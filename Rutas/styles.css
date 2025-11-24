@@ -13,7 +13,7 @@
     --primary-color: #2c5f2d;
     --secondary-color: #87a96b;
     --accent-color: #d4a574;
-    --dark-color: #1a1a1a;
+    --dark-color: #000000;
     --light-color: #f5f5f5;
     --white: #ffffff;
     --shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -38,7 +38,7 @@ body {
    NAVEGACIÓN
    =============================================== */
 .navbar {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    background-color: #000000;
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     position: fixed;
     width: 100%;
