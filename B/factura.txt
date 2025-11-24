@@ -1,0 +1,53 @@
+═══════════════════════════════════════════════════════════
+                        FACTURA
+═══════════════════════════════════════════════════════════
+
+Número de Factura: 2025-001
+Fecha: 18/11/2025
+
+───────────────────────────────────────────────────────────
+
+DATOS DEL VENDEDOR:
+Empresa XYZ S.L.
+CIF: B12345678
+Dirección: Calle Principal 123, 28001 Madrid
+Teléfono: +34 912 345 678
+Email: contacto@empresaxyz.com
+
+───────────────────────────────────────────────────────────
+
+DATOS DEL CLIENTE:
+Cliente ABC
+NIF/CIF: 12345678A
+Dirección: Avenida Secundaria 456, 28002 Madrid
+Teléfono: +34 913 456 789
+
+───────────────────────────────────────────────────────────
+
+DETALLE DE PRODUCTOS/SERVICIOS:
+
+Descripción                    Cant.   Precio Unit.   Total
+─────────────────────────────────────────────────────────
+Servicio de Consultoría          10      150.00€    1,500.00€
+Desarrollo de Software            5      300.00€    1,500.00€
+Soporte Técnico                  20       50.00€    1,000.00€
+
+───────────────────────────────────────────────────────────
+
+                                    Subtotal:    4,000.00€
+                                    IVA (21%):     840.00€
+                                    ───────────────────────
+                                    TOTAL:       4,840.00€
+
+───────────────────────────────────────────────────────────
+
+FORMA DE PAGO: Transferencia bancaria
+CUENTA BANCARIA: ES12 1234 5678 9012 3456 7890
+
+VENCIMIENTO: 18/12/2025
+
+───────────────────────────────────────────────────────────
+
+Gracias por su confianza.
+
+═══════════════════════════════════════════════════════════
