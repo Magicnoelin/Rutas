@@ -349,8 +349,11 @@ function generarDia3(intereses) {
         contenido += `<p><strong>Mañana:</strong> Picos de Urbión - Senderismo a la cima (2228m) para los más aventureros ⛰️.</p>
                       <p><strong>Tarde:</strong> Molinos de Duero - Pueblo serrano tranquilo.</p>`;
     } else if (intereses.includes('gastronomia')) {
-        contenido += `<p><strong>Mañana:</strong> Ruta del vino de Ribera del Duero 🍷 - Visita a bodegas.</p>
-                      <p><strong>Tarde:</strong> Degustación de productos locales (torreznos, morcilla, setas).</p>`;
+        contenido += `<p><strong>Mañana:</strong> Ruta del vino de Ribera del Duero 🍷 - Visita a bodegas emblemáticas.</p>
+                      <p><strong>Tarde:</strong> Degustación de productos locales (torreznos, morcilla, setas de temporada).</p>`;
+    } else if (intereses.includes('cultura')) {
+        contenido += `<p><strong>Mañana:</strong> Monasterio de San Juan de Duero - Claustro románico único con arcos mudéjares 🏛️.</p>
+                      <p><strong>Tarde:</strong> Ruta del Románico Soriano - Iglesias medievales excepcionales.</p>`;
     } else {
         contenido += `<p><strong>Mañana:</strong> Laguna Negra y Lagunas Glaciares 💧.</p>
                       <p><strong>Tarde:</strong> Visita a pueblos con encanto de la Sierra.</p>`;
@@ -446,7 +449,16 @@ function generarConsejos(intereses) {
     
     if (intereses.includes('gastronomia')) {
         consejos += '<li>🍽️ Reserva con antelación en los mejores restaurantes</li>';
-        consejos += '<li>🍷 No te pierdas los vinos de la Ribera del Duero</li>';
+        consejos += '<li>🍷 No te pierdas los vinos de la Ribera del Duero y Rueda</li>';
+        consejos += '<li>🧀 Degusta productos típicos: Queso de Soria, Jamón de Treviño</li>';
+        consejos += '<li>🍄 Temporada de setas (sept-nov): prueba setas de cardo y shiitake</li>';
+    }
+    
+    if (intereses.includes('cultura')) {
+        consejos += '<li>🏛️ Comprueba horarios de museos y monumentos (muchos cierran lunes)</li>';
+        consejos += '<li>🎫 Carnet joven y passes culturales disponibles</li>';
+        consejos += '<li>📚 Aprovecha las rutas literarias: Machado, Celaya, Bécquer</li>';
+        consejos += '<li>⛪ Visita iglesias románicas con guía local para mejor comprensión</li>';
     }
     
     consejos += '<li>🌡️ El clima es continental: frío en invierno, caluroso en verano</li>';
@@ -462,6 +474,24 @@ function generarConsejos(intereses) {
     }
     
     consejos += '</ul>';
+    
+    // Información específica sobre enoturismo y patrimonio
+    if (intereses.includes('gastronomia') || intereses.includes('cultura')) {
+        consejos += '<div style="background-color: #f9f9f9; padding: 1rem; border-radius: 8px; margin-top: 1rem;">';
+        consejos += '<h5>🍷 Enoturismo en Castilla y León</h5>';
+        consejos += '<p><strong>Ribera del Duero:</strong> Bodegas emblemáticas como Protos, Vega Sicilia, Pago de Carraovejas.</p>';
+        consejos += '<p><strong>Rueda:</strong> Famosa por vinos blancos, visita Bodegas José Pariente.</p>';
+        consejos += '<p><strong>Recomendación:</strong> Reserva visitas con antelación, especialmente en vendimia (septiembre).</p>';
+        consejos += '</div>';
+        
+        consejos += '<div style="background-color: #f9f9f9; padding: 1rem; border-radius: 8px; margin-top: 1rem;">';
+        consejos += '<h5>🏛️ Patrimonio de Castilla y León</h5>';
+        consejos += '<p><strong>Patrimonio Mundial UNESCO:</strong> Catedral de Burgos, León y Segovia; Acueducto de Segovia.</p>';
+        consejos += '<p><strong>Románico:</strong> Ruta del Románico Soriano, San Juan de Duero, Iglesia de San Pedro en Soria.</p>';
+        consejos += '<p><strong>Gótico:</strong> Catedrales de Burgos y León, Claustro de la Colegiata de San Miguel.</p>';
+        consejos += '</div>';
+    }
+    
     consejos += '</div>';
     
     return consejos;
