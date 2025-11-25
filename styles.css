@@ -86,30 +86,19 @@ body {
 
 .nav-menu a {
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--white);
     font-weight: 500;
     transition: var(--transition);
     position: relative;
-    padding: 0.5rem 0;
-}
-
-.nav-menu a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--accent-color);
-    transition: width 0.3s ease;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+    text-align: center;
 }
 
 .nav-menu a:hover {
-    color: var(--white);
-}
-
-.nav-menu a:hover::after {
-    width: 100%;
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
 }
 
 .btn-asistente {
@@ -186,21 +175,59 @@ body {
    =============================================== */
 .section {
     padding: 5rem 0;
+    position: relative;
 }
 
 .section-alt {
     background-color: var(--light-color);
 }
 
+/* ===============================================
+   TÍTULOS DE CATEGORÍAS PRINCIPALES
+   =============================================== */
 .section-title {
     text-align: center;
     font-size: 2.5rem;
     color: var(--primary-color);
     margin-bottom: 3rem;
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 1.5rem 2rem;
+}
+
+.section-title::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 700px;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(44, 95, 45, 0.08) 0%, rgba(135, 169, 107, 0.12) 50%, rgba(212, 165, 116, 0.08) 100%);
+    border-radius: 50px;
+    z-index: -1;
+    box-shadow: 0 4px 20px rgba(44, 95, 45, 0.1);
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 2px;
 }
 
 .section-title i {
-    margin-right: 1rem;
+    margin-right: 0.8rem;
+    color: var(--accent-color);
+    font-size: 2.2rem;
+    vertical-align: middle;
 }
 
 /* ===============================================
@@ -636,6 +663,544 @@ body {
 
     .chat-messages {
         height: 400px;
+    }
+}
+
+/* ===============================================
+   DROPDOWN MENU
+   =============================================== */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: rgba(44, 95, 45, 0.95);
+    list-style: none;
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    min-width: 200px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.dropdown-menu li {
+    padding: 0;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 0.8rem 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.dropdown-menu a:hover {
+    background-color: rgba(212, 165, 116, 0.2);
+    color: var(--accent-color);
+    padding-left: 2rem;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nav-menu a.active {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+/* ===============================================
+   COMPROMISO SOCIAL - ESTILOS ESPECÍFICOS
+   =============================================== */
+
+/* Variables de color para compromiso social */
+:root {
+    --compromiso-bg: #F5F1E8;
+    --compromiso-primary: #F77F00;
+    --compromiso-secondary: #87a96b;
+    --compromiso-warm: #D4A574;
+    --compromiso-text: #4a4a4a;
+}
+
+/* Hero Compromiso Social */
+.hero-compromiso {
+    height: 70vh;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.4)),
+                url('https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=1920&h=1080&fit=crop') center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--white);
+    margin-top: 90px;
+    position: relative;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(247, 127, 0, 0.3) 0%, rgba(135, 169, 107, 0.3) 100%);
+}
+
+.hero-content-compromiso {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    padding: 0 2rem;
+}
+
+.hero-content-compromiso h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    font-weight: 700;
+}
+
+.hero-content-compromiso h1 i {
+    color: var(--compromiso-primary);
+    margin-right: 1rem;
+}
+
+.hero-subtitle {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    max-width: 700px;
+    margin: 0 auto;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Secciones de Compromiso Social */
+.section-compromiso {
+    padding: 5rem 0;
+    background-color: var(--compromiso-bg);
+}
+
+.section-compromiso:nth-child(even) {
+    background-color: var(--white);
+}
+
+/* Introducción */
+.intro-compromiso {
+    text-align: center;
+}
+
+.intro-content h2 {
+    font-size: 2.5rem;
+    color: var(--compromiso-primary);
+    margin-bottom: 1.5rem;
+}
+
+.intro-text {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: var(--compromiso-text);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Títulos de sección */
+.section-title-compromiso {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--compromiso-primary);
+    margin-bottom: 3rem;
+    font-weight: 700;
+}
+
+.section-title-compromiso i {
+    margin-right: 1rem;
+    color: var(--compromiso-secondary);
+}
+
+/* Grid de Categorías */
+.grid-compromiso {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2.5rem;
+    margin-top: 3rem;
+}
+
+/* Cards de Compromiso */
+.card-compromiso {
+    background-color: var(--white);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-compromiso::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--compromiso-primary) 0%, var(--compromiso-secondary) 100%);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.card-compromiso:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 30px rgba(247, 127, 0, 0.2);
+    border-color: var(--compromiso-primary);
+}
+
+.card-compromiso:hover::before {
+    transform: scaleX(1);
+}
+
+.card-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--compromiso-primary) 0%, var(--compromiso-warm) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(247, 127, 0, 0.3);
+}
+
+.card-icon i {
+    font-size: 2.5rem;
+    color: var(--white);
+}
+
+.card-compromiso h3 {
+    font-size: 1.5rem;
+    color: var(--compromiso-primary);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.card-description {
+    color: var(--compromiso-text);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.card-stat {
+    background-color: var(--compromiso-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--compromiso-secondary);
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+}
+
+.card-stat i {
+    color: var(--compromiso-secondary);
+    font-size: 1.2rem;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+}
+
+.card-stat span {
+    font-size: 0.95rem;
+    color: var(--compromiso-text);
+    line-height: 1.6;
+}
+
+/* Cómo Funciona / Nuestro Compromiso */
+.como-funciona {
+    background-color: var(--white);
+}
+
+.compromiso-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    margin-top: 3rem;
+}
+
+.compromiso-item {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--compromiso-bg);
+    border-radius: 20px;
+    transition: var(--transition);
+}
+
+.compromiso-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(247, 127, 0, 0.15);
+}
+
+.compromiso-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--compromiso-secondary) 0%, var(--compromiso-primary) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 6px 20px rgba(135, 169, 107, 0.3);
+}
+
+.compromiso-icon i {
+    font-size: 3rem;
+    color: var(--white);
+}
+
+.compromiso-item h3 {
+    font-size: 1.5rem;
+    color: var(--compromiso-primary);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.compromiso-item p {
+    color: var(--compromiso-text);
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+/* Objetivos 2025-2028 */
+.objetivos-section {
+    background: linear-gradient(135deg, var(--compromiso-bg) 0%, #fff 100%);
+}
+
+.objetivos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2.5rem;
+    margin-top: 3rem;
+}
+
+.objetivo-card {
+    background-color: var(--white);
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.objetivo-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(247, 127, 0, 0.05) 0%, rgba(135, 169, 107, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.objetivo-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(247, 127, 0, 0.2);
+}
+
+.objetivo-card:hover::before {
+    opacity: 1;
+}
+
+.objetivo-numero {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--compromiso-primary);
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.objetivo-label {
+    font-size: 1.1rem;
+    color: var(--compromiso-text);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.objetivo-icon {
+    font-size: 3rem;
+    color: var(--compromiso-secondary);
+    opacity: 0.3;
+    position: relative;
+    z-index: 1;
+}
+
+/* Únete al Movimiento */
+.unete-section {
+    background-color: var(--compromiso-bg);
+}
+
+.unete-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 3rem;
+    margin-top: 3rem;
+}
+
+.unete-card {
+    background-color: var(--white);
+    padding: 3rem 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.unete-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 35px rgba(247, 127, 0, 0.2);
+}
+
+.unete-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--compromiso-primary) 0%, var(--compromiso-warm) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 6px 20px rgba(247, 127, 0, 0.3);
+    transition: var(--transition);
+}
+
+.unete-card:hover .unete-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.unete-icon i {
+    font-size: 3rem;
+    color: var(--white);
+}
+
+.unete-card h3 {
+    font-size: 1.8rem;
+    color: var(--compromiso-primary);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.unete-card p {
+    color: var(--compromiso-text);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    font-size: 1.05rem;
+    flex-grow: 1;
+}
+
+.btn-unete {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 2.5rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.btn-unete i {
+    font-size: 1.2rem;
+}
+
+.btn-viajeros {
+    background: linear-gradient(135deg, var(--compromiso-primary) 0%, var(--compromiso-warm) 100%);
+    color: var(--white);
+}
+
+.btn-viajeros:hover {
+    background: linear-gradient(135deg, var(--compromiso-warm) 0%, var(--compromiso-primary) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(247, 127, 0, 0.3);
+}
+
+.btn-empresas {
+    background: linear-gradient(135deg, var(--compromiso-secondary) 0%, var(--primary-color) 100%);
+    color: var(--white);
+}
+
+.btn-empresas:hover {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--compromiso-secondary) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(135, 169, 107, 0.3);
+}
+
+.btn-colaboradores {
+    background: linear-gradient(135deg, var(--compromiso-warm) 0%, var(--accent-color) 100%);
+    color: var(--white);
+}
+
+.btn-colaboradores:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--compromiso-warm) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.3);
+}
+
+/* Responsive para Compromiso Social */
+@media (max-width: 768px) {
+    .hero-content-compromiso h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.4rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+    
+    .grid-compromiso {
+        grid-template-columns: 1fr;
+    }
+    
+    .objetivo-numero {
+        font-size: 3rem;
+    }
+    
+    .unete-grid {
+        grid-template-columns: 1fr;
     }
 }
 
