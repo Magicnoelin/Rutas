@@ -5,11 +5,11 @@
  */
 
 // Configuración de la base de datos
-define('DB_HOST', 'localhost');  // o 127.0.0.1
+define('DB_HOST', '127.0.0.1');  // Tu servidor MySQL (127.0.0.1:3306)
 define('DB_NAME', 'u412199647_Alojamientos');
-define('DB_USER', 'TU_USUARIO_MYSQL');  // ← REEMPLAZA CON TU USUARIO
-define('DB_PASS', 'TU_PASSWORD_MYSQL'); // ← REEMPLAZA CON TU CONTRASEÑA
-define('DB_TABLE', 'alojamientos');     // ← CONFIRMA EL NOMBRE DE TU TABLA
+define('DB_USER', 'u412199647_rutasrurales');
+define('DB_PASS', 'Rutas5Rurales7$');
+define('DB_TABLE', 'alojamientos_csv'); // Confirmado: nombre real de la tabla
 
 // Configuración de CORS (permite que tu web acceda a la API)
 header('Access-Control-Allow-Origin: https://rutasrurales.io');
