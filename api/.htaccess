@@ -12,18 +12,34 @@
 
 # Configuración de CORS
 <IfModule mod_headers.c>
-    # Permitir acceso desde tu dominio
-    Header set Access-Control-Allow-Origin "https://rutasrurales.io"
+    # Permitir acceso desde tu dominio (con y sin www)
+    SetEnvIf Origin "^https?://(www\.)?rutasrurales\.io$" AccessControlAllowOrigin=$0
+    Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
     Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
     Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+    Header set Access-Control-Allow-Credentials "true"
     Header set Access-Control-Max-Age "3600"
+    
+    # Responder a preflight requests
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
 </IfModule>
 
-# Proteger archivos sensibles
-<FilesMatch "^(config\.php|\.htaccess)$">
+# Proteger archivos sensibles (pero permitir que PHP los use internamente)
+<FilesMatch "^\.htaccess$">
     Order allow,deny
     Deny from all
 </FilesMatch>
+
+# Permitir acceso a config.php solo desde PHP (no desde navegador)
+<Files "config.php">
+    Order Deny,Allow
+    Deny from all
+    <IfModule mod_php.c>
+        Allow from all
+    </IfModule>
+</Files>
 
 # Prevenir listado de directorios
 Options -Indexes
