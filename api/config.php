@@ -5,11 +5,21 @@
  */
 
 // Configuración de la base de datos
-define('DB_HOST', '127.0.0.1');  // Tu servidor MySQL (127.0.0.1:3306)
+// DESARROLLO LOCAL - Cambia estas credenciales según tu configuración local
+define('DB_HOST', '127.0.0.1');  // Tu servidor MySQL local
+define('DB_NAME', 'rutas_alojamientos');  // Nombre de BD local
+define('DB_USER', 'root');  // Usuario MySQL local (normalmente 'root')
+define('DB_PASS', '');  // Contraseña MySQL local (vacía por defecto en XAMPP/WAMP)
+define('DB_TABLE', 'alojamientos'); // Nombre de tabla local
+
+// PRODUCCIÓN - Comenta las líneas de arriba y descomenta estas para subir al servidor:
+/*
+define('DB_HOST', '127.0.0.1');
 define('DB_NAME', 'u412199647_Alojamientos');
 define('DB_USER', 'u412199647_rutasrurales');
 define('DB_PASS', 'Rutas5Rurales7$');
-define('DB_TABLE', 'alojamientos_csv'); // Confirmado: nombre real de la tabla
+define('DB_TABLE', 'alojamientos_csv');
+*/
 
 // Configuración de reCAPTCHA v3
 define('RECAPTCHA_SITE_KEY', '6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k');
