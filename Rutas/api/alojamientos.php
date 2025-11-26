@@ -28,6 +28,10 @@ try {
     $where = [];
     $params = [];
     
+    // IMPORTANTE: Solo mostrar alojamientos publicados
+    $where[] = "Estado = :estado";
+    $params[':estado'] = 'publicado';
+    
     // Filtro por tipo
     if (isset($_GET['tipo']) && !empty($_GET['tipo'])) {
         $where[] = "Tipo = :tipo";

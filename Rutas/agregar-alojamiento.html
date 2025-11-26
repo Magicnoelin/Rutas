@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Alojamiento - Rutas</title>
+    <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k"></script>
     <style>
         .form-container {
             max-width: 900px;
@@ -509,7 +512,7 @@
                     <i class="fas fa-eye"></i> Vista Previa
                 </button>
                 <button type="submit" class="btn-submit">
-                    <i class="fas fa-save"></i> Generar JSON
+                    <i class="fas fa-save"></i> Guardar Alojamiento
                 </button>
                 <button type="reset" class="btn-reset">
                     <i class="fas fa-redo"></i> Limpiar
@@ -561,6 +564,7 @@
     <script>
         let fotoCounter = 1;
         let generatedJSON = '';
+        const API_URL = 'https://rutasrurales.io/api/crear.php';
 
         // Agregar campo de foto
         function agregarCampoFoto() {
@@ -582,14 +586,9 @@
             button.parentElement.remove();
         }
 
-        // Generar ID único
-        function generarID() {
-            return Math.random().toString(36).substr(2, 8);
-        }
-
         // Generar vista previa
         function generarVistaPrevia() {
-            const formData = recopilarDatos();
+            const formData = recopilarDatosParaAPI();
             if (!formData) return;
 
             const jsonString = JSON.stringify(formData, null, 2);
@@ -597,12 +596,15 @@
             document.getElementById('previewContainer').classList.add('active');
             generatedJSON = jsonString;
 
+            // Actualizar mensaje de vista previa
+            document.querySelector('.preview-header p').textContent = 'Revisa los datos antes de guardar';
+
             // Scroll a la vista previa
             document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Recopilar datos del formulario
-        function recopilarDatos() {
+        // Recopilar datos del formulario para la API
+        function recopilarDatosParaAPI() {
             const form = document.getElementById('alojamientoForm');
             
             // Validar campos requeridos
@@ -611,80 +613,183 @@
                 return null;
             }
 
+            // Mapear campos del formulario a nombres de la API (con mayúsculas)
             const formData = {
-                id: generarID(),
-                nombre: document.getElementById('nombre').value.trim(),
-                tipo: document.getElementById('tipo').value,
-                direccion: document.getElementById('direccion').value.trim(),
-                localidad: document.getElementById('localidad').value.trim(),
-                provincia: document.getElementById('provincia').value.trim(),
-                plazas: parseInt(document.getElementById('plazas').value)
+                Nombre: document.getElementById('nombre').value.trim(),
+                Tipo: document.getElementById('tipo').value,
+                Direccion: document.getElementById('direccion').value.trim() + ', ' + 
+                          document.getElementById('localidad').value.trim() + ', ' +
+                          document.getElementById('provincia').value.trim(),
+                Plazas: parseInt(document.getElementById('plazas').value),
+                Telefono1: document.getElementById('telefono').value.trim(),
+                Notaspublicas: document.getElementById('descripcion').value.trim()
             };
 
             // Precio (opcional)
             const precio = document.getElementById('precio').value;
             if (precio) {
-                formData.precio = parseInt(precio);
+                formData.Precio = parseInt(precio);
             }
 
-            // Teléfonos
-            formData.telefono = document.getElementById('telefono').value.trim();
+            // Teléfono 2 (opcional)
             const telefono2 = document.getElementById('telefono2').value.trim();
             if (telefono2) {
-                formData.telefono2 = telefono2;
+                formData.Telefono2 = telefono2;
             }
 
             // Email (opcional)
             const email = document.getElementById('email').value.trim();
             if (email) {
-                formData.email = email;
+                formData.Email = email;
             }
 
             // Web (opcional)
             const web = document.getElementById('web').value.trim();
             if (web) {
-                formData.web = web;
+                formData.Web = web;
             }
 
             // Instagram (opcional)
             const instagram = document.getElementById('instagram').value.trim();
             if (instagram) {
-                formData.instagram = instagram;
+                formData.Instagram = instagram;
             }
 
             // Booking (opcional)
             const booking = document.getElementById('booking').value.trim();
             if (booking) {
-                formData.booking = booking;
+                formData.Booking = booking;
             }
 
-            // Fotos
-            const fotos = [];
+            // Fotos (hasta 4)
             const fotoInputs = document.querySelectorAll('.photo-input-group input');
-            fotoInputs.forEach(input => {
+            fotoInputs.forEach((input, index) => {
                 const url = input.value.trim();
-                if (url) {
-                    fotos.push(url);
+                if (url && index < 4) {
+                    formData[`Foto${index + 1}`] = url;
                 }
             });
-            if (fotos.length > 0) {
-                formData.fotos = fotos;
-            }
-
-            // Características
-            const caracteristicas = [];
-            const checkboxes = document.querySelectorAll('input[name="caracteristicas"]:checked');
-            checkboxes.forEach(checkbox => {
-                caracteristicas.push(checkbox.value);
-            });
-            if (caracteristicas.length > 0) {
-                formData.caracteristicas = caracteristicas;
-            }
-
-            // Descripción
-            formData.descripcion = document.getElementById('descripcion').value.trim();
 
             return formData;
+        }
+
+        // Guardar alojamiento en la base de datos
+        async function guardarAlojamiento() {
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                // Deshabilitar botón y mostrar loading
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+                // Recopilar datos
+                const formData = recopilarDatosParaAPI();
+                if (!formData) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    return;
+                }
+
+                // Obtener token de reCAPTCHA
+                const recaptchaToken = await grecaptcha.execute('6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k', {action: 'submit'});
+                formData.recaptchaToken = recaptchaToken;
+
+                // Enviar a la API
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Mostrar mensaje de éxito
+                    mostrarMensajeExito(result);
+                } else {
+                    // Mostrar error
+                    mostrarMensajeError(result.error || 'Error al guardar el alojamiento');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensajeError('Error de conexión. Por favor, intenta de nuevo.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        // Mostrar mensaje de éxito
+        function mostrarMensajeExito(result) {
+            const previewContainer = document.getElementById('previewContainer');
+            const previewHeader = document.querySelector('.preview-header');
+            
+            previewHeader.innerHTML = `
+                <h3 style="color: #27ae60;"><i class="fas fa-check-circle"></i> ¡Alojamiento Guardado Exitosamente!</h3>
+                <p style="color: #155724; font-size: 1.1rem; margin-top: 1rem;">
+                    <strong>ID:</strong> ${result.data.id}<br>
+                    <strong>Nombre:</strong> ${result.data.nombre}<br>
+                    <strong>Estado:</strong> Pendiente de verificación y pago
+                </p>
+                <p style="color: #666; margin-top: 1rem;">
+                    Tu alojamiento ha sido guardado en la base de datos. 
+                    Estará visible públicamente una vez completado el proceso de verificación y pago.
+                </p>
+                <p style="color: #666; margin-top: 0.5rem; font-size: 0.9rem;">
+                    <strong>Puntuación reCAPTCHA:</strong> ${(result.data.recaptcha_score * 100).toFixed(0)}% (humano verificado)
+                </p>
+            `;
+
+            document.getElementById('jsonOutput').textContent = JSON.stringify(result.data, null, 2);
+            previewContainer.classList.add('active');
+            
+            // Ocultar botón de copiar
+            document.querySelector('.copy-btn').style.display = 'none';
+            
+            // Scroll al mensaje
+            previewContainer.scrollIntoView({ behavior: 'smooth' });
+
+            // Limpiar formulario después de 3 segundos
+            setTimeout(() => {
+                if (confirm('¿Deseas agregar otro alojamiento?')) {
+                    document.getElementById('alojamientoForm').reset();
+                    previewContainer.classList.remove('active');
+                    document.querySelector('.copy-btn').style.display = 'flex';
+                    fotoCounter = 1;
+                    const photoInputs = document.getElementById('photoInputs');
+                    photoInputs.innerHTML = `
+                        <div class="photo-input-group">
+                            <input type="url" name="foto1" placeholder="URL de la foto 1 (principal)">
+                        </div>
+                    `;
+                }
+            }, 3000);
+        }
+
+        // Mostrar mensaje de error
+        function mostrarMensajeError(errorMsg) {
+            const previewContainer = document.getElementById('previewContainer');
+            const previewHeader = document.querySelector('.preview-header');
+            
+            previewHeader.innerHTML = `
+                <h3 style="color: #e74c3c;"><i class="fas fa-exclamation-circle"></i> Error al Guardar</h3>
+                <p style="color: #721c24; margin-top: 1rem;">
+                    ${errorMsg}
+                </p>
+                <p style="color: #666; margin-top: 1rem; font-size: 0.9rem;">
+                    Por favor, revisa los datos e intenta de nuevo. Si el problema persiste, contacta con soporte.
+                </p>
+            `;
+
+            document.getElementById('jsonOutput').textContent = '';
+            previewContainer.classList.add('active');
+            document.querySelector('.copy-btn').style.display = 'none';
+            
+            previewContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
         // Copiar JSON al portapapeles
@@ -706,12 +811,15 @@
         // Manejar envío del formulario
         document.getElementById('alojamientoForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            generarVistaPrevia();
+            guardarAlojamiento();
         });
 
         // Limpiar vista previa al resetear
         document.getElementById('alojamientoForm').addEventListener('reset', function() {
             document.getElementById('previewContainer').classList.remove('active');
+            document.querySelector('.copy-btn').style.display = 'flex';
+            document.querySelector('.preview-header h3').innerHTML = '<i class="fas fa-code"></i> JSON Generado';
+            document.querySelector('.preview-header p').textContent = 'Copia este JSON y añádelo al archivo alojamientos.json';
             fotoCounter = 1;
             const photoInputs = document.getElementById('photoInputs');
             photoInputs.innerHTML = `

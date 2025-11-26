@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alojamientos - Rutas</title>
+    <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -179,6 +180,7 @@
     <script>
         let todosLosAlojamientos = [];
         let alojamientosFiltrados = [];
+        let categoriaActual = '';
 
         // Cargar alojamientos al iniciar
         window.addEventListener('DOMContentLoaded', cargarAlojamientos);
@@ -188,17 +190,27 @@
                 const response = await fetch('alojamientos.json');
                 todosLosAlojamientos = await response.json();
                 alojamientosFiltrados = [...todosLosAlojamientos];
-                
+
+                // Verificar parámetros de URL para categoría
+                const urlParams = new URLSearchParams(window.location.search);
+                categoriaActual = urlParams.get('categoria');
+
+                // Aplicar filtro de categoría si existe
+                if (categoriaActual) {
+                    aplicarFiltroCategoria();
+                    actualizarTituloCategoria();
+                }
+
                 // Llenar filtro de localidades
                 llenarFiltroLocalidades();
-                
+
                 // Mostrar alojamientos
                 mostrarAlojamientos();
-                
+
                 // Ocultar loading
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('alojamientosGrid').style.display = 'grid';
-                
+
             } catch (error) {
                 console.error('Error al cargar alojamientos:', error);
                 document.getElementById('loading').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error al cargar los alojamientos';
@@ -319,15 +331,60 @@
             mostrarAlojamientos();
         }
 
+        function aplicarFiltroCategoria() {
+            if (!categoriaActual) return;
+
+            alojamientosFiltrados = todosLosAlojamientos.filter(alojamiento => {
+                switch (categoriaActual) {
+                    case 'casas-rurales':
+                        // Casas rurales y turismo rural: alojamientos tradicionales en entorno rural
+                        return alojamiento.caracteristicas &&
+                               (alojamiento.caracteristicas.includes('Naturaleza') ||
+                                alojamiento.caracteristicas.includes('Tranquilo') ||
+                                alojamiento.caracteristicas.includes('Senderismo') ||
+                                alojamiento.localidad.toLowerCase().includes('rural') ||
+                                alojamiento.tipo === 'Casa');
+                    case 'apartamentos-urbanos':
+                        // Apartamentos turísticos urbanos: viviendas de alquiler en ciudades patrimonio
+                        return alojamiento.tipo === 'Piso' || alojamiento.tipo === 'Apartamento';
+                    case 'viviendas-turisticas':
+                        // Viviendas de uso turístico: propiedades residenciales completas
+                        return alojamiento.tipo === 'Casa' || alojamiento.tipo === 'Chalé' ||
+                               alojamiento.tipo === 'Piso' || alojamiento.tipo === 'Apartamento';
+                    default:
+                        return true;
+                }
+            });
+        }
+
+        function actualizarTituloCategoria() {
+            const tituloElement = document.querySelector('.section-title');
+            const iconElement = tituloElement.querySelector('i');
+
+            switch (categoriaActual) {
+                case 'casas-rurales':
+                    tituloElement.innerHTML = '<i class="fas fa-home"></i> Casas Rurales y Turismo Rural';
+                    break;
+                case 'apartamentos-urbanos':
+                    tituloElement.innerHTML = '<i class="fas fa-building"></i> Apartamentos Turísticos Urbanos';
+                    break;
+                case 'viviendas-turisticas':
+                    tituloElement.innerHTML = '<i class="fas fa-house-user"></i> Viviendas de Uso Turístico';
+                    break;
+                default:
+                    // Mantener el título original
+                    break;
+            }
+        }
+
         function actualizarEstadisticas() {
             const total = alojamientosFiltrados.length;
             const plazasTotales = alojamientosFiltrados.reduce((sum, a) => sum + a.plazas, 0);
-            
+
             document.getElementById('statsText').innerHTML = `
-                <i class="fas fa-home"></i> ${total} alojamiento${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''} 
+                <i class="fas fa-home"></i> ${total} alojamiento${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}
                 | <i class="fas fa-users"></i> ${plazasTotales} plazas totales
             `;
         }
     </script>
 </body>
-</html>

@@ -39,12 +39,12 @@ body {
    =============================================== */
 .navbar {
     background-color: #000000;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 15px rgba(0,0,0,0.2);
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
-    padding: 1.2rem 0;
+    padding: 0.8rem 0;
     backdrop-filter: blur(10px);
 }
 
@@ -65,12 +65,12 @@ body {
 }
 
 .logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .logo img {
-    height: 65px !important;
-    filter: drop-shadow(0 2px 8px rgba(255,255,255,0.2));
+    height: 60px !important;
+    filter: drop-shadow(0 2px 8px rgba(255,255,255,0.1));
 }
 
 .logo i {
@@ -80,55 +80,73 @@ body {
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 2.5rem;
     align-items: center;
 }
 
-.nav-menu a {
+.nav-menu > li > a {
     text-decoration: none;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
+    font-size: 0.95rem;
     transition: var(--transition);
     position: relative;
     padding: 0.5rem 0;
+    background-color: transparent;
+    border-radius: 0;
+    text-align: center;
+    letter-spacing: 0.3px;
 }
 
-.nav-menu a::after {
+.nav-menu > li > a::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--accent-color);
+    background: linear-gradient(90deg, #F77F00 0%, #D4A574 100%);
     transition: width 0.3s ease;
 }
 
-.nav-menu a:hover {
-    color: var(--white);
+.nav-menu > li > a:hover {
+    color: #ffffff;
+    background-color: transparent;
+    transform: translateY(0);
 }
 
-.nav-menu a:hover::after {
+.nav-menu > li > a:hover::after {
     width: 100%;
 }
 
+.nav-menu a.active {
+    color: #F77F00;
+    font-weight: 600;
+}
+
+.nav-menu a.active::after {
+    width: 100%;
+    background: #F77F00;
+}
+
 .btn-asistente {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #c49563 100%);
+    background: linear-gradient(135deg, #F77F00 0%, #D4A574 100%) !important;
     color: var(--white) !important;
-    padding: 0.6rem 1.8rem;
-    border-radius: 30px;
+    padding: 0.7rem 2rem !important;
+    border-radius: 30px !important;
     transition: var(--transition);
-    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
+    box-shadow: 0 4px 15px rgba(247, 127, 0, 0.4);
+    font-weight: 600;
 }
 
 .btn-asistente::after {
-    display: none;
+    display: none !important;
 }
 
 .btn-asistente:hover {
-    background: linear-gradient(135deg, #c49563 0%, var(--accent-color) 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+    background: linear-gradient(135deg, #D4A574 0%, #F77F00 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 25px rgba(247, 127, 0, 0.6) !important;
 }
 
 /* ===============================================
@@ -186,21 +204,59 @@ body {
    =============================================== */
 .section {
     padding: 5rem 0;
+    position: relative;
 }
 
 .section-alt {
     background-color: var(--light-color);
 }
 
+/* ===============================================
+   TÍTULOS DE CATEGORÍAS PRINCIPALES
+   =============================================== */
 .section-title {
     text-align: center;
     font-size: 2.5rem;
     color: var(--primary-color);
     margin-bottom: 3rem;
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 1.5rem 2rem;
+}
+
+.section-title::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 700px;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(44, 95, 45, 0.08) 0%, rgba(135, 169, 107, 0.12) 50%, rgba(212, 165, 116, 0.08) 100%);
+    border-radius: 50px;
+    z-index: -1;
+    box-shadow: 0 4px 20px rgba(44, 95, 45, 0.1);
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 2px;
 }
 
 .section-title i {
-    margin-right: 1rem;
+    margin-right: 0.8rem;
+    color: var(--accent-color);
+    font-size: 2.2rem;
+    vertical-align: middle;
 }
 
 /* ===============================================
@@ -651,7 +707,7 @@ body {
     position: absolute;
     top: 100%;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.95);
+    background-color: rgba(44, 95, 45, 0.95);
     list-style: none;
     padding: 0.5rem 0;
     margin-top: 0.5rem;
@@ -671,6 +727,7 @@ body {
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
     transition: var(--transition);
+    text-align: center;
 }
 
 .dropdown-menu a:hover {
@@ -706,11 +763,11 @@ body {
 
 /* Variables de color para compromiso social */
 :root {
-    --compromiso-bg: #F5F1E8;
-    --compromiso-primary: #F77F00;
-    --compromiso-secondary: #87a96b;
-    --compromiso-warm: #D4A574;
-    --compromiso-text: #4a4a4a;
+    --compromiso-bg: #F4F1DE;
+    --compromiso-primary: #2D5016;
+    --compromiso-secondary: #4A7C2C;
+    --compromiso-warm: #88B04B;
+    --compromiso-text: #1B3409;
 }
 
 /* Hero Compromiso Social */
@@ -733,7 +790,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(247, 127, 0, 0.3) 0%, rgba(135, 169, 107, 0.3) 100%);
+    background: linear-gradient(135deg, rgba(45, 80, 22, 0.3) 0%, rgba(74, 124, 44, 0.3) 100%);
 }
 
 .hero-content-compromiso {
@@ -847,7 +904,7 @@ body {
 
 .card-compromiso:hover {
     transform: translateY(-10px);
-    box-shadow: 0 12px 30px rgba(247, 127, 0, 0.2);
+    box-shadow: 0 12px 30px rgba(45, 80, 22, 0.2);
     border-color: var(--compromiso-primary);
 }
 
@@ -864,7 +921,7 @@ body {
     align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(247, 127, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
 }
 
 .card-icon i {
@@ -931,7 +988,7 @@ body {
 
 .compromiso-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(247, 127, 0, 0.15);
+    box-shadow: 0 8px 25px rgba(45, 80, 22, 0.15);
 }
 
 .compromiso-icon {
@@ -943,7 +1000,7 @@ body {
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    box-shadow: 0 6px 20px rgba(135, 169, 107, 0.3);
+    box-shadow: 0 6px 20px rgba(74, 124, 44, 0.3);
 }
 
 .compromiso-icon i {
@@ -994,14 +1051,14 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(247, 127, 0, 0.05) 0%, rgba(135, 169, 107, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(45, 80, 22, 0.05) 0%, rgba(74, 124, 44, 0.05) 100%);
     opacity: 0;
     transition: opacity 0.4s ease;
 }
 
 .objetivo-card:hover {
     transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 12px 35px rgba(247, 127, 0, 0.2);
+    box-shadow: 0 12px 35px rgba(45, 80, 22, 0.2);
 }
 
 .objetivo-card:hover::before {
@@ -1060,7 +1117,7 @@ body {
 
 .unete-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 12px 35px rgba(247, 127, 0, 0.2);
+    box-shadow: 0 12px 35px rgba(45, 80, 22, 0.2);
 }
 
 .unete-icon {
@@ -1072,7 +1129,7 @@ body {
     align-items: center;
     justify-content: center;
     margin-bottom: 2rem;
-    box-shadow: 0 6px 20px rgba(247, 127, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(45, 80, 22, 0.3);
     transition: var(--transition);
 }
 
@@ -1125,7 +1182,7 @@ body {
 .btn-viajeros:hover {
     background: linear-gradient(135deg, var(--compromiso-warm) 0%, var(--compromiso-primary) 100%);
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(247, 127, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(45, 80, 22, 0.3);
 }
 
 .btn-empresas {
@@ -1136,7 +1193,7 @@ body {
 .btn-empresas:hover {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--compromiso-secondary) 100%);
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(135, 169, 107, 0.3);
+    box-shadow: 0 6px 20px rgba(74, 124, 44, 0.3);
 }
 
 .btn-colaboradores {

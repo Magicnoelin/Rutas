@@ -21,6 +21,16 @@ try {
         jsonError('Datos JSON inválidos', 400);
     }
     
+    // Validar reCAPTCHA
+    if (!isset($data['recaptchaToken'])) {
+        jsonError('Token de reCAPTCHA no proporcionado', 400);
+    }
+    
+    $recaptchaResult = validateRecaptcha($data['recaptchaToken']);
+    if (!$recaptchaResult['success']) {
+        jsonError($recaptchaResult['error'], 403);
+    }
+    
     // Validar campos requeridos
     $camposRequeridos = ['Nombre', 'Tipo', 'Direccion'];
     foreach ($camposRequeridos as $campo) {
@@ -45,14 +55,14 @@ try {
     
     $pdo = getDBConnection();
     
-    // Preparar campos para INSERT
+    // Preparar campos para INSERT (agregando Estado)
     $campos = [
         'ID', 'Responsable', 'Nickname', 'NRegistro', 'Tipo', 'Nombre', 
         'Direccion', 'Latitud', 'Longitud', 'Telefono1', 'Telefono2', 
         'Email', 'Plazas', 'Discapacitados', 'Precio', 'Contactado',
         'Notaspublicas', 'Notasprivadas', 'Foto1', 'Foto2', 'Foto3', 
         'Foto4', 'Web', 'Airbnb', 'Booking', 'Instagram', 'Usuarioinsta',
-        'Google', 'Facebook'
+        'Google', 'Facebook', 'Estado'
     ];
     
     // Construir query INSERT
@@ -66,6 +76,13 @@ try {
     $stmt->bindValue(':ID', $id);
     foreach ($campos as $campo) {
         if ($campo === 'ID') continue;
+        
+        // Estado siempre es 'pendiente' para nuevos alojamientos
+        if ($campo === 'Estado') {
+            $stmt->bindValue(':Estado', 'pendiente');
+            continue;
+        }
+        
         $valor = isset($datosLimpios[$campo]) ? $datosLimpios[$campo] : null;
         $stmt->bindValue(':' . $campo, $valor);
     }
@@ -79,7 +96,12 @@ try {
     $stmtSelect->execute();
     $nuevoAlojamiento = $stmtSelect->fetch();
     
-    jsonSuccess($nuevoAlojamiento, 'Alojamiento creado correctamente');
+    jsonSuccess([
+        'id' => $id,
+        'nombre' => $nuevoAlojamiento['Nombre'],
+        'estado' => 'pendiente',
+        'recaptcha_score' => $recaptchaResult['score']
+    ], '¡Alojamiento guardado exitosamente! Tu alojamiento está pendiente de verificación y pago para ser publicado.');
     
 } catch (PDOException $e) {
     jsonError('Error al crear alojamiento: ' . $e->getMessage(), 500);
