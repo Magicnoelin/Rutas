@@ -11,6 +11,10 @@ define('DB_USER', 'u412199647_rutasrurales');
 define('DB_PASS', 'Rutas5Rurales7$');
 define('DB_TABLE', 'alojamientos_csv'); // Confirmado: nombre real de la tabla
 
+// Configuración de reCAPTCHA v3
+define('RECAPTCHA_SITE_KEY', '6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k');
+define('RECAPTCHA_SECRET_KEY', '6LeHyRgsAAAAAHMWHsn2Som5LjQxDCFIsKqv0O2F');
+
 // Configuración de CORS (permite que tu web acceda a la API)
 header('Access-Control-Allow-Origin: https://rutasrurales.io');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -57,6 +61,50 @@ function sanitizeInput($data) {
 // Función para validar email
 function isValidEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL);
+}
+
+// Función para validar reCAPTCHA v3
+function validateRecaptcha($token) {
+    if (empty($token)) {
+        return ['success' => false, 'error' => 'Token de reCAPTCHA no proporcionado'];
+    }
+    
+    $secretKey = RECAPTCHA_SECRET_KEY;
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    
+    $data = [
+        'secret' => $secretKey,
+        'response' => $token
+    ];
+    
+    $options = [
+        'http' => [
+            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method' => 'POST',
+            'content' => http_build_query($data)
+        ]
+    ];
+    
+    $context = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+    
+    if ($result === FALSE) {
+        return ['success' => false, 'error' => 'Error al verificar reCAPTCHA'];
+    }
+    
+    $response = json_decode($result, true);
+    
+    // reCAPTCHA v3 devuelve un score de 0.0 a 1.0
+    // 1.0 = muy probablemente humano, 0.0 = muy probablemente bot
+    if ($response['success'] && $response['score'] >= 0.5) {
+        return ['success' => true, 'score' => $response['score']];
+    }
+    
+    return [
+        'success' => false, 
+        'error' => 'Verificación de reCAPTCHA fallida. Score: ' . ($response['score'] ?? 'N/A'),
+        'score' => $response['score'] ?? 0
+    ];
 }
 
 // Función para respuesta JSON exitosa
