@@ -16,9 +16,24 @@ define('RECAPTCHA_SITE_KEY', '6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k');
 define('RECAPTCHA_SECRET_KEY', '6LeHyRgsAAAAAHMWHsn2Som5LjQxDCFIsKqv0O2F');
 
 // Configuración de CORS (permite que tu web acceda a la API)
-header('Access-Control-Allow-Origin: https://rutasrurales.io');
+$allowed_origins = [
+    'https://rutasrurales.io',
+    'https://www.rutasrurales.io',
+    'http://rutasrurales.io',
+    'http://www.rutasrurales.io'
+];
+
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+if (in_array($origin, $allowed_origins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else {
+    header('Access-Control-Allow-Origin: https://rutasrurales.io');
+}
+
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json; charset=utf-8');
 
 // Manejar preflight requests
