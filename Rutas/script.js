@@ -470,7 +470,7 @@ function generarConsejos(intereses) {
     }
     
     if (intereses.includes('astronomia')) {
-        consejos += '<li>✨ Luna nueva es el mejor momento para observar estrellas</li>';
+        consejos += '<li>Luna nueva es el mejor momento para observar estrellas</li>';
     }
     
     consejos += '</ul>';
@@ -540,5 +540,4 @@ document.addEventListener('DOMContentLoaded', function() {
     cards.forEach(card => observer.observe(card));
 });
 
-console.log('🌄 Rutas - Sistema cargado correctamente');
-console.log('🤖 Agente de IA listo para ayudar');
+// Sistema cargado correctamente

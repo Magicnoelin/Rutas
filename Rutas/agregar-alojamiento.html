@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google reCAPTCHA v3 -->
     <script src="https://www.google.com/recaptcha/api.js?render=6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k"></script>
+    <!-- Configuración de la aplicación -->
+    <script src="config.js"></script>
     <style>
         .form-container {
             max-width: 900px;
@@ -564,8 +566,8 @@
     <script>
         let fotoCounter = 1;
         let generatedJSON = '';
-        const API_URL = 'https://rutasrurales.io/api/crear.php';
-
+        // CONFIGURACIÓN DE API - Cambia según tu entorno
+        const API_URL = 'http://localhost/rutas/api/crear.php';  // DESARROLLO LOCAL
         // Agregar campo de foto
         function agregarCampoFoto() {
             fotoCounter++;
