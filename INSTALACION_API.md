@@ -15,7 +15,7 @@ Esta guía te ayudará a instalar y configurar el backend API para conectar tu w
 - Acceso FTP o File Manager
 
 ✅ Base de datos:
-- Nombre: `u412199647_Alojamientos`
+- Nombre: `u412199647_Rutas`
 - Servidor: `localhost` (127.0.0.1:3306)
 - Tabla con 29 campos (según tu CSV)
 
@@ -56,7 +56,7 @@ Esta guía te ayudará a instalar y configurar el backend API para conectar tu w
 
 ```php
 define('DB_HOST', 'localhost');  // Dejar como está
-define('DB_NAME', 'u412199647_Alojamientos');  // Dejar como está
+define('DB_NAME', 'u412199647_Rutas');  // Dejar como está
 define('DB_USER', 'TU_USUARIO_MYSQL');  // ← CAMBIAR
 define('DB_PASS', 'TU_PASSWORD_MYSQL'); // ← CAMBIAR
 define('DB_TABLE', 'alojamientos');     // ← CONFIRMAR nombre de tabla
@@ -252,4 +252,3 @@ Una vez completados todos los pasos, tu sistema estará funcionando con:
 - ✅ Frontend conectado en tiempo real
 - ✅ Dashboard con estadísticas reales
 - ✅ Formularios para añadir/editar alojamientos
-
