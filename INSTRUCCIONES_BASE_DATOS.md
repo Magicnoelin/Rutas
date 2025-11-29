@@ -178,6 +178,29 @@ Si encuentras algún problema:
 
 ---
 
+## 📋 Creación de la Tabla Accommodations (Alojamientos Turísticos)
+
+### Paso 1: Ejecutar el Script de Creación
+1. En phpMyAdmin, selecciona la base de datos `u412199647_Rutas`
+2. Ve a la pestaña **SQL**
+3. Copia y pega el contenido del archivo `api/crear_tabla_accommodations.sql`
+4. Haz clic en **Continuar**
+
+### Paso 2: Verificar la Creación
+Ejecuta esta consulta para verificar:
+```sql
+SELECT COUNT(*) as total_accommodations FROM accommodations;
+```
+
+**Resultado esperado:** 4 (datos de ejemplo incluidos)
+
+### Paso 3: Probar la Página de Alojamientos Turísticos
+1. Abre: `https://rutasrurales.io/alojamientos-turisticos.html`
+2. Deberías ver 4 alojamientos turísticos de ejemplo
+3. Los filtros deberían funcionar correctamente
+
+---
+
 ## ✅ Checklist Final
 
 - [ ] Script SQL ejecutado exitosamente
@@ -187,3 +210,5 @@ Si encuentras algún problema:
 - [ ] Nuevos alojamientos tienen estado "pendiente"
 - [ ] Alojamientos pendientes NO aparecen en la lista pública
 - [ ] reCAPTCHA funciona correctamente
+- [ ] Tabla `accommodations` creada correctamente
+- [ ] Página alojamientos-turisticos.html muestra datos
