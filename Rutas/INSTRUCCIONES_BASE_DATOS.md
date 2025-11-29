@@ -12,7 +12,7 @@ Agregar la columna `Estado` a la tabla de alojamientos para implementar el siste
 ### Paso 1: Acceder a phpMyAdmin
 1. Accede a tu panel de hosting
 2. Busca y abre **phpMyAdmin**
-3. Selecciona la base de datos: `u412199647_Alojamientos`
+3. Selecciona la base de datos: `u412199647_Rutas`
 
 ### Paso 2: Ejecutar el Script SQL
 1. Haz clic en la pestaña **SQL** en la parte superior
@@ -50,7 +50,7 @@ FROM alojamientos_csv;
 El archivo está en: `api/agregar_columna_estado.sql`
 
 ### Paso 2: Importar en phpMyAdmin
-1. En phpMyAdmin, selecciona la base de datos `u412199647_Alojamientos`
+1. En phpMyAdmin, selecciona la base de datos `u412199647_Rutas`
 2. Haz clic en la pestaña **Importar**
 3. Haz clic en **Seleccionar archivo**
 4. Selecciona el archivo `agregar_columna_estado.sql`
@@ -63,7 +63,7 @@ El archivo está en: `api/agregar_columna_estado.sql`
 Si tienes acceso SSH a tu servidor:
 
 ```bash
-mysql -h 127.0.0.1 -u u412199647_rutasrurales -p u412199647_Alojamientos < api/agregar_columna_estado.sql
+mysql -h 127.0.0.1 -u u412199647_rutasrurales -p u412199647_Rutas < api/agregar_columna_estado.sql
 ```
 
 Cuando te pida la contraseña, ingresa: `Rutas5Rurales7$`
@@ -155,7 +155,7 @@ Reemplaza `ID_DEL_ALOJAMIENTO` con el ID real.
 ✅ Esto es normal si ya ejecutaste el script antes. Ignora el error.
 
 ### Error: "Table 'alojamientos_csv' doesn't exist"
-❌ Verifica que estás en la base de datos correcta: `u412199647_Alojamientos`
+❌ Verifica que estás en la base de datos correcta: `u412199647_Rutas`
 
 ### El formulario no guarda
 1. Abre la consola del navegador (F12)
@@ -187,4 +187,3 @@ Si encuentras algún problema:
 - [ ] Nuevos alojamientos tienen estado "pendiente"
 - [ ] Alojamientos pendientes NO aparecen en la lista pública
 - [ ] reCAPTCHA funciona correctamente
-

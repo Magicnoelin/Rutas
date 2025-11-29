@@ -1,5 +1,5 @@
 -- Script SQL para agregar columna Estado a la tabla de alojamientos
--- Ejecutar este script en la base de datos u412199647_Alojamientos
+-- Ejecutar este script en la base de datos u412199647_Rutas
 
 -- 1. Agregar columna Estado si no existe
 ALTER TABLE alojamientos_csv 

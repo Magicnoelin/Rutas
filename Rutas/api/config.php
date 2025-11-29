@@ -15,7 +15,7 @@ define('DB_TABLE', 'alojamientos'); // Nombre de tabla local
 // PRODUCCIÓN - Comenta las líneas de arriba y descomenta estas para subir al servidor:
 /*
 define('DB_HOST', '127.0.0.1');
-define('DB_NAME', 'u412199647_Alojamientos');
+define('DB_NAME', 'u412199647_Rutas');
 define('DB_USER', 'u412199647_rutasrurales');
 define('DB_PASS', 'Rutas5Rurales7$');
 define('DB_TABLE', 'alojamientos_csv');
