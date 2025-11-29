@@ -18,19 +18,29 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 try {
     $pdo = getDBConnection();
-    
+
+    // Permitir especificar tabla diferente (para accommodations)
+    $tableName = isset($_GET['table']) && !empty($_GET['table']) ? $_GET['table'] : DB_TABLE;
+
     // Obtener parámetros de paginación
     $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
     $limit = isset($_GET['limit']) ? min(100, max(1, intval($_GET['limit']))) : 20;
     $offset = ($page - 1) * $limit;
-    
+
     // Construir query base
     $where = [];
     $params = [];
-    
-    // IMPORTANTE: Solo mostrar alojamientos publicados
-    $where[] = "Estado = :estado";
-    $params[':estado'] = 'publicado';
+
+    // IMPORTANTE: Solo mostrar alojamientos publicados (si la tabla tiene columna Estado)
+    try {
+        $columns = $pdo->query("DESCRIBE $tableName")->fetchAll(PDO::FETCH_COLUMN);
+        if (in_array('Estado', $columns)) {
+            $where[] = "Estado = :estado";
+            $params[':estado'] = 'publicado';
+        }
+    } catch (Exception $e) {
+        // Si no se puede verificar columnas, continuar sin filtro
+    }
     
     // Filtro por tipo
     if (isset($_GET['tipo']) && !empty($_GET['tipo'])) {
@@ -49,13 +59,13 @@ try {
     $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
     
     // Contar total de registros
-    $countSql = "SELECT COUNT(*) as total FROM " . DB_TABLE . " " . $whereClause;
+    $countSql = "SELECT COUNT(*) as total FROM $tableName " . $whereClause;
     $countStmt = $pdo->prepare($countSql);
     $countStmt->execute($params);
     $totalRecords = $countStmt->fetch()['total'];
-    
+
     // Obtener registros paginados
-    $sql = "SELECT * FROM " . DB_TABLE . " " . $whereClause . " ORDER BY Nombre ASC LIMIT :limit OFFSET :offset";
+    $sql = "SELECT * FROM $tableName " . $whereClause . " ORDER BY Nombre ASC, name ASC LIMIT :limit OFFSET :offset";
     $stmt = $pdo->prepare($sql);
     
     // Bind parámetros

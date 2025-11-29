@@ -203,12 +203,12 @@
 
         async function cargarAlojamientos() {
             try {
-                // Usar la API específica para alojamientos turísticos
-                const response = await fetch('api/accommodations.php');
+                // Usar la API de alojamientos con tabla accommodations
+                const response = await fetch('api/alojamientos.php?table=accommodations');
                 const data = await response.json();
 
-                if (data.success && data.data && data.data.length > 0) {
-                    todosLosAlojamientos = data.data;
+                if (data.success && data.alojamientos && data.alojamientos.length > 0) {
+                    todosLosAlojamientos = data.alojamientos;
                     alojamientosFiltrados = [...todosLosAlojamientos];
                 } else {
                     // Fallback a datos locales si la API no funciona o no hay datos
