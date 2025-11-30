@@ -36,19 +36,23 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Función para alternar el menú móvil
 function toggleMobileMenu() {
     const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('nav-menu');
+    const navMenu = document.getElementById('navMenu');
 
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
+    if (hamburger && navMenu) {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    }
 }
 
 // Función para cerrar el menú móvil
 function closeMobileMenu() {
     const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('nav-menu');
+    const navMenu = document.getElementById('navMenu');
 
-    hamburger.classList.remove('active');
-    navMenu.classList.remove('active');
+    if (hamburger && navMenu) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    }
 }
 
 // Función para abrir el asistente

@@ -318,7 +318,12 @@
                     <img src="Logo.png" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">
                     <span>Rutas</span>
                 </div>
-                <ul class="nav-menu">
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html">Inicio</a></li>
                     <li><a href="alojamientos.html">Alojamientos</a></li>
                     <li><a href="index.html#actividades">Actividades</a></li>
@@ -522,21 +527,21 @@
             </div>
         </form>
 
-        <!-- Vista Previa y JSON -->
+        <!-- Resultado -->
         <div class="preview-container" id="previewContainer">
             <div class="preview-header">
-                <h3><i class="fas fa-code"></i> JSON Generado</h3>
-                <p>Copia este JSON y añádelo al archivo alojamientos.json</p>
+                <h3><i class="fas fa-info-circle"></i> Resultado</h3>
+                <p>Información del proceso</p>
             </div>
             
-            <div class="json-output" id="jsonOutput"></div>
+            <div class="json-output" id="jsonOutput" style="display: none;"></div>
             
-            <button class="copy-btn" onclick="copiarJSON()">
+            <button class="copy-btn" onclick="copiarJSON()" style="display: none;">
                 <i class="fas fa-copy"></i> Copiar JSON
             </button>
             
             <div class="success-message" id="successMessage">
-                <i class="fas fa-check-circle"></i> ¡JSON copiado al portapapeles!
+                <i class="fas fa-check-circle"></i> ¡Operación completada!
             </div>
         </div>
     </div>
@@ -836,6 +841,37 @@
                 </div>
             `;
         });
+
+        // Menú hamburguesa
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', function() {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            // Cerrar menú al hacer clic en un enlace
+            const navLinks = navMenu.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            // Cerrar menú al hacer clic fuera
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navMenu.contains(event.target);
+                const isClickOnHamburger = hamburger.contains(event.target);
+                
+                if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            });
+        }
     </script>
 </body>
 </html>
