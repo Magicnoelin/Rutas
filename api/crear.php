@@ -88,20 +88,77 @@ try {
     }
     
     $stmt->execute();
-    
+
+    // También guardar en tabla accommodations si existe
+    $sqlAccommodations = null;
+    try {
+        // Verificar si existe la tabla accommodations
+        $stmtCheck = $pdo->query("SHOW TABLES LIKE 'accommodations'");
+        if ($stmtCheck->rowCount() > 0) {
+            // Preparar datos para accommodations
+            $accData = [
+                'id' => $id,
+                'name' => $datosLimpios['Nombre'] ?? '',
+                'type' => $datosLimpios['Tipo'] ?? '',
+                'address' => $datosLimpios['Direccion'] ?? '',
+                'capacity' => intval($datosLimpios['Plazas'] ?? 0),
+                'price' => !empty($datosLimpios['Precio']) ? floatval($datosLimpios['Precio']) : null,
+                'description' => $datosLimpios['Notaspublicas'] ?? '',
+                'phone' => $datosLimpios['Telefono1'] ?? '',
+                'email' => $datosLimpios['Email'] ?? '',
+                'website' => $datosLimpios['Web'] ?? '',
+                'image1' => $datosLimpios['Foto1'] ?? '',
+                'image2' => $datosLimpios['Foto2'] ?? '',
+                'image3' => $datosLimpios['Foto3'] ?? '',
+                'image4' => $datosLimpios['Foto4'] ?? '',
+                'status' => 'pending'
+            ];
+
+            // Generar SQL INSERT statement
+            $columnas = implode(', ', array_keys($accData));
+            $valores = implode(', ', array_map(function($valor) {
+                return $valor === null ? 'NULL' : "'" . addslashes($valor) . "'";
+            }, array_values($accData)));
+
+            $updateParts = [];
+            foreach (array_keys($accData) as $columna) {
+                if ($columna !== 'id') {
+                    $updateParts[] = "$columna = VALUES($columna)";
+                }
+            }
+            $updateClause = implode(', ', $updateParts);
+
+            $sqlAccommodations = "INSERT INTO accommodations ($columnas) VALUES ($valores) ON DUPLICATE KEY UPDATE $updateClause;";
+
+            // Ejecutar INSERT en accommodations
+            $stmtAcc = $pdo->prepare("INSERT INTO accommodations ($columnas) VALUES (" . str_repeat('?,', count($accData)-1) . "?) ON DUPLICATE KEY UPDATE $updateClause");
+            $stmtAcc->execute(array_values($accData));
+        }
+    } catch (Exception $e) {
+        // Si falla accommodations, continuar (no es crítico)
+        error_log('Error guardando en accommodations: ' . $e->getMessage());
+    }
+
     // Obtener el alojamiento recién creado
     $sqlSelect = "SELECT * FROM " . DB_TABLE . " WHERE ID = :id";
     $stmtSelect = $pdo->prepare($sqlSelect);
     $stmtSelect->bindValue(':id', $id);
     $stmtSelect->execute();
     $nuevoAlojamiento = $stmtSelect->fetch();
-    
-    jsonSuccess([
+
+    $response = [
         'id' => $id,
         'nombre' => $nuevoAlojamiento['Nombre'],
         'estado' => 'pendiente',
         'recaptcha_score' => $recaptchaResult['score']
-    ], '¡Alojamiento guardado exitosamente! Tu alojamiento está pendiente de verificación y pago para ser publicado.');
+    ];
+
+    // Incluir SQL generado si se creó
+    if ($sqlAccommodations) {
+        $response['sql_generated'] = $sqlAccommodations;
+    }
+
+    jsonSuccess($response, '¡Alojamiento guardado exitosamente! Tu alojamiento está pendiente de verificación y pago para ser publicado.');
     
 } catch (PDOException $e) {
     jsonError('Error al crear alojamiento: ' . $e->getMessage(), 500);

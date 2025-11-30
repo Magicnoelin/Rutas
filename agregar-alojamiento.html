@@ -569,8 +569,6 @@
     <script>
         let fotoCounter = 1;
         let generatedJSON = '';
-        // CONFIGURACIÓN DE API - Cambia según tu entorno
-        const API_URL = 'http://localhost/rutas/api/crear.php';  // DESARROLLO LOCAL
         // Agregar campo de foto
         function agregarCampoFoto() {
             fotoCounter++;
@@ -678,15 +676,15 @@
             return formData;
         }
 
-        // Guardar alojamiento en la base de datos
+        // Mostrar JSON para copiar manualmente
         async function guardarAlojamiento() {
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
-            
+
             try {
                 // Deshabilitar botón y mostrar loading
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando JSON...';
 
                 // Recopilar datos
                 const formData = recopilarDatosParaAPI();
@@ -696,32 +694,55 @@
                     return;
                 }
 
-                // Obtener token de reCAPTCHA
-                const recaptchaToken = await grecaptcha.execute('6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k', {action: 'submit'});
-                formData.recaptchaToken = recaptchaToken;
+                // Generar ID único
+                const id = 'manual_' + Date.now();
 
-                // Enviar a la API
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
+                // Crear objeto completo para accommodations.json
+                const nuevoAlojamiento = {
+                    id: id,
+                    name: formData.Nombre,
+                    type: formData.Tipo,
+                    address: formData.Direccion,
+                    capacity: formData.Plazas,
+                    price: formData.Precio || null,
+                    description: formData.Notaspublicas,
+                    phone: formData.Telefono1,
+                    email: formData.Email || '',
+                    website: formData.Web || '',
+                    image1: formData.Foto1 || '',
+                    status: 'active',
+                    Nombre: formData.Nombre,
+                    Tipo: formData.Tipo,
+                    Direccion: formData.Direccion,
+                    Plazas: formData.Plazas,
+                    Precio: formData.Precio || null,
+                    Notaspublicas: formData.Notaspublicas,
+                    Telefono1: formData.Telefono1,
+                    Email: formData.Email || '',
+                    Web: formData.Web || '',
+                    Foto1: formData.Foto1 || '',
+                    localidad: formData.Direccion.split(',')[1]?.trim() || '',
+                    provincia: formData.Direccion.split(',')[2]?.trim() || 'Soria',
+                    fotos: [formData.Foto1 || ''].filter(f => f),
+                    caracteristicas: []
+                };
 
-                const result = await response.json();
+                // Mostrar JSON generado
+                const jsonString = JSON.stringify(nuevoAlojamiento, null, 2);
+                document.getElementById('jsonOutput').textContent = jsonString;
+                document.getElementById('previewContainer').classList.add('active');
+                generatedJSON = jsonString;
 
-                if (result.success) {
-                    // Mostrar mensaje de éxito
-                    mostrarMensajeExito(result);
-                } else {
-                    // Mostrar error
-                    mostrarMensajeError(result.error || 'Error al guardar el alojamiento');
-                }
+                // Cambiar mensaje
+                document.querySelector('.preview-header h3').textContent = 'JSON Generado - Copia y pega en accommodations.json';
+                document.querySelector('.preview-header p').textContent = 'Abre el archivo accommodations.json y añade este objeto al array';
+
+                // Scroll
+                document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
 
             } catch (error) {
                 console.error('Error:', error);
-                mostrarMensajeError('Error de conexión. Por favor, intenta de nuevo.');
+                mostrarMensajeError('Error al generar JSON');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
@@ -741,8 +762,8 @@
                     <strong>Estado:</strong> Pendiente de verificación y pago
                 </p>
                 <p style="color: #666; margin-top: 1rem;">
-                    Tu alojamiento ha sido guardado en la base de datos. 
-                    Estará visible públicamente una vez completado el proceso de verificación y pago.
+                    Tu alojamiento ha sido guardado en el archivo JSON.
+                    Aparecerá inmediatamente en la lista de alojamientos turísticos.
                 </p>
                 <p style="color: #666; margin-top: 0.5rem; font-size: 0.9rem;">
                     <strong>Puntuación reCAPTCHA:</strong> ${(result.data.recaptcha_score * 100).toFixed(0)}% (humano verificado)
