@@ -676,7 +676,7 @@
             return formData;
         }
 
-        // Mostrar JSON para copiar manualmente
+        // Guardar alojamiento en la base de datos
         async function guardarAlojamiento() {
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
@@ -684,7 +684,7 @@
             try {
                 // Deshabilitar botón y mostrar loading
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando JSON...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando en base de datos...';
 
                 // Recopilar datos
                 const formData = recopilarDatosParaAPI();
@@ -694,55 +694,34 @@
                     return;
                 }
 
-                // Generar ID único
-                const id = 'manual_' + Date.now();
+                // Obtener token de reCAPTCHA
+                const recaptchaToken = await grecaptcha.execute('6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k', {action: 'submit'});
+                formData.recaptchaToken = recaptchaToken;
 
-                // Crear objeto completo para accommodations.json
-                const nuevoAlojamiento = {
-                    id: id,
-                    name: formData.Nombre,
-                    type: formData.Tipo,
-                    address: formData.Direccion,
-                    capacity: formData.Plazas,
-                    price: formData.Precio || null,
-                    description: formData.Notaspublicas,
-                    phone: formData.Telefono1,
-                    email: formData.Email || '',
-                    website: formData.Web || '',
-                    image1: formData.Foto1 || '',
-                    status: 'active',
-                    Nombre: formData.Nombre,
-                    Tipo: formData.Tipo,
-                    Direccion: formData.Direccion,
-                    Plazas: formData.Plazas,
-                    Precio: formData.Precio || null,
-                    Notaspublicas: formData.Notaspublicas,
-                    Telefono1: formData.Telefono1,
-                    Email: formData.Email || '',
-                    Web: formData.Web || '',
-                    Foto1: formData.Foto1 || '',
-                    localidad: formData.Direccion.split(',')[1]?.trim() || '',
-                    provincia: formData.Direccion.split(',')[2]?.trim() || 'Soria',
-                    fotos: [formData.Foto1 || ''].filter(f => f),
-                    caracteristicas: []
-                };
+                // Enviar datos a la API
+                const apiUrl = window.CONFIG?.API_BASE_URL 
+                    ? `${window.CONFIG.API_BASE_URL}/crear.php`
+                    : 'api/crear.php';
 
-                // Mostrar JSON generado
-                const jsonString = JSON.stringify(nuevoAlojamiento, null, 2);
-                document.getElementById('jsonOutput').textContent = jsonString;
-                document.getElementById('previewContainer').classList.add('active');
-                generatedJSON = jsonString;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
 
-                // Cambiar mensaje
-                document.querySelector('.preview-header h3').textContent = 'JSON Generado - Copia y pega en accommodations.json';
-                document.querySelector('.preview-header p').textContent = 'Abre el archivo accommodations.json y añade este objeto al array';
+                const result = await response.json();
 
-                // Scroll
-                document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
+                if (result.success) {
+                    mostrarMensajeExito(result);
+                } else {
+                    mostrarMensajeError(result.message || 'Error al guardar el alojamiento');
+                }
 
             } catch (error) {
                 console.error('Error:', error);
-                mostrarMensajeError('Error al generar JSON');
+                mostrarMensajeError('Error de conexión: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
