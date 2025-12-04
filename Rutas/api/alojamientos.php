@@ -20,7 +20,7 @@ try {
     $pdo = getDBConnection();
 
     // Permitir especificar tabla diferente (para accommodations)
-    $tableName = isset($_GET['table']) && !empty($_GET['table']) ? $_GET['table'] : DB_TABLE;
+    $tableName = isset($_GET['table']) && !empty($_GET['table']) ? sanitizeInput($_GET['table']) : DB_TABLE;
 
     // Obtener parámetros de paginación
     $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
@@ -31,27 +31,41 @@ try {
     $where = [];
     $params = [];
 
-    // IMPORTANTE: Solo mostrar alojamientos publicados (si la tabla tiene columna Estado)
+    // IMPORTANTE: Solo mostrar alojamientos publicados
     try {
         $columns = $pdo->query("DESCRIBE $tableName")->fetchAll(PDO::FETCH_COLUMN);
-        if (in_array('Estado', $columns)) {
-            $where[] = "Estado = :estado";
-            $params[':estado'] = 'publicado';
+        if ($tableName === 'accommodations') {
+            // Tabla accommodations usa columna 'status'
+            if (in_array('status', $columns)) {
+                $where[] = "status = :status";
+                $params[':status'] = 'active';
+            }
+        } else {
+            // Tabla alojamientos_csv usa columna 'Estado'
+            if (in_array('Estado', $columns)) {
+                $where[] = "Estado = :estado";
+                $params[':estado'] = 'publicado';
+            }
         }
     } catch (Exception $e) {
         // Si no se puede verificar columnas, continuar sin filtro
     }
-    
+
     // Filtro por tipo
     if (isset($_GET['tipo']) && !empty($_GET['tipo'])) {
-        $where[] = "Tipo = :tipo";
+        $tipoCol = ($tableName === 'accommodations') ? 'type' : 'Tipo';
+        $where[] = "$tipoCol = :tipo";
         $params[':tipo'] = sanitizeInput($_GET['tipo']);
     }
-    
+
     // Filtro por búsqueda general
     if (isset($_GET['search']) && !empty($_GET['search'])) {
         $search = '%' . sanitizeInput($_GET['search']) . '%';
-        $where[] = "(Nombre LIKE :search OR Direccion LIKE :search OR Responsable LIKE :search)";
+        if ($tableName === 'accommodations') {
+            $where[] = "(name LIKE :search OR address LIKE :search OR description LIKE :search)";
+        } else {
+            $where[] = "(Nombre LIKE :search OR Direccion LIKE :search OR Responsable LIKE :search)";
+        }
         $params[':search'] = $search;
     }
     
@@ -65,7 +79,8 @@ try {
     $totalRecords = $countStmt->fetch()['total'];
 
     // Obtener registros paginados
-    $sql = "SELECT * FROM $tableName " . $whereClause . " ORDER BY Nombre ASC, name ASC LIMIT :limit OFFSET :offset";
+    $orderBy = ($tableName === 'accommodations') ? 'name ASC' : 'Nombre ASC';
+    $sql = "SELECT * FROM $tableName " . $whereClause . " ORDER BY $orderBy LIMIT :limit OFFSET :offset";
     $stmt = $pdo->prepare($sql);
     
     // Bind parámetros
@@ -79,40 +94,81 @@ try {
     $alojamientos = $stmt->fetchAll();
     
     // Procesar datos para el frontend
-    $alojamientosProcesados = array_map(function($alojamiento) {
-        // Convertir plazas a número
-        $alojamiento['Plazas'] = intval($alojamiento['Plazas']);
-        
-        // Procesar precio
-        if (!empty($alojamiento['Precio'])) {
-            $alojamiento['Precio'] = floatval($alojamiento['Precio']);
-        }
-        
-        // Crear array de fotos
-        $fotos = [];
-        for ($i = 1; $i <= 4; $i++) {
-            $fotoKey = 'Foto' . $i;
-            if (!empty($alojamiento[$fotoKey])) {
-                $fotos[] = $alojamiento[$fotoKey];
+    $alojamientosProcesados = array_map(function($alojamiento) use ($tableName) {
+        // Detectar si es tabla accommodations (columnas en inglés)
+        $isAccommodations = ($tableName === 'accommodations');
+
+        if ($isAccommodations) {
+            // Convertir plazas a número
+            $alojamiento['Plazas'] = intval($alojamiento['capacity'] ?? $alojamiento['Plazas'] ?? 0);
+
+            // Procesar precio
+            if (!empty($alojamiento['price'])) {
+                $alojamiento['Precio'] = floatval($alojamiento['price']);
             }
-        }
-        $alojamiento['Fotos'] = $fotos;
-        
-        // Extraer localidad y provincia de la dirección
-        if (!empty($alojamiento['Direccion'])) {
-            $partes = explode(' ', $alojamiento['Direccion']);
-            $alojamiento['Localidad'] = '';
-            $alojamiento['Provincia'] = '';
-            
-            // Intentar extraer provincia (última palabra antes del código postal)
-            if (count($partes) > 2) {
-                $alojamiento['Provincia'] = $partes[count($partes) - 1];
-                if (count($partes) > 3) {
-                    $alojamiento['Localidad'] = $partes[count($partes) - 2];
+
+            // Crear array de fotos
+            $fotos = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $fotoKey = 'image' . $i;
+                if (!empty($alojamiento[$fotoKey])) {
+                    $fotos[] = $alojamiento[$fotoKey];
+                }
+            }
+            $alojamiento['Fotos'] = $fotos;
+
+            // Extraer localidad y provincia de la dirección
+            if (!empty($alojamiento['address'])) {
+                $partes = explode(',', $alojamiento['address']);
+                $alojamiento['Localidad'] = trim($partes[0] ?? '');
+                $alojamiento['Provincia'] = trim($partes[1] ?? '');
+            }
+
+            // Mapear campos para compatibilidad con frontend
+            $alojamiento['Nombre'] = $alojamiento['name'] ?? '';
+            $alojamiento['Tipo'] = $alojamiento['type'] ?? '';
+            $alojamiento['Direccion'] = $alojamiento['address'] ?? '';
+            $alojamiento['Telefono1'] = $alojamiento['phone'] ?? '';
+            $alojamiento['Email'] = $alojamiento['email'] ?? '';
+            $alojamiento['Web'] = $alojamiento['website'] ?? '';
+            $alojamiento['Notaspublicas'] = $alojamiento['description'] ?? '';
+
+        } else {
+            // Tabla alojamientos_csv (columnas en español)
+            // Convertir plazas a número
+            $alojamiento['Plazas'] = intval($alojamiento['Plazas']);
+
+            // Procesar precio
+            if (!empty($alojamiento['Precio'])) {
+                $alojamiento['Precio'] = floatval($alojamiento['Precio']);
+            }
+
+            // Crear array de fotos
+            $fotos = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $fotoKey = 'Foto' . $i;
+                if (!empty($alojamiento[$fotoKey])) {
+                    $fotos[] = $alojamiento[$fotoKey];
+                }
+            }
+            $alojamiento['Fotos'] = $fotos;
+
+            // Extraer localidad y provincia de la dirección
+            if (!empty($alojamiento['Direccion'])) {
+                $partes = explode(' ', $alojamiento['Direccion']);
+                $alojamiento['Localidad'] = '';
+                $alojamiento['Provincia'] = '';
+
+                // Intentar extraer provincia (última palabra antes del código postal)
+                if (count($partes) > 2) {
+                    $alojamiento['Provincia'] = $partes[count($partes) - 1];
+                    if (count($partes) > 3) {
+                        $alojamiento['Localidad'] = $partes[count($partes) - 2];
+                    }
                 }
             }
         }
-        
+
         return $alojamiento;
     }, $alojamientos);
     

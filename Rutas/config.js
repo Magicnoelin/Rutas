@@ -1,10 +1,8 @@
 // Configuración de la aplicación Rutas
 // Cambia estas constantes según tu entorno
 
-// API Configuration
-const API_BASE_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost/rutas/api/'
-    : 'https://rutasrurales.io/api/';
+// API Configuration - FORZADO A PRODUCCIÓN PARA SOLUCIONAR ERRORES
+const API_BASE_URL = 'https://rutasrurales.io/api/';
 
 const API_URL = API_BASE_URL + 'crear.php';
 const TEST_API_URL = API_BASE_URL + 'test.php';

@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-X990K5GE42');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alojamientos Turísticos - Rutas</title>
@@ -87,7 +96,7 @@
     <section class="section" style="margin-top: 100px;">
         <div class="container">
             <h1 class="section-title">
-                <i class="fas fa-hotel"></i> Todos los Alojamientos Turísticos en Soria
+                <i class="fas fa-hotel"></i> Alojamientos Turísticos
             </h1>
 
             <!-- Botón para agregar alojamiento -->
@@ -100,6 +109,21 @@
             <!-- Filtros -->
             <div class="filters">
                 <div class="filter-group">
+                    <label for="filterProvincia">
+                        <i class="fas fa-map"></i> Provincia:
+                    </label>
+                    <select id="filterProvincia">
+                        <option value="Soria" selected>Soria</option>
+                        <option value="Burgos">Burgos</option>
+                        <option value="Segovia">Segovia</option>
+                        <option value="Ávila">Ávila</option>
+                        <option value="Valladolid">Valladolid</option>
+                        <option value="Palencia">Palencia</option>
+                        <option value="León">León</option>
+                        <option value="Zamora">Zamora</option>
+                        <option value="Salamanca">Salamanca</option>
+                    </select>
+
                     <label for="filterLocalidad">
                         <i class="fas fa-map-marker-alt"></i> Localidad:
                     </label>
@@ -203,19 +227,40 @@
 
         async function cargarAlojamientos() {
             try {
-                // Usar la API de alojamientos con tabla accommodations
-                const response = await fetch('api/alojamientos.php?table=accommodations');
-                const data = await response.json();
+                // Intentar usar la API de PHP primero (base de datos)
+                let response;
+                let data;
 
-                if (data.success && data.alojamientos && data.alojamientos.length > 0) {
-                    todosLosAlojamientos = data.alojamientos;
+                try {
+                    console.log('Intentando cargar desde API...');
+                    response = await fetch('api/alojamientos.php?table=accommodations');
+                    console.log('Respuesta HTTP:', response.status);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    data = await response.json();
+                    console.log('Datos recibidos:', data);
+
+                    if (data.success && data.alojamientos && data.alojamientos.length > 0) {
+                        todosLosAlojamientos = data.alojamientos;
+                        alojamientosFiltrados = [...todosLosAlojamientos];
+                        console.log('✅ Cargados', data.alojamientos.length, 'alojamientos desde la base de datos');
+                        console.log('Provincias encontradas:', [...new Set(data.alojamientos.map(a => a.provincia || a.Provincia || a.province || a.Province))]);
+                    } else {
+                        throw new Error('API returned empty or invalid data');
+                    }
+                } catch (apiError) {
+                    console.warn('❌ API no disponible:', apiError.message);
+                    console.log('Cambiando a datos locales...');
+
+                    // Fallback a datos locales
+                    response = await fetch('accommodations.json');
+                    todosLosAlojamientos = await response.json();
                     alojamientosFiltrados = [...todosLosAlojamientos];
-                } else {
-                    // Fallback a datos locales si la API no funciona o no hay datos
-                    console.warn('API de accommodations no disponible o sin datos, usando datos locales');
-                    const localResponse = await fetch('alojamientos.json');
-                    todosLosAlojamientos = await localResponse.json();
-                    alojamientosFiltrados = [...todosLosAlojamientos];
+                    console.log('✅ Cargados', todosLosAlojamientos.length, 'alojamientos desde archivo local');
+                    console.log('Provincias en datos locales:', [...new Set(todosLosAlojamientos.map(a => a.provincia || a.Provincia || a.province || a.Province))]);
                 }
 
                 // Verificar parámetros de URL para categoría
@@ -346,26 +391,30 @@
         }
 
         function aplicarFiltros() {
+            const provincia = document.getElementById('filterProvincia').value;
             const localidad = document.getElementById('filterLocalidad').value;
             const tipo = document.getElementById('filterTipo').value;
             const plazasMin = parseInt(document.getElementById('filterPlazas').value) || 1;
 
             alojamientosFiltrados = todosLosAlojamientos.filter(alojamiento => {
+                const alojProvincia = alojamiento.provincia || alojamiento.Provincia || alojamiento.province || alojamiento.Province;
                 const alojLocalidad = alojamiento.localidad || alojamiento.Localidad;
                 const alojTipo = alojamiento.tipo || alojamiento.Tipo;
                 const alojPlazas = alojamiento.plazas || alojamiento.Plazas;
 
+                const cumpleProvincia = !provincia || alojProvincia === provincia;
                 const cumpleLocalidad = !localidad || alojLocalidad === localidad;
                 const cumpleTipo = !tipo || alojTipo === tipo;
                 const cumplePlazas = alojPlazas >= plazasMin;
 
-                return cumpleLocalidad && cumpleTipo && cumplePlazas;
+                return cumpleProvincia && cumpleLocalidad && cumpleTipo && cumplePlazas;
             });
 
             mostrarAlojamientos();
         }
 
         function limpiarFiltros() {
+            document.getElementById('filterProvincia').value = 'Soria';
             document.getElementById('filterLocalidad').value = '';
             document.getElementById('filterTipo').value = '';
             document.getElementById('filterPlazas').value = '1';

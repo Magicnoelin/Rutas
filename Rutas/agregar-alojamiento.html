@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-X990K5GE42');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Alojamiento - Rutas</title>
@@ -318,7 +327,12 @@
                     <img src="Logo.png" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">
                     <span>Rutas</span>
                 </div>
-                <ul class="nav-menu">
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html">Inicio</a></li>
                     <li><a href="alojamientos.html">Alojamientos</a></li>
                     <li><a href="index.html#actividades">Actividades</a></li>
@@ -522,21 +536,21 @@
             </div>
         </form>
 
-        <!-- Vista Previa y JSON -->
+        <!-- Resultado -->
         <div class="preview-container" id="previewContainer">
             <div class="preview-header">
-                <h3><i class="fas fa-code"></i> JSON Generado</h3>
-                <p>Copia este JSON y añádelo al archivo alojamientos.json</p>
+                <h3><i class="fas fa-info-circle"></i> Resultado</h3>
+                <p>Información del proceso</p>
             </div>
             
-            <div class="json-output" id="jsonOutput"></div>
+            <div class="json-output" id="jsonOutput" style="display: none;"></div>
             
-            <button class="copy-btn" onclick="copiarJSON()">
+            <button class="copy-btn" onclick="copiarJSON()" style="display: none;">
                 <i class="fas fa-copy"></i> Copiar JSON
             </button>
             
             <div class="success-message" id="successMessage">
-                <i class="fas fa-check-circle"></i> ¡JSON copiado al portapapeles!
+                <i class="fas fa-check-circle"></i> ¡Operación completada!
             </div>
         </div>
     </div>
@@ -569,8 +583,6 @@
     <script>
         let fotoCounter = 1;
         let generatedJSON = '';
-        // CONFIGURACIÓN DE API - Cambia según tu entorno
-        const API_URL = 'http://localhost/rutas/api/crear.php';  // DESARROLLO LOCAL
         // Agregar campo de foto
         function agregarCampoFoto() {
             fotoCounter++;
@@ -682,11 +694,11 @@
         async function guardarAlojamiento() {
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
-            
+
             try {
                 // Deshabilitar botón y mostrar loading
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando en base de datos...';
 
                 // Recopilar datos
                 const formData = recopilarDatosParaAPI();
@@ -700,8 +712,12 @@
                 const recaptchaToken = await grecaptcha.execute('6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k', {action: 'submit'});
                 formData.recaptchaToken = recaptchaToken;
 
-                // Enviar a la API
-                const response = await fetch(API_URL, {
+                // Enviar datos a la API
+                const apiUrl = window.CONFIG?.API_BASE_URL 
+                    ? `${window.CONFIG.API_BASE_URL}/crear.php`
+                    : 'api/crear.php';
+
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -712,16 +728,14 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    // Mostrar mensaje de éxito
                     mostrarMensajeExito(result);
                 } else {
-                    // Mostrar error
-                    mostrarMensajeError(result.error || 'Error al guardar el alojamiento');
+                    mostrarMensajeError(result.message || 'Error al guardar el alojamiento');
                 }
 
             } catch (error) {
                 console.error('Error:', error);
-                mostrarMensajeError('Error de conexión. Por favor, intenta de nuevo.');
+                mostrarMensajeError('Error de conexión: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
@@ -738,18 +752,20 @@
                 <p style="color: #155724; font-size: 1.1rem; margin-top: 1rem;">
                     <strong>ID:</strong> ${result.data.id}<br>
                     <strong>Nombre:</strong> ${result.data.nombre}<br>
+                    <strong>Tipo:</strong> ${result.data.tipo}<br>
                     <strong>Estado:</strong> Pendiente de verificación y pago
                 </p>
                 <p style="color: #666; margin-top: 1rem;">
-                    Tu alojamiento ha sido guardado en la base de datos. 
-                    Estará visible públicamente una vez completado el proceso de verificación y pago.
+                    Tu alojamiento ha sido guardado en la base de datos.
+                    Una vez verificado y confirmado el pago, aparecerá en la lista de alojamientos.
                 </p>
                 <p style="color: #666; margin-top: 0.5rem; font-size: 0.9rem;">
                     <strong>Puntuación reCAPTCHA:</strong> ${(result.data.recaptcha_score * 100).toFixed(0)}% (humano verificado)
                 </p>
             `;
 
-            document.getElementById('jsonOutput').textContent = JSON.stringify(result.data, null, 2);
+            // Ocultar el área de JSON
+            document.getElementById('jsonOutput').style.display = 'none';
             previewContainer.classList.add('active');
             
             // Ocultar botón de copiar
@@ -764,6 +780,7 @@
                     document.getElementById('alojamientoForm').reset();
                     previewContainer.classList.remove('active');
                     document.querySelector('.copy-btn').style.display = 'flex';
+                    document.getElementById('jsonOutput').style.display = 'block';
                     fotoCounter = 1;
                     const photoInputs = document.getElementById('photoInputs');
                     photoInputs.innerHTML = `
@@ -833,6 +850,37 @@
                 </div>
             `;
         });
+
+        // Menú hamburguesa
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', function() {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            // Cerrar menú al hacer clic en un enlace
+            const navLinks = navMenu.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            // Cerrar menú al hacer clic fuera
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navMenu.contains(event.target);
+                const isClickOnHamburger = hamburger.contains(event.target);
+                
+                if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            });
+        }
     </script>
 </body>
 </html>

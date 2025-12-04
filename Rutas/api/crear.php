@@ -55,53 +55,55 @@ try {
     
     $pdo = getDBConnection();
     
-    // Preparar campos para INSERT (agregando Estado)
-    $campos = [
-        'ID', 'Responsable', 'Nickname', 'NRegistro', 'Tipo', 'Nombre', 
-        'Direccion', 'Latitud', 'Longitud', 'Telefono1', 'Telefono2', 
-        'Email', 'Plazas', 'Discapacitados', 'Precio', 'Contactado',
-        'Notaspublicas', 'Notasprivadas', 'Foto1', 'Foto2', 'Foto3', 
-        'Foto4', 'Web', 'Airbnb', 'Booking', 'Instagram', 'Usuarioinsta',
-        'Google', 'Facebook', 'Estado'
+    // Preparar datos para accommodations (tabla principal)
+    $accData = [
+        'id' => $id,
+        'name' => $datosLimpios['Nombre'] ?? '',
+        'type' => $datosLimpios['Tipo'] ?? '',
+        'address' => $datosLimpios['Direccion'] ?? '',
+        'capacity' => intval($datosLimpios['Plazas'] ?? 0),
+        'price' => !empty($datosLimpios['Precio']) ? floatval($datosLimpios['Precio']) : null,
+        'description' => $datosLimpios['Notaspublicas'] ?? '',
+        'phone' => $datosLimpios['Telefono1'] ?? '',
+        'email' => $datosLimpios['Email'] ?? '',
+        'website' => $datosLimpios['Web'] ?? '',
+        'image1' => $datosLimpios['Foto1'] ?? '',
+        'image2' => $datosLimpios['Foto2'] ?? '',
+        'image3' => $datosLimpios['Foto3'] ?? '',
+        'image4' => $datosLimpios['Foto4'] ?? '',
+        'status' => 'pending'
     ];
+
+    // Construir query INSERT para accommodations
+    $columnas = array_keys($accData);
+    $placeholders = array_map(function($col) { return ":$col"; }, $columnas);
     
-    // Construir query INSERT
-    $camposStr = implode(', ', $campos);
-    $placeholders = ':' . implode(', :', $campos);
-    
-    $sql = "INSERT INTO " . DB_TABLE . " ($camposStr) VALUES ($placeholders)";
+    $sql = "INSERT INTO accommodations (" . implode(', ', $columnas) . ") VALUES (" . implode(', ', $placeholders) . ")";
     $stmt = $pdo->prepare($sql);
     
     // Bind valores
-    $stmt->bindValue(':ID', $id);
-    foreach ($campos as $campo) {
-        if ($campo === 'ID') continue;
-        
-        // Estado siempre es 'pendiente' para nuevos alojamientos
-        if ($campo === 'Estado') {
-            $stmt->bindValue(':Estado', 'pendiente');
-            continue;
-        }
-        
-        $valor = isset($datosLimpios[$campo]) ? $datosLimpios[$campo] : null;
-        $stmt->bindValue(':' . $campo, $valor);
+    foreach ($accData as $key => $value) {
+        $stmt->bindValue(":$key", $value);
     }
     
     $stmt->execute();
-    
+
     // Obtener el alojamiento recién creado
-    $sqlSelect = "SELECT * FROM " . DB_TABLE . " WHERE ID = :id";
+    $sqlSelect = "SELECT * FROM accommodations WHERE id = :id";
     $stmtSelect = $pdo->prepare($sqlSelect);
     $stmtSelect->bindValue(':id', $id);
     $stmtSelect->execute();
     $nuevoAlojamiento = $stmtSelect->fetch();
-    
-    jsonSuccess([
+
+    $response = [
         'id' => $id,
-        'nombre' => $nuevoAlojamiento['Nombre'],
-        'estado' => 'pendiente',
+        'nombre' => $nuevoAlojamiento['name'],
+        'tipo' => $nuevoAlojamiento['type'],
+        'estado' => 'pending',
         'recaptcha_score' => $recaptchaResult['score']
-    ], '¡Alojamiento guardado exitosamente! Tu alojamiento está pendiente de verificación y pago para ser publicado.');
+    ];
+
+    jsonSuccess($response, '¡Alojamiento guardado exitosamente en la base de datos! Tu alojamiento está pendiente de verificación y pago para ser publicado.');
     
 } catch (PDOException $e) {
     jsonError('Error al crear alojamiento: ' . $e->getMessage(), 500);

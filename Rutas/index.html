@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-X990K5GE42');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rutas - Red Unificada de Turistas, Alojamientos y Servicios</title>
@@ -15,23 +24,23 @@
             <div class="container">
                 <div class="logo">
                     <img src="Logo.png" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas,<br>Alojamientos y Servicios</span>
+                    </div>
                 </div>
-                <ul class="nav-menu">
-                    <li class="dropdown">
-                        <a href="#alojamientos">Alojamientos Turísticos <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="alojamientos.html">Ver Alojamientos</a></li>
-                            <li><a href="alojamientos.html?categoria=casas-rurales">Casas Rurales y Turismo Rural</a></li>
-                            <li><a href="alojamientos.html?categoria=apartamentos-urbanos">Apartamentos Turísticos Urbanos</a></li>
-                            <li><a href="alojamientos.html?categoria=viviendas-turisticas">Viviendas de Uso Turístico</a></li>
-                            <li><a href="agregar-alojamiento.html">Añadir Alojamiento</a></li>
-                        </ul>
-                    </li>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="alojamientos.html">Alojamientos</a></li>
                     <li><a href="rutas-turisticas.html">Rutas Turísticas</a></li>
-                    <li><a href="#actividades">Actividades Turísticas</a></li>
-                    <li><a href="#actividades">Eventos Culturales</a></li>
+                    <li><a href="#actividades">Actividades</a></li>
                     <li><a href="#lugares">Lugares de Interés</a></li>
-                    <li><a href="compromiso-social.html">Nuestro Compromiso Social</a></li>
+                    <li><a href="compromiso-social.html">Compromiso Social</a></li>
                     <li><a href="#asistente" class="btn-asistente">Asistente IA</a></li>
                 </ul>
             </div>
@@ -300,12 +309,9 @@
                 <div class="footer-section">
                     <h3>Enlaces Útiles</h3>
                     <ul>
-                        <li><a href="alojamientos.html">Alojamientos Rurales</a></li>
-                        <li><a href="alojamientos-turisticos.html">Alojamientos Turísticos</a></li>
+                        <li><a href="#alojamientos">Alojamientos</a></li>
                         <li><a href="#actividades">Actividades</a></li>
                         <li><a href="#lugares">Lugares</a></li>
-                        <li><a href="aviso-legal.html">Aviso Legal</a></li>
-                        <li><a href="politica-cookies.html">Política de Cookies</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -314,7 +320,7 @@
                     <p><i class="fas fa-phone"></i> +34 605 249 696</p>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.instagram.com/rutas_rurales/" target="_blank"><i class="fab fa-instagram"></i></a>
                         <a href="#"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>

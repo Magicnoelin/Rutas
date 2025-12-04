@@ -28,8 +28,32 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 block: 'start'
             });
         }
+        // Cerrar menú móvil al hacer clic en un enlace
+        closeMobileMenu();
     });
 });
+
+// Función para alternar el menú móvil
+function toggleMobileMenu() {
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+
+    if (hamburger && navMenu) {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    }
+}
+
+// Función para cerrar el menú móvil
+function closeMobileMenu() {
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+
+    if (hamburger && navMenu) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    }
+}
 
 // Función para abrir el asistente
 function abrirAsistente() {
@@ -501,7 +525,7 @@ function generarConsejos(intereses) {
 // EVENTOS GLOBALES
 // ===============================================
 
-// Permitir enviar con Enter
+// Permitir enviar con Enter y configurar menú móvil
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('userInput');
     if (input) {
@@ -510,6 +534,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 enviarMensaje();
             }
         });
+    }
+
+    // Configurar menú móvil
+    const hamburger = document.getElementById('hamburger');
+    if (hamburger) {
+        hamburger.addEventListener('click', toggleMobileMenu);
     }
 });
 
