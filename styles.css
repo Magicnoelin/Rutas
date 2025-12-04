@@ -79,22 +79,22 @@ body {
 .logo-title {
     font-size: 1.8rem;
     font-weight: bold;
-    display: none; /* Ocultar "Rutas" en móvil */
+    display: none; /* Ocultar "Rutas" en todas las vistas */
 }
 
 .logo-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.65rem;
     font-weight: normal;
     line-height: 1.3;
-    opacity: 0.95;
+    opacity: 0.85;
 }
 
 @media (min-width: 769px) {
     .logo-title {
-        display: block;
+        display: none; /* Mantener oculto también en desktop */
     }
     .logo-subtitle {
-        font-size: 0.85rem;
+        font-size: 0.65rem;
     }
 }
 
@@ -112,32 +112,29 @@ body {
     font-size: 0.95rem;
     transition: var(--transition);
     position: relative;
-    padding: 0.5rem 0;
+    padding: 0.6rem 1rem;
     background-color: transparent;
-    border-radius: 0;
+    border-radius: 8px;
     text-align: center;
     letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.nav-menu > li > a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #F77F00 0%, #D4A574 100%);
-    transition: width 0.3s ease;
+.nav-menu > li > a i {
+    font-size: 1.1rem;
+    color: #87a96b;
 }
 
 .nav-menu > li > a:hover {
     color: #ffffff;
-    background-color: transparent;
-    transform: translateY(0);
+    background-color: rgba(135, 169, 107, 0.2);
+    transform: translateY(-2px);
 }
 
-.nav-menu > li > a:hover::after {
-    width: 100%;
+.nav-menu > li > a:hover i {
+    color: #F77F00;
 }
 
 .nav-menu a.active {
@@ -181,24 +178,26 @@ body {
     transform: rotate(-45deg) translate(7px, -6px);
 }
 
-.btn-asistente {
-    background: linear-gradient(135deg, #F77F00 0%, #D4A574 100%) !important;
-    color: var(--white) !important;
-    padding: 0.7rem 2rem !important;
-    border-radius: 30px !important;
+.nav-asistente {
+    padding: 0.3rem !important;
+    border-radius: 50% !important;
+    background-color: transparent !important;
+    border: 2px solid #87a96b !important;
     transition: var(--transition);
-    box-shadow: 0 4px 15px rgba(247, 127, 0, 0.4);
-    font-weight: 600;
 }
 
-.btn-asistente::after {
-    display: none !important;
+.nav-asistente:hover {
+    border-color: #F77F00 !important;
+    background-color: rgba(247, 127, 0, 0.1) !important;
+    transform: scale(1.1) !important;
 }
 
-.btn-asistente:hover {
-    background: linear-gradient(135deg, #D4A574 0%, #F77F00 100%) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 25px rgba(247, 127, 0, 0.6) !important;
+.asistente-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
 }
 
 /* ===============================================
