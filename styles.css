@@ -689,6 +689,16 @@ body {
 }
 
 /* ===============================================
+   MI TEXTO - ESTILO PERSONALIZADO
+   =============================================== */
+.mi-texto {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;   /* Medium */
+    font-size: 13px;
+    line-height: 1.4;   /* opcional pero recomendable */
+}
+
+/* ===============================================
    RESPONSIVE
    =============================================== */
 @media (max-width: 768px) {
