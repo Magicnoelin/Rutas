@@ -971,7 +971,7 @@ body {
 .hero-compromiso {
     height: 70vh;
     background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.4)),
-                url('https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=1920&h=1080&fit=crop') center/cover;
+                url('https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=1920&h=1080&fit=crop') center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
