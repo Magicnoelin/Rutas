@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-X990K5GE42');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos Culturales - Rutas Soria</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="Logo.png" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="alojamientos.html"><i class="fas fa-bed"></i> Alojamientos Turísticos</a></li>
+                    <li><a href="index.html#lugares"><i class="fas fa-route"></i> Lugares de interés</a></li>
+                    <li><a href="index.html#actividades"><i class="fas fa-hiking"></i> Actividades Turísticas</a></li>
+                    <li><a href="eventos-culturales.html" class="active"><i class="fas fa-map-marker-alt"></i> Eventos culturales</a></li>
+                    <li><a href="rutas-turisticas.html"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="compromiso-social.html"><i class="fas fa-heart"></i> Compromiso Social</a></li>
+                    <li><a href="index.html#asistente" class="nav-asistente">
+                        <img src="antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-eventos">
+        <div class="hero-overlay"></div>
+        <div class="hero-content-eventos">
+            <h1><i class="fas fa-calendar-alt"></i> Eventos Culturales en Soria</h1>
+            <p class="hero-subtitle">Descubre la agenda cultural de la provincia</p>
+            <p class="hero-description">Música, teatro, exposiciones, festivales y mucho más. No te pierdas los próximos eventos en Soria.</p>
+        </div>
+    </section>
+
+    <!-- Sección de Eventos -->
+    <section class="section-eventos">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-star"></i> Próximos Eventos
+            </h2>
+            
+            <div class="grid-eventos">
+                <!-- Evento 1 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">15</span>
+                        <span class="mes">ENE</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=250&fit=crop" alt="Concierto">
+                    <div class="card-content">
+                        <div class="evento-categoria musica">
+                            <i class="fas fa-music"></i> Música
+                        </div>
+                        <h3>Concierto de Música Clásica</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Auditorio de Soria</p>
+                        <p class="evento-descripcion">Disfruta de una velada única con la Orquesta Sinfónica interpretando obras maestras de compositores clásicos.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 2 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">18</span>
+                        <span class="mes">ENE</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=400&h=250&fit=crop" alt="Teatro">
+                    <div class="card-content">
+                        <div class="evento-categoria teatro">
+                            <i class="fas fa-theater-masks"></i> Teatro
+                        </div>
+                        <h3>Obra de Teatro: La Celestina</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Teatro Principal, Soria</p>
+                        <p class="evento-descripcion">Representación de la obra clásica española con un elenco de actores profesionales.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 3 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">20</span>
+                        <span class="mes">ENE</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&h=250&fit=crop" alt="Exposición">
+                    <div class="card-content">
+                        <div class="evento-categoria exposicion">
+                            <i class="fas fa-palette"></i> Exposición
+                        </div>
+                        <h3>Exposición de Arte Contemporáneo</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Museo Numantino</p>
+                        <p class="evento-descripcion">Muestra de artistas locales con obras que reflejan la cultura y paisajes sorianos.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 4 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">25</span>
+                        <span class="mes">ENE</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=250&fit=crop" alt="Festival">
+                    <div class="card-content">
+                        <div class="evento-categoria festival">
+                            <i class="fas fa-drum"></i> Festival
+                        </div>
+                        <h3>Festival de Folklore Tradicional</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Plaza Mayor, Soria</p>
+                        <p class="evento-descripcion">Celebración de las tradiciones sorianas con música, danza y gastronomía típica.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 5 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">28</span>
+                        <span class="mes">ENE</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1481349518771-20055b2a7b24?w=400&h=250&fit=crop" alt="Cine">
+                    <div class="card-content">
+                        <div class="evento-categoria cine">
+                            <i class="fas fa-film"></i> Cine
+                        </div>
+                        <h3>Ciclo de Cine Español</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Cines Mercado, Soria</p>
+                        <p class="evento-descripcion">Proyección de películas clásicas del cine español con coloquio posterior.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 6 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">01</span>
+                        <span class="mes">FEB</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop" alt="Conferencia">
+                    <div class="card-content">
+                        <div class="evento-categoria conferencia">
+                            <i class="fas fa-microphone"></i> Conferencia
+                        </div>
+                        <h3>Conferencia: Historia de Numancia</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Centro Cultural, Soria</p>
+                        <p class="evento-descripcion">Charla sobre la historia y arqueología de la antigua ciudad celtíbera de Numancia.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 7 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">05</span>
+                        <span class="mes">FEB</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=250&fit=crop" alt="Concierto Jazz">
+                    <div class="card-content">
+                        <div class="evento-categoria musica">
+                            <i class="fas fa-music"></i> Música
+                        </div>
+                        <h3>Noche de Jazz en Vivo</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Casino Círculo Amistad Numancia</p>
+                        <p class="evento-descripcion">Velada de jazz con músicos locales e internacionales en un ambiente íntimo.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 8 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">08</span>
+                        <span class="mes">FEB</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=250&fit=crop" alt="Mercado">
+                    <div class="card-content">
+                        <div class="evento-categoria mercado">
+                            <i class="fas fa-shopping-basket"></i> Mercado
+                        </div>
+                        <h3>Mercado Medieval</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> El Burgo de Osma</p>
+                        <p class="evento-descripcion">Recreación de un mercado medieval con artesanía, gastronomía y espectáculos.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 9 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">12</span>
+                        <span class="mes">FEB</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop" alt="Danza">
+                    <div class="card-content">
+                        <div class="evento-categoria danza">
+                            <i class="fas fa-running"></i> Danza
+                        </div>
+                        <h3>Espectáculo de Danza Contemporánea</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Palacio de la Audiencia</p>
+                        <p class="evento-descripcion">Compañía nacional presenta su última creación de danza contemporánea.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 10 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">14</span>
+                        <span class="mes">FEB</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1519167758481-83f29da8c2b6?w=400&h=250&fit=crop" alt="Gastronomía">
+                    <div class="card-content">
+                        <div class="evento-categoria gastronomia">
+                            <i class="fas fa-utensils"></i> Gastronomía
+                        </div>
+                        <h3>Jornadas Gastronómicas de la Trufa</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Varios restaurantes, Soria</p>
+                        <p class="evento-descripcion">Menús especiales dedicados a la trufa negra de Soria en restaurantes participantes.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 11 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">18</span>
+                        <span class="mes">FEB</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&h=250&fit=crop" alt="Literatura">
+                    <div class="card-content">
+                        <div class="evento-categoria literatura">
+                            <i class="fas fa-book"></i> Literatura
+                        </div>
+                        <h3>Encuentro con Autor: Poesía Soriana</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Biblioteca Pública, Soria</p>
+                        <p class="evento-descripcion">Presentación de libro y recital poético inspirado en los paisajes de Soria.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evento 12 -->
+                <div class="card-evento">
+                    <div class="evento-fecha">
+                        <span class="dia">22</span>
+                        <span class="mes">FEB</span>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=250&fit=crop" alt="Fotografía">
+                    <div class="card-content">
+                        <div class="evento-categoria exposicion">
+                            <i class="fas fa-camera"></i> Fotografía
+                        </div>
+                        <h3>Exposición Fotográfica: Soria Natural</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Sala de Exposiciones, Soria</p>
+                        <p class="evento-descripcion">Muestra fotográfica sobre la naturaleza y paisajes de la provincia de Soria.</p>
+                        <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-evento">
+                            <i class="fas fa-info-circle"></i> Más información
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enlace a más eventos -->
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="https://www.turismosoria.es/agenda/" target="_blank" class="btn-primary">
+                    <i class="fas fa-calendar-check"></i> Ver Agenda Completa en Turismo Soria
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer mi-texto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><img src="Logo.png" alt="Rutas Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;"></h3>
+                    <p><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</p>
+                    <p><i class="fas fa-phone"></i> +34 605 249 696</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/rutas_rurales/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="aviso-legal.html">Aviso Legal</a></li>
+                        <li><a href="politica-cookies.html">Política de Cookies</a></li>
+                        <li><a href="agradecimientos.html">Agradecimientos</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
