@@ -322,6 +322,9 @@ function generarRutaPersonalizada() {
     // Consejos adicionales
     respuesta += generarConsejos(intereses);
     
+    // Enlaces promocionales
+    respuesta += generarEnlacesPromocionales();
+    
     respuesta += '<p>¿Te gustaría más detalles sobre algún lugar en particular o necesitas información adicional? 😊</p>';
     
     return respuesta;
@@ -457,6 +460,12 @@ function generarRecomendacionesAlojamiento(intereses) {
         contenido += `<p>Te recomiendo alojarte en la zona que más se ajuste a tu itinerario.</p>`;
     }
     
+    contenido += `<p style="margin-top: 1.5rem; padding: 1rem; background-color: #f0f8f0; border-radius: 8px; border-left: 4px solid #2c5f2d;">
+                  <strong>💡 ¿Necesitas más opciones?</strong><br>
+                  Tenemos <a href="alojamientos.html" style="color: #2c5f2d; font-weight: 700; text-decoration: underline;">17 alojamientos turísticos disponibles</a> 
+                  en nuestra web con diferentes características y precios para que encuentres el perfecto para ti.
+                  </p>`;
+    
     contenido += '</div>';
     return contenido;
 }
@@ -519,6 +528,50 @@ function generarConsejos(intereses) {
     consejos += '</div>';
     
     return consejos;
+}
+
+function generarEnlacesPromocionales() {
+    let enlaces = '<div class="route-recommendation" style="background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e9 100%); border: 2px solid #2c5f2d; margin-top: 2rem;">';
+    enlaces += '<h4 style="color: #2c5f2d; text-align: center; margin-bottom: 1.5rem;">🌟 Descubre Más en Nuestra Web</h4>';
+    enlaces += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
+    
+    enlaces += `
+        <a href="alojamientos.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+            <i class="fas fa-bed" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
+            <strong>Alojamientos Turísticos</strong><br>
+            <small style="color: #666;">17 opciones disponibles</small>
+        </a>
+        
+        <a href="#lugares" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+            <i class="fas fa-landmark" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
+            <strong>Lugares de Interés</strong><br>
+            <small style="color: #666;">Patrimonio y cultura</small>
+        </a>
+        
+        <a href="#actividades" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+            <i class="fas fa-hiking" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
+            <strong>Actividades Turísticas</strong><br>
+            <small style="color: #666;">Naturaleza y aventura</small>
+        </a>
+        
+        <a href="eventos-culturales.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+            <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
+            <strong>Eventos Culturales</strong><br>
+            <small style="color: #666;">Agenda cultural</small>
+        </a>
+        
+        <a href="rutas-turisticas.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+            <i class="fas fa-route" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
+            <strong>Rutas Turísticas</strong><br>
+            <small style="color: #666;">Itinerarios completos</small>
+        </a>
+    `;
+    
+    enlaces += '</div>';
+    enlaces += '<p style="text-align: center; margin-top: 1.5rem; color: #2c5f2d; font-weight: 600;">📍 Toda la información que necesitas para tu viaje perfecto a Soria</p>';
+    enlaces += '</div>';
+    
+    return enlaces;
 }
 
 // ===============================================
