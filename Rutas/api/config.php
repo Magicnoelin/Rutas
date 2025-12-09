@@ -7,7 +7,7 @@
 // Configuración de la base de datos
 // DESARROLLO LOCAL - Comenta estas líneas para usar producción
 /*
-define('DB_HOST', '127.0.0.1');  // Tu servidor MySQL local
+define('DB_HOST', 'localhost');  // Tu servidor MySQL local
 define('DB_NAME', 'u412199647_Rutas');  // Nombre de BD local
 define('DB_USER', 'root');  // Usuario MySQL local (normalmente 'root')
 define('DB_PASS', '');  // Contraseña MySQL local (vacía por defecto en XAMPP/WAMP)
@@ -15,9 +15,9 @@ define('DB_TABLE', 'accommodations'); // Nombre de tabla local
 */
 
 // PRODUCCIÓN - Configuración activa para el servidor
-define('DB_HOST', '127.0.0.1');
+define('DB_HOST', 'localhost');
 define('DB_NAME', 'u412199647_Rutas');
-define('DB_USER', 'u412199647_rutasrurales');
+define('DB_USER', 'u412199647_olgamarin');
 define('DB_PASS', 'Rutas5Rurales7$');
 define('DB_TABLE', 'accommodations');
 
@@ -151,3 +151,6 @@ function jsonError($message, $code = 400) {
     ]);
     exit();
 }
+$pdo = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8", $user, $password);
+// Configura PDO para que lance excepciones en caso de error
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
