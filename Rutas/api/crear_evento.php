@@ -55,6 +55,35 @@ try {
 
     $pdo = getDBConnection();
 
+    // Verificar y crear tabla si no existe
+    $sqlCheckTable = "SHOW TABLES LIKE 'cultural_events'";
+    $result = $pdo->query($sqlCheckTable);
+    if ($result->rowCount() == 0) {
+        // Crear tabla si no existe
+        $sqlCreateTable = "
+            CREATE TABLE cultural_events (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                event_date DATE NOT NULL,
+                event_time TIME,
+                location VARCHAR(255),
+                category VARCHAR(100),
+                image VARCHAR(500),
+                organizer VARCHAR(255),
+                contact_email VARCHAR(255),
+                contact_phone VARCHAR(50),
+                website VARCHAR(255),
+                price DECIMAL(10,2),
+                capacity INT,
+                status ENUM('active', 'inactive', 'cancelled') DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ";
+        $pdo->exec($sqlCreateTable);
+    }
+
     // Preparar datos para cultural_events
     $eventData = [
         'id' => $id,
