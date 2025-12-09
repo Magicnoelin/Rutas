@@ -5,21 +5,21 @@
  */
 
 // Configuración de la base de datos
-// DESARROLLO LOCAL - Cambia estas credenciales según tu configuración local
+// DESARROLLO LOCAL - Comenta estas líneas para usar producción
+/*
 define('DB_HOST', '127.0.0.1');  // Tu servidor MySQL local
 define('DB_NAME', 'rutas_alojamientos');  // Nombre de BD local
 define('DB_USER', 'root');  // Usuario MySQL local (normalmente 'root')
 define('DB_PASS', '');  // Contraseña MySQL local (vacía por defecto en XAMPP/WAMP)
 define('DB_TABLE', 'alojamientos'); // Nombre de tabla local
+*/
 
-// PRODUCCIÓN - Comenta las líneas de arriba y descomenta estas para subir al servidor:
-/*
+// PRODUCCIÓN - Configuración activa para el servidor
 define('DB_HOST', '127.0.0.1');
 define('DB_NAME', 'u412199647_Rutas');
 define('DB_USER', 'u412199647_rutasrurales');
 define('DB_PASS', 'Rutas5Rurales7$');
-define('DB_TABLE', 'alojamientos_csv');
-*/
+define('DB_TABLE', 'accommodations');
 
 // Configuración de reCAPTCHA v3
 define('RECAPTCHA_SITE_KEY', '6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k');
