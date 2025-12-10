@@ -17,7 +17,7 @@ define('DB_TABLE', 'accommodations'); // Nombre de tabla local
 // PRODUCCIÓN - Configuración activa para el servidor
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'u412199647_Rutas');
-define('DB_USER', 'u412199647_rutasrurales');
+define('DB_USER', 'u412199647_olgamarin');
 define('DB_PASS', 'Rutas5Rurales7$');
 define('DB_TABLE', 'accommodations');
 
