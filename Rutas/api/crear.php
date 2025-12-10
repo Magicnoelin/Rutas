@@ -114,9 +114,25 @@ try {
         }
     }
 
+    // Obtener un category_id válido de la tabla categories_accommodations
+    $categoryId = 1; // Valor por defecto
+    try {
+        $sqlGetCategory = "SELECT id FROM categories_accommodations LIMIT 1";
+        $stmtCategory = $pdo->query($sqlGetCategory);
+        $categoryResult = $stmtCategory->fetch();
+        if ($categoryResult) {
+            $categoryId = $categoryResult['id'];
+        }
+        error_log('Crear.php - Using category_id: ' . $categoryId);
+    } catch (PDOException $categoryError) {
+        error_log('Crear.php - Failed to get category_id: ' . $categoryError->getMessage());
+        // Continuar con el valor por defecto
+    }
+
     // Preparar datos para accommodations usando las columnas correctas de la tabla existente
     $accData = [
         'name' => $datosLimpios['Nombre'] ?? '',
+        'category_id' => $categoryId, // ID de categoría válido
         'accommodation_type' => $datosLimpios['Tipo'] ?? 'casa', // Valor por defecto según enum
         'address' => $datosLimpios['Direccion'] ?? '',
         'capacity' => intval($datosLimpios['Plazas'] ?? 0),
