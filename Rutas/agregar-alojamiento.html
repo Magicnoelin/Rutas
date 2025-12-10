@@ -21,33 +21,10 @@
     <!-- Configuración de la aplicación -->
     <script src="config.js"></script>
     <style>
-        .form-container {
-            max-width: 900px;
-            margin: 120px auto 50px;
-            background: white;
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 5px 30px rgba(0,0,0,0.1);
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .form-header h1 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .form-header p {
-            color: #666;
-        }
-
         .form-section {
             margin-bottom: 2rem;
             padding: 1.5rem;
-            background: var(--light-color);
+            background: #f8f9fa;
             border-radius: 10px;
         }
 
@@ -57,6 +34,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 1.2rem;
         }
 
         .form-group {
@@ -228,9 +206,12 @@
             display: none;
             margin-top: 2rem;
             padding: 2rem;
-            background: var(--light-color);
+            background: white;
             border-radius: 15px;
-            border: 2px solid var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .preview-container.active {
@@ -296,11 +277,6 @@
         }
 
         @media (max-width: 768px) {
-            .form-container {
-                margin: 100px 20px 30px;
-                padding: 2rem 1.5rem;
-            }
-
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -342,12 +318,22 @@
         </nav>
     </header>
 
-    <!-- Formulario -->
-    <div class="form-container">
-        <div class="form-header">
-            <h1><i class="fas fa-plus-circle"></i> Agregar Nuevo Alojamiento</h1>
-            <p>Completa el formulario para añadir un nuevo alojamiento rural a la plataforma</p>
-        </div>
+    <!-- Sección de Agregar Alojamiento -->
+    <section class="section" style="margin-top: 100px;">
+        <div class="container">
+            <h1 class="section-title">
+                <i class="fas fa-plus-circle"></i> Agregar Nuevo Alojamiento
+            </h1>
+
+            <!-- Información -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <p style="font-size: 1.1rem; color: var(--secondary-color);">
+                    Completa el formulario para añadir un nuevo alojamiento rural a la plataforma
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="filters" style="max-width: 900px; margin: 0 auto;">
 
         <form id="alojamientoForm">
             <!-- Información Básica -->
@@ -553,7 +539,7 @@
                 <i class="fas fa-check-circle"></i> ¡Operación completada!
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
