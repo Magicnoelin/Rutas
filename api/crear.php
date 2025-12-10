@@ -59,6 +59,35 @@ try {
 
     $pdo = getDBConnection();
 
+    // Verificar y crear tabla accommodations si no existe
+    $sqlCheckTable = "SHOW TABLES LIKE 'accommodations'";
+    $result = $pdo->query($sqlCheckTable);
+    if ($result->rowCount() == 0) {
+        // Crear tabla accommodations
+        $sqlCreateTable = "
+            CREATE TABLE accommodations (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                type VARCHAR(100),
+                address TEXT,
+                capacity INT DEFAULT 0,
+                price DECIMAL(10,2),
+                description TEXT,
+                phone VARCHAR(50),
+                email VARCHAR(255),
+                website VARCHAR(255),
+                image1 VARCHAR(500),
+                image2 VARCHAR(500),
+                image3 VARCHAR(500),
+                image4 VARCHAR(500),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                status ENUM('active', 'inactive') DEFAULT 'active'
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ";
+        $pdo->exec($sqlCreateTable);
+    }
+
     // Preparar datos para accommodations (sin ID ya que es AUTO_INCREMENT)
     $accData = [
         'name' => $datosLimpios['Nombre'] ?? '',
