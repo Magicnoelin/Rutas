@@ -16,7 +16,11 @@ try {
     // Obtener datos del body
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
-    
+
+    // Debug: Log received data
+    error_log('Crear.php - Received JSON: ' . $json);
+    error_log('Crear.php - Decoded data: ' . json_encode($data));
+
     if (!$data) {
         jsonError('Datos JSON inválidos', 400);
     }
@@ -108,5 +112,11 @@ try {
     jsonSuccess($response, '¡Alojamiento guardado exitosamente en la base de datos! Tu alojamiento está activo y visible en la plataforma.');
     
 } catch (PDOException $e) {
-    jsonError('Error al crear alojamiento: ' . $e->getMessage(), 500);
+    // Log detailed error for debugging
+    error_log('Crear.php - Database Error: ' . $e->getMessage());
+    error_log('Crear.php - SQL State: ' . $e->getCode());
+    error_log('Crear.php - Event Data: ' . json_encode($accData ?? []));
+
+    // Temporary detailed error for debugging
+    jsonError('Error al crear alojamiento: ' . $e->getMessage() . ' (Debug: ' . $e->getCode() . ')', 500);
 }
