@@ -1,263 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-X990K5GE42');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Evento Cultural - Rutas</title>
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google reCAPTCHA v3 -->
     <script src="https://www.google.com/recaptcha/api.js?render=6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k"></script>
-    <!-- Configuración de la aplicación -->
     <script src="config.js"></script>
-    <style>
-        .form-container {
-            max-width: 900px;
-            margin: 120px auto 50px;
-            background: white;
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 5px 30px rgba(0,0,0,0.1);
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .form-header h1 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .form-header p {
-            color: #666;
-        }
-
-        .form-section {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: var(--light-color);
-            border-radius: 10px;
-        }
-
-        .form-section h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--dark-color);
-            font-weight: 500;
-        }
-
-        .form-group label .required {
-            color: #e74c3c;
-            margin-left: 3px;
-        }
-
-        .form-group label .optional {
-            color: #95a5a6;
-            font-size: 0.85rem;
-            font-weight: normal;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        .btn-submit,
-        .btn-preview,
-        .btn-reset {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-submit {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-submit:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .btn-preview {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .btn-preview:hover {
-            background-color: #c49563;
-            transform: translateY(-2px);
-        }
-
-        .btn-reset {
-            background-color: #95a5a6;
-            color: white;
-        }
-
-        .btn-reset:hover {
-            background-color: #7f8c8d;
-        }
-
-        .preview-container {
-            display: none;
-            margin-top: 2rem;
-            padding: 2rem;
-            background: var(--light-color);
-            border-radius: 15px;
-            border: 2px solid var(--primary-color);
-        }
-
-        .preview-container.active {
-            display: block;
-        }
-
-        .preview-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .preview-header h3 {
-            color: var(--primary-color);
-        }
-
-        .json-output {
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 1.5rem;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .copy-btn {
-            margin-top: 1rem;
-            padding: 0.8rem 1.5rem;
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .copy-btn:hover {
-            background-color: #229954;
-        }
-
-        .success-message {
-            display: none;
-            background-color: #d4edda;
-            color: #155724;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            text-align: center;
-            border: 1px solid #c3e6cb;
-        }
-
-        .success-message.active {
-            display: block;
-        }
-
-        @media (max-width: 768px) {
-            .form-container {
-                margin: 100px 20px 30px;
-                padding: 2rem 1.5rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .form-actions {
-                flex-direction: column;
-            }
-
-            .btn-submit,
-            .btn-preview,
-            .btn-reset {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-    </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <nav class="navbar">
             <div class="container">
@@ -266,333 +19,125 @@
                     <span>Rutas</span>
                 </div>
                 <button class="hamburger" id="hamburger" aria-label="Menú">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                 </button>
                 <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html">Inicio</a></li>
                     <li><a href="alojamientos.html">Alojamientos</a></li>
-                    <li><a href="index.html#actividades">Actividades</a></li>
-                    <li><a href="index.html#lugares">Lugares de Interés</a></li>
                     <li><a href="eventos-culturales.html">Eventos Culturales</a></li>
                 </ul>
             </div>
         </nav>
     </header>
 
-    <!-- Formulario -->
     <div class="form-container">
         <div class="form-header">
             <h1><i class="fas fa-calendar-plus"></i> Agregar Evento Cultural</h1>
-            <p>Completa el formulario para añadir un nuevo evento cultural a la plataforma</p>
+            <p>Completa el formulario para añadir un nuevo evento cultural</p>
         </div>
 
         <form id="eventoForm">
-            <!-- Información Básica -->
             <div class="form-section">
                 <h3><i class="fas fa-info-circle"></i> Información Básica</h3>
-
                 <div class="form-group">
                     <label for="title">Título del Evento <span class="required">*</span></label>
-                    <input type="text" id="title" name="title" required placeholder="Ej: Concierto de Música Clásica">
+                    <input type="text" id="title" name="title" required>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label for="category">Categoría <span class="required">*</span></label>
                         <select id="category" name="category" required>
-                            <option value="">Seleccionar...</option>
                             <option value="Música">Música</option>
                             <option value="Teatro">Teatro</option>
-                            <option value="Exposición">Exposición</option>
-                            <option value="Festival">Festival</option>
-                            <option value="Cine">Cine</option>
-                            <option value="Conferencia">Conferencia</option>
-                            <option value="Danza">Danza</option>
-                            <option value="Gastronomía">Gastronomía</option>
-                            <option value="Literatura">Literatura</option>
-                            <option value="Fotografía">Fotografía</option>
-                            <option value="Otro">Otro</option>
                         </select>
                     </div>
-
                     <div class="form-group">
-                        <label for="event_date">Fecha del Evento <span class="required">*</span></label>
+                        <label for="event_date">Fecha <span class="required">*</span></label>
                         <input type="date" id="event_date" name="event_date" required>
                     </div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="event_time">Hora del Evento <span class="optional">(opcional)</span></label>
-                        <input type="time" id="event_time" name="event_time">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="location">Ubicación <span class="required">*</span></label>
-                        <input type="text" id="location" name="location" required placeholder="Ej: Auditorio de Soria">
-                    </div>
+                <div class="form-group">
+                    <label for="location">Ubicación <span class="required">*</span></label>
+                    <input type="text" id="location" name="location" required>
                 </div>
-
                 <div class="form-group">
                     <label for="description">Descripción <span class="required">*</span></label>
-                    <textarea id="description" name="description" required placeholder="Describe el evento, programa, artistas participantes..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="image">URL de la Imagen <span class="optional">(opcional)</span></label>
-                    <input type="url" id="image" name="image" placeholder="https://ejemplo.com/imagen.jpg">
+                    <textarea id="description" name="description" required></textarea>
                 </div>
             </div>
 
-            <!-- Información Adicional -->
-            <div class="form-section">
-                <h3><i class="fas fa-user-tie"></i> Información del Organizador</h3>
-
-                <div class="form-group">
-                    <label for="organizer">Organizador <span class="optional">(opcional)</span></label>
-                    <input type="text" id="organizer" name="organizer" placeholder="Ej: Ayuntamiento de Soria">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contact_email">Email de Contacto <span class="optional">(opcional)</span></label>
-                        <input type="email" id="contact_email" name="contact_email" placeholder="contacto@ejemplo.com">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contact_phone">Teléfono de Contacto <span class="optional">(opcional)</span></label>
-                        <input type="tel" id="contact_phone" name="contact_phone" placeholder="Ej: 975123456">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="website">Sitio Web <span class="optional">(opcional)</span></label>
-                    <input type="url" id="website" name="website" placeholder="https://www.ejemplo.com">
-                </div>
-            </div>
-
-            <!-- Detalles del Evento -->
-            <div class="form-section">
-                <h3><i class="fas fa-ticket-alt"></i> Detalles del Evento</h3>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="price">Precio (€) <span class="optional">(opcional)</span></label>
-                        <input type="number" id="price" name="price" min="0" step="0.01" placeholder="Ej: 15.00">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="capacity">Aforo Máximo <span class="optional">(opcional)</span></label>
-                        <input type="number" id="capacity" name="capacity" min="1" placeholder="Ej: 200">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Botones de Acción -->
             <div class="form-actions">
-                <button type="button" class="btn-preview" onclick="generarVistaPrevia()">
-                    <i class="fas fa-eye"></i> Vista Previa
-                </button>
                 <button type="submit" class="btn-submit">
                     <i class="fas fa-save"></i> Guardar Evento
-                </button>
-                <button type="reset" class="btn-reset">
-                    <i class="fas fa-redo"></i> Limpiar
                 </button>
             </div>
         </form>
 
-        <!-- Resultado -->
         <div class="preview-container" id="previewContainer">
             <div class="preview-header">
-                <h3><i class="fas fa-info-circle"></i> Resultado</h3>
-                <p>Información del proceso</p>
-            </div>
-
-            <div class="json-output" id="jsonOutput" style="display: none;"></div>
-
-            <button class="copy-btn" onclick="copiarJSON()" style="display: none;">
-                <i class="fas fa-copy"></i> Copiar JSON
-            </button>
-
-            <div class="success-message" id="successMessage">
-                <i class="fas fa-check-circle"></i> ¡Operación completada!
+                <h3 id="resultTitle">Resultado</h3>
+                <p id="resultMessage">Información del proceso</p>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content-simple">
-                <div class="footer-info">
-                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
-                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
-                </div>
-                <div class="footer-links">
-                    <a href="aviso-legal.html">Aviso Legal</a>
-                    <a href="politica-cookies.html">Política de Cookies</a>
-                    <a href="agradecimientos.html">Agradecimientos</a>
-                </div>
-                <div class="footer-social">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                </div>
-            </div>
-            <div class="footer-copyright">
-                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        let generatedJSON = '';
-
-        // Generar vista previa
-        function generarVistaPrevia() {
-            const formData = recopilarDatosParaAPI();
-            if (!formData) return;
-
-            const jsonString = JSON.stringify(formData, null, 2);
-            document.getElementById('jsonOutput').textContent = jsonString;
-            document.getElementById('previewContainer').classList.add('active');
-            generatedJSON = jsonString;
-
-            // Actualizar mensaje de vista previa
-            document.querySelector('.preview-header p').textContent = 'Revisa los datos antes de guardar';
-
-            // Scroll a la vista previa
-            document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Recopilar datos del formulario para la API
-        function recopilarDatosParaAPI() {
-            const form = document.getElementById('eventoForm');
-
-            // Validar campos requeridos
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return null;
-            }
-
-            // Mapear campos del formulario a nombres de la API
-            const formData = {
-                title: document.getElementById('title').value.trim(),
-                description: document.getElementById('description').value.trim(),
-                event_date: document.getElementById('event_date').value,
-                location: document.getElementById('location').value.trim(),
-                category: document.getElementById('category').value
-            };
-
-            // Hora (opcional)
-            const eventTime = document.getElementById('event_time').value;
-            if (eventTime) {
-                formData.event_time = eventTime;
-            }
-
-            // Imagen (opcional)
-            const image = document.getElementById('image').value.trim();
-            if (image) {
-                formData.image = image;
-            }
-
-            // Organizador (opcional)
-            const organizer = document.getElementById('organizer').value.trim();
-            if (organizer) {
-                formData.organizer = organizer;
-            }
-
-            // Contacto email (opcional)
-            const contactEmail = document.getElementById('contact_email').value.trim();
-            if (contactEmail) {
-                formData.contact_email = contactEmail;
-            }
-
-            // Contacto teléfono (opcional)
-            const contactPhone = document.getElementById('contact_phone').value.trim();
-            if (contactPhone) {
-                formData.contact_phone = contactPhone;
-            }
-
-            // Website (opcional)
-            const website = document.getElementById('website').value.trim();
-            if (website) {
-                formData.website = website;
-            }
-
-            // Precio (opcional)
-            const price = document.getElementById('price').value;
-            if (price) {
-                formData.price = parseFloat(price);
-            }
-
-            // Capacidad (opcional)
-            const capacity = document.getElementById('capacity').value;
-            if (capacity) {
-                formData.capacity = parseInt(capacity);
-            }
-
-            return formData;
-        }
-
-        // Guardar evento en la base de datos
         async function guardarEvento() {
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
 
             try {
-                // Deshabilitar botón y mostrar loading
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando en base de datos...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
-                // Recopilar datos
-                const formData = recopilarDatosParaAPI();
-                if (!formData) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                    return;
-                }
+                const formData = {
+                    title: document.getElementById('title').value.trim(),
+                    description: document.getElementById('description').value.trim(),
+                    event_date: document.getElementById('event_date').value,
+                    location: document.getElementById('location').value.trim(),
+                    category: document.getElementById('category').value
+                };
 
-                // Obtener token de reCAPTCHA
                 const recaptchaToken = await grecaptcha.execute('6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k', {action: 'submit'});
                 formData.recaptchaToken = recaptchaToken;
 
-                // Enviar datos a la API
                 const apiUrl = window.CONFIG?.API_BASE_URL
                     ? `${window.CONFIG.API_BASE_URL}/crear_evento.php`
                     : 'api/crear_evento.php';
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
 
-                let result;
-                try {
-                    result = await response.json();
-                } catch (jsonError) {
-                    // If JSON parsing fails, show the raw response
-                    const text = await response.text();
-                    mostrarMensajeError('Error del servidor: ' + response.status + ' ' + response.statusText + ' - ' + text);
-                    return;
+                let errorMessage = '';
+
+                if (response.ok) {
+                    try {
+                        const result = await response.json();
+                        if (result.success) {
+                            mostrarMensajeExito(result);
+                            return;
+                        } else {
+                            errorMessage = result.error || result.message || 'Error del servidor';
+                        }
+                    } catch (jsonError) {
+                        errorMessage = 'Respuesta inválida del servidor';
+                    }
+                } else {
+                    // Try to get error details from response
+                    try {
+                        const result = await response.json();
+                        errorMessage = result.error || result.message || `Error ${response.status}`;
+                    } catch (jsonError) {
+                        errorMessage = `Error del servidor: ${response.status} ${response.statusText}`;
+                    }
                 }
 
-                if (response.ok && result.success) {
-                    mostrarMensajeExito(result);
-                } else {
-                    // Show detailed error from server
-                    const errorMsg = result.error || result.message || 'Error desconocido del servidor';
-                    mostrarMensajeError('Error al guardar el evento: ' + errorMsg + ' (Código: ' + response.status + ')');
-                }
+                mostrarMensajeError(errorMessage);
 
             } catch (error) {
-                console.error('Error:', error);
                 mostrarMensajeError('Error de conexión: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
@@ -600,132 +145,22 @@
             }
         }
 
-        // Mostrar mensaje de éxito
         function mostrarMensajeExito(result) {
-            const previewContainer = document.getElementById('previewContainer');
-            const previewHeader = document.querySelector('.preview-header');
-
-            previewHeader.innerHTML = `
-                <h3 style="color: #27ae60;"><i class="fas fa-check-circle"></i> ¡Evento Guardado Exitosamente!</h3>
-                <p style="color: #155724; font-size: 1.1rem; margin-top: 1rem;">
-                    <strong>ID:</strong> ${result.data.id}<br>
-                    <strong>Título:</strong> ${result.data.title}<br>
-                    <strong>Categoría:</strong> ${result.data.category}<br>
-                    <strong>Fecha:</strong> ${result.data.event_date}<br>
-                    <strong>Estado:</strong> Activo
-                </p>
-                <p style="color: #666; margin-top: 1rem;">
-                    Tu evento cultural ha sido guardado en la base de datos.
-                    Aparecerá en la lista de eventos culturales.
-                </p>
-                <p style="color: #666; margin-top: 0.5rem; font-size: 0.9rem;">
-                    <strong>Puntuación reCAPTCHA:</strong> ${(result.data.recaptcha_score * 100).toFixed(0)}% (humano verificado)
-                </p>
-            `;
-
-            // Ocultar el área de JSON
-            document.getElementById('jsonOutput').style.display = 'none';
-            previewContainer.classList.add('active');
-
-            // Ocultar botón de copiar
-            document.querySelector('.copy-btn').style.display = 'none';
-
-            // Scroll al mensaje
-            previewContainer.scrollIntoView({ behavior: 'smooth' });
-
-            // Limpiar formulario después de 3 segundos
-            setTimeout(() => {
-                if (confirm('¿Deseas agregar otro evento?')) {
-                    document.getElementById('eventoForm').reset();
-                    previewContainer.classList.remove('active');
-                    document.querySelector('.copy-btn').style.display = 'flex';
-                    document.getElementById('jsonOutput').style.display = 'block';
-                }
-            }, 3000);
+            document.getElementById('resultTitle').innerHTML = '<i class="fas fa-check-circle"></i> ¡Evento Guardado!';
+            document.getElementById('resultMessage').textContent = `ID: ${result.data.id}, Título: ${result.data.title}`;
+            document.getElementById('previewContainer').classList.add('active');
         }
 
-        // Mostrar mensaje de error
         function mostrarMensajeError(errorMsg) {
-            const previewContainer = document.getElementById('previewContainer');
-            const previewHeader = document.querySelector('.preview-header');
-
-            previewHeader.innerHTML = `
-                <h3 style="color: #e74c3c;"><i class="fas fa-exclamation-circle"></i> Error al Guardar</h3>
-                <p style="color: #721c24; margin-top: 1rem;">
-                    ${errorMsg}
-                </p>
-                <p style="color: #666; margin-top: 1rem; font-size: 0.9rem;">
-                    Por favor, revisa los datos e intenta de nuevo. Si el problema persiste, contacta con soporte.
-                </p>
-            `;
-
-            document.getElementById('jsonOutput').textContent = '';
-            previewContainer.classList.add('active');
-            document.querySelector('.copy-btn').style.display = 'none';
-
-            previewContainer.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('resultTitle').innerHTML = '<i class="fas fa-exclamation-circle"></i> Error';
+            document.getElementById('resultMessage').textContent = errorMsg;
+            document.getElementById('previewContainer').classList.add('active');
         }
 
-        // Copiar JSON al portapapeles
-        function copiarJSON() {
-            const jsonText = document.getElementById('jsonOutput').textContent;
-
-            navigator.clipboard.writeText(jsonText).then(() => {
-                const successMsg = document.getElementById('successMessage');
-                successMsg.classList.add('active');
-
-                setTimeout(() => {
-                    successMsg.classList.remove('active');
-                }, 3000);
-            }).catch(err => {
-                alert('Error al copiar: ' + err);
-            });
-        }
-
-        // Manejar envío del formulario
         document.getElementById('eventoForm').addEventListener('submit', function(e) {
             e.preventDefault();
             guardarEvento();
         });
-
-        // Limpiar vista previa al resetear
-        document.getElementById('eventoForm').addEventListener('reset', function() {
-            document.getElementById('previewContainer').classList.remove('active');
-            document.querySelector('.copy-btn').style.display = 'flex';
-            document.querySelector('.preview-header h3').innerHTML = '<i class="fas fa-code"></i> JSON Generado';
-            document.querySelector('.preview-header p').textContent = 'Copia este JSON y añádelo manualmente si es necesario';
-        });
-
-        // Menú hamburguesa
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('navMenu');
-
-        if (hamburger && navMenu) {
-            hamburger.addEventListener('click', function() {
-                hamburger.classList.toggle('active');
-                navMenu.classList.toggle('active');
-            });
-
-            // Cerrar menú al hacer clic en un enlace
-            const navLinks = navMenu.querySelectorAll('a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    hamburger.classList.remove('active');
-                    navMenu.classList.remove('active');
-                });
-            });
-
-            // Cerrar menú al hacer clic fuera
-            document.addEventListener('click', function(event) {
-                const isClickInsideNav = navMenu.contains(event.target);
-                const isClickOnHamburger = hamburger.contains(event.target);
-
-                if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
-                    hamburger.classList.remove('active');
-                    navMenu.classList.remove('active');
-                }
-            });
-        }
     </script>
 </body>
 </html>
