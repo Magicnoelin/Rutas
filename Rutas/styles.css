@@ -788,13 +788,7 @@ body {
         transition: all 0.3s ease;
     }
 
-    .nav-menu > li > a::before {
-        content: '';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 1.3rem;
-        color: #87a96b;
-    }
+    /* Removed CSS-generated icons - using HTML icons only */
 
     .nav-menu > li:nth-child(1) > a::before {
         content: '\f015'; /* home icon */
