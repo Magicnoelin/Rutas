@@ -17,7 +17,7 @@ define('DB_TABLE', 'accommodations'); // Nombre de tabla local
 // PRODUCCIÓN - Configuración activa para el servidor
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'u412199647_Rutas');
-define('DB_USER', 'u412199647_olgamarin');
+define('DB_USER', 'u412199647_rutasrurales');
 define('DB_PASS', 'Rutas5Rurales7$');
 define('DB_TABLE', 'accommodations');
 
@@ -151,6 +151,3 @@ function jsonError($message, $code = 400) {
     ]);
     exit();
 }
-$pdo = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8", $user, $password);
-// Configura PDO para que lance excepciones en caso de error
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
