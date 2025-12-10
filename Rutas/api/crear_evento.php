@@ -62,7 +62,7 @@ try {
         // Crear tabla si no existe
         $sqlCreateTable = "
             CREATE TABLE cultural_events (
-                id INT AUTO_INCREMENT PRIMARY KEY,
+                id VARCHAR(50) PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 description TEXT,
                 event_date DATE NOT NULL,
@@ -136,5 +136,10 @@ try {
     jsonSuccess($response, '¡Evento cultural guardado exitosamente en la base de datos!');
 
 } catch (PDOException $e) {
-    jsonError('Error al crear evento: ' . $e->getMessage(), 500);
+    // Log detailed error for debugging
+    error_log('Database Error in crear_evento.php: ' . $e->getMessage());
+    error_log('SQL State: ' . $e->getCode());
+    error_log('Event Data: ' . json_encode($eventData ?? []));
+
+    jsonError('Error al guardar el evento: ' . $e->getMessage(), 500);
 }
