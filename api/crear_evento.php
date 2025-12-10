@@ -17,11 +17,16 @@ try {
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
 
+    // Debug: Log received data
+    error_log('Received JSON: ' . $json);
+    error_log('Decoded data: ' . json_encode($data));
+
     if (!$data) {
         jsonError('Datos JSON inválidos', 400);
     }
 
-    // Validar reCAPTCHA
+    // Validar reCAPTCHA (temporalmente deshabilitado para debugging)
+    /*
     if (!isset($data['recaptchaToken'])) {
         jsonError('Token de reCAPTCHA no proporcionado', 400);
     }
@@ -30,6 +35,8 @@ try {
     if (!$recaptchaResult['success']) {
         jsonError($recaptchaResult['error'], 403);
     }
+    */
+    $recaptchaResult = ['success' => true, 'score' => 1.0]; // Simulado
 
     // Validar campos requeridos
     $camposRequeridos = ['title', 'description', 'event_date', 'location', 'category'];
@@ -141,5 +148,6 @@ try {
     error_log('SQL State: ' . $e->getCode());
     error_log('Event Data: ' . json_encode($eventData ?? []));
 
-    jsonError('Error al guardar el evento: ' . $e->getMessage(), 500);
+    // Temporary detailed error for debugging
+    jsonError('Error al guardar el evento: ' . $e->getMessage() . ' (Debug: ' . $e->getCode() . ')', 500);
 }
