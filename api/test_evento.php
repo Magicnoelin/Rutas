@@ -21,7 +21,7 @@ try {
     if (!$tableExists) {
         $sqlCreateTable = "
             CREATE TABLE cultural_events (
-                id INT AUTO_INCREMENT PRIMARY KEY,
+                id VARCHAR(50) PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 description TEXT,
                 event_date DATE NOT NULL,
