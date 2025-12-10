@@ -179,10 +179,10 @@ body {
 }
 
 .nav-asistente {
-    padding: 0.3rem !important;
+    padding: 0 !important;
     border-radius: 50% !important;
     background-color: transparent !important;
-    border: 2px solid #87a96b !important;
+    border: none !important;
     transition: var(--transition);
 }
 
@@ -798,29 +798,11 @@ body {
 
     /* Removed CSS-generated icons - using HTML icons only */
 
-    .nav-menu > li:nth-child(1) > a::before {
-        content: '\f015'; /* home icon */
-    }
+    /* Removed */
 
-    .nav-menu > li:nth-child(2) > a::before {
-        content: '\f236'; /* bed icon */
-    }
+    /* Removed */
 
-    .nav-menu > li:nth-child(3) > a::before {
-        content: '\f5a0'; /* route icon */
-    }
-
-    .nav-menu > li:nth-child(4) > a::before {
-        content: '\f57d'; /* hiking icon */
-    }
-
-    .nav-menu > li:nth-child(5) > a::before {
-        content: '\f3c5'; /* map-marker-alt icon */
-    }
-
-    .nav-menu > li:nth-child(6) > a::before {
-        content: '\f4ad'; /* heart icon */
-    }
+    /* All remaining CSS-generated icons removed */
 
     .nav-menu > li > a:hover,
     .nav-menu > li > a.active {
