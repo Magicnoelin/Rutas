@@ -105,8 +105,8 @@ try {
             $columnNames = array_column($columns, 'Field');
             error_log('Crear.php - Table columns: ' . implode(', ', $columnNames));
 
-            if (!in_array('type', $columnNames)) {
-                error_log('Crear.php - ERROR: type column missing from accommodations table');
+            if (!in_array('accommodation_type', $columnNames)) {
+                error_log('Crear.php - ERROR: accommodation_type column missing from accommodations table');
                 jsonError('La tabla accommodations no tiene la estructura correcta. Contacta con soporte.', 500);
             }
         } catch (PDOException $describeError) {
@@ -114,22 +114,22 @@ try {
         }
     }
 
-    // Preparar datos para accommodations (sin ID ya que es AUTO_INCREMENT)
+    // Preparar datos para accommodations usando las columnas correctas de la tabla existente
     $accData = [
         'name' => $datosLimpios['Nombre'] ?? '',
-        'type' => $datosLimpios['Tipo'] ?? '',
+        'accommodation_type' => $datosLimpios['Tipo'] ?? 'casa', // Valor por defecto según enum
         'address' => $datosLimpios['Direccion'] ?? '',
         'capacity' => intval($datosLimpios['Plazas'] ?? 0),
-        'price' => !empty($datosLimpios['Precio']) ? floatval($datosLimpios['Precio']) : null,
+        'price_per_night' => !empty($datosLimpios['Precio']) ? floatval($datosLimpios['Precio']) : null,
         'description' => $datosLimpios['Notaspublicas'] ?? '',
         'phone' => $datosLimpios['Telefono1'] ?? '',
         'email' => $datosLimpios['Email'] ?? '',
         'website' => $datosLimpios['Web'] ?? '',
-        'image1' => $datosLimpios['Foto1'] ?? '',
-        'image2' => $datosLimpios['Foto2'] ?? '',
-        'image3' => $datosLimpios['Foto3'] ?? '',
-        'image4' => $datosLimpios['Foto4'] ?? '',
-        'status' => 'active' // Cambiado de 'pending' a 'active' según la tabla
+        'photo1' => $datosLimpios['Foto1'] ?? '',
+        'photo2' => $datosLimpios['Foto2'] ?? '',
+        'photo3' => $datosLimpios['Foto3'] ?? '',
+        'photo4' => $datosLimpios['Foto4'] ?? '',
+        'is_active' => 1 // Activo por defecto
     ];
 
     // Construir query INSERT para accommodations
@@ -159,8 +159,8 @@ try {
     $response = [
         'id' => $id,
         'nombre' => $nuevoAlojamiento['name'],
-        'tipo' => $nuevoAlojamiento['type'],
-        'estado' => $nuevoAlojamiento['status'],
+        'tipo' => $nuevoAlojamiento['accommodation_type'],
+        'estado' => $nuevoAlojamiento['is_active'] ? 'activo' : 'inactivo',
         'recaptcha_score' => $recaptchaResult['score']
     ];
 
