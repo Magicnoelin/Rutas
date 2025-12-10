@@ -51,9 +51,6 @@ try {
         jsonError('Email de contacto inválido', 400);
     }
 
-    // Generar ID único
-    $id = uniqid('event_');
-
     // Sanitizar todos los datos
     $datosLimpios = [];
     foreach ($data as $key => $value) {
@@ -62,52 +59,26 @@ try {
 
     $pdo = getDBConnection();
 
-    // Verificar y crear tabla si no existe
-    $sqlCheckTable = "SHOW TABLES LIKE 'cultural_events'";
-    $result = $pdo->query($sqlCheckTable);
-    if ($result->rowCount() == 0) {
-        // Crear tabla si no existe
-        $sqlCreateTable = "
-            CREATE TABLE cultural_events (
-                id VARCHAR(50) PRIMARY KEY,
-                title VARCHAR(255) NOT NULL,
-                description TEXT,
-                event_date DATE NOT NULL,
-                event_time TIME,
-                location VARCHAR(255),
-                category VARCHAR(100),
-                image VARCHAR(500),
-                organizer VARCHAR(255),
-                contact_email VARCHAR(255),
-                contact_phone VARCHAR(50),
-                website VARCHAR(255),
-                price DECIMAL(10,2),
-                capacity INT,
-                status ENUM('active', 'inactive', 'cancelled') DEFAULT 'active',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-        ";
-        $pdo->exec($sqlCreateTable);
-    }
+    // Usar la tabla 'cultural_events' que ya existe con la estructura correcta
+    $tableName = 'cultural_events';
 
-    // Preparar datos para cultural_events
+    // Preparar datos para cultural_events usando las columnas correctas de la tabla
+    // NOTA: No incluir 'id' porque es AUTO_INCREMENT
     $eventData = [
-        'id' => $id,
-        'title' => $datosLimpios['title'] ?? '',
+        'name' => $datosLimpios['title'] ?? '',
         'description' => $datosLimpios['description'] ?? '',
-        'event_date' => $datosLimpios['event_date'] ?? '',
-        'event_time' => $datosLimpios['event_time'] ?? null,
-        'location' => $datosLimpios['location'] ?? '',
-        'category' => $datosLimpios['category'] ?? '',
-        'image' => $datosLimpios['image'] ?? null,
-        'organizer' => $datosLimpios['organizer'] ?? null,
-        'contact_email' => $datosLimpios['contact_email'] ?? null,
-        'contact_phone' => $datosLimpios['contact_phone'] ?? null,
+        'start_date' => $datosLimpios['event_date'] ?? '',
+        'start_time' => $datosLimpios['event_time'] ?? null,
+        'venue_name' => $datosLimpios['location'] ?? '',
+        'category_id' => 1, // TODO: Mapear categoría a ID numérico
+        'email' => $datosLimpios['contact_email'] ?? null,
+        'phone' => $datosLimpios['contact_phone'] ?? null,
         'website' => $datosLimpios['website'] ?? null,
-        'price' => isset($datosLimpios['price']) && $datosLimpios['price'] !== '' ? floatval($datosLimpios['price']) : null,
+        'ticket_price' => isset($datosLimpios['price']) && $datosLimpios['price'] !== '' ? floatval($datosLimpios['price']) : null,
         'capacity' => isset($datosLimpios['capacity']) && $datosLimpios['capacity'] !== '' ? intval($datosLimpios['capacity']) : null,
-        'status' => 'active'
+        'status' => 'scheduled', // Estado por defecto de la tabla
+        'organizer' => $datosLimpios['organizer'] ?? null,
+        'municipality' => 'Soria' // Valor por defecto
     ];
 
     // Construir query INSERT para cultural_events
@@ -124,6 +95,9 @@ try {
 
     $stmt->execute();
 
+    // Obtener el ID del evento recién creado
+    $id = $pdo->lastInsertId();
+
     // Obtener el evento recién creado
     $sqlSelect = "SELECT * FROM cultural_events WHERE id = :id";
     $stmtSelect = $pdo->prepare($sqlSelect);
@@ -132,11 +106,11 @@ try {
     $nuevoEvento = $stmtSelect->fetch();
 
     $response = [
-        'id' => $id,
-        'title' => $nuevoEvento['title'],
-        'category' => $nuevoEvento['category'],
-        'event_date' => $nuevoEvento['event_date'],
-        'status' => 'active',
+        'id' => $nuevoEvento['id'],
+        'title' => $nuevoEvento['name'],
+        'category' => $nuevoEvento['category_id'],
+        'event_date' => $nuevoEvento['start_date'],
+        'status' => $nuevoEvento['status'],
         'recaptcha_score' => $recaptchaResult['score']
     ];
 
