@@ -62,7 +62,12 @@ try {
     // Verificar y crear tabla accommodations si no existe
     $sqlCheckTable = "SHOW TABLES LIKE 'accommodations'";
     $result = $pdo->query($sqlCheckTable);
-    if ($result->rowCount() == 0) {
+    $tableExists = $result->rowCount() > 0;
+
+    error_log('Crear.php - Table accommodations exists: ' . ($tableExists ? 'YES' : 'NO'));
+
+    if (!$tableExists) {
+        error_log('Crear.php - Creating accommodations table...');
         // Crear tabla accommodations
         $sqlCreateTable = "
             CREATE TABLE accommodations (
@@ -85,7 +90,28 @@ try {
                 status ENUM('active', 'inactive') DEFAULT 'active'
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ";
-        $pdo->exec($sqlCreateTable);
+        try {
+            $pdo->exec($sqlCreateTable);
+            error_log('Crear.php - Table accommodations created successfully');
+        } catch (PDOException $createError) {
+            error_log('Crear.php - Failed to create table: ' . $createError->getMessage());
+            throw $createError;
+        }
+    } else {
+        // Verificar estructura de la tabla
+        try {
+            $sqlDescribe = "DESCRIBE accommodations";
+            $columns = $pdo->query($sqlDescribe)->fetchAll(PDO::FETCH_ASSOC);
+            $columnNames = array_column($columns, 'Field');
+            error_log('Crear.php - Table columns: ' . implode(', ', $columnNames));
+
+            if (!in_array('type', $columnNames)) {
+                error_log('Crear.php - ERROR: type column missing from accommodations table');
+                jsonError('La tabla accommodations no tiene la estructura correcta. Contacta con soporte.', 500);
+            }
+        } catch (PDOException $describeError) {
+            error_log('Crear.php - Failed to describe table: ' . $describeError->getMessage());
+        }
     }
 
     // Preparar datos para accommodations (sin ID ya que es AUTO_INCREMENT)
