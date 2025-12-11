@@ -66,8 +66,7 @@
         <nav class="navbar">
             <div class="container">
                 <div class="logo">
-                    <img src="logo_990x1076_verde.png" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">
-                    <span>Rutas</span>
+                    <img src="logo_990x1076_verde.png" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">                  
                 </div>
                 <ul class="nav-menu">
                     <li><a href="index.html">Inicio</a></li>
@@ -147,13 +146,6 @@
                         <i class="fas fa-users"></i> Plazas mínimas:
                     </label>
                     <input type="number" id="filterPlazas" min="1" max="20" value="1">
-
-                    <button onclick="aplicarFiltros()" class="btn-primary" style="padding: 0.5rem 1.5rem;">
-                        <i class="fas fa-filter"></i> Filtrar
-                    </button>
-                    <button onclick="limpiarFiltros()" class="btn-secondary" style="padding: 0.5rem 1.5rem;">
-                        <i class="fas fa-times"></i> Limpiar
-                    </button>
                 </div>
             </div>
 
@@ -213,6 +205,7 @@
         let todosLosAlojamientos = [];
         let alojamientosFiltrados = [];
         let categoriaActual = '';
+        let isAdmin = false;
 
         // Cargar alojamientos turísticos al iniciar
         window.addEventListener('DOMContentLoaded', cargarAlojamientos);
@@ -235,12 +228,14 @@
                     data = await response.json();
                     console.log('Datos recibidos:', data);
 
-                    if (data.success && data.alojamientos && data.alojamientos.length > 0) {
-                        todosLosAlojamientos = data.alojamientos;
+                    if (data.success && data.data && data.data.alojamientos && data.data.alojamientos.length > 0) {
+                        todosLosAlojamientos = data.data.alojamientos;
                         alojamientosFiltrados = [...todosLosAlojamientos];
-                        console.log('✅ Cargados', data.alojamientos.length, 'alojamientos desde la base de datos');
-                        console.log('Provincias encontradas:', [...new Set(data.alojamientos.map(a => a.provincia || a.Provincia || a.province || a.Province))]);
+                        console.log('✅ Cargados', data.data.alojamientos.length, 'alojamientos desde la base de datos');
+                        console.log('Provincias encontradas:', [...new Set(data.data.alojamientos.map(a => a.provincia || a.Provincia || a.province || a.Province))]);
+                        console.log('Primer alojamiento:', data.data.alojamientos[0]);
                     } else {
+                        console.log('Estructura de respuesta:', data);
                         throw new Error('API returned empty or invalid data');
                     }
                 } catch (apiError) {
@@ -265,11 +260,19 @@
                     actualizarTituloCategoria();
                 }
 
-                // Llenar filtro de localidades
+                // Llenar filtros de localidades y provincias
                 llenarFiltroLocalidades();
+                llenarFiltroProvincias();
 
-                // Mostrar alojamientos
-                mostrarAlojamientos();
+                // Aplicar filtro inicial de provincia (Soria por defecto)
+                const provinciaInicial = document.getElementById('filterProvincia').value;
+                if (provinciaInicial) {
+                    await actualizarMunicipiosPorProvincia(provinciaInicial);
+                    aplicarFiltros(); // Aplicar filtro al cargar
+                } else {
+                    // Si no hay provincia inicial, mostrar todos
+                    mostrarAlojamientos();
+                }
 
                 // Ocultar loading
                 document.getElementById('loading').style.display = 'none';
@@ -291,6 +294,65 @@
                 option.textContent = localidad;
                 select.appendChild(option);
             });
+        }
+
+        function llenarFiltroProvincias() {
+            const provincias = [...new Set(todosLosAlojamientos.map(a => a.Provincia || a.provincia || a.province || a.Province))].filter(p => p && p.trim() !== '').sort();
+            const select = document.getElementById('filterProvincia');
+
+            // Limpiar opciones existentes
+            select.innerHTML = '';
+
+            // Agregar opción por defecto "Soria" si existe en los datos
+            if (provincias.includes('Soria')) {
+                const optionSoria = document.createElement('option');
+                optionSoria.value = 'Soria';
+                optionSoria.textContent = 'Soria';
+                optionSoria.selected = true;
+                select.appendChild(optionSoria);
+            }
+
+            // Agregar todas las provincias encontradas
+            provincias.forEach(provincia => {
+                if (provincia !== 'Soria') { // Evitar duplicado
+                    const option = document.createElement('option');
+                    option.value = provincia;
+                    option.textContent = provincia;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        async function actualizarMunicipiosPorProvincia(provincia) {
+            const selectMunicipio = document.getElementById('filterLocalidad');
+
+            if (!provincia) {
+                // Si no hay provincia seleccionada, mostrar todos los municipios
+                llenarFiltroLocalidades();
+                return;
+            }
+
+            try {
+                const response = await fetch(`api/municipios.php?provincia=${encodeURIComponent(provincia)}`);
+                const data = await response.json();
+
+                if (data.success && data.municipios) {
+                    // Limpiar opciones existentes
+                    selectMunicipio.innerHTML = '<option value="">Todas</option>';
+
+                    // Agregar municipios de la provincia
+                    data.municipios.forEach(municipio => {
+                        const option = document.createElement('option');
+                        option.value = municipio;
+                        option.textContent = municipio;
+                        selectMunicipio.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar municipios:', error);
+                // Fallback: mostrar todos los municipios
+                llenarFiltroLocalidades();
+            }
         }
 
         function mostrarAlojamientos() {
@@ -321,9 +383,76 @@
             const card = document.createElement('div');
             card.className = 'card';
 
-            // Imagen - manejar diferentes formatos de la tabla accommodations
-            const foto = alojamiento.fotos || alojamiento.Foto1 || alojamiento.Fotos ||
-                         'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
+            // Recopilar todas las fotos disponibles
+            let fotos = [];
+
+            // Priorizar Fotos array (de accommodations API)
+            if (alojamiento.Fotos && Array.isArray(alojamiento.Fotos) && alojamiento.Fotos.length > 0) {
+                fotos = alojamiento.Fotos;
+            } else if (alojamiento.fotos && Array.isArray(alojamiento.fotos) && alojamiento.fotos.length > 0) {
+                fotos = alojamiento.fotos;
+            } else {
+                // Intentar fotos individuales
+                const foto1 = alojamiento.Foto1 || alojamiento.photo1;
+                const foto2 = alojamiento.Foto2 || alojamiento.photo2;
+                const foto3 = alojamiento.Foto3 || alojamiento.photo3;
+                const foto4 = alojamiento.Foto4 || alojamiento.photo4;
+
+                if (foto1) fotos.push(foto1);
+                if (foto2) fotos.push(foto2);
+                if (foto3) fotos.push(foto3);
+                if (foto4) fotos.push(foto4);
+            }
+
+            // Si no hay fotos, usar imagen por defecto
+            if (fotos.length === 0) {
+                fotos = ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'];
+            }
+
+            // Crear carrusel de fotos
+            const carouselId = `carousel-${alojamiento.id || alojamiento.ID || Math.random().toString(36).substr(2, 9)}`;
+            let carouselHTML = `
+                <div class="photo-carousel" id="${carouselId}" style="position: relative; height: 250px; overflow: hidden; border-radius: 15px 15px 0 0;">
+                    <div class="carousel-slides" style="display: flex; height: 100%; transition: transform 0.3s ease;">
+            `;
+
+            fotos.forEach((foto, index) => {
+                carouselHTML += `
+                    <img src="${foto}" alt="Foto ${index + 1}" style="width: 100%; height: 100%; object-fit: cover; flex-shrink: 0;"
+                         onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'">
+                `;
+            });
+
+            carouselHTML += `
+                    </div>
+            `;
+
+            // Agregar controles de navegación si hay más de 1 foto
+            if (fotos.length > 1) {
+                carouselHTML += `
+                    <button class="carousel-prev" onclick="cambiarFoto('${carouselId}', -1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-next" onclick="cambiarFoto('${carouselId}', 1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="carousel-indicators" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px;">
+                `;
+
+                fotos.forEach((_, index) => {
+                    carouselHTML += `
+                        <span class="indicator ${index === 0 ? 'active' : ''}" onclick="irAFoto('${carouselId}', ${index})" style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.3s;"></span>
+                    `;
+                });
+
+                carouselHTML += `
+                    </div>
+                `;
+            }
+
+            carouselHTML += `
+                </div>
+            `;
 
             // Características - manejar diferentes formatos
             const caracteristicas = alojamiento.caracteristicas || alojamiento.Caracteristicas || [];
@@ -362,9 +491,14 @@
             const tipo = alojamiento.tipo || alojamiento.Tipo;
 
             card.innerHTML = `
-                <img src="${foto}" alt="${nombre}" onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'">
+                ${carouselHTML}
                 <div class="card-content">
-                    <h3>${nombre}</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <h3>${nombre}</h3>
+                        <button class="btn-edit" onclick="editarAlojamiento(${alojamiento.id || alojamiento.ID})" style="display: ${isAdmin ? 'block' : 'none'}; background: none; border: none; color: var(--primary-color); cursor: pointer; padding: 0.5rem;" title="Editar alojamiento">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
                     <p class="location"><i class="fas fa-map-marker-alt"></i> ${localidad}, ${provincia}</p>
                     <p>${descripcion}</p>
                     <div class="card-features">
@@ -389,10 +523,16 @@
             const plazasMin = parseInt(document.getElementById('filterPlazas').value) || 1;
 
             alojamientosFiltrados = todosLosAlojamientos.filter(alojamiento => {
-                const alojProvincia = alojamiento.provincia || alojamiento.Provincia || alojamiento.province || alojamiento.Province;
-                const alojLocalidad = alojamiento.localidad || alojamiento.Localidad;
-                const alojTipo = alojamiento.tipo || alojamiento.Tipo;
-                const alojPlazas = alojamiento.plazas || alojamiento.Plazas;
+                // Manejar campos de provincia con diferentes formatos (API vs JSON)
+                const alojProvincia = alojamiento.Provincia || alojamiento.provincia || alojamiento.province || alojamiento.Province;
+                const alojLocalidad = alojamiento.Localidad || alojamiento.localidad || alojamiento.municipality || alojamiento.Municipality;
+                const alojTipo = alojamiento.accommodation_type || alojamiento.Tipo || alojamiento.type;
+                const alojPlazas = alojamiento.capacity || alojamiento.Plazas || alojamiento.plazas;
+
+                // Solo incluir alojamientos que tengan provincia válida
+                if (!alojProvincia || alojProvincia.trim() === '') {
+                    return false;
+                }
 
                 const cumpleProvincia = !provincia || alojProvincia === provincia;
                 const cumpleLocalidad = !localidad || alojLocalidad === localidad;
@@ -471,8 +611,333 @@
             document.getElementById('statsText').innerHTML = `
                 <i class="fas fa-hotel"></i> ${total} alojamiento${total !== 1 ? 's' : ''} turístico${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}
                 | <i class="fas fa-users"></i> ${plazasTotales} plazas totales
+                ${isAdmin ? '| <i class="fas fa-user-shield"></i> Modo Admin' : ''}
             `;
         }
+
+        // Funciones de administración
+        function mostrarLoginAdmin() {
+            const password = prompt('Introduce la contraseña de administrador:');
+            if (password === '12345') {
+                isAdmin = true;
+                mostrarBotonesEdicion();
+                actualizarEstadisticas();
+                alert('✅ Modo administrador activado');
+            } else if (password !== null) {
+                alert('❌ Contraseña incorrecta');
+            }
+        }
+
+        function mostrarBotonesEdicion() {
+            const botonesEdicion = document.querySelectorAll('.btn-edit');
+            botonesEdicion.forEach(btn => {
+                btn.style.display = isAdmin ? 'block' : 'none';
+            });
+        }
+
+        function editarAlojamiento(id) {
+            if (!isAdmin) {
+                alert('Debes iniciar sesión como administrador para editar alojamientos');
+                mostrarLoginAdmin();
+                return;
+            }
+
+            // Buscar el alojamiento por ID
+            const alojamiento = todosLosAlojamientos.find(a => (a.id || a.ID) == id);
+            if (!alojamiento) {
+                alert('Alojamiento no encontrado');
+                return;
+            }
+
+            // Crear modal de edición
+            mostrarModalEdicion(alojamiento);
+        }
+
+        function mostrarModalEdicion(alojamiento) {
+            // Crear modal
+            const modal = document.createElement('div');
+            modal.id = 'editModal';
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.8); z-index: 10000; display: flex;
+                align-items: center; justify-content: center; padding: 20px;
+            `;
+
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white; border-radius: 15px; padding: 2rem;
+                max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            `;
+
+            modalContent.innerHTML = `
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem; text-align: center;">
+                    <i class="fas fa-edit"></i> Editar Alojamiento
+                </h2>
+
+                <form id="editForm">
+                    <input type="hidden" id="editId" value="${alojamiento.id || alojamiento.ID}">
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            Nombre:
+                        </label>
+                        <input type="text" id="editNombre" value="${alojamiento.nombre || alojamiento.Nombre || ''}"
+                               style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Tipo:
+                            </label>
+                            <select id="editTipo" style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                                <option value="Casa" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Casa') ? 'selected' : ''}>Casa</option>
+                                <option value="Piso" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Piso') ? 'selected' : ''}>Piso</option>
+                                <option value="Chalé" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Chalé') ? 'selected' : ''}>Chalé</option>
+                                <option value="Hotel" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Hotel') ? 'selected' : ''}>Hotel</option>
+                                <option value="Apartamento" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Apartamento') ? 'selected' : ''}>Apartamento</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Plazas:
+                            </label>
+                            <input type="number" id="editPlazas" value="${alojamiento.capacity || alojamiento.Plazas || 1}" min="1" max="50"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Provincia:
+                            </label>
+                            <input type="text" id="editProvincia" value="${alojamiento.province || alojamiento.Province || ''}"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Localidad:
+                            </label>
+                            <input type="text" id="editLocalidad" value="${alojamiento.municipality || alojamiento.Localidad || ''}"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            Dirección:
+                        </label>
+                        <input type="text" id="editDireccion" value="${alojamiento.address || alojamiento.Direccion || ''}"
+                               style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Precio (€/noche):
+                            </label>
+                            <input type="number" id="editPrecio" value="${alojamiento.price_per_night || alojamiento.Precio || ''}" min="0" step="1"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Teléfono:
+                            </label>
+                            <input type="tel" id="editTelefono" value="${alojamiento.phone || alojamiento.Telefono1 || alojamiento.Telefono || ''}"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            Email:
+                        </label>
+                        <input type="email" id="editEmail" value="${alojamiento.email || alojamiento.Email || ''}"
+                               style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            Descripción:
+                        </label>
+                        <textarea id="editDescripcion" rows="3"
+                                  style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; resize: vertical;">${alojamiento.description || alojamiento.Notaspublicas || ''}</textarea>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            URLs de Fotos (una por línea):
+                        </label>
+                        <textarea id="editFotos" rows="4" placeholder="https://ejemplo.com/foto1.jpg&#10;https://ejemplo.com/foto2.jpg&#10;https://ejemplo.com/foto3.jpg&#10;https://ejemplo.com/foto4.jpg"
+                                  style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; resize: vertical; font-family: monospace;">${(alojamiento.Fotos && Array.isArray(alojamiento.Fotos)) ? alojamiento.Fotos.join('\n') : ''}</textarea>
+                        <small style="color: #666; font-size: 0.9rem;">Introduce una URL por línea. Las URLs deben ser completas (https://...)</small>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" onclick="cerrarModal()" class="btn-secondary" style="padding: 0.75rem 1.5rem;">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary" style="padding: 0.75rem 1.5rem;">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            `;
+
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+
+            // Manejar envío del formulario
+            document.getElementById('editForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                guardarCambiosAlojamiento();
+            });
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById('editModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function guardarCambiosAlojamiento() {
+            const id = document.getElementById('editId').value;
+
+            // Procesar URLs de fotos (una por línea)
+            const fotosTexto = document.getElementById('editFotos').value.trim();
+            const fotosUrls = fotosTexto ? fotosTexto.split('\n').map(url => url.trim()).filter(url => url) : [];
+
+            const datosActualizados = {
+                id: id,
+                name: document.getElementById('editNombre').value,
+                accommodation_type: document.getElementById('editTipo').value,
+                capacity: parseInt(document.getElementById('editPlazas').value),
+                province: document.getElementById('editProvincia').value,
+                municipality: document.getElementById('editLocalidad').value,
+                address: document.getElementById('editDireccion').value,
+                price_per_night: document.getElementById('editPrecio').value ? parseFloat(document.getElementById('editPrecio').value) : null,
+                phone: document.getElementById('editTelefono').value,
+                email: document.getElementById('editEmail').value,
+                description: document.getElementById('editDescripcion').value,
+                photos: fotosUrls // Array de URLs de fotos
+            };
+
+            try {
+                const response = await fetch('api/actualizar.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datosActualizados)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Alojamiento actualizado correctamente');
+                    cerrarModal();
+
+                    // Recargar datos
+                    await cargarAlojamientos();
+                } else {
+                    alert('❌ Error al actualizar: ' + (result.error || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error de conexión al actualizar alojamiento');
+            }
+        }
+
+        // Agregar botón de login admin en la sección de filtros
+        function agregarBotonAdmin() {
+            const filterGroup = document.querySelector('.filter-group');
+            const adminBtn = document.createElement('button');
+            adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin';
+            adminBtn.className = 'btn-secondary';
+            adminBtn.style.padding = '0.5rem 1rem';
+            adminBtn.onclick = mostrarLoginAdmin;
+            adminBtn.title = 'Iniciar sesión como administrador';
+            filterGroup.appendChild(adminBtn);
+        }
+
+        // Funciones del carrusel de fotos
+        function cambiarFoto(carouselId, direction) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+
+            const slides = carousel.querySelector('.carousel-slides');
+            const images = slides.querySelectorAll('img');
+            const indicators = carousel.querySelectorAll('.indicator');
+
+            if (images.length <= 1) return;
+
+            // Obtener el transform actual del contenedor de slides
+            const currentTransform = slides.style.transform || 'translateX(0%)';
+
+            // Extraer el porcentaje del transform (ej: "translateX(-200%)" -> -200)
+            const transformMatch = currentTransform.match(/translateX\((-?\d+)%\)/);
+            const currentOffset = transformMatch ? parseInt(transformMatch[1]) : 0;
+
+            // Calcular índice actual basado en el offset
+            const currentIndex = Math.abs(currentOffset) / 100;
+
+            // Calcular nuevo índice
+            let newIndex = currentIndex + direction;
+            if (newIndex < 0) newIndex = images.length - 1;
+            if (newIndex >= images.length) newIndex = 0;
+
+            // Mover slides
+            slides.style.transform = `translateX(-${newIndex * 100}%)`;
+
+            // Actualizar indicadores
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === newIndex);
+            });
+        }
+
+        function irAFoto(carouselId, index) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+
+            const slides = carousel.querySelector('.carousel-slides');
+            const indicators = carousel.querySelectorAll('.indicator');
+
+            // Mover slides
+            slides.style.transform = `translateX(-${index * 100}%)`;
+
+            // Actualizar indicadores
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+        }
+
+        // Agregar event listeners para filtros automáticos
+        function inicializarFiltrosAutomaticos() {
+            // Filtros de select (inmediatos)
+            document.getElementById('filterProvincia').addEventListener('change', function(e) {
+                const provinciaSeleccionada = e.target.value;
+                actualizarMunicipiosPorProvincia(provinciaSeleccionada);
+                aplicarFiltros();
+            });
+            document.getElementById('filterLocalidad').addEventListener('change', aplicarFiltros);
+            document.getElementById('filterTipo').addEventListener('change', aplicarFiltros);
+
+            // Filtro de plazas (con debounce para evitar llamadas excesivas)
+            let plazasTimeout;
+            document.getElementById('filterPlazas').addEventListener('input', function() {
+                clearTimeout(plazasTimeout);
+                plazasTimeout = setTimeout(aplicarFiltros, 500); // Esperar 500ms después del último input
+            });
+        }
+
+        // Agregar botón admin cuando se cargue la página
+        window.addEventListener('load', function() {
+            agregarBotonAdmin();
+            inicializarFiltrosAutomaticos();
+        });
     </script>
 </body>
 </html>

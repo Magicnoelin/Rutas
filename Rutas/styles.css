@@ -179,8 +179,8 @@ body {
 }
 
 .nav-asistente {
-    padding: 0 !important;
-    border-radius: 50% !important;
+    padding: 0.6rem 1rem !important;
+    border-radius: 8px !important;
     background-color: transparent !important;
     border: none !important;
     transition: var(--transition);

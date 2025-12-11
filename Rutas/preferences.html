@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-X990K5GE42');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preferencias de Usuario - Rutas</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .preferences-section {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .preferences-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .preferences-header {
+            margin-bottom: 2rem;
+        }
+
+        .preferences-header i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .preferences-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .preferences-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        .preferences-form {
+            text-align: left;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .form-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .preference-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preference-option:hover {
+            border-color: var(--primary-color);
+            background-color: #f0f8f0;
+        }
+
+        .preference-option.selected {
+            border-color: var(--primary-color);
+            background-color: #e8f5e9;
+        }
+
+        .preference-option input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .preference-option label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-group select,
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group select:focus,
+        .form-group input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .preferences-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .preferences-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .preferences-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .preferences-footer {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .preferences-footer p {
+            color: #666;
+            margin: 0;
+        }
+
+        .skip-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .skip-link:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background-color: #efe;
+            color: #363;
+            border: 1px solid #cfc;
+        }
+
+        .alert-info {
+            background-color: #eff;
+            color: #336;
+            border: 1px solid #ccf;
+        }
+
+        @media (max-width: 768px) {
+            .preferences-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .preferences-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .preferences-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo_990x1076_verde.png" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos Turísticos</a></li>
+                    <li><a href="index.html#lugares"><i class="fas fa-route"></i> Lugares de interés</a></li>
+                    <li><a href="index.html#actividades"><i class="fas fa-hiking"></i> Actividades Turísticas</a></li>
+                    <li><a href="eventos-culturales.html"><i class="fas fa-map-marker-alt"></i> Eventos culturales</a></li>
+                    <li><a href="rutas-turisticas.html"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="compromiso-social.html"><i class="fas fa-heart"></i> Compromiso Social</a></li>
+                    <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                    <li><a href="index.html#asistente" class="nav-asistente">
+                        <img src="antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                        Asistente Antonio
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección de Preferencias -->
+    <section class="preferences-section">
+        <div class="container">
+            <div class="preferences-container">
+                <div class="preferences-header">
+                    <i class="fas fa-sliders-h"></i>
+                    <h1>Personaliza tu Experiencia</h1>
+                    <p>Cuéntanos tus preferencias para ofrecerte las mejores recomendaciones</p>
+                </div>
+
+                <div id="alertMessage" class="alert"></div>
+
+                <form id="preferencesForm" class="preferences-form">
+                    <!-- Intereses de viaje -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-heart"></i> ¿Qué tipo de actividades te interesan?</h3>
+                        <div class="preferences-grid">
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="naturaleza" name="interests" value="naturaleza">
+                                <label for="naturaleza"><i class="fas fa-tree"></i> Naturaleza y senderismo</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="cultura" name="interests" value="cultura">
+                                <label for="cultura"><i class="fas fa-landmark"></i> Cultura e historia</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="gastronomia" name="interests" value="gastronomia">
+                                <label for="gastronomia"><i class="fas fa-utensils"></i> Gastronomía</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="relax" name="interests" value="relax">
+                                <label for="relax"><i class="fas fa-spa"></i> Relax y bienestar</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="aventura" name="interests" value="aventura">
+                                <label for="aventura"><i class="fas fa-hiking"></i> Aventura y deportes</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="fotografia" name="interests" value="fotografia">
+                                <label for="fotografia"><i class="fas fa-camera"></i> Fotografía</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="familia" name="interests" value="familia">
+                                <label for="familia"><i class="fas fa-users"></i> Actividades familiares</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="astronomia" name="interests" value="astronomia">
+                                <label for="astronomia"><i class="fas fa-star"></i> Astronomía</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tipo de alojamiento preferido -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-bed"></i> ¿Qué tipo de alojamiento prefieres?</h3>
+                        <div class="preferences-grid">
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="casa_rural" name="accommodation_types" value="casa_rural">
+                                <label for="casa_rural"><i class="fas fa-home"></i> Casa rural</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="hotel" name="accommodation_types" value="hotel">
+                                <label for="hotel"><i class="fas fa-hotel"></i> Hotel</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="apartamento" name="accommodation_types" value="apartamento">
+                                <label for="apartamento"><i class="fas fa-building"></i> Apartamento</label>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)">
+                                <input type="checkbox" id="camping" name="accommodation_types" value="camping">
+                                <label for="camping"><i class="fas fa-campground"></i> Camping</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferencias adicionales -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-cog"></i> Otras preferencias</h3>
+
+                        <div class="form-group">
+                            <label for="budget">Presupuesto aproximado por noche (€)</label>
+                            <select id="budget" name="budget">
+                                <option value="">Seleccionar presupuesto</option>
+                                <option value="0-50">Hasta 50€</option>
+                                <option value="50-100">50€ - 100€</option>
+                                <option value="100-150">100€ - 150€</option>
+                                <option value="150-200">150€ - 200€</option>
+                                <option value="200+">Más de 200€</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="group_size">¿Cuántas personas viajan normalmente?</label>
+                            <select id="group_size" name="group_size">
+                                <option value="">Seleccionar tamaño del grupo</option>
+                                <option value="1">Solo/a</option>
+                                <option value="2">Pareja</option>
+                                <option value="3-4">Grupo pequeño (3-4 personas)</option>
+                                <option value="5-8">Grupo mediano (5-8 personas)</option>
+                                <option value="8+">Grupo grande (más de 8)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trip_duration">Duración típica de tus viajes</label>
+                            <select id="trip_duration" name="trip_duration">
+                                <option value="">Seleccionar duración</option>
+                                <option value="1">Fin de semana (1-2 días)</option>
+                                <option value="3-4">Corta (3-4 días)</option>
+                                <option value="5-7">Media (5-7 días)</option>
+                                <option value="7+">Larga (más de una semana)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="preferences-btn" id="preferencesBtn">
+                        <i class="fas fa-save"></i> Guardar Preferencias
+                    </button>
+                </form>
+
+                <div class="preferences-footer">
+                    <p><a href="login.html" class="skip-link">Omitir por ahora y continuar al login</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+            </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Función para mostrar alertas
+        function showAlert(message, type = 'error') {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+
+            // Ocultar después de 5 segundos para errores, mantener para éxito
+            if (type !== 'success') {
+                setTimeout(() => {
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Función para alternar selección de preferencias
+        function togglePreference(element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            const isSelected = element.classList.contains('selected');
+
+            if (isSelected) {
+                element.classList.remove('selected');
+                checkbox.checked = false;
+            } else {
+                element.classList.add('selected');
+                checkbox.checked = true;
+            }
+        }
+
+        // Función para manejar el envío del formulario
+        document.getElementById('preferencesForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Recopilar intereses seleccionados
+            const interests = Array.from(document.querySelectorAll('input[name="interests"]:checked'))
+                .map(cb => cb.value);
+
+            // Recopilar tipos de alojamiento
+            const accommodationTypes = Array.from(document.querySelectorAll('input[name="accommodation_types"]:checked'))
+                .map(cb => cb.value);
+
+            // Recopilar otras preferencias
+            const budget = document.getElementById('budget').value;
+            const groupSize = document.getElementById('group_size').value;
+            const tripDuration = document.getElementById('trip_duration').value;
+
+            // Validación básica
+            if (interests.length === 0) {
+                showAlert('Por favor, selecciona al menos un interés.');
+                return;
+            }
+
+            // Deshabilitar botón durante el proceso
+            const preferencesBtn = document.getElementById('preferencesBtn');
+            preferencesBtn.disabled = true;
+            preferencesBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+            // Preparar datos para la API
+            const preferencesData = {
+                interests: interests,
+                accommodation_types: accommodationTypes,
+                budget: budget,
+                group_size: groupSize,
+                trip_duration: tripDuration
+            };
+
+            // Llamar a la API de preferencias
+            fetch('api/save-preferences.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(preferencesData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('¡Preferencias guardadas exitosamente!', 'success');
+
+                    // Redirigir después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showAlert(data.error || 'Error al guardar preferencias', 'error');
+                    preferencesBtn.disabled = false;
+                    preferencesBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Preferencias';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Inténtalo de nuevo.', 'error');
+                preferencesBtn.disabled = false;
+                preferencesBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Preferencias';
+            });
+        });
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>

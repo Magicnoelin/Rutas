@@ -35,10 +35,10 @@ try {
     try {
         $columns = $pdo->query("DESCRIBE $tableName")->fetchAll(PDO::FETCH_COLUMN);
         if ($tableName === 'accommodations') {
-            // Tabla accommodations usa columna 'status'
-            if (in_array('status', $columns)) {
-                $where[] = "status = :status";
-                $params[':status'] = 'active';
+            // Tabla accommodations usa columna 'is_active'
+            if (in_array('is_active', $columns)) {
+                $where[] = "is_active = :is_active";
+                $params[':is_active'] = 1;
             }
         } else {
             // Tabla alojamientos_csv usa columna 'Estado'
@@ -53,7 +53,7 @@ try {
 
     // Filtro por tipo
     if (isset($_GET['tipo']) && !empty($_GET['tipo'])) {
-        $tipoCol = ($tableName === 'accommodations') ? 'type' : 'Tipo';
+        $tipoCol = ($tableName === 'accommodations') ? 'accommodation_type' : 'Tipo';
         $where[] = "$tipoCol = :tipo";
         $params[':tipo'] = sanitizeInput($_GET['tipo']);
     }
@@ -103,30 +103,48 @@ try {
             $alojamiento['Plazas'] = intval($alojamiento['capacity'] ?? $alojamiento['Plazas'] ?? 0);
 
             // Procesar precio
-            if (!empty($alojamiento['price'])) {
-                $alojamiento['Precio'] = floatval($alojamiento['price']);
+            if (!empty($alojamiento['price_per_night'])) {
+                $alojamiento['Precio'] = floatval($alojamiento['price_per_night']);
             }
 
-            // Crear array de fotos
+            // Crear array de fotos con URLs completas
             $fotos = [];
             for ($i = 1; $i <= 4; $i++) {
-                $fotoKey = 'image' . $i;
+                $fotoKey = 'photo' . $i;
                 if (!empty($alojamiento[$fotoKey])) {
-                    $fotos[] = $alojamiento[$fotoKey];
+                    $fotoValue = $alojamiento[$fotoKey];
+
+                    // Verificar si contiene múltiples URLs separadas por comas
+                    if (strpos($fotoValue, ',') !== false) {
+                        // Separar las URLs por coma
+                        $fotoUrls = array_map('trim', explode(',', $fotoValue));
+                        foreach ($fotoUrls as $fotoUrl) {
+                            if (!empty($fotoUrl)) {
+                                // Si no es una URL completa, construirla
+                                if (!preg_match('/^https?:\/\//', $fotoUrl)) {
+                                    $fotoUrl = 'https://rutasrurales.io/Alojamientos_Images/' . $fotoUrl;
+                                }
+                                $fotos[] = $fotoUrl;
+                            }
+                        }
+                    } else {
+                        // URL única
+                        if (!preg_match('/^https?:\/\//', $fotoValue)) {
+                            $fotoValue = 'https://rutasrurales.io/Alojamientos_Images/' . $fotoValue;
+                        }
+                        $fotos[] = $fotoValue;
+                    }
                 }
             }
             $alojamiento['Fotos'] = $fotos;
 
-            // Extraer localidad y provincia de la dirección
-            if (!empty($alojamiento['address'])) {
-                $partes = explode(',', $alojamiento['address']);
-                $alojamiento['Localidad'] = trim($partes[0] ?? '');
-                $alojamiento['Provincia'] = trim($partes[1] ?? '');
-            }
+            // Usar campos municipality y province directamente de la base de datos
+            $alojamiento['Localidad'] = $alojamiento['municipality'] ?? '';
+            $alojamiento['Provincia'] = $alojamiento['province'] ?? '';
 
             // Mapear campos para compatibilidad con frontend
             $alojamiento['Nombre'] = $alojamiento['name'] ?? '';
-            $alojamiento['Tipo'] = $alojamiento['type'] ?? '';
+            $alojamiento['Tipo'] = $alojamiento['accommodation_type'] ?? '';
             $alojamiento['Direccion'] = $alojamiento['address'] ?? '';
             $alojamiento['Telefono1'] = $alojamiento['phone'] ?? '';
             $alojamiento['Email'] = $alojamiento['email'] ?? '';
