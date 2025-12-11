@@ -107,22 +107,40 @@ try {
                 $alojamiento['Precio'] = floatval($alojamiento['price_per_night']);
             }
 
-            // Crear array de fotos
+            // Crear array de fotos con URLs completas
             $fotos = [];
             for ($i = 1; $i <= 4; $i++) {
                 $fotoKey = 'photo' . $i;
                 if (!empty($alojamiento[$fotoKey])) {
-                    $fotos[] = $alojamiento[$fotoKey];
+                    $fotoValue = $alojamiento[$fotoKey];
+
+                    // Verificar si contiene múltiples URLs separadas por comas
+                    if (strpos($fotoValue, ',') !== false) {
+                        // Separar las URLs por coma
+                        $fotoUrls = array_map('trim', explode(',', $fotoValue));
+                        foreach ($fotoUrls as $fotoUrl) {
+                            if (!empty($fotoUrl)) {
+                                // Si no es una URL completa, construirla
+                                if (!preg_match('/^https?:\/\//', $fotoUrl)) {
+                                    $fotoUrl = 'https://rutasrurales.io/Alojamientos_Images/' . $fotoUrl;
+                                }
+                                $fotos[] = $fotoUrl;
+                            }
+                        }
+                    } else {
+                        // URL única
+                        if (!preg_match('/^https?:\/\//', $fotoValue)) {
+                            $fotoValue = 'https://rutasrurales.io/Alojamientos_Images/' . $fotoValue;
+                        }
+                        $fotos[] = $fotoValue;
+                    }
                 }
             }
             $alojamiento['Fotos'] = $fotos;
 
-            // Extraer localidad y provincia de la dirección
-            if (!empty($alojamiento['address'])) {
-                $partes = explode(',', $alojamiento['address']);
-                $alojamiento['Localidad'] = trim($partes[0] ?? '');
-                $alojamiento['Provincia'] = trim($partes[1] ?? '');
-            }
+            // Usar campos municipality y province directamente de la base de datos
+            $alojamiento['Localidad'] = $alojamiento['municipality'] ?? '';
+            $alojamiento['Provincia'] = $alojamiento['province'] ?? '';
 
             // Mapear campos para compatibilidad con frontend
             $alojamiento['Nombre'] = $alojamiento['name'] ?? '';
