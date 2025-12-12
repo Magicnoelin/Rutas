@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-X990K5GE42');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opciones - Rutas</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .options-section {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .options-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 3rem;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .options-header {
+            margin-bottom: 3rem;
+        }
+
+        .options-header i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .options-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        .options-header p {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .option-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: var(--primary-color);
+        }
+
+        .option-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .option-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .option-card p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .option-card .btn-primary {
+            margin-top: 1rem;
+        }
+
+        .main-action {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            padding: 1.5rem 3rem;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .main-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .options-container {
+                padding: 2rem 1rem;
+            }
+
+            .options-header h1 {
+                font-size: 2rem;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-action {
+                padding: 1.2rem 2rem;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo_990x1076_verde.png" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos Turísticos</a></li>
+                    <li><a href="index.html#lugares"><i class="fas fa-route"></i> Lugares de interés</a></li>
+                    <li><a href="index.html#actividades"><i class="fas fa-hiking"></i> Actividades Turísticas</a></li>
+                    <li><a href="eventos-culturales.html"><i class="fas fa-map-marker-alt"></i> Eventos culturales</a></li>
+                    <li><a href="opciones.html"><i class="fas fa-plug"></i> Opciones</a></li>
+                    <li><a href="rutas-turisticas.html"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="compromiso-social.html"><i class="fas fa-heart"></i> Compromiso Social</a></li>
+                    <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                    <li><a href="index.html#asistente" class="nav-asistente">
+                        <img src="antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                        Asistente Antonio
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección de Opciones -->
+    <section class="options-section">
+        <div class="container">
+            <div class="options-container">
+                <div class="options-header">
+                    <i class="fas fa-compass"></i>
+                    <h1>Opciones de Rutas</h1>
+                    <p>Descubre todas las formas de conectar con la experiencia turística de Soria</p>
+                </div>
+
+                <div class="options-grid">
+                    <div class="option-card" onclick="window.location.href='alojamientos-turisticos.html'">
+                        <i class="fas fa-home"></i>
+                        <h3>Alojamientos Turísticos</h3>
+                        <p>Encuentra casas rurales, hoteles y apartamentos en los lugares más hermosos de Soria.</p>
+                        <a href="alojamientos-turisticos.html" class="btn-primary">Ver Alojamientos</a>
+                    </div>
+
+                    <div class="option-card" onclick="window.location.href='index.html#actividades'">
+                        <i class="fas fa-hiking"></i>
+                        <h3>Actividades Turísticas</h3>
+                        <p>Descubre rutas de senderismo, observación astronómica y experiencias únicas en la naturaleza.</p>
+                        <a href="index.html#actividades" class="btn-primary">Ver Actividades</a>
+                    </div>
+
+                    <div class="option-card" onclick="window.location.href='index.html#lugares'">
+                        <i class="fas fa-landmark"></i>
+                        <h3>Lugares de Interés</h3>
+                        <p>Explora monumentos históricos, iglesias románicas y lugares emblemáticos de Soria.</p>
+                        <a href="index.html#lugares" class="btn-primary">Ver Lugares</a>
+                    </div>
+
+                    <div class="option-card" onclick="window.location.href='eventos-culturales.html'">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Eventos Culturales</h3>
+                        <p>Asiste a festivales, conciertos y eventos culturales tradicionales de la provincia.</p>
+                        <a href="eventos-culturales.html" class="btn-primary">Ver Eventos</a>
+                    </div>
+
+                    <div class="option-card" onclick="window.location.href='rutas-turisticas.html'">
+                        <i class="fas fa-route"></i>
+                        <h3>Rutas Turísticas</h3>
+                        <p>Planifica tu viaje con rutas organizadas por temáticas y niveles de dificultad.</p>
+                        <a href="rutas-turisticas.html" class="btn-primary">Ver Rutas</a>
+                    </div>
+
+                    <div class="option-card" onclick="window.location.href='index.html#asistente'">
+                        <i class="fas fa-robot"></i>
+                        <h3>Asistente Antonio</h3>
+                        <p>Deja que nuestro asistente inteligente te ayude a planificar el viaje perfecto.</p>
+                        <a href="index.html#asistente" class="btn-primary">Hablar con Antonio</a>
+                    </div>
+                </div>
+
+                <a href="connection-assistant.html" class="main-action">
+                    <i class="fas fa-plug"></i> Conecta con Rutas - Asistente de Conexión
+                </a>
+
+                <p style="margin-top: 2rem; color: #666; font-size: 0.9rem;">
+                    ¿Eres proveedor de servicios turísticos? <a href="register.html" style="color: var(--primary-color); font-weight: 600;">Regístrate aquí</a> para ofrecer tus servicios.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+            </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

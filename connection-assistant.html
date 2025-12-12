@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-X990K5GE42');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Conexión - Rutas</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .connection-assistant-section {
+            min-height: calc(100vh - 200px);
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .assistant-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .assistant-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .assistant-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .assistant-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .assistant-content {
+            padding: 3rem 2rem;
+        }
+
+        .search-section {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 3rem;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="date"] {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            grid-column: 1 / -1;
+            justify-self: center;
+            min-width: 200px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results-section {
+            margin-top: 3rem;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-count {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-tab {
+            padding: 0.75rem 1.5rem;
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .filter-tab:hover {
+            border-color: var(--primary-color);
+        }
+
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .provider-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .provider-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .provider-image {
+            height: 200px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .provider-image i {
+            font-size: 3rem;
+            color: #ccc;
+        }
+
+        .provider-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .provider-content {
+            padding: 1.5rem;
+        }
+
+        .provider-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .provider-type {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .provider-description {
+            color: #555;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .provider-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .provider-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .provider-rating .stars {
+            color: #ffd700;
+        }
+
+        .provider-price {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .provider-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary,
+        .btn-primary {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-results i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .assistant-header {
+                padding: 2rem 1rem;
+            }
+
+            .assistant-header h1 {
+                font-size: 2rem;
+            }
+
+            .assistant-content {
+                padding: 2rem 1rem;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .providers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .filter-tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo_990x1076_verde.png" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos Turísticos</a></li>
+                    <li><a href="index.html#lugares"><i class="fas fa-route"></i> Lugares de interés</a></li>
+                    <li><a href="index.html#actividades"><i class="fas fa-hiking"></i> Actividades Turísticas</a></li>
+                    <li><a href="eventos-culturales.html"><i class="fas fa-map-marker-alt"></i> Eventos culturales</a></li>
+                    <li><a href="rutas-turisticas.html"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="compromiso-social.html"><i class="fas fa-heart"></i> Compromiso Social</a></li>
+                    <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                    <li><a href="index.html#asistente" class="nav-asistente">
+                        <img src="antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                        Asistente Antonio
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección del Asistente de Conexión -->
+    <section class="connection-assistant-section">
+        <div class="container">
+            <div class="assistant-container">
+                <div class="assistant-header">
+                    <h1><i class="fas fa-plug"></i> Conecta con Rutas</h1>
+                    <p>Conecta Hoy con los Mejores Servicios Turísticos</p>
+                </div>
+
+                <div class="assistant-content">
+                    <!-- Sección de Búsqueda -->
+                    <div class="search-section">
+                        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">
+                            <i class="fas fa-search"></i> ¿Qué estás buscando?
+                        </h2>
+
+                        <form id="searchForm" class="search-form">
+                            <div class="form-group">
+                                <label for="serviceType">
+                                    <i class="fas fa-concierge-bell"></i> Tipo de Servicio
+                                </label>
+                                <select id="serviceType" name="serviceType">
+                                    <option value="">Todos los servicios</option>
+                                    <option value="alojamiento">🏠 Alojamientos</option>
+                                    <option value="evento">🎪 Eventos Culturales</option>
+                                    <option value="actividad">🎭 Actividades</option>
+                                    <option value="lugar">🏛️ Lugares de Interés</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location">
+                                    <i class="fas fa-map-marker-alt"></i> Ubicación
+                                </label>
+                                <input type="text" id="location" name="location" placeholder="Ciudad, pueblo o zona">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dateFrom">
+                                    <i class="fas fa-calendar-alt"></i> Fecha Desde
+                                </label>
+                                <input type="date" id="dateFrom" name="dateFrom">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dateTo">
+                                    <i class="fas fa-calendar-alt"></i> Fecha Hasta
+                                </label>
+                                <input type="date" id="dateTo" name="dateTo">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="guests">
+                                    <i class="fas fa-users"></i> Número de Personas
+                                </label>
+                                <select id="guests" name="guests">
+                                    <option value="">Cualquier cantidad</option>
+                                    <option value="1">1 persona</option>
+                                    <option value="2">2 personas</option>
+                                    <option value="3-4">3-4 personas</option>
+                                    <option value="5-8">5-8 personas</option>
+                                    <option value="8+">Más de 8 personas</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="budget">
+                                    <i class="fas fa-euro-sign"></i> Presupuesto Máximo
+                                </label>
+                                <select id="budget" name="budget">
+                                    <option value="">Sin límite</option>
+                                    <option value="50">Hasta 50€</option>
+                                    <option value="100">Hasta 100€</option>
+                                    <option value="200">Hasta 200€</option>
+                                    <option value="500">Hasta 500€</option>
+                                    <option value="1000">Hasta 1000€</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="search-btn" id="searchBtn">
+                                <i class="fas fa-search"></i> Buscar Proveedores
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Sección de Resultados -->
+                    <div class="results-section" id="resultsSection" style="display: none;">
+                        <div class="results-header">
+                            <div class="results-count" id="resultsCount">0 proveedores encontrados</div>
+                            <div class="filter-tabs">
+                                <div class="filter-tab active" data-filter="all">Todos</div>
+                                <div class="filter-tab" data-filter="verified">Verificados</div>
+                                <div class="filter-tab" data-filter="available">Disponibles</div>
+                                <div class="filter-tab" data-filter="recommended">Recomendados</div>
+                            </div>
+                        </div>
+
+                        <div id="providersContainer">
+                            <div class="loading">
+                                <i class="fas fa-spinner"></i>
+                                <p>Buscando los mejores proveedores...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+            </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Estado de la aplicación
+        let currentProviders = [];
+        let currentFilters = {
+            type: 'all',
+            verified: false,
+            available: false,
+            recommended: false
+        };
+
+        // Función para mostrar proveedores
+        function displayProviders(providers) {
+            const container = document.getElementById('providersContainer');
+            const resultsCount = document.getElementById('resultsCount');
+
+            if (!providers || providers.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No se encontraron proveedores</h3>
+                        <p>Intenta cambiar los criterios de búsqueda</p>
+                    </div>
+                `;
+                resultsCount.textContent = '0 proveedores encontrados';
+                return;
+            }
+
+            resultsCount.textContent = `${providers.length} proveedores encontrados`;
+
+            const providersHTML = providers.map(provider => `
+                <div class="provider-card" onclick="viewProviderDetails(${provider.id})">
+                    <div class="provider-image">
+                        <i class="${getProviderIcon(provider.type)}"></i>
+                        ${provider.verified ? '<div class="provider-badge">Verificado</div>' : ''}
+                    </div>
+                    <div class="provider-content">
+                        <div class="provider-name">${provider.name}</div>
+                        <div class="provider-type">${getProviderTypeText(provider.type)}</div>
+                        <div class="provider-description">${provider.description || 'Sin descripción disponible'}</div>
+                        <div class="provider-details">
+                            <div class="provider-rating">
+                                <div class="stars">${getStarsHTML(provider.rating || 0)}</div>
+                                <span>(${provider.reviews || 0})</span>
+                            </div>
+                            ${provider.price ? `<div class="provider-price">Desde ${provider.price}€</div>` : ''}
+                        </div>
+                        <div class="provider-actions">
+                            <button class="btn-secondary" onclick="event.stopPropagation(); contactProvider(${provider.id})">
+                                <i class="fas fa-envelope"></i> Contactar
+                            </button>
+                            <a href="${getProviderLink(provider)}" class="btn-primary">
+                                <i class="fas fa-eye"></i> Ver Detalles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="providers-grid">${providersHTML}</div>`;
+        }
+
+        // Función para obtener icono según tipo
+        function getProviderIcon(type) {
+            const icons = {
+                'alojamiento': 'fas fa-home',
+                'evento': 'fas fa-calendar-alt',
+                'actividad': 'fas fa-hiking',
+                'lugar': 'fas fa-map-marker-alt'
+            };
+            return icons[type] || 'fas fa-building';
+        }
+
+        // Función para obtener texto del tipo
+        function getProviderTypeText(type) {
+            const types = {
+                'alojamiento': 'ALOJAMIENTO TURÍSTICO',
+                'evento': 'EVENTO CULTURAL',
+                'actividad': 'ACTIVIDAD TURÍSTICA',
+                'lugar': 'LUGAR DE INTERÉS'
+            };
+            return types[type] || type.toUpperCase();
+        }
+
+        // Función para generar estrellas
+        function getStarsHTML(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            const emptyStars = 5 - Math.ceil(rating);
+
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            return stars;
+        }
+
+        // Función para obtener enlace del proveedor
+        function getProviderLink(provider) {
+            const links = {
+                'alojamiento': 'alojamientos-turisticos.html',
+                'evento': 'eventos-culturales.html',
+                'actividad': 'index.html#actividades',
+                'lugar': 'index.html#lugares'
+            };
+            return links[provider.type] || '#';
+        }
+
+        // Función para buscar proveedores
+        async function searchProviders() {
+            const searchBtn = document.getElementById('searchBtn');
+            const resultsSection = document.getElementById('resultsSection');
+
+            // Mostrar loading
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+            resultsSection.style.display = 'block';
+
+            try {
+                // Obtener datos del formulario
+                const formData = new FormData(document.getElementById('searchForm'));
+                const searchParams = new URLSearchParams(formData);
+
+                // Llamar a la API real
+                const response = await fetch(`api/search-providers.php?${searchParams}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    currentProviders = data.providers || [];
+                    displayProviders(currentProviders);
+                } else {
+                    throw new Error(data.error || 'Error en la búsqueda');
+                }
+
+            } catch (error) {
+                console.error('Error en búsqueda:', error);
+
+                // Si hay error en la API, mostrar datos simulados como fallback
+                console.log('Usando datos simulados como fallback...');
+                const mockProviders = [
+                    {
+                        id: 1,
+                        name: 'Casa Rural El Roble',
+                        type: 'alojamiento',
+                        description: 'Hermosa casa rural en el corazón de la Sierra de Urbión',
+                        rating: 4.8,
+                        reviews: 45,
+                        price: 85,
+                        verified: true,
+                        location: 'Vinuesa'
+                    },
+                    {
+                        id: 2,
+                        name: 'Festival de Teatro Clásico',
+                        type: 'evento',
+                        description: 'Evento cultural anual con obras de teatro clásico',
+                        rating: 4.6,
+                        reviews: 128,
+                        price: 25,
+                        verified: true,
+                        location: 'Almazán'
+                    },
+                    {
+                        id: 3,
+                        name: 'Ruta del Románico',
+                        type: 'actividad',
+                        description: 'Excursión guiada por las iglesias románicas más importantes',
+                        rating: 4.9,
+                        reviews: 67,
+                        price: 35,
+                        verified: true,
+                        location: 'Soria'
+                    },
+                    {
+                        id: 4,
+                        name: 'Monasterio de San Juan de Duero',
+                        type: 'lugar',
+                        description: 'Impresionante monasterio románico con claustro mudéjar',
+                        rating: 4.7,
+                        reviews: 203,
+                        verified: true,
+                        location: 'Soria'
+                    }
+                ];
+
+                currentProviders = mockProviders;
+                displayProviders(mockProviders);
+
+                // Mostrar mensaje de que se están usando datos simulados
+                setTimeout(() => {
+                    showAlert('Mostrando resultados de demostración. La API puede no estar configurada correctamente.', 'info');
+                }, 1000);
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.innerHTML = '<i class="fas fa-search"></i> Buscar Proveedores';
+            }
+        }
+
+        // Función para mostrar alertas
+        function showAlert(message, type = 'error') {
+            // Crear alerta temporal
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                padding: 1rem;
+                border-radius: 10px;
+                max-width: 300px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            `;
+
+            if (type === 'error') {
+                alertDiv.style.backgroundColor = '#fee';
+                alertDiv.style.color = '#c33';
+                alertDiv.style.border = '1px solid #fcc';
+            } else if (type === 'success') {
+                alertDiv.style.backgroundColor = '#efe';
+                alertDiv.style.color = '#363';
+                alertDiv.style.border = '1px solid #cfc';
+            } else if (type === 'info') {
+                alertDiv.style.backgroundColor = '#eff';
+                alertDiv.style.color = '#336';
+                alertDiv.style.border = '1px solid #ccf';
+            }
+
+            document.body.appendChild(alertDiv);
+
+            // Ocultar después de 5 segundos
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Función para filtrar proveedores
+        function filterProviders(filterType) {
+            // Actualizar filtros activos
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            let filteredProviders = [...currentProviders];
+
+            switch (filterType) {
+                case 'verified':
+                    filteredProviders = currentProviders.filter(p => p.verified);
+                    break;
+                case 'available':
+                    // Filtrar por disponibilidad (simulado)
+                    filteredProviders = currentProviders.filter(p => Math.random() > 0.3);
+                    break;
+                case 'recommended':
+                    // Filtrar por rating alto
+                    filteredProviders = currentProviders.filter(p => (p.rating || 0) >= 4.5);
+                    break;
+                default:
+                    filteredProviders = currentProviders;
+            }
+
+            displayProviders(filteredProviders);
+        }
+
+        // Función para ver detalles del proveedor
+        function viewProviderDetails(providerId) {
+            // Aquí iría la navegación a la página de detalles
+            console.log('Ver detalles del proveedor:', providerId);
+        }
+
+        // Función para contactar proveedor
+        function contactProvider(providerId) {
+            // Aquí iría la lógica de contacto
+            alert('Funcionalidad de contacto próximamente. ID del proveedor: ' + providerId);
+        }
+
+        // Event listeners
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            searchProviders();
+        });
+
+        // Filtros
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                filterProviders(this.dataset.filter);
+            });
+        });
+
+        // Inicializar con búsqueda automática al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simular búsqueda inicial
+            setTimeout(() => {
+                searchProviders();
+            }, 500);
+        });
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -7,6 +7,71 @@
 
 require_once 'config.php';
 
+/**
+ * Crear permisos para un usuario según su tipo
+ */
+function createUserPermissions($pdo, $userId, $userType) {
+    $permissions = [];
+    
+    switch ($userType) {
+        case 'turista':
+            // Turistas: solo lectura en todos los recursos
+            $permissions = [
+                ['resource' => 'accommodations', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'events', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'places', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'activities', 'create' => false, 'read' => true, 'update' => false, 'delete' => false]
+            ];
+            break;
+            
+        case 'alojamiento':
+            // Alojamientos: CRUD completo en accommodations, lectura en el resto
+            $permissions = [
+                ['resource' => 'accommodations', 'create' => true, 'read' => true, 'update' => true, 'delete' => true],
+                ['resource' => 'events', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'places', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'activities', 'create' => false, 'read' => true, 'update' => false, 'delete' => false]
+            ];
+            break;
+            
+        case 'promotor_eventos':
+            // Promotores: CRUD completo en events, lectura en el resto
+            $permissions = [
+                ['resource' => 'accommodations', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'events', 'create' => true, 'read' => true, 'update' => true, 'delete' => true],
+                ['resource' => 'places', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'activities', 'create' => false, 'read' => true, 'update' => false, 'delete' => false]
+            ];
+            break;
+            
+        case 'actividad_cultural':
+            // Actividades culturales: CRUD en places y activities, lectura en el resto
+            $permissions = [
+                ['resource' => 'accommodations', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'events', 'create' => false, 'read' => true, 'update' => false, 'delete' => false],
+                ['resource' => 'places', 'create' => true, 'read' => true, 'update' => true, 'delete' => true],
+                ['resource' => 'activities', 'create' => true, 'read' => true, 'update' => true, 'delete' => true]
+            ];
+            break;
+    }
+    
+    // Insertar permisos en la base de datos
+    $sql = "INSERT INTO user_permissions (user_id, resource_type, can_create, can_read, can_update, can_delete) 
+            VALUES (:user_id, :resource_type, :can_create, :can_read, :can_update, :can_delete)";
+    $stmt = $pdo->prepare($sql);
+    
+    foreach ($permissions as $perm) {
+        $stmt->execute([
+            ':user_id' => $userId,
+            ':resource_type' => $perm['resource'],
+            ':can_create' => $perm['create'] ? 1 : 0,
+            ':can_read' => $perm['read'] ? 1 : 0,
+            ':can_update' => $perm['update'] ? 1 : 0,
+            ':can_delete' => $perm['delete'] ? 1 : 0
+        ]);
+    }
+}
+
 // Solo permitir método POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonError('Método no permitido', 405);
@@ -35,10 +100,23 @@ try {
     $recaptchaResult = ['success' => true, 'score' => 1.0]; // Simulado
 
     // Validar campos requeridos
-    $camposRequeridos = ['firstName', 'lastName', 'email', 'password'];
+    $camposRequeridos = ['userType', 'firstName', 'lastName', 'email', 'password'];
     foreach ($camposRequeridos as $campo) {
         if (!isset($data[$campo]) || empty(trim($data[$campo]))) {
             jsonError("El campo '$campo' es requerido", 400);
+        }
+    }
+
+    // Validar tipo de usuario
+    $tiposValidos = ['turista', 'alojamiento', 'promotor_eventos', 'actividad_cultural'];
+    if (!in_array($data['userType'], $tiposValidos)) {
+        jsonError('Tipo de usuario inválido', 400);
+    }
+
+    // Validar campos de negocio si no es turista
+    if ($data['userType'] !== 'turista') {
+        if (empty(trim($data['businessName'])) || empty(trim($data['businessDescription']))) {
+            jsonError('Los datos del negocio son requeridos para este tipo de usuario', 400);
         }
     }
 
@@ -89,6 +167,11 @@ try {
         $sqlCreateTable = "
             CREATE TABLE users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
+                user_type ENUM('turista', 'alojamiento', 'promotor_eventos', 'actividad_cultural') NOT NULL DEFAULT 'turista',
+                business_name VARCHAR(255) NULL,
+                business_description TEXT NULL,
+                verification_status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
+                subscription_level ENUM('basic', 'premium') DEFAULT 'basic',
                 first_name VARCHAR(100) NOT NULL,
                 last_name VARCHAR(100) NOT NULL,
                 email VARCHAR(255) NOT NULL UNIQUE,
@@ -102,10 +185,37 @@ try {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 last_login TIMESTAMP NULL,
                 INDEX idx_email (email),
-                INDEX idx_status (status)
+                INDEX idx_status (status),
+                INDEX idx_user_type (user_type),
+                INDEX idx_verification_status (verification_status)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ";
         $pdo->exec($sqlCreateTable);
+    }
+
+    // Crear tabla user_permissions si no existe
+    $sqlCheckPermissionsTable = "SHOW TABLES LIKE 'user_permissions'";
+    $resultPermissions = $pdo->query($sqlCheckPermissionsTable);
+    $permissionsTableExists = $resultPermissions->rowCount() > 0;
+
+    if (!$permissionsTableExists) {
+        $sqlCreatePermissionsTable = "
+            CREATE TABLE user_permissions (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                resource_type ENUM('accommodations', 'events', 'places', 'activities') NOT NULL,
+                can_create BOOLEAN DEFAULT FALSE,
+                can_read BOOLEAN DEFAULT TRUE,
+                can_update BOOLEAN DEFAULT FALSE,
+                can_delete BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                INDEX idx_user_id (user_id),
+                INDEX idx_resource_type (resource_type),
+                UNIQUE KEY unique_user_resource (user_id, resource_type)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ";
+        $pdo->exec($sqlCreatePermissionsTable);
     }
 
     // Generar hash de contraseña
@@ -114,8 +224,16 @@ try {
     // Generar token de verificación
     $verificationToken = bin2hex(random_bytes(32));
 
+    // Determinar estado de verificación según tipo de usuario
+    $verificationStatus = ($datosLimpios['userType'] === 'turista') ? 'verified' : 'pending';
+
     // Preparar datos para inserción
     $userData = [
+        'user_type' => $datosLimpios['userType'],
+        'business_name' => $datosLimpios['businessName'] ?? null,
+        'business_description' => $datosLimpios['businessDescription'] ?? null,
+        'verification_status' => $verificationStatus,
+        'subscription_level' => 'basic',
         'first_name' => $datosLimpios['firstName'],
         'last_name' => $datosLimpios['lastName'],
         'email' => $datosLimpios['email'],
@@ -139,6 +257,9 @@ try {
 
     $stmt->execute();
     $userId = $pdo->lastInsertId();
+
+    // Crear permisos según tipo de usuario
+    createUserPermissions($pdo, $userId, $datosLimpios['userType']);
 
     // Aquí se podría enviar email de verificación
     // sendVerificationEmail($datosLimpios['email'], $verificationToken);

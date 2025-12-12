@@ -80,7 +80,11 @@ function sanitizeInput($data) {
     if (is_array($data)) {
         return array_map('sanitizeInput', $data);
     }
-    return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
+    // Manejar null y valores no string
+    if ($data === null) {
+        return null;
+    }
+    return htmlspecialchars(strip_tags(trim((string)$data)), ENT_QUOTES, 'UTF-8');
 }
 
 // Función para validar email

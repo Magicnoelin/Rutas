@@ -86,7 +86,8 @@
         .form-group input[type="text"],
         .form-group input[type="email"],
         .form-group input[type="password"],
-        .form-group input[type="tel"] {
+        .form-group input[type="tel"],
+        .form-group select {
             width: 100%;
             padding: 1rem;
             border: 2px solid #e0e0e0;
@@ -285,6 +286,47 @@
                 <div id="alertMessage" class="alert"></div>
 
                 <form id="registerForm" class="register-form">
+                    <!-- Tipo de Usuario -->
+                    <div class="form-group">
+                        <label for="userType">
+                            <i class="fas fa-user-tag"></i> ¿Cómo te registras?
+                        </label>
+                        <select id="userType" name="userType" required onchange="handleUserTypeChange()">
+                            <option value="">Selecciona una opción</option>
+                            <option value="turista">🧳 Turista - Explorar y reservar</option>
+                            <option value="alojamiento">🏠 Alojamiento Turístico - Ofrecer hospedaje</option>
+                            <option value="promotor_eventos">🎪 Promotor de Eventos - Organizar eventos culturales</option>
+                            <option value="actividad_cultural">🎭 Actividad Cultural / Lugar de Interés</option>
+                        </select>
+                    </div>
+
+                    <!-- Campos de Negocio (ocultos por defecto) -->
+                    <div id="businessFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="businessName">
+                                <i class="fas fa-building"></i> Nombre del Negocio/Organización
+                            </label>
+                            <input
+                                type="text"
+                                id="businessName"
+                                name="businessName"
+                                placeholder="Nombre de tu negocio"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="businessDescription">
+                                <i class="fas fa-align-left"></i> Descripción
+                            </label>
+                            <textarea
+                                id="businessDescription"
+                                name="businessDescription"
+                                rows="3"
+                                placeholder="Describe brevemente tu negocio o actividad"
+                                style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; box-sizing: border-box; resize: vertical;"
+                            ></textarea>
+                        </div>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="firstName">
@@ -410,6 +452,26 @@
     </footer>
 
     <script>
+        // Función para manejar cambio de tipo de usuario
+        function handleUserTypeChange() {
+            const userType = document.getElementById('userType').value;
+            const businessFields = document.getElementById('businessFields');
+            const businessName = document.getElementById('businessName');
+            const businessDescription = document.getElementById('businessDescription');
+
+            if (userType && userType !== 'turista') {
+                // Mostrar campos de negocio
+                businessFields.style.display = 'block';
+                businessName.required = true;
+                businessDescription.required = true;
+            } else {
+                // Ocultar campos de negocio
+                businessFields.style.display = 'none';
+                businessName.required = false;
+                businessDescription.required = false;
+            }
+        }
+
         // Función para mostrar alertas
         function showAlert(message, type = 'error') {
             const alertDiv = document.getElementById('alertMessage');
@@ -504,8 +566,32 @@
             registerBtn.disabled = true;
             registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
 
+            // Obtener tipo de usuario y campos de negocio
+            const userType = document.getElementById('userType').value;
+            const businessName = document.getElementById('businessName').value.trim();
+            const businessDescription = document.getElementById('businessDescription').value.trim();
+
+            // Validar tipo de usuario
+            if (!userType) {
+                showAlert('Por favor, selecciona cómo te registras.');
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
+                return;
+            }
+
+            // Validar campos de negocio si no es turista
+            if (userType !== 'turista' && (!businessName || !businessDescription)) {
+                showAlert('Por favor, completa los datos de tu negocio.');
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
+                return;
+            }
+
             // Preparar datos para la API
             const registerData = {
+                userType: userType,
+                businessName: businessName || null,
+                businessDescription: businessDescription || null,
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
@@ -515,32 +601,66 @@
                 terms: termsAccepted
             };
 
-            // Llamar a la API de registro
-            fetch('api/register.php', {
+            // Usar register_simple.php directamente - ya sabemos que funciona
+            fetch('api/register_simple.php?v=' + Date.now() + '&nocache=' + Math.random(), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(registerData)
+                body: JSON.stringify(registerData),
+                // Agregar timeout para evitar problemas de extensiones
+                signal: AbortSignal.timeout(10000) // 10 segundos timeout
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Respuesta completa del servidor:', data);
+
                 if (data.success) {
+                    // Mostrar información de debug si existe
+                    if (data.debug_info) {
+                        console.log('DEBUG INFO:', data.debug_info);
+                        showAlert('DEBUG: ' + JSON.stringify(data.debug_info), 'info');
+                    }
+
                     showAlert(data.message || '¡Cuenta creada exitosamente!', 'success');
 
-                    // Redirigir a preferencias después de 3 segundos
+                    // Redirigir a preferencias después de 5 segundos (más tiempo para ver debug)
                     setTimeout(() => {
                         window.location.href = data.redirect_to || 'preferences.html';
-                    }, 3000);
+                    }, 5000);
                 } else {
-                    showAlert(data.error || 'Error al crear la cuenta', 'error');
+                    // Mostrar toda la información disponible del error
+                    console.error('Error completo:', data);
+
+                    let errorMessage = data.error || 'Error desconocido';
+                    if (data.debug_info) {
+                        errorMessage += ' | DEBUG: ' + (data.debug_info.error_message || JSON.stringify(data.debug_info));
+                    }
+
+                    showAlert('ERROR: ' + errorMessage, 'error');
                     registerBtn.disabled = false;
                     registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showAlert('Error de conexión. Inténtalo de nuevo.', 'error');
+                console.error('Error completo:', error);
+
+                // Manejar diferentes tipos de errores
+                if (error.name === 'TimeoutError') {
+                    showAlert('La petición tardó demasiado. Verifica tu conexión e inténtalo de nuevo.', 'error');
+                } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    showAlert('Error de conexión. Posiblemente una extensión del navegador está bloqueando la petición.', 'error');
+                } else if (error.message.includes('HTTP')) {
+                    showAlert(`Error del servidor: ${error.message}`, 'error');
+                } else {
+                    showAlert(`Error: ${error.message}`, 'error');
+                }
+
                 registerBtn.disabled = false;
                 registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
             });
