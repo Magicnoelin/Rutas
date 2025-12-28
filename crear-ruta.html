@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X990K5GE42');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Ruta Turística - Rutas</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet para el mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .crear-ruta-container {
+            max-width: 1400px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+
+        .crear-ruta-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .crear-ruta-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .crear-ruta-header p {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .ruta-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .ruta-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .ruta-section h2 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #87a96b;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: #f9fdf9;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area:hover {
+            background: #f0f9f0;
+            border-color: var(--primary-color);
+        }
+
+        .file-upload-area i {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-area input {
+            display: none;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .file-preview.active {
+            display: block;
+        }
+
+        #map {
+            width: 100%;
+            height: 500px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .map-info {
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #2c5f2d;
+        }
+
+        .seleccion-items {
+            margin-top: 2rem;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .item-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .item-card:hover {
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .item-card.selected {
+            border-color: var(--primary-color);
+            background: #f9fdf9;
+        }
+
+        .item-card.selected::before {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .item-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-card h4 {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-card p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-card .price {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .descuentos-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #fff3cd;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .descuentos-section h3 {
+            color: #856404;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .descuento-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .descuento-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .descuento-item label {
+            flex: 1;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .descuento-item .descuento-value {
+            font-weight: 600;
+            color: #d4a574;
+        }
+
+        .items-seleccionados {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #e3f2fd;
+            border-radius: 10px;
+        }
+
+        .items-seleccionados h3 {
+            color: #1565c0;
+            margin-bottom: 1rem;
+        }
+
+        .selected-item-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .selected-item-tag .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1a4520;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .loading-spinner i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .ruta-form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo_990x1076_verde.png" alt="Rutas Logo">
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="alojamientos.html">Alojamientos</a></li>
+                    <li><a href="rutas-turisticas.html" class="active">Rutas Turísticas</a></li>
+                    <li><a href="index.html#actividades">Actividades</a></li>
+                    <li><a href="index.html#lugares">Lugares de Interés</a></li>
+                    <li><a href="eventos-culturales.html">Eventos</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <div class="crear-ruta-container">
+        <div class="crear-ruta-header">
+            <h1><i class="fas fa-route"></i> Crear Nueva Ruta Turística</h1>
+            <p>Diseña tu ruta perfecta combinando alojamientos, actividades, lugares de interés y eventos</p>
+        </div>
+
+        <form id="rutaForm">
+            <div class="ruta-form-grid">
+                <!-- Sección Izquierda: Información de la Ruta -->
+                <div>
+                    <!-- Información Básica -->
+                    <div class="ruta-section">
+                        <h2><i class="fas fa-info-circle"></i> Información Básica</h2>
+                        
+                        <div class="form-group">
+                            <label for="titulo">Título de la Ruta <span class="required">*</span></label>
+                            <input type="text" id="titulo" name="titulo" placeholder="Ej: Ruta del Románico en Soria" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descripcion">Descripción <span class="required">*</span></label>
+                            <textarea id="descripcion" name="descripcion" placeholder="Describe tu ruta turística..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duracion">Duración (días)</label>
+                            <input type="number" id="duracion" name="duracion" min="1" max="30" value="3">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dificultad">Dificultad</label>
+                            <select id="dificultad" name="dificultad">
+                                <option value="facil">Fácil</option>
+                                <option value="media" selected>Media</option>
+                                <option value="dificil">Difícil</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="precio_estimado">Precio Estimado (€)</label>
+                            <input type="number" id="precio_estimado" name="precio_estimado" min="0" step="10" placeholder="0">
+                        </div>
+                    </div>
+
+                    <!-- Multimedia -->
+                    <div class="ruta-section" style="margin-top: 2rem;">
+                        <h2><i class="fas fa-photo-video"></i> Multimedia</h2>
+                        
+                        <div class="form-group">
+                            <label>Audio de la Ruta</label>
+                            <div class="file-upload-area" onclick="document.getElementById('audioInput').click()">
+                                <i class="fas fa-microphone"></i>
+                                <p>Haz clic para añadir un audio</p>
+                                <small>MP3, WAV, OGG (máx. 10MB)</small>
+                                <input type="file" id="audioInput" accept="audio/*">
+                            </div>
+                            <div class="file-preview" id="audioPreview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Video de la Ruta</label>
+                            <div class="file-upload-area" onclick="document.getElementById('videoInput').click()">
+                                <i class="fas fa-video"></i>
+                                <p>Haz clic para añadir un video</p>
+                                <small>MP4, WebM, OGG (máx. 50MB)</small>
+                                <input type="file" id="videoInput" accept="video/*">
+                            </div>
+                            <div class="file-preview" id="videoPreview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>O añade una URL de YouTube</label>
+                            <input type="url" id="youtubeUrl" name="youtubeUrl" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección Derecha: Mapa -->
+                <div>
+                    <div class="ruta-section">
+                        <h2><i class="fas fa-map-marked-alt"></i> Mapa de la Ruta</h2>
+                        <div id="map"></div>
+                        <div class="map-info">
+                            <i class="fas fa-info-circle"></i> 
+                            Haz clic en el mapa para añadir puntos de interés. Los elementos seleccionados aparecerán automáticamente.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selección de Elementos -->
+            <div class="ruta-section seleccion-items">
+                <h2><i class="fas fa-th-large"></i> Selecciona Elementos para tu Ruta</h2>
+                
+                <div class="tabs-container">
+                    <button type="button" class="tab-btn active" data-tab="alojamientos">
+                        <i class="fas fa-bed"></i> Alojamientos
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="actividades">
+                        <i class="fas fa-hiking"></i> Actividades
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="lugares">
+                        <i class="fas fa-landmark"></i> Lugares de Interés
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="eventos">
+                        <i class="fas fa-calendar-alt"></i> Eventos Culturales
+                    </button>
+                </div>
+
+                <!-- Contenido de Tabs -->
+                <div class="tab-content active" id="tab-alojamientos">
+                    <div class="items-grid" id="grid-alojamientos">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-actividades">
+                    <div class="items-grid" id="grid-actividades">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-lugares">
+                    <div class="items-grid" id="grid-lugares">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-eventos">
+                    <div class="items-grid" id="grid-eventos">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Items Seleccionados -->
+                <div class="items-seleccionados" id="itemsSeleccionados" style="display: none;">
+                    <h3><i class="fas fa-check-circle"></i> Elementos Seleccionados (<span id="countSelected">0</span>)</h3>
+                    <div id="selectedItemsList"></div>
+                </div>
+            </div>
+
+            <!-- Descuentos Especiales -->
+            <div class="ruta-section descuentos-section">
+                <h3><i class="fas fa-tags"></i> Descuentos Especiales</h3>
+                <p style="margin-bottom: 1rem; color: #856404;">Aplica descuentos a tu ruta para hacerla más atractiva</p>
+                
+                <div class="descuento-item">
+                    <input type="checkbox" id="desc-early" name="descuentos[]" value="early">
+                    <label for="desc-early">
+                        <strong>Reserva Anticipada</strong> - 
+                        <span class="descuento-value">10% descuento</span>
+                        <br><small>Para reservas con más de 30 días de antelación</small>
+                    </label>
+                </div>
+
+                <div class="descuento-item">
+                    <input type="checkbox" id="desc-grupo" name="descuentos[]" value="grupo">
+                    <label for="desc-grupo">
+                        <strong>Grupos (4+ personas)</strong> - 
+                        <span class="descuento-value">15% descuento</span>
+                        <br><small>Descuento para grupos familiares o de amigos</small>
+                    </label>
+                </div>
+
+                <div class="descuento-item">
+                    <input type="checkbox" id="desc-temporada" name="descuentos[]" value="temporada">
+                    <label for="desc-temporada">
+                        <strong>Temporada Baja</strong> - 
+                        <span class="descuento-value">20% descuento</span>
+                        <br><small>Válido de noviembre a febrero (excepto festivos)</small>
+                    </label>
+                </div>
+
+                <div class="descuento-item">
+                    <input type="checkbox" id="desc-completa" name="descuentos[]" value="completa">
+                    <label for="desc-completa">
+                        <strong>Ruta Completa</strong> - 
+                        <span class="descuento-value">25% descuento</span>
+                        <br><small>Al reservar todos los servicios incluidos en la ruta</small>
+                    </label>
+                </div>
+
+                <div class="descuento-item">
+                    <input type="checkbox" id="desc-senales" name="descuentos[]" value="senales">
+                    <label for="desc-senales">
+                        <strong>Pago por Adelantado</strong> - 
+                        <span class="descuento-value">5% descuento</span>
+                        <br><small>Descuento adicional por pago completo al reservar</small>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="btn-container">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="previsualizarRuta()">
+                    <i class="fas fa-eye"></i> Previsualizar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Ruta
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner"></i>
+            <p style="margin-top: 1rem; color: #333;">Guardando tu ruta...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="crear-ruta.js"></script>
+</body>
+</html>
