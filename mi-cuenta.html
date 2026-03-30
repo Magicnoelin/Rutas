@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel - Rutas Rurales</title>
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary-color: #2e7d32; --secondary-color: #4a7c4e; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+        
+        .header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+        .header .container { max-width: 1200px; margin: 0 auto; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .header .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--primary-color); font-weight: bold; font-size: 1.2rem; }
+        .header .logo img { height: 40px; }
+        .header .nav-menu { display: flex; gap: 20px; list-style: none; }
+        .header .nav-menu a { text-decoration: none; color: #555; display: flex; align-items: center; gap: 8px; }
+        .header .nav-menu a:hover { color: var(--primary-color); }
+        
+        .dashboard-container { display: flex; margin-top: 70px; min-height: calc(100vh - 70px); }
+        .dashboard-sidebar { width: 260px; background: white; border-right: 1px solid #eee; padding: 20px; flex-shrink: 0; }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 5px; }
+        .sidebar-menu a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #555; text-decoration: none; border-radius: 10px; transition: all 0.3s; font-weight: 500; }
+        .sidebar-menu a:hover { background-color: #f0f7f0; color: var(--primary-color); }
+        .sidebar-menu a.active { background-color: var(--primary-color); color: white; }
+        
+        .dashboard-content { flex: 1; padding: 30px; overflow-y: auto; }
+        
+        .dashboard-section { display: none; animation: fadeIn 0.4s; }
+        .dashboard-section.active { display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .welcome-header { margin-bottom: 30px; }
+        .welcome-header h1 { color: var(--primary-color); font-size: 2rem; margin-bottom: 10px; }
+        
+        .btn-primary { background: var(--primary-color); color: white; padding: 12px 24px; border: none; border-radius: 25px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; }
+        .btn-primary:hover { background: #1b5e20; }
+        
+        .profile-card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .profile-header { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .profile-avatar { width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; }
+        
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--primary-color); font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 1rem; }
+        .form-group input:focus { border-color: var(--primary-color); outline: none; }
+        
+        .status-card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .status-card h3 { color: var(--primary-color); margin-bottom: 15px; }
+        
+        .resource-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .resource-card img { width: 100%; height: 200px; object-fit: cover; }
+        .resource-card .content { padding: 20px; }
+        .resource-card h4 { color: var(--primary-color); margin-bottom: 10px; }
+        .resource-card p { color: #666; margin-bottom: 15px; }
+        .resource-card .stats { display: flex; gap: 15px; margin-bottom: 15px; }
+        .resource-card .stat { background: #f5f5f5; padding: 5px 12px; border-radius: 5px; font-size: 0.85rem; }
+        .resource-card .actions { display: flex; gap: 10px; }
+        .resource-card .actions a { flex: 1; text-align: center; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; }
+        .resource-card .actions .btn-view { background: var(--primary-color); color: white; }
+        .resource-card .actions .btn-edit { background: #666; color: white; }
+        .resource-card .actions .btn-photos { background: #e67e22; color: white; }
+        
+        .badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600; }
+        .badge-active { background: #e8f5e9; color: var(--primary-color); }
+        .badge-inactive { background: #ffebee; color: #c62828; }
+        
+        .empty-state { text-align: center; padding: 60px 20px; background: white; border-radius: 15px; }
+        .empty-state i { font-size: 4rem; color: #ddd; margin-bottom: 20px; }
+        .empty-state p { color: #666; margin-bottom: 20px; }
+        
+        @media (max-width: 768px) {
+            .dashboard-container { flex-direction: column; }
+            .dashboard-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #eee; }
+            .sidebar-menu { display: flex; overflow-x: auto; gap: 10px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+        
+        .footer { background: white; padding: 30px 20px; text-align: center; border-top: 1px solid #eee; margin-top: 40px; }
+        .footer p { color: #888; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 15px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { color: var(--primary-color); }
+        .modal-header button { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; }
+        .role-option { display: flex; align-items: center; gap: 10px; padding: 15px; border: 2px solid #eee; border-radius: 10px; margin-bottom: 10px; cursor: pointer; }
+        .role-option.selected { border-color: var(--primary-color); background: #f0f7f0; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/index.html" class="logo">
+                <img src="/menu_images/Logo%20transparente.webp" alt="Rutas"> Rutas Rurales
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#inicio" class="active" onclick="showSection('inicio')"><i class="fas fa-th-large"></i> Inicio</a></li>
+                <li><a href="#profile" onclick="showSection('profile')"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+                <li id="nav-preferences" style="display:none"><a href="#preferences" onclick="showSection('preferences')"><i class="fas fa-sliders-h"></i> Preferencias</a></li>
+                <li><a href="#favoritos" onclick="showSection('favoritos')"><i class="fas fa-heart"></i> Favoritos</a></li>
+                <li id="nav-mis-alojamientos" style="display:none"><a href="#mis-alojamientos" onclick="showSection('mis-alojamientos')"><i class="fas fa-bed"></i> Mis Alojamientos</a></li>
+                <li id="nav-mis-actividades" style="display:none"><a href="#mis-actividades" onclick="showSection('mis-actividades')"><i class="fas fa-hiking"></i> Mis Actividades</a></li>
+                <li id="nav-mis-lugares" style="display:none"><a href="#mis-lugares" onclick="showSection('mis-lugares')"><i class="fas fa-map-marker-alt"></i> Mis Lugares</a></li>
+                <li id="nav-mis-eventos" style="display:none"><a href="#mis-eventos" onclick="showSection('mis-eventos')"><i class="fas fa-calendar-alt"></i> Mis Eventos</a></li>
+                <li><a href="#mensajes" onclick="showSection('mensajes')"><i class="fas fa-comments"></i> Mensajes</a></li>
+                <li><a href="#membresia" onclick="showSection('membresia')"><i class="fas fa-crown"></i> Mi Membresía</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-content">
+            <!-- INICIO -->
+            <section id="inicio-section" class="dashboard-section active">
+                <div class="welcome-header">
+                    <h1>¡Hola, <span id="userNameDisplay">Viajero</span>! 👋</h1>
+                    <p>Bienvenido a tu panel personal en Rutas Rurales.</p>
+                </div>
+                
+                <div class="status-card">
+                    <h3>Tu plan: <span id="planBadge">Gratuito</span></h3>
+                    <p>Roles activos: <span id="rolesBadges">Cargando...</span></p>
+                </div>
+                
+                <h3>¿Qué quieres hacer hoy?</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div class="profile-card" style="text-align: center; cursor: pointer;" onclick="window.location.href='/index.html'">
+                        <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                        <h4>Explorar Rutas</h4>
+                        <p style="color: #666;">Descubre rutas, alojamientos y lugares en la España rural.</p>
+                    </div>
+                    <div class="profile-card" style="text-align: center; cursor: pointer;" onclick="showSection('preferences')">
+                        <i class="fas fa-sliders-h" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                        <h4>Mis Preferencias</h4>
+                        <p style="color: #666;">Personaliza tu experiencia.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PERFIL -->
+            <section id="profile-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px;">Mi Perfil</h2>
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar"><i class="fas fa-user"></i></div>
+                        <div>
+                            <h3 id="profileName">Cargando...</h3>
+                            <p id="profileEmail" style="color: #666;">cargando@email.com</p>
+                            <span id="profileRole" class="badge badge-active">Turista</span>
+                        </div>
+                    </div>
+                    <form id="profileForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Apellidos</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Teléfono</label>
+                                <input type="tel" id="phone" placeholder="+34 600 000 000">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="email" disabled>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                    </form>
+                </div>
+                
+                <div class="profile-card">
+                    <h3 style="margin-bottom: 15px;"><i class="fas fa-id-badge"></i> Mis Roles</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Puedes tener varios roles a la vez.</p>
+                    <button onclick="openRolesModal()" class="btn-primary"><i class="fas fa-plus"></i> Añadir / Cambiar Roles</button>
+                    <div id="profileRolesList" style="margin-top: 15px;"></div>
+                </div>
+            </section>
+
+            <!-- PREFERENCIAS -->
+            <section id="preferences-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px;">Mis Preferencias</h2>
+                <div class="profile-card">
+                    <form id="preferencesForm">
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label>Intereses</label>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" name="interests" value="naturaleza"> <i class="fas fa-tree"></i> Naturaleza</label>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" name="interests" value="cultura"> <i class="fas fa-landmark"></i> Cultura</label>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" name="interests" value="gastronomia"> <i class="fas fa-utensils"></i> Gastronomía</label>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" name="interests" value="aventura"> <i class="fas fa-hiking"></i> Aventura</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Presupuesto</label>
+                            <select id="prefBudget">
+                                <option value="">Seleccionar...</option>
+                                <option value="bajo">Económico (< 50€)</option>
+                                <option value="medio">Medio (50€ - 150€)</option>
+                                <option value="alto">Alto (> 150€)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Guardar Preferencias</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- FAVORITOS -->
+            <section id="favoritos-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px;">Mis Favoritos</h2>
+                <div class="empty-state">
+                    <i class="fas fa-heart-broken"></i>
+                    <h3>Tu lista de favoritos está vacía</h3>
+                    <p>Guarda los lugares que te enamoren.</p>
+                    <a href="/lugares-interes-paginacion.html" class="btn-primary">Descubrir Lugares</a>
+                </div>
+            </section>
+
+            <!-- MIS ALOJAMIENTOS -->
+            <section id="mis-alojamientos-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mis Alojamientos</h2>
+                    <a href="/agregar-alojamiento.html" class="btn-primary"><i class="fas fa-plus"></i> Añadir Nuevo</a>
+                </div>
+                <div id="mis-alojamientos-list">
+                    <div class="empty-state">
+                        <i class="fas fa-bed"></i>
+                        <h3>No tienes alojamientos registrados</h3>
+                        <p>Añade tu primer alojamiento rural.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIS ACTIVIDADES -->
+            <section id="mis-actividades-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mis Actividades</h2>
+                    <a href="/agregar-actividad.html" class="btn-primary"><i class="fas fa-plus"></i> Añadir Nueva</a>
+                </div>
+                <div id="mis-actividades-list">
+                    <div class="empty-state">
+                        <i class="fas fa-hiking"></i>
+                        <h3>No tienes actividades registradas</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIS LUGARES -->
+            <section id="mis-lugares-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mis Lugares de Interés</h2>
+                    <a href="/agregar-lugar-interes.html" class="btn-primary"><i class="fas fa-plus"></i> Añadir Nuevo</a>
+                </div>
+                <div id="mis-lugares-list">
+                    <div class="empty-state">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>No tienes lugares registrados</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIS EVENTOS -->
+            <section id="mis-eventos-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mis Eventos</h2>
+                    <a href="/agregar-evento.html" class="btn-primary"><i class="fas fa-plus"></i> Añadir Nuevo</a>
+                </div>
+                <div id="mis-eventos-list">
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>No tienes eventos registrados</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MENSAJES -->
+            <section id="mensajes-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px;">Mis Mensajes</h2>
+                <div class="empty-state">
+                    <i class="fas fa-comments"></i>
+                    <h3>No tienes conversaciones</h3>
+                    <p>Inicia una conversación desde las fichas de alojamientos o eventos.</p>
+                </div>
+            </section>
+
+            <!-- MEMBRESÍA -->
+            <section id="membresia-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px;">Mi Membresía</h2>
+                <div class="profile-card">
+                    <h3>Tu Plan Actual: <span id="currentPlan">Gratuito</span></h3>
+                    <p style="margin-top: 10px;">Accede a más funciones y mayor visibilidad con los planes Premium.</p>
+                    <a href="#membresia" class="btn-primary" style="margin-top: 15px;">Ver Planes Premium</a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>© 2026 rutasrurales.io. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Modal Roles -->
+    <div id="rolesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Selecciona tus Roles</h3>
+                <button onclick="closeRolesModal()">&times;</button>
+            </div>
+            <div id="rolesGrid"></div>
+            <button onclick="saveRoles()" class="btn-primary" style="margin-top: 20px; width: 100%;"><i class="fas fa-save"></i> Guardar Roles</button>
+        </div>
+    </div>
+
+    <script>
+    // Navegación
+    function showSection(id) {
+        document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id + '-section').classList.add('active');
+        document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+        document.querySelector('.sidebar-menu a[href="#' + id + '"]')?.classList.add('active');
+    }
+
+    // Cargar perfil
+    async function loadProfile() {
+        try {
+            const res = await fetch('api/get_profile.php');
+            const data = await res.json();
+            if (data.success) {
+                const u = data.data;
+                document.getElementById('userNameDisplay').textContent = u.first_name || 'Viajero';
+                document.getElementById('profileName').textContent = (u.first_name || '') + ' ' + (u.last_name || '');
+                document.getElementById('profileEmail').textContent = u.email || '';
+                document.getElementById('firstName').value = u.first_name || '';
+                document.getElementById('lastName').value = u.last_name || '';
+                document.getElementById('phone').value = u.phone || '';
+                document.getElementById('email').value = u.email || '';
+            }
+        } catch(e) { console.error(e); }
+        
+        // Cargar roles
+        loadRoles();
+    }
+
+    // Cargar roles
+    async function loadRoles() {
+        try {
+            const res = await fetch('api/roles.php?action=mis_roles');
+            const data = await res.json();
+            if (data.success && data.data.length > 0) {
+                const roles = data.data.map(r => r.nombre).join(', ');
+                document.getElementById('profileRole').textContent = roles;
+                document.getElementById('rolesBadges').innerHTML = data.data.map(r => '<span class="badge badge-active">' + r.nombre + '</span>').join(' ');
+                document.getElementById('profileRolesList').innerHTML = data.data.map(r => '<span class="badge badge-active" style="margin-right:5px;">' + r.nombre + '</span>').join('');
+                
+                // Actualizar menú
+                const slugs = data.data.map(r => r.slug);
+                document.getElementById('nav-preferences').style.display = slugs.includes('turista') ? 'block' : 'none';
+                document.getElementById('nav-mis-alojamientos').style.display = slugs.includes('alojamiento') ? 'block' : 'none';
+                document.getElementById('nav-mis-actividades').style.display = slugs.includes('actividad_cultural') ? 'block' : 'none';
+                document.getElementById('nav-mis-lugares').style.display = slugs.includes('guia_turistico') ? 'block' : 'none';
+                document.getElementById('nav-mis-eventos').style.display = slugs.includes('promotor_eventos') ? 'block' : 'none';
+                
+                // Cargar recursos
+                loadResources();
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    // Cargar recursos del usuario
+    async function loadResources() {
+        try {
+            const res = await fetch('api/get_user_resources.php');
+            const data = await res.json();
+            if (data.success) {
+                const r = data.data.resources;
+                if (r.accommodation?.length) renderAlojamientos(r.accommodation);
+                if (r.activity?.length) renderActividades(r.activity);
+                if (r.place?.length) renderLugares(r.place);
+                if (r.event?.length) renderEventos(r.event);
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    // Renderizar alojamientos
+    function renderAlojamientos(list) {
+        const container = document.getElementById('mis-alojamientos-list');
+        container.innerHTML = list.map(a => `
+            <div class="resource-card">
+                <img src="${a.data.photo || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 200%22><rect fill=%22%23eee%22 width=%22400%22 height=%22200%22/><text fill=%22%23aaa%22 x=%22200%22 y=%22100%22 text-anchor=%22middle%22 font-size=%2250%22>🏨</text></svg>'}" alt="${a.data.name}">
+                <div class="content">
+                    <span class="badge ${a.data.is_active == 1 ? 'badge-active' : 'badge-inactive'}">${a.data.is_active == 1 ? 'Activo' : 'Inactivo'}</span>
+                    <h4>${a.data.name}</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> ${a.data.municipality || ''}, ${a.data.province || ''}</p>
+                    <div class="stats">
+                        <span class="stat"><i class="fas fa-eye"></i> ${a.stats?.views || 0}</span>
+                        <span class="stat"><i class="fas fa-heart"></i> ${a.stats?.favorites || 0}</span>
+                        <span class="stat"><i class="fas fa-envelope"></i> ${a.stats?.messages || 0}</span>
+                    </div>
+                    <div class="actions">
+                        <a href="/detalle.html?slug=${a.data.slug}" target="_blank" class="btn-view"><i class="fas fa-eye"></i> Ver</a>
+                        <a href="/editar-alojamiento.php?id=${a.data.id}" target="_blank" class="btn-edit"><i class="fas fa-edit"></i> Editar</a>
+                        <a href="/gestion-fotos-alojamiento.html?slug=${a.data.slug}" target="_blank" class="btn-photos"><i class="fas fa-camera"></i> Fotos</a>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderActividades(list) {
+        document.getElementById('mis-actividades-list').innerHTML = list.map(a => `
+            <div class="resource-card">
+                <img src="${a.data.photo || ''}" alt="${a.data.name}">
+                <div class="content">
+                    <span class="badge ${a.data.is_active == 1 ? 'badge-active' : 'badge-inactive'}">${a.data.is_active == 1 ? 'Activo' : 'Inactivo'}</span>
+                    <h4>${a.data.name}</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> ${a.data.municipality || ''}, ${a.data.province || ''}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderLugares(list) {
+        document.getElementById('mis-lugares-list').innerHTML = list.map(l => `
+            <div class="resource-card">
+                <img src="${l.data.photo || ''}" alt="${l.data.name}">
+                <div class="content">
+                    <span class="badge ${l.data.is_active == 1 ? 'badge-active' : 'badge-inactive'}">${l.data.is_active == 1 ? 'Activo' : 'Inactivo'}</span>
+                    <h4>${l.data.name}</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> ${l.data.municipality || ''}, ${l.data.province || ''}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderEventos(list) {
+        document.getElementById('mis-eventos-list').innerHTML = list.map(e => `
+            <div class="resource-card">
+                <img src="${e.data.photo || ''}" alt="${e.data.name}">
+                <div class="content">
+                    <span class="badge ${e.data.is_active == 1 ? 'badge-active' : 'badge-inactive'}">${e.data.is_active == 1 ? 'Activo' : 'Inactivo'}</span>
+                    <h4>${e.data.name}</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> ${e.data.municipality || ''}, ${e.data.province || ''}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Modal Roles
+    async function openRolesModal() {
+        document.getElementById('rolesModal').classList.add('active');
+        try {
+            const res = await fetch('api/roles.php?action=list_roles');
+            const data = await res.json();
+            const res2 = await fetch('api/roles.php?action=mis_roles');
+            const myRoles = await res2.json();
+            const selected = myRoles.data?.map(r => r.slug) || [];
+            
+            document.getElementById('rolesGrid').innerHTML = data.data.map(r => `
+                <label class="role-option ${selected.includes(r.slug) ? 'selected' : ''}">
+                    <input type="checkbox" value="${r.slug}" ${selected.includes(r.slug) ? 'checked' : ''}>
+                    <span>${r.nombre}</span>
+                </label>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+    function closeRolesModal() {
+        document.getElementById('rolesModal').classList.remove('active');
+    }
+
+    async function saveRoles() {
+        const checks = document.querySelectorAll('#rolesGrid input:checked');
+        const roles = Array.from(checks).map(c => c.value);
+        if (roles.length === 0) return alert('Selecciona al menos un rol');
+        if (roles.length > 2) return alert('Máximo 2 roles en plan gratuito');
+        
+        try {
+            const res = await fetch('api/roles.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action: 'actualizar_mis_roles', roles})
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('¡Roles actualizados!');
+                closeRolesModal();
+                location.reload();
+            }
+        } catch(e) { alert('Error de conexión'); }
+    }
+
+    // Guardar perfil
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const res = await fetch('api/update_profile.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    phone: document.getElementById('phone').value
+                })
+            });
+            const data = await res.json();
+            alert(data.success ? '¡Perfil guardado!' : 'Error: ' + data.error);
+        } catch(e) { alert('Error de conexión'); }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (confirm('¿Cerrar sesión?')) {
+            await fetch('api/logout.php');
+            window.location.href = 'index.html';
+        }
+    });
+
+    // Iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash.substring(1) || 'inicio';
+        showSection(hash);
+        loadProfile();
+    });
+    </script>
+</body>
+</html>

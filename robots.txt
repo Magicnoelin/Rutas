@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Bloqueos de seguridad y páginas privadas
+Disallow: /checkout/
+Disallow: /shop/
+Disallow: /form/
+Disallow: /tag/
+Disallow: /places/alojamientos/tag/
+Disallow: /api/get_nearby_content.php
+Disallow: */feed/
+Disallow: */comments/feed/
+Disallow: /?elementor_library=*
+Disallow: /8017-2/
+Disallow: /alojamiento/8017
+Disallow: /detalle.html?slug=8017
+
+# La ruta a tu nuevo mapa del sitio
+Sitemap: https://www.rutasrurales.io/sitemap.xml

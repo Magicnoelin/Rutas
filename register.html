@@ -1,0 +1,650 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Regístrate en Rutas Rurales. Crea tu cuenta para acceder a todas las funcionalidades de la plataforma turística." />
+    <title>Registro de Usuario - Rutas</title>
+    <link rel="canonical" href="https://www.rutasrurales.io/register.html">
+    <link rel="icon" href="menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .register-section {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .register-header {
+            margin-bottom: 2rem;
+        }
+
+        .register-header i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .register-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .register-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        .register-form {
+            text-align: left;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="tel"],
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .password-strength.weak { color: #e74c3c; }
+        .password-strength.medium { color: #f39c12; }
+        .password-strength.strong { color: #27ae60; }
+
+        .terms-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .terms-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            margin-top: 0.2rem;
+        }
+
+        .terms-group label {
+            font-weight: normal;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .terms-link {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .terms-link:hover {
+            text-decoration: underline;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .register-footer {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .register-footer p {
+            color: #666;
+            margin: 0;
+        }
+
+        .login-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .alert-error { background-color: #fee; color: #c33; border: 1px solid #fcc; }
+        .alert-success { background-color: #efe; color: #363; border: 1px solid #cfc; }
+        .alert-info { background-color: #eff; color: #336; border: 1px solid #ccf; }
+
+        /* Social Login Styles */
+        .social-login-section { margin-top: 1.5rem; }
+        
+        .social-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .social-divider hr {
+            flex: 1;
+            border: none;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .social-divider span {
+            padding: 0 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .social-btn:hover {
+            border-color: #ccc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .social-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .social-icon { width: 20px; height: 20px; }
+        
+        .google-btn span { color: #444; font-weight: 500; }
+        
+        .facebook-btn span { color: white; }
+        .facebook-btn {
+            background: #1877F2;
+            border-color: #1877F2;
+        }
+        .facebook-btn:hover {
+            background: #166FE5;
+            border-color: #166FE5;
+        }
+
+        @media (max-width: 768px) {
+            .register-container { padding: 2rem; margin: 1rem; }
+            .register-header h1 { font-size: 1.5rem; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo">
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos</a></li>
+                    <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección de Registro -->
+    <section class="register-section">
+        <div class="container">
+            <div class="register-container">
+                <div class="register-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h1>Crear Cuenta</h1>
+                    <p>Únete a la comunidad de Rutas</p>
+                </div>
+
+                <div id="alertMessage" class="alert"></div>
+
+                <form id="registerForm" class="register-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName"><i class="fas fa-user"></i> Nombre</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Tu nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName"><i class="fas fa-user"></i> Apellidos</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Tus apellidos" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Correo electrónico</label>
+                        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone"><i class="fas fa-phone"></i> Teléfono (opcional)</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+34 600 000 000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
+                        <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required>
+                        <div id="passwordStrength" class="password-strength"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword"><i class="fas fa-lock"></i> Confirmar contraseña</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repite tu contraseña" required>
+                    </div>
+
+                    <div class="terms-group">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">
+                            Acepto los <a href="aviso-legal.html" class="terms-link" target="_blank">términos y condiciones</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="register-btn" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Crear Cuenta
+                    </button>
+                </form>
+
+                <!-- Social Login Section -->
+                <div class="social-login-section">
+                    <div class="social-divider">
+                        <hr><span>o regístrate con</span><hr>
+                    </div>
+                    
+                    <div class="social-buttons">
+                        <button type="button" class="social-btn google-btn" id="googleRegisterBtn">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="social-icon">
+                            <span>Registrarse con Google</span>
+                        </button>
+                        
+                        <button type="button" class="social-btn facebook-btn" id="facebookRegisterBtn">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" alt="Facebook" class="social-icon">
+                            <span>Registrarse con Facebook</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="register-footer">
+                    <p>¿Ya tienes cuenta? <a href="login.html" class="login-link">Inicia sesión aquí</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK v10+ (ES Modules) -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+        import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBY8hGasyQQgKJs3f24sBFElaLyzFj2bNc",
+            authDomain: "rutasruralesio.firebaseapp.com",
+            projectId: "rutasruralesio",
+            storageBucket: "rutasruralesio.firebasestorage.app",
+            messagingSenderId: "419342447102",
+            appId: "1:419342447102:web:b6ad33ec6750eadabc90af"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Función para mostrar alertas
+        window.showAlert = function(message, type) {
+            type = type || 'error';
+            var alertDiv = document.getElementById('alertMessage');
+            alertDiv.textContent = message;
+            alertDiv.className = 'alert alert-' + type;
+            alertDiv.style.display = 'block';
+            if (type !== 'success') {
+                setTimeout(function() {
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            }
+        };
+
+        // Validar fortaleza de contraseña
+        function checkPasswordStrength(password) {
+            var strengthDiv = document.getElementById('passwordStrength');
+            if (password.length === 0) {
+                strengthDiv.style.display = 'none';
+                return;
+            }
+            strengthDiv.style.display = 'block';
+            var score = 0;
+            if (password.length >= 8) score++;
+            if (/[a-z]/.test(password)) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+
+            if (score < 3) {
+                strengthDiv.textContent = 'Contraseña débil';
+                strengthDiv.className = 'password-strength weak';
+            } else if (score < 4) {
+                strengthDiv.textContent = 'Contraseña media';
+                strengthDiv.className = 'password-strength medium';
+            } else {
+                strengthDiv.textContent = 'Contraseña fuerte';
+                strengthDiv.className = 'password-strength strong';
+            }
+        }
+
+        // Validar email
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Registro con Google
+        window.handleGoogleRegister = function() {
+            var btn = document.getElementById('googleRegisterBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
+
+            var provider = new GoogleAuthProvider();
+            
+            signInWithPopup(auth, provider)
+                .then(function(result) { return result.user.getIdToken(); })
+                .then(function(idToken) {
+                    return fetch('api/social_login.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ provider: 'google', idToken: idToken })
+                    });
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        showAlert('¡Bienvenido! Redirigiendo...', 'success');
+                        setTimeout(function() {
+                            window.location.href = data.data.redirect || 'user-dashboard.html';
+                        }, 1000);
+                    } else {
+                        showAlert(data.error || 'Error al registrarse con Google', 'error');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Google register error:', error);
+                    showAlert('Error al registrarse con Google: ' + error.message, 'error');
+                })
+                .finally(function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="social-icon"><span>Registrarse con Google</span>';
+                });
+        }
+
+        // Registro con Facebook
+        window.handleFacebookRegister = function() {
+            var btn = document.getElementById('facebookRegisterBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
+
+            var provider = new FacebookAuthProvider();
+            
+            signInWithPopup(auth, provider)
+                .then(function(result) { return result.user.getIdToken(); })
+                .then(function(idToken) {
+                    return fetch('api/social_login.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ provider: 'facebook', idToken: idToken })
+                    });
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        showAlert('¡Bienvenido! Redirigiendo...', 'success');
+                        setTimeout(function() {
+                            window.location.href = data.data.redirect || 'user-dashboard.html';
+                        }, 1000);
+                    } else {
+                        showAlert(data.error || 'Error al registrarse con Facebook', 'error');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Facebook register error:', error);
+                    showAlert('Error al registrarse con Facebook: ' + error.message, 'error');
+                })
+                .finally(function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" alt="Facebook" class="social-icon"><span>Registrarse con Facebook</span>';
+                });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            var googleBtn = document.getElementById('googleRegisterBtn');
+            var facebookBtn = document.getElementById('facebookRegisterBtn');
+            
+            if (googleBtn) googleBtn.addEventListener('click', window.handleGoogleRegister);
+            if (facebookBtn) facebookBtn.addEventListener('click', window.handleFacebookRegister);
+
+            // Validación de contraseña
+            var passwordInput = document.getElementById('password');
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function(e) {
+                    checkPasswordStrength(e.target.value);
+                });
+            }
+
+            // Validación de confirmación
+            var confirmInput = document.getElementById('confirmPassword');
+            if (confirmInput) {
+                confirmInput.addEventListener('input', function(e) {
+                    var password = document.getElementById('password').value;
+                    if (e.target.value && password !== e.target.value) {
+                        e.target.style.borderColor = '#e74c3c';
+                    } else if (e.target.value && password === e.target.value) {
+                        e.target.style.borderColor = '#27ae60';
+                    } else {
+                        e.target.style.borderColor = '#e0e0e0';
+                    }
+                });
+            }
+
+            // Formulario de registro
+            var registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    var firstName = document.getElementById('firstName').value.trim();
+                    var lastName = document.getElementById('lastName').value.trim();
+                    var email = document.getElementById('email').value.trim();
+                    var phone = document.getElementById('phone').value.trim();
+                    var password = document.getElementById('password').value;
+                    var confirmPassword = document.getElementById('confirmPassword').value;
+                    var termsAccepted = document.getElementById('terms').checked;
+
+                    if (!firstName || !lastName) {
+                        showAlert('Por favor, completa tu nombre y apellidos.');
+                        return;
+                    }
+
+                    if (!isValidEmail(email)) {
+                        showAlert('Por favor, introduce un correo electrónico válido.');
+                        return;
+                    }
+
+                    if (password.length < 8) {
+                        showAlert('La contraseña debe tener al menos 8 caracteres.');
+                        return;
+                    }
+
+                    if (password !== confirmPassword) {
+                        showAlert('Las contraseñas no coinciden.');
+                        return;
+                    }
+
+                    if (!termsAccepted) {
+                        showAlert('Debes aceptar los términos y condiciones.');
+                        return;
+                    }
+
+                    var registerBtn = document.getElementById('registerBtn');
+                    registerBtn.disabled = true;
+                    registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+
+                    fetch('api/register.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            phone: phone,
+                            password: password,
+                            confirmPassword: confirmPassword,
+                            terms: termsAccepted
+                        })
+                    })
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        if (data.success) {
+                            showAlert(data.message || '¡Cuenta creada exitosamente!', 'success');
+                            setTimeout(function() {
+                                window.location.href = data.redirect_to || 'preferences.html';
+                            }, 3000);
+                        } else {
+                            showAlert(data.error || 'Error al crear la cuenta', 'error');
+                            registerBtn.disabled = false;
+                            registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+                        showAlert('Error de conexión. Inténtalo de nuevo.', 'error');
+                        registerBtn.disabled = false;
+                        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
+                    });
+                });
+            }
+        });
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>

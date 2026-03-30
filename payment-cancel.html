@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Cancelado - RutasRurales.io</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .cancel-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .cancel-icon {
+            font-size: 80px;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+        .cancel-title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .cancel-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn-retry {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #246634;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .btn-retry:hover {
+            background: #1a4d26;
+        }
+        .btn-secondary {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .info-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .info-box h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        .info-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .info-box li {
+            margin: 8px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="cancel-container">
+        <div class="cancel-icon">⚠</div>
+        <h1 class="cancel-title">Pago Cancelado</h1>
+        <p class="cancel-message">
+            Has cancelado el proceso de pago. No se ha realizado ningún cargo a tu tarjeta.
+        </p>
+
+        <div class="info-box">
+            <h3>¿Por qué cancelaste?</h3>
+            <ul>
+                <li>Si tuviste algún problema técnico, puedes intentarlo de nuevo</li>
+                <li>Si necesitas más información sobre los planes, visita nuestra página de precios</li>
+                <li>Si tienes dudas, contacta con nuestro soporte</li>
+            </ul>
+        </div>
+
+        <div>
+            <a href="preferences.html" class="btn-retry">Intentar de Nuevo</a>
+            <a href="user-dashboard.html" class="btn-secondary">Volver al Dashboard</a>
+        </div>
+
+        <p style="margin-top: 30px; color: #999; font-size: 14px;">
+            ¿Necesitas ayuda? Contacta con nosotros en 
+            <a href="mailto:olgamarin@rutasrurales.io">olgamarin@rutasrurales.io</a>
+        </p>
+    </div>
+
+    <script>
+        // Guardar en localStorage que el pago fue cancelado
+        localStorage.setItem('payment_cancelled', 'true');
+        localStorage.setItem('payment_cancel_timestamp', new Date().toISOString());
+    </script>
+</body>
+</html>

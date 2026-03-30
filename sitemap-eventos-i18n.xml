@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SITEMAP: Eventos Culturales - Versiones Internacionales
+  Contiene SOLO las URLs de idiomas distintos al español (de, en, fr, zh).
+  Las URLs en español están en sitemap-eventos.xml
+
+  Formato de URL: /[lang]/evento/[slug-traducido]
+  Ejemplo: /de/evento/volksfest-san-pedro-zamora-2026
+
+  GENERADO AUTOMÁTICAMENTE - NO EDITAR MANUALMENTE
+  Última regeneración: 2026-03-26 09:54:48
+  Total traducciones: 28
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- ============================================================
+       ALEMÁN (de) - 7 eventos traducidos
+       ============================================================ -->
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/keramikmarkt-folklore-festival-benavente-spanien</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-ceramica-festival-folklore-benavente-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/keramikmarkt-folklore-festival-benavente-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/la-veguilla-fest-benavente-spanien-volksfest</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-la-veguilla-benavente-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/la-veguilla-fest-benavente-spanien-volksfest"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/mittelaltermarkt-villalpando-kastilien-spanien</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-villalpando-2026-fechas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/mittelaltermarkt-villalpando-kastilien-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/prozession-schweigen-miserere-zamora-2026</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-silencio-miserere-zamora-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/prozession-schweigen-miserere-zamora-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/san-juan-fest-soria-spanien-stierlauf-tradition</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/san-juan-fest-soria-spanien-stierlauf-tradition"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/toro-enmaromado-benavente-spanien-volksfest</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toro-enmaromado-benavente-2026-fechas-recorrido"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/toro-enmaromado-benavente-spanien-volksfest"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/zaragoza-florece-2026-termine-offiziell</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/zaragoza-florece-2026-fechas-oficiales"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/zaragoza-florece-2026-termine-offiziell"/>
+  </url>
+
+  <!-- ============================================================
+       INGLÉS (en) - 6 eventos traducidos
+       ============================================================ -->
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/la-veguilla-festival-benavente-spain-dates-program</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-la-veguilla-benavente-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/la-veguilla-festival-benavente-spain-dates-program"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/medieval-market-villalpando-spain-tourism</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-villalpando-2026-fechas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/medieval-market-villalpando-spain-tourism"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/pottery-fair-folklore-festival-benavente-spain</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-ceramica-festival-folklore-benavente-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/pottery-fair-folklore-festival-benavente-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/san-juan-festival-soria-spain-2026-bull-run</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/san-juan-festival-soria-spain-2026-bull-run"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/san-pedro-festival-zamora-2026</loc>
+    <lastmod>2026-03-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-pedro-zamora-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/san-pedro-festival-zamora-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/toro-enmaromado-bull-on-rope-benavente-spain</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toro-enmaromado-benavente-2026-fechas-recorrido"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/toro-enmaromado-bull-on-rope-benavente-spain"/>
+  </url>
+
+  <!-- ============================================================
+       FRANCÉS (fr) - 14 eventos traducidos
+       ============================================================ -->
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/descente-ange-penafiel-2026</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/bajada-del-angel-penafiel-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/descente-ange-penafiel-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fete-lundi-des-eaux-salamanque-espagne-2026</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/lunes-de-aguas-salamanca-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fete-lundi-des-eaux-salamanque-espagne-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fete-toro-enmaromado-benavente-espagne-tradition</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toro-enmaromado-benavente-2026-fechas-recorrido"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fete-toro-enmaromado-benavente-espagne-tradition"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fetes-san-juan-soria-espagne-programme-la-saca</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fetes-san-juan-soria-espagne-programme-la-saca"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fetes-san-pedro-zamora-2026</loc>
+    <lastmod>2026-03-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-pedro-zamora-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fetes-san-pedro-zamora-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fetes-veguilla-benavente-zamora-tradition-espagne</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-la-veguilla-benavente-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fetes-veguilla-benavente-zamora-tradition-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/foire-ceramique-festival-folklore-benavente-espagne</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-ceramica-festival-folklore-benavente-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/foire-ceramique-festival-folklore-benavente-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/marche-medieval-villalpando-zamora-espagne</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-villalpando-2026-fechas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/marche-medieval-villalpando-zamora-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/procession-pas-rencontre-leon-2026</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-pasos-encuentro-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/procession-pas-rencontre-leon-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/procession-silence-miserere-zamora-2026</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-silencio-miserere-zamora-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/procession-silence-miserere-zamora-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/procession-vendredi-saint-valladolid-espagne-2026</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-general-viernes-santo-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/procession-vendredi-saint-valladolid-espagne-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/programme-procession-manteaux-bruns-zamora-2026</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-capas-pardas-zamora-2026-horario"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/programme-procession-manteaux-bruns-zamora-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/semaine-sainte-leon-limonade-2026</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-leon-2026-limonada-matar-judios"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/semaine-sainte-leon-limonade-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/semaine-sainte-salamanque-descente-croix-2026</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-salamanca-descendimiento-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/semaine-sainte-salamanque-descente-croix-2026"/>
+  </url>
+
+  <!-- ============================================================
+       CHINO (zh) - 1 eventos traducidos
+       ============================================================ -->
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/san-pedro-festival-zamora-2026-zh</loc>
+    <lastmod>2026-03-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-pedro-zamora-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/san-pedro-festival-zamora-2026-zh"/>
+  </url>
+
+</urlset>

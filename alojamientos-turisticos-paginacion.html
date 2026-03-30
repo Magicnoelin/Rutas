@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>>Reserva tu Escapada Rural: Alojamientos con Encanto | Rutas</title>
+    <meta name="description" content="Encuentra los mejores alojamientos turísticos y casas rurales. Reserva estancias únicas rodeadas de naturaleza y disfruta de una escapada inolvidable.">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .filters {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-group label {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .filter-group select,
+        .filter-group input {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: var(--primary-color);
+        }
+        .stats {
+            text-align: center;
+            margin: 2rem 0;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo_990x1076_verde.png" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">                  
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="index.html#alojamientos">Alojamientos Turísticos <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="alojamientos.html">Ver Alojamientos Rurales</a></li>
+                            <li><a href="alojamientos-turisticos.html">Ver Alojamientos Turísticos</a></li>
+                            <li><a href="alojamientos.html?categoria=casas-rurales">Casas Rurales y Turismo Rural</a></li>
+                            <li><a href="alojamientos.html?categoria=apartamentos-urbanos">Apartamentos Turísticos Urbanos</a></li>
+                            <li><a href="alojamientos.html?categoria=viviendas-turisticas">Viviendas de Uso Turístico</a></li>
+                            <li><a href="agregar-alojamiento.html">Añadir Alojamiento</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="rutas.html">Rutas</a></li>
+                    <li><a href="index.html#actividades">Actividades Turísticas</a></li>
+                    <li><a href="index.html#lugares">Lugares de Interés</a></li>
+                    <li><a href="compromiso-social.html">Nuestro Compromiso Social</a></li>
+                    <li><a href="index.html#asistente" class="btn-asistente">Asistente IA</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección de Alojamientos Turísticos -->
+    <section class="section" style="margin-top: 100px;">
+        <div class="container">
+            <h1 class="section-title">
+                <i class="fas fa-hotel"></i> Alojamientos Turísticos
+            </h1>
+
+            <!-- Botón para agregar alojamiento -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <a href="agregar-alojamiento.html" class="btn-primary" style="text-decoration: none;">
+                    <i class="fas fa-plus-circle"></i> Agregar Nuevo Alojamiento
+                </a>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="filterProvincia">
+                        <i class="fas fa-map"></i> Provincia:
+                    </label>
+                    <select id="filterProvincia">
+                        <option value="" selected>Todas las provincias</option>
+                        <option value="Soria">Soria</option>
+                        <option value="Burgos">Burgos</option>
+                        <option value="Segovia">Segovia</option>
+                        <option value="Ávila">Ávila</option>
+                        <option value="Valladolid">Valladolid</option>
+                        <option value="Palencia">Palencia</option>
+                        <option value="León">León</option>
+                        <option value="Zamora">Zamora</option>
+                        <option value="Salamanca">Salamanca</option>
+                    </select>
+
+                    <label for="filterLocalidad">
+                        <i class="fas fa-map-marker-alt"></i> Localidad:
+                    </label>
+                    <select id="filterLocalidad">
+                        <option value="">Todas</option>
+                    </select>
+
+                    <label for="filterTipo">
+                        <i class="fas fa-building"></i> Tipo:
+                    </label>
+                    <select id="filterTipo">
+                        <option value="">Todos</option>
+                        <option value="Casa">Casa</option>
+                        <option value="Piso">Piso</option>
+                        <option value="Chalé">Chalé</option>
+                        <option value="Hotel">Hotel</option>
+                        <option value="Apartamento">Apartamento</option>
+                    </select>
+
+                    <label for="filterPlazas">
+                        <i class="fas fa-users"></i> Plazas mínimas:
+                    </label>
+                    <input type="number" id="filterPlazas" min="1" max="20" value="1">
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="stats">
+                <span id="statsText"></span>
+            </div>
+
+            <!-- Paginación -->
+            <div id="pagination" class="pagination" style="display: none; text-align: center; margin: 2rem 0;">
+                <button id="prevPage" class="btn-secondary" style="margin-right: 1rem;">← Anterior</button>
+                <span id="pageInfo">Página 1 de 1</span>
+                <button id="nextPage" class="btn-secondary" style="margin-left: 1rem;">Siguiente →</button>
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Cargando alojamientos turísticos...
+            </div>
+
+            <!-- Grid de Alojamientos Turísticos -->
+            <div id="alojamientosGrid" class="grid" style="display: none;">
+                <!-- Los alojamientos turísticos se cargarán aquí dinámicamente -->
+            </div>
+
+            <!-- Sin resultados -->
+            <div id="noResults" style="display: none; text-align: center; padding: 3rem;">
+                <i class="fas fa-search" style="font-size: 3rem; color: var(--secondary-color);"></i>
+                <h3 style="color: var(--primary-color); margin-top: 1rem;">No se encontraron alojamientos turísticos</h3>
+                <p>Intenta cambiar los filtros de búsqueda</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+
+
+
+    <script>
+        let todosLosAlojamientos = [];
+        let alojamientosFiltrados = [];
+        let categoriaActual = '';
+        let isAdmin = false;
+        let currentPage = 1;
+        let totalPages = 1;
+        let totalRecords = 0;
+        let perPage = 20;
+
+        // Cargar alojamientos turísticos al iniciar
+        window.addEventListener('DOMContentLoaded', function() {
+            try {
+                cargarAlojamientos();
+            } catch (error) {
+                console.error('Error al inicializar la página:', error);
+                document.getElementById('loading').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error al cargar la página. Por favor, recarga.';
+            }
+        });
+
+        async function cargarAlojamientos(page = 1) {
+            try {
+                currentPage = page;
+
+                // Construir URL con parámetros de paginación y filtros
+                let url = `api/alojamientos.php?table=accommodations&page=${page}&limit=${perPage}`;
+
+                // Agregar filtros si existen
+                const provincia = document.getElementById('filterProvincia').value;
+                const localidad = document.getElementById('filterLocalidad').value;
+                const tipo = document.getElementById('filterTipo').value;
+
+                if (provincia && provincia !== '') {
+                    url += `&provincia=${encodeURIComponent(provincia)}`;
+                }
+                if (localidad && localidad !== '') {
+                    url += `&localidad=${encodeURIComponent(localidad)}`;
+                }
+                if (tipo && tipo !== '') {
+                    url += `&tipo=${encodeURIComponent(tipo)}`;
+                }
+
+                console.log('Cargando página:', page, 'URL:', url);
+
+                // Intentar usar la API de PHP primero (base de datos)
+                let response;
+                let data;
+
+                try {
+                    console.log('Intentando cargar desde API...');
+                    response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        mode: 'cors'
+                    });
+                    console.log('Respuesta HTTP:', response.status);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    data = await response.json();
+                    console.log('Datos recibidos:', data);
+
+                    if (data.success && data.data && data.data.alojamientos) {
+                        alojamientosFiltrados = data.data.alojamientos;
+                        totalRecords = data.data.pagination.total_records;
+                        totalPages = data.data.pagination.total_pages;
+
+                        console.log(`✅ Página ${page}: ${alojamientosFiltrados.length} alojamientos (${totalRecords} total, ${totalPages} páginas)`);
+
+                        // Si es la primera carga, llenar filtros
+                        if (page === 1) {
+                            // Verificar parámetros de URL para categoría
+                            const urlParams = new URLSearchParams(window.location.search);
+                            categoriaActual = urlParams.get('categoria');
+
+                            // Aplicar filtro de categoría si existe
+                            if (categoriaActual) {
+                                aplicarFiltroCategoria();
+                                actualizarTituloCategoria();
+                            }
+
+                            // Llenar filtros de localidades y provincias (usando datos locales para filtros)
+                            await cargarDatosParaFiltros();
+                        }
+                    } else {
+                        console.log('Estructura de respuesta:', data);
+                        throw new Error('API returned empty or invalid data');
+                    }
+                } catch (apiError) {
+                    console.warn('❌ API no disponible:', apiError.message);
+
+                    // Fallback: solo para primera página
+                    if (page === 1) {
+                        console.log('Cambiando a datos locales...');
+                        response = await fetch('accommodations.json');
+                        const datosLocales = await response.json();
+
+                        // Aplicar filtros básicos localmente
+                        alojamientosFiltrados = filtrarDatosLocalmente(datosLocales);
+                        totalRecords = alojamientosFiltrados.length;
+                        totalPages = Math.ceil(totalRecords / perPage);
+
+                        // Tomar solo la página actual
+                        const startIndex = (page - 1) * perPage;
+                        alojamientosFiltrados = alojamientosFiltrados.slice(startIndex, startIndex + perPage);
+
+                        console.log('✅ Cargados datos locales - Página:', page, 'de', totalPages);
+
+                        // Llenar filtros con datos locales
+                        todosLosAlojamientos = datosLocales;
+                        await cargarDatosParaFiltros();
+                    } else {
+                        alojamientosFiltrados = [];
+                    }
+                }
+
+                // Mostrar alojamientos y actualizar controles
+                mostrarAlojamientos();
+                actualizarControlesPaginacion();
+
+                // Ocultar loading en primera carga
+                if (page === 1) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('alojamientosGrid').style.display = 'grid';
+                }
+
+            } catch (error) {
+                console.error('Error al cargar alojamientos turísticos:', error);
+                document.getElementById('loading').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error al cargar los alojamientos turísticos';
+            }
+        }
+
+        async function cargarDatosParaFiltros() {
+            try {
+                // Cargar TODOS los datos sin filtros para obtener todas las provincias
+                const response = await fetch('api/alojamientos.php?table=accommodations&page=1&limit=2000');
+                const data = await response.json();
+
+                if (data.success && data.data && data.data.alojamientos) {
+                    todosLosAlojamientos = data.data.alojamientos;
+                    console.log('✅ Datos completos para filtros:', todosLosAlojamientos.length, 'registros');
+
+                    // Extraer todas las provincias únicas
+                    const todasLasProvincias = [...new Set(todosLosAlojamientos.map(a => a.Provincia || a.provincia || a.province || a.Province))].filter(p => p && p.trim() !== '').sort();
+                    console.log('📍 Provincias encontradas:', todasLasProvincias);
+
+                } else {
+                    // Fallback a datos locales
+                    const responseLocal = await fetch('accommodations.json');
+                    todosLosAlojamientos = await responseLocal.json();
+                    console.log('✅ Datos locales para filtros:', todosLosAlojamientos.length, 'registros');
+                }
+
+                llenarFiltroLocalidades();
+                llenarFiltroProvincias();
+            } catch (error) {
+                console.error('Error cargando datos para filtros:', error);
+                // Fallback básico
+                llenarFiltroLocalidades();
+                llenarFiltroProvincias();
+            }
+        }
+
+        function actualizarControlesPaginacion() {
+            const paginationDiv = document.getElementById('pagination');
+            const pageInfo = document.getElementById('pageInfo');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+
+            console.log('Actualizando paginación:', { currentPage, totalPages, totalRecords });
+
+            if (totalPages <= 1) {
+                paginationDiv.style.display = 'none';
+                return;
+            }
+
+            paginationDiv.style.display = 'block';
+
+            // Asegurarse de que currentPage y totalPages sean números
+            const current = parseInt(currentPage) || 1;
+            const total = parseInt(totalPages) || 1;
+
+            pageInfo.textContent = `Página ${current} de ${total}`;
+
+            // Habilitar/deshabilitar botones
+            prevBtn.disabled = current <= 1;
+            nextBtn.disabled = current >= total;
+
+            prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
+            nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
+        }
+
+        function cambiarPagina(direccion) {
+            const nuevaPagina = currentPage + direccion;
+            if (nuevaPagina >= 1 && nuevaPagina <= totalPages) {
+                cargarAlojamientos(nuevaPagina);
+            }
+        }
+
+        // Agregar event listeners para filtros automáticos
+        function inicializarFiltrosAutomaticos() {
+            // Filtros de select (reinician paginación)
+            document.getElementById('filterProvincia').addEventListener('change', function() {
+                cargarAlojamientos(1); // Reiniciar a página 1
+            });
+            document.getElementById('filterLocalidad').addEventListener('change', function() {
+                cargarAlojamientos(1); // Reiniciar a página 1
+            });
+            document.getElementById('filterTipo').addEventListener('change', function() {
+                cargarAlojamientos(1); // Reiniciar a página 1
+            });
+
+            // Filtro de plazas (con debounce)
+            let plazasTimeout;
+            document.getElementById('filterPlazas').addEventListener('input', function() {
+                clearTimeout(plazasTimeout);
+                plazasTimeout = setTimeout(() => cargarAlojamientos(1), 500);
+            });
+
+            // Controles de paginación
+            document.getElementById('prevPage').addEventListener('click', function(e) {
+                e.preventDefault();
+                cambiarPagina(-1);
+            });
+            document.getElementById('nextPage').addEventListener('click', function(e) {
+                e.preventDefault();
+                cambiarPagina(1);
+            });
+        }
+
+        // Agregar botón admin cuando se cargue la página
+        window.addEventListener('load', function() {
+            agregarBotonAdmin();
+            inicializarFiltrosAutomaticos();
+        });
+
+        function filtrarDatosLocalmente(datos) {
+            const provincia = document.getElementById('filterProvincia').value;
+            const localidad = document.getElementById('filterLocalidad').value;
+            const tipo = document.getElementById('filterTipo').value;
+            const plazasMin = parseInt(document.getElementById('filterPlazas').value) || 1;
+
+            return datos.filter(alojamiento => {
+                const alojProvincia = alojamiento.Provincia || alojamiento.provincia || alojamiento.province || alojamiento.Province;
+                const alojLocalidad = alojamiento.Localidad || alojamiento.localidad || alojamiento.municipality || alojamiento.Municipality;
+                const alojTipo = alojamiento.accommodation_type || alojamiento.Tipo || alojamiento.type;
+                const alojPlazas = alojamiento.capacity || alojamiento.Plazas || alojamiento.plazas;
+
+                if (!alojProvincia || alojProvincia.trim() === '') {
+                    return false;
+                }
+
+                const cumpleProvincia = !provincia || alojProvincia === provincia;
+                const cumpleLocalidad = !localidad || alojLocalidad === localidad;
+                const cumpleTipo = !tipo || alojTipo === tipo;
+                const cumplePlazas = alojPlazas >= plazasMin;
+
+                return cumpleProvincia && cumpleLocalidad && cumpleTipo && cumplePlazas;
+            });
+
+            mostrarAlojamientos();
+        }
+
+        function mostrarAlojamientos() {
+            const grid = document.getElementById('alojamientosGrid');
+            const noResults = document.getElementById('noResults');
+
+            grid.innerHTML = '';
+
+            if (alojamientosFiltrados.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                actualizarEstadisticas();
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+
+            alojamientosFiltrados.forEach(alojamiento => {
+                const card = crearTarjetaAlojamiento(alojamiento);
+                grid.appendChild(card);
+            });
+
+            actualizarEstadisticas();
+        }
+
+        function crearTarjetaAlojamiento(alojamiento) {
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            // Recopilar todas las fotos disponibles
+            let fotos = [];
+
+            // Priorizar Fotos array (de accommodations API)
+            if (alojamiento.Fotos && Array.isArray(alojamiento.Fotos) && alojamiento.Fotos.length > 0) {
+                fotos = alojamiento.Fotos;
+            } else if (alojamiento.fotos && Array.isArray(alojamiento.fotos) && alojamiento.fotos.length > 0) {
+                fotos = alojamiento.fotos;
+            } else {
+                // Intentar fotos individuales
+                const foto1 = alojamiento.Foto1 || alojamiento.photo1;
+                const foto2 = alojamiento.Foto2 || alojamiento.photo2;
+                const foto3 = alojamiento.Foto3 || alojamiento.photo3;
+                const foto4 = alojamiento.Foto4 || alojamiento.photo4;
+
+                if (foto1) fotos.push(foto1);
+                if (foto2) fotos.push(foto2);
+                if (foto3) fotos.push(foto3);
+                if (foto4) fotos.push(foto4);
+            }
+
+            // Si no hay fotos, usar imagen por defecto
+            if (fotos.length === 0) {
+                fotos = ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'];
+            }
+
+            // Crear carrusel de fotos
+            const carouselId = `carousel-${alojamiento.id || alojamiento.ID || Math.random().toString(36).substr(2, 9)}`;
+            let carouselHTML = `
+                <div class="photo-carousel" id="${carouselId}" style="position: relative; height: 250px; overflow: hidden; border-radius: 15px 15px 0 0;">
+                    <div class="carousel-slides" style="display: flex; height: 100%; transition: transform 0.3s ease;">
+            `;
+
+            fotos.forEach((foto, index) => {
+                carouselHTML += `
+                    <img src="${foto}" alt="Foto ${index + 1}" style="width: 100%; height: 100%; object-fit: cover; flex-shrink: 0;"
+                         onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'">
+                `;
+            });
+
+            carouselHTML += `
+                    </div>
+            `;
+
+            // Agregar controles de navegación si hay más de 1 foto
+            if (fotos.length > 1) {
+                carouselHTML += `
+                    <button class="carousel-prev" onclick="cambiarFoto('${carouselId}', -1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-next" onclick="cambiarFoto('${carouselId}', 1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="carousel-indicators" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px;">
+                `;
+
+                fotos.forEach((_, index) => {
+                    carouselHTML += `
+                        <span class="indicator ${index === 0 ? 'active' : ''}" onclick="irAFoto('${carouselId}', ${index})" style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.3s;"></span>
+                    `;
+                });
+
+                carouselHTML += `
+                    </div>
+                `;
+            }
+
+            carouselHTML += `
+                </div>
+            `;
+
+            // Características - manejar diferentes formatos
+            const caracteristicas = alojamiento.caracteristicas || alojamiento.Caracteristicas || [];
+            const caracteristicasHTML = Array.isArray(caracteristicas) && caracteristicas.length > 0
+                ? caracteristicas.slice(0, 3).map(c => `<span><i class="fas fa-check"></i> ${c}</span>`).join('')
+                : '';
+
+            // Precio - manejar diferentes formatos
+            const precio = alojamiento.precio || alojamiento.Precio;
+            const precioHTML = precio
+                ? `<p class="price">Desde ${precio}€/noche</p>`
+                : `<p class="price">Consultar precio</p>`;
+
+            // Botones de contacto - manejar diferentes formatos
+            let botonesHTML = '';
+            const web = alojamiento.web || alojamiento.Web;
+            const telefono = alojamiento.telefono || alojamiento.Telefono1 || alojamiento.Telefono;
+            const email = alojamiento.email || alojamiento.Email;
+
+            // Generar slug para URL amigable
+            const slug = alojamiento.slug || generarSlug(alojamiento.nombre || alojamiento.Nombre || alojamiento.name);
+
+            // Botón Ver Detalle (siempre visible)
+            botonesHTML += `<a href="/alojamiento/${slug}" class="btn-primary" style="margin-right: 0.5rem;"><i class="fas fa-eye"></i> Ver Detalle</a>`;
+
+            if (web) {
+                botonesHTML += `<a href="${web}" target="_blank" class="btn-secondary" style="margin-right: 0.5rem;"><i class="fas fa-globe"></i> Web</a>`;
+            }
+            if (telefono) {
+                botonesHTML += `<a href="tel:${telefono}" class="btn-secondary"><i class="fas fa-phone"></i> Llamar</a>`;
+            }
+            if (email) {
+                botonesHTML += `<a href="mailto:${email}" class="btn-secondary" style="margin-top: 0.5rem;"><i class="fas fa-envelope"></i> Email</a>`;
+            }
+
+            // Nombre y ubicación - manejar diferentes formatos
+            const nombre = alojamiento.nombre || alojamiento.Nombre;
+            const localidad = alojamiento.localidad || alojamiento.Localidad;
+            const provincia = alojamiento.provincia || alojamiento.Provincia || 'Soria';
+            const descripcion = alojamiento.descripcion || alojamiento.Notaspublicas || `Alojamiento turístico en ${localidad}`;
+            const plazas = alojamiento.plazas || alojamiento.Plazas;
+            const tipo = alojamiento.tipo || alojamiento.Tipo;
+
+            card.innerHTML = `
+                ${carouselHTML}
+                <div class="card-content">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <h3>${nombre}</h3>
+                        <button class="btn-edit" onclick="editarAlojamiento(${alojamiento.id || alojamiento.ID})" style="display: ${isAdmin ? 'block' : 'none'}; background: none; border: none; color: var(--primary-color); cursor: pointer; padding: 0.5rem;" title="Editar alojamiento">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> ${localidad}, ${provincia}</p>
+                    <p>${descripcion}</p>
+                    <div class="card-features">
+                        <span><i class="fas fa-users"></i> ${plazas} plazas</span>
+                        <span><i class="fas fa-home"></i> ${tipo}</span>
+                        ${caracteristicasHTML}
+                    </div>
+                    ${precioHTML}
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+                        ${botonesHTML}
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function aplicarFiltroCategoria() {
+            if (!categoriaActual) return;
+
+            alojamientosFiltrados = todosLosAlojamientos.filter(alojamiento => {
+                switch (categoriaActual) {
+                    case 'casas-rurales':
+                        // Casas rurales y turismo rural: alojamientos tradicionales en entorno rural
+                        return alojamiento.caracteristicas &&
+                               (alojamiento.caracteristicas.includes('Naturaleza') ||
+                                alojamiento.caracteristicas.includes('Tranquilo') ||
+                                alojamiento.caracteristicas.includes('Senderismo') ||
+                                alojamiento.localidad.toLowerCase().includes('rural') ||
+                                alojamiento.tipo === 'Casa');
+                    case 'apartamentos-urbanos':
+                        // Apartamentos turísticos urbanos: viviendas de alquiler en ciudades patrimonio
+                        return alojamiento.tipo === 'Piso' || alojamiento.tipo === 'Apartamento';
+                    case 'viviendas-turisticas':
+                        // Viviendas de uso turístico: propiedades residenciales completas
+                        return alojamiento.tipo === 'Casa' || alojamiento.tipo === 'Chalé' ||
+                               alojamiento.tipo === 'Piso' || alojamiento.tipo === 'Apartamento';
+                    default:
+                        return true;
+                }
+            });
+        }
+
+        function actualizarTituloCategoria() {
+            const tituloElement = document.querySelector('.section-title');
+            const iconElement = tituloElement.querySelector('i');
+
+            switch (categoriaActual) {
+                case 'casas-rurales':
+                    tituloElement.innerHTML = '<i class="fas fa-home"></i> Casas Rurales y Turismo Rural';
+                    break;
+                case 'apartamentos-urbanos':
+                    tituloElement.innerHTML = '<i class="fas fa-building"></i> Apartamentos Turísticos Urbanos';
+                    break;
+                case 'viviendas-turisticas':
+                    tituloElement.innerHTML = '<i class="fas fa-house-user"></i> Viviendas de Uso Turístico';
+                    break;
+                default:
+                    // Mantener el título original
+                    break;
+            }
+        }
+
+        function actualizarEstadisticas() {
+            const total = alojamientosFiltrados.length;
+            const plazasTotales = alojamientosFiltrados.reduce((sum, a) => {
+                const plazas = a.plazas || a.Plazas || 0;
+                return sum + plazas;
+            }, 0);
+
+            document.getElementById('statsText').innerHTML = `
+                <i class="fas fa-hotel"></i> ${total} alojamiento${total !== 1 ? 's' : ''} turístico${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}
+                | <i class="fas fa-users"></i> ${plazasTotales} plazas totales
+                ${isAdmin ? '| <i class="fas fa-user-shield"></i> Modo Admin' : ''}
+            `;
+        }
+
+        // Función para generar slug amigable para SEO
+        function generarSlug(texto) {
+            if (!texto) return '';
+            return texto
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
+                .replace(/ñ/g, 'n')
+                .replace(/[^a-z0-9\s-]/g, '') // Solo letras, números, espacios y guiones
+                .replace(/\s+/g, '-') // Espacios a guiones
+                .replace(/-+/g, '-') // Múltiples guiones a uno
+                .replace(/^-|-$/g, ''); // Eliminar guiones al inicio/final
+        }
+
+        // Funciones de administración
+        function mostrarLoginAdmin() {
+            const password = prompt('Introduce la contraseña de administrador:');
+            if (password === '12345') {
+                isAdmin = true;
+                mostrarBotonesEdicion();
+                actualizarEstadisticas();
+                alert('✅ Modo administrador activado');
+            } else if (password !== null) {
+                alert('❌ Contraseña incorrecta');
+            }
+        }
+
+        function mostrarBotonesEdicion() {
+            const botonesEdicion = document.querySelectorAll('.btn-edit');
+            botonesEdicion.forEach(btn => {
+                btn.style.display = isAdmin ? 'block' : 'none';
+            });
+        }
+
+        function editarAlojamiento(id) {
+            if (!isAdmin) {
+                alert('Debes iniciar sesión como administrador para editar alojamientos');
+                mostrarLoginAdmin();
+                return;
+            }
+
+            // Buscar el alojamiento por ID
+            const alojamiento = todosLosAlojamientos.find(a => (a.id || a.ID) == id);
+            if (!alojamiento) {
+                alert('Alojamiento no encontrado');
+                return;
+            }
+
+            // Crear modal de edición
+            mostrarModalEdicion(alojamiento);
+        }
+
+        function mostrarModalEdicion(alojamiento) {
+            // Crear modal
+            const modal = document.createElement('div');
+            modal.id = 'editModal';
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.8); z-index: 10000; display: flex;
+                align-items: center; justify-content: center; padding: 20px;
+            `;
+
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white; border-radius: 15px; padding: 2rem;
+                max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            `;
+
+            modalContent.innerHTML = `
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem; text-align: center;">
+                    <i class="fas fa-edit"></i> Editar Alojamiento
+                </h2>
+
+                <form id="editForm">
+                    <input type="hidden" id="editId" value="${alojamiento.id || alojamiento.ID}">
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            Nombre:
+                        </label>
+                        <input type="text" id="editNombre" value="${alojamiento.nombre || alojamiento.Nombre || ''}"
+                               style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Tipo:
+                            </label>
+                            <select id="editTipo" style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                                <option value="Casa" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Casa') ? 'selected' : ''}>Casa</option>
+                                <option value="Piso" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Piso') ? 'selected' : ''}>Piso</option>
+                                <option value="Chalé" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Chalé') ? 'selected' : ''}>Chalé</option>
+                                <option value="Hotel" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Hotel') ? 'selected' : ''}>Hotel</option>
+                                <option value="Apartamento" ${((alojamiento.accommodation_type || alojamiento.Tipo) === 'Apartamento') ? 'selected' : ''}>Apartamento</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Plazas:
+                            </label>
+                            <input type="number" id="editPlazas" value="${alojamiento.capacity || alojamiento.Plazas || 1}" min="1" max="50"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Provincia:
+                            </label>
+                            <input type="text" id="editProvincia" value="${alojamiento.province || alojamiento.Province || ''}"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Localidad:
+                            </label>
+                            <input type="text" id="editLocalidad" value="${alojamiento.municipality || alojamiento.Localidad || ''}"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            Dirección:
+                        </label>
+                        <input type="text" id="editDireccion" value="${alojamiento.address || alojamiento.Direccion || ''}"
+                               style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Precio (€/noche):
+                            </label>
+                            <input type="number" id="editPrecio" value="${alojamiento.price_per_night || alojamiento.Precio || ''}" min="0" step="1"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                                Teléfono:
+                            </label>
+                            <input type="tel" id="editTelefono" value="${alojamiento.phone || alojamiento.Telefono1 || alojamiento.Telefono || ''}"
+                                   style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            Email:
+                        </label>
+                        <input type="email" id="editEmail" value="${alojamiento.email || alojamiento.Email || ''}"
+                               style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            Descripción:
+                        </label>
+                        <textarea id="editDescripcion" rows="3"
+                                  style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; resize: vertical;">${alojamiento.description || alojamiento.Notaspublicas || ''}</textarea>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-color);">
+                            URLs de Fotos (una por línea):
+                        </label>
+                        <textarea id="editFotos" rows="4" placeholder="https://ejemplo.com/foto1.jpg&#10;https://ejemplo.com/foto2.jpg&#10;https://ejemplo.com/foto3.jpg&#10;https://ejemplo.com/foto4.jpg"
+                                  style="width: 100%; padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; resize: vertical; font-family: monospace;">${(alojamiento.Fotos && Array.isArray(alojamiento.Fotos)) ? alojamiento.Fotos.join('\n') : ''}</textarea>
+                        <small style="color: #666; font-size: 0.9rem;">Introduce una URL por línea. Las URLs deben ser completas (https://...)</small>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" onclick="cerrarModal()" class="btn-secondary" style="padding: 0.75rem 1.5rem;">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary" style="padding: 0.75rem 1.5rem;">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            `;
+
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+
+            // Manejar envío del formulario
+            document.getElementById('editForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                guardarCambiosAlojamiento();
+            });
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById('editModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function guardarCambiosAlojamiento() {
+            const id = document.getElementById('editId').value;
+
+            // Procesar URLs de fotos (una por línea)
+            const fotosTexto = document.getElementById('editFotos').value.trim();
+            const fotosUrls = fotosTexto ? fotosTexto.split('\n').map(url => url.trim()).filter(url => url) : [];
+
+            const datosActualizados = {
+                id: id,
+                name: document.getElementById('editNombre').value,
+                accommodation_type: document.getElementById('editTipo').value,
+                capacity: parseInt(document.getElementById('editPlazas').value),
+                province: document.getElementById('editProvincia').value,
+                municipality: document.getElementById('editLocalidad').value,
+                address: document.getElementById('editDireccion').value,
+                price_per_night: document.getElementById('editPrecio').value ? parseFloat(document.getElementById('editPrecio').value) : null,
+                phone: document.getElementById('editTelefono').value,
+                email: document.getElementById('editEmail').value,
+                description: document.getElementById('editDescripcion').value,
+                photos: fotosUrls // Array de URLs de fotos
+            };
+
+            try {
+                const response = await fetch('api/actualizar.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datosActualizados)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Alojamiento actualizado correctamente');
+                    cerrarModal();
+
+                    // Recargar datos
+                    await cargarAlojamientos();
+                } else {
+                    alert('❌ Error al actualizar: ' + (result.error || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error de conexión al actualizar alojamiento');
+            }
+        }
+
+        // Agregar botón de login admin en la sección de filtros
+        function agregarBotonAdmin() {
+            const filterGroup = document.querySelector('.filter-group');
+            const adminBtn = document.createElement('button');
+            adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin';
+            adminBtn.className = 'btn-secondary';
+            adminBtn.style.padding = '0.5rem 1rem';
+            adminBtn.onclick = mostrarLoginAdmin;
+            adminBtn.title = 'Iniciar sesión como administrador';
+            filterGroup.appendChild(adminBtn);
+        }
+
+        // Funciones del carrusel de fotos
+        function cambiarFoto(carouselId, direction) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+
+            const slides = carousel.querySelector('.carousel-slides');
+            const images = slides.querySelectorAll('img');
+            const indicators = carousel.querySelectorAll('.indicator');
+
+            if (images.length <= 1) return;
+
+            // Obtener el transform actual del contenedor de slides
+            const currentTransform = slides.style.transform || 'translateX(0%)';
+
+            // Extraer el porcentaje del transform (ej: "translateX(-200%)" -> -200)
+            const transformMatch = currentTransform.match(/translateX\((-?\d+)%\)/);
+            const currentOffset = transformMatch ? parseInt(transformMatch[1]) : 0;
+
+            // Calcular índice actual basado en el offset
+            const currentIndex = Math.abs(currentOffset) / 100;
+
+            // Calcular nuevo índice
+            let newIndex = currentIndex + direction;
+            if (newIndex < 0) newIndex = images.length - 1;
+            if (newIndex >= images.length) newIndex = 0;
+
+            // Mover slides
+            slides.style.transform = `translateX(-${newIndex * 100}%)`;
+
+            // Actualizar indicadores
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === newIndex);
+            });
+        }
+
+        function irAFoto(carouselId, index) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+
+            const slides = carousel.querySelector('.carousel-slides');
+            const indicators = carousel.querySelectorAll('.indicator');
+
+            // Mover slides
+            slides.style.transform = `translateX(-${index * 100}%)`;
+
+            // Actualizar indicadores
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+        }
+
+        function llenarFiltroLocalidades() {
+            const localidades = [...new Set(todosLosAlojamientos.map(a => a.localidad || a.Localidad))].sort();
+            const select = document.getElementById('filterLocalidad');
+
+            localidades.forEach(localidad => {
+                const option = document.createElement('option');
+                option.value = localidad;
+                option.textContent = localidad;
+                select.appendChild(option);
+            });
+        }
+
+        function llenarFiltroProvincias() {
+            const provincias = [...new Set(todosLosAlojamientos.map(a => a.Provincia || a.provincia || a.province || a.Province))].filter(p => p && p.trim() !== '').sort();
+            const select = document.getElementById('filterProvincia');
+
+            // NO limpiar opciones existentes - mantener el select del HTML con la opción "Todas las provincias"
+            // Solo agregar provincias que no existan ya
+
+            // Obtener provincias ya existentes en el select
+            const opcionesExistentes = Array.from(select.options).map(opt => opt.value);
+
+            // Agregar todas las provincias encontradas que no estén ya en el select
+            provincias.forEach(provincia => {
+                if (!opcionesExistentes.includes(provincia)) {
+                    const option = document.createElement('option');
+                    option.value = provincia;
+                    option.textContent = provincia;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        async function actualizarMunicipiosPorProvincia(provincia) {
+            const selectMunicipio = document.getElementById('filterLocalidad');
+
+            if (!provincia) {
+                // Si no hay provincia seleccionada, mostrar todos los municipios
+                llenarFiltroLocalidades();
+                return;
+            }
+
+            try {
+                const response = await fetch(`api/municipios.php?provincia=${encodeURIComponent(provincia)}`);
+                const data = await response.json();
+
+                if (data.success && data.municipios) {
+                    // Limpiar opciones existentes
+                    selectMunicipio.innerHTML = '<option value="">Todas</option>';
+
+                    // Agregar municipios de la provincia
+                    data.municipios.forEach(municipio => {
+                        const option = document.createElement('option');
+                        option.value = municipio;
+                        option.textContent = municipio;
+                        selectMunicipio.appendChild(option);
+                    });
+                } else {
+                    // Si la API falla, filtrar localmente
+                    filtrarLocalidadesPorProvincia(provincia);
+                }
+            } catch (error) {
+                console.error('Error al cargar municipios desde API:', error);
+                // Fallback: filtrar localmente de los datos cargados
+                filtrarLocalidadesPorProvincia(provincia);
+            }
+        }
+
+        function filtrarLocalidadesPorProvincia(provincia) {
+            const selectMunicipio = document.getElementById('filterLocalidad');
+
+            // Limpiar opciones existentes
+            selectMunicipio.innerHTML = '<option value="">Todas</option>';
+
+            if (!provincia) {
+                llenarFiltroLocalidades();
+                return;
+            }
+
+            // Filtrar localidades de los alojamientos cargados que pertenecen a la provincia seleccionada
+            const localidadesDeLaProvincia = [...new Set(
+                todosLosAlojamientos
+                    .filter(a => {
+                        const alojProvincia = a.Provincia || a.provincia || a.province || a.Province;
+                        return alojProvincia === provincia;
+                    })
+                    .map(a => a.Localidad || a.localidad || a.municipality || a.Municipality)
+                    .filter(loc => loc && loc.trim() !== '')
+            )].sort();
+
+            // Agregar las localidades filtradas al selector
+            localidadesDeLaProvincia.forEach(localidad => {
+                const option = document.createElement('option');
+                option.value = localidad;
+                option.textContent = localidad;
+                selectMunicipio.appendChild(option);
+            });
+        }

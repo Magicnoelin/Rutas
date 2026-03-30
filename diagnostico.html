@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico del Sistema</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .check { background: #e8f5e9; padding: 10px; margin: 5px 0; border-left: 4px solid #4CAF50; }
+        .error { background: #ffebee; padding: 10px; margin: 5px 0; border-left: 4px solid #f44336; }
+        .warning { background: #fff3e0; padding: 10px; margin: 5px 0; border-left: 4px solid #ff9800; }
+        .info { background: #e3f2fd; padding: 10px; margin: 5px 0; border-left: 4px solid #2196F3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #2196F3; color: white; border: none; border-radius: 4px; }
+        button:hover { background: #1976D2; }
+        .test-box { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        h2 { color: #333; border-bottom: 2px solid #2196F3; padding-bottom: 5px; }
+        h3 { color: #666; }
+    </style>
+</head>
+<body>
+    <h2>🔍 Diagnóstico del Sistema de Fotos</h2>
+    
+    <div class="test-box">
+        <h3>1. Verificar Archivos PHP</h3>
+        <button onclick="verificarArchivos()">Verificar Archivos</button>
+        <div id="archivos"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>2. Probar Conexión API</h3>
+        <button onclick="probarAPI()">Probar API</button>
+        <div id="api"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>3. Probar Subida Completa</h3>
+        <div>
+            <label>Categoría: <select id="catTest">
+                <option value="">Seleccionar...</option>
+                <option value="salon">Salón</option>
+                <option value="cocina">Cocina</option>
+            </select></label><br><br>
+            <label>Slug: <input type="text" id="slugTest" placeholder="ej: mi-alojamiento" style="padding: 5px; width: 200px;"></label><br><br>
+            <label>Archivo: <input type="file" id="fileTest" accept="image/*"></label><br><br>
+            <button onclick="probarSubida()">Subir Foto de Prueba</button>
+        </div>
+        <div id="subida"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>4. Información del Servidor</h3>
+        <button onclick="infoServidor()">Ver Info Servidor</button>
+        <div id="servidor"></div>
+    </div>
+
+    <script>
+        async function verificarArchivos() {
+            const div = document.getElementById('archivos');
+            div.innerHTML = '<div class="info">Verificando...</div>';
+
+            const archivos = [
+                'api/upload_accommodation_photo.php',
+                'api/search_accommodation.php',
+                'api/get_accommodation_photos.php',
+                'api/config.php'
+            ];
+
+            let html = '';
+            for (let archivo of archivos) {
+                try {
+                    const response = await fetch(archivo);
+                    if (response.ok) {
+                        html += `<div class="check">✅ ${archivo} - EXISTE</div>`;
+                    } else {
+                        html += `<div class="error">❌ ${archivo} - NO ENCONTRADO (HTTP ${response.status})</div>`;
+                    }
+                } catch (e) {
+                    html += `<div class="error">❌ ${archivo} - ERROR: ${e.message}</div>`;
+                }
+            }
+            div.innerHTML = html;
+        }
+
+        async function probarAPI() {
+            const div = document.getElementById('api');
+            div.innerHTML = '<div class="info">Probando...</div>';
+
+            try {
+                const response = await fetch('api/config.php');
+                const text = await response.text();
+                
+                if (response.ok) {
+                    div.innerHTML = `<div class="check">✅ API Funcionando - Respuesta: ${text.substring(0, 100)}...</div>`;
+                } else {
+                    div.innerHTML = `<div class="error">❌ API Error - HTTP ${response.status}</div>`;
+                }
+            } catch (e) {
+                div.innerHTML = `<div class="error">❌ Error de conexión: ${e.message}</div>`;
+            }
+        }
+
+        async function probarSubida() {
+            const div = document.getElementById('subida');
+            const cat = document.getElementById('catTest').value;
+            const slug = document.getElementById('slugTest').value.trim();
+            const fileInput = document.getElementById('fileTest');
+            const file = fileInput.files[0];
+
+            if (!cat || !slug || !file) {
+                div.innerHTML = '<div class="warning">⚠️ Completa todos los campos: categoría, slug y archivo</div>';
+                return;
+            }
+
+            div.innerHTML = '<div class="info">⏳ Subiendo...</div>';
+
+            try {
+                const formData = new FormData();
+                formData.append('accommodation_identifier', slug);
+                formData.append('photo_category', cat);
+                formData.append('photo', file);
+
+                const response = await fetch('api/upload_accommodation_photo.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    div.innerHTML = `
+                        <div class="check">
+                            <h3>✅ SUBIDA EXITOSA</h3>
+                            <p><strong>URL:</strong> ${result.data.url}</p>
+                            <p><strong>Categoría:</strong> ${result.data.category}</p>
+                            <p><strong>Archivo:</strong> ${result.data.filename}</p>
+                            <p><strong>Completo:</strong> ${window.location.origin}${result.data.url}</p>
+                        </div>
+                    `;
+                } else {
+                    div.innerHTML = `<div class="error">❌ Error: ${result.error}</div>`;
+                }
+            } catch (e) {
+                div.innerHTML = `<div class="error">❌ Error: ${e.message}</div>`;
+            }
+        }
+
+        async function infoServidor() {
+            const div = document.getElementById('servidor');
+            div.innerHTML = '<div class="info">Obteniendo información...</div>';
+
+            const info = {
+                'URL Actual': window.location.href,
+                'Base URL': window.location.origin,
+                'Path': window.location.pathname,
+                'User Agent': navigator.userAgent,
+                'Fecha': new Date().toLocaleString()
+            };
+
+            let html = '<div class="check">';
+            for (let [key, value] of Object.entries(info)) {
+                html += `<strong>${key}:</strong> ${value}<br>`;
+            }
+            html += '</div>';
+            div.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

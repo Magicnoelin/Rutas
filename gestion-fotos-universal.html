@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sube fotos de lugares, eventos, actividades y alojamientos de la España rural. Comparte tu experiencia con la comunidad.">
+    <title>Subir Fotos - Rutas Rurales</title>
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --green: #2f5233;
+            --green-light: #4a7c4e;
+            --green-bg: #e8f5e9;
+            --orange: #e67e22;
+            --radius: 12px;
+        }
+
+        body { background: #f5f7f5; }
+
+        .page-wrap {
+            max-width: 900px;
+            margin: 110px auto 3rem;
+            padding: 0 1rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .page-title h1 { color: var(--green); font-size: 2rem; margin-bottom: .4rem; }
+        .page-title p  { color: #666; font-size: 1rem; }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,.07);
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: .8rem;
+            margin-bottom: 1rem;
+        }
+        .type-btn {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: .9rem .5rem;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all .25s;
+            font-size: .88rem;
+            font-weight: 600;
+            color: #555;
+        }
+        .type-btn i { display: block; font-size: 1.6rem; margin-bottom: .4rem; color: var(--green); }
+        .type-btn:hover  { border-color: var(--green); background: var(--green-bg); }
+        .type-btn.active { border-color: var(--green); background: var(--green); color: white; }
+        .type-btn.active i { color: white; }
+
+        .search-wrap {
+            display: flex;
+            gap: .6rem;
+            margin-bottom: .8rem;
+        }
+        .search-wrap input {
+            flex: 1;
+            padding: .75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: .95rem;
+            transition: border-color .2s;
+        }
+        .search-wrap input:focus { outline: none; border-color: var(--green); }
+        .search-wrap button {
+            padding: .75rem 1.2rem;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: .95rem;
+            transition: background .2s;
+        }
+        .search-wrap button:hover { background: var(--green-light); }
+
+        #searchResults {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            max-height: 260px;
+            overflow-y: auto;
+            display: none;
+        }
+        .result-item {
+            padding: .75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            transition: background .15s;
+        }
+        .result-item:last-child { border-bottom: none; }
+        .result-item:hover { background: var(--green-bg); }
+        .result-item .ri-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--green-bg); color: var(--green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .result-item .ri-name { font-weight: 600; font-size: .9rem; color: #333; }
+        .result-item .ri-meta { font-size: .8rem; color: #888; }
+        .result-item .ri-badge { font-size: .72rem; background: var(--green-bg); color: var(--green); padding: .15rem .5rem; border-radius: 10px; font-weight: 700; }
+
+        #selectedEntity {
+            display: none;
+            background: var(--green-bg);
+            border: 2px solid var(--green);
+            border-radius: 8px;
+            padding: .8rem 1rem;
+            margin-top: .8rem;
+            align-items: center;
+            gap: .8rem;
+        }
+        #selectedEntity.show { display: flex; }
+        #selectedEntity .se-icon { font-size: 1.4rem; color: var(--green); }
+        #selectedEntity .se-info { flex: 1; }
+        #selectedEntity .se-name { font-weight: 700; color: var(--green); }
+        #selectedEntity .se-meta { font-size: .82rem; color: #555; }
+        #selectedEntity .se-clear { background: none; border: none; color: #999; cursor: pointer; font-size: 1.2rem; padding: .2rem; }
+        #selectedEntity .se-clear:hover { color: #e74c3c; }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: .5rem;
+        }
+        .cat-btn {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: .6rem .4rem;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: .82rem;
+            font-weight: 600;
+            color: #555;
+            transition: all .2s;
+        }
+        .cat-btn:hover  { border-color: var(--green); background: var(--green-bg); }
+        .cat-btn.active { border-color: var(--green); background: var(--green); color: white; }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all .25s;
+            background: #fafafa;
+            position: relative;
+        }
+        .upload-area:hover, .upload-area.drag-over {
+            border-color: var(--green);
+            background: var(--green-bg);
+        }
+        .upload-area i { font-size: 2.5rem; color: var(--green); margin-bottom: .8rem; display: block; }
+        .upload-area p { color: #666; margin-bottom: .3rem; }
+        .upload-area .hint { font-size: .82rem; color: #aaa; }
+        .upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+        #previewWrap {
+            display: none;
+            margin-top: 1rem;
+            position: relative;
+        }
+        #previewWrap img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+        #previewWrap .remove-preview {
+            position: absolute;
+            top: .4rem;
+            right: .4rem;
+            background: rgba(0,0,0,.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: .9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: .85rem; font-weight: 600; color: var(--green); margin-bottom: .4rem; }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: .7rem .9rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: .9rem;
+            transition: border-color .2s;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--green); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .btn-upload {
+            width: 100%;
+            padding: 1rem;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            margin-top: 1rem;
+        }
+        .btn-upload:hover:not(:disabled) { background: var(--green-light); transform: translateY(-2px); }
+        .btn-upload:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+
+        .msg {
+            padding: 1rem 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: .6rem;
+            font-weight: 600;
+        }
+        .msg.show { display: flex; }
+        .msg.success { background: #d4edda; color: #155724; }
+        .msg.error   { background: #f8d7da; color: #721c24; }
+        .msg.info    { background: #d1ecf1; color: #0c5460; }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            color: #aaa;
+            font-size: .9rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .btn-suggest {
+            width: 100%;
+            padding: .9rem;
+            background: white;
+            color: var(--orange);
+            border: 2px solid var(--orange);
+            border-radius: 10px;
+            font-size: .95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+        }
+        .btn-suggest:hover { background: #fef5ec; }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.55);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        .modal-header h3 { color: var(--green); font-size: 1.1rem; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; line-height: 1; }
+        .modal-close:hover { color: #333; }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.5);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .loading-overlay.show { display: flex; }
+        .loading-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem 2.5rem;
+            text-align: center;
+        }
+        .loading-box i { font-size: 2.5rem; color: var(--green); margin-bottom: .8rem; display: block; animation: spin 1s linear infinite; }
+        .loading-box p { color: #555; font-weight: 600; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .pending-info {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: .8rem 1rem;
+            font-size: .85rem;
+            color: #856404;
+            margin-top: 1rem;
+            display: flex;
+            gap: .5rem;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 600px) {
+            .type-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-row  { grid-template-columns: 1fr; }
+            .cat-grid  { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <nav class="navbar">
+        <div class="container">
+            <a href="/index.html" class="logo">
+                <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo">
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="/user-dashboard.html"><i class="fas fa-user"></i> Mi Panel</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<div class="page-wrap">
+
+    <div class="page-title">
+        <h1><i class="fas fa-camera" style="color:var(--green);"></i> Comparte tus fotos</h1>
+        <p>Ayuda a otros viajeros subiendo fotos de lugares, eventos y actividades de la Espana rural</p>
+    </div>
+
+    <div class="msg success" id="msgSuccess"><i class="fas fa-check-circle"></i> <span id="msgSuccessText"></span></div>
+    <div class="msg error"   id="msgError"><i class="fas fa-exclamation-circle"></i> <span id="msgErrorText"></span></div>
+
+    <div class="card">
+        <div class="card-title"><i class="fas fa-layer-group"></i> Paso 1 - Que tipo de lugar es?</div>
+        <div class="type-grid">
+            <button class="type-btn active" data-type="places_of_interest" onclick="selectType(this)">
+                <i class="fas fa-map-marker-alt"></i>Lugar de Interes
+            </button>
+            <button class="type-btn" data-type="cultural_events" onclick="selectType(this)">
+                <i class="fas fa-calendar-alt"></i>Evento Cultural
+            </button>
+            <button class="type-btn" data-type="activities" onclick="selectType(this)">
+                <i class="fas fa-hiking"></i>Actividad
+            </button>
+            <button class="type-btn" data-type="accommodations" onclick="selectType(this)">
+                <i class="fas fa-bed"></i>Alojamiento
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><i class="fas fa-search"></i> Paso 2 - Busca el lugar</div>
+
+        <div class="search-wrap">
+            <input type="text" id="searchInput" placeholder="Escribe el nombre del lugar, evento o actividad..." autocomplete="off">
+            <button onclick="doSearch()"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div id="searchResults"></div>
+
+        <div id="selectedEntity">
+            <span class="se-icon"><i class="fas fa-map-marker-alt" id="seIcon"></i></span>
+            <div class="se-info">
+                <div class="se-name" id="seName">-</div>
+                <div class="se-meta" id="seMeta">-</div>
+            </div>
+            <button class="se-clear" onclick="clearSelection()" title="Cambiar seleccion"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="divider">No encuentras el lugar?</div>
+
+        <button class="btn-suggest" onclick="openSuggestModal()">
+            <i class="fas fa-plus-circle"></i> Anadir un lugar nuevo que no esta en la web
+        </button>
+    </div>
+
+    <div class="card" id="stepCategory" style="display:none;">
+        <div class="card-title"><i class="fas fa-tag"></i> Paso 3 - Categoria de la foto</div>
+        <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <div class="card" id="stepUpload" style="display:none;">
+        <div class="card-title"><i class="fas fa-upload"></i> Paso 4 - Sube tu foto</div>
+
+        <div class="upload-area" id="uploadArea">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Haz clic o arrastra tu foto aqui</p>
+            <p class="hint">JPG, PNG o WEBP - Maximo 8MB</p>
+            <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" onchange="handleFile(event)">
+        </div>
+
+        <div id="previewWrap">
+            <img id="previewImg" src="" alt="Vista previa">
+            <button class="remove-preview" onclick="removeFile()" title="Quitar foto"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div style="margin-top:1.5rem;">
+            <div class="card-title" style="font-size:.9rem;margin-bottom:.8rem;"><i class="fas fa-info-circle"></i> Datos opcionales</div>
+            <div class="form-group">
+                <label for="captionInput">Descripcion de la foto</label>
+                <textarea id="captionInput" rows="2" placeholder="Ej: Vista del castillo desde el mirador..."></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="authorNameInput">Tu nombre (para el credito)</label>
+                    <input type="text" id="authorNameInput" placeholder="Ej: Maria Garcia">
+                </div>
+                <div class="form-group">
+                    <label for="authorInstaInput"><i class="fab fa-instagram"></i> Instagram (opcional)</label>
+                    <input type="text" id="authorInstaInput" placeholder="@tu_usuario">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-upload" id="btnUpload" onclick="uploadPhoto()" disabled>
+            <i class="fas fa-upload"></i> Subir foto
+        </button>
+
+        <div class="pending-info">
+            <i class="fas fa-info-circle" style="margin-top:.1rem;flex-shrink:0;"></i>
+            <span>Tu foto sera revisada antes de publicarse. Gracias por contribuir!</span>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="suggestModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-plus-circle" style="color:var(--orange);"></i> Anadir lugar nuevo</h3>
+            <button class="modal-close" onclick="closeSuggestModal()">&times;</button>
+        </div>
+        <p style="color:#666;font-size:.9rem;margin-bottom:1.2rem;">
+            Si el lugar que buscas no esta en nuestra web, cuntanos sobre el. Lo revisaremos.
+        </p>
+
+        <div class="msg info show" style="margin-bottom:1rem;">
+            <i class="fas fa-info-circle"></i>
+            <span>La foto que adjuntes quedara pendiente de revision.</span>
+        </div>
+
+        <div class="form-group">
+            <label>Nombre del lugar <span style="color:#e74c3c;">*</span></label>
+            <input type="text" id="sugName" placeholder="Ej: Ermita de San Bartolome">
+        </div>
+        <div class="form-group">
+            <label>Tipo</label>
+            <select id="sugType" style="width:100%;padding:.7rem .9rem;border:2px solid #e0e0e0;border-radius:8px;font-size:.9rem;">
+                <option value="places_of_interest">Lugar de Interes</option>
+                <option value="cultural_events">Evento Cultural</option>
+                <option value="activities">Actividad</option>
+                <option value="accommodations">Alojamiento</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Municipio</label>
+                <input type="text" id="sugMunicipality" placeholder="Ej: Vinuesa">
+            </div>
+            <div class="form-group">
+                <label>Provincia</label>
+                <input type="text" id="sugProvince" placeholder="Ej: Soria">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Descripcion breve</label>
+            <textarea id="sugDescription" rows="3" placeholder="Cuntanos que es este lugar..."></textarea>
+        </div>
+
+        <button onclick="submitSuggestion()" style="width:100%;padding:.9rem;background:var(--orange);color:white;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;">
+            <i class="fas fa-paper-plane"></i> Enviar sugerencia
+        </button>
+    </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+        <i class="fas fa-spinner"></i>
+        <p id="loadingText">Procesando foto...</p>
+    </div>
+</div>
+
+<script src="/config.js"></script>
+<script>
+const state = {
+    type:       'places_of_interest',
+    entityId:   null,
+    entityName: '',
+    entityMeta: '',
+    category:   null,
+    file:       null,
+};
+
+const CATEGORIES = {
+    places_of_interest: [
+        {id:'exterior',   label:'Exterior',   icon:'fa-mountain-sun'},
+        {id:'interior',   label:'Interior',   icon:'fa-home'},
+        {id:'detalle',    label:'Detalle',   icon:'fa-search-plus'},
+        {id:'panoramica', label:'Panoramica', icon:'fa-image'},
+        {id:'otro',       label:'Otro',       icon:'fa-plus'},
+    ],
+    cultural_events: [
+        {id:'exterior',   label:'Exterior',   icon:'fa-mountain-sun'},
+        {id:'interior',   label:'Interior',   icon:'fa-home'},
+        {id:'actuacion',  label:'Actuacion',  icon:'fa-masks-theater'},
+        {id:'detalle',    label:'Detalle',   icon:'fa-search-plus'},
+        {id:'panoramica', label:'Panoramica', icon:'fa-image'},
+        {id:'otro',       label:'Otro',       icon:'fa-plus'},
+    ],
+    activities: [
+        {id:'ruta',       label:'Ruta',       icon:'fa-person-hiking'},
+        {id:'paisaje',    label:'Paisaje',   icon:'fa-mountain'},
+        {id:'fauna',      label:'Fauna',      icon:'fa-paw'},
+        {id:'flora',      label:'Flora',      icon:'fa-leaf'},
+        {id:'panoramica', label:'Panoramica', icon:'fa-image'},
+        {id:'otro',       label:'Otro',       icon:'fa-plus'},
+    ],
+    accommodations: [
+        {id:'exterior',   label:'Exterior',   icon:'fa-house-chimney'},
+        {id:'habitacion', label:'Habitacion', icon:'fa-bed'},
+        {id:'salon',      label:'Salon',      icon:'fa-couch'},
+        {id:'cocina',     label:'Cocina',     icon:'fa-utensils'},
+        {id:'jardin',     label:'Jardin',     icon:'fa-tree'},
+        {id:'piscina',    label:'Piscina',    icon:'fa-person-swimming'},
+        {id:'otro',       label:'Otro',       icon:'fa-plus'},
+    ],
+};
+
+const TYPE_ICONS = {
+    places_of_interest: 'fa-map-marker-alt',
+    cultural_events:    'fa-calendar-alt',
+    activities:         'fa-hiking',
+    accommodations:     'fa-bed',
+};
+
+const TYPE_LABELS = {
+    places_of_interest: 'Lugar de Interes',
+    cultural_events:    'Evento Cultural',
+    activities:         'Actividad',
+    accommodations:     'Alojamiento',
+};
+
+function selectType(btn) {
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.type = btn.dataset.type;
+    clearSelection();
+    renderCategories();
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('searchResults').innerHTML = '';
+}
+
+let searchTimeout;
+document.getElementById('searchInput').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const q = this.value.trim();
+    if (q.length < 2) {
+        document.getElementById('searchResults').style.display = 'none';
+        return;
+    }
+    searchTimeout = setTimeout(() => doSearch(), 400);
+});
+
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+});
+
+async function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (q.length < 2) return;
+
+    const resultsEl = document.getElementById('searchResults');
+    resultsEl.style.display = 'block';
+    resultsEl.innerHTML = '<div style="padding:1rem;text-align:center;color:#888;"><i class="fas fa-spinner fa-spin"></i> Buscando...</div>';
+
+    try {
+        const apiBase = (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL.replace(/\/$/, '') : '/api');
+        const resp = await fetch(apiBase + '/search_entity.php?q=' + encodeURIComponent(q) + '&type=' + state.type, { credentials: 'include' });
+        const data = await resp.json();
+
+        if (!data.success || !data.data.length) {
+            resultsEl.innerHTML = '<div style="padding:1rem;text-align:center;color:#888;"><i class="fas fa-search" style="font-size:1.5rem;margin-bottom:.5rem;display:block;"></i>No se encontraron resultados para "<strong>' + escHtml(q) + '</strong>"</div>';
+            return;
+        }
+
+        resultsEl.innerHTML = data.data.map(function(item) {
+            return '<div class="result-item" data-id="' + item.id + '" data-name="' + escJs(item.name) + '" data-municipality="' + escJs(item.municipality || '') + '" data-province="' + escJs(item.province || '') + '" data-type="' + escJs(item.entity_type) + '">' +
+                '<div class="ri-icon"><i class="fas ' + item.icon + '"></i></div>' +
+                '<div style="flex:1;">' +
+                    '<div class="ri-name">' + escHtml(item.name) + '</div>' +
+                    '<div class="ri-meta">' + escHtml(item.municipality || '') + (item.province ? ', ' + escHtml(item.province) : '') + '</div>' +
+                '</div>' +
+                '<span class="ri-badge">' + escHtml(item.type_label) + '</span>' +
+            '</div>';
+        }).join('');
+
+        document.querySelectorAll('.result-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                selectEntity(
+                    parseInt(this.dataset.id),
+                    this.dataset.name,
+                    this.dataset.municipality,
+                    this.dataset.province,
+                    this.dataset.type
+                );
+            });
+        });
+
+    } catch(e) {
+        resultsEl.innerHTML = '<div style="padding:1rem;text-align:center;color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Error de conexion</div>';
+    }
+}
+
+function selectEntity(id, name, municipality, province, type) {
+    state.entityId   = id;
+    state.entityName = name;
+    state.entityMeta = [municipality, province].filter(Boolean).join(', ');
+    state.type       = type;
+
+    document.querySelectorAll('.type-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.type === type);
+    });
+
+    document.getElementById('seIcon').className = 'fas ' + (TYPE_ICONS[type] || 'fa-map-marker-alt');
+    document.getElementById('seName').textContent = name;
+    document.getElementById('seMeta').textContent = [TYPE_LABELS[type], state.entityMeta].filter(Boolean).join(' - ');
+    document.getElementById('selectedEntity').classList.add('show');
+
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('searchInput').value = name;
+
+    renderCategories();
+    document.getElementById('stepCategory').style.display = 'block';
+    document.getElementById('stepUpload').style.display = 'block';
+    updateUploadBtn();
+}
+
+function clearSelection() {
+    state.entityId   = null;
+    state.entityName = '';
+    state.entityMeta = '';
+    state.category   = null;
+    document.getElementById('selectedEntity').classList.remove('show');
+    document.getElementById('stepCategory').style.display = 'none';
+    document.getElementById('stepUpload').style.display = 'none';
+    updateUploadBtn();
+}
+
+function renderCategories() {
+    const cats = CATEGORIES[state.type] || CATEGORIES.places_of_interest;
+    const grid = document.getElementById('catGrid');
+    grid.innerHTML = cats.map(function(c) {
+        return '<button class="cat-btn" data-cat="' + c.id + '" onclick="selectCat(this)">' +
+            '<i class="fas ' + c.icon + '"></i><br>' + c.label +
+        '</button>';
+    }).join('');
+    state.category = null;
+    updateUploadBtn();
+}
+
+function selectCat(btn) {
+    document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.category = btn.dataset.cat;
+    updateUploadBtn();
+}
+
+function handleFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const allowed = ['image/jpeg','image/jpg','image/png','image/webp'];
+    if (!allowed.includes(file.type)) {
+        showMsg('error', 'Solo se permiten imagenes JPG, PNG o WEBP');
+        return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+        showMsg('error', 'La imagen no debe superar los 8MB');
+        return;
+    }
+
+    state.file = file;
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        document.getElementById('previewImg').src = ev.target.result;
+        document.getElementById('previewWrap').style.display = 'block';
+        document.getElementById('uploadArea').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+    updateUploadBtn();
+}
+
+const uploadAreaEl = document.getElementById('uploadArea');
+uploadAreaEl.addEventListener('dragover', function(e) { e.preventDefault(); uploadAreaEl.classList.add('drag-over'); });
+uploadAreaEl.addEventListener('dragleave', function() { uploadAreaEl.classList.remove('drag-over'); });
+uploadAreaEl.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadAreaEl.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+        document.getElementById('photoInput').files = e.dataTransfer.files;
+        handleFile({ target: { files: [file] } });
+    }
+});
+
+function removeFile() {
+    state.file = null;
+    document.getElementById('photoInput').value = '';
+    document.getElementById('previewWrap').style.display = 'none';
+    document.getElementById('uploadArea').style.display = 'block';
+    updateUploadBtn();
+}
+
+function updateUploadBtn() {
+    const ready = state.entityId && state.category && state.file;
+    document.getElementById('btnUpload').disabled = !ready;
+}
+
+async function uploadPhoto() {
+    if (!state.entityId || !state.category || !state.file) return;
+
+    showLoading('Subiendo foto...');
+
+    try {
+        const fd = new FormData();
+        fd.append('entity_type', state.type);
+        fd.append('entity_id',   state.entityId);
+        fd.append('category',    state.category);
+        fd.append('caption',     document.getElementById('captionInput').value.trim());
+        fd.append('author_name', document.getElementById('authorNameInput').value.trim());
+        fd.append('author_instagram', document.getElementById('authorInstaInput').value.trim());
+        fd.append('photo', state.file);
+
+        const apiBase = (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL.replace(/\/$/, '') : '/api');
+        const resp = await fetch(apiBase + '/upload_entity_photo.php', { method: 'POST', body: fd, credentials: 'include' });
+        const data = await resp.json();
+
+        hideLoading();
+
+        if (data.success) {
+            showMsg('success', 'Foto subida! Estara visible tras revision.');
+            removeFile();
+            document.getElementById('captionInput').value = '';
+            document.getElementById('authorNameInput').value = '';
+            document.getElementById('authorInstaInput').value = '';
+            document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+            state.category = null;
+            updateUploadBtn();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            showMsg('error', data.error || 'Error al subir la foto');
+        }
+
+    } catch(e) {
+        hideLoading();
+        showMsg('error', 'Error de conexion. Intentalo de nuevo.');
+    }
+}
+
+function openSuggestModal() {
+    document.getElementById('suggestModal').classList.add('show');
+    document.getElementById('sugType').value = state.type;
+}
+function closeSuggestModal() {
+    document.getElementById('suggestModal').classList.remove('show');
+}
+document.getElementById('suggestModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSuggestModal();
+});
+
+async function submitSuggestion() {
+    const name = document.getElementById('sugName').value.trim();
+    if (!name) {
+        alert('El nombre del lugar es obligatorio');
+        return;
+    }
+
+    showLoading('Enviando sugerencia...');
+
+    try {
+        const fd = new FormData();
+        fd.append('name',         name);
+        fd.append('entity_type',  document.getElementById('sugType').value);
+        fd.append('municipality', document.getElementById('sugMunicipality').value.trim());
+        fd.append('province',     document.getElementById('sugProvince').value.trim());
+        fd.append('description',  document.getElementById('sugDescription').value.trim());
+
+        const apiBase = (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL.replace(/\/$/, '') : '/api');
+        const resp = await fetch(apiBase + '/suggest_entity.php', { method: 'POST', body: fd, credentials: 'include' });
+        const data = await resp.json();
+
+        hideLoading();
+
+        if (data.success) {
+            closeSuggestModal();
+            showMsg('success', 'Sugerencia enviada! La revisaremos pronto.');
+            document.getElementById('sugName').value = '';
+            document.getElementById('sugMunicipality').value = '';
+            document.getElementById('sugProvince').value = '';
+            document.getElementById('sugDescription').value = '';
+        } else {
+            showMsg('error', data.error || 'Error al enviar la sugerencia');
+        }
+
+    } catch(e) {
+        hideLoading();
+        showMsg('error', 'Error de conexion. Intentalo de nuevo.');
+    }
+}
+
+function showMsg(type, text) {
+    ['success','error'].forEach(function(t) {
+        const el = document.getElementById('msg' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (el) el.classList.remove('show');
+    });
+    const el = document.getElementById('msg' + type.charAt(0).toUpperCase() + type.slice(1));
+    if (!el) return;
+    document.getElementById('msg' + type.charAt(0).toUpperCase() + type.slice(1) + 'Text').textContent = text;
+    el.classList.add('show');
+    // Forzar scroll al mensaje si no es visible
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function() { el.classList.remove('show'); }, 7000);
+}
+
+function showLoading(text) {
+    document.getElementById('loadingText').textContent = text;
+    document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+function escHtml(str) {
+    return String(str).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');
+}
+function escJs(str) {
+    return String(str).replace(/'/g,"\\'").replace(/\\/g,'\\\\');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderCategories();
+
+    const params = new URLSearchParams(window.location.search);
+    const pType  = params.get('type');
+    const pId    = params.get('entity_id');
+    const pName  = params.get('entity_name');
+    const pMuni  = params.get('municipality') || '';
+    const pProv  = params.get('province') || '';
+
+    if (pType && pId && pName) {
+        const typeBtn = document.querySelector('.type-btn[data-type="' + pType + '"]');
+        if (typeBtn) selectType(typeBtn);
+        selectEntity(parseInt(pId), decodeURIComponent(pName), decodeURIComponent(pMuni), decodeURIComponent(pProv), pType);
+        document.getElementById('searchInput').value = decodeURIComponent(pName);
+    } else if (pType) {
+        const typeBtn = document.querySelector('.type-btn[data-type="' + pType + '"]');
+        if (typeBtn) selectType(typeBtn);
+    }
+});
+</script>
+</body>
+</html>

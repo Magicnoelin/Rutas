@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Actividad Turística - Rutas</title>
+    <link rel="icon" href="menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k"></script>
+    <script src="config.js"></script>
+    <style>
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .form-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+        .form-group label .optional {
+            color: #95a5a6;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .photo-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .photo-input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .photo-input-group input {
+            flex: 1;
+        }
+        .btn-add-photo,
+        .btn-remove-photo {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        .btn-add-photo {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .btn-add-photo:hover {
+            background-color: var(--primary-color);
+        }
+        .btn-remove-photo {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-remove-photo:hover {
+            background-color: #c0392b;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .btn-submit,
+        .btn-draft,
+        .btn-reset {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-submit:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        .btn-draft {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-draft:hover {
+            background-color: #e67e22;
+        }
+        .btn-reset {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-reset:hover {
+            background-color: #7f8c8d;
+        }
+        .preview-container {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .preview-container.active {
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .btn-submit,
+            .btn-draft,
+            .btn-reset {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">
+                    <span>Rutas</span>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="alojamientos.html">Alojamientos</a></li>
+                    <li><a href="actividades-turisticas.html">Actividades</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section class="section" style="margin-top: 100px;">
+        <div class="container">
+            <h1 class="section-title">
+                <i class="fas fa-hiking"></i> Agregar Actividad Turística
+            </h1>
+
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <p style="font-size: 1.1rem; color: var(--secondary-color);">
+                    Comparte una actividad turística: senderismo, ciclismo, rutas, etc.
+                </p>
+            </div>
+
+            <div class="filters" style="max-width: 900px; margin: 0 auto;">
+                <form id="actividadForm">
+                    <!-- Información Básica -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-info-circle"></i> Información Básica</h3>
+                        
+                        <div class="form-group">
+                            <label for="name">Nombre de la Actividad <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" required placeholder="Ej: Ruta del Cañón del Río Lobos">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="activity_type">Tipo de Actividad <span class="required">*</span></label>
+                                <select id="activity_type" name="activity_type" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Senderismo">Senderismo</option>
+                                    <option value="Ciclismo">Ciclismo</option>
+                                    <option value="Escalada">Escalada</option>
+                                    <option value="Kayak">Kayak</option>
+                                    <option value="Observación de Aves">Observación de Aves</option>
+                                    <option value="Fotografía">Fotografía</option>
+                                    <option value="Turismo Rural">Turismo Rural</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="difficulty">Dificultad <span class="required">*</span></label>
+                                <select id="difficulty" name="difficulty" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="fácil">Fácil</option>
+                                    <option value="moderada">Moderada</option>
+                                    <option value="difícil">Difícil</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Descripción <span class="required">*</span></label>
+                            <textarea id="description" name="description" required placeholder="Describe la actividad, qué incluye, qué se puede ver..."></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="duration">Duración <span class="optional">(opcional)</span></label>
+                                <input type="text" id="duration" name="duration" placeholder="Ej: 3 horas, Medio día, Todo el día">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="season">Temporada Recomendada <span class="optional">(opcional)</span></label>
+                                <input type="text" id="season" name="season" placeholder="Ej: Primavera y Otoño">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ubicación -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Ubicación</h3>
+                        
+                        <div class="form-group">
+                            <label for="address">Punto de Inicio <span class="optional">(opcional)</span></label>
+                            <input type="text" id="address" name="address" placeholder="Ej: Aparcamiento del Cañón">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="municipality">Municipio <span class="required">*</span></label>
+                                <input type="text" id="municipality" name="municipality" required placeholder="Ej: Ucero">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="province">Provincia <span class="required">*</span></label>
+                                <input type="text" id="province" name="province" required value="Soria">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detalles Adicionales -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-ticket-alt"></i> Detalles Adicionales</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="price">Precio (€) <span class="optional">(opcional)</span></label>
+                                <input type="number" id="price" name="price" min="0" step="0.01" placeholder="Ej: 25.00">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="max_participants">Máximo de Participantes <span class="optional">(opcional)</span></label>
+                                <input type="number" id="max_participants" name="max_participants" min="1" placeholder="Ej: 15">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-address-book"></i> Información de Contacto</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Teléfono <span class="optional">(opcional)</span></label>
+                                <input type="tel" id="phone" name="phone" placeholder="Ej: 975123456">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email <span class="optional">(opcional)</span></label>
+                                <input type="email" id="email" name="email" placeholder="contacto@ejemplo.com">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="website">Sitio Web <span class="optional">(opcional)</span></label>
+                                <input type="url" id="website" name="website" placeholder="https://www.ejemplo.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="booking_url">URL de Reserva <span class="optional">(opcional)</span></label>
+                                <input type="url" id="booking_url" name="booking_url" placeholder="https://reservas.ejemplo.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fotos -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-camera"></i> Fotografías</h3>
+                        <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">
+                            Añade URLs de imágenes de la actividad. La primera será la imagen principal.
+                        </p>
+                        
+                        <div class="photo-inputs" id="photoInputs">
+                            <div class="photo-input-group">
+                                <input type="url" name="photo1" placeholder="URL de la foto 1 (principal)">
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn-add-photo" onclick="agregarCampoFoto()">
+                            <i class="fas fa-plus"></i> Añadir otra foto
+                        </button>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-draft" onclick="guardarBorrador()">
+                            <i class="fas fa-save"></i> Guardar Borrador
+                        </button>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Enviar para Revisión
+                        </button>
+                        <button type="reset" class="btn-reset">
+                            <i class="fas fa-redo"></i> Limpiar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Resultado -->
+            <div class="preview-container" id="previewContainer">
+                <div class="preview-header" style="text-align: center;">
+                    <h3 id="resultTitle" style="color: var(--primary-color); margin-bottom: 1rem;">Resultado</h3>
+                    <p id="resultMessage" style="color: var(--secondary-color); font-size: 1.1rem;">Información del proceso</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                </div>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        let fotoCounter = 1;
+
+        function agregarCampoFoto() {
+            fotoCounter++;
+            const photoInputs = document.getElementById('photoInputs');
+            const newPhotoGroup = document.createElement('div');
+            newPhotoGroup.className = 'photo-input-group';
+            newPhotoGroup.innerHTML = `
+                <input type="url" name="photo${fotoCounter}" placeholder="URL de la foto ${fotoCounter}">
+                <button type="button" class="btn-remove-photo" onclick="eliminarCampoFoto(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            photoInputs.appendChild(newPhotoGroup);
+        }
+
+        function eliminarCampoFoto(button) {
+            button.parentElement.remove();
+        }
+
+        async function guardarBorrador() {
+            await guardarActividad('draft');
+        }
+
+        async function guardarActividad(submitAction = 'submit') {
+            const form = document.getElementById('actividadForm');
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const submitBtn = submitAction === 'draft' 
+                ? document.querySelector('.btn-draft')
+                : document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+                const formData = {
+                    name: document.getElementById('name').value.trim(),
+                    description: document.getElementById('description').value.trim(),
+                    activity_type: document.getElementById('activity_type').value,
+                    difficulty: document.getElementById('difficulty').value,
+                    municipality: document.getElementById('municipality').value.trim(),
+                    province: document.getElementById('province').value.trim(),
+                    submit_action: submitAction
+                };
+
+                // Campos opcionales
+                const optionalFields = ['duration', 'season', 'address', 'price', 'max_participants', 
+                                       'phone', 'email', 'website', 'booking_url'];
+                optionalFields.forEach(field => {
+                    const value = document.getElementById(field).value.trim();
+                    if (value) formData[field] = value;
+                });
+
+                // Fotos
+                const fotoInputs = document.querySelectorAll('.photo-input-group input');
+                fotoInputs.forEach((input, index) => {
+                    const url = input.value.trim();
+                    if (url && index < 4) {
+                        formData[`photo${index + 1}`] = url;
+                    }
+                });
+
+                const recaptchaToken = await grecaptcha.execute('6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k', {action: 'submit'});
+                formData.recaptchaToken = recaptchaToken;
+
+                const apiUrl = window.CONFIG?.API_BASE_URL
+                    ? `${window.CONFIG.API_BASE_URL}/crear_actividad.php`
+                    : 'api/crear_actividad.php';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    mostrarMensajeExito(result, submitAction);
+                } else {
+                    mostrarMensajeError(result.error || 'Error al guardar la actividad');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensajeError('Error de conexión: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function mostrarMensajeExito(result, submitAction) {
+            const statusText = submitAction === 'draft' ? 'Guardada como Borrador' : 'Enviada para Revisión';
+            const statusIcon = submitAction === 'draft' ? 'fa-save' : 'fa-check-circle';
+            const statusColor = submitAction === 'draft' ? '#f39c12' : '#27ae60';
+
+            document.getElementById('resultTitle').innerHTML = `<i class="fas ${statusIcon}"></i> ¡Actividad ${statusText}!`;
+            document.getElementById('resultMessage').innerHTML = `
+                <p style="color: ${statusColor}; font-size: 1.1rem; margin-top: 1rem;">
+                    <strong>ID:</strong> ${result.data.id}<br>
+                    <strong>Nombre:</strong> ${result.data.name}<br>
+                    <strong>Estado:</strong> ${result.data.moderation_status}
+                </p>
+                <p style="color: #666; margin-top: 1rem;">
+                    ${submitAction === 'draft' 
+                        ? 'Tu actividad ha sido guardada como borrador. Puedes editarla y enviarla para revisión cuando esté lista.'
+                        : 'Tu actividad ha sido enviada para revisión. Te notificaremos cuando sea aprobada.'}
+                </p>
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="window.location.href='user-dashboard.html#mis-actividades'" style="padding: 12px 24px; background-color: var(--primary-color); color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                        👉 Ir a Mi Dashboard
+                    </button>
+                    <button onclick="window.location.href='gestion-fotos-actividades.html?slug=' + '${result.data.slug || ''}'" style="padding: 12px 24px; background-color: #e67e22; color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                        📸 Gestión de Fotos
+                    </button>
+                    <button onclick="location.reload()" style="padding: 12px 24px; background-color: var(--secondary-color); color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                        ➕ Añadir Otra Actividad
+                    </button>
+                </div>
+            `;
+            document.getElementById('previewContainer').classList.add('active');
+            document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function mostrarMensajeError(errorMsg) {
+            document.getElementById('resultTitle').innerHTML = '<i class="fas fa-exclamation-circle"></i> Error';
+            document.getElementById('resultMessage').innerHTML = `
+                <p style="color: #e74c3c; margin-top: 1rem;">${errorMsg}</p>
+                <p style="color: #666; margin-top: 1rem; font-size: 0.9rem;">
+                    Por favor, revisa los datos e intenta de nuevo.
+                </p>
+            `;
+            document.getElementById('previewContainer').classList.add('active');
+            document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('actividadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            guardarActividad('submit');
+        });
+
+        document.getElementById('actividadForm').addEventListener('reset', function() {
+            document.getElementById('previewContainer').classList.remove('active');
+            fotoCounter = 1;
+            const photoInputs = document.getElementById('photoInputs');
+            photoInputs.innerHTML = `
+                <div class="photo-input-group">
+                    <input type="url" name="photo1" placeholder="URL de la foto 1 (principal)">
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

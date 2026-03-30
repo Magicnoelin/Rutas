@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Landtourismus Spanien: Beste Landhäuser & Erlebnisse | RutasRurales</title>
+    <meta name="description" content="Entdecken Sie den besten Landtourismus in Spanien. Finden Sie charmante Unterkünfte, einzigartige Routen und authentische Erlebnisse in der Natur.">
+    <link rel="canonical" href="https://www.rutasrurales.io/de/" />
+
+    <link rel="icon" href="../favicon.png" type="image/png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="../menu_images/Logo%20transparente.webp" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Vereinigtes Netzwerk von Touristen, Unterkünften und Dienstleistungen</span>
+                    </div>
+                </div>
+                <!-- Language Selector -->
+                <div class="language-selector">
+                    <div class="language-dropdown">
+                        <button class="language-btn" aria-label="Sprache auswählen">
+                            <span class="current-lang"><i class="fas fa-globe"></i> DE</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="language-menu">
+                            <a href="../index.html" class="language-option" data-lang="es">
+                                <span class="fi fi-es flag-icon-img"></span> Español
+                            </a>
+                            <a href="../en/index.html" class="language-option" data-lang="en">
+                                <span class="fi fi-us flag-icon-img"></span> English
+                            </a>
+                            <a href="../fr/index.html" class="language-option" data-lang="fr">
+                                <span class="fi fi-fr flag-icon-img"></span> Français
+                            </a>
+                            <a href="index.html" class="language-option active" data-lang="de">
+                                <span class="fi fi-de flag-icon-img"></span> Deutsch
+                            </a>
+                            <a href="../zh/index.html" class="language-option" data-lang="zh">
+                                <span class="fi fi-cn flag-icon-img"></span> 中文
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menü">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="../alojamientos-turisticos.html"><i class="fas fa-bed"></i> Touristische Unterkünfte</a></li>
+                    <li><a href="../lugares-interes-paginacion.html"><i class="fas fa-landmark"></i> Sehenswürdigkeiten</a></li>
+                    <li><a href="https://rutasrurales.io/actividades-turisticas.html"><i class="fas fa-hiking"></i> Touristische Aktivitäten</a></li>
+                    <li><a href="https://rutasrurales.io/eventos-culturales-paginacion.html"><i class="fas fa-map-marker-alt"></i> Kulturelle Veranstaltungen</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle"><i class="fas fa-bars"></i> Mehr</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../rutas.html"><i class="fas fa-route"></i> Routen</a></li>
+                            <li><a href="../compromiso-social.html"><i class="fas fa-heart"></i> Soziales Engagement</a></li>
+                            <li><a href="../login.html"><i class="fas fa-user"></i> Anmelden</a></li>
+                            <li class="dropdown-submenu">
+                                <a href="#" class="dropdown-submenu-toggle"><i class="fas fa-concierge-bell"></i> Dienstleistungen</a>
+                                <ul class="dropdown-submenu-menu">
+                                    <li><a href="../entidades.html"><i class="fas fa-building"></i> Einheiten</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#asistente" class="nav-asistente">
+                                <img src="../antonio.jpg" alt="Antonio - Assistent" class="asistente-avatar">
+                                Antonio Assistent
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="hero" id="inicio">
+            <div class="hero-content">
+                <h1>Buchen Sie die besten Landtourismus-Erlebnisse in Spanien</h1>
+                <p>Ihre einheitliche Plattform für charmante Unterkünfte, einzigartige Routen und unvergessliche Aktivitäten in ganz Spanien</p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <button class="btn-primary" onclick="abrirAsistente()">
+                        <i class="fas fa-robot"></i> Planen Sie Ihre Reise mit KI
+                    </button>
+                    <a href="mapa-eclipse.php" class="btn-secondary" style="background: linear-gradient(135deg, #2c3e50, #34495e); color: white;">
+                        <i class="fas fa-moon"></i> Finsternis 2026 Karte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Accommodations Section -->
+    <section id="alojamientos" class="section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-home"></i> Ländliche Unterkünfte
+            </h2>
+            <p style="text-align: center; margin-bottom: 2rem;">
+                <a href="https://rutasrurales.io/alojamientos-turisticos-paginacion.html" class="btn-primary">
+                    <i class="fas fa-search"></i> Alle Unterkünfte ansehen
+                </a>
+            </p>
+            <div class="grid">
+                <div class="card">
+                    <img src="https://drive.google.com/thumbnail?id=1lCFCuPzjFknI25AJG5yMhDvs9l6c2FS6&sz=w400" alt="Casa Enrique" onerror="this.src='https://www.rutasrurales.io/menu_images/Casa_enrique.jpg'">
+                    <div class="card-content">
+                        <h3>Casa Enrique</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Santervas de la Sierra, Soria</p>
+                        <p><strong>Authentisches Ferienhaus in Soria:</strong> Genießen Sie absolute Ruhe in unserem gemütlichen Landhaus für bis zu <strong>6 Personen</strong>. Mitten im Herzen der unberührten Natur gelegen – der perfekte Rückzugsort für Familien und Wanderfreunde.</p>                        <div class="card-features">
+                            <span><i class="fas fa-users"></i> 6 Plätze</span>
+                            <span><i class="fas fa-mountain"></i> Aussicht</span>
+                            <span><i class="fas fa-wifi"></i> WLAN</span>
+                        </div>
+                        <p class="price">Ab 225€/Nacht</p>
+                        <a href="https://sites.google.com/view/casaruralenrique/inicio" target="_blank" class="btn-secondary">Mehr ansehen</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/Alojamientos_Images/4758.Foto1.213750.jpg" alt="La Plaza Vinuesa">
+                    <div class="card-content">
+                        <h3>La Plaza</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Vinuesa, Soria</p>
+                        <p>Zentrales Apartment in Vinuesa, nahe der Laguna Negra. Perfekt für Paare.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-users"></i> 4 Plätze</span>
+                            <span><i class="fas fa-tree"></i> Natur</span>
+                            <span><i class="fas fa-parking"></i> Parkplatz</span>
+                        </div>
+                        <p class="price">Preis auf Anfrage</p>
+                        <a href="tel:629820592" class="btn-secondary">Kontakt</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/casa_chaparrete_1.jpg" alt="Casa Chaparrete">
+                    <div class="card-content">
+                        <h3>Casa Chaparrete</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Deza, Soria</p>
+                        <p>Landhaus im Herzen von Soria, perfekt zum Abschalten. Kapazität für 6 Personen.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-users"></i> 6 Plätze</span>
+                            <span><i class="fas fa-fire"></i> Kamin</span>
+                            <span><i class="fas fa-hiking"></i> Wandern</span>
+                        </div>
+                        <p class="price">Preis auf Anfrage</p>
+                        <a href="tel:625594262" class="btn-secondary">Kontakt</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activities Section -->
+    <section id="actividades" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-hiking"></i> Touristische Aktivitäten
+            </h2>
+            <div class="grid">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop" alt="Wandern">
+                    <div class="card-content">
+                        <h3>Wandern an der Laguna Negra</h3>
+                        <p class="location"><i class="fas fa-clock"></i> 3-4 Stunden</p>
+                        <p><strong>Wandern an der Laguna Negra:</strong> Entdecken Sie den spektakulären <strong>Rundweg</strong> um diesen mythischen Gletschersee. Erleben Sie beeindruckende <strong>Hochgebirgslandschaften</strong> und unberührte Natur im Herzen der Picos de Urbión.</p>                  <p>Rundweg um die mythische Laguna Negra, Hochgebirgslandschaften.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-signal"></i> Schwierigkeit: Mittel</span>
+                            <span><i class="fas fa-route"></i> 12 km</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/canon_rio_lobos.jpg" alt="Cañón del Río Lobos">
+                    <div class="card-content">
+                        <h3>Cañón del Río Lobos</h3>
+                        <p class="location"><i class="fas fa-clock"></i> 2-5 Stunden</p>
+                        <p><strong>Geheimnisvoller Cañón del Río Lobos:</strong> Erkunden Sie das Naturschutzgebiet mit seinen monumentalen Felsformationen und der mystischen <strong>Ermita de San Bartolomé</strong> – ein einstiger Zufluchtsort der Tempelritter.</p>                        <div class="card-features">
+                            <span><i class="fas fa-signal"></i> Schwierigkeit: Niedrig</span>
+                            <span><i class="fas fa-binoculars"></i> Beobachtung</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/ruta_micologica.jpg" alt="Pilzkunde">
+                    <div class="card-content">
+                        <h3>Pilzkunde-Route</h3>
+                        <p class="location"><i class="fas fa-clock"></i> Herbst (Sep-Nov)</p>
+                        <p>Geführte Pilzwanderungen: Entdecken Sie die besten Sammelplätze mit einem Experten.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-user-tie"></i> Mit Führer</span>
+                            <span><i class="fas fa-leaf"></i> Natur</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/observación_astronomica.png" alt="Astronomie">
+                    <div class="card-content">
+                        <h3>Sternbeobachtung</h3>
+                        <p class="location"><i class="fas fa-clock"></i> Nachts</p>
+                        <p><strong>Astrotourismus in Soria:</strong> Genießen Sie einen der klarsten Sternenhimmel Europas. Dank der <strong>Starlight-Zertifizierung</strong> und fehlender Lichtverschmutzung erleben Sie die <strong>Milchstraße</strong> in ihrer vollen Pracht.</p>                      <p>Soria unter den Sternen: Erleben Sie einen der reinsten Himmel Spaniens mit Starlight-Zertifizierung.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-moon"></i> Dunkler Himmel</span>
+                            <span><i class="fas fa-telescope"></i> Teleskope</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/ciclismo.jpg" alt="Radfahren">
+                    <div class="card-content">
+                        <h3>Mountainbiken</h3>
+                        <p class="location"><i class="fas fa-clock"></i> 2-4 Stunden</p>
+                            <p><strong>MTB-Abenteuer in Soria:</strong> Entdecken Sie herausfordernde <strong>Mountainbike-Routen</strong> durch die Picos de Urbión und die Sierra de Cebollera. Erleben Sie Adrenalin auf erstklassigen Trails inmitten einer unberührten <strong>Hochgebirgslandschaft</strong>.</p>                        <div class="card-features">
+                            <span><i class="fas fa-signal"></i> Schwierigkeit: Mittel-Hoch</span>
+                            <span><i class="fas fa-biking"></i> MTB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/torreznos.jpg" alt="Gastronomie">
+                    <div class="card-content">
+                        <h3>Sorianische Gastronomie</h3>
+                        <p class="location"><i class="fas fa-clock"></i> Ganzjährig</p>
+                        <p><strong>Kulinarische Entdeckungsreise:</strong> Soria für Feinschmecker. Genießen Sie die authentische Küche mit <strong>traditioneller Caldereta</strong>, saftigen Braten und erstklassigen <strong>DO-Weinen aus der Ribera del Duero</strong> – ein Muss für jeden Genießer.</p>         <p>Soria für Feinschmecker: Entdecken Sie die regionale Küche mit Caldereta, Braten (Asados) und Weinen aus der Ribera del Duero.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-utensils"></i> Traditionell</span>
+                            <span><i class="fas fa-wine-glass"></i> Weine</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Places of Interest Section -->
+    <section id="lugares" class="section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-landmark"></i> Sehenswürdigkeiten
+            </h2>
+            <div style="text-align: center; margin-bottom: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="../agregar-lugar-interes.html" class="btn-primary">
+                    <i class="fas fa-plus-circle"></i> Sehenswürdigkeit hinzufügen
+                </a>
+                <a href="../lugares-interes-paginacion.html" class="btn-primary">
+                    <i class="fas fa-search"></i> Sehenswürdigkeiten ansehen
+                </a>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/gastronomia.jpg" alt="Sorianische Gastronomie" style="height: 200px; object-fit: cover; border-radius: 15px 15px 0 0;">
+                    <div class="card-content">
+                        <h3>Gastronomie</h3>
+                        <p class="location"><i class="fas fa-utensils"></i> Kulinarische Erlebnisse</p>
+                        <p><strong>Gourmet-Erlebnis Soria:</strong> Begeben Sie sich auf eine kulinarische Reise und entdecken Sie den <strong>schwarzen Trüffel</strong>, den Diamanten unserer Küche. Probieren Sie authentische <strong>regionale Produkte</strong> und erleben Sie die herzliche, traditionelle Gastronomie Kastiliens.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-utensils"></i> Traditionell</span>
+                            <span><i class="fas fa-wine-glass"></i> DO-Weine</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/enoturismo.jpg" alt="Weintourismus - Weinberge" style="height: 200px; object-fit: cover; border-radius: 15px 15px 0 0;">
+                    <div class="card-content">
+                        <h3>Weintourismus</h3>
+                        <p class="location"><i class="fas fa-wine-glass"></i> Weintourismus</p>
+                        <p><strong>Premium-Weinproben in Soria:</strong> Entdecken Sie erstklassige Weinkeller in der <strong>Ribera del Duero</strong>. Probieren Sie charaktervolle Rotweine direkt im Barrique-Keller und erfahren Sie alles über den <strong>ökologischen Weinbau</strong> in einer der besten Lagen Spaniens.</p>                        <div class="card-features">
+                            <span><i class="fas fa-wine-bottle"></i> Weinkeller</span>
+                            <span><i class="fas fa-glass-cheers"></i> Verkostungen</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/Yacimiento_Numancia.jpg" alt="Numantia">
+                    <div class="card-content">
+                        <h3>Numantia-Archäologische Stätte</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Garray</p>
+                        <p><strong>Numantia: Ein Mythos der Weltgeschichte.</strong> Besuchen Sie die legendäre keltiberische Ausgrabungsstätte in Soria und entdecken Sie das Symbol des <strong>heldenhaften Widerstands gegen das Römische Reich</strong> – ein unvergessliches Erlebnis für Geschichtsliebhaber.</p>                        <div class="card-features">
+                            <span><i class="fas fa-ticket-alt"></i> 5€</span>
+                            <span><i class="fas fa-history"></i> Geschichte</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/San_Juan_de_Duero.jpg" alt="San Juan de Duero">
+                    <div class="card-content">
+                        <h3>Kloster San Juan de Duero</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Soria Hauptstadt</p>
+                            <p><strong>San Juan de Duero:</strong> Bewundern Sie das weltweit einzigartige <strong>Architekturjuwel von Soria</strong>. Ein romanischer Kreuzgang mit faszinierenden, verschränkten Bögen <strong>mudéjarischer Inspiration</strong> – ein absolutes Muss für Kulturliebhaber.</p>                        <div class="card-features">
+                            <span><i class="fas fa-church"></i> Romanisch</span>
+                            <span><i class="fas fa-camera"></i> Fotogen</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/villa_de_medinaceli.jpg" alt="Medinaceli">
+                    <div class="card-content">
+                        <h3>Villa de Medinaceli</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Medinaceli</p>
+                        <p>Mittelalterliche Stadt mit dem einzigen dreib<p><strong>Medinaceli entdecken:</strong> Besuchen Sie die monumentale mittelalterliche Stadt mit dem <strong>einzigen dreibögigen römischen Triumphbogen Spaniens</strong> – ein architektonisches Juwel des Kulturerbes.</p>ögigen römischen Bogen Spaniens.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-crown"></i> Historisches Ensemble</span>
+                            <span><i class="fas fa-archway"></i> Römischer Bogen</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/El_burgo_de_Osma.jpg" alt="Burgo de Osma">
+                    <div class="card-content">
+                        <h3>El Burgo de Osma</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Burgo de Osma</p>
+                        <p>Bischofsstadt mit beeindruckender gotischer Kathedrale und mittelalterlichem historischen Zentrum.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-church"></i> Kathedrale</span>
+                            <span><i class="fas fa-shopping-bag"></i> Markt</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/urbion.jpg" alt="Picos de Urbión">
+                    <div class="card-content">
+                        <h3>Picos de Urbión</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Iberisches System</p>
+                        <p><strong>Wandern in Soria:</strong> Bezwingen Sie den höchsten Gipfel der Provinz und entdecken Sie mystische <strong>Gletscherseen</strong> inmitten einer spektakulären Hochgebirgslandschaft – ein Paradies für Naturfotografen.</p>
+                        <div class="card-features">
+                            <span><i class="fas fa-mountain"></i> 2.228m</span>
+                            <span><i class="fas fa-snowflake"></i> Gletscher</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/almenar.jpg" alt="Burg Almenar">
+                    <div class="card-content">
+                        <h3>Burg Almenar</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Almenar de Soria</p>
+                        <p><strong>Mittelalterliche Zeitreise:</strong> Besuchen Sie diese beeindruckende <strong>Burg aus dem 13. Jahrhundert</strong>. Die monumentale Festungsanlage mit ihren mächtigen Mauern und gut erhaltenen Türmen ist ein Highlight der spanischen Burgenroute.</p>                        <div class="card-features">
+                            <span><i class="fas fa-chess-rook"></i> Mittelalterlich</span>
+                            <span><i class="fas fa-shield-alt"></i> Festung</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant Section -->
+    <section id="asistente" class="section section-alt asistente-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-robot"></i> KI-Assistent
+            </h2>
+            <p class="asistente-intro">
+                Unser KI-Assistent hilft Ihnen dabei, die beste personalisierte Route zu planen
+                entsprechend Ihrer Vorlieben, verfügbaren Tage und Art der gewünschten Erfahrung.
+            </p>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-avatar">
+                            <img src="../antonio.jpg" alt="Antonio - Assistent" class="bot-avatar">
+                        </div>
+                        <div class="message-content">
+                            <p>Hallo! Mein Name ist Antonio und ich bin Ihr virtueller Tourismus-Assistent 🌄</p>
+                            <p>Ich kann Ihnen helfen, Ihre Reise zu planen, indem ich Ihnen empfehle:</p>
+                            <ul>
+                                <li>✨ Personalisierte Routen</li>
+                                <li>🏡 <a href="../alojamientos-turisticos.html" style="color: #2c5f2d; font-weight: 600;">Touristische Unterkünfte</a> nach Ihren Bedürfnissen</li>
+                                <li>🥾 <a href="#actividades" style="color: #2c5f2d; font-weight: 600;">Touristische Aktivitäten</a></li>
+                                <li>🏛️ <a href="#lugares" style="color: #2c5f2d; font-weight: 600;">Sehenswürdigkeiten</a></li>
+                                <li>🎭 <a href="../eventos-culturales-paginacion.html" style="color: #2c5f2d; font-weight: 600;">Kulturelle Veranstaltungen</a></li>
+                            </ul>
+                            <p>Um zu beginnen, sagen Sie mir: Wie viele Tage planen Sie durch Spanien zu reisen und welche Art von Aktivitäten interessieren Sie?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="quick-options" id="quickOptions">
+                        <button class="quick-btn" onclick="enviarQuickOption('1 Tag - Natur und Wandern')">
+                            <i class="fas fa-hiking"></i> 1 Tag / Natur
+                        </button>
+                        <button class="quick-btn" onclick="enviarQuickOption('2-3 Tage - Kultur und Geschichte')">
+                            <i class="fas fa-landmark"></i> 2-3 Tage / Kultur
+                        </button>
+                        <button class="quick-btn" onclick="enviarQuickOption('Wochenende - ländliche Entspannung')">
+                            <i class="fas fa-spa"></i> Wochenende / Entspannung
+                        </button>
+                        <button class="quick-btn" onclick="enviarQuickOption('eine Woche - vollständiges Erlebnis')">
+                            <i class="fas fa-calendar-week"></i> 1 Woche / Vollständig
+                        </button>
+                    </div>
+
+                    <div class="chat-input">
+                        <input
+                            type="text"
+                            id="userInput"
+                            placeholder="Schreiben Sie Ihre Nachricht hier..."
+                            onkeypress="if(event.key === 'Enter') enviarMensaje()"
+                        >
+                        <button class="btn-send" onclick="enviarMensaje()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="../aviso-legal.html">Impressum</a>
+                    <a href="../politica-cookies.html">Cookie-Richtlinie</a>
+                    <a href="../agradecimientos.html">Danksagungen</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

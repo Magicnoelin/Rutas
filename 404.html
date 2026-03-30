@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-X990K5GE42');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error 404 - Página no encontrada - Rutas</title>
+    <meta name="description" content="Lo sentimos, la página que buscas no existe. Descubre rutas turísticas y alojamientos rurales en Castilla y León.">
+    <meta name="robots" content="noindex, follow">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .error-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        .error-message {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        .error-suggestions {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .suggestions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .suggestion-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            transition: transform 0.3s ease;
+        }
+        .suggestion-card:hover {
+            transform: translateY(-5px);
+        }
+        .suggestion-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        .suggestion-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+        .suggestion-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .search-form {
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .search-input:focus {
+            border-color: var(--primary-color);
+        }
+        .error-footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo_990x1076_verde.png" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="alojamientos-turisticos.html">Alojamientos</a></li>
+                    <li><a href="rutas-turisticas.html">Rutas</a></li>
+                    <li><a href="index.html#actividades">Actividades</a></li>
+                    <li><a href="index.html#lugares">Lugares</a></li>
+                    <li><a href="compromiso-social.html">Compromiso Social</a></li>
+                    <li><a href="index.html#asistente" class="btn-asistente">Asistente IA</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Error Content -->
+    <section class="section" style="margin-top: 100px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+        <div class="container">
+            <div class="error-container">
+                <div class="error-code">404</div>
+                <h1 class="error-title">¡Oops! Página no encontrada</h1>
+                <p class="error-message">
+                    Lo sentimos, la página que estás buscando no existe o ha sido movida.
+                    Pero no te preocupes, puedes explorar las maravillas de Castilla y León desde aquí.
+                </p>
+
+                <div class="error-actions">
+                    <a href="index.html" class="btn-primary">
+                        <i class="fas fa-home"></i> Ir al Inicio
+                    </a>
+                    <a href="javascript:history.back()" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver Atrás
+                    </a>
+                    <a href="index.html#asistente" class="btn-primary">
+                        <i class="fas fa-robot"></i> Usar Asistente IA
+                    </a>
+                </div>
+
+                <!-- Search Form -->
+                <div class="search-form">
+                    <input type="text" class="search-input" placeholder="Buscar en el sitio..." onkeypress="if(event.key === 'Enter') buscar()">
+                </div>
+
+                <!-- Suggestions -->
+                <div class="error-suggestions">
+                    <h2 style="color: var(--primary-color); margin-bottom: 1rem;">
+                        <i class="fas fa-lightbulb"></i> ¿Qué te gustaría hacer?
+                    </h2>
+                    <div class="suggestions-grid">
+                        <div class="suggestion-card">
+                            <div class="suggestion-icon">
+                                <i class="fas fa-hiking"></i>
+                            </div>
+                            <h3 class="suggestion-title">Descubrir Rutas</h3>
+                            <p class="suggestion-description">
+                                Explora senderos espectaculares en la naturaleza de Soria
+                            </p>
+                            <a href="rutas-turisticas.html" class="btn-primary" style="margin-top: 1rem;">Ver Rutas</a>
+                        </div>
+                        <div class="suggestion-card">
+                            <div class="suggestion-icon">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <h3 class="suggestion-title">Buscar Alojamiento</h3>
+                            <p class="suggestion-description">
+                                Encuentra casas rurales y alojamientos turísticos únicos
+                            </p>
+                            <a href="alojamientos-turisticos.html" class="btn-primary" style="margin-top: 1rem;">Ver Alojamientos</a>
+                        </div>
+                        <div class="suggestion-card">
+                            <div class="suggestion-icon">
+                                <i class="fas fa-landmark"></i>
+                            </div>
+                            <h3 class="suggestion-title">Conocer Lugares</h3>
+                            <p class="suggestion-description">
+                                Descubre el patrimonio histórico y cultural de Castilla y León
+                            </p>
+                            <a href="index.html#lugares" class="btn-primary" style="margin-top: 1rem;">Ver Lugares</a>
+                        </div>
+                        <div class="suggestion-card">
+                            <div class="suggestion-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <h3 class="suggestion-title">Gastronomía Local</h3>
+                            <p class="suggestion-description">
+                                Prueba los sabores tradicionales de la cocina soriana
+                            </p>
+                            <a href="index.html#lugares" class="btn-primary" style="margin-top: 1rem;">Saber Más</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="error-footer">
+                    <p>
+                        Si crees que esto es un error, puedes
+                        <a href="mailto:olgamarin@rutasrurales.io" style="color: var(--primary-color); text-decoration: underline;">
+                            contactarnos
+                        </a>
+                        para que lo solucionemos.
+                    </p>
+                    <p style="margin-top: 1rem;">
+                        <small>&copy; 2025 rutasrurales.io - Todos los derechos reservados</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function buscar() {
+            const query = document.querySelector('.search-input').value.trim();
+            if (query) {
+                // Redirigir al asistente IA con la consulta
+                window.location.href = `index.html?search=${encodeURIComponent(query)}#asistente`;
+            }
+        }
+
+        // Auto-focus en el campo de búsqueda
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.search-input').focus();
+        });
+    </script>
+</body>
+</html>

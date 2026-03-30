@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Detalle completo del alojamiento rural. Información, fotos, características y contacto para reservar tu estancia en Castilla y León." />
+    <title>Detalle del Alojamiento | Rutas Rurales</title>
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <link id="canonical-link" rel="canonical" href="">
+    <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+    <style>
+        /* CSS crítico inline */
+        body { margin:0; font-family:Arial,sans-serif; background:#fff; color:#333; }
+        .detail-container { background:white; padding:2rem; border-radius:16px; margin-bottom:2rem; }
+        .detail-header h1 { color: #2c5f2d; font-size:2rem; font-weight:700; margin-bottom:0.5rem; }
+        .detail-header p { color:#666; font-size:1.1rem; }
+        .detail-grid { display:grid; gap:2rem; grid-template-columns:1.2fr 0.8fr; }
+        @media(max-width:900px){.detail-grid{grid-template-columns:1fr;}}
+        .gallery-container { position:relative; height:450px; overflow:hidden; border-radius:12px; margin-bottom:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+        .gallery-img { width:100%; height:100%; object-fit:cover; display:none; transition: opacity 0.5s ease-in-out; }
+        .gallery-img.active { display:block; }
+        .gallery-nav { position:absolute; top:50%; width:100%; display:flex; justify-content:space-between; transform:translateY(-50%); padding:0 1rem; }
+        .nav-btn { background: rgba(255,255,255,0.9); color: #2c5f2d; border:none; width:50px; height:50px; border-radius:50%; cursor:pointer; font-size:1.2rem; display:flex; align-items:center; justify-content:center; }
+        .feature-tag { display:inline-block; background:#e0f0db; color:#2c5f2d; padding:0.3rem 0.6rem; margin:0.2rem; border-radius:4px; font-size:0.9rem; }
+        .info-card { background:#f9f9f9; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+        .info-item { margin:0.5rem 0; }
+        .info-item a { color: #2c5f2d; text-decoration: none; font-weight: 600; }
+        .info-item a:hover { text-decoration: underline; color: #1a3a1c; }
+        .btn-primary, .btn-secondary { display:inline-block; padding:0.6rem 1rem; border-radius:6px; text-decoration:none; color:white; font-weight:600; margin-top:0.5rem; text-align:center; }
+        .btn-primary { background:#2c5f2d; }
+        .btn-secondary { background:#666; }
+        .card-evento-mini:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+        }
+        
+        /* Secciones de contenido relacionado */
+        .nearby-section {
+            margin: 3rem 0;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+        .nearby-section h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nearby-section h2 i {
+            font-size: 1.6rem;
+        }
+        .nearby-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .nearby-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
+        .nearby-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .nearby-card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        .nearby-card-content {
+            padding: 1.25rem;
+        }
+        .nearby-card-content h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .nearby-card-location {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .nearby-card-description {
+            color: #444;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .nearby-card-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .nearby-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .event-date-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        /* Banner Eclipse Solar */
+        .eclipse-banner {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            margin: 2rem auto;
+            max-width: 1000px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .eclipse-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,200,0,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
+        .eclipse-banner-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .eclipse-banner-icon { font-size: 3rem; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .eclipse-banner-text { flex: 1; }
+        .eclipse-banner h3 { margin: 0 0 0.5rem 0; font-size: 1.4rem; color: #ffd700; }
+        .eclipse-banner p { margin: 0; font-size: 0.95rem; opacity: 0.9; }
+        .eclipse-banner-date {
+            background: #ffd700;
+            color: #1a1a2e;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .eclipse-banner-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .eclipse-banner-close:hover { opacity: 1; }
+        @media (max-width: 768px) {
+            .nearby-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="50" height="50" style="height: 50px; margin-right: 10px;">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+
+                <!-- Selector de idiomas desktop -->
+                <div class="language-selector-nav">
+                    <button class="language-btn-nav" id="languageBtnNav" aria-label="Seleccionar idioma">
+                        <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                        <span>ES</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown-nav" id="languageDropdownNav">
+                        <a href="/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                            Español
+                        </a>
+                        <a href="/en/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
+                            English
+                        </a>
+                        <a href="/fr/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
+                            Français
+                        </a>
+                        <a href="/de/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
+                            Deutsch
+                        </a>
+                        <a href="/zh/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
+                            中文
+                        </a>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="/alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamiento</a></li>
+                    <li><a href="/index.html#actividades"><i class="fas fa-hiking"></i> Actividades</a></li>
+                    <li><a href="/eventos-culturales-paginacion.html"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+                    <li><a href="/rutas.html"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="/index.html#asistente" class="nav-asistente">
+                        <img src="/antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                        Antonio
+                    </a></li>
+
+                    <!-- Selector de idiomas móvil -->
+                    <li class="language-selector-mobile">
+                        <h4>🌐 Idiomas</h4>
+                        <div class="language-options-mobile">
+                            <a href="/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                                ES
+                            </a>
+                            <a href="/en/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
+                                EN
+                            </a>
+                            <a href="/fr/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
+                                FR
+                            </a>
+                            <a href="/de/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
+                                DE
+                            </a>
+                            <a href="/zh/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
+                                ZH
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section class="section" style="margin-top: 100px;">
+        <div class="container">
+            <div id="loading" style="text-align: center; padding: 3rem;">
+                <i class="fas fa-spinner fa-spin fa-2x"></i><br><br>Cargando detalles del alojamiento...
+            </div>
+
+            <div id="error-msg" style="display: none; text-align: center; padding: 3rem;">
+                <i class="fas fa-exclamation-triangle fa-3x" style="color: #e74c3c;"></i>
+                <h2 style="margin-top: 1rem;">Alojamiento no encontrado</h2>
+                <p>Lo sentimos, no hemos podido encontrar la información solicitada.</p>
+                <a href="/alojamientos-turisticos.html" class="btn-primary" style="margin-top: 1rem;">Volver al listado</a>
+            </div>
+
+            <div id="detail-content" class="detail-container" style="display: none;">
+                <!-- El contenido se inyectará aquí -->
+            </div>
+
+            <!-- Secciones de contenido relacionado -->
+            <div id="nearby-content" style="display: none;">
+                <!-- Lugares de Interés -->
+                <section class="nearby-section" id="places-section" style="display: none;">
+                    <h2><i class="fas fa-map-marked-alt"></i> Lugares de Interés en la Zona</h2>
+                    <div id="places-grid" class="nearby-grid"></div>
+                </section>
+
+                <!-- Actividades Turísticas -->
+                <section class="nearby-section" id="activities-section" style="display: none;">
+                    <h2><i class="fas fa-hiking"></i> Actividades Turísticas</h2>
+                    <div id="activities-grid" class="nearby-grid"></div>
+                </section>
+
+                <!-- Eventos Culturales -->
+                <section class="nearby-section" id="events-section" style="display: none;">
+                    <h2><i class="fas fa-calendar-alt"></i> Eventos Culturales Próximos</h2>
+                    <div id="events-grid" class="nearby-grid"></div>
+                </section>
+            </div>
+
+            <!-- Fallback content in case JavaScript fails -->
+            <noscript>
+                <div class="detail-container">
+                    <h2>Error: JavaScript requerido</h2>
+                    <p>Esta página requiere JavaScript para funcionar correctamente. Por favor, habilite JavaScript en su navegador.</p>
+                    <a href="/alojamientos-turisticos.html" class="btn-primary">Volver al listado</a>
+                </div>
+            </noscript>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="/aviso-legal.html">Aviso Legal</a>
+                    <a href="/politica-cookies.html">Política de Cookies</a>
+                    <a href="/agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/script.js?v=20260114" defer></script>
+    <script>
+        let currentImageIndex = 0;
+        let currentPhotos = [];
+
+        // ============================================
+        // TRACKING DE VISITAS Y FAVORITOS
+        // ============================================
+        function trackAccommodationView(accommodationId) {
+            if (!accommodationId) return;
+            fetch('/api/track_resource_stat.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    resource_type: 'accommodation',
+                    resource_id: accommodationId,
+                    stat_type: 'view'
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Vista registrada para alojamiento:', accommodationId);
+                } else {
+                    console.warn('No se pudo registrar vista:', data.error);
+                }
+            })
+            .catch(err => console.warn('Error tracking vista:', err));
+        }
+
+        function trackAccommodationFavorite(accommodationId) {
+            if (!accommodationId) return;
+            fetch('/api/track_resource_stat.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    resource_type: 'accommodation',
+                    resource_id: accommodationId,
+                    stat_type: 'favorite'
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Favorito registrado para alojamiento:', accommodationId);
+                } else {
+                    console.warn('No se pudo registrar favorito:', data.error);
+                }
+            })
+            .catch(err => console.warn('Error tracking favorito:', err));
+        }
+
+        // Aplica el estilo visual al botón según si es favorito o no
+        function applyFavStyle(btn, isFav) {
+            if (isFav) {
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fas fa-heart" style="color:#e74c3c;"></i> Guardado en favoritos';
+                btn.style.background = '#fff0f0';
+                btn.style.color = '#e74c3c';
+                btn.style.border = '2px solid #e74c3c';
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fas fa-heart"></i> Guardar en favoritos';
+                btn.style.background = 'white';
+                btn.style.color = '#2c5f2d';
+                btn.style.border = '2px solid #2c5f2d';
+            }
+        }
+
+        // Comprueba en la API si el usuario ya tiene este favorito guardado
+        function checkFavoriteStatus(accommodationId) {
+            const btn = document.getElementById('btn-favorito-' + accommodationId);
+            if (!btn) return;
+
+            fetch('/api/favorites.php?entity_type=accommodation&entity_id=' + accommodationId)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        // Sincronizar localStorage con la BD
+                        if (data.is_favorite) {
+                            localStorage.setItem('fav_accommodation_' + accommodationId, '1');
+                        } else {
+                            localStorage.removeItem('fav_accommodation_' + accommodationId);
+                        }
+                        applyFavStyle(btn, data.is_favorite);
+                    }
+                    // Si no autenticado (401) dejamos el estado de localStorage
+                })
+                .catch(() => {}); // silencioso si falla
+        }
+
+        function toggleFavorite(accommodationId, btn) {
+            const isFav = btn.classList.contains('active');
+            const action = isFav ? 'remove' : 'add';
+
+            // Feedback visual inmediato (optimistic UI)
+            applyFavStyle(btn, !isFav);
+            btn.disabled = true;
+
+            fetch('/api/favorites.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    entity_type: 'accommodation',
+                    entity_id: accommodationId,
+                    action: action
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                if (data.success) {
+                    // Confirmar estado real devuelto por la API
+                    applyFavStyle(btn, data.is_favorite);
+                    if (data.is_favorite) {
+                        localStorage.setItem('fav_accommodation_' + accommodationId, '1');
+                    } else {
+                        localStorage.removeItem('fav_accommodation_' + accommodationId);
+                    }
+                } else if (data.code === 401 || data.error === 'No autenticado') {
+                    // Usuario no logueado: revertir y redirigir al login
+                    applyFavStyle(btn, isFav);
+                    if (confirm('Debes iniciar sesión para guardar favoritos.\n¿Quieres ir a la página de login?')) {
+                        window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
+                    }
+                } else {
+                    // Otro error: revertir
+                    applyFavStyle(btn, isFav);
+                    console.warn('Error al guardar favorito:', data.error);
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                // Sin conexión: guardar solo en localStorage como fallback
+                if (action === 'add') {
+                    localStorage.setItem('fav_accommodation_' + accommodationId, '1');
+                    applyFavStyle(btn, true);
+                } else {
+                    localStorage.removeItem('fav_accommodation_' + accommodationId);
+                    applyFavStyle(btn, false);
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('Cargando detalle de alojamiento...');
+
+            // Usar slug inyectado por PHP si existe, sino obtener de URL
+            let slug = window.currentSlug || '';
+
+            if (!slug) {
+                const urlParams = new URLSearchParams(window.location.search);
+                slug = urlParams.get('slug');
+                console.log('Slug from URL params:', slug);
+            }
+
+            if (!slug) {
+                const path = window.location.pathname;
+                const match = path.match(/\/alojamiento\/([^\/]+)/);
+                if (match) slug = match[1];
+                console.log('Slug from pathname:', slug);
+            }
+
+            if (!slug) {
+                console.error('No slug found');
+                mostrarError();
+                return;
+            }
+
+            // Set a timeout to show error if loading takes too long
+            const loadingTimeout = setTimeout(() => {
+                console.error('Loading timeout reached');
+                mostrarError();
+            }, 15000); // 15 seconds timeout
+
+            try {
+                console.log('Intentando cargar desde API...');
+                // Intentar primero desde la API (base de datos) con timeout corto
+                const controller = new AbortController();
+                const apiTimeout = setTimeout(() => controller.abort(), 5000);
+                let response = await fetch('/api/alojamiento-slug.php?slug=' + encodeURIComponent(slug), {
+                    signal: controller.signal
+                });
+                clearTimeout(apiTimeout);
+                console.log('API response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                let data = await response.json();
+                console.log('API data received:', data);
+
+                if (data.success && data.data) {
+                    console.log('Renderizando desde API');
+                    clearTimeout(loadingTimeout);
+                    renderizarDetalle(data.data);
+                    // Trackear la vista
+                    const accId = data.data.id || data.data.ID;
+                    if (accId) {
+                        trackAccommodationView(accId);
+                        // Comprobar estado real del favorito en la BD (si el usuario está logueado)
+                        checkFavoriteStatus(accId);
+                    }
+                } else {
+                    console.log('API returned error, trying JSON fallback...');
+                    await cargarDesdeJson(slug, loadingTimeout);
+                }
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                await cargarDesdeJson(slug, loadingTimeout, error);
+            }
+        });
+
+        async function cargarDesdeJson(slug, loadingTimeout, error = null) {
+            if (error && error.name !== 'AbortError') {
+                clearTimeout(loadingTimeout);
+            }
+
+            try {
+                const response = await fetch('/accommodations.json');
+                const alojamientos = await response.json();
+                console.log('JSON data loaded:', alojamientos.length, 'alojamientos');
+
+                // Primero intentar encontrar por slug exacto si viene en los datos
+                let alojamiento = alojamientos.find(a => {
+                    // Comparar con el slug nativo del alojamiento si existe
+                    if (a.slug && a.slug.toLowerCase() === slug.toLowerCase()) {
+                        console.log('Encontrado por slug nativo:', a.slug);
+                        return true;
+                    }
+                    // Comparar con Slug (mayúscula)
+                    if (a.Slug && a.Slug.toLowerCase() === slug.toLowerCase()) {
+                        console.log('Encontrado por Slug nativo:', a.Slug);
+                        return true;
+                    }
+                    return false;
+                });
+
+                // Si no se encontró por slug nativo, generar slug desde el nombre
+                if (!alojamiento) {
+                    console.log('No encontrado por slug nativo, buscando por nombre...');
+                    alojamiento = alojamientos.find(a => {
+                        const nombre = a.name || a.Nombre || '';
+                        const alojSlug = generarSlug(nombre);
+                        const match = alojSlug === slug;
+                        if (match) console.log('Encontrado por nombre:', nombre);
+                        return match;
+                    });
+                }
+
+                // Si aún no se encuentra, buscar por ID en la URL (si es numérico)
+                if (!alojamiento && /^\d+$/.test(slug)) {
+                    console.log('Buscando por ID numérico:', slug);
+                    alojamiento = alojamientos.find(a => {
+                        const id = String(a.id || a.ID || '');
+                        return id === slug;
+                    });
+                    if (alojamiento) console.log('Encontrado por ID:', alojamiento.name || alojamiento.Nombre);
+                }
+
+                if (alojamiento) {
+                    console.log('Alojamiento encontrado:', alojamiento);
+                    clearTimeout(loadingTimeout);
+                    renderizarDetalle(alojamiento);
+                } else {
+                    console.log('Alojamiento no encontrado en JSON');
+                    console.log('Slug buscado:', slug);
+                    // Mostrar algunos ejemplos para debug
+                    const ejemplos = alojamientos.slice(0, 3).map(a => ({
+                        nombre: a.name || a.Nombre,
+                        slug: generarSlug(a.name || a.Nombre || '')
+                    }));
+                    console.log('Ejemplos de slugs en JSON:', ejemplos);
+                    clearTimeout(loadingTimeout);
+                    mostrarError();
+                }
+            } catch (jsonError) {
+                console.error('Error cargando JSON fallback:', jsonError);
+                clearTimeout(loadingTimeout);
+                mostrarError();
+            }
+        }
+
+        function generarSlug(texto) {
+            if (!texto) return '';
+            return texto
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/ñ/g, 'n')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        function mostrarError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-msg').style.display = 'block';
+        }
+
+        function renderizarDetalle(a) {
+            document.getElementById('loading').style.display = 'none';
+            const container = document.getElementById('detail-content');
+            container.style.display = 'block';
+
+            // Guardar datos del alojamiento para cargar contenido relacionado
+            window.currentAccommodation = a;
+
+            // Actualizar el título de la página
+            const nombreAlojamiento = a.Nombre || a.name || 'Alojamiento';
+            document.title = nombreAlojamiento + ' | Rutas Rurales';
+
+            // Establecer URL canónica
+            const canonicalSlug = generarSlug(nombreAlojamiento);
+            const canonicalUrl = `https://www.rutasrurales.io/alojamiento/${canonicalSlug}`;
+            const canonicalLink = document.getElementById('canonical-link');
+            if (canonicalLink) {
+                canonicalLink.setAttribute('href', canonicalUrl);
+            }
+
+            // Preparar fotos
+            currentPhotos = a.Fotos || a.fotos || a.photos || [];
+            if (currentPhotos.length === 0) {
+                const img = a.Foto1 || a.photo1 || a.image1 || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop';
+                currentPhotos = [img];
+            }
+
+            // Generar HTML de galería
+            const galleryHtml = `
+                <div class="gallery-container">
+                    ${currentPhotos.map((foto, index) => 
+                        `<img src="${foto}" class="gallery-img ${index === 0 ? 'active' : ''}" alt="${a.Nombre || a.name}">`
+                    ).join('')}
+                    ${currentPhotos.length > 1 ? `
+                        <div class="gallery-nav">
+                            <button class="nav-btn" onclick="cambiarFoto(-1)"><i class="fas fa-chevron-left"></i></button>
+                            <button class="nav-btn" onclick="cambiarFoto(1)"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Características
+            const carac = a.caracteristicas || a.features || [];
+            const caracHtml = carac.map(c => `<span class="feature-tag"><i class="fas fa-check-circle"></i> ${c}</span>`).join('');
+
+            // Información de contacto
+            const telefono = a.Telefono1 || a.phone || '';
+            const email = a.Email || a.email || '';
+            const web = a.Web || a.website || '';
+
+            // Guardar eventos vinculados para usar después junto con eventos cercanos
+            window.linkedEvents = a.eventos_vinculados || [];
+
+            container.innerHTML = `
+                <div class="detail-header">
+                    <h1>${a.Nombre || a.name}</h1>
+                    <p><i class="fas fa-map-marker-alt"></i> ${a.Direccion || a.address || ''}, ${a.Localidad || a.municipality || ''}, ${a.Provincia || a.province || ''}</p>
+                </div>
+                
+                ${galleryHtml}
+
+                <div class="detail-grid">
+                    <div>
+                        <h3>Descripción</h3>
+                        <p>${a.Notaspublicas || a.description || 'Sin descripción disponible.'}</p>
+                        <div style="margin-top: 1rem;">${caracHtml}</div>
+                    </div>
+                    <div>
+                            <div class="info-card">
+                            <h3 style="margin-top:0; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; display: inline-block; margin-bottom: 1.5rem;">Información y Reservas</h3>
+                            <div class="price-tag">${a.Precio || a.price ? (a.Precio || a.price) + '€ / noche' : 'Consultar precio'}</div>
+                            
+                            ${(a.Provincia || a.province || a.latitude) ? `
+                                <a href="/rutas.php?${a.latitude && a.longitude ? 'lat=' + a.latitude + '&lng=' + a.longitude + '&' : ''}provincia=${encodeURIComponent(a.Provincia || a.province || '')}&radius=100&alojamientos=1&lugares=1&actividades=1&eventos=1" class="btn-primary" style="display: block; text-align: center; text-decoration: none; background: linear-gradient(135deg, #e67e22, #d35400); color: white; padding: 14px; border-radius: 10px; font-weight: 700; margin-top: 12px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4); transition: all 0.3s ease;">
+                                    <i class="fas fa-compass"></i> 🌟 ¡No te pierdas todo lo que hay cerca!
+                                    <span style="display: block; font-size: 0.75rem; font-weight: 500; margin-top: 4px; opacity: 0.95;">
+                                        Alojamientos, actividades, lugares únicos y eventos en 100km
+                                    </span>
+                                </a>
+                            ` : ''}
+                            
+                            <div class="info-item"><i class="fas fa-users"></i> <strong>Capacidad:</strong>&nbsp;${a.Plazas || a.capacity || 0} personas</div>
+                            <div class="info-item"><i class="fas fa-home"></i> <strong>Tipo:</strong>&nbsp;${a.Tipo || a.accommodation_type || a.type}</div>
+                            <hr style="margin: 1rem 0; border: 0; border-top: 1px solid #ddd;">
+                            ${telefono ? `<div class="info-item"><i class="fas fa-phone-alt"></i> <a href="tel:${telefono}">${telefono}</a></div>` : ''}
+                            ${email ? `<div class="info-item"><i class="fas fa-envelope"></i> <a href="mailto:${email}">${email}</a></div>` : ''}
+                            ${web ? `<div class="info-item"><i class="fas fa-globe"></i> <a href="${web}" target="_blank">Visitar Web</a></div>` : ''}
+                            
+                            ${a.host_info && a.host_info.avatar_url ? `
+                                <div style="text-align: center; margin: 1rem 0; padding: 1rem; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    <img src="${a.host_info.avatar_url}" alt="${a.host_info.first_name || 'Anfitrión'}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 3px solid var(--primary-color);">
+                                    <div style="font-weight: bold; color: var(--primary-color);">${a.host_info.first_name || ''} ${a.host_info.last_name || ''}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">Tu anfitrión</div>
+                                </div>
+                            ` : ''}
+                            
+                            ${telefono ? `<a href="https://wa.me/34${telefono.replace(/\s/g,'')}" target="_blank" class="btn-primary" style="display: block; text-align: center; margin-top: 1rem;"><i class="fab fa-whatsapp"></i> Contactar por WhatsApp</a>` : ''}
+                            
+                            <!-- BOTÓN FAVORITO (CORAZÓN) -->
+                            <button id="btn-favorito-${a.id || a.ID}"
+                                onclick="toggleFavorite(${a.id || a.ID}, this)"
+                                class="${localStorage.getItem('fav_accommodation_' + (a.id || a.ID)) ? 'active' : ''}"
+                                style="display: block; width: 100%; text-align: center; margin-top: 0.5rem; padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer;
+                                       background: ${localStorage.getItem('fav_accommodation_' + (a.id || a.ID)) ? '#fff0f0' : 'white'};
+                                       color: ${localStorage.getItem('fav_accommodation_' + (a.id || a.ID)) ? '#e74c3c' : '#2c5f2d'};
+                                       border: 2px solid ${localStorage.getItem('fav_accommodation_' + (a.id || a.ID)) ? '#e74c3c' : '#2c5f2d'};">
+                                ${localStorage.getItem('fav_accommodation_' + (a.id || a.ID))
+                                    ? '<i class="fas fa-heart" style="color:#e74c3c;"></i> Guardado en favoritos'
+                                    : '<i class="fas fa-heart"></i> Guardar en favoritos'}
+                            </button>
+                            
+                            <a href="https://api.whatsapp.com/send?text=${encodeURIComponent('¡Mira este alojamiento: ' + (a.Nombre || a.name) + '! ' + window.location.href)}" target="_blank" class="btn-secondary" style="display: block; text-align: center; margin-top: 0.5rem;"><i class="fas fa-share-nodes"></i> Compartir en WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Cargar contenido relacionado
+            loadNearbyContent(a);
+            
+            // Mostrar banner del eclipse solar si la provincia está afectada
+            const province = a.Provincia || a.province || '';
+            if (province) {
+                showEclipseBanner(province);
+            }
+        }
+
+        async function loadNearbyContent(alojamiento) {
+            try {
+                console.log('Alojamiento recibido:', alojamiento);
+                
+                const accommodationId = alojamiento.id || alojamiento.ID;
+                const municipality = alojamiento.municipality || alojamiento.Localidad || alojamiento.localidad;
+                const province = alojamiento.province || alojamiento.Provincia || alojamiento.provincia;
+                
+                console.log('Datos extraídos:', { accommodationId, municipality, province });
+                
+                if (!accommodationId && !municipality && !province) {
+                    console.log('No hay datos de ubicación para cargar contenido relacionado');
+                    return;
+                }
+                
+                let apiUrl = '/api/get_nearby_content.php?';
+                if (accommodationId) {
+                    apiUrl += `accommodation_id=${accommodationId}`;
+                } else if (municipality || province) {
+                    if (municipality) apiUrl += `municipality=${encodeURIComponent(municipality)}`;
+                    if (province) {
+                        if (municipality) apiUrl += '&';
+                        apiUrl += `province=${encodeURIComponent(province)}`;
+                    }
+                }
+                
+                console.log('Llamando a API:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                console.log('Respuesta API:', data);
+                
+                if (data.success) {
+                    renderNearbyContent(data.data);
+                } else {
+                    console.error('Error en API:', data.error);
+                }
+            } catch (error) {
+                console.error('Error al cargar contenido relacionado:', error);
+            }
+        }
+
+        function renderNearbyContent(data) {
+            const nearbyContainer = document.getElementById('nearby-content');
+            
+            // Renderizar lugares de interés
+            if (data.places_of_interest && data.places_of_interest.length > 0) {
+                renderPlaces(data.places_of_interest);
+                document.getElementById('places-section').style.display = 'block';
+            }
+            
+            // Renderizar actividades turísticas
+            if (data.tourist_activities && data.tourist_activities.length > 0) {
+                renderActivities(data.tourist_activities);
+                document.getElementById('activities-section').style.display = 'block';
+            }
+            
+            // Renderizar eventos culturales
+            if (data.cultural_events && data.cultural_events.length > 0) {
+                renderEvents(data.cultural_events);
+                document.getElementById('events-section').style.display = 'block';
+            }
+            
+            // Mostrar el contenedor si hay algo que mostrar
+            if (data.places_of_interest.length > 0 || data.tourist_activities.length > 0 || data.cultural_events.length > 0) {
+                nearbyContainer.style.display = 'block';
+            }
+        }
+
+        function renderPlaces(places) {
+            const grid = document.getElementById('places-grid');
+            grid.innerHTML = places.map(place => {
+                // Generar URL segura con fallback
+                const placeUrl = place.slug 
+                    ? `/lugar/${place.slug}` 
+                    : '#lugares-de-interes';
+                
+                return `
+                <div class="nearby-card" onclick="window.location.href='${placeUrl}'">
+                    <img src="${place.main_photo || 'https://rutasrurales.io/img/default-place.jpg'}" alt="${place.name || 'Lugar de interés'}" class="nearby-card-image" loading="lazy">
+                    <div class="nearby-card-content">
+                        <h3>${place.name || 'Lugar de interés'}</h3>
+                        <div class="nearby-card-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${place.municipality || ''}${place.province ? ', ' + place.province : ''}
+                            ${place.distance ? `<br><span style="color: var(--secondary-color); font-size: 0.85rem; margin-top: 4px; display: inline-block;"><i class="fas fa-route"></i> A ${place.distance} km</span>` : ''}
+                        </div>
+                        <p class="nearby-card-description">${place.short_description || place.description || 'Descubre este lugar de interés'}</p>
+                        ${place.opening_hours ? `
+                            <div class="nearby-card-meta">
+                                <span><i class="fas fa-clock"></i> ${place.opening_hours}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderActivities(activities) {
+            const grid = document.getElementById('activities-grid');
+            grid.innerHTML = activities.map(activity => {
+                // Generar URL segura con fallback
+                const activityUrl = activity.slug 
+                    ? `/actividad/${activity.slug}` 
+                    : '#actividades-turisticas';
+                
+                return `
+                <div class="nearby-card" onclick="window.location.href='${activityUrl}'">
+                    <img src="${activity.main_photo || 'https://rutasrurales.io/img/default-activity.jpg'}" alt="${activity.name || 'Actividad'}" class="nearby-card-image" loading="lazy">
+                    <div class="nearby-card-content">
+                        <h3>${activity.name || 'Actividad'}</h3>
+                        <div class="nearby-card-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${activity.municipality || ''}${activity.province ? ', ' + activity.province : ''}
+                            ${activity.distance ? `<br><span style="color: var(--secondary-color); font-size: 0.85rem; margin-top: 4px; display: inline-block;"><i class="fas fa-route"></i> A ${activity.distance} km</span>` : ''}
+                        </div>
+                        <p class="nearby-card-description">${activity.short_description || activity.description || 'Descubre esta actividad'}</p>
+                        <div class="nearby-card-meta">
+                            ${activity.duration ? `<span><i class="fas fa-clock"></i> ${activity.duration}</span>` : ''}
+                            ${activity.difficulty_level ? `<span><i class="fas fa-chart-line"></i> ${activity.difficulty_level}</span>` : ''}
+                            ${activity.price ? `<span><i class="fas fa-euro-sign"></i> ${activity.price}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderEvents(events) {
+            const grid = document.getElementById('events-grid');
+            
+            // Combinar eventos cercanos con eventos vinculados (evitando duplicados)
+            const linkedEvents = window.linkedEvents || [];
+            
+            // Función para normalizar slug para comparación
+            const normalizeSlug = (slug) => {
+                if (!slug) return '';
+                return slug.toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/ñ/g, 'n')
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+            };
+            
+            // Set para evitar duplicados (por ID y por slug normalizado)
+            const seenIds = new Set();
+            const seenSlugs = new Set();
+            
+            // Función para verificar si ya existe
+            const isDuplicate = (event) => {
+                const eventId = event.id || event.event_id;
+                const eventSlug = normalizeSlug(event.slug || event.Slug || event.name || event.titulo || event.title);
+                
+                if (eventId && seenIds.has(eventId)) return true;
+                if (eventSlug && seenSlugs.has(eventSlug)) return true;
+                
+                // Marcar como visto
+                if (eventId) seenIds.add(eventId);
+                if (eventSlug) seenSlugs.add(eventSlug);
+                return false;
+            };
+            
+            // Procesar eventos cercanos primero
+            const allEvents = [];
+            events.forEach(event => {
+                if (!isDuplicate(event)) {
+                    allEvents.push({
+                        ...event,
+                        linked: false
+                    });
+                }
+            });
+            
+            // Agregar eventos vinculados que no estén ya en la lista
+            linkedEvents.forEach(linkedEvent => {
+                // Normalizar campos del evento vinculado para que coincidan con la estructura esperada
+                const normalizedLinked = {
+                    ...linkedEvent,
+                    id: linkedEvent.id || linkedEvent.event_id,
+                    slug: linkedEvent.slug || linkedEvent.Slug || linkedEvent.name || linkedEvent.titulo || linkedEvent.title,
+                    name: linkedEvent.name || linkedEvent.titulo || linkedEvent.title,
+                    main_photo: linkedEvent.imagen || linkedEvent.poster_image || linkedEvent.photo1,
+                    start_date: linkedEvent.start_date || linkedEvent.fecha_evento,
+                    start_date_formatted: linkedEvent.fecha_formateada || linkedEvent.event_date_formatted,
+                    event_time: linkedEvent.event_time || linkedEvent.hora_evento,
+                    venue: linkedEvent.venue_name || linkedEvent.ubicacion || linkedEvent.venue,
+                    municipality: linkedEvent.municipality || linkedEvent.localidad,
+                    province: linkedEvent.province,
+                    short_description: linkedEvent.short_description || linkedEvent.descripcion_corta,
+                    description: linkedEvent.description || linkedEvent.descripcion,
+                    category: linkedEvent.category_id || linkedEvent.categoria || linkedEvent.category,
+                    category_name: linkedEvent.category_name || getEventCategoryName(linkedEvent.category_id || linkedEvent.categoria || linkedEvent.category),
+                    is_free: linkedEvent.is_free,
+                    ticket_price: linkedEvent.ticket_price,
+                    ticket_price_range: linkedEvent.ticket_price_range,
+                    distance: 0, // Eventos vinculados se consideran en la misma ubicación
+                    linked: true
+                };
+                
+                if (!isDuplicate(normalizedLinked)) {
+                    allEvents.push(normalizedLinked);
+                }
+            });
+            
+            // Función auxiliar para obtener nombre de categoría
+            function getEventCategoryName(id) {
+                const categorias = {
+                    1: 'Fiestas Populares', 2: 'Fiestas Patronales', 3: 'Fiestas Tradicionales', 4: 'Romerías', 5: 'Carnavales',
+                    6: 'Cultura y Espectáculos', 7: 'Conciertos', 8: 'Teatro', 9: 'Exposiciones', 10: 'Festivales de Música', 11: 'Cine',
+                    12: 'Gastronomía y Ferias', 13: 'Ferias Gastronómicas', 14: 'Jornadas Gastronómicas', 15: 'Mercados Tradicionales', 16: 'Ferias de Productos Locales',
+                    17: 'Deportes', 18: 'Carreras Populares', 19: 'Maratones y Medias', 20: 'Competiciones Ciclistas', 21: 'Eventos Deportivos',
+                    22: 'Religión y Tradición', 23: 'Semana Santa', 24: 'Procesiones', 25: 'Celebraciones Religiosas'
+                };
+                return categorias[id] || 'Evento Cultural';
+            }
+            
+            if (allEvents.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">No hay eventos culturales próximos en esta zona</p>';
+                return;
+            }
+            
+            // Ordenar por fecha
+            allEvents.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+            
+            grid.innerHTML = allEvents.map(event => {
+                // Usar name primero (campo real de BD), luego title, fallback a 'Evento'
+                const title = event.name || event.title || 'Evento sin nombre';
+                const eventDate = event.event_date_formatted || event.start_date_formatted || 
+                                (event.start_date ? formatDate(event.start_date) : '');
+                const eventTime = event.event_time || '';
+                const venue = event.venue || event.municipality || '';
+                const province = event.province || '';
+                const description = event.short_description || event.description || '';
+                const category = event.category_name || event.category || 'Evento';
+                
+                // Determinar precio correctamente según la estructura de la BD
+                // is_free = 1 → Gratis, ticket_price = precio numérico
+                let priceDisplay = '';
+                if (event.is_free == 1) {
+                    priceDisplay = 'Gratis';
+                } else if (event.ticket_price && parseFloat(event.ticket_price) > 0) {
+                    priceDisplay = parseFloat(event.ticket_price).toFixed(2).replace('.00', '') + ' EUR';
+                } else if (event.ticket_price_range) {
+                    priceDisplay = event.ticket_price_range;
+                }
+                
+                return `
+                    <div class="nearby-card" onclick="window.location.href='/evento/${event.slug || '#'}'">
+                        <img src="${event.main_photo || 'https://rutasrurales.io/menu_images/evento-default.jpg'}" 
+                             alt="${title}" class="nearby-card-image" loading="lazy"
+                             onerror="this.src='https://rutasrurales.io/menu_images/evento-default.jpg'">
+                        <div class="nearby-card-content">
+                            ${eventDate ? `
+                                <div class="event-date-badge">
+                                    <i class="fas fa-calendar"></i> ${eventDate}
+                                    ${eventTime ? ` - ${eventTime}` : ''}
+                                </div>
+                            ` : ''}
+                            ${category ? `
+                                <div style="color: var(--primary-color); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">
+                                    ${category}
+                                </div>
+                            ` : ''}
+                            <h3>${title}</h3>
+                            ${venue || province ? `
+                                <div class="nearby-card-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${venue}${province && venue ? ', ' : ''}${province}
+                                    ${event.distance ? `<br><span style="color: var(--secondary-color); font-size: 0.85rem; margin-top: 4px; display: inline-block;"><i class="fas fa-route"></i> A ${event.distance} km</span>` : ''}
+                                </div>
+                            ` : ''}
+                            ${description ? `
+                                <p class="nearby-card-description">${description}</p>
+                            ` : ''}
+                            ${priceDisplay ? `
+                                <div class="nearby-card-meta">
+                                    <span><i class="fas fa-tag"></i> ${priceDisplay}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Función auxiliar para formatear fechas
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
+            return date.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        window.cambiarFoto = function(dir) {
+            const imgs = document.querySelectorAll('.gallery-img');
+            imgs[currentImageIndex].classList.remove('active');
+            
+            currentImageIndex += dir;
+            if (currentImageIndex >= imgs.length) currentImageIndex = 0;
+            if (currentImageIndex < 0) currentImageIndex = imgs.length - 1;
+            
+            imgs[currentImageIndex].classList.add('active');
+        }
+        
+        // ============================================
+        // ECLIPSE SOLAR 2026 - BANNER DINÁMICO
+        // ============================================
+        const ECLIPSE_CONFIG = {
+            date: '12 de agosto de 2026',
+            time: '20:26 - 20:33 CEST',
+            totalEclipseProvinces: [
+                'A Coruña', 'La Coruña', 'Almería', 'Cádiz', 'Córdoba', 'Huelva', 'Jaén', 'Málaga', 'Sevilla',
+                'Huesca', 'Teruel', 'Zaragoza',
+                'Asturias', 'Oviedo', 'Gijón',
+                'Islas Baleares', 'Baleares', 'Mallorca', 'Menorca', 'Ibiza',
+                'Álava', 'Vizcaya', 'Guipúzcoa', 'Bizkaia', 'Gipuzkoa', 'País Vasco', 'Bilbao', 'San Sebastián',
+                'Cantabria', 'Santander',
+                'Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo', 'Castilla-La Mancha',
+                'Ávila', 'Burgos', 'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora', 'Castilla y León',
+                'Barcelona', 'Girona', 'Lleida', 'Tarragona', 'Cataluña', 'Gerona',
+                'Lugo', 'Ourense', 'Pontevedra', 'Galicia',
+                'La Rioja', 'Logroño',
+                'Madrid', 'Alcalá de Henares',
+                'Navarra', 'Pamplona',
+                'Alicante', 'Castellón', 'Valencia', 'Comunidad Valenciana'
+            ],
+            citiesInfo: {
+                'A Coruña': { duration: '1m 32s', coverage: '100%' },
+                'Bilbao': { duration: '1m 29s', coverage: '100%' },
+                'Palma': { duration: '1m 36s', coverage: '100%' },
+                'Valencia': { duration: '1m 29s', coverage: '100%' },
+                'Zaragoza': { duration: '1m 25s', coverage: '100%', note: 'Menor nubosidad (19%)' }
+            }
+        };
+
+        function hasEclipse(province) {
+            if (!province) return { affected: false };
+            const normalizedProvince = province.toLowerCase().trim();
+            const matchedProvince = ECLIPSE_CONFIG.totalEclipseProvinces.find(p => 
+                p.toLowerCase() === normalizedProvince || 
+                p.toLowerCase().includes(normalizedProvince) ||
+                normalizedProvince.includes(p.toLowerCase())
+            );
+            if (matchedProvince) {
+                const cityInfo = ECLIPSE_CONFIG.citiesInfo[matchedProvince] || 
+                                ECLIPSE_CONFIG.citiesInfo[Object.keys(ECLIPSE_CONFIG.citiesInfo).find(c => 
+                                    c.toLowerCase().includes(normalizedProvince) || 
+                                    normalizedProvince.includes(c.toLowerCase())
+                                )];
+                return { affected: true, province: matchedProvince, cityInfo: cityInfo };
+            }
+            return { affected: false };
+        }
+
+        function showEclipseBanner(province) {
+            const eclipseInfo = hasEclipse(province);
+            if (!eclipseInfo.affected) return;
+            const bannerClosed = localStorage.getItem('eclipse_banner_closed');
+            if (bannerClosed) return;
+            
+            const banner = document.createElement('div');
+            banner.className = 'eclipse-banner';
+            banner.id = 'eclipse-banner';
+            
+            let extraInfo = '';
+            if (eclipseInfo.cityInfo) {
+                extraInfo = `<br><small style="opacity: 0.8;">🕐 Duración de la totalidad: ${eclipseInfo.cityInfo.duration}</small>`;
+                if (eclipseInfo.cityInfo.note) {
+                    extraInfo += `<br><small style="opacity: 0.8;">☁️ ${eclipseInfo.cityInfo.note}</small>`;
+                }
+            } else {
+                extraInfo = `<br><small style="opacity: 0.8;">☀️ Este alojamiento está dentro de la zona de eclipse solar total</small>`;
+            }
+            
+            banner.innerHTML = `
+                <button class="eclipse-banner-close" onclick="closeEclipseBanner()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="eclipse-banner-content">
+                    <div class="eclipse-banner-icon">🌑</div>
+                    <div class="eclipse-banner-text">
+                        <h3>🌟 Eclipse Solar Total - 12 de Agosto 2026</h3>
+                        <p>${eclipseInfo.province} será uno de los mejores lugares del mundo para observar este fenómeno único${extraInfo}</p>
+                    </div>
+                    <div class="eclipse-banner-date">
+                        <i class="fas fa-calendar-alt"></i> ${ECLIPSE_CONFIG.date}
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertBefore(banner, document.body.firstChild);
+        }
+
+        function closeEclipseBanner() {
+            const banner = document.getElementById('eclipse-banner');
+            if (banner) {
+                banner.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => banner.remove(), 300);
+                localStorage.setItem('eclipse_banner_closed', 'true');
+            }
+        }
+    </script>
+</body>
+</html>

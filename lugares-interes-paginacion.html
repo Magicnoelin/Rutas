@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explora una amplia selección de lugares de interés en las rutas rurales de Castilla y León. Filtra por provincia, categoría y busca los mejores monumentos, bodegas, naturaleza y patrimonio cultural." />
+    <title>Lugares de Interés | Rutas Rurales</title>
+    <link rel="icon" href="/favicon.png?v=20260113" type="image/png">
+    <link rel="canonical" href="/lugares-interes-paginacion.html">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* RESET GLOBAL */
+        #navMenu a, #navMenu a:visited, #navMenu a:active {
+            text-decoration: none !important;
+            color: inherit !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- DISEÑO PARA PC --- */
+        @media (min-width: 993px) {
+            .hamburger { display: none !important; }
+            .nav-menu {
+                display: flex !important;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+                font-family: 'Montserrat', sans-serif;
+                margin-left: auto;
+            }
+            .nav-row {
+                display: flex !important;
+                list-style: none !important;
+                margin: 0; padding: 0;
+                width: 650px;
+                justify-content: center;
+            }
+            .nav-row li { flex: 1; text-align: center; }
+            .nav-row li a {
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                text-transform: capitalize;
+                color: var(--accent-color) !important;
+                font-weight: 600;
+            }
+            .nav-row li a span { color: var(--accent-color) !important; }
+            .nav-row li a i { color: var(--accent-color) !important; font-size: 1.1rem; }
+            .nav-row li a:hover, .nav-row li a:hover span, .nav-row li a:hover i { color: #ffffff !important; }
+        }
+
+        /* --- DISEÑO PARA MÓVIL --- */
+        @media (max-width: 992px) {
+            html, body { overflow-x: hidden !important; width: 100% !important; position: relative; }
+            .header, .navbar { height: auto !important; padding: 2px 0 !important; position: fixed !important; top: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #2c5f2d !important; }
+            .navbar .container { flex-direction: row !important; justify-content: flex-start !important; align-items: center !important; gap: 5px !important; padding: 0 5px !important; display: flex !important; width: 100% !important; }
+            .logo { flex-shrink: 0 !important; margin-right: 2px !important; display: block !important; }
+            .logo img { height: 35px !important; width: auto !important; }
+            .nav-menu { display: flex !important; position: static !important; width: auto !important; height: auto !important; background: transparent !important; flex-direction: column !important; flex: 1 !important; gap: 1px !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+            .nav-row { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 2px !important; width: 100% !important; list-style: none !important; padding: 0 !important; margin: 0 !important; }
+            .nav-row li { display: block !important; }
+            .nav-row li a { background: rgba(255, 255, 255, 0.1) !important; min-height: 30px !important; padding: 1px !important; border-radius: 4px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center; }
+            .nav-row li a span { font-size: 0.50rem !important; font-weight: 600 !important; line-height: 1 !important; text-align: center !important; white-space: nowrap !important; color: #d4a574 !important; margin: 0 !important; }
+            .nav-row li a i { font-size: 0.8rem !important; margin-bottom: 0px !important; color: #ffffff !important; }
+            input[type="text"], input[type="number"], input[type="search"], textarea, select { font-size: 16px !important; }
+        }
+
+        .asistente-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid #ffffff; vertical-align: middle; }
+        @media (max-width: 992px) { .asistente-avatar { width: 18px !important; height: 18px !important; margin-bottom: 0px; } }
+
+        .filters { background-color: white; padding: 2rem; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .filter-group { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+        .filter-group label { font-weight: bold; color: var(--primary-color); }
+        .filter-group select, .filter-group input { padding: 0.5rem 1rem; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 1rem; outline: none; }
+        .stats { text-align: center; margin: 2rem 0; font-size: 1.2rem; color: var(--secondary-color); }
+        .loading { text-align: center; padding: 3rem; font-size: 1.5rem; color: var(--primary-color); }
+        .btn-categoria { background: linear-gradient(135deg, #666, #999); color: white; border: none; padding: 0.5rem 1rem; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-categoria:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .btn-categoria.active { transform: translateY(0); box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .categorias-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .btn-bodegas { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .btn-restauracion { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .btn-monumentos { background: linear-gradient(135deg, #8B4513, #A0522D); }
+        .btn-castillos { background: linear-gradient(135deg, #654321, #8B4513); }
+        .btn-iglesias { background: linear-gradient(135deg, #D4AF37, #FFD700); }
+        .btn-ermitas { background: linear-gradient(135deg, #DAA520, #FFD700); }
+        .btn-monasterios { background: linear-gradient(135deg, #CD853F, #DEB887); }
+        .btn-naturaleza { background: linear-gradient(135deg, #228B22, #32CD32); }
+        .btn-miradores { background: linear-gradient(135deg, #4169E1, #1E90FF); }
+        .btn-parques { background: linear-gradient(135deg, #32CD32, #90EE90); }
+        .btn-rios { background: linear-gradient(135deg, #1E90FF, #87CEEB); }
+        .btn-bosques { background: linear-gradient(135deg, #2E8B57, #228B22); }
+        .btn-patrimonio { background: linear-gradient(135deg, #800080, #9370DB); }
+        .btn-museos { background: linear-gradient(135deg, #9370DB, #DDA0DD); }
+        .btn-yacimientos { background: linear-gradient(135deg, #A0522D, #CD853F); }
+        .btn-centros { background: linear-gradient(135deg, #8B008B, #9932CC); }
+        .btn-pueblos { background: linear-gradient(135deg, #DC143C, #FF6347); }
+        .btn-conjuntos { background: linear-gradient(135deg, #B22222, #CD5C5C); }
+        .btn-villas { background: linear-gradient(135deg, #8B0000, #B22222); }
+    </style>
+</head>
+<body>
+    <!-- Header completo como en el menú de inicio -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <a href="/index.html"><img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo"></a>
+                </div>
+
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-row">
+                        <li><a href="/alojamientos-turisticos.html">
+                            <i class="fas fa-bed"></i>
+                            <span>Alojamientos</span>
+                        </a></li>
+                        <li><a href="/lugares-interes-paginacion.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Lugares</span>
+                        </a></li>
+                        <li><a href="/eventos-culturales-paginacion.html">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Eventos</span>
+                        </a></li>
+                        <li><a href="/actividades-turisticas.html">
+                            <i class="fas fa-hiking"></i>
+                            <span>Actividades</span>
+                        </a></li>
+                    </ul>
+                    
+                    <ul class="nav-row">
+                        <li><a href="/index.html#inicio">
+                            <i class="fas fa-home"></i>
+                            <span>Inicio</span>
+                        </a></li>
+                        <li><a href="/rutas.php">
+                            <i class="fas fa-route"></i>
+                            <span>Rutas</span>
+                        </a></li>
+                        <li><a href="/login.html">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Acceso</span>
+                        </a></li>
+                        <li><a href="/index.html#asistente">
+                            <img src="/antonio.jpg" alt="Antonio" class="asistente-avatar">
+                            <span>Antonio</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="section" style="margin-top: 80px;">
+        <div class="container">
+            <h1 class="section-title"><i class="fas fa-landmark"></i> Lugares de Interés</h1>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="filterProvincia"><i class="fas fa-map"></i> Provincia:</label>
+                    <select id="filterProvincia">
+                        <option value="">Todas</option>
+                        <option value="Soria">Soria</option>
+                        <option value="Burgos">Burgos</option>
+                        <option value="Segovia">Segovia</option>
+                        <option value="Ávila">Ávila</option>
+                        <option value="Valladolid">Valladolid</option>
+                        <option value="Palencia">Palencia</option>
+                        <option value="León">León</option>
+                        <option value="Zamora">Zamora</option>
+                        <option value="Salamanca">Salamanca</option>
+                    </select>
+
+                    <label for="filterSearch"><i class="fas fa-search"></i> Buscar:</label>
+                    <input type="text" id="filterSearch" placeholder="Nombre del lugar...">
+
+                    <div class="categorias-container">
+                        <button id="filterBodegas" class="btn-categoria btn-bodegas" title="Filtrar Bodegas">
+                            <i class="fas fa-wine-glass"></i> Bodegas
+                        </button>
+                        <button id="filterRestauracion" class="btn-categoria btn-restauracion" title="Filtrar Restauración">
+                            <i class="fas fa-concierge-bell"></i> Restauración
+                        </button>
+                        <button id="filterMonumentos" class="btn-categoria btn-monumentos" title="Filtrar Monumentos">
+                            <i class="fas fa-landmark"></i> Monumentos
+                        </button>
+                        <button id="filterCastillos" class="btn-categoria btn-castillos" title="Filtrar Castillos">
+                            <i class="fas fa-fort-awesome"></i> Castillos
+                        </button>
+                        <button id="filterIglesias" class="btn-categoria btn-iglesias" title="Filtrar Iglesias">
+                            <i class="fas fa-church"></i> Iglesias
+                        </button>
+                        <button id="filterErmitas" class="btn-categoria btn-ermitas" title="Filtrar Ermitas">
+                            <i class="fas fa-chapel"></i> Ermitas
+                        </button>
+                        <button id="filterMonasterios" class="btn-categoria btn-monasterios" title="Filtrar Monasterios">
+                            <i class="fas fa-monument"></i> Monasterios
+                        </button>
+                        <button id="filterNaturaleza" class="btn-categoria btn-naturaleza" title="Filtrar Naturaleza">
+                            <i class="fas fa-tree"></i> Naturaleza
+                        </button>
+                        <button id="filterMiradores" class="btn-categoria btn-miradores" title="Filtrar Miradores">
+                            <i class="fas fa-binoculars"></i> Miradores
+                        </button>
+                        <button id="filterParques" class="btn-categoria btn-parques" title="Filtrar Parques Naturales">
+                            <i class="fas fa-park"></i> Parques
+                        </button>
+                        <button id="filterRios" class="btn-categoria btn-rios" title="Filtrar Ríos y Lagunas">
+                            <i class="fas fa-water"></i> Ríos/Lagunas
+                        </button>
+                        <button id="filterBosques" class="btn-categoria btn-bosques" title="Filtrar Bosques">
+                            <i class="fas fa-forest"></i> Bosques
+                        </button>
+                        <button id="filterPatrimonio" class="btn-categoria btn-patrimonio" title="Filtrar Patrimonio Cultural">
+                            <i class="fas fa-museum"></i> Patrimonio
+                        </button>
+                        <button id="filterMuseos" class="btn-categoria btn-museos" title="Filtrar Museos">
+                            <i class="fas fa-university"></i> Museos
+                        </button>
+                        <button id="filterYacimientos" class="btn-categoria btn-yacimientos" title="Filtrar Yacimientos">
+                            <i class="fas fa-landmark"></i> Yacimientos
+                        </button>
+                        <button id="filterCentros" class="btn-categoria btn-centros" title="Filtrar Centros Interpretación">
+                            <i class="fas fa-info-circle"></i> Centros
+                        </button>
+                        <button id="filterPueblos" class="btn-categoria btn-pueblos" title="Filtrar Pueblos con Encanto">
+                            <i class="fas fa-home-city"></i> Pueblos
+                        </button>
+                        <button id="filterConjuntos" class="btn-categoria btn-conjuntos" title="Filtrar Conjuntos Históricos">
+                            <i class="fas fa-city"></i> Conjuntos
+                        </button>
+                        <button id="filterVillas" class="btn-categoria btn-villas" title="Filtrar Villas Medievales">
+                            <i class="fas fa-castle"></i> Villas
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats"><span id="statsText">Cargando lugares...</span></div>
+
+            <div id="loading" class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>
+
+            <div id="lugaresGrid" class="grid" style="display: none;"></div>
+
+            <div id="noResults" style="display: none; text-align: center; padding: 3rem;">
+                <i class="fas fa-search" style="font-size: 3rem; color: var(--secondary-color);"></i>
+                <h3 style="color: var(--primary-color); margin-top: 1rem;">No se encontraron lugares</h3>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-copyright"><p>&copy; 2025 rutasrurales.io</p></div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let todosLosLugares = [];
+        let lugaresFiltrados = [];
+        let filtroCategorias = [];
+
+        window.addEventListener('DOMContentLoaded', cargarLugares);
+
+        async function cargarLugares() {
+            try {
+                const response = await fetch('/api/lugares-interes.php');
+                const data = await response.json();
+                if (data.success && data.data) {
+                    todosLosLugares = data.data;
+                    lugaresFiltrados = [...todosLosLugares];
+                    console.log('Cargados', todosLosLugares.length, 'lugares desde API');
+                    inicializarFiltros();
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('lugaresGrid').style.display = 'grid';
+                    mostrarLugares();
+                } else {
+                    document.getElementById('loading').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error al cargar';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error al cargar';
+            }
+        }
+
+        function inicializarFiltros() {
+            document.getElementById('filterProvincia').addEventListener('change', aplicarFiltros);
+            let searchTimeout;
+            document.getElementById('filterSearch').addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(aplicarFiltros, 300);
+            });
+
+            // Event listeners for all category buttons
+            document.getElementById('filterBodegas').addEventListener('click', function() { toggleCategoria(18, this); });
+            document.getElementById('filterRestauracion').addEventListener('click', function() { toggleCategoria(19, this); });
+            document.getElementById('filterMonumentos').addEventListener('click', function() { toggleCategoria(1, this); });
+            document.getElementById('filterCastillos').addEventListener('click', function() { toggleCategoria(2, this); });
+            document.getElementById('filterIglesias').addEventListener('click', function() { toggleCategoria(3, this); });
+            document.getElementById('filterErmitas').addEventListener('click', function() { toggleCategoria(4, this); });
+            document.getElementById('filterMonasterios').addEventListener('click', function() { toggleCategoria(5, this); });
+            document.getElementById('filterNaturaleza').addEventListener('click', function() { toggleCategoria(6, this); });
+            document.getElementById('filterMiradores').addEventListener('click', function() { toggleCategoria(7, this); });
+            document.getElementById('filterParques').addEventListener('click', function() { toggleCategoria(8, this); });
+            document.getElementById('filterRios').addEventListener('click', function() { toggleCategoria(9, this); });
+            document.getElementById('filterBosques').addEventListener('click', function() { toggleCategoria(10, this); });
+            document.getElementById('filterPatrimonio').addEventListener('click', function() { toggleCategoria(11, this); });
+            document.getElementById('filterMuseos').addEventListener('click', function() { toggleCategoria(12, this); });
+            document.getElementById('filterYacimientos').addEventListener('click', function() { toggleCategoria(13, this); });
+            document.getElementById('filterCentros').addEventListener('click', function() { toggleCategoria(14, this); });
+            document.getElementById('filterPueblos').addEventListener('click', function() { toggleCategoria(15, this); });
+            document.getElementById('filterConjuntos').addEventListener('click', function() { toggleCategoria(16, this); });
+            document.getElementById('filterVillas').addEventListener('click', function() { toggleCategoria(17, this); });
+        }
+
+        function toggleCategoria(categoriaId, button) {
+            const index = filtroCategorias.indexOf(categoriaId);
+            if (index > -1) {
+                filtroCategorias.splice(index, 1);
+                button.classList.remove('active');
+            } else {
+                filtroCategorias.push(categoriaId);
+                button.classList.add('active');
+            }
+            aplicarFiltros();
+        }
+
+        function aplicarFiltros() {
+            const provincia = document.getElementById('filterProvincia').value;
+            const search = document.getElementById('filterSearch').value.toLowerCase().trim();
+
+            lugaresFiltrados = todosLosLugares.filter(lugar => {
+                const lugarProvincia = (lugar.provincia || '').toLowerCase().trim();
+                const cumpleProvincia = !provincia || lugarProvincia === provincia.toLowerCase();
+
+                const texto = (lugar.nombre || '').toLowerCase() + ' ' +
+                              (lugar.descripcion || '').toLowerCase() + ' ' +
+                              (lugar.localidad || '').toLowerCase();
+                const cumpleSearch = !search || texto.includes(search);
+
+                const cumpleCategorias = filtroCategorias.length === 0 || filtroCategorias.includes(lugar.categoria);
+
+                return cumpleProvincia && cumpleSearch && cumpleCategorias;
+            });
+
+            mostrarLugares();
+        }
+
+        function mostrarLugares() {
+            const grid = document.getElementById('lugaresGrid');
+            const noResults = document.getElementById('noResults');
+            grid.innerHTML = '';
+
+            if (lugaresFiltrados.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                document.getElementById('statsText').textContent = '0 lugares encontrados';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            document.getElementById('statsText').innerHTML = '<i class="fas fa-landmark"></i> ' + lugaresFiltrados.length + ' lugares';
+
+            lugaresFiltrados.forEach(lugar => {
+                const card = crearTarjeta(lugar);
+                grid.appendChild(card);
+            });
+        }
+
+        function crearTarjeta(lugar) {
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            const fotos = lugar.fotos || [];
+            const foto = fotos.length > 0 ? fotos[0] : 'interest_places_images/Patrocinio.webp';
+            const descripcion = (lugar.descripcion_corta || lugar.descripcion || 'Sin descripción').substring(0, 150);
+            const precio = lugar.precio || 'Entrada gratuita';
+
+            card.innerHTML = `
+                <img src="${foto}" alt="${lugar.nombre}" onerror="this.src='interest_places_images/Patrocinio.webp'">
+                <div class="card-content">
+                    <h3>${lugar.nombre}</h3>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> ${lugar.localidad || ''}, ${lugar.provincia || ''}</p>
+                    <p>${descripcion}...</p>
+                    <p class="price">${precio}</p>
+                    <a href="/lugar/${lugar.slug}" class="btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-eye"></i> Ver Detalle
+                    </a>
+                </div>
+            `;
+            return card;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alta de Restaurante | Rutas Rurales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1b4332;
+            --accent: #2d6a4f;
+            --ocre: #e9c46a;
+            --bg: #f9f7f2;
+            --text: #2d3142;
+            --white: #ffffff;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        
+        .header { text-align: center; margin-bottom: 30px; }
+        .header i { color: var(--accent); font-size: 3rem; margin-bottom: 10px; }
+        .header h1 { color: var(--primary); margin: 0; }
+
+        .card { background: var(--white); padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--ocre); }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--primary); }
+        
+        input, select, textarea { 
+            width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; 
+            font-size: 1rem; box-sizing: border-box; transition: border-color 0.3s;
+        }
+        input:focus { border-color: var(--accent); outline: none; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .btn-submit { 
+            width: 100%; padding: 15px; background: var(--accent); color: white; 
+            border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; 
+            cursor: pointer; transition: transform 0.2s, background 0.3s;
+            margin-top: 10px; box-shadow: 0 4px 0 #1b4332;
+        }
+        .btn-submit:hover { background: #1b4332; }
+        .btn-submit:active { transform: translateY(3px); box-shadow: none; }
+
+        .info-note { background: #f1f8e9; padding: 15px; border-radius: 8px; font-size: 0.9rem; color: #1b4332; margin-bottom: 20px; border-left: 4px solid var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <i class="fas fa-utensils"></i>
+        <h1>Nuevo Restaurante</h1>
+        <p>Registra los datos básicos para empezar</p>
+    </div>
+
+    <div class="card">
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i> Al guardar, se generará el <strong>Slug SEO</strong> automáticamente y pasaremos a la subida de fotos.
+        </div>
+
+        <form id="restaurantForm">
+            <div class="form-group">
+                <label>Nombre del Establecimiento</label>
+                <input type="text" id="name" placeholder="Ej: Mesón del Cabrito" required oninput="generateSlug()">
+            </div>
+
+            <div class="form-group">
+                <label>Slug (URL Amigable)</label>
+                <input type="text" id="slug" placeholder="meson-del-cabrito" readonly style="background: #f8f9fa;">
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Tipo de Cocina</label>
+                    <select id="cuisine">
+                        <option value="tradicional">Tradicional / Castiza</option>
+                        <option value="asador">Asador</option>
+                        <option value="moderna">De Autor</option>
+                        <option value="tapas">Tapas y Raciones</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono de Reservas</label>
+                    <input type="tel" id="phone" placeholder="9XX XXX XXX">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción Corta</label>
+                <textarea id="description" rows="3" placeholder="Breve texto para buscadores..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">GUARDAR Y SUBIR FOTOS <i class="fas fa-arrow-right"></i></button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Generador automático de Slugs
+    function generateSlug() {
+        const name = document.getElementById('name').value;
+        const slug = name.toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quitar tildes
+            .replace(/[^a-z0-9]/g, '-') // Quitar caracteres raros
+            .replace(/-+/g, '-') // Quitar guiones dobles
+            .replace(/^-|-$/g, ''); // Quitar guiones al inicio/final
+        document.getElementById('slug').value = slug;
+    }
+
+    document.getElementById('restaurantForm').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        // Aquí iría el fetch a tu API de guardado (ej: api/save_restaurant.php)
+        // Simulamos éxito y redirigimos al Media Manager
+        const slug = document.getElementById('slug').value;
+        
+        alert("¡Datos guardados! Ahora vamos a subir las fotos.");
+        
+        // IMPORTANTE: Redirigimos con type=places_of_interest y el slug recién creado
+        window.location.href = `gestion-fotos-universal.html?type=places_of_interest&slug=${slug}`;
+    };
+</script>
+
+</body>
+</html>

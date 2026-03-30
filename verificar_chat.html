@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación del Sistema de Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2f5233; }
+        h2 { color: #2f5233; margin-top: 30px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .warning { color: orange; font-weight: bold; }
+        .info { color: #2f5233; }
+        .btn {
+            background: #2f5233;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover { background: #1e3a21; }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #5a6268; }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #2f5233;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .result.error { border-left-color: red; background: #fff5f5; }
+        .result.warning { border-left-color: orange; background: #fffaf0; }
+        .result.success { border-left-color: green; background: #f0fff4; }
+        ul { line-height: 1.8; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+        .hidden { display: none; }
+        .loading { text-align: center; padding: 20px; }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2f5233;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificación del Sistema de Chat</h1>
+        <p>Este script verificará la estructura de las tablas del chat y corregirá cualquier problema automáticamente.</p>
+        
+        <div id="actions">
+            <button class="btn" onclick="verificarChat()">Ejecutar Verificación</button>
+            <button class="btn btn-secondary" onclick="verificarAccommodations()">Verificar Alojamientos</button>
+            <a href="/index.html" class="btn btn-secondary">Volver al Inicio</a>
+        </div>
+
+        <div id="loading" class="hidden loading">
+            <div class="spinner"></div>
+            <p>Verificando estructura de tablas...</p>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function verificarChat() {
+            const resultsDiv = document.getElementById('results');
+            const loadingDiv = document.getElementById('loading');
+            
+            resultsDiv.innerHTML = '';
+            loadingDiv.classList.remove('hidden');
+            
+            try {
+                const response = await fetch('api/verificar_chat.php?force=1');
+                const text = await response.text();
+                
+                loadingDiv.classList.add('hidden');
+                
+                // Convertir la respuesta HTML a algo más legible
+                resultsDiv.innerHTML = `
+                    <div class="result">
+                        <h3>Resultados de la Verificación:</h3>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
+                            ${text}
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                loadingDiv.classList.add('hidden');
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>Error de Conexión</h3>
+                        <p>No se pudo conectar con el servidor API: ${error.message}</p>
+                        <p>Asegúrate de que el servidor PHP esté en ejecución.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function verificarAccommodations() {
+            const resultsDiv = document.getElementById('results');
+            const loadingDiv = document.getElementById('loading');
+            
+            resultsDiv.innerHTML = '';
+            loadingDiv.classList.remove('hidden');
+            
+            try {
+                const response = await fetch('api/verificar_estructura.php');
+                const text = await response.text();
+                
+                loadingDiv.classList.add('hidden');
+                
+                resultsDiv.innerHTML = `
+                    <div class="result">
+                        <h3>Verificación de Alojamientos:</h3>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
+                            ${text}
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                loadingDiv.classList.add('hidden');
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>Error de Conexión</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Ejecutar automáticamente al cargar
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                verificarChat();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

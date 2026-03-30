@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Fotos - Simple</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f2f5; margin: 0; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1a73e8; margin-bottom: 30px; }
+        
+        .step { background: #f8f9fa; border: 2px solid #e0e0e0; padding: 20px; margin: 15px 0; border-radius: 10px; }
+        .step h3 { margin: 0 0 15px 0; color: #202124; }
+        
+        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #dadce0; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
+        input[type="text"]:focus { border-color: #1a73e8; outline: none; }
+        
+        button { padding: 12px 24px; background: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold; }
+        button:hover { background: #1557b0; }
+        button:disabled { background: #9aa0a6; cursor: not-allowed; }
+        
+        .btn-search { margin-top: 10px; width: 100%; }
+        .btn-upload { background: #0f9d58; width: 100%; font-size: 16px; padding: 15px; }
+        .btn-upload:hover { background: #0b8043; }
+        .btn-upload:disabled { background: #9aa0a6; }
+        
+        .categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin: 15px 0; }
+        .cat-btn { padding: 12px; background: white; border: 2px solid #dadce0; border-radius: 8px; cursor: pointer; text-align: center; font-size: 14px; transition: all 0.2s; }
+        .cat-btn:hover { border-color: #1a73e8; background: #e8f0fe; }
+        .cat-btn.selected { background: #1a73e8; color: white; border-color: #1a73e8; font-weight: bold; }
+        
+        .file-area { border: 2px dashed #dadce0; padding: 30px; text-align: center; border-radius: 8px; cursor: pointer; background: white; transition: all 0.2s; margin: 15px 0; }
+        .file-area:hover { border-color: #1a73e8; background: #e8f0fe; }
+        .file-area input { display: none; }
+        
+        .result-box { background: #e8f5e9; border: 2px solid #4caf50; padding: 15px; border-radius: 8px; margin: 15px 0; display: none; }
+        .result-box.show { display: block; }
+        .result-box h4 { margin: 0 0 10px 0; color: #2e7d32; }
+        .result-box code { background: white; padding: 4px 8px; border-radius: 4px; font-family: monospace; word-break: break-all; }
+        .result-box a { color: #1a73e8; font-weight: bold; text-decoration: none; }
+        .result-box a:hover { text-decoration: underline; }
+        
+        .info-box { background: #e3f2fd; border: 2px solid #2196f3; padding: 15px; border-radius: 8px; margin: 15px 0; display: none; }
+        .info-box.show { display: block; }
+        .info-box strong { color: #1565c0; }
+        
+        .gallery { margin-top: 20px; }
+        .gallery h3 { color: #1a73e8; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .photo-card { position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); aspect-ratio: 4/3; background: #f0f0f0; }
+        .photo-card img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-card .delete { position: absolute; top: 5px; right: 5px; background: rgba(244,67,54,0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-weight: bold; }
+        
+        .loading { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .loading.show { display: flex; }
+        .loading-box { background: white; padding: 30px; border-radius: 12px; text-align: center; min-width: 300px; }
+        .loading-box .spinner { width: 50px; height: 50px; border: 5px solid #e0e0e0; border-top-color: #1a73e8; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .message { padding: 12px; border-radius: 8px; margin: 10px 0; display: none; font-weight: bold; text-align: center; }
+        .message.show { display: block; }
+        .message.success { background: #c8e6c9; color: #2e7d32; border: 2px solid #4caf50; }
+        .message.error { background: #ffcdd2; color: #c62828; border: 2px solid #f44336; }
+        
+        .no-photos { text-align: center; padding: 40px; color: #757575; background: #f5f5f5; border-radius: 8px; margin-top: 15px; }
+        
+        .debug { background: #f5f5f5; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 11px; color: #666; margin-top: 10px; max-height: 100px; overflow-y: auto; display: none; }
+        .debug.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Sistema de Fotos de Alojamientos</h1>
+
+        <!-- Paso 1: Buscar -->
+        <div class="step">
+            <h3>1. Buscar Alojamiento</h3>
+            <input type="text" id="searchInput" placeholder="Escribe el nombre del alojamiento...">
+            <button class="btn-search" onclick="buscar()">Buscar</button>
+            <div id="searchResults"></div>
+            <div id="infoAlojamiento" class="info-box"></div>
+        </div>
+
+        <!-- Paso 2: Categoría -->
+        <div class="step">
+            <h3>2. Seleccionar Categoría</h3>
+            <div class="categories" id="categoryContainer"></div>
+        </div>
+
+        <!-- Paso 3: Archivo -->
+        <div class="step">
+            <h3>3. Seleccionar Foto</h3>
+            <div class="file-area" onclick="document.getElementById('fileInput').click()">
+                <p style="margin: 0; font-weight: bold; color: #1a73e8;">Haz clic aquí para elegir una foto</p>
+                <p id="fileInfo" style="margin: 5px 0 0 0; color: #666; font-size: 13px;">Ningún archivo seleccionado</p>
+                <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this)">
+            </div>
+        </div>
+
+        <!-- Paso 4: Subir -->
+        <div class="step">
+            <h3>4. Subir Foto</h3>
+            <div id="message" class="message"></div>
+            <button id="uploadBtn" class="btn-upload" onclick="subir()" disabled>🚀 Subir Foto</button>
+            <div id="result" class="result-box"></div>
+        </div>
+
+        <!-- Galería -->
+        <div class="gallery">
+            <h3>🖼️ Galería de Fotos</h3>
+            <div id="gallery"></div>
+        </div>
+
+        <!-- Debug -->
+        <div id="debug" class="debug"></div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="loading">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <p>⏳ Subiendo foto...</p>
+            <small>Convirtiendo a WebP</small>
+        </div>
+    </div>
+
+    <script>
+        let state = { alojamiento: null, categoria: '', archivo: null };
+
+        const categorias = [
+            {id: 'fachada', name: 'Fachada'}, {id: 'exterior', name: 'Exterior'},
+            {id: 'salon', name: 'Salón'}, {id: 'cocina', name: 'Cocina'}, 
+            {id: 'jardin', name: 'Jardín'}, {id: 'habitacion', name: 'Habitación'}, 
+            {id: 'bano', name: 'Baño'}, {id: 'piscina', name: 'Piscina'}, 
+            {id: 'comedor', name: 'Comedor'}, {id: 'terraza', name: 'Terraza'}, 
+            {id: 'otro', name: 'Otro'}
+        ];
+
+        // Auto-buscar si hay slug en URL
+        function autoBuscarSiHaySlug() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            if (slug) {
+                document.getElementById('searchInput').value = slug;
+                setTimeout(() => buscar(), 500);
+            }
+        }
+
+        // Inicializar categorías y auto-búsqueda
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auto-buscar si hay slug en URL
+            autoBuscarSiHaySlug();
+            
+            const container = document.getElementById('categoryContainer');
+            categorias.forEach(cat => {
+                const btn = document.createElement('div');
+                btn.className = 'cat-btn';
+                btn.textContent = cat.name;
+                btn.onclick = () => {
+                    state.categoria = cat.id;
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    log(`Categoría: ${cat.id}`);
+                    actualizarBoton();
+                };
+                container.appendChild(btn);
+            });
+            log('Sistema listo');
+        });
+
+        function log(msg) {
+            const debug = document.getElementById('debug');
+            const time = new Date().toLocaleTimeString();
+            debug.innerHTML = `[${time}] ${msg}<br>` + debug.innerHTML;
+            debug.classList.add('show');
+        }
+
+        async function buscar() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                mostrarMensaje('❌ Escribe un nombre', 'error');
+                return;
+            }
+
+            log(`Buscando: ${query}`);
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '<p style="text-align:center; color:#666;">Buscando...</p>';
+
+            try {
+                const response = await fetch(`api/search_accommodation.php?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                // Verificar que el slug coincida exactamente
+                let item = null;
+                if (data.success && data.data.results.length > 0) {
+                    // Buscar coincidencia exacta de slug
+                    item = data.data.results.find(r => r.slug.toLowerCase() === query.toLowerCase());
+                    
+                    if (!item) {
+                        resultsDiv.innerHTML = '<p style="text-align:center; color:#d32f2f;">❌ El slug no coincide exactamente. Usa el slug exacto del alojamiento.</p>';
+                        log('Slug no coincide exactamente');
+                        return;
+                    }
+                    
+                    state.alojamiento = item;
+                    
+                    const info = document.getElementById('infoAlojamiento');
+                    info.innerHTML = `<strong>✅ ${item.name}</strong><br><small>Slug: ${item.slug} | ${item.accommodation_type} - ${item.municipality}</small>`;
+                    info.classList.add('show');
+                    resultsDiv.innerHTML = '';
+                    
+                    log(`Encontrado: ${item.name} (${item.slug})`);
+                    actualizarBoton();
+                    cargarGaleria(item.slug);
+                } else {
+                    resultsDiv.innerHTML = '<p style="text-align:center; color:#d32f2f;">❌ No encontrado</p>';
+                    log('No se encontró');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="text-align:center; color:#d32f2f;">❌ Error: ${error.message}</p>`;
+                log(`Error: ${error.message}`);
+            }
+        }
+
+        function handleFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                mostrarMensaje('❌ Archivo no es imagen', 'error');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarMensaje('❌ Máximo 5MB', 'error');
+                return;
+            }
+
+            state.archivo = file;
+            document.getElementById('fileInfo').textContent = `${file.name} (${(file.size/1024).toFixed(0)} KB)`;
+            log(`Archivo: ${file.name}`);
+            actualizarBoton();
+        }
+
+        function actualizarBoton() {
+            const btn = document.getElementById('uploadBtn');
+            const ready = state.alojamiento && state.categoria && state.archivo;
+            btn.disabled = !ready;
+            
+            if (ready) {
+                log('✅ BOTÓN LISTO');
+            } else {
+                const faltan = [];
+                if (!state.alojamiento) faltan.push('alojamiento');
+                if (!state.categoria) faltan.push('categoría');
+                if (!state.archivo) faltan.push('archivo');
+                log(`❌ Faltan: ${faltan.join(', ')}`);
+            }
+        }
+
+        async function subir() {
+            if (!state.alojamiento || !state.categoria || !state.archivo) {
+                mostrarMensaje('❌ Completa todos los campos', 'error');
+                return;
+            }
+
+            log('🔄 SUBIENDO...');
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('message').classList.remove('show');
+
+            try {
+                const formData = new FormData();
+                formData.append('accommodation_identifier', state.alojamiento.slug);
+                formData.append('photo_category', state.categoria);
+                formData.append('photo', state.archivo);
+
+                const response = await fetch('api/upload_accommodation_photo.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const fullUrl = window.location.origin + data.data.url;
+                    const result = document.getElementById('result');
+                    result.innerHTML = `
+                        <h4>✅ ÉXITO</h4>
+                        <p><strong>Archivo:</strong> ${data.data.filename}</p>
+                        <p><strong>Categoría:</strong> ${data.data.category}</p>
+                        <p><strong>Ubicación:</strong> <code>${data.data.url}</code></p>
+                        <p><strong>URL:</strong> <a href="${fullUrl}" target="_blank">${fullUrl}</a></p>
+                    `;
+                    result.classList.add('show');
+                    mostrarMensaje('✅ Foto subida correctamente', 'success');
+                    log(`✅ ÉXITO: ${data.data.filename}`);
+
+                    // Reset
+                    state.categoria = '';
+                    state.archivo = null;
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('fileInfo').textContent = 'Ningún archivo seleccionado';
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+                    actualizarBoton();
+                    cargarGaleria(state.alojamiento.slug);
+                } else {
+                    mostrarMensaje(`❌ Error: ${data.error}`, 'error');
+                    log(`❌ ERROR: ${data.error}`);
+                }
+            } catch (error) {
+                mostrarMensaje(`❌ Error: ${error.message}`, 'error');
+                log(`❌ ERROR: ${error.message}`);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+
+        async function cargarGaleria(slug) {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '<div class="no-photos">⏳ Cargando fotos...</div>';
+
+            try {
+                const response = await fetch(`api/get_accommodation_photos.php?slug=${encodeURIComponent(slug)}`);
+                const data = await response.json();
+
+                if (data.success && Object.keys(data.data.photos_by_category).length > 0) {
+                    let html = '';
+                    const cats = Object.keys(data.data.photos_by_category).sort();
+                    
+                    cats.forEach(cat => {
+                        html += `<div style="margin: 15px 0;"><h4 style="margin: 0 0 8px 0; color: #1a73e8;">📁 ${cat}</h4><div class="photo-grid">`;
+                        data.data.photos_by_category[cat].forEach(photo => {
+                            html += `<div class="photo-card">
+                                <img src="${photo.url}" loading="lazy">
+                                <button class="delete" onclick="deletePhoto('${photo.url}')">×</button>
+                            </div>`;
+                        });
+                        html += `</div></div>`;
+                    });
+                    
+                    gallery.innerHTML = html;
+                    log(`Galería: ${cats.length} categorías`);
+                } else {
+                    gallery.innerHTML = '<div class="no-photos">No hay fotos</div>';
+                }
+            } catch (error) {
+                gallery.innerHTML = '<div class="no-photos">Error al cargar</div>';
+                log(`Error galería: ${error.message}`);
+            }
+        }
+
+        async function deletePhoto(url) {
+            if (!confirm('¿Eliminar foto?')) return;
+            log(`Eliminando: ${url}`);
+            if (state.alojamiento) cargarGaleria(state.alojamiento.slug);
+        }
+
+        function mostrarMensaje(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type} show`;
+            setTimeout(() => msg.classList.remove('show'), 5000);
+        }
+
+        // Enter en búsqueda
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') buscar();
+            });
+        });
+    </script>
+</body>
+</html>

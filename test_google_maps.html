@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Google Maps Integration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+        }
+
+        .test-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .test-title {
+            color: #2F5233;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #2F5233;
+            padding-bottom: 10px;
+        }
+
+        .test-section {
+            margin-bottom: 20px;
+        }
+
+        .test-section h3 {
+            color: #6B8E6B;
+            margin-bottom: 10px;
+        }
+
+        .test-section p {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .google-map-container {
+            height: 400px;
+            width: 100%;
+            border-radius: 12px;
+            margin: 20px 0;
+            overflow: hidden;
+            border: 2px solid #2F5233;
+        }
+
+        #google-map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .map-error {
+            background: #fff8f8;
+            border: 1px solid #e74c3c;
+            padding: 1rem;
+            border-radius: 8px;
+            color: #c0392b;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #f0f9f0;
+            border: 1px solid #27ae60;
+            padding: 1rem;
+            border-radius: 8px;
+            color: #27ae60;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+
+        .btn-test {
+            background-color: #2F5233;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .btn-test:hover {
+            background-color: #6B8E6B;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>🗺️ Test de Integración de Google Maps</h1>
+
+    <div class="test-container">
+        <div class="test-title">📍 Prueba de Google Maps en Eventos Culturales</div>
+
+        <div class="test-section">
+            <h3>🔧 Configuración Actual</h3>
+            <p>Se ha implementado la integración de Google Maps en la página de detalle de eventos con las siguientes características:</p>
+
+            <ul>
+                <li>✅ Reemplazo del mapa Leaflet/OpenStreetMap por Google Maps</li>
+                <li>✅ Estilo personalizado que coincide con la paleta de colores del sitio</li>
+                <li>✅ Marcador con animación de caída</li>
+                <li>✅ Ventana de información que muestra el título del evento</li>
+                <li>✅ Manejo de errores robusto</li>
+                <li>✅ Zoom nivel 15 para ver detalles locales</li>
+                <li>✅ Enlace directo a Google Maps para abrir en nueva pestaña</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Cambios Realizados</h3>
+
+            <div class="code-block">
+                1. Se reemplazó la librería Leaflet por Google Maps API<br>
+                2. Se añadió el script de Google Maps en el HEAD:<br>
+                   <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places" async defer></script><br>
+                <br>
+                3. Se creó la función initGoogleMap(lat, lng, title) con:<br>
+                   - Validación de disponibilidad de la API<br>
+                   - Conversión segura de coordenadas<br>
+                   - Estilos personalizados para el mapa<br>
+                   - Marcador con animación<br>
+                   - Ventana de información automática<br>
+                   - Manejo de errores<br>
+                <br>
+                4. Se actualizó el HTML para usar el contenedor de Google Maps:<br>
+                   <div class="google-map-container"><br>
+                   &nbsp;&nbsp;<div id="google-map"></div><br>
+                   </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 Prueba Visual</h3>
+            <p>A continuación se muestra un mapa de prueba con coordenadas de Soria (España):</p>
+
+            <div class="google-map-container">
+                <div id="google-map"></div>
+            </div>
+
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i> Si ves un mapa arriba, ¡la integración está funcionando correctamente!
+            </div>
+
+            <p>El mapa debería mostrar:</p>
+            <ul>
+                <li>📍 Un marcador en el centro de Soria</li>
+                <li>🎨 Estilo personalizado con colores verdes y dorados</li>
+                <li>📄 Una ventana de información con el título "Test de Google Maps"</li>
+                <li>🔍 Nivel de zoom adecuado para ver la ciudad</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Notas Importantes</h3>
+            <p><strong>⚠️ Reemplazar la clave de API:</strong></p>
+            <p>La clave de API actual (<code>AIzaSyD3jP6QpYvJvJvJvJvJvJvJvJvJvJvJvJvJvJv</code>) es un placeholder. Debes reemplazarla con una clave válida de Google Cloud Platform.</p>
+
+            <p><strong>🔐 Pasos para obtener una clave de API:</strong></p>
+            <ol>
+                <li>Ve a <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a></li>
+                <li>Crea un nuevo proyecto o selecciona uno existente</li>
+                <li>Habilita la API "Maps JavaScript API"</li>
+                <li>Ve a "Credenciales" y crea una nueva clave de API</li>
+                <li>Restringe la clave a tu dominio para mayor seguridad</li>
+                <li>Reemplaza la clave en el código</li>
+            </ol>
+
+            <p><strong>💡 Beneficios de Google Maps:</strong></p>
+            <ul>
+                <li>Mayor reconocimiento de marca</li>
+                <li>Integración con otros servicios de Google</li>
+                <li>Datos más actualizados</li>
+                <li>Mejor experiencia de usuario</li>
+                <li>Soporte para Street View y otras funciones avanzadas</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Google Maps API - Clave del cliente -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNdQ1eauGeKUTMLAJ5_TwwRxo91wWsPg&libraries=places,marker&loading=async" async defer></script>
+
+    <script>
+        // Función para inicializar el mapa de prueba
+        function initTestMap() {
+            // Coordenadas de Soria, España (Palacio de la Audiencia)
+            const soriaCoords = { lat: 41.7642, lng: -2.4678 };
+
+            try {
+                // Verificar si la API está cargada
+                if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+                    throw new Error('Google Maps API no está cargada');
+                }
+
+                // Configuración del mapa
+                const mapOptions = {
+                    center: soriaCoords,
+                    zoom: 15,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    streetViewControl: false,
+                    mapTypeControl: true,
+                    fullscreenControl: false,
+                    styles: [
+                        {
+                            featureType: 'all',
+                            elementType: 'labels.text.fill',
+                            stylers: [{color: '#444444'}]
+                        },
+                        {
+                            featureType: 'administrative.locality',
+                            elementType: 'labels.text.fill',
+                            stylers: [{color: '#2F5233'}]
+                        },
+                        {
+                            featureType: 'poi',
+                            elementType: 'labels.text.fill',
+                            stylers: [{color: '#6B8E6B'}]
+                        },
+                        {
+                            featureType: 'poi.park',
+                            elementType: 'geometry',
+                            stylers: [{color: '#e5e5e5'}]
+                        },
+                        {
+                            featureType: 'poi.park',
+                            elementType: 'labels.text.fill',
+                            stylers: [{color: '#6B8E6B'}]
+                        },
+                        {
+                            featureType: 'road',
+                            elementType: 'geometry',
+                            stylers: [{color: '#ffffff'}]
+                        },
+                        {
+                            featureType: 'road',
+                            elementType: 'geometry.stroke',
+                            stylers: [{color: '#d1d1d1'}]
+                        },
+                        {
+                            featureType: 'road',
+                            elementType: 'labels.text.fill',
+                            stylers: [{color: '#444444'}]
+                        },
+                        {
+                            featureType: 'road.highway',
+                            elementType: 'geometry',
+                            stylers: [{color: '#f8c967'}]
+                        },
+                        {
+                            featureType: 'road.highway',
+                            elementType: 'geometry.stroke',
+                            stylers: [{color: '#e9bc62'}]
+                        },
+                        {
+                            featureType: 'road.highway',
+                            elementType: 'labels.text.fill',
+                            stylers: [{color: '#f3d19c'}]
+                        },
+                        {
+                            featureType: 'transit',
+                            elementType: 'geometry',
+                            stylers: [{color: '#2f3948'}]
+                        },
+                        {
+                            featureType: 'water',
+                            elementType: 'geometry',
+                            stylers: [{color: '#B8956A'}]
+                        },
+                        {
+                            featureType: 'water',
+                            elementType: 'labels.text.fill',
+                            stylers: [{color: '#515c6d'}]
+                        }
+                    ]
+                };
+
+                // Crear el mapa
+                const map = new google.maps.Map(document.getElementById('google-map'), mapOptions);
+
+                // Crear marcador usando AdvancedMarkerElement (recomendado por Google)
+                const marker = new google.maps.marker.AdvancedMarkerElement({
+                    position: soriaCoords,
+                    map: map,
+                    title: 'Test de Google Maps',
+                    gmpClickable: true
+                });
+
+                // Crear ventana de información
+                const infoWindow = new google.maps.InfoWindow({
+                    content: '<div style="color: #2F5233; font-weight: bold;">Test de Google Maps</div><div style="font-size: 0.9rem; color: #666; margin-top: 5px;">📍 Soria, España</div>'
+                });
+
+                // Abrir ventana de información automáticamente
+                marker.addListener('click', function() {
+                    infoWindow.open(map, marker);
+                });
+
+                // Abrir ventana de información después de un breve retraso
+                setTimeout(() => {
+                    infoWindow.open(map, marker);
+                }, 500);
+
+                // Ajustar el tamaño del mapa
+                setTimeout(() => {
+                    google.maps.event.trigger(map, 'resize');
+                    map.setCenter(soriaCoords);
+                }, 100);
+
+                console.log('✅ Mapa de Google cargado correctamente');
+
+            } catch (error) {
+                console.error('❌ Error al cargar el mapa:', error);
+                const mapContainer = document.getElementById('google-map');
+                if (mapContainer) {
+                    mapContainer.innerHTML = `
+                        <div class="map-error">
+                            <i class="fas fa-exclamation-triangle"></i> Error al cargar el mapa: ${error.message}<br>
+                            <small>Por favor, verifica que tienes una clave de API válida y conexión a internet.</small>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Inicializar el mapa cuando la API esté lista
+        window.addEventListener('load', function() {
+            // Esperar un momento para que la API se cargue
+            setTimeout(initTestMap, 1000);
+        });
+    </script>
+</body>
+</html>

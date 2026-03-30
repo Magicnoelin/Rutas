@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reserva el mejor turismo rural en España con Rutas. Encuentra alojamientos con encanto, rutas de senderismo, actividades de aventura y eventos culturales. Tu plataforma para vivir experiencias auténticas en la naturaleza.">
+
+  <!-- X (Twitter) Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@rutas_rurales">
+  <meta name="twitter:title" content="Turismo Rural en España | Reserva Alojamientos y Experiencias | Rutas">
+  <meta name="twitter:description" content="Reserva alojamientos únicos, rutas mágicas y experiencias auténticas en toda España con Rutas, tu plataforma de turismo rural.">
+  <meta name="twitter:image" content="https://www.rutasrurales.io/menu_images/Logo%20transparente.webp">
+
+  <!-- Cache control (temporal para ver cambios) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <title>Turismo Rural en España | Reserva las Mejores Casas Rurales y Experiencias | Rutas</title>
+  <link rel="canonical" href="https://rutasrurales.io/">
+
+  <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css?v=20260114">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+  </style>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-X990K5GE42');
+  </script>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="60" height="60">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+                
+                <!-- Selector de idiomas desktop -->
+                <div class="language-selector-nav">
+                    <button class="language-btn-nav" id="languageBtnNav" aria-label="Seleccionar idioma">
+                        <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                        <span>ES</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown-nav" id="languageDropdownNav">
+                        <a href="index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                            Español
+                        </a>
+                        <a href="en/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
+                            English
+                        </a>
+                        <a href="fr/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
+                            Français
+                        </a>
+                        <a href="de/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
+                            Deutsch
+                        </a>
+                        <a href="zh/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
+                            中文
+                        </a>
+                    </div>
+                </div>
+                
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#inicio"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos Turísticos</a></li>
+                    <li><a href="lugares-interes-paginacion.html"><i class="fas fa-route"></i> Lugares de interés</a></li>
+                    <li><a href="https://rutasrurales.io/actividades-turisticas.html"><i class="fas fa-hiking"></i> Actividades Turísticas</a></li>
+                    <li><a href="https://rutasrurales.io/eventos-culturales-paginacion.html"><i class="fas fa-map-marker-alt"></i> Eventos culturales</a></li>
+                    <li><a href="rutas-turisticas.html"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="compromiso-social.html"><i class="fas fa-heart"></i> Compromiso Social</a></li>
+                    <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                    <li><a href="#asistente" class="nav-asistente">
+                        <img src="menu_images/antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                        Antonio
+                    </a></li>
+                    
+                    <!-- Selector de idiomas móvil -->
+                    <li class="language-selector-mobile">
+                        <h4>🌐 Idiomas</h4>
+                        <div class="language-options-mobile">
+                            <a href="index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                                ES
+                            </a>
+                            <a href="en/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
+                                EN
+                            </a>
+                            <a href="fr/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
+                                FR
+                            </a>
+                            <a href="de/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
+                                DE
+                            </a>
+                            <a href="zh/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
+                                ZH
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="hero" id="inicio">
+            <div class="hero-content">
+                <h1>Reserva las Mejores Experiencias de Turismo Rural en España</h1>
+                <p>Tu plataforma unificada para encontrar alojamientos con encanto, rutas únicas y actividades inolvidables en toda España</p>
+                <button class="btn-primary" onclick="abrirAsistente()">
+                    <i class="fas fa-robot"></i> Planifica tu Viaje con IA
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+<footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+            <div class="footer-links">
+                <a href="aviso-legal.html">Aviso Legal</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="agradecimientos.html">Agradecimientos</a>
+            </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div> </footer> <script src="script.js?v=20260114"></script>
+</body>
+</html>

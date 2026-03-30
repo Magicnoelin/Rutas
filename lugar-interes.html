@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Lugar de Interés | Rutas Rurales</title>
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="canonical" id="canonical-url" href="">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .detail-container { background-color: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 30px rgba(44, 95, 45, 0.1); margin-bottom: 2rem; }
+        .detail-header { margin-bottom: 2rem; border-bottom: 3px solid var(--primary-color); padding-bottom: 1rem; }
+        .detail-header h1 { color: var(--primary-color); font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .detail-header p { color: #666; font-size: 1.1rem; }
+        .detail-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; }
+        @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
+        .gallery-container { position: relative; height: 450px; border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .gallery-img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .gallery-img.active { display: block; }
+        .gallery-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); padding: 0 1rem; }
+        .nav-btn { background: rgba(255,255,255,0.9); color: var(--primary-color); border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: all 0.3s ease; }
+        .nav-btn:hover { background: var(--primary-color); color: white; transform: scale(1.1); }
+        .info-card { background: linear-gradient(135deg, #fafffc 0%, #f0f9f0 100%); padding: 2rem; border-radius: 16px; border: 2px solid rgba(44, 95, 45, 0.1); }
+        .info-card h3 { color: var(--primary-color); font-size: 1.4rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 2px solid var(--primary-color); }
+        .info-item { display: flex; align-items: center; margin-bottom: 1.2rem; color: #555; font-size: 1rem; padding: 0.8rem; background: white; border-radius: 10px; }
+        .info-item i { width: 40px; height: 40px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; }
+        .info-item a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+        .photo-credit { 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: linear-gradient(transparent, rgba(0,0,0,0.7)); 
+            color: white; 
+            padding: 2rem 1rem 1rem; 
+            font-size: 0.85rem; 
+            opacity: 0; 
+            transition: opacity 0.3s ease;
+        }
+        .photo-credit.show { opacity: 1; }
+        .photo-credit a { color: #fff; text-decoration: underline; }
+        .photo-credit i { margin-right: 0.5rem; }
+        
+        /* ===============================================
+           CARRUSEL DE ALOJAMIENTOS - ESTILOS
+           =============================================== */
+        .accommodations-carousel-section {
+            margin-top: 3rem;
+            padding: 2rem 0;
+        }
+        
+        .accommodations-carousel-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .accommodations-carousel-header h3 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        
+        .accommodations-carousel-header h3 i {
+            color: var(--accent-color);
+        }
+        
+        .accommodations-carousel-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .carousel-wrapper {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .carousel-track {
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.5s ease-in-out;
+            padding: 0.5rem;
+        }
+        
+        .accommodation-card {
+            flex: 0 0 280px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .accommodation-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+        
+        .accommodation-card-image {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+        
+        .accommodation-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .accommodation-card-image img.loaded {
+            opacity: 1;
+        }
+        
+        .accommodation-card:hover .accommodation-card-image img {
+            transform: scale(1.1);
+        }
+        
+        .accommodation-type-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .accommodation-card-content {
+            padding: 1.2rem;
+        }
+        
+        .accommodation-card-content h4 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .accommodation-location {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .accommodation-location i {
+            color: var(--accent-color);
+            font-size: 0.8rem;
+        }
+        
+        .accommodation-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .accommodation-feature {
+            background: #f5f5f5;
+            color: #555;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+        
+        .accommodation-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        
+        .accommodation-price span {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #888;
+        }
+        
+        .carousel-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .carousel-nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .carousel-nav-btn.prev {
+            left: 10px;
+        }
+        
+        .carousel-nav-btn.next {
+            right: 10px;
+        }
+        
+        .carousel-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .carousel-nav-btn:disabled:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-50%);
+        }
+        
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1.5rem;
+        }
+        
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+        
+        .carousel-loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .carousel-loading i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .carousel-empty {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+        }
+        
+        .carousel-empty i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+        
+        /* Placeholder para lazy loading */
+        .image-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .accommodation-card {
+                flex: 0 0 240px;
+            }
+            
+            .carousel-nav-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="50" height="50" style="height: 50px; margin-right: 10px;">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+
+                <!-- Selector de idiomas desktop -->
+                <div class="language-selector-nav">
+                    <button class="language-btn-nav" id="languageBtnNav" aria-label="Seleccionar idioma">
+                        <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                        <span>ES</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown-nav" id="languageDropdownNav">
+                        <a href="/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                            Español
+                        </a>
+                        <a href="/en/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
+                            English
+                        </a>
+                        <a href="/fr/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
+                            Français
+                        </a>
+                        <a href="/de/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
+                            Deutsch
+                        </a>
+                        <a href="/zh/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
+                            中文
+                        </a>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="/index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos</a></li>
+                    <li><a href="/lugares-interes-paginacion.html"><i class="fas fa-landmark"></i> Lugares</a></li>
+                    <li><a href="/rutas.html"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="/index.html#asistente" class="nav-asistente">
+                        <img src="/antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                        Antonio
+                    </a></li>
+
+                    <!-- Selector de idiomas móvil -->
+                    <li class="language-selector-mobile">
+                        <h4>🌐 Idiomas</h4>
+                        <div class="language-options-mobile">
+                            <a href="/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                                ES
+                            </a>
+                            <a href="/en/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
+                                EN
+                            </a>
+                            <a href="/fr/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
+                                FR
+                            </a>
+                            <a href="/de/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
+                                DE
+                            </a>
+                            <a href="/zh/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
+                                ZH
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <section class="section" style="margin-top: 100px;">
+        <div class="container">
+            <div id="loading" style="text-align: center; padding: 3rem;">
+                <i class="fas fa-spinner fa-spin fa-2x"></i><br><br>Cargando...
+            </div>
+            <div id="error-msg" style="display: none; text-align: center; padding: 3rem;">
+                <i class="fas fa-exclamation-triangle fa-3x" style="color: #e74c3c;"></i>
+                <h2 style="margin-top: 1rem;">No encontrado</h2>
+                <a href="/lugares-interes-paginacion.html" class="btn-primary" style="margin-top: 1rem;">Volver</a>
+            </div>
+            <div id="detail-content" class="detail-container" style="display: none;"></div>
+            
+            <!-- Sección de carrusel de alojamientos en la provincia (lazy loading) -->
+            <div id="accommodations-carousel" class="accommodations-carousel-section" style="display: none;">
+                <div class="container">
+                    <div class="accommodations-carousel-header">
+                        <h3><i class="fas fa-bed"></i> Alojamientos Turísticos Cercanos</h3>
+                        <p>Descubre los mejores alojamientos turísticos en <span id="carousel-province-name"></span></p>
+                    </div>
+                    <div class="carousel-wrapper">
+                        <button class="carousel-nav-btn prev" id="carousel-prev" aria-label="Anterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-nav-btn next" id="carousel-next" aria-label="Siguiente">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <div class="carousel-track" id="carousel-track">
+                            <!-- Las tarjetas se cargan dinámicamente con lazy loading -->
+                        </div>
+                        <div class="carousel-dots" id="carousel-dots"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="/aviso-legal.html">Aviso Legal</a>
+                    <a href="/politica-cookies.html">Política de Cookies</a>
+                    <a href="/agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="/script.js?v=20260114"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Función formateadora de descripciones
+        function formatearDescripcion(texto) {
+            if (!texto) return 'Sin descripción.';
+            
+            // Añadir emojis a palabras clave automáticamente
+            const busquedas = ["Horario", "Ubicación", "Entrada", "Precio", "Teléfono", "Email", "Web", "Dirección", "Historia"];
+            const emojis = ["🕐", "📍", "🎫", "💰", "📞", "📧", "🌐", "🏠", "📜"];
+            
+            busquedas.forEach((palabra, index) => {
+                const regex = new RegExp(`\\b${palabra}\\b`, 'gi');
+                texto = texto.replace(regex, `${emojis[index]} ${palabra}`);
+            });
+            
+            // Convertir asteriscos **texto** en negritas <strong>texto</strong>
+            texto = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            return texto;
+        }
+
+        let currentImageIndex = 0, currentPhotos = [], currentPhotoCredits = {}, currentFirstCredit = null;
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Usar slug inyectado por PHP si existe, sino obtener de URL
+            let slug = window.currentSlug || '';
+            
+            if (!slug) {
+                slug = urlParams.get('slug');
+            }
+            
+            if (!slug) {
+                // Si viene de URL amigable, extraer slug de la URL
+                const path = window.location.pathname;
+                // Buscar slug tanto en /lugar/ (nuevo) como en /lugares-interes/ (antiguo)
+                const match = path.match(/\/(?:lugar|lugares-interes)\/([^\/]+)/);
+                if (match) slug = match[1];
+            }
+
+            // Redirección específica para Restaurante Santo Domingo II
+            if (slug === 'restaurante-santo-domingo-ii') {
+                window.location.replace('/lugar/restaurante-santo-domingo-2-soria');
+                return;
+            }
+
+            if (!slug) { mostrarError(); return; }
+            // Canonical URL amigable
+            const canonicalUrl = 'https://www.rutasrurales.io/lugar/' + slug;
+            const canonicalLink = document.getElementById('canonical-url');
+            if (canonicalLink) {
+                canonicalLink.setAttribute('href', canonicalUrl);
+            }
+            cargarLugar(slug);
+        });
+
+        // Función para trackear vistas de lugares de interés
+        function trackPlaceView(placeId) {
+            if (!placeId) return;
+            
+            fetch('/api/track_resource_stat.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    resource_type: 'place',
+                    resource_id: placeId,
+                    stat_type: 'view'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Vista registrada para lugar:', placeId, data.data);
+                } else {
+                    console.error('Error al registrar vista:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error al trackear vista:', error);
+            });
+        }
+
+        async function cargarLugar(slug) {
+            try {
+                const response = await fetch('/api/lugar-interes.php?slug=' + slug);
+                const data = await response.json();
+                if (data.success && data.data) {
+                    renderizarDetalle(data.data);
+                    // Trackear la vista del lugar
+                    const placeId = data.data.id || data.data.ID;
+                    trackPlaceView(placeId);
+                } else {
+                    mostrarError();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarError();
+            }
+        }
+
+        function mostrarError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-msg').style.display = 'block';
+        }
+
+        function renderizarDetalle(lugar) {
+            document.getElementById('loading').style.display = 'none';
+            const c = document.getElementById('detail-content');
+            c.style.display = 'block';
+            const nom = lugar.nombre || lugar.name || 'Lugar';
+            document.title = nom + ' | Rutas Rurales';
+            
+            currentPhotos = lugar.fotos || [];
+            currentPhotoCredits = lugar.foto_creditos || {};
+            currentFirstCredit = lugar.primer_credito || null;
+            if (!currentPhotos.length) {
+                ['photo1','photo2','photo3','photo4'].forEach(p => {
+                    if (lugar[p]) currentPhotos.push(lugar[p]);
+                });
+            }
+            if (!currentPhotos.length) currentPhotos = ['interest_places_images/Patrocinio.webp'];
+            
+            const gh = '<div class="gallery-container">' +
+                currentPhotos.map((f,i) => '<img src="' + f + '" class="gallery-img ' + (i===0?'active':'') + '" alt="' + nom + '" ' + (i===0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"') + ' onerror="this.src=\'interest_places_images/Patrocinio.webp\'">').join('') +
+                (currentPhotos.length>1 ? '<div class="gallery-nav"><button class="nav-btn" onclick="cambiarFoto(-1)"><i class="fas fa-chevron-left"></i></button><button class="nav-btn" onclick="cambiarFoto(1)"><i class="fas fa-chevron-right"></i></button></div>' : '') +
+                '<div class="photo-credit" id="photoCredit"></div>' +
+                '</div>';
+            
+            const des = lugar.descripcion || lugar.description || 'Sin descripción';
+            const tel = lugar.telefono || lugar.phone || '';
+            const em = lugar.email || '';
+            let web = lugar.web || lugar.website || '';
+            
+            // Asegurar que la URL tenga protocolo
+            if (web && !web.match(/^https?:\/\//i)) {
+                web = 'https://' + web;
+            }
+            
+            let bh = '';
+            if (tel) bh += '<div class="info-item"><i class="fas fa-phone-alt"></i> <a href="tel:' + tel + '">' + tel + '</a></div>';
+            if (em) bh += '<div class="info-item"><i class="fas fa-envelope"></i> <a href="mailto:' + em + '">' + em + '</a></div>';
+            if (web) bh += '<div class="info-item"><i class="fas fa-globe"></i> <a href="' + web + '" target="_blank" rel="noopener noreferrer">Visitar Web</a></div>';
+            
+            let mapaHTML = '';
+            const lat = lugar.latitud || lugar.latitude;
+            const lng = lugar.longitud || lugar.longitude;
+            const provincia = lugar.provincia || lugar.Provincia || lugar.province || '';
+            
+            if (lat && lng) {
+                mapaHTML = '<div style="margin-top: 2rem;"><h3>Ubicación</h3><div id="map-lugar" style="height: 300px; width: 100%; border-radius: 12px; z-index: 1;"></div></div>';
+                setTimeout(() => initMap(lat, lng, nom), 100);
+            }
+            
+            // Guardar datos para Mi Ruta
+            window.currentPlace = lugar;
+
+            const btnMyRoute = '<button onclick="addToMyRouteFromDetail()" class="btn-primary" style="width: 100%; margin-top: 1rem; background: var(--accent-color); border: none;">' +
+                '<i class="fas fa-plus-circle"></i> Añadir a mi Itinerario</button>';
+            
+            // Botón de rutas cercanas - reutilizar las variables ya declaradas
+            
+            const btnRutasCercanas = (provincia || lat) ? `
+                <a href="/rutas.php?${lat && lng ? 'lat=' + lat + '&lng=' + lng + '&' : ''}provincia=${encodeURIComponent(provincia)}&radius=100&alojamientos=1&lugares=1&actividades=1&eventos=1" class="btn-primary" style="display: block; text-align: center; text-decoration: none; background: linear-gradient(135deg, #e67e22, #d35400); color: white; padding: 14px; border-radius: 10px; font-weight: 700; margin-top: 12px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4); transition: all 0.3s ease;">
+                    <i class="fas fa-compass"></i> 🌟 ¡No te pierdas todo lo que hay cerca!
+                    <span style="display: block; font-size: 0.75rem; font-weight: 500; margin-top: 4px; opacity: 0.95;">
+                        Alojamientos, actividades, lugares únicos y eventos en 100km
+                    </span>
+                </a>
+            ` : '';
+
+            c.innerHTML = '<div class="detail-header"><h1>' + nom + '</h1><p><i class="fas fa-map-marker-alt"></i> ' + (lugar.direccion||'') + ' ' + (lugar.localidad||'') + ' ' + (lugar.provincia||'') + '</p></div>' +
+                gh + '<div class="detail-grid"><div><h3>Descripción</h3><p>' + formatearDescripcion(des) + '</p>' + mapaHTML + '</div><div><div class="info-card"><h3>Información</h3>' + bh + btnMyRoute + btnRutasCercanas + '</div></div></div>';
+            
+            // Mostrar botón de otros alojamientos si hay provincia (reutilizar variable provincia ya declarada)
+            if (provincia) {
+                mostrarBotonOtrosAlojamientos(provincia);
+            }
+            
+            // Mostrar crédito de la primera foto
+            setTimeout(() => updatePhotoCredit(0), 100);
+        }
+        
+        // Función para actualizar el crédito de la foto
+        function updatePhotoCredit(index) {
+            const creditEl = document.getElementById('photoCredit');
+            if (!creditEl || !currentPhotos.length) return;
+            
+            const photoUrl = currentPhotos[index];
+            let credit = currentPhotoCredits[photoUrl];
+            
+            // Si no hay crédito específico para esta foto, usar el primer crédito
+            if (!credit || !credit.author) {
+                credit = currentFirstCredit;
+            }
+            
+            if (credit && credit.author) {
+                const instaHtml = credit.instagram 
+                    ? ` · <a href="https://instagram.com/${credit.instagram.replace('@','')}" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> ${credit.instagram}</a>`
+                    : '';
+                creditEl.innerHTML = `<i class="fas fa-camera"></i> <span>Foto: ${credit.author}${instaHtml}</span>`;
+                creditEl.classList.add('show');
+            } else {
+                creditEl.classList.remove('show');
+            }
+        }
+
+        window.cambiarFoto = function(d) {
+            if (currentPhotos.length <= 1) return;
+            const imgs = document.querySelectorAll('.gallery-img');
+            imgs[currentImageIndex].classList.remove('active');
+            currentImageIndex += d;
+            if (currentImageIndex >= imgs.length) currentImageIndex = 0;
+            if (currentImageIndex < 0) currentImageIndex = imgs.length - 1;
+            imgs[currentImageIndex].classList.add('active');
+            // Actualizar crédito de la foto
+            updatePhotoCredit(currentImageIndex);
+        }
+
+        function initMap(lat, lng, title) {
+            if (typeof L === 'undefined') return;
+            const map = L.map('map-lugar').setView([lat, lng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            L.marker([lat, lng]).addTo(map).bindPopup('<b>' + title + '</b>').openPopup();
+        }
+
+        // Función para mostrar el botón de otros alojamientos
+        function mostrarBotonOtrosAlojamientos(provincia) {
+            if (!provincia || provincia.trim() === '') return;
+
+            const seccionOtros = document.getElementById('otros-alojamientos');
+            const btnOtros = document.getElementById('btn-otros-alojamientos');
+
+            if (seccionOtros && btnOtros) {
+                // Establecer el enlace con la provincia
+                btnOtros.href = `/alojamientos-turisticos.html?provincia=${encodeURIComponent(provincia)}`;
+                seccionOtros.style.display = 'block';
+            }
+        }
+
+        // Lógica de Mi Ruta Personal
+        function addToMyRouteFromDetail() {
+            const item = window.currentPlace;
+            if (!item) {
+                alert('Error: No se pudo obtener la información del lugar');
+                return;
+            }
+
+            let myRoute = JSON.parse(localStorage.getItem('myPersonalRoute') || '[]');
+
+            const id = item.id;
+            const tipo = 'lugar';
+
+            if (myRoute.some(i => i.id === id && i.tipo === tipo)) {
+                alert('Este lugar ya está en tu ruta');
+                return;
+            }
+
+            myRoute.push({
+                id: id,
+                nombre: item.nombre || item.name,
+                tipo: tipo,
+                lat: item.latitud || item.latitude,
+                lng: item.longitud || item.longitude,
+                slug: item.slug,
+                foto: (item.fotos && item.fotos.length > 0) ? item.fotos[0] : (item.photo1 || 'interest_places_images/Patrocinio.webp'),
+                localidad: item.localidad || item.municipality,
+                description: (item.descripcion || item.description || '').substring(0, 300) + '...'
+            });
+
+            localStorage.setItem('myPersonalRoute', JSON.stringify(myRoute));
+            
+            // Mostrar confirmación y opción de ir al itinerario
+            if (confirm(`✅ Añadido a tu itinerario (${myRoute.length} ${myRoute.length === 1 ? 'parada' : 'paradas'})\n\n¿Quieres ver tu itinerario completo?`)) {
+                window.location.href = '/mi-ruta.html';
+            }
+            
+            const toast = document.createElement('div');
+            toast.style = "position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary-color); color: white; padding: 1rem 2rem; border-radius: 30px; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-weight: bold;";
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ¡Añadido a tu ruta! <a href="/mi-ruta.html" style="color: white; text-decoration: underline; margin-left: 10px;">Ver mi ruta</a>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // ===============================================
+        // CARRUSEL DE ALOJAMIENTOS CON LAZY LOADING
+        // ===============================================
+        
+        // Variables del carrusel
+        let accommodationsData = [];
+        let currentCarouselIndex = 0;
+        let carouselItemsPerView = 3;
+        
+        // Función para cargar alojamientos por provincia (lazy loading)
+        async function loadAccommodationsByProvince(provincia) {
+            const carouselSection = document.getElementById('accommodations-carousel');
+            const track = document.getElementById('carousel-track');
+            const provinceNameEl = document.getElementById('carousel-province-name');
+            
+            console.log('DEBUG: Cargando alojamientos para provincia:', provincia);
+            
+            if (!carouselSection || !track || !provincia) {
+                console.log('DEBUG: Faltan elementos o provincia');
+                return;
+            }
+            
+            // Mostrar sección con indicador de carga
+            carouselSection.style.display = 'block';
+            track.innerHTML = '<div class="carousel-loading"><i class="fas fa-spinner"></i><br>Cargando alojamientos...</div>';
+            
+            // Actualizar nombre de provincia en el título
+            if (provinceNameEl) {
+                provinceNameEl.textContent = provincia;
+            }
+            
+            try {
+                // Llamada a la API
+                const apiUrl = `/api/get_accommodations_by_province.php?provincia=${encodeURIComponent(provincia)}&limit=10`;
+                console.log('DEBUG: Llamando API:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                console.log('DEBUG: Respuesta API:', data);
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    accommodationsData = data.data;
+                    console.log('DEBUG: Alojamientos encontrados:', accommodationsData.length);
+                    renderCarousel();
+                } else {
+                    console.log('DEBUG: No hay alojamientos o error:', data.message);
+                    // Ocultar sección
+                    carouselSection.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('DEBUG Error al cargar alojamientos:', error);
+                carouselSection.style.display = 'none';
+            }
+        }
+        
+        // Función para renderizar el carrusel
+        function renderCarousel() {
+            const track = document.getElementById('carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            
+            if (!track || accommodationsData.length === 0) return;
+            
+            // Calcular elementos visibles según el ancho de pantalla
+            updateCarouselSettings();
+            
+            // Generar HTML de las tarjetas
+            track.innerHTML = accommodationsData.map((acc, index) => createAccommodationCard(acc, index)).join('');
+            
+            // Generar puntos de navegación
+            const totalDots = Math.ceil(accommodationsData.length / carouselItemsPerView);
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalDots; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Ir a grupo ${i + 1}`);
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+            
+            // Configurar botones de navegación
+            prevBtn.onclick = () => navigateCarousel(-1);
+            nextBtn.onclick = () => navigateCarousel(1);
+            
+            // Actualizar estado de botones
+            updateCarouselButtons();
+            
+            // Aplicar lazy loading a las imágenes
+            applyLazyLoading();
+        }
+        
+        // Función para crear HTML de una tarjeta de alojamiento
+        function createAccommodationCard(accommodation, index) {
+            const tipo = accommodation.tipo || accommodation.Tipo || 'Casa Rural';
+            const nombre = accommodation.nombre || accommodation.Nombre || 'Alojamiento';
+            const localidad = accommodation.localidad || accommodation.Localidad || '';
+            const provincia = accommodation.provincia || accommodation.Provincia || '';
+            const precio = accommodation.precio || accommodation.Precio || 0;
+            const caracteristicas = accommodation.caracteristicas || accommodation.Caracteristicas || [];
+            
+            // Obtener la foto principal - buscar en múltiples campos
+            let foto = '';
+            if (accommodation.foto) {
+                foto = accommodation.foto;
+            } else if (accommodation.fotos && Array.isArray(accommodation.fotos) && accommodation.fotos.length > 0) {
+                foto = accommodation.fotos[0];
+            } else if (accommodation.Foto1) {
+                foto = accommodation.Foto1;
+            } else if (accommodation.foto1) {
+                foto = accommodation.foto1;
+            }
+            
+            // Si no hay foto, usar imagen por defecto
+            if (!foto) {
+                foto = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
+            }
+            
+            // Generar badge de tipo
+            let tipoBadge = tipo;
+            if (tipo.toLowerCase().includes('casa')) tipoBadge = 'Casa Rural';
+            else if (tipo.toLowerCase().includes('piso') || tipo.toLowerCase().includes('apartamento')) tipoBadge = 'Apartamento';
+            else if (tipo.toLowerCase().includes('hotel')) tipoBadge = 'Hotel';
+            else if (tipo.toLowerCase().includes('hostal')) tipoBadge = 'Hostal';
+            
+            // Generar precio
+            const precioHTML = precio > 0 
+                ? `<span class="accommodation-price">${precio}€ <span>/noche</span></span>`
+                : `<span class="accommodation-price"><span>Consultar</span></span>`;
+            
+            // Generar características (máximo 3)
+            const featuresHTML = caracteristicas.slice(0, 3).map(f => 
+                `<span class="accommodation-feature">${f}</span>`
+            ).join('');
+            
+            // Generar enlace al detalle del alojamiento
+            // Usar slug si está disponible y es válido (no demasiado largo ni con caracteres extraños)
+            let slug = accommodation.slug || accommodation.Slug || '';
+            // Si el slug está vacío o es muy largo (más de 80 caracteres), usar ID
+            if (!slug || slug.length > 80 || slug.includes('alojamiento') || slug.includes('undefined')) {
+                slug = '';
+            }
+            const accommodationLink = slug 
+                ? `/alojamiento/${slug}` 
+                : `/alojamiento.html?id=${accommodation.id}`;
+            
+            return `
+                <a href="${accommodationLink}" class="accommodation-card" data-index="${index}">
+                    <div class="accommodation-card-image">
+                        <span class="accommodation-type-badge">${tipoBadge}</span>
+                        <img data-src="${foto}" alt="${nombre}" class="lazy-img">
+                        <noscript><img src="${foto}" alt="${nombre}" class="lazy-img-noscript"></noscript>
+                        <div class="image-placeholder"></div>
+                    </div>
+                    <div class="accommodation-card-content">
+                        <h4>${nombre}</h4>
+                        <p class="accommodation-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${localidad}${localidad && provincia ? ', ' : ''}${provincia}
+                        </p>
+                        <div class="accommodation-features">${featuresHTML}</div>
+                        ${precioHTML}
+                    </div>
+                </a>
+            `;
+        }
+        
+        // Función para aplicar lazy loading a las imágenes
+        function applyLazyLoading() {
+            const images = document.querySelectorAll('.lazy-img');
+            
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.getAttribute('data-src');
+                            if (src) {
+                                img.src = src;
+                                img.onload = () => {
+                                    img.classList.add('loaded');
+                                    // Ocultar placeholder
+                                    const placeholder = img.parentElement.querySelector('.image-placeholder');
+                                    if (placeholder) placeholder.style.display = 'none';
+                                };
+                                img.onerror = () => {
+                                    // Imagen por defecto en caso de error
+                                    img.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
+                                    img.classList.add('loaded');
+                                };
+                            }
+                            observer.unobserve(img);
+                        }
+                    });
+                }, {
+                    rootMargin: '50px 0px',
+                    threshold: 0.1
+                });
+                
+                images.forEach(img => imageObserver.observe(img));
+            } else {
+                // Fallback para navegadores sin IntersectionObserver
+                images.forEach(img => {
+                    const src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                        img.classList.add('loaded');
+                    }
+                });
+            }
+        }
+        
+        // Función para actualizar configuración según ancho de pantalla
+        function updateCarouselSettings() {
+            const width = window.innerWidth;
+            if (width < 600) {
+                carouselItemsPerView = 1;
+            } else if (width < 900) {
+                carouselItemsPerView = 2;
+            } else {
+                carouselItemsPerView = 3;
+            }
+        }
+        
+        // Función para navegar entre slides
+        function navigateCarousel(direction) {
+            const maxIndex = Math.ceil(accommodationsData.length / carouselItemsPerView) - 1;
+            currentCarouselIndex += direction;
+            
+            if (currentCarouselIndex < 0) currentCarouselIndex = 0;
+            if (currentCarouselIndex > maxIndex) currentCarouselIndex = maxIndex;
+            
+            updateCarouselPosition();
+        }
+        
+        // Función para ir a un slide específico
+        function goToSlide(index) {
+            currentCarouselIndex = index;
+            updateCarouselPosition();
+        }
+        
+        // Función para actualizar la posición del carrusel
+        function updateCarouselPosition() {
+            const track = document.getElementById('carousel-track');
+            const cards = track.querySelectorAll('.accommodation-card');
+            
+            if (cards.length === 0) return;
+            
+            const cardWidth = cards[0].offsetWidth + 24; // Ancho + gap
+            const offset = currentCarouselIndex * cardWidth * carouselItemsPerView;
+            track.style.transform = `translateX(-${offset}px)`;
+            
+            // Actualizar botones
+            updateCarouselButtons();
+            
+            // Actualizar puntos
+            updateCarouselDots();
+        }
+        
+        // Función para actualizar estado de botones
+        function updateCarouselButtons() {
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            const maxIndex = Math.ceil(accommodationsData.length / carouselItemsPerView) - 1;
+            
+            if (prevBtn) prevBtn.disabled = currentCarouselIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentCarouselIndex >= maxIndex;
+        }
+        
+        // Función para actualizar puntos de navegación
+        function updateCarouselDots() {
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentCarouselIndex);
+            });
+        }
+        
+        // Modificar la función mostrarBotonOtrosAlojamientos para cargar el carrusel con lazy loading
+        const originalMostrarBotonOtrosAlojamientos = mostrarBotonOtrosAlojamientos;
+        mostrarBotonOtrosAlojamientos = function(provincia) {
+            // Llamar a la función original
+            if (provincia && provincia.trim() !== '') {
+                // Actualizar enlace existente
+                const btnOtros = document.getElementById('btn-otros-alojamientos');
+                const seccionOtros = document.getElementById('otros-alojamientos');
+                if (btnOtros) {
+                    btnOtros.href = `/alojamientos-turisticos.html?provincia=${encodeURIComponent(provincia)}`;
+                }
+                if (seccionOtros) {
+                    seccionOtros.style.display = 'block';
+                }
+                
+                // Cargar carrusel con lazy loading (después de un pequeño delay para no bloquear la carga inicial)
+                setTimeout(() => {
+                    loadAccommodationsByProvince(provincia);
+                }, 1500); // 1.5 segundos de delay para lazy loading
+            }
+        };
+        
+        // Reemplazar la función original
+        window.mostrarBotonOtrosAlojamientos = mostrarBotonOtrosAlojamientos;
+    </script>
+</body>
+</html>

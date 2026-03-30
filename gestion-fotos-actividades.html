@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Fotos de Actividades</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; margin: 0; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 25px; }
+        
+        .section { border: 2px solid #e0e0e0; padding: 20px; margin: 15px 0; border-radius: 8px; background: #fafafa; }
+        .section h3 { margin-top: 0; color: #34495e; }
+        
+        .search-box { display: flex; gap: 10px; margin-bottom: 15px; }
+        .search-box input { flex: 1; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .search-box button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .search-box button:hover { background: #2980b9; }
+        
+        .results { background: white; border: 1px solid #ddd; border-radius: 5px; max-height: 150px; overflow-y: auto; display: none; margin-top: 5px; }
+        .results.active { display: block; }
+        .result-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s; }
+        .result-item:hover { background: #f0f8ff; }
+        .result-item strong { color: #2c3e50; display: block; }
+        .result-item small { color: #7f8c8d; }
+        
+        .info-box { background: #e8f4f8; padding: 15px; border-radius: 5px; border: 1px solid #3498db; display: none; margin-top: 10px; }
+        .info-box.active { display: block; }
+        .info-box strong { color: #2c3e50; }
+        .info-box small { color: #7f8c8d; }
+        
+        .categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; margin: 15px 0; }
+        .cat-btn { padding: 12px 8px; background: white; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.2s; font-size: 13px; }
+        .cat-btn:hover { border-color: #3498db; background: #f0f8ff; transform: translateY(-2px); }
+        .cat-btn.selected { background: #3498db; color: white; border-color: #3498db; font-weight: bold; }
+        
+        .file-area { border: 2px dashed #ccc; padding: 30px; text-align: center; border-radius: 8px; cursor: pointer; background: white; transition: all 0.3s; }
+        .file-area:hover { border-color: #3498db; background: #f0f8ff; }
+        .file-area i { font-size: 35px; color: #3498db; margin-bottom: 10px; display: block; }
+        .file-area p { margin: 5px 0; color: #555; }
+        .file-area small { color: #999; }
+        .file-area input { display: none; }
+        
+        .upload-btn { width: 100%; padding: 16px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 15px 0; transition: all 0.2s; }
+        .upload-btn:hover { background: #229954; transform: translateY(-2px); }
+        .upload-btn:disabled { background: #95a5a6; cursor: not-allowed; transform: none; }
+        
+        .message { padding: 12px; border-radius: 6px; margin: 10px 0; display: none; font-weight: bold; }
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .message.active { display: block; }
+        
+        .photo-info { background: #e8f4f8; padding: 15px; border-radius: 6px; border: 1px solid #b8daff; margin: 10px 0; display: none; }
+        .photo-info.active { display: block; }
+        .photo-info h4 { margin: 0 0 10px 0; color: #2c3e50; }
+        .photo-info code { background: white; padding: 3px 6px; border-radius: 3px; font-family: monospace; word-break: break-all; color: #2c3e50; }
+        .photo-info a { color: #3498db; text-decoration: none; font-weight: bold; }
+        .photo-info a:hover { text-decoration: underline; }
+        
+        .gallery { margin-top: 20px; }
+        .category-section { margin: 20px 0; }
+        .category-section h4 { color: #3498db; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+        .photo-card { position: relative; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); aspect-ratio: 4/3; background: #f0f0f0; }
+        .photo-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
+        .photo-card:hover img { transform: scale(1.05); }
+        .photo-card .delete { position: absolute; top: 5px; right: 5px; background: rgba(231,76,60,0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .photo-card .date { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; padding: 3px 6px; font-size: 10px; text-align: center; }
+        
+        .loading { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .loading.active { display: flex; }
+        .loading-content { background: white; padding: 30px; border-radius: 10px; text-align: center; min-width: 300px; }
+        .loading-content i { font-size: 45px; color: #3498db; animation: spin 1s linear infinite; display: block; margin-bottom: 15px; }
+        .loading-content p { margin: 5px 0; color: #333; font-weight: bold; }
+        .loading-content small { color: #777; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .no-photos { text-align: center; padding: 40px; color: #7f8c8d; background: white; border-radius: 8px; border: 2px dashed #ddd; }
+        .no-photos i { font-size: 45px; margin-bottom: 10px; display: block; }
+        
+        .debug-info { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 11px; color: #666; margin-top: 10px; display: none; }
+        .debug-info.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Gestión de Fotos de Actividades Turísticas</h1>
+
+        <!-- Sección 1: Búsqueda -->
+        <div class="section">
+            <h3>🔍 1. Buscar Actividad</h3>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Escribe el nombre de la actividad...">
+                <button onclick="buscarActividad()">Buscar</button>
+            </div>
+            <div id="searchResults" class="results"></div>
+            <div id="activityInfo" class="info-box">
+                <strong id="actName">-</strong><br>
+                <small>Slug: <span id="actSlug">-</span> | Tipo: <span id="actType">-</span> | Localidad: <span id="actMuni">-</span></small>
+            </div>
+        </div>
+
+        <!-- Sección 2: Subida -->
+        <div class="section">
+            <h3>📤 2. Subir Nueva Foto</h3>
+            
+            <div id="message" class="message"></div>
+            
+            <div class="categories" id="categoryContainer">
+                <!-- Botones generados por JS -->
+            </div>
+
+            <div class="file-area" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p><strong>Haz clic para seleccionar una foto</strong></p>
+                <small id="fileInfo">Ningún archivo seleccionado</small>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" onchange="handleFile(this)">
+            </div>
+
+            <button id="uploadBtn" class="upload-btn" onclick="subirFoto()" disabled>
+                🚀 Subir Foto
+            </button>
+
+            <div id="photoInfo" class="photo-info">
+                <h4>✅ Foto Subida Exitosamente</h4>
+                <p><strong>Ubicación:</strong> <code id="photoPath">-</code></p>
+                <p><strong>URL:</strong> <a href="#" id="photoUrl" target="_blank">Ver foto</a></p>
+                <p><strong>Categoría:</strong> <span id="photoCat">-</span></p>
+                <p><strong>Archivo:</strong> <span id="photoFile">-</span></p>
+            </div>
+        </div>
+
+        <!-- Sección 3: Galería -->
+        <div class="section">
+            <h3>🖼️ 3. Galería de Fotos</h3>
+            <div id="gallery" class="gallery"></div>
+        </div>
+
+        <!-- Debug Info -->
+        <div id="debugInfo" class="debug-info"></div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading">
+        <div class="loading-content">
+            <i class="fas fa-spinner"></i>
+            <p>⏳ Procesando foto...</p>
+            <small>Convirtiendo a WebP y guardando en servidor</small>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // Variables de estado
+        let selectedCategory = '';
+        let selectedFile = null;
+        let currentActivity = null;
+
+        // Categorías disponibles para actividades
+        const categories = [
+            {id: 'ruta', name: 'Ruta', icon: '🥾'},
+            {id: 'paisaje', name: 'Paisaje', icon: '🏔️'},
+            {id: 'fauna', name: 'Fauna', icon: '🦌'},
+            {id: 'flora', name: 'Flora', icon: '🌿'},
+            {id: 'panoramica', name: 'Panorámica', icon: '📸'},
+            {id: 'equipo', name: 'Equipo', icon: '🎒'},
+            {id: 'otro', name: 'Otro', icon: '➕'}
+        ];
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            initCategories();
+            debug('Sistema iniciado correctamente');
+            
+            // Auto-cargar si hay slug en la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            if (slug) {
+                loadActivityBySlug(slug);
+            }
+        });
+
+        function initCategories() {
+            const container = document.getElementById('categoryContainer');
+            categories.forEach(cat => {
+                const btn = document.createElement('div');
+                btn.className = 'cat-btn';
+                btn.textContent = `${cat.icon} ${cat.name}`;
+                btn.onclick = () => selectCategory(cat.id, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function debug(msg) {
+            const debugDiv = document.getElementById('debugInfo');
+            const time = new Date().toLocaleTimeString();
+            debugDiv.innerHTML = `[${time}] ${msg}<br>` + debugDiv.innerHTML;
+            debugDiv.classList.add('active');
+        }
+
+        function selectCategory(category, btnElement) {
+            selectedCategory = category;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            debug(`Categoría seleccionada: ${category}`);
+            updateButtonState();
+        }
+
+        function handleFile(input) {
+            const file = input.files[0];
+            if (!file) {
+                selectedFile = null;
+                document.getElementById('fileInfo').textContent = 'Ningún archivo seleccionado';
+                debug('Archivo cancelado');
+                updateButtonState();
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                showMessage('❌ Por favor selecciona una imagen válida', 'error');
+                input.value = '';
+                debug('ERROR: Archivo no es imagen');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showMessage('❌ La imagen no debe superar 5MB', 'error');
+                input.value = '';
+                debug('ERROR: Archivo muy grande');
+                return;
+            }
+
+            selectedFile = file;
+            document.getElementById('fileInfo').textContent = `${file.name} (${(file.size/1024).toFixed(2)} KB)`;
+            debug(`✅ Archivo seleccionado: ${file.name} (${(file.size/1024).toFixed(2)} KB)`);
+            updateButtonState();
+        }
+
+        function updateButtonState() {
+            const btn = document.getElementById('uploadBtn');
+            const ready = selectedCategory && selectedFile && currentActivity;
+            
+            btn.disabled = !ready;
+            
+            if (ready) {
+                debug('✅ BOTÓN HABILITADO - Todos los datos completos');
+            } else {
+                const missing = [];
+                if (!currentActivity) missing.push('actividad');
+                if (!selectedCategory) missing.push('categoría');
+                if (!selectedFile) missing.push('archivo');
+                debug(`❌ BOTÓN DESHABILITADO - Faltan: ${missing.join(', ')}`);
+            }
+        }
+
+        async function loadActivityBySlug(slug) {
+            debug(`🔍 Cargando actividad por slug: ${slug}`);
+            document.getElementById('searchResults').innerHTML = '<div style="padding: 10px; text-align: center;">⏳ Cargando datos...</div>';
+            document.getElementById('searchResults').classList.add('active');
+            
+            try {
+                const response = await fetch(`api/actividad-slug.php?slug=${encodeURIComponent(slug)}`);
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const act = data.data;
+                    selectActivity(act.id, act.slug, act.name, act.activity_type || 'Actividad', act.municipality);
+                    document.getElementById('searchResults').classList.remove('active');
+                } else {
+                    showMessage('❌ No se pudo cargar la actividad especificada', 'error');
+                }
+            } catch (error) {
+                debug(`❌ Error cargando slug: ${error.message}`);
+                showMessage('❌ Error de conexión al cargar actividad', 'error');
+            }
+        }
+
+        async function buscarActividad() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                showMessage('❌ Por favor escribe un nombre de actividad', 'error');
+                return;
+            }
+
+            debug(`🔍 Buscando: ${query}`);
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">⏳ Buscando...</div>';
+            resultsDiv.classList.add('active');
+
+            try {
+                const response = await fetch(`api/search_activities.php?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (data.success && data.data.results.length > 0) {
+                    let html = '';
+                    data.data.results.forEach(item => {
+                        html += `<div class="result-item" onclick="selectActivity(${item.id}, '${item.slug}', '${item.name.replace(/'/g, "\\'")}', '${item.activity_type}', '${item.municipality}')">
+                            <strong>${item.name}</strong><br>
+                            <small>${item.activity_type} - ${item.municipality} (slug: ${item.slug})</small>
+                        </div>`;
+                    });
+                    resultsDiv.innerHTML = html;
+                    debug(`✅ Encontradas ${data.data.results.length} actividades`);
+                } else {
+                    resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center; color: #e74c3c;">❌ No se encontraron actividades</div>';
+                    debug('❌ No se encontraron resultados');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div style="padding: 10px; text-align: center; color: #e74c3c;">❌ Error: ${error.message}</div>`;
+                debug(`❌ ERROR API: ${error.message}`);
+            }
+        }
+
+        function selectActivity(id, slug, name, type, municipality) {
+            currentActivity = { id, slug, name, type, municipality };
+            document.getElementById('searchResults').classList.remove('active');
+            document.getElementById('activityInfo').classList.add('active');
+            document.getElementById('actName').textContent = name;
+            document.getElementById('actSlug').textContent = slug;
+            document.getElementById('actType').textContent = type;
+            document.getElementById('actMuni').textContent = municipality;
+            
+            debug(`✅ Actividad seleccionada: ${name} (${slug})`);
+            updateButtonState();
+            loadPhotos(slug);
+        }
+
+        async function subirFoto() {
+            if (!selectedCategory || !selectedFile || !currentActivity) {
+                showMessage('❌ Completa todos los campos antes de subir', 'error');
+                return;
+            }
+
+            debug('🔄 INICIANDO SUBIDA...');
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('photoInfo').classList.remove('active');
+            document.getElementById('message').classList.remove('active');
+
+            try {
+                const formData = new FormData();
+                formData.append('activity_identifier', currentActivity.slug);
+                formData.append('photo_category', selectedCategory);
+                formData.append('photo', selectedFile);
+
+                debug(`📤 Enviando: slug=${currentActivity.slug}, cat=${selectedCategory}, file=${selectedFile.name}`);
+
+                const response = await fetch('api/upload_activity_photo.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                debug(`📡 Respuesta: HTTP ${response.status} - ${result.success ? 'ÉXITO' : 'ERROR'}`);
+
+                if (result.success) {
+                    const fullUrl = window.location.origin + result.data.url;
+                    document.getElementById('photoPath').textContent = result.data.url;
+                    document.getElementById('photoUrl').href = fullUrl;
+                    document.getElementById('photoUrl').textContent = fullUrl;
+                    document.getElementById('photoCat').textContent = result.data.category;
+                    document.getElementById('photoFile').textContent = result.data.filename;
+                    document.getElementById('photoInfo').classList.add('active');
+                    showMessage('✅ Foto subida y convertida a WebP exitosamente!', 'success');
+                    debug(`✅ SUBIDA EXITOSA: ${result.data.filename}`);
+
+                    // Reset formulario
+                    selectedFile = null;
+                    selectedCategory = '';
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('fileInfo').textContent = 'Ningún archivo seleccionado';
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+                    updateButtonState();
+
+                    // Recargar galería
+                    loadPhotos(currentActivity.slug);
+                } else {
+                    showMessage(`❌ Error: ${result.error}`, 'error');
+                    debug(`❌ ERROR DEL SERVIDOR: ${result.error}`);
+                }
+            } catch (error) {
+                showMessage(`❌ Error: ${error.message}`, 'error');
+                debug(`❌ ERROR EXCEPCIÓN: ${error.message}`);
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        async function loadPhotos(slug) {
+            if (!slug) return;
+
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '<div style="padding: 20px; text-align: center;">⏳ Cargando fotos...</div>';
+
+            try {
+                const response = await fetch(`api/get_activity_photos.php?slug=${encodeURIComponent(slug)}`);
+                const data = await response.json();
+
+                if (data.success && Object.keys(data.data.photos_by_category).length > 0) {
+                    let html = '';
+                    const categories = Object.keys(data.data.photos_by_category).sort();
+
+                    categories.forEach(cat => {
+                        html += `<div class="category-section">
+                            <h4>📁 ${cat}</h4>
+                            <div class="photo-grid">`;
+
+                        data.data.photos_by_category[cat].forEach(photo => {
+                            html += `<div class="photo-card">
+                                <img src="${photo.url}" alt="${cat}" loading="lazy" onerror="this.src='/tourist_activities_images/default.webp'">
+                                <button class="delete" onclick="deletePhoto('${photo.url}')">×</button>
+                                <div class="date">${new Date(photo.created_at).toLocaleDateString()}</div>
+                            </div>`;
+                        });
+
+                        html += `</div></div>`;
+                    });
+
+                    gallery.innerHTML = html;
+                    debug(`✅ Galería cargada: ${categories.length} categorías`);
+                } else {
+                    gallery.innerHTML = '<div class="no-photos"><i class="fas fa-camera"></i><p>No hay fotos para esta actividad</p></div>';
+                    debug('ℹ️ No hay fotos en la galería');
+                }
+            } catch (error) {
+                gallery.innerHTML = '<div class="no-photos"><i class="fas fa-exclamation-triangle"></i><p>Error al cargar las fotos</p></div>';
+                debug(`❌ ERROR AL CARGAR FOTOS: ${error.message}`);
+            }
+        }
+
+        async function deletePhoto(url) {
+            if (!confirm('¿Eliminar esta foto?')) return;
+
+            try {
+                showMessage('🗑️ Foto eliminada (simulación)', 'success');
+                debug(`🗑️ Eliminando foto: ${url}`);
+                if (currentActivity) {
+                    loadPhotos(currentActivity.slug);
+                }
+            } catch (error) {
+                showMessage('❌ Error al eliminar', 'error');
+                debug(`❌ ERROR AL ELIMINAR: ${error.message}`);
+            }
+        }
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type} active`;
+            setTimeout(() => msg.classList.remove('active'), 5000);
+        }
+
+        // Búsqueda con Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') buscarActividad();
+            });
+        });
+    </script>
+</body>
+</html>

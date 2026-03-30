@@ -1,0 +1,54 @@
+<?php
+// Permitir acceso desde tu dominio (CORS)
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json; charset=utf-8');
+
+// --- CONFIGURACIÓN DE CONEXIÓN ---
+$host = "localhost";
+$db   = "u412199647_Rutas";
+$user = "u412199647_olgamarin";
+$pass = "Rutas5Rurales7$";
+$charset = 'utf8mb4';
+
+try {
+    $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ];
+    $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+    // En producción es mejor no mostrar el error detallado, pero para debug lo dejamos así:
+    echo json_encode(['success' => false, 'error' => 'Error de conexión: ' . $e->getMessage()]);
+    exit;
+}
+
+// --- LÓGICA DE BÚSQUEDA ---
+$query = isset($_GET['query']) ? trim($_GET['query']) : '';
+
+if (strlen($query) < 2) {
+    echo json_encode(['success' => true, 'results' => []]);
+    exit;
+}
+
+try {
+    // Buscamos por nombre o slug en la tabla cultural_events
+    $sql = "SELECT id, name, slug FROM cultural_events 
+            WHERE (name LIKE :term OR slug LIKE :term) 
+            AND is_active = 1 
+            LIMIT 15";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['term' => "%$query%"]);
+    $results = $stmt->fetchAll();
+
+    echo json_encode([
+        'success' => true, 
+        'results' => $results,
+        'count' => count($results)
+    ]);
+
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+}

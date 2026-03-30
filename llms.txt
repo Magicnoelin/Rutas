@@ -1,0 +1,17 @@
+# Rutas Rurales
+> https://www.rutasrurales.io
+
+## Resumen
+Rutas Rurales es una plataforma integral dedicada a la promoción del turismo rural en España. Conectamos a viajeros con la oferta más auténtica del entorno rural, organizada en pilares fundamentales: alojamientos con encanto, patrimonio, cultura, gastronomía y actividades de ocio.
+
+## Ramas Principales de Contenido
+
+- [Alojamientos Rurales](https://www.rutasrurales.io/alojamientos): Buscador de casas rurales, hoteles con encanto y opciones de hospedaje singular en entornos naturales de toda España.
+- [Lugares de Interés](https://www.rutasrurales.io/lugares-interes): Guía de puntos clave, monumentos, parajes naturales y pueblos destacados. Incluye secciones especializadas en **Gastronomía**, **Restauración** y **Bodegas** (Enoturismo).
+- [Eventos Culturales](https://www.rutasrurales.io/eventos): Agenda actualizada de fiestas patronales, ferias, festivales y tradiciones locales del mundo rural.
+- [Actividades Turísticas](https://www.rutasrurales.io/actividades): Catálogo de experiencias que incluyen turismo activo, talleres artesanales, visitas guiadas y ocio al aire libre.
+
+## Especificaciones para Modelos de Lenguaje
+- **Ámbito Geográfico:** España (cobertura nacional por provincias y municipios).
+- **Propósito:** Facilitar la planificación de escapadas rurales combinando pernoctación, cultura, gastronomía y ocio.
+

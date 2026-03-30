@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Link Accommodation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2f5233;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f0f7f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2f5233;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #2f5233;
+        }
+        button {
+            background-color: #2f5233;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3a6b3f;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Vincular Alojamiento ID 182</h1>
+
+        <div class="step">
+            <h3>📋 Información</h3>
+            <p>Este script vinculará el alojamiento con ID <strong>182</strong> al usuario <strong>nuevoaloja1@gmail.com</strong>.</p>
+            <p>El proceso realizará las siguientes acciones:</p>
+            <ol>
+                <li>Buscar el usuario nuevoaloja1@gmail.com en la base de datos</li>
+                <li>Verificar que el alojamiento ID 182 existe</li>
+                <li>Actualizar el campo created_by del alojamiento si es necesario</li>
+                <li>Crear la vinculación en la tabla user_resources</li>
+                <li>Inicializar estadísticas para el recurso</li>
+                <li>Verificar que la vinculación se haya creado correctamente</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>⚠️ Requisitos</h3>
+            <p>Para que este proceso funcione correctamente:</p>
+            <ul>
+                <li>El usuario nuevoaloja1@gmail.com debe existir en la base de datos</li>
+                <li>El alojamiento con ID 182 debe existir en la base de datos</li>
+                <li>La tabla user_resources debe existir</li>
+                <li>La tabla resource_stats debe existir</li>
+            </ul>
+        </div>
+
+        <button id="executeBtn" onclick="executeLinking()">🚀 Ejecutar Vinculación</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function executeLinking() {
+            const button = document.getElementById('executeBtn');
+            const resultDiv = document.getElementById('result');
+
+            // Disable button and show loading
+            button.disabled = true;
+            button.textContent = '🔄 Procesando';
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'loading';
+            resultDiv.innerHTML = '<p>🔄 Conectando con el servidor</p>';
+
+            try {
+                // Call the API
+                const response = await fetch('api/link_accommodation_182.php', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Success
+                    resultDiv.className = 'success';
+                    const responseData = data.data || {};
+
+                    // Handle both success cases: new link or existing link
+                    let content = '<h3>✅ ¡Vinculación Exitosa!</h3>';
+
+                    if (responseData.message && responseData.message.includes('Ya existe vinculación')) {
+                        content += `
+                            <p><strong>Mensaje:</strong> ${responseData.message}</p>
+                            <p><strong>Usuario:</strong> ${responseData.user_id}</p>
+                            <p><strong>Alojamiento:</strong> ${responseData.accommodation_name} (ID: ${responseData.accommodation_id})</p>
+                            <p><strong>Estado:</strong> ${responseData.status}</p>
+                            <p><strong>ID de Vinculación:</strong> ${responseData.link_id}</p>
+                        `;
+                    } else {
+                        content += `
+                            <p><strong>Mensaje:</strong> ${data.message}</p>
+                            <p><strong>Usuario:</strong> ${responseData.user_name || 'N/A'} (ID: ${responseData.user_id || 'N/A'})</p>
+                            <p><strong>Email:</strong> ${responseData.user_email || 'N/A'}</p>
+                            <p><strong>Alojamiento:</strong> ${responseData.accommodation_name || 'N/A'} (ID: ${responseData.accommodation_id || 'N/A'})</p>
+                            <p><strong>Estado:</strong> ${responseData.status || 'N/A'}</p>
+                            <p><strong>ID de Vinculación:</strong> ${responseData.link_id || 'N/A'}</p>
+                        `;
+
+                        if (responseData.steps_completed) {
+                            content += `
+                                <h4>Pasos completados:</h4>
+                                <ul>
+                                    <li>${responseData.steps_completed.user_found ? '✅' : '❌'} Usuario encontrado</li>
+                                    <li>${responseData.steps_completed.accommodation_found ? '✅' : '❌'} Alojamiento encontrado</li>
+                                    <li>${responseData.steps_completed.created_by_updated ? '✅' : '❌'} Campo created_by actualizado</li>
+                                    <li>${responseData.steps_completed.user_resources_link_created ? '✅' : '❌'} Vinculación en user_resources creada</li>
+                                    <li>${responseData.steps_completed.resource_stats_initialized ? '✅' : '❌'} Estadísticas inicializadas</li>
+                                    <li>${responseData.steps_completed.verification_successful ? '✅' : '❌'} Verificación exitosa</li>
+                                </ul>
+                            `;
+                        }
+                    }
+
+                    content += `
+                        <h4>📋 Respuesta completa:</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+
+                        <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                            <h4>🎯 Próximos pasos:</h4>
+                            <p>El alojamiento ahora debería aparecer en el dashboard del usuario en la sección "Mis Alojamientos".</p>
+                            <p>Puedes verificar esto accediendo a: <a href="user-dashboard.html#mis-alojamientos" target="_blank">user-dashboard.html#mis-alojamientos</a></p>
+                        </div>
+                    `;
+
+                    resultDiv.innerHTML = content;
+                } else {
+                    // Error
+                    resultDiv.className = 'error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error al vincular</h3>
+                        <p><strong>Error:</strong> ${data.error || 'Error desconocido'}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Error de conexión</h3>
+                    <p>No se pudo conectar con el servidor: ${error.message}</p>
+                `;
+                console.error('Error:', error);
+            } finally {
+                button.disabled = false;
+                button.textContent = '🚀 Ejecutar Vinculación';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Manager | Rutas Rurales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <style>
+    :root {
+        --primary: #1b4332;       /* Verde Bosque Profundo */
+        --accent: #2d6a4f;        /* Verde Rutas Rurales */
+        --accent-light: #d8e2dc;  /* Tono Arena/Ocre muy suave */
+        --success: #40916c;       /* Verde Hoja */
+        --danger: #9a031e;        /* Granate para alertas */
+        --bg: #f9f7f2;            /* Fondo Crema/Ocre muy claro */
+        --card-bg: #ffffff;
+        --text: #2d3142;          /* Gris carbón para lectura */
+        --ocre-muted: #e9c46a;    /* Ocre corporativo para detalles */
+    }
+
+    body { 
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+        background: var(--bg); 
+        color: var(--text);
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* Header Profesional */
+    .top-bar {
+        background: var(--primary);
+        color: #f8f9fa;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        border-bottom: 3px solid var(--ocre-muted);
+    }
+
+    .container { 
+        max-width: 1100px; 
+        margin: 20px auto; 
+        padding: 0 20px;
+    }
+
+    .card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        padding: 25px;
+        margin-bottom: 25px;
+        border: 1px solid #e9ecef;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--primary);
+    }
+
+    /* Selector de Entidad (Badge) */
+    .entity-badge {
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        background: var(--ocre-muted);
+        color: #582f0e; /* Marrón oscuro para contraste sobre ocre */
+    }
+
+    /* Grid de Categorías Mejorado */
+    .categories-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
+        gap: 12px; 
+        margin: 20px 0; 
+    }
+
+    .cat-item { 
+        padding: 15px 10px; 
+        background: #fff; 
+        border: 2px solid #edf2f7; 
+        border-radius: 10px; 
+        cursor: pointer; 
+        text-align: center; 
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .cat-item i { font-size: 1.5rem; color: #adc178; } /* Verde oliva suave */
+    .cat-item span { font-size: 0.85rem; font-weight: 500; }
+
+    .cat-item:hover { 
+        border-color: var(--accent); 
+        background: #f1f8e9; 
+        transform: translateY(-2px);
+    }
+
+    .cat-item.selected { 
+        border-color: var(--accent); 
+        background: var(--accent); 
+        color: white; 
+        box-shadow: 0 4px 8px rgba(45, 106, 79, 0.3);
+    }
+    .cat-item.selected i { color: white; }
+
+    /* Área de Carga Estilo Moderno */
+    .upload-zone {
+        border: 2px dashed #adc178;
+        padding: 40px;
+        text-align: center;
+        border-radius: 12px;
+        background: #fafafa;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .upload-zone:hover { 
+        border-color: var(--success); 
+        background: #f1f8e9; 
+    }
+
+    .btn-upload {
+        width: 100%;
+        padding: 15px;
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 0 #2d6a4f;
+    }
+    .btn-upload:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-upload:active { transform: translateY(2px); box-shadow: none; }
+    .btn-upload:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+
+    /* Galería */
+    .gallery-section { margin-top: 30px; }
+    .photo-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+        gap: 15px; 
+    }
+    .photo-card {
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        aspect-ratio: 1;
+        border: 1px solid #e9ecef;
+    }
+    .photo-card img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-card .actions {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(27, 67, 50, 0.6);
+        display: flex;
+        align-items: center; justify-content: center;
+        opacity: 0; transition: opacity 0.3s;
+    }
+    .photo-card:hover .actions { opacity: 1; }
+    
+    .btn-del {
+        background: var(--danger);
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    /* Status Messages */
+    .status-msg { padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; font-weight: 500; }
+    .status-msg.info { 
+        background: #f1f8e9; 
+        color: #1b4332; 
+        border-left: 5px solid var(--accent); 
+    }
+
+    .loading-overlay {
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(255,255,255,0.85);
+        display: none; align-items: center; justify-content: center; z-index: 1000;
+        color: var(--primary);
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div>
+            <i class="fas fa-images"></i> <strong>Rutas Rurales</strong> | Media Manager
+        </div>
+        <div id="entityDisplay" class="entity-badge">Cargando...</div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-info-circle"></i> Información del recurso</div>
+            <div id="statusMsg" class="status-msg info"></div>
+            <div id="resourceDetail">
+                <h2 id="resName" style="margin:0; color: var(--primary);">Seleccione un recurso</h2>
+                <p id="resMeta" style="color: #64748b; margin: 5px 0;"></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> Subir Nueva Fotografía</div>
+            
+            <label style="font-size: 0.9rem; font-weight: 600;">Paso 1: Selecciona la categoría</label>
+            <div class="categories-grid" id="catGrid"></div>
+
+            <label style="font-size: 0.9rem; font-weight: 600;">Paso 2: Selecciona el archivo</label>
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-file-image" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px;"></i>
+                <p id="fileNameDisplay">Arrastra o haz clic para buscar imagen</p>
+                <input type="file" id="fileInput" hidden onchange="handleFile(this)">
+            </div>
+
+            <button id="uploadBtn" class="btn-upload" disabled onclick="processUpload()">
+                <i class="fas fa-rocket"></i> SUBIR A SERVIDOR
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-th"></i> Galería Organizada</div>
+            <div id="galleryContainer">
+                <p style="color: #94a3b8;">Cargue un recurso para gestionar sus fotos.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" class="loading-overlay">
+        <div class="card"><i class="fas fa-spinner fa-spin"></i> Procesando...</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+    // --- 1. CONFIGURACIÓN DINÁMICA DE ICONOS E IDs ---
+    // Mapeamos los IDs de categoría de tu base de datos a iconos y carpetas SEO
+    const dynamicConfig = {
+        places_of_interest: {
+            19: { label: 'Restaurante', folder: 'restaurantes', icons: [
+                {id: 'platos', name: 'Platos', icon: 'fa-utensils'},
+                {id: 'comedor', name: 'Comedor', icon: 'fa-chair'},
+                {id: 'carta', name: 'Carta/Menú', icon: 'fa-book-open'}
+            ]},
+            12: { label: 'Museo', folder: 'museos', icons: [
+                {id: 'expo', name: 'Exposición', icon: 'fa-image'},
+                {id: 'fachada', name: 'Fachada', icon: 'fa-building'}
+            ]},
+            2: { label: 'Castillo', folder: 'castillos', icons: [
+                {id: 'torre', name: 'Torre/Muralla', icon: 'fa-chess-rook'},
+                {id: 'patio', name: 'Patio', icon: 'fa-archway'}
+            ]},
+            default: { label: 'Lugar de Interés', folder: 'lugares', icons: [
+                {id: 'general', name: 'General', icon: 'fa-camera'},
+                {id: 'entorno', name: 'Entorno', icon: 'fa-tree'}
+            ]}
+        },
+        activities: {
+            1: { label: 'Aventura', folder: 'actividades-aventura', icons: [
+                {id: 'ruta', name: 'En Ruta', icon: 'fa-route'},
+                {id: 'equipo', name: 'Equipo', icon: 'fa-hiking'}
+            ]},
+            3: { label: 'Gastronomía', folder: 'experiencias-gastronomicas', icons: [
+                {id: 'degustacion', name: 'Cata/Taller', icon: 'fa-glass-wine'}
+            ]}
+        },
+        // Configuración fija para tablas que no usan category_id (Alojamiento)
+        accommodations: {
+            label: 'Alojamiento',
+            folder: 'alojamientos',
+            icons: [
+                {id: 'fachada', name: 'Fachada', icon: 'fa-home'},
+                {id: 'interior', name: 'Interior', icon: 'fa-couch'},
+                {id: 'habitacion', name: 'Habitación', icon: 'fa-bed'},
+                {id: 'entorno', name: 'Entorno', icon: 'fa-mountain'}
+            ]
+        },
+        cultural_events: {
+            label: 'Evento Cultural',
+            folder: 'eventos-culturales',
+            icons: [
+                {id: 'ambiente', name: 'Ambiente', icon: 'fa-users'},
+                {id: 'detalle', name: 'Detalle', icon: 'fa-camera-retro'}
+            ]
+        }
+    };
+
+    // --- 2. ESTADO GLOBAL ---
+    let currentType = 'accommodations'; // Tabla actual
+    let currentId = null;
+    let currentSlug = '';
+    let selectedCategory = ''; // Subcarpeta (ej: 'platos')
+    let selectedFile = null;
+    let customFolder = ''; // Carpeta raíz SEO (ej: 'restaurantes')
+
+    // --- 3. INICIO ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        currentType = params.get('type') || 'accommodations';
+        
+        // Actualizar el Badge visual del tipo
+        const badge = document.getElementById('entityDisplay');
+        if(badge) badge.textContent = currentType.replace('_', ' ').toUpperCase();
+    });
+
+    // --- 4. BÚSQUEDA ---
+    async function buscarRecurso() {
+        const query = document.getElementById('searchInput').value;
+        const resultsDiv = document.getElementById('searchResults');
+        
+        if (query.length < 2) return;
+
+        try {
+            const resp = await fetch(`../api/search_universal.php?query=${query}&type=${currentType}`);
+            const data = await resp.json();
+
+            if (data.success && data.results.length > 0) {
+                resultsDiv.innerHTML = '';
+                resultsDiv.style.display = 'block';
+                data.results.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    div.innerHTML = `<strong>${item.name}</strong> <small>(${item.slug})</small>`;
+                    div.onclick = () => seleccionarRecurso(item);
+                    resultsDiv.appendChild(div);
+                });
+            } else {
+                resultsDiv.innerHTML = '<div style="padding:10px">No se encontraron resultados</div>';
+            }
+        } catch (e) { console.error("Error en búsqueda", e); }
+    }
+
+    // --- 5. SELECCIÓN DE RECURSO Y RENDER DE ICONOS ---
+    function seleccionarRecurso(item) {
+        currentId = item.id;
+        currentSlug = item.slug;
+
+        // Determinar configuración basada en el category_id que devuelve el buscador
+        let config;
+        if (currentType === 'places_of_interest' || currentType === 'activities') {
+            config = (dynamicConfig[currentType] && dynamicConfig[currentType][item.category_id]) 
+                     || dynamicConfig.places_of_interest.default;
+        } else {
+            config = dynamicConfig[currentType];
+        }
+
+        customFolder = config.folder; // Guardamos para el SEO
+
+        // Pintar botones de categorías
+        const grid = document.getElementById('catGrid');
+        grid.innerHTML = '';
+        config.icons.forEach(cat => {
+            const div = document.createElement('div');
+            div.className = 'cat-item';
+            div.innerHTML = `<i class="fas ${cat.icon}"></i><span>${cat.name}</span>`;
+            div.onclick = () => {
+                selectedCategory = cat.id;
+                document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('selected'));
+                div.classList.add('selected');
+                checkReady();
+            };
+            grid.appendChild(div);
+        });
+
+        // Actualizar UI Info
+        document.getElementById('searchResults').style.display = 'none';
+        document.getElementById('resName').textContent = item.name;
+        document.getElementById('resMeta').innerHTML = `<strong>Slug:</strong> ${currentSlug} | <strong>Tipo:</strong> ${config.label}`;
+        document.getElementById('resInfo').style.display = 'block';
+        
+        checkReady();
+    }
+
+    // --- 6. GESTIÓN DE ARCHIVOS Y SUBIDA ---
+    function handleFile(input) {
+        selectedFile = input.files[0];
+        if (selectedFile) {
+            document.getElementById('fileNameDisplay').innerHTML = `✅ ${selectedFile.name}`;
+            checkReady();
+        }
+    }
+
+    function checkReady() {
+        const btn = document.getElementById('uploadBtn');
+        btn.disabled = !(selectedCategory && selectedFile && currentId);
+    }
+
+    async function processUpload() {
+        const loader = document.getElementById('loading');
+        loader.style.display = 'flex';
+
+        const fd = new FormData();
+        fd.append('entity_type', currentType);
+        fd.append('entity_id', currentId);
+        fd.append('slug', currentSlug);
+        fd.append('category', selectedCategory);
+        fd.append('custom_folder', customFolder); // IMPORTANTE: Para el PHP SEO
+        fd.append('photo', selectedFile);
+
+        try {
+            const r = await fetch('../api/upload_universal.php', { method: 'POST', body: fd });
+            const data = await r.json();
+            if(data.success) {
+                alert("📸 Imagen subida y optimizada con éxito");
+                // Resetear file input
+                document.getElementById('fileInput').value = '';
+                selectedFile = null;
+                document.getElementById('fileNameDisplay').textContent = '';
+                checkReady();
+            } else {
+                alert("Error: " + data.error);
+            }
+        } catch (e) { alert("Error crítico en la subida"); }
+        
+        loader.style.display = 'none';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+========================================
+ARCHIVOS QUE DEBES SUBIR AL SERVIDOR
+========================================
+
+Para solucionar el problema de dashboard/editar-mi-alojamiento.php
+
+ARCHIVOS A SUBIR:
+-----------------
+
+1. .htaccess (RAÍZ)
+   Ubicación local: C:\Users\olgam\Documents\Proyectos\Rutas\Rutas\.htaccess
+   Ubicación servidor: /home/u412199647/domains/rutasrurales.io/public_html/.htaccess
+   ⚠️ IMPORTANTE: Este archivo tiene la línea 11 modificada con "dashboard"
+
+2. dashboard/.htaccess (NUEVO)
+   Ubicación local: C:\Users\olgam\Documents\Proyectos\Rutas\Rutas\dashboard\.htaccess
+   Ubicación servidor: /home/u412199647/domains/rutasrurales.io/public_html/dashboard/.htaccess
+   ⚠️ NUEVO ARCHIVO - Crear en el servidor
+
+3. dashboard/README.md (NUEVO - OPCIONAL)
+   Ubicación local: C:\Users\olgam\Documents\Proyectos\Rutas\Rutas\dashboard\README.md
+   Ubicación servidor: /home/u412199647/domains/rutasrurales.io/public_html/dashboard/README.md
+   ℹ️ Documentación - No es crítico pero recomendado
+
+ARCHIVO A ELIMINAR DEL SERVIDOR:
+---------------------------------
+
+4. editar-mi-alojamiento.php (RAÍZ)
+   Ubicación servidor: /home/u412199647/domains/rutasrurales.io/public_html/editar-mi-alojamiento.php
+   ⚠️ ELIMINAR - Es un duplicado que causa confusión
+
+
+PASOS PARA SUBIR:
+-----------------
+
+Opción A - FileZilla/FTP:
+1. Conectar a tu servidor FTP
+2. Subir .htaccess a la raíz (sobrescribir el existente)
+3. Crear carpeta dashboard si no existe
+4. Subir dashboard/.htaccess
+5. Eliminar /editar-mi-alojamiento.php de la raíz
+
+Opción B - cPanel File Manager:
+1. Ir a cPanel > File Manager
+2. Navegar a public_html
+3. Editar .htaccess y reemplazar la línea 11:
+   ANTES: RewriteRule ^(api|admin_tablas|de|en|fr|zh)/ - [L]
+   DESPUÉS: RewriteRule ^(api|admin_tablas|dashboard|de|en|fr|zh)/ - [L]
+4. Ir a public_html/dashboard
+5. Crear nuevo archivo .htaccess con el contenido del archivo local
+6. Volver a public_html y eliminar editar-mi-alojamiento.php
+
+
+VERIFICACIÓN:
+-------------
+
+Después de subir, prueba:
+https://rutasrurales.io/dashboard/editar-mi-alojamiento.php?id=119
+
+Debería mostrar el formulario de edición, NO el código PHP.
+
+
+PROBLEMA ACTUAL:
+----------------
+
+El servidor todavía tiene la versión ANTIGUA del .htaccess que NO incluye "dashboard"
+en la lista de carpetas excluidas. Por eso sigue mostrando el código.
+
+Los cambios están SOLO en tu ordenador local, no en el servidor.

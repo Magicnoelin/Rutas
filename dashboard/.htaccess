@@ -1,0 +1,14 @@
+# Dashboard - Forzado de ejecución PHP
+<FilesMatch "\.php$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+# Si lo anterior falla, intentamos esta variante que usa Hostinger
+<IfModule mod_mime.c>
+    AddHandler application/x-httpd-php .php
+</IfModule>
+
+# Asegurar que el navegador no lo trate como texto
+<IfModule mod_headers.c>
+    Header set Content-Type "text/html"
+</IfModule>

@@ -1,0 +1,47 @@
+{
+    "total_conversaciones": 19,
+    "ultima_actualizacion": "2026-03-20 05:09:04",
+    "palabras_clave": {
+        "semana": 6,
+        "relajación": 5,
+        "rural": 5,
+        "astronomía": 4,
+        "estrellas": 4,
+        "naturaleza": 3,
+        "senderismo": 3,
+        "relax": 2,
+        "descanso": 2,
+        "gastronomía": 1,
+        "vino": 1,
+        "actividades": 1,
+        "aventura": 1,
+        "deporte": 1,
+        "cultura": 1,
+        "historia": 1,
+        "experiencia": 1,
+        "completa": 1
+    },
+    "dispositivos": {
+        "desktop": 19
+    },
+    "idiomas": {
+        "es": 19
+    },
+    "por_dia_semana": {
+        "4": 10,
+        "5": 9
+    },
+    "por_hora": {
+        "19": 9,
+        "20": 1,
+        "04": 4,
+        "05": 5
+    },
+    "intereses": {
+        "naturaleza": 3,
+        "gastronomia": 1,
+        "astronomia": 2,
+        "aventura": 2,
+        "relax": 1
+    }
+}

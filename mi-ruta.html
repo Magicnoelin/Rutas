@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="description" content="Mi Itinerario Personalizado - Rutas Rurales" />
+    <title>Mi Itinerario Personalizado | Rutas Rurales</title>
+    <link rel="canonical" href="https://www.rutasrurales.io/mi-ruta.html">
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        /* Fuentes locales Montserrat - cargadas desde el servidor */
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: local('Montserrat Regular'), local('Montserrat-Regular'), url('/fonts/montserrat-v31-latin-regular.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: local('Montserrat Medium'), local('Montserrat-Medium'), url('/fonts/montserrat-v31-latin-500.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: local('Montserrat SemiBold'), local('Montserrat-SemiBold'), url('/fonts/montserrat-v31-latin-600.woff2') format('woff2');
+        }
+
+        :root {
+            --primary-color: #2F5233;
+            --secondary-color: #6B8E6B;
+            --accent-color: #B8956A;
+            --bg-light: #f8f9fa;
+        }
+
+        /* Reset para el menú */
+        #navMenu a, #navMenu a:visited, #navMenu a:active {
+            text-decoration: none !important;
+            color: inherit !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Estilos del header (copiados del header.php) */
+        @media (min-width: 993px) {
+            .hamburger { display: none !important; }
+            .nav-menu {
+                display: flex !important;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+                font-family: 'Montserrat', sans-serif;
+                margin-left: auto;
+            }
+            .nav-row {
+                display: flex !important;
+                list-style: none !important;
+                margin: 0; padding: 0;
+                width: 650px;
+                justify-content: center;
+            }
+            .nav-row li { flex: 1; text-align: center; }
+            .nav-row li a {
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                text-transform: capitalize;
+                color: var(--accent-color) !important;
+                font-weight: 600;
+            }
+            .nav-row li a span { color: var(--accent-color) !important; }
+            .nav-row li a i { color: var(--accent-color) !important; font-size: 1.1rem; }
+            .nav-row li a:hover, .nav-row li a:hover span, .nav-row li a:hover i { color: #ffffff !important; }
+        }
+
+        @media (max-width: 992px) {
+            html, body { overflow-x: hidden !important; width: 100% !important; position: relative; }
+            .header, .navbar { height: auto !important; padding: 2px 0 !important; position: fixed !important; top: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #2c5f2d !important; }
+            .navbar .container { flex-direction: row !important; justify-content: flex-start !important; align-items: center !important; gap: 5px !important; padding: 0 5px !important; display: flex !important; width: 100% !important; }
+            .logo { flex-shrink: 0 !important; margin-right: 2px !important; display: block !important; }
+            .logo img { height: 35px !important; width: auto !important; }
+            .logo-text { display: none !important; }
+            .nav-menu { display: flex !important; position: static !important; width: auto !important; height: auto !important; background: transparent !important; flex-direction: column !important; flex: 1 !important; gap: 1px !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+            .nav-row { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 2px !important; width: 100% !important; list-style: none !important; padding: 0 !important; margin: 0 !important; }
+            .nav-row li { display: block !important; }
+            .nav-row li a { background: rgba(255, 255, 255, 0.1) !important; min-height: 30px !important; padding: 1px !important; border-radius: 4px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center; }
+            .nav-row li a span { font-size: 0.50rem !important; font-weight: 600 !important; line-height: 1 !important; text-align: center !important; white-space: nowrap !important; color: #d4a574 !important; margin: 0 !important; }
+            .nav-row li a i { font-size: 0.8rem !important; margin-bottom: 0px !important; color: #ffffff !important; }
+            input[type="text"], input[type="number"], input[type="search"], textarea, select { font-size: 16px !important; }
+            #map { width: 100% !important; }
+        }
+
+        .asistente-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid #ffffff; vertical-align: middle; }
+        @media (max-width: 992px) { .asistente-avatar { width: 18px !important; height: 18px !important; margin-bottom: 0px; } }
+
+        /* Layout del itinerary */
+        .itinerary-layout { display: grid; grid-template-columns: 480px 1fr; height: calc(100vh - 80px); margin-top: 80px; }
+        .itinerary-sidebar { padding: 1.5rem; overflow-y: auto; background: var(--bg-light); border-right: 1px solid #eee; }
+        .itinerary-map { height: 100%; background: #e0e0e0; }
+        
+        .itinerary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #eee; }
+        
+        .route-summary { 
+            background: white; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .summary-item { text-align: center; }
+        .summary-label { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: bold; }
+        .summary-value { font-size: 1.1rem; color: var(--primary-color); font-weight: 800; }
+
+        .itinerary-item { 
+            background: white; padding: 1rem; border-radius: 12px; margin-bottom: 0.5rem; 
+            display: flex; gap: 1rem; align-items: flex-start; position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #eee;
+            transition: all 0.2s;
+        }
+        .itinerary-item:hover { transform: translateX(5px); border-color: var(--primary-color); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .item-main { flex: 1; min-width: 0; }
+        
+        .item-type-icon {
+            width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; margin-bottom: 0.5rem;
+        }
+        .type-alojamiento { background: #fff3e0; color: #e67e22; }
+        .type-lugar { background: #e8f5e9; color: #27ae60; }
+        .type-actividad { background: #e3f2fd; color: #3498db; }
+        .type-evento { background: #f3e5f5; color: #9b59b6; }
+
+        .item-number { 
+            background: var(--primary-color); color: white; width: 24px; height: 24px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 0.8rem; position: absolute; top: -10px; left: -10px;
+            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .item-img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; background: #eee; flex-shrink: 0; }
+        
+        .item-title { font-weight: bold; font-size: 1rem; color: #333; margin: 0 0 4px 0; display: block; text-decoration: none; }
+        .item-title:hover { color: var(--primary-color); }
+        .item-meta { font-size: 0.75rem; color: #777; display: flex; align-items: center; gap: 5px; }
+        
+        .item-schedule { display: flex; gap: 8px; margin-top: 10px; }
+        .schedule-input { 
+            font-size: 0.75rem; padding: 4px 8px; border: 1px solid #ddd; border-radius: 6px; 
+            background: #fafafa; color: #444; outline: none;
+        }
+        .schedule-input:focus { border-color: var(--primary-color); background: white; }
+
+        .item-description { margin-top: 10px; width: 100%; }
+        .description-textarea {
+            width: 100%; font-size: 0.8rem; padding: 8px; border: 1px solid #eee; border-radius: 8px;
+            background: #fcfcfc; color: #555; resize: vertical; min-height: 40px; outline: none;
+            transition: all 0.2s;
+        }
+        .description-textarea:focus { border-color: var(--accent-color); background: white; }
+
+        .print-description { display: none; }
+
+        .distance-divider {
+            display: flex; align-items: center; justify-content: center;
+            padding: 8px 0; margin-left: 40px; position: relative;
+        }
+        .distance-line { position: absolute; left: -25px; top: 0; bottom: 0; width: 2px; border-left: 2px dashed #ccc; }
+        .distance-badge { 
+            background: #eee; color: #666; font-size: 0.7rem; font-weight: bold; 
+            padding: 2px 10px; border-radius: 10px; display: flex; align-items: center; gap: 5px;
+        }
+
+        .item-actions { display: flex; flex-direction: column; gap: 5px; margin-left: 5px; }
+        .btn-order { background: #f0f0f0; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; color: #666; font-size: 0.7rem; }
+        .btn-order:hover:not(:disabled) { background: var(--primary-color); color: white; }
+        
+        .btn-remove { color: #ff7675; cursor: pointer; background: none; border: none; font-size: 1rem; padding: 5px; }
+        .btn-remove:hover { color: #d63031; transform: scale(1.1); }
+        
+        .empty-state { text-align: center; padding: 4rem 1rem; color: #999; }
+        .empty-state i { font-size: 4rem; margin-bottom: 1.5rem; color: #ddd; }
+
+        /* Banner de registro */
+        .register-prompt {
+            background: linear-gradient(135deg, #2F5233 0%, #3d6b42 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .register-prompt h3 { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+        .register-prompt p { margin: 0 0 1rem 0; font-size: 0.85rem; opacity: 0.9; }
+        .register-prompt .btn-register {
+            background: #B8956A;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .register-prompt .btn-register:hover { background: #c9a57a; transform: scale(1.05); }
+        
+        /* Botón de limpiar/borrar ruta actual */
+        .clear-data-btn {
+            background: transparent;
+            color: #888;
+            border: 1px dashed #ccc;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .clear-data-btn:hover { color: #ff7675; border-color: #ff7675; }
+
+        @media (max-width: 992px) {
+            .itinerary-layout { grid-template-columns: 1fr; height: auto; }
+            .itinerary-map { height: 400px; order: -1; }
+            .itinerary-sidebar { height: auto; overflow: visible; }
+        }
+
+        @media print {
+            @page { margin: 1cm; }
+            .header, .itinerary-map, .item-actions, .btn-remove, .itinerary-actions, .btn-order, .item-schedule input, .description-textarea, .register-prompt { display: none !important; }
+            .itinerary-layout { display: block; margin: 0; }
+            .itinerary-sidebar { width: 100%; border: none; padding: 0; background: white; }
+            .itinerary-item { break-inside: avoid; border: 1px solid #eee; margin-bottom: 1rem; padding: 1.5rem; background: white !important; }
+            .print-description { display: block; font-size: 0.9rem; color: #444; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 8px; border-left: 3px solid var(--accent-color); white-space: pre-wrap; }
+            .item-schedule::before { content: "Programado: "; font-weight: bold; font-size: 0.8rem; }
+            .item-schedule { margin-bottom: 10px; display: block; }
+            .item-schedule span { font-size: 0.9rem; font-weight: bold; color: var(--primary-color); }
+            .distance-badge { background: white; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header completo como en el menú de inicio -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <a href="/index.html"><img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo"></a>
+                </div>
+
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-row">
+                        <li><a href="/alojamientos-turisticos.html">
+                            <i class="fas fa-bed"></i>
+                            <span>Alojamientos</span>
+                        </a></li>
+                        <li><a href="/lugares-interes-paginacion.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Lugares</span>
+                        </a></li>
+                        <li><a href="/eventos-culturales-paginacion.html">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Eventos</span>
+                        </a></li>
+                        <li><a href="/actividades-turisticas.html">
+                            <i class="fas fa-hiking"></i>
+                            <span>Actividades</span>
+                        </a></li>
+                    </ul>
+                    
+                    <ul class="nav-row">
+                        <li><a href="/index.html#inicio">
+                            <i class="fas fa-home"></i>
+                            <span>Inicio</span>
+                        </a></li>
+                        <li><a href="/rutas.php">
+                            <i class="fas fa-route"></i>
+                            <span>Rutas</span>
+                        </a></li>
+                        <li><a href="/login.html">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Acceso</span>
+                        </a></li>
+                        <li><a href="/index.html#asistente">
+                            <img src="/antonio.jpg" alt="Antonio" class="asistente-avatar">
+                            <span>Antonio</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="itinerary-layout">
+        <aside class="itinerary-sidebar">
+            <div class="itinerary-header">
+                <h2 style="color: var(--primary-color); margin: 0;"><i class="fas fa-route"></i> Mi Viaje</h2>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <button class="clear-data-btn" onclick="clearAllData()" title="Borrar datos guardados en este navegador"><i class="fas fa-broom"></i> Limpiar</button>
+                    <span id="itemCount" class="badge" style="background: var(--primary-color); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">0 paradas</span>
+                </div>
+            </div>
+
+            <!-- Banner de registro (solo visible si no hay usuario logueado) -->
+            <div id="registerPrompt" class="register-prompt" style="display: none;">
+                <h3><i class="fas fa-user-plus"></i> ¡Regístrate gratis!</h3>
+                <p>Guarda tu ruta en tu perfil y accede a ella desde cualquier dispositivo.</p>
+                <a href="/register.html" class="btn-register">Crear cuenta</a>
+                <p style="margin-top: 10px; font-size: 0.75rem; opacity: 0.8;">¿Ya tienes cuenta? <a href="/login.html" style="color: #B8956A; text-decoration: underline;">Iniciar sesión</a></p>
+            </div>
+
+            <div id="routeSummary" class="route-summary">
+                <div class="summary-item">
+                    <div class="summary-label">Distancia Total</div>
+                    <div class="summary-value" id="totalDistance">0 km</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Días de Viaje</div>
+                    <div class="summary-value" id="totalDays">1 día</div>
+                </div>
+            </div>
+            
+            <div id="itineraryList">
+                <!-- Items dinámicos -->
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-map-signs"></i>
+                <p>Tu itinerario está vacío.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1.5rem;">Explora alojamientos, lugares y eventos para añadirlos aquí.</p>
+                <a href="/rutas.html" class="btn-primary" style="display: inline-block; text-decoration: none;">Explorar Mapa</a>
+            </div>
+
+            <div id="itineraryActions" style="margin-top: 2rem; display: none; border-top: 1px solid #eee; padding-top: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button onclick="clearRoute()" class="btn-secondary" style="background: #f5f5f5; color: #666; border: 1px solid #ddd; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                        <i class="fas fa-trash-alt"></i> Borrar todo
+                    </button>
+                    <button onclick="window.print()" class="btn-primary" style="padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--accent-color); border: none;">
+                        <i class="fas fa-file-pdf"></i> Guardar como PDF
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <div class="itinerary-map" id="map"></div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let markers = [];
+        let polyline;
+
+        function initMap() {
+            try {
+                map = L.map('map').setView([41.765, -2.468], 8);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap'
+                }).addTo(map);
+            } catch (e) {
+                console.error("Error inicializando el mapa:", e);
+            }
+            renderItinerary();
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radio de la tierra en km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function getCategoryIcon(tipo) {
+            const icons = {
+                'alojamiento': { icon: 'fa-bed', class: 'type-alojamiento', label: 'Dormir' },
+                'lugar': { icon: 'fa-utensils', class: 'type-lugar', label: 'Comer/Visitar' },
+                'actividad': { icon: 'fa-hiking', class: 'type-actividad', label: 'Actividad' },
+                'evento': { icon: 'fa-calendar-star', class: 'type-evento', label: 'Evento' }
+            };
+            return icons[tipo.toLowerCase()] || { icon: 'fa-map-marker-alt', class: '', label: 'Punto' };
+        }
+
+        function renderItinerary() {
+            let myRoute = [];
+            try {
+                myRoute = JSON.parse(localStorage.getItem('myPersonalRoute') || '[]');
+            } catch (e) {
+                myRoute = [];
+            }
+
+            const listContainer = document.getElementById('itineraryList');
+            const emptyState = document.getElementById('emptyState');
+            const actions = document.getElementById('itineraryActions');
+            const countBadge = document.getElementById('itemCount');
+            const summary = document.getElementById('routeSummary');
+
+            listContainer.innerHTML = '';
+            
+            if (map) {
+                markers.forEach(m => { try { map.removeLayer(m); } catch(e){} });
+                markers = [];
+                if (polyline) { try { map.removeLayer(polyline); } catch(e){} }
+            }
+
+            countBadge.textContent = `${myRoute.length} ${myRoute.length === 1 ? 'parada' : 'paradas'}`;
+
+            if (!Array.isArray(myRoute) || myRoute.length === 0) {
+                emptyState.style.display = 'block';
+                actions.style.display = 'none';
+                summary.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            actions.style.display = 'block';
+            summary.style.display = 'grid';
+
+            let totalKm = 0;
+            const coords = [];
+            const uniqueDays = new Set();
+
+            myRoute.forEach((item, index) => {
+                if (!item || typeof item !== 'object') return;
+
+                const lat = parseFloat(item.lat || item.latitude || item.latitud || 0);
+                const lng = parseFloat(item.lng || item.longitude || item.longitud || 0);
+                const hasCoords = !isNaN(lat) && !isNaN(lng) && (Math.abs(lat) > 0.1);
+                
+                const cat = getCategoryIcon(item.tipo || '');
+                if (item.date) uniqueDays.add(item.date);
+
+                // Calcular distancia desde el anterior
+                let distHtml = '';
+                if (index > 0 && hasCoords) {
+                    const prev = myRoute[index-1];
+                    const pLat = parseFloat(prev.lat || prev.latitude || prev.latitud || 0);
+                    const pLng = parseFloat(prev.lng || prev.longitude || prev.longitud || 0);
+                    if (!isNaN(pLat) && Math.abs(pLat) > 0.1) {
+                        const km = calculateDistance(pLat, pLng, lat, lng);
+                        totalKm += km;
+                        distHtml = `
+                            <div class="distance-divider">
+                                <div class="distance-line"></div>
+                                <div class="distance-badge"><i class="fas fa-car"></i> ${km.toFixed(1)} km</div>
+                            </div>
+                        `;
+                    }
+                }
+
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    ${distHtml}
+                    <div class="itinerary-item">
+                        <div class="item-number">${index + 1}</div>
+                        <img src="${item.foto || '/tourist_activities_images/Patrocinio.webp'}" class="item-img" onerror="this.src='/tourist_activities_images/Patrocinio.webp'">
+                        <div class="item-main">
+                            <div class="item-type-icon ${cat.class}" title="${cat.label}">
+                                <i class="fas ${cat.icon}"></i>
+                            </div>
+                            <a href="/${item.tipo}/${item.slug}" class="item-title">${item.nombre || 'Sin nombre'}</a>
+                            <div class="item-meta">
+                                <i class="fas fa-map-marker-alt"></i> ${item.localidad || 'España'}
+                            </div>
+                            <div class="item-schedule">
+                                <input type="date" class="schedule-input" value="${item.date || ''}" onchange="updateItemData(${index}, 'date', this.value)" title="Fecha">
+                                <input type="time" class="schedule-input" value="${item.time || ''}" onchange="updateItemData(${index}, 'time', this.value)" title="Hora">
+                                <span class="print-only"><span>${item.date || ''}</span> <span>${item.time || ''}</span></span>
+                            </div>
+                            <div class="item-description">
+                                <textarea class="description-textarea" placeholder="Añadir notas o descripción para el PDF..." oninput="updateItemData(${index}, 'description', this.value)">${item.description || ''}</textarea>
+                                <div class="print-description">${item.description || ''}</div>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-order" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}><i class="fas fa-chevron-up"></i></button>
+                            <button class="btn-order" onclick="moveItem(${index}, 1)" ${index === myRoute.length - 1 ? 'disabled' : ''}><i class="fas fa-chevron-down"></i></button>
+                            <button class="btn-remove" onclick="removeItem(${index})"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+
+                if (hasCoords && map) {
+                    const marker = L.marker([lat, lng], {
+                        icon: L.divIcon({
+                            className: 'custom-div-icon',
+                            html: `<div style="background: var(--primary-color); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">${index + 1}</div>`,
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 15]
+                        })
+                    }).addTo(map).bindPopup(`<b>${index + 1}. ${item.nombre}</b><br><small>${cat.label}</small>`);
+                    markers.push(marker);
+                    coords.push([lat, lng]);
+                }
+            });
+
+            document.getElementById('totalDistance').textContent = totalKm.toFixed(1) + ' km';
+            document.getElementById('totalDays').textContent = (uniqueDays.size || 1) + (uniqueDays.size === 1 ? ' día' : ' días');
+
+            if (map && coords.length > 1) {
+                polyline = L.polyline(coords, {color: 'var(--primary-color)', weight: 4, dashArray: '10, 10', opacity: 0.6}).addTo(map);
+                map.fitBounds(polyline.getBounds(), {padding: [50, 50]});
+            } else if (map && coords.length === 1) {
+                map.setView(coords[0], 13);
+            }
+        }
+
+        function updateItemData(index, field, value) {
+            let myRoute = JSON.parse(localStorage.getItem('myPersonalRoute') || '[]');
+            myRoute[index][field] = value;
+            localStorage.setItem('myPersonalRoute', JSON.stringify(myRoute));
+            
+            // Si es la descripción, actualizamos el div de impresión sin re-renderizar todo
+            if (field === 'description') {
+                const items = document.querySelectorAll('.itinerary-item');
+                const printDiv = items[index].querySelector('.print-description');
+                if (printDiv) printDiv.textContent = value;
+            } else {
+                renderItinerary();
+            }
+        }
+
+        function moveItem(index, direction) {
+            let myRoute = JSON.parse(localStorage.getItem('myPersonalRoute') || '[]');
+            const newIndex = index + direction;
+            if (newIndex >= 0 && newIndex < myRoute.length) {
+                const temp = myRoute[index];
+                myRoute[index] = myRoute[newIndex];
+                myRoute[newIndex] = temp;
+                localStorage.setItem('myPersonalRoute', JSON.stringify(myRoute));
+                renderItinerary();
+            }
+        }
+
+        function removeItem(index) {
+            if (confirm('¿Quitar este punto de tu itinerario?')) {
+                let myRoute = JSON.parse(localStorage.getItem('myPersonalRoute') || '[]');
+                myRoute.splice(index, 1);
+                localStorage.setItem('myPersonalRoute', JSON.stringify(myRoute));
+                renderItinerary();
+            }
+        }
+
+        function clearRoute() {
+            if (confirm('¿Seguro que quieres borrar todo tu itinerario?')) {
+                localStorage.removeItem('myPersonalRoute');
+                renderItinerary();
+            }
+        }
+
+        // Nueva función para borrar todos los datos (incluye localStorage del navegador)
+        function clearAllData() {
+            if (confirm('¿Borrar todos los datos guardados en este navegador?\n\nEsto eliminará tu ruta actual y cualquier dato guardado localmente.')) {
+                localStorage.removeItem('myPersonalRoute');
+                // También limpiar otras posibles claves relacionadas
+                localStorage.removeItem('route_items');
+                localStorage.removeItem('saved_route');
+                renderItinerary();
+                alert('Datos borrados. La página se recargará.');
+                location.reload();
+            }
+        }
+
+        // Mostrar banner de registro si no hay usuario logueado
+        function checkUserAndShowPrompt() {
+            const registerPrompt = document.getElementById('registerPrompt');
+            
+            // Verificar si hay sesión de usuario (PHP o JavaScript)
+            const hasSession = document.cookie.includes('PHPSESSID') || 
+                              sessionStorage.getItem('user_id') ||
+                              sessionStorage.getItem('userLogged');
+            
+            // Mostrar banner de registro solo si NO hay sesión Y la ruta tiene elementos
+            if (!hasSession) {
+                let myRoute = [];
+                try {
+                    myRoute = JSON.parse(localStorage.getItem('myPersonalRoute') || '[]');
+                } catch (e) {
+                    myRoute = [];
+                }
+                
+                // Mostrar el banner siempre que haya algo en la ruta o incluso vacío
+                // para motivar al usuario a registrarse
+                if (registerPrompt) {
+                    registerPrompt.style.display = 'block';
+                }
+            }
+        }
+
+        // Inicialización
+        function initApp() {
+            initMap();
+            checkUserAndShowPrompt();
+        }
+
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

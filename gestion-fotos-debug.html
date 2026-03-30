@@ -1,0 +1,254 @@
+DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Fotos - DEBUG</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .debug { background: #000; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; margin: 10px 0; border-radius: 5px; max-height: 150px; overflow-y: auto; }
+        .step { border: 2px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .step h3 { margin-top: 0; color: #333; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .cat-btn { padding: 8px 15px; margin: 3px; cursor: pointer; background: #fff; border: 2px solid #ddd; border-radius: 5px; display: inline-block; }
+        .cat-btn.selected { background: #007bff; color: white; border-color: #007bff; }
+        input[type="text"], input[type="file"] { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        .status { padding: 10px; margin: 5px 0; border-radius: 5px; font-weight: bold; }
+        .ok { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .wait { background: #fff3cd; color: #856404; }
+        .result { background: #e8f4f8; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 DEBUG - Sistema de Fotos</h1>
+        
+        <div class="debug" id="debug">Esperando acciones...</div>
+
+        <!-- Paso 1: Buscar -->
+        <div class="step">
+            <h3>1. Buscar Alojamiento</h3>
+            <input type="text" id="searchInput" placeholder="Nombre del alojamiento...">
+            <button onclick="buscar()">Buscar</button>
+            <div id="searchResult"></div>
+        </div>
+
+        <!-- Paso 2: Seleccionar Categoría -->
+        <div class="step">
+            <h3>2. Seleccionar Categoría</h3>
+            <div id="categoryButtons"></div>
+            <div id="categoryStatus" class="status"></div>
+        </div>
+
+        <!-- Paso 3: Seleccionar Archivo -->
+        <div class="step">
+            <h3>3. Seleccionar Archivo</h3>
+            <input type="file" id="fileInput" accept="image/*">
+            <div id="fileStatus" class="status"></div>
+        </div>
+
+        <!-- Paso 4: Botón de Subida -->
+        <div class="step">
+            <h3>4. Botón de Subida</h3>
+            <button id="uploadBtn" onclick="subir()" disabled>Subir Foto</button>
+            <div id="btnStatus" class="status"></div>
+        </div>
+
+        <!-- Resultado -->
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        let state = {
+            alojamiento: null,
+            categoria: '',
+            archivo: null
+        };
+
+        function log(msg) {
+            const debug = document.getElementById('debug');
+            const time = new Date().toLocaleTimeString();
+            debug.innerHTML = `[${time}] ${msg}<br>` + debug.innerHTML;
+        }
+
+        function updateUI() {
+            // Actualizar estado del botón
+            const btn = document.getElementById('uploadBtn');
+            const btnStatus = document.getElementById('btnStatus');
+            const ready = state.alojamiento && state.categoria && state.archivo;
+
+            btn.disabled = !ready;
+
+            if (ready) {
+                btnStatus.textContent = '✅ LISTO PARA SUBIR';
+                btnStatus.className = 'status ok';
+                log('BOTÓN HABILITADO - Todo listo');
+            } else {
+                let missing = [];
+                if (!state.alojamiento) missing.push('alojamiento');
+                if (!state.categoria) missing.push('categoría');
+                if (!state.archivo) missing.push('archivo');
+                btnStatus.textContent = `❌ FALTAN: ${missing.join(', ')}`;
+                btnStatus.className = 'status error';
+                log(`BOTÓN DESHABILITADO - Faltan: ${missing.join(', ')}`);
+            }
+
+            // Actualizar estados individuales
+            const catStatus = document.getElementById('categoryStatus');
+            catStatus.textContent = state.categoria ? `✅ ${state.categoria}` : '❌ Ninguna';
+            catStatus.className = state.categoria ? 'status ok' : 'status error';
+
+            const fileStatus = document.getElementById('fileStatus');
+            fileStatus.textContent = state.archivo ? `✅ ${state.archivo.name}` : '❌ Ninguno';
+            fileStatus.className = state.archivo ? 'status ok' : 'status error';
+        }
+
+        // Crear botones de categoría
+        const categorias = [
+            {id: 'fachada', name: 'Fachada', icon: '🏠'},
+            {id: 'salon', name: 'Salón', icon: '🛋️'},
+            {id: 'cocina', name: 'Cocina', icon: '🍴'},
+            {id: 'jardin', name: 'Jardín', icon: '🌳'},
+            {id: 'habitacion', name: 'Habitación', icon: '🛏️'},
+            {id: 'bano', name: 'Baño', icon: '🚿'}
+        ];
+
+        const catButtonsDiv = document.getElementById('categoryButtons');
+        categorias.forEach(cat => {
+            const btn = document.createElement('div');
+            btn.className = 'cat-btn';
+            btn.textContent = `${cat.icon} ${cat.name}`;
+            btn.onclick = () => {
+                state.categoria = cat.id;
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                log(`Categoría seleccionada: ${cat.id}`);
+                updateUI();
+            };
+            catButtonsDiv.appendChild(btn);
+        });
+
+        // Input archivo
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    log('ERROR: Archivo no es imagen');
+                    alert('Por favor selecciona una imagen');
+                    return;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    log('ERROR: Archivo muy grande');
+                    alert('La imagen no debe superar 5MB');
+                    return;
+                }
+                state.archivo = file;
+                log(`Archivo seleccionado: ${file.name} (${(file.size/1024).toFixed(2)} KB)`);
+            } else {
+                state.archivo = null;
+                log('Archivo eliminado');
+            }
+            updateUI();
+        });
+
+        async function buscar() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                log('ERROR: Campo de búsqueda vacío');
+                return;
+            }
+
+            log(`Buscando: ${query}`);
+            const resultDiv = document.getElementById('searchResult');
+            resultDiv.innerHTML = 'Buscando...';
+
+            try {
+                const response = await fetch(`api/search_accommodation.php?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (data.success && data.data.results.length > 0) {
+                    const item = data.data.results[0]; // Tomar el primero
+                    state.alojamiento = item;
+                    resultDiv.innerHTML = `
+                        <div style="background: #d4edda; padding: 10px; border-radius: 5px; margin-top: 5px;">
+                            <strong>✅ Encontrado:</strong> ${item.name}<br>
+                            <small>Slug: ${item.slug} | Tipo: ${item.accommodation_type}</small>
+                        </div>
+                    `;
+                    log(`Alojamiento encontrado: ${item.name} (${item.slug})`);
+                    updateUI();
+                } else {
+                    resultDiv.innerHTML = '<div style="color: red;">❌ No encontrado</div>';
+                    log('ERROR: No se encontró el alojamiento');
+                    state.alojamiento = null;
+                    updateUI();
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div style="color: red;">❌ Error: ${error.message}</div>`;
+                log(`ERROR API: ${error.message}`);
+                state.alojamiento = null;
+                updateUI();
+            }
+        }
+
+        async function subir() {
+            if (!state.alojamiento || !state.categoria || !state.archivo) {
+                log('ERROR: Intento de subir sin todos los datos');
+                return;
+            }
+
+            log('🔄 INICIANDO SUBIDA...');
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<strong>⏳ Subiendo...</strong>';
+
+            try {
+                const formData = new FormData();
+                formData.append('accommodation_identifier', state.alojamiento.slug);
+                formData.append('photo_category', state.categoria);
+                formData.append('photo', state.archivo);
+
+                log(`FormData preparado: slug=${state.alojamiento.slug}, cat=${state.categoria}`);
+
+                const response = await fetch('api/upload_accommodation_photo.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                log(`Respuesta del servidor: ${response.status} - ${data.success ? 'ÉXITO' : 'ERROR'}`);
+
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <strong>✅ SUBIDA EXITOSA</strong><br>
+                        <strong>URL:</strong> ${data.data.url}<br>
+                        <strong>Archivo:</strong> ${data.data.filename}<br>
+                        <strong>Categoría:</strong> ${data.data.category}<br>
+                        <a href="${window.location.origin}${data.data.url}" target="_blank">Ver foto</a>
+                    `;
+                    log(`✅ ÉXITO: ${data.data.filename}`);
+                    
+                    // Reset
+                    state.categoria = '';
+                    state.archivo = null;
+                    document.getElementById('fileInput').value = '';
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+                    updateUI();
+                } else {
+                    resultDiv.innerHTML = `<strong>❌ ERROR:</strong> ${data.error}`;
+                    log(`❌ ERROR: ${data.error}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ ERROR:</strong> ${error.message}`;
+                log(`❌ ERROR EXCEPCIÓN: ${error.message}`);
+            }
+        }
+
+        log('Sistema iniciado - Listo para usar');
+    </script>
+</body>
+</html>

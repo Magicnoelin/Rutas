@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Próximamente - Rutas</title>
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para esta página */
+        .coming-soon-section {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #f9f9f9 0%, #e8f5e9 100%);
+            margin-top: 90px; /* Espacio para el header fijo */
+        }
+
+        .coming-soon-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .icon-container {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            color: white;
+            font-size: 3rem;
+            box-shadow: 0 5px 15px rgba(47, 82, 51, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .main-title {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            text-align: left;
+        }
+
+        .lang-item {
+            padding: 1.2rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+            transition: transform 0.3s ease;
+        }
+
+        .lang-item:hover {
+            transform: translateY(-3px);
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .lang-code {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .lang-text {
+            color: #444;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección Principal -->
+    <section class="coming-soon-section">
+        <div class="coming-soon-card">
+            <div class="icon-container">
+                <i class="fas fa-hard-hat"></i>
+            </div>
+            
+            <h1 class="main-title">En Construcción</h1>
+            <p class="subtitle">Estamos trabajando para ofrecerte esta sección muy pronto.</p>
+
+            <div class="languages-grid">
+                <div class="lang-item">
+                    <span class="lang-code"><img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="20"> Español</span>
+                    <span class="lang-text">Próximamente</span>
+                </div>
+                <div class="lang-item">
+                    <span class="lang-code"><img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="20"> English</span>
+                    <span class="lang-text">Coming Soon</span>
+                </div>
+                <div class="lang-item">
+                    <span class="lang-code"><img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="20"> Français</span>
+                    <span class="lang-text">Bientôt Disponible</span>
+                </div>
+                <div class="lang-item">
+                    <span class="lang-code"><img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="20"> Deutsch</span>
+                    <span class="lang-text">Demnächst Verfügbar</span>
+                </div>
+                <div class="lang-item">
+                    <span class="lang-code"><img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="20"> 中文</span>
+                    <span class="lang-text">即将推出</span>
+                </div>
+            </div>
+
+            <a href="/index.html" class="btn-primary">
+                <i class="fas fa-arrow-left"></i> Volver al Inicio
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="/aviso-legal.html">Aviso Legal</a>
+                    <a href="/politica-cookies.html">Política de Cookies</a>
+                    <a href="/agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

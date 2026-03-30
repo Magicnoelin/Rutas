@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Frontend Paginación</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; background: #f5f5f5; }
+        .debug-section { background: white; padding: 1rem; margin: 1rem 0; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .success { background: #e6ffe6; color: #5cb85c; padding: 1rem; border-radius: 5px; margin: 1rem 0; }
+        .error { background: #ffe6e6; color: #d9534f; padding: 1rem; border-radius: 5px; margin: 1rem 0; }
+        .warning { background: #fff3cd; color: #856404; padding: 1rem; border-radius: 5px; margin: 1rem 0; }
+        .info { background: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 5px; margin: 1rem 0; }
+        pre { background: #f8f8f8; padding: 1rem; border-radius: 5px; overflow-x: auto; max-height: 300px; }
+        button { background: #2c5f2d; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #1e3d20; }
+        .test-result { margin: 1rem 0; padding: 1rem; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Debug: Frontend de Paginación de Alojamientos</h1>
+
+    <div class="debug-section">
+        <h2>1. Test directo de API</h2>
+        <p>Probando la llamada exacta que hace la paginación...</p>
+        <button onclick="testAPICall()">Probar API Call</button>
+        <div id="apiTestResult" class="test-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>2. Test de elementos DOM</h2>
+        <p>Verificando que los elementos HTML existen...</p>
+        <button onclick="checkDOMElements()">Verificar DOM</button>
+        <div id="domTestResult" class="test-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>3. Simulación completa del proceso</h2>
+        <p>Simulando todo el proceso de carga como lo hace la paginación real...</p>
+        <button onclick="simulateFullProcess()">Simular proceso completo</button>
+        <div id="fullProcessResult" class="test-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>4. Test de procesamiento de datos</h2>
+        <p>Probando cómo se procesan los datos para mostrar...</p>
+        <button onclick="testDataProcessing()">Probar procesamiento</button>
+        <div id="dataProcessingResult" class="test-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>5. Comparación con fallback JSON</h2>
+        <p>Comparando resultados de API vs accommodations.json...</p>
+        <button onclick="compareWithJSON()">Comparar con JSON</button>
+        <div id="jsonComparisonResult" class="test-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>6. Diagnóstico de posibles problemas</h2>
+        <div id="diagnosticsResult" class="test-result"></div>
+    </div>
+
+    <script>
+        let mockData = null;
+        let jsonData = null;
+
+        async function testAPICall() {
+            const resultDiv = document.getElementById('apiTestResult');
+            resultDiv.innerHTML = '<p>🔄 Probando llamada a API...</p>';
+
+            try {
+                console.log('Testing API call...');
+                const response = await fetch('api/alojamientos.php?table=accommodations&page=1&limit=20');
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                if (data.success && data.data && data.data.alojamientos) {
+                    mockData = data.data.alojamientos;
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ API funcionando correctamente<br>
+                            <strong>${data.data.alojamientos.length} alojamientos encontrados</strong><br>
+                            Total en BD: ${data.data.pagination.total_records}<br>
+                            Páginas totales: ${data.data.pagination.total_pages}
+                        </div>
+                        <details>
+                            <summary>Ver datos crudos</summary>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </details>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ API devolvió estructura inesperada<br>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('API call failed:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Error en llamada a API: ${error.message}<br>
+                        Intentando fallback a accommodations.json...
+                    </div>
+                `;
+
+                // Test fallback
+                try {
+                    const fallbackResponse = await fetch('accommodations.json');
+                    const fallbackData = await fallbackResponse.json();
+                    mockData = fallbackData;
+                    resultDiv.innerHTML += `
+                        <div class="warning">
+                            ⚠️ Usando datos de fallback<br>
+                            <strong>${fallbackData.length} alojamientos en accommodations.json</strong>
+                        </div>
+                    `;
+                } catch (fallbackError) {
+                    resultDiv.innerHTML += `
+                        <div class="error">
+                            ❌ Fallback también falló: ${fallbackError.message}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function checkDOMElements() {
+            const resultDiv = document.getElementById('domTestResult');
+            const elements = [
+                'filterProvincia',
+                'filterLocalidad',
+                'filterTipo',
+                'filterPlazas',
+                'statsText',
+                'pagination',
+                'loading',
+                'alojamientosGrid',
+                'noResults'
+            ];
+
+            let results = '<h3>Verificación de elementos DOM:</h3>';
+            let allExist = true;
+
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    results += `<p>✅ ${id}: Existe</p>`;
+                } else {
+                    results += `<p>❌ ${id}: NO EXISTE</p>`;
+                    allExist = false;
+                }
+            });
+
+            if (allExist) {
+                resultDiv.innerHTML = `<div class="success">${results}</div>`;
+            } else {
+                resultDiv.innerHTML = `<div class="error">${results}</div>`;
+            }
+        }
+
+        async function simulateFullProcess() {
+            const resultDiv = document.getElementById('fullProcessResult');
+            resultDiv.innerHTML = '<p>🔄 Simulando proceso completo...</p>';
+
+            try {
+                // Step 1: API call
+                let alojamientos = [];
+                try {
+                    const response = await fetch('api/alojamientos.php?table=accommodations&page=1&limit=20');
+                    const data = await response.json();
+                    if (data.success && data.data && data.data.alojamientos) {
+                        alojamientos = data.data.alojamientos;
+                        resultDiv.innerHTML += '<p>✅ API call exitosa</p>';
+                    } else {
+                        throw new Error('API structure error');
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML += '<p>⚠️ API falló, usando fallback...</p>';
+                    const fallbackResponse = await fetch('accommodations.json');
+                    alojamientos = await fallbackResponse.json();
+                }
+
+                resultDiv.innerHTML += `<p>📊 ${alojamientos.length} alojamientos obtenidos</p>`;
+
+                // Step 2: Process data (simulate mostrarAlojamientos)
+                if (alojamientos.length > 0) {
+                    const grid = document.createElement('div');
+                    grid.style.display = 'grid';
+                    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+                    grid.style.gap = '2rem';
+                    grid.style.marginTop = '1rem';
+
+                    alojamientos.slice(0, 6).forEach(alojamiento => { // Show first 6
+                        const card = document.createElement('div');
+                        card.style.background = 'white';
+                        card.style.borderRadius = '10px';
+                        card.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                        card.style.padding = '1rem';
+
+                        const nombre = alojamiento.Nombre || alojamiento.name || 'Sin nombre';
+                        const localidad = alojamiento.Localidad || alojamiento.localidad || alojamiento.municipality || 'Sin localidad';
+                        const provincia = alojamiento.Provincia || alojamiento.provincia || alojamiento.province || 'Sin provincia';
+
+                        card.innerHTML = `
+                            <h3 style="color: #2c5f2d; margin-bottom: 0.5rem;">${nombre}</h3>
+                            <p style="color: #666; margin-bottom: 0.5rem;">📍 ${localidad}, ${provincia}</p>
+                            <p style="color: #888; font-size: 0.9rem;">ID: ${alojamiento.id || alojamiento.ID}</p>
+                        `;
+
+                        grid.appendChild(card);
+                    });
+
+                    resultDiv.innerHTML += '<p>✅ Procesamiento de datos exitoso</p>';
+                    resultDiv.appendChild(grid);
+                } else {
+                    resultDiv.innerHTML += '<div class="error">❌ No hay alojamientos para mostrar</div>';
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error en simulación: ${error.message}</div>`;
+            }
+        }
+
+        async function testDataProcessing() {
+            const resultDiv = document.getElementById('dataProcessingResult');
+
+            if (!mockData) {
+                resultDiv.innerHTML = '<div class="warning">⚠️ Ejecuta primero el test de API</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<h3>Procesamiento de datos de ejemplo:</h3>';
+
+            const sample = mockData[0];
+            const processed = {
+                id: sample.id || sample.ID,
+                nombre: sample.Nombre || sample.name,
+                tipo: sample.Tipo || sample.type || sample.accommodation_type,
+                localidad: sample.Localidad || sample.localidad || sample.municipality,
+                provincia: sample.Provincia || sample.provincia || sample.province,
+                plazas: sample.Plazas || sample.plazas || sample.capacity,
+                precio: sample.Precio || sample.precio || sample.price || sample.price_per_night,
+                fotos: sample.Fotos || sample.fotos || []
+            };
+
+            resultDiv.innerHTML += `
+                <div class="info">
+                    <strong>Datos originales:</strong><br>
+                    <pre>${JSON.stringify(sample, null, 2)}</pre>
+                </div>
+                <div class="success">
+                    <strong>Datos procesados:</strong><br>
+                    <pre>${JSON.stringify(processed, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        async function compareWithJSON() {
+            const resultDiv = document.getElementById('jsonComparisonResult');
+
+            try {
+                // Load JSON
+                const jsonResponse = await fetch('accommodations.json');
+                jsonData = await jsonResponse.json();
+
+                resultDiv.innerHTML = `<p>📄 accommodations.json: ${jsonData.length} alojamientos</p>`;
+
+                // Compare with API data
+                if (mockData) {
+                    const apiCount = mockData.length;
+                    const jsonCount = jsonData.length;
+
+                    resultDiv.innerHTML += `<p>🔗 API: ${apiCount} alojamientos</p>`;
+
+                    if (apiCount !== jsonCount) {
+                        resultDiv.innerHTML += `<div class="warning">⚠️ Diferencia en cantidad: API=${apiCount}, JSON=${jsonCount}</div>`;
+                    } else {
+                        resultDiv.innerHTML += '<div class="success">✅ Mismas cantidades</div>';
+                    }
+
+                    // Check if Casa de Aldea exists in both
+                    const casaAldeaAPI = mockData.find(a => (a.Nombre || a.name || '').toLowerCase().includes('aldea'));
+                    const casaAldeaJSON = jsonData.find(a => (a.Nombre || a.name || '').toLowerCase().includes('aldea'));
+
+                    resultDiv.innerHTML += '<h4>Casa de Aldea:</h4>';
+                    resultDiv.innerHTML += `<p>En API: ${casaAldeaAPI ? '✅ Sí' : '❌ No'}</p>`;
+                    resultDiv.innerHTML += `<p>En JSON: ${casaAldeaJSON ? '✅ Sí' : '❌ No'}</p>`;
+                } else {
+                    resultDiv.innerHTML += '<div class="warning">⚠️ Ejecuta el test de API primero</div>';
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error cargando JSON: ${error.message}</div>`;
+            }
+        }
+
+        function runDiagnostics() {
+            const resultDiv = document.getElementById('diagnosticsResult');
+
+            let diagnostics = '<h3>Diagnóstico de posibles problemas:</h3>';
+
+            // Check if we have data
+            if (!mockData) {
+                diagnostics += '<div class="error">❌ No se pudieron obtener datos de la API</div>';
+            } else {
+                diagnostics += '<div class="success">✅ Datos de API obtenidos</div>';
+            }
+
+            // Check DOM elements
+            const requiredElements = ['alojamientosGrid', 'loading', 'pagination'];
+            let missingElements = [];
+            requiredElements.forEach(id => {
+                if (!document.getElementById(id)) {
+                    missingElements.push(id);
+                }
+            });
+
+            if (missingElements.length > 0) {
+                diagnostics += `<div class="error">❌ Elementos DOM faltantes: ${missingElements.join(', ')}</div>`;
+            } else {
+                diagnostics += '<div class="success">✅ Todos los elementos DOM existen</div>';
+            }
+
+            // Check JavaScript errors
+            if (window.console && window.console.error) {
+                diagnostics += '<div class="info">ℹ️ Revisa la consola del navegador (F12) para errores de JavaScript</div>';
+            }
+
+            // CORS issues
+            diagnostics += '<div class="info">ℹ️ Verifica que no hay problemas de CORS (Cross-Origin Resource Sharing)</div>';
+
+            // Network issues
+            diagnostics += '<div class="info">ℹ️ Verifica la pestaña Network en las herramientas de desarrollador</div>';
+
+            resultDiv.innerHTML = diagnostics;
+        }
+
+        // Run diagnostics on load
+        window.addEventListener('DOMContentLoaded', runDiagnostics);
+    </script>
+</body>
+</html>

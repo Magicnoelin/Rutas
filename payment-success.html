@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Exitoso - RutasRurales.io</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .success-icon {
+            font-size: 80px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .success-title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .success-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .success-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .success-details p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .success-details strong {
+            color: #333;
+        }
+        .btn-dashboard {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #246634;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .btn-dashboard:hover {
+            background: #1a4d26;
+        }
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #246634;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1 class="success-title">¡Pago Exitoso!</h1>
+        <p class="success-message">
+            Tu suscripción ha sido activada correctamente. Ya puedes disfrutar de todos los beneficios de tu plan Premium.
+        </p>
+
+        <div class="success-details" id="paymentDetails">
+            <p><strong>Plan:</strong> <span id="planName">Premium</span></p>
+            <p><strong>Ciclo de facturación:</strong> <span id="billingCycle">Mensual</span></p>
+            <p><strong>Monto:</strong> <span id="amount">9.99</span> €</p>
+            <p><strong>Estado:</strong> <span style="color: #28a745;">Activo</span></p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Verificando tu pago...</p>
+        </div>
+
+        <a href="user-dashboard.html" class="btn-dashboard">Ir al Dashboard</a>
+
+        <p style="margin-top: 30px; color: #999; font-size: 14px;">
+            Recibirás un correo de confirmación con los detalles de tu suscripción.
+        </p>
+    </div>
+
+    <script>
+        // Obtener el session_id de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        if (sessionId) {
+            // Aquí podrías hacer una llamada al backend para verificar el pago
+            // y obtener los detalles de la suscripción
+            console.log('Session ID:', sessionId);
+            
+            // Ejemplo de cómo obtener los detalles:
+            /*
+            fetch('/api/verify_payment.php?session_id=' + sessionId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('planName').textContent = data.plan_name;
+                        document.getElementById('billingCycle').textContent = data.billing_cycle;
+                        document.getElementById('amount').textContent = data.amount;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            */
+        }
+
+        // Guardar en localStorage que el pago fue exitoso
+        localStorage.setItem('payment_success', 'true');
+        localStorage.setItem('payment_timestamp', new Date().toISOString());
+    </script>
+</body>
+</html>

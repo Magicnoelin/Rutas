@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soluciones para Entidades | Rutas Rurales</title>
+    <meta name="description" content="Digitalización y promoción para ayuntamientos y asociaciones rurales. Potencia tu municipio con Rutas Rurales.">
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css?v=20260114">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --verde: #2d5a27; --naranja: #e67e22; }
+        
+        /* Hero Section */
+        .hero-entidades {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('/menu_images/entidades.webp');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 0 20px;
+            margin-top: 0;
+        }
+
+        .hero-entidades h1 { font-size: 2.8rem; margin-bottom: 10px; }
+        .hero-entidades p { font-size: 1.2rem; opacity: 0.9; }
+        .btn-contacto {
+            background: var(--naranja);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .btn-contacto:hover { background: #d35400; }
+
+        /* Content Sections */
+        .entidades-content { max-width: 1100px; margin: 50px auto; padding: 0 20px; }
+        .section-title { color: var(--verde); font-size: 2rem; margin-bottom: 15px; text-align: center; }
+        .section-subtitle { text-align: center; color: #666; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto; }
+        
+        .grid-3 { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; 
+            margin: 40px 0;
+        }
+        .card-entidad { 
+            border-bottom: 4px solid var(--verde); 
+            padding: 25px; 
+            background: #f9f9f9;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card-entidad:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .card-entidad i { 
+            font-size: 2.5rem; 
+            color: var(--verde); 
+            margin-bottom: 15px; 
+        }
+        .card-entidad h3 { color: #333; margin-bottom: 10px; }
+        .card-entidad p { color: #666; font-size: 0.95rem; }
+
+        /* Plans Section */
+        .planes-entidades { background: #f5f5f5; padding: 60px 20px; margin: 50px 0; }
+        .planes-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 30px; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        .plan-entidad { 
+            background: white; 
+            padding: 35px; 
+            border-radius: 12px; 
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .plan-entidad.premium { border: 3px solid var(--verde); }
+        .plan-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--verde);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .plan-entidad h3 { color: var(--verde); font-size: 1.4rem; margin-bottom: 20px; }
+        .plan-features { list-style: none; padding: 0; margin: 20px 0; text-align: left; }
+        .plan-features li { padding: 10px 0; border-bottom: 1px solid #eee; color: #555; }
+        .plan-features li i { color: var(--verde); margin-right: 10px; }
+        .btn-plan {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-plan-outline { border: 2px solid var(--verde); color: var(--verde); }
+        .btn-plan-outline:hover { background: var(--verde); color: white; }
+        .btn-plan-solid { background: var(--verde); color: white; }
+        .btn-plan-solid:hover { background: #1e3d1a; }
+
+        /* CTA Section */
+        .cta-entidades {
+            background: linear-gradient(135deg, var(--verde) 0%, #3d7a3d 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .cta-entidades h2 { font-size: 2rem; margin-bottom: 15px; }
+        .cta-entidades p { opacity: 0.9; margin-bottom: 25px; }
+        .cta-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+        }
+        .btn-cta {
+            display: inline-block;
+            padding: 14px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn-cta-light { background: white; color: var(--verde); }
+        .btn-cta-light:hover { background: #f0f0f0; }
+        .btn-cta-outline { border: 2px solid white; color: white; }
+        .btn-cta-outline:hover { background: white; color: var(--verde); }
+
+        @media (max-width: 768px) {
+            .hero-entidades h1 { font-size: 2rem; }
+            .hero-entidades { height: 50vh; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="60" height="60">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+                
+                <!-- Selector de idiomas desktop -->
+                <div class="language-selector-nav">
+                    <button class="language-btn-nav" id="languageBtnNav" aria-label="Seleccionar idioma">
+                        <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                        <span>ES</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown-nav" id="languageDropdownNav">
+                        <a href="index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
+                            Español
+                        </a>
+                        <a href="en/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
+                            English
+                        </a>
+                        <a href="fr/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
+                            Français
+                        </a>
+                        <a href="de/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
+                            Deutsch
+                        </a>
+                        <a href="zh/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
+                            中文
+                        </a>
+                    </div>
+                </div>
+                
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="entidades.html" class="active"><i class="fas fa-building"></i> Entidades</a></li>
+                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos</a></li>
+                    <li><a href="lugares-interes-paginacion.html"><i class="fas fa-route"></i> Lugares</a></li>
+                    <li><a href="https://rutasrurales.io/actividades-turisticas.html"><i class="fas fa-hiking"></i> Actividades</a></li>
+                    <li><a href="eventos-culturales-paginacion.html"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+                    <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                    
+                    <!-- Selector de idiomas móvil -->
+                    <li class="language-selector-mobile">
+                        <h4>🌐 Idiomas</h4>
+                        <div class="language-options-mobile">
+                            <a href="index.html"><img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español"> ES</a>
+                            <a href="en/index.html"><img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English"> EN</a>
+                            <a href="fr/index.html"><img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français"> FR</a>
+                            <a href="de/index.html"><img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch"> DE</a>
+                            <a href="zh/index.html"><img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文"> ZH</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-entidades">
+        <h1>Impulsa tu Entidad Rural</h1>
+        <p>Herramientas digitales para ayuntamientos, asociaciones y grupos de desarrollo.</p>
+        <a href="#contacto" class="btn-contacto">Solicitar Dossier Técnico</a>
+    </section>
+
+    <!-- Main Content -->
+    <main class="entidades-content">
+        <section>
+            <h2 class="section-title">Propuesta de Valor para Organizaciones</h2>
+            <p class="section-subtitle">En <strong>Rutas Rurales</strong> ayudamos a las entidades públicas y privadas a poner en valor su patrimonio natural y cultural mediante tecnología accesible y de alto impacto.</p>
+            
+            <div class="grid-3">
+                <div class="card-entidad">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>Digitalización</h3>
+                    <p>Convierte tus rutas en papel o PDF en mapas interactivos inteligentes con descarga offline para visitantes.</p>
+                </div>
+                <div class="card-entidad">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Observatorio</h3>
+                    <p>Obtén datos reales sobre el flujo de visitantes y las rutas más demandadas en tu zona.</p>
+                </div>
+                <div class="card-entidad">
+                    <i class="fas fa-search"></i>
+                    <h3>Promoción SEO</h3>
+                    <p>Tu municipio aparecerá en los primeros resultados de búsqueda de turismo activo y naturaleza.</p>
+                </div>
+                <div class="card-entidad">
+                    <i class="fas fa-users"></i>
+                    <h3>Colaboración</h3>
+                    <p>Conecta con otras entidades locales para compartir recursos y maximizar el impacto conjunto.</p>
+                </div>
+                <div class="card-entidad">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>App Móvil</h3>
+                    <p>Tu propio espacio digital en la aplicación de Rutas Rurales con geolocalización y contenido offline.</p>
+                </div>
+                <div class="card-entidad">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Moderación</h3>
+                    <p>Sistema de control de calidad para garantizar información actualizada y verificada.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Planes Section -->
+    <section class="planes-entidades">
+        <div class="container">
+            <h2 class="section-title">Planes para Entidades</h2>
+            <p class="section-subtitle">Adaptamos nuestras soluciones a las necesidades y presupuesto de cada organización</p>
+            
+            <div class="planes-grid">
+                <div class="plan-entidad">
+                    <h3>Básico</h3>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Perfil de entidad en Rutas</li>
+                        <li><i class="fas fa-check"></i> Inclusión en búsquedas locales</li>
+                        <li><i class="fas fa-check"></i> Acceso a estadísticas básicas</li>
+                        <li><i class="fas fa-check"></i> Soporte por email</li>
+                    </ul>
+                    <a href="#contacto" class="btn-plan btn-plan-outline">Consultar</a>
+                </div>
+                <div class="plan-entidad premium">
+                    <span class="plan-badge">Más Popular</span>
+                    <h3>Premium</h3>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Todo lo del plan Básico</li>
+                        <li><i class="fas fa-check"></i> Perfil destacado y banners</li>
+                        <li><i class="fas fa-check"></i> Digitalización de rutas</li>
+                        <li><i class="fas fa-check"></i> Analytics avanzados</li>
+                        <li><i class="fas fa-check"></i> Soporte prioritario</li>
+                    </ul>
+                    <a href="#contacto" class="btn-plan btn-plan-solid">Contratar</a>
+                </div>
+                <div class="plan-entidad">
+                    <h3>Alianza</h3>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Todo lo del plan Premium</li>
+                        <li><i class="fas fa-check"></i> App propia customizable</li>
+                        <li><i class="fas fa-check"></i> Observatorio de datos</li>
+                        <li><i class="fas fa-check"></i> Formación equipos</li>
+                        <li><i class="fas fa-check"></i> Gerente dedicado</li>
+                    </ul>
+                    <a href="#contacto" class="btn-plan btn-plan-outline">Contactar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-entidades" id="contacto">
+        <div class="container">
+            <div class="cta-badge">🎉 ¡20% de descuento hasta el 23 de enero de 2026!</div>
+            <h2>¿Listo para transformar tu territorio?</h2>
+            <p>Únete a las entidades que ya potencian su desarrollo digital con Rutas Rurales</p>
+            <div>
+                <a href="mailto:olgamarin@rutasrurales.io" class="btn-cta btn-cta-light"><i class="fas fa-envelope"></i> Solicitar Dossier</a>
+                <a href="tel:+34605249696" class="btn-cta btn-cta-outline"><i class="fas fa-phone"></i> Llamar ahora</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js?v=20260114"></script>
+</body>
+</html>

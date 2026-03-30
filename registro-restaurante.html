@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Registra tu restaurante, bodega o bar en Rutas Rurales. Aumenta tu visibilidad turística y conecta con miles de viajeros que buscan gastronomía local. ¡Es gratis y solo tarda 2 minutos!" />
+    <title>Registra tu Restaurante | Publica tu Negocio Gastronómico | Rutas Rurales</title>
+    <link rel="canonical" href="https://www.rutasrurales.io/registro-restaurante.html">
+    <link rel="icon" href="menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Open Graph para redes sociales -->
+    <meta property="og:title" content="Registra tu Restaurante en Rutas Rurales | Visibilidad Premium">
+    <meta property="og:description" content="Únete a la mayor red de turismo rural de España. Registra tu restaurante, bodega o bar y alcanza a miles de viajeros que buscan gastronomía local auténtica.">
+    <meta property="og:image" content="https://rutasrurales.io/menu_images/gastronomia.jpg">
+    <meta property="og:url" content="https://rutasrurales.io/registro-restaurante.html">
+    <meta property="og:type" content="website">
+    
+    <!-- Schema.org para negocio local -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Registro de Restaurantes en Rutas Rurales",
+        "description": "Plataforma de registro para restaurantes, bodegas y negocios gastronómicos rurales",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Rutas Rurales"
+        }
+    }
+    </script>
+    
+    <style>
+        /* Variables CSS */
+        :root {
+            --primary-color: #2F5233;
+            --secondary-color: #6B8E6B;
+            --accent-color: #B8956A;
+            --accent-dark: #9a7854;
+            --success-color: #27ae60;
+            --white: #ffffff;
+            --light-bg: #f8f9fa;
+            --text-dark: #1a2e1a;
+            --text-light: #666;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--white);
+        }
+        
+        /* Header simple */
+        .header-minimal {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-minimal .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-minimal .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        
+        .header-minimal .logo img {
+            height: 40px;
+        }
+        
+        .header-minimal .logo-text {
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .header-minimal .login-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .header-minimal .login-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+        
+        /* Hero Section */
+        .hero-restaurante {
+            min-height: 90vh;
+            margin-top: 60px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(47, 82, 51, 0.95) 0%, rgba(47, 82, 51, 0.85) 100%),
+                        url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&h=1080&fit=crop') center/cover;
+            position: relative;
+        }
+        
+        .hero-restaurante::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(47, 82, 51, 0.9) 0%, rgba(47, 82, 51, 0.7) 100%);
+        }
+        
+        .hero-restaurante .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .hero-content h1 {
+            color: white;
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero-content h1 i {
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+        
+        .hero-content .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .hero-stat {
+            text-align: center;
+        }
+        
+        .hero-stat-number {
+            display: block;
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+        
+        .hero-stat-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+        
+        /* Formulario de registro */
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 480px;
+        }
+        
+        .register-card h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .register-card .card-subtitle {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        
+        .register-card .card-subtitle strong {
+            color: var(--accent-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-group label i {
+            color: var(--accent-color);
+            margin-right: 5px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(47, 82, 51, 0.1);
+        }
+        
+        .form-group input::placeholder {
+            color: #999;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-hint {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.3rem;
+        }
+        
+        .btn-register {
+            width: 100%;
+            padding: 1.1rem;
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(184, 149, 106, 0.4);
+        }
+        
+        .btn-register:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .terms-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .terms-text a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .terms-text a:hover {
+            text-decoration: underline;
+        }
+        
+        .login-prompt {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+            color: var(--text-light);
+        }
+        
+        .login-prompt a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        /* Alertas */
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Beneficios Section */
+        .beneficios-section {
+            padding: 5rem 0;
+            background: var(--light-bg);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .beneficios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .beneficio-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .beneficio-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+        
+        .beneficio-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .beneficio-icon i {
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .beneficio-card h3 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .beneficio-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Cómo funciona */
+        .como-funciona {
+            padding: 5rem 0;
+            background: white;
+        }
+        
+        .pasos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .paso-card {
+            text-align: center;
+            position: relative;
+        }
+        
+        .paso-number {
+            width: 50px;
+            height: 50px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+        }
+        
+        .paso-card h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .paso-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Testimonios */
+        .testimonios-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+        
+        .testimonios-section .section-title h2 {
+            color: white;
+        }
+        
+        .testimonios-section .section-title p {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .testimonios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .testimonio-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            position: relative;
+        }
+        
+        .testimonio-card::before {
+            content: '"';
+            font-size: 5rem;
+            color: var(--accent-color);
+            opacity: 0.3;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-family: Georgia, serif;
+        }
+        
+        .testimonio-text {
+            font-style: italic;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonio-autor {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .testimonio-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .testimonio-info h4 {
+            color: var(--primary-color);
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .testimonio-info span {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+        
+        /* CTA Final */
+        .cta-section {
+            padding: 5rem 0;
+            background: var(--light-bg);
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(184, 149, 106, 0.4);
+        }
+        
+        /* Footer */
+        .footer-minimal {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-minimal p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .footer-minimal a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-restaurante .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-stats {
+                justify-content: center;
+            }
+            
+            .register-card {
+                margin: 0 auto;
+            }
+            
+            .pasos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .pasos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .register-card {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Header Minimal -->
+    <header class="header-minimal">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="menu_images/Logo%20transparente.webp" alt="Rutas Rurales">
+                <span class="logo-text">Rutas Rurales</span>
+            </a>
+            <a href="login.html" class="login-link">
+                <i class="fas fa-sign-in-alt"></i> Ya tengo cuenta
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-restaurante">
+        <div class="container">
+            <div class="hero-content animate-fade">
+                <h1>
+                    <i class="fas fa-utensils"></i>
+                    Haz que los Turistas Encontren tu Restaurante
+                </h1>
+                <p class="subtitle">
+                    Únete a la mayor red de turismo rural de España. Registra tu restaurante, bodega o bar <strong>gratis</strong> y alcanza a miles de viajeros que buscan gastronomía local auténtica.
+                </p>
+                
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">+50.000</span>
+                        <span class="hero-stat-label">Viajeros Mensuales</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">+500</span>
+                        <span class="hero-stat-label">Restaurantes</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">100%</span>
+                        <span class="hero-stat-label">Gratis</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulario de Registro -->
+            <div class="register-card animate-fade delay-2">
+                <h2>🚀 ¡Regístrate Gratis!</h2>
+                <p class="card-subtitle">Tarda <strong>menos de 2 minutos</strong>. Sin compromiso.</p>
+                
+                <div id="alertMessage" class="alert"></div>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="restaurantName">
+                            <i class="fas fa-store"></i> Nombre del Restaurante *
+                        </label>
+                        <input type="text" id="restaurantName" name="restaurantName" 
+                               placeholder="Ej. Casa Rural El Buen Gusto" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessType">
+                            <i class="fas fa-tags"></i> Tipo de Negocio *
+                        </label>
+                        <select id="businessType" name="businessType" required>
+                            <option value="">Selecciona...</option>
+                            <option value="restaurante">🍽️ Restaurante</option>
+                            <option value="bar">🍺 Bar / Tapas</option>
+                            <option value="bodega">🍷 Bodega / Enoturismo</option>
+                            <option value="cafeteria">☕ Cafetería</option>
+                            <option value="asador">🔥 Asador</option>
+                            <option value="taberna">🏛️ Taberna / Mesón</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="municipality">
+                                <i class="fas fa-map-marker-alt"></i> Localidad *
+                            </label>
+                            <input type="text" id="municipality" name="municipality" 
+                                   placeholder="Ej. El Burgo de Osma" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="province">
+                                <i class="fas fa-map"></i> Provincia *
+                            </label>
+                            <select id="province" name="province" required>
+                                <option value="">Selecciona...</option>
+                                <option value="Soria">Soria</option>
+                                <option value="Burgos">Burgos</option>
+                                <option value="Segovia">Segovia</option>
+                                <option value="Ávila">Ávila</option>
+                                <option value="Salamanca">Salamanca</option>
+                                <option value="León">León</option>
+                                <option value="Palencia">Palencia</option>
+                                <option value="Valladolid">Valladolid</option>
+                                <option value="Zamora">Zamora</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactName">
+                            <i class="fas fa-user"></i> Persona de Contacto *
+                        </label>
+                        <input type="text" id="contactName" name="contactName" 
+                               placeholder="Tu nombre completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email *
+                        </label>
+                        <input type="email" id="email" name="email" 
+                               placeholder="tu@restaurante.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">
+                            <i class="fas fa-phone"></i> Teléfono
+                        </label>
+                        <input type="tel" id="phone" name="phone" 
+                               placeholder="+34 600 000 000">
+                        <p class="form-hint">Te llamaremos solo si hay interesados en reservar</p>
+                    </div>
+                    
+                    <button type="submit" class="btn-register" id="registerBtn">
+                        <i class="fas fa-rocket"></i> Crear mi ficha gratis
+                    </button>
+                    
+                    <p class="terms-text">
+                        Al registrarte aceptas nuestros <a href="aviso-legal.html">Términos</a> 
+                        y <a href="politica-cookies.html">Política de Privacidad</a>
+                    </p>
+                </form>
+                
+                <div class="login-prompt">
+                    ¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios Section -->
+    <section class="beneficios-section">
+        <div class="section-title">
+            <h2>¿Por qué registrarte en Rutas Rurales?</h2>
+            <p>La plataforma líder en turismo rural que conecta tu negocio con viajeros de toda España</p>
+        </div>
+        
+        <div class="beneficios-grid">
+            <div class="beneficio-card">
+                <div class="beneficio-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>Visibilidad Premium</h3>
+                <p>Aparece en las búsquedas de miles de turistas que buscan dónde comer cerca de destinos turísticos rurales.</p>
+            </div>
+            
+            <div class="beneficio-card">
+                <div class="beneficio-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Perfil Móvil</h3>
+                <p>Tu negocio se muestra perfectamente en móviles, donde el 80% de nuestros usuarios buscan restaurantes.</p>
+            </div>
+            
+            <div class="beneficio-card">
+                <div class="beneficio-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Gestión de Reservas</h3>
+                <p>Recibe solicitudes de reserva directamente y gestiona tu disponibilidad desde un panel fácil de usar.</p>
+            </div>
+            
+            <div class="beneficio-card">
+                <div class="beneficio-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Estadísticas Gratis</h3>
+                <p>Conoce cuántas personas ven tu perfil, desde dónde te buscan y qué platos les interesan más.</p>
+            </div>
+            
+            <div class="beneficio-card">
+                <div class="beneficio-icon">
+                    <i class="fas fa-images"></i>
+                </div>
+                <h3>Galería de Fotos</h3>
+                <p>Muestra tus platos, ambiente y especialidades con hasta 10 fotos de alta calidad.</p>
+            </div>
+            
+            <div class="beneficio-card">
+                <div class="beneficio-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Red B2B</h3>
+                <p>Conecta con alojamientos turísticos que recomiendan tu restaurante a sus huéspedes.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cómo Funciona -->
+    <section class="como-funciona">
+        <div class="section-title">
+            <h2>¿Cómo funciona?</h2>
+            <p>En solo 4 pasos tu restaurante será visible para miles de viajeros</p>
+        </div>
+        
+        <div class="pasos-grid">
+            <div class="paso-card">
+                <div class="paso-number">1</div>
+                <h3>Regístrate</h3>
+                <p>Crea tu cuenta con email y teléfono en menos de 2 minutos</p>
+            </div>
+            
+            <div class="paso-card">
+                <div class="paso-number">2</div>
+                <h3>Describe tu negocio</h3>
+                <p>Cuéntanos qué te hace único: especialidad, ambiente, historia...</p>
+            </div>
+            
+            <div class="paso-card">
+                <div class="paso-number">3</div>
+                <h3>Añade fotos</h3>
+                <p>Sube fotos de tus platos estrella y tu local para atraer comensales</p>
+            </div>
+            
+            <div class="paso-card">
+                <div class="paso-number">4</div>
+                <h3>¡Listo!</h3>
+                <p>Tu perfil queda activo y los turistas podrán encontrarte inmediatamente</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="testimonios-section">
+        <div class="section-title">
+            <h2>Lo que dicen nuestros restaurantes</h2>
+            <p>Empresas que ya forman parte de nuestra red de gastronomía rural</p>
+        </div>
+        
+        <div class="testimonios-grid">
+            <div class="testimonio-card">
+                <p class="testimonio-text">"Desde que estamos en Rutas Rurales hemos notado un aumento notable de reservas, especialmente los fines de semana. Los turistas nos encuentran fácilmente"</p>
+                <div class="testimonio-autor">
+                    <div class="testimonio-avatar">MR</div>
+                    <div class="testimonio-info">
+                        <h4>María Rodríguez</h4>
+                        <span>Restaurante Casa Grande, El Burgo de Osma</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonio-card">
+                <p class="testimonio-text">"La visibilidad que nos da la plataforma es increíble. Muchos huéspedes de casas rurales vienen recomendados por los propios propietarios."</p>
+                <div class="testimonio-autor">
+                    <div class="testimonio-avatar">JL</div>
+                    <div class="testimonio-info">
+                        <h4>Javier López</h4>
+                        <span>Bodega Don Crisanto, San Esteban de Gormaz</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonio-card">
+                <p class="testimonio-text">"Gratis y muy fácil de usar. En 15 minutos tenía mi restaurante publicado con fotos. El panel de estadísticas me ayuda mucho."</p>
+                <div class="testimonio-autor">
+                    <div class="testimonio-avatar">AP</div>
+                    <div class="testimonio-info">
+                        <h4>Ana Pérez</h4>
+                        <span>Bar El Rincón, Soria</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="cta-section">
+        <h2>¡Empieza a atraer más clientes hoy!</h2>
+        <p>Únete a más de 500 restaurantes que ya confían en Rutas Rurales</p>
+        <a href="#registerForm" class="btn-cta">
+            <i class="fas fa-plus-circle"></i> Crear mi ficha gratis
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-minimal">
+        <div class="container">
+            <p>&copy; 2025 Rutas Rurales. Todos los derechos reservados.</p>
+            <p>
+                <a href="aviso-legal.html">Aviso Legal</a> | 
+                <a href="politica-cookies.html">Política de Cookies</a> | 
+                <a href="login.html">Acceso negocios</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Función para mostrar alertas
+        function showAlert(message, type = 'error') {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+            
+            if (type !== 'success') {
+                setTimeout(() => {
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Validar email
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Manejar envío del formulario
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const restaurantName = document.getElementById('restaurantName').value.trim();
+            const businessType = document.getElementById('businessType').value;
+            const municipality = document.getElementById('municipality').value.trim();
+            const province = document.getElementById('province').value;
+            const contactName = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            
+            // Validaciones
+            if (!restaurantName || !businessType || !municipality || !province || !contactName || !email) {
+                showAlert('Por favor, completa todos los campos obligatorios.');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showAlert('Por favor, introduce un correo electrónico válido.');
+                return;
+            }
+            
+            // Deshabilitar botón
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando tu ficha...';
+            
+            // Preparar datos para registro de usuario + negocio gastronómico
+            const registerData = {
+                firstName: contactName.split(' ')[0],
+                lastName: contactName.split(' ').slice(1).join(' ') || '',
+                email: email,
+                phone: phone,
+                password: Math.random().toString(36).slice(-8), // Contraseña temporal
+                role: businessType,
+                businessName: restaurantName,
+                municipality: municipality,
+                province: province
+            };
+            
+            // Llamar a la API de registro
+            fetch('api/register.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registerData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('🎉 ¡Perfecto! Tu ficha ha sido creada. Te hemos enviado un email con las instrucciones para completar tu perfil.', 'success');
+                    
+                    // Redirigir al dashboard después de 3 segundos
+                    setTimeout(() => {
+                        window.location.href = 'user-dashboard.html';
+                    }, 3000);
+                } else {
+                    showAlert(data.error || 'Error al crear la ficha. Inténtalo de nuevo.', 'error');
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = '<i class="fas fa-rocket"></i> Crear mi ficha gratis';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Inténtalo de nuevo en unos segundos.', 'error');
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-rocket"></i> Crear mi ficha gratis';
+            });
+        });
+        
+        // Smooth scroll para los enlaces internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestión de fotos para alojamientos rurales. Sube y organiza fotos por categorías.">
+    <title>Gestión de Fotos - Rutas</title>
+    <link rel="icon" href="menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .photo-management-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .accommodation-selector {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 2px solid #e0e0e0;
+        }
+
+        .accommodation-selector h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .accommodation-search {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .accommodation-search input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .accommodation-search button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .accommodation-search button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .search-results {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: #f0f8ff;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item strong {
+            color: var(--dark-color);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .search-result-item small {
+            color: #666;
+        }
+
+        .accommodation-info {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .accommodation-info.active {
+            display: block;
+        }
+
+        .accommodation-info h4 {
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .accommodation-info p {
+            color: #666;
+            margin: 0.2rem 0;
+        }
+
+        .photo-upload-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 2px solid #e0e0e0;
+        }
+
+        .photo-upload-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .category-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-btn {
+            padding: 0.8rem;
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .category-btn:hover {
+            background-color: #e8f4f8;
+            border-color: var(--primary-color);
+        }
+
+        .category-btn.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .file-upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #fff;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: #f0f8ff;
+        }
+
+        .file-upload-area i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-area p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-area .file-info {
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+
+        .upload-btn {
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .upload-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .photo-info-box {
+            background: #e8f4f8;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .photo-info-box.active {
+            display: block;
+        }
+
+        .photo-info-box h5 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .photo-info-box p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+        }
+
+        .photo-info-box code {
+            background: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .photo-info-box a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .photo-info-box a:hover {
+            text-decoration: underline;
+        }
+
+        .photo-gallery {
+            margin-top: 2rem;
+        }
+
+        .category-section {
+            margin-bottom: 2rem;
+        }
+
+        .category-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .photo-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            aspect-ratio: 4/3;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-card .photo-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .photo-card .photo-actions button {
+            background-color: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .photo-card .photo-actions button:hover {
+            background-color: rgba(255,255,255,1);
+            transform: scale(1.1);
+        }
+
+        .photo-card .photo-actions button.delete-btn {
+            background-color: rgba(231, 76, 60, 0.8);
+            color: white;
+        }
+
+        .photo-card .photo-actions button.delete-btn:hover {
+            background-color: rgba(231, 76, 60, 1);
+        }
+
+        .photo-card .photo-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .loading-content i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-content p {
+            color: var(--dark-color);
+            font-size: 1.1rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .success-message.active {
+            display: flex;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .error-message.active {
+            display: flex;
+        }
+
+        .no-photos-message {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .no-photos-message i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .accommodation-search {
+                flex-direction: column;
+            }
+
+            .category-selector {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">
+                    <span>Rutas</span>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="alojamientos.html">Alojamientos</a></li>
+                    <li><a href="agregar-alojamiento.html">Agregar Alojamiento</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Photo Management Section -->
+    <section class="section" style="margin-top: 100px;">
+        <div class="container">
+            <h1 class="section-title">
+                <i class="fas fa-images"></i> Gestión de Fotos de Alojamiento
+            </h1>
+
+            <div class="photo-management-container">
+                <!-- Accommodation Selector -->
+                <div class="accommodation-selector">
+                    <h3><i class="fas fa-search"></i> Seleccionar Alojamiento</h3>
+
+                    <div class="accommodation-search">
+                        <input type="text" id="accommodationSearch" placeholder="Buscar alojamiento por nombre...">
+                        <button onclick="searchAccommodation()">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+
+                    <div class="search-results" id="searchResults"></div>
+
+                    <div class="accommodation-info" id="accommodationInfo">
+                        <h4><i class="fas fa-home"></i> <span id="accommodationName">Nombre del Alojamiento</span></h4>
+                        <p><strong>Slug:</strong> <span id="accommodationSlug">alojamiento-slug</span></p>
+                        <p><strong>Tipo:</strong> <span id="accommodationType">Tipo de alojamiento</span></p>
+                        <p><strong>Localidad:</strong> <span id="accommodationMunicipality">Localidad</span></p>
+                        <input type="hidden" id="currentAccommodationId">
+                        <input type="hidden" id="currentAccommodationSlug">
+                    </div>
+                </div>
+
+                <!-- Photo Upload Section -->
+                <div class="photo-upload-section">
+                    <h3><i class="fas fa-upload"></i> Subir Nueva Foto</h3>
+
+                    <div class="success-message" id="successMessage">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="successText">Foto subida exitosamente!</span>
+                    </div>
+
+                    <div class="error-message" id="errorMessage">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="errorText">Error al subir la foto</span>
+                    </div>
+
+                    <div class="upload-form">
+                        <div class="form-group">
+                            <label>Seleccionar Categoría:</label>
+                            <div class="category-selector" id="categorySelector">
+                                <button class="category-btn" data-category="salon" onclick="selectCategory('salon')">
+                                    <i class="fas fa-couch"></i><br>Salón
+                                </button>
+                                <button class="category-btn" data-category="cocina" onclick="selectCategory('cocina')">
+                                    <i class="fas fa-utensils"></i><br>Cocina
+                                </button>
+                                <button class="category-btn" data-category="jardin" onclick="selectCategory('jardin')">
+                                    <i class="fas fa-tree"></i><br>Jardín
+                                </button>
+                                <button class="category-btn" data-category="habitacion" onclick="selectCategory('habitacion')">
+                                    <i class="fas fa-bed"></i><br>Habitación
+                                </button>
+                                <button class="category-btn" data-category="bano" onclick="selectCategory('bano')">
+                                    <i class="fas fa-bath"></i><br>Baño
+                                </button>
+                                <button class="category-btn" data-category="exterior" onclick="selectCategory('exterior')">
+                                    <i class="fas fa-mountain"></i><br>Exterior
+                                </button>
+                                <button class="category-btn" data-category="piscina" onclick="selectCategory('piscina')">
+                                    <i class="fas fa-swimming-pool"></i><br>Piscina
+                                </button>
+                                <button class="category-btn" data-category="comedor" onclick="selectCategory('comedor')">
+                                    <i class="fas fa-chair"></i><br>Comedor
+                                </button>
+                                <button class="category-btn" data-category="terraza" onclick="selectCategory('terraza')">
+                                    <i class="fas fa-umbrella-beach"></i><br>Terraza
+                                </button>
+                                <button class="category-btn" data-category="otro" onclick="selectCategory('otro')">
+                                    <i class="fas fa-plus"></i><br>Otro
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Seleccionar Foto:</label>
+                            <div class="file-upload-area" id="fileUploadArea" onclick="triggerFileInput()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Haz clic para seleccionar una foto</p>
+                                <p class="file-info" id="fileInfo">Ningún archivo seleccionado</p>
+                                <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handleFileSelect(event)">
+                            </div>
+                        </div>
+
+                        <button class="upload-btn" id="uploadBtn" onclick="uploadPhoto()" disabled>
+                            <i class="fas fa-upload"></i> Subir Foto
+                        </button>
+
+                        <!-- Info Box para mostrar resultado -->
+                        <div class="photo-info-box" id="photoInfoBox">
+                            <h5><i class="fas fa-info-circle"></i> Foto Subida Exitosamente</h5>
+                            <p><strong>Ubicación:</strong> <code id="photoPath">-</code></p>
+                            <p><strong>URL:</strong> <a href="#" id="photoUrl" target="_blank">Ver foto</a></p>
+                            <p><strong>Categoría:</strong> <span id="photoCategory">-</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photo Gallery -->
+                <div class="photo-gallery">
+                    <h3><i class="fas fa-images"></i> Galería de Fotos</h3>
+                    <div id="photoGallery">
+                        <div class="no-photos-message">
+                            <i class="fas fa-camera"></i>
+                            <p>No hay fotos para mostrar. Sube tu primera foto!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <i class="fas fa-spinner"></i>
+            <p>Procesando foto...</p>
+            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Convertir a WebP y guardando...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let selectedCategory = '';
+        let selectedFile = null;
+        let currentAccommodationId = '';
+        let currentAccommodationSlug = '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we have a slug in URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            if (slug) {
+                document.getElementById('accommodationSearch').value = slug;
+                searchAccommodation();
+            }
+        });
+
+        async function searchAccommodation() {
+            const searchTerm = document.getElementById('accommodationSearch').value.trim();
+            if (!searchTerm) {
+                showError('Por favor ingresa un nombre de alojamiento');
+                return;
+            }
+
+            const searchResults = document.getElementById('searchResults');
+            searchResults.innerHTML = '<p style="padding: 1rem; text-align: center; color: #666;">Buscando...</p>';
+            searchResults.classList.add('active');
+
+            try {
+                const apiUrl = window.CONFIG?.API_BASE_URL
+                    ? `${window.CONFIG.API_BASE_URL}/search_accommodation.php?query=${encodeURIComponent(searchTerm)}`
+                    : `api/search_accommodation.php?query=${encodeURIComponent(searchTerm)}`;
+
+                const response = await fetch(apiUrl);
+                const result = await response.json();
+
+                if (response.ok && result.success && result.data.results.length > 0) {
+                    displaySearchResults(result.data.results);
+                } else {
+                    searchResults.innerHTML = '<p style="padding: 1rem; text-align: center; color: #666;">No se encontraron alojamientos</p>';
+                }
+            } catch (error) {
+                searchResults.innerHTML = '<p style="padding: 1rem; text-align: center; color: red;">Error al buscar</p>';
+            }
+        }
+
+        function displaySearchResults(results) {
+            const searchResults = document.getElementById('searchResults');
+            let html = '';
+
+            results.forEach(item => {
+                html += `
+                    <div class="search-result-item" onclick="selectAccommodation(${item.id}, '${item.slug}', '${item.name.replace(/'/g, "\\'")}', '${item.accommodation_type}', '${item.municipality}')">
+                        <strong>${item.name}</strong>
+                        <small>${item.accommodation_type} - ${item.municipality}, ${item.province} (slug: ${item.slug})</small>
+                    </div>
+                `;
+            });
+
+            searchResults.innerHTML = html;
+        }
+
+        function selectAccommodation(id, slug, name, type, municipality) {
+            currentAccommodationId = id;
+            currentAccommodationSlug = slug;
+
+            document.getElementById('currentAccommodationId').value = id;
+            document.getElementById('currentAccommodationSlug').value = slug;
+            document.getElementById('accommodationName').textContent = name;
+            document.getElementById('accommodationSlug').textContent = slug;
+            document.getElementById('accommodationType').textContent = type;
+            document.getElementById('accommodationMunicipality').textContent = municipality;
+
+            document.getElementById('searchResults').classList.remove('active');
+            document.getElementById('accommodationInfo').classList.add('active');
+
+            // Update button state when accommodation is selected
+            updateUploadButtonState();
+
+            // Load photos for this accommodation
+            loadPhotos(slug);
+        }
+
+        function selectCategory(category) {
+            selectedCategory = category;
+
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+
+            const selectedBtn = document.querySelector(`.category-btn[data-category="${category}"]`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('selected');
+            }
+
+            updateUploadButtonState();
+        }
+
+        function triggerFileInput() {
+            document.getElementById('photoInput').click();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+            if (!validTypes.includes(file.type)) {
+                showError('Solo se permiten imágenes JPG, PNG o WEBP');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showError('La imagen no debe superar los 5MB');
+                return;
+            }
+
+            selectedFile = file;
+
+            const fileInfo = document.getElementById('fileInfo');
+            fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+
+            updateUploadButtonState();
+        }
+
+        function updateUploadButtonState() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            if (selectedCategory && selectedFile && currentAccommodationSlug) {
+                uploadBtn.disabled = false;
+            } else {
+                uploadBtn.disabled = true;
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        async function uploadPhoto() {
+            if (!selectedCategory || !selectedFile || !currentAccommodationSlug) {
+                showError('Por favor selecciona una categoría, una foto y un alojamiento');
+                return;
+            }
+
+            // Hide previous info box
+            document.getElementById('photoInfoBox').classList.remove('active');
+
+            // Show loading overlay
+            document.getElementById('loadingOverlay').classList.add('active');
+
+            try {
+                const formData = new FormData();
+                formData.append('accommodation_identifier', currentAccommodationSlug);
+                formData.append('photo_category', selectedCategory);
+                formData.append('photo', selectedFile);
+
+                const apiUrl = window.CONFIG?.API_BASE_URL
+                    ? `${window.CONFIG.API_BASE_URL}/upload_accommodation_photo.php`
+                    : 'api/upload_accommodation_photo.php';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // Show success message
+                    showSuccess('Foto subida y convertida a WebP exitosamente!');
+
+                    // Show photo info
+                    const photoUrl = result.data.url;
+                    const fullUrl = window.location.origin + photoUrl;
+                    
+                    document.getElementById('photoPath').textContent = photoUrl;
+                    document.getElementById('photoUrl').href = fullUrl;
+                    document.getElementById('photoUrl').textContent = fullUrl;
+                    document.getElementById('photoCategory').textContent = result.data.category;
+                    document.getElementById('photoInfoBox').classList.add('active');
+
+                    // Reset form
+                    selectedFile = null;
+                    document.getElementById('photoInput').value = '';
+                    document.getElementById('fileInfo').textContent = 'Ningún archivo seleccionado';
+                    updateUploadButtonState();
+
+                    // Reload photos
+                    loadPhotos(currentAccommodationSlug);
+                } else {
+                    throw new Error(result.error || 'Error al subir la foto');
+                }
+
+            } catch (error) {
+                showError('Error al subir la foto: ' + error.message);
+            } finally {
+                document.getElementById('loadingOverlay').classList.remove('active');
+            }
+        }
+
+        async function loadPhotos(slug) {
+            if (!slug) return;
+
+            try {
+                const apiUrl = window.CONFIG?.API_BASE_URL
+                    ? `${window.CONFIG.API_BASE_URL}/get_accommodation_photos.php?slug=${encodeURIComponent(slug)}`
+                    : `api/get_accommodation_photos.php?slug=${encodeURIComponent(slug)}`;
+
+                const response = await fetch(apiUrl);
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    displayPhotos(result.data);
+                } else {
+                    displayPhotos({ photos_by_category: {} });
+                }
+
+            } catch (error) {
+                console.error('Error loading photos:', error);
+                displayPhotos({ photos_by_category: {} });
+            }
+        }
+
+        function displayPhotos(data) {
+            const gallery = document.getElementById('photoGallery');
+            const photosByCategory = data.photos_by_category || {};
+
+            if (Object.keys(photosByCategory).length === 0) {
+                gallery.innerHTML = `
+                    <div class="no-photos-message">
+                        <i class="fas fa-camera"></i>
+                        <p>No hay fotos para mostrar. Sube tu primera foto!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            const sortedCategories = Object.keys(photosByCategory).sort();
+
+            sortedCategories.forEach(category => {
+                const photos = photosByCategory[category];
+
+                html += `
+                    <div class="category-section">
+                        <h4><i class="fas fa-folder"></i> ${category}</h4>
+                        <div class="photo-grid">
+                `;
+
+                photos.forEach(photo => {
+                    html += `
+                        <div class="photo-card">
+                            <img src="${photo.url}" alt="${category}" loading="lazy">
+                            <div class="photo-actions">
+                                <button class="delete-btn" onclick="deletePhoto('${photo.url}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="photo-info">
+                                ${new Date(photo.created_at).toLocaleDateString()}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            gallery.innerHTML = html;
+        }
+
+        async function deletePhoto(photoUrl) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta foto?')) {
+                return;
+            }
+
+            try {
+                showSuccess('Foto eliminada exitosamente (simulación)');
+                loadPhotos(currentAccommodationSlug);
+            } catch (error) {
+                showError('Error al eliminar la foto: ' + error.message);
+            }
+        }
+
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            successText.textContent = message;
+            successMessage.classList.add('active');
+
+            setTimeout(() => {
+                successMessage.classList.remove('active');
+            }, 5000);
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorMessage.classList.add('active');
+
+            setTimeout(() => {
+                errorMessage.classList.remove('active');
+            }, 5000);
+        }
+
+        // Menú hamburguesa
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', function() {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            const navLinks = navMenu.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navMenu.contains(event.target);
+                const isClickOnHamburger = hamburger.contains(event.target);
+
+                if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

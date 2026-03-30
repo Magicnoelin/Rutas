@@ -1,0 +1,25 @@
+{
+  "host": "rutasrurales.io",
+  "key": "0f0ff6f93be24e0d9a7cc983f315fd09",
+  "keyLocation": "https://rutasrurales.io/0f0ff6f93be24e0d9a7cc983f315fd09.txt",
+  "urlList": [
+
+"https://rutasrurales.io/evento/procesion-pasos-encuentro-leon-2026",
+"https://rutasrurales.io/evento/semana-santa-salamanca-descendimiento-2026",
+"https://rutasrurales.io/evento/lunes-de-aguas-salamanca-2026",
+"https://rutasrurales.io/evento/procesion-silencio-miserere-zamora-2026",
+"https://rutasrurales.io/evento/procesion-general-viernes-santo-valladolid-2026",
+"https://rutasrurales.io/actividad/cata-vinos-soria",
+"https://rutasrurales.io/actividad/kayak-cuerda-del-pozo",
+"https://rutasrurales.io/actividad/micologia-picos-urbion",
+"https://rutasrurales.io/actividad/senderismo-canon-rio-lobos",
+"https://rutasrurales.io/actividad/consigna-maletas-soria",
+"https://rutasrurales.io/actividad/visita-guiada-numancia",
+"https://rutasrurales.io/en/index.html",
+"https://rutasrurales.io/fr/index.html",
+"https://rutasrurales.io/de/index.html",
+"https://rutasrurales.io/de/index.html",
+"https://rutasrurales.io/zh/index.html",
+https://rutasrurales.io/
+]
+}

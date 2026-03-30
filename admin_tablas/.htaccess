@@ -1,0 +1,8 @@
+
+# DO NOT REMOVE THIS LINE AND THE LINES BELOW PWPROTECTID:ue97hhHaFi
+AuthType Basic
+AuthName "Restricted Access"
+AuthUserFile /home/u412199647/domains/rutasrurales.io/public_html/admin_tablas/.htpasswd
+Require valid-user
+# DO NOT REMOVE THIS LINE AND THE LINES ABOVE ue97hhHaFi:PWPROTECTID
+
