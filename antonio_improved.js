@@ -657,8 +657,25 @@ function mostrarCategoria(categoria) {
 }
 
 function crearTarjetaItem(item, categoriaInfo) {
+    // Determinar la URL según la categoría
+    let url = '#';
+    switch(categoriaInfo.nombre) {
+        case 'Alojamientos':
+            url = 'alojamientos-turisticos.html';
+            break;
+        case 'Lugares de interés':
+            url = 'lugares-interes-paginacion.html';
+            break;
+        case 'Actividades turísticas':
+            url = 'actividades-turisticas.html';
+            break;
+        case 'Eventos culturales':
+            url = 'eventos-culturales-paginacion.html';
+            break;
+    }
+    
     return `
-        <div class="antonio-card">
+        <div class="antonio-card" onclick="window.location.href='${url}'" style="cursor: pointer;">
             <div class="antonio-card-header">
                 <div class="antonio-card-icon" style="background: ${categoriaInfo.color}20; color: ${categoriaInfo.color};">
                     ${item.icono}
@@ -669,6 +686,9 @@ function crearTarjetaItem(item, categoriaInfo) {
             <div class="antonio-card-meta">
                 <span>📍 ${item.ubicacion || item.duracion || item.fecha || ''}</span>
                 <span>💰 ${item.precio || item.entrada || 'Consultar'}</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 0.8rem; color: var(--antonio-primary);">
+                <i class="fas fa-external-link-alt"></i> Ver más en ${categoriaInfo.nombre.toLowerCase()}
             </div>
         </div>
     `;

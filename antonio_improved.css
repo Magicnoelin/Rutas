@@ -75,23 +75,36 @@
     font-size: 1.8rem;
 }
 
-/* BADGE DE NOTIFICACIONES */
+/* BADGE DE NOTIFICACIONES - MEJORADO PARA MÓVIL */
 .antonio-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    background: #e74c3c;
+    top: -2px;
+    right: -2px;
+    background: #ff9800;
     color: var(--antonio-white);
     border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    font-size: 0.75rem;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
     font-weight: bold;
     display: flex !important;
     align-items: center;
     justify-content: center;
     border: 2px solid var(--antonio-white);
-    animation: antonio-pulse 1.5s infinite;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 10001;
+}
+
+/* En móvil, hacer el badge más visible */
+@media (max-width: 480px) {
+    .antonio-badge {
+        width: 18px;
+        height: 18px;
+        font-size: 0.65rem;
+        top: -1px;
+        right: -1px;
+        border-width: 1.5px;
+    }
 }
 
 @keyframes antonio-pulse {
