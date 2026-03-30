@@ -1,8 +1,8 @@
 <?php
 // Idioma chino
 $lang = 'zh';
-$page_title = '2026年日食地图 | 西班牙最佳观赏地点 | 乡村路线';
-$page_description = '在2026年8月12日日全食的全食带寻找农村住宿。西班牙酒店和农村房屋互动地图。';
+$page_title = '2026年日食地图 | 西班牙最佳观测地点 | 乡村路线';
+$page_description = '寻找2026年8月12日日全食全食带的乡村住宿。西班牙酒店和乡村房屋的交互式地图。';
 
 // Conexión a la base de datos
 $host = "localhost";
@@ -30,13 +30,13 @@ $conn->close();
 
 // Traducciones específicas de la página
 $page_translations = [
-    'hero_title' => '🌒 2026年西班牙日全食观赏地点',
-    'hero_subtitle' => '在<strong>全食带</strong>寻找酒店和农村房屋。',
+    'hero_title' => '🌒 2026年在西班牙观看日全食的最佳地点',
+    'hero_subtitle' => '在<strong>全食带</strong>寻找酒店和乡村房屋。',
     'timer_prefix' => '剩余天数',
-    'seo_title' => '2026年日食最佳观赏地点',
-    'seo_text' => '要在2026年8月12日体验<strong>完全黑暗</strong>，必须位于阴影带内。我们的互动地图使用<strong>经纬度坐标</strong>，只显示能保证独特天文体验的住宿。',
+    'seo_title' => '2026年日食最佳观测地点',
+    'seo_text' => '为了在2026年8月12日体验<strong>完全黑暗</strong>，必须位于阴影带内。我们的交互式地图使用<strong>经纬度</strong>坐标，仅向您展示保证独特天文体验的住宿。',
     'badge_total' => '全食带 100%',
-    'badge_partial' => '偏食进阶',
+    'badge_partial' => '高级偏食',
     'view_details' => '查看详情'
 ];
 
@@ -57,7 +57,7 @@ include '../header.php';
 
 <div class="container-eclipse">
     <div class="hero-eclipse">
-        <h1>🌒 <?php echo $page_translations['hero_title']; ?></h1>
+    <h1>🌒 <?php echo $page_translations['hero_title']; ?></h1>
         <p><?php echo $page_translations['hero_subtitle']; ?></p>
         <div id="timer"><?php echo $page_translations['timer_prefix']; ?>...</div>
     </div>
@@ -97,7 +97,7 @@ window.onload = function() {
                     '<span class="badge-totalidad"><?php echo $page_translations['badge_total']; ?></span>' : 
                     '<span style="color:gray; font-size:0.8em;"><?php echo $page_translations['badge_partial']; ?></span>';
 
-                // 缩略图带alt属性
+                // Thumbnail with alt attribute
                 var fotoUrl = loc.photo1 && loc.photo1.trim() !== '' 
                     ? loc.photo1 
                     : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&h=150&fit=crop';

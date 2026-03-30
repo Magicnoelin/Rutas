@@ -1,29 +1,287 @@
-<footer class="footer" style="background-color: #2c5f2d; color: white; padding: 40px 20px; font-family: 'Montserrat', sans-serif;">
-    <div class="container" style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; align-items: center; text-align: center;">
+<?php
+// Detectar idioma desde variable $lang o desde el path
+$lang = $lang ?? 'es';
+
+// Traducciones del footer
+$footer_translations = [
+    'es' => [
+        'contact' => 'Contacto',
+        'email' => 'Correo electrónico',
+        'phone' => 'Teléfono',
+        'legal_notice' => 'Aviso Legal',
+        'privacy' => 'Privacidad',
+        'cookies' => 'Cookies',
+        'acknowledgments' => 'Agradecimientos',
+        'social_commitment' => 'Compromiso Social',
+        'copyright' => '&copy; 2026 <strong>rutasrurales.io</strong>. Todos los derechos reservados.',
+        'follow_us' => 'Síguenos',
+        'eclipse_info' => 'Información Eclipse 2026',
+        'accommodations' => 'Alojamientos',
+        'places' => 'Lugares de interés',
+        'events' => 'Eventos culturales',
+        'activities' => 'Actividades turísticas'
+    ],
+    'en' => [
+        'contact' => 'Contact',
+        'email' => 'Email',
+        'phone' => 'Phone',
+        'legal_notice' => 'Legal Notice',
+        'privacy' => 'Privacy',
+        'cookies' => 'Cookies',
+        'acknowledgments' => 'Acknowledgments',
+        'social_commitment' => 'Social Commitment',
+        'copyright' => '&copy; 2026 <strong>rutasrurales.io</strong>. All rights reserved.',
+        'follow_us' => 'Follow us',
+        'eclipse_info' => 'Eclipse 2026 Information',
+        'accommodations' => 'Accommodations',
+        'places' => 'Places of interest',
+        'events' => 'Cultural events',
+        'activities' => 'Tourist activities'
+    ],
+    'fr' => [
+        'contact' => 'Contact',
+        'email' => 'Email',
+        'phone' => 'Téléphone',
+        'legal_notice' => 'Mentions légales',
+        'privacy' => 'Confidentialité',
+        'cookies' => 'Cookies',
+        'acknowledgments' => 'Remerciements',
+        'social_commitment' => 'Engagement social',
+        'copyright' => '&copy; 2026 <strong>rutasrurales.io</strong>. Tous droits réservés.',
+        'follow_us' => 'Suivez-nous',
+        'eclipse_info' => 'Informations Éclipse 2026',
+        'accommodations' => 'Hébergements',
+        'places' => 'Lieux d\'intérêt',
+        'events' => 'Événements culturels',
+        'activities' => 'Activités touristiques'
+    ],
+    'de' => [
+        'contact' => 'Kontakt',
+        'email' => 'E-Mail',
+        'phone' => 'Telefon',
+        'legal_notice' => 'Impressum',
+        'privacy' => 'Datenschutz',
+        'cookies' => 'Cookies',
+        'acknowledgments' => 'Danksagungen',
+        'social_commitment' => 'Soziales Engagement',
+        'copyright' => '&copy; 2026 <strong>rutasrurales.io</strong>. Alle Rechte vorbehalten.',
+        'follow_us' => 'Folgen Sie uns',
+        'eclipse_info' => 'Eclipse 2026 Informationen',
+        'accommodations' => 'Unterkünfte',
+        'places' => 'Sehenswürdigkeiten',
+        'events' => 'Kulturelle Veranstaltungen',
+        'activities' => 'Touristische Aktivitäten'
+    ],
+    'zh' => [
+        'contact' => '联系',
+        'email' => '电子邮件',
+        'phone' => '电话',
+        'legal_notice' => '法律声明',
+        'privacy' => '隐私',
+        'cookies' => 'Cookies',
+        'acknowledgments' => '致谢',
+        'social_commitment' => '社会责任',
+        'copyright' => '&copy; 2026 <strong>rutasrurales.io</strong>. 保留所有权利。',
+        'follow_us' => '关注我们',
+        'eclipse_info' => '2026年日食信息',
+        'accommodations' => '住宿',
+        'places' => '景点',
+        'events' => '文化活动',
+        'activities' => '旅游活动'
+    ]
+];
+
+$ft = $footer_translations[$lang] ?? $footer_translations['es'];
+$lang_prefix = ($lang != 'es') ? '/' . $lang : '';
+?>
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3><?php echo $ft['contact']; ?></h3>
+                <div class="footer-info">
+                    <span class="footer-item">
+                        <i class="fas fa-envelope"></i> 
+                        <a href="mailto:olgamarin@rutasrurales.io">olgamarin@rutasrurales.io</a>
+                    </span>
+                    <span class="footer-item">
+                        <i class="fas fa-phone"></i> 
+                        <a href="tel:+34605249696">+34 605 249 696</a>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3><?php echo $ft['follow_us']; ?></h3>
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/rutasrurales.io" target="_blank" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://twitter.com/rutasrurales" target="_blank" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://www.instagram.com/rutasrurales.io" target="_blank" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/company/rutasrurales" target="_blank" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3><?php echo $ft['eclipse_info']; ?></h3>
+                <div class="footer-links">
+                    <a href="<?php echo $lang_prefix; ?>/mapa-eclipse.php"><?php echo $ft['eclipse_info']; ?></a>
+                    <a href="<?php echo $lang_prefix; ?>/alojamientos-turisticos.html"><?php echo $ft['accommodations']; ?></a>
+                    <a href="<?php echo $lang_prefix; ?>/lugares-interes-paginacion.html"><?php echo $ft['places']; ?></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3><?php echo $ft['legal_notice']; ?></h3>
+                <div class="footer-links">
+                    <a href="<?php echo $lang_prefix; ?>/aviso-legal.html"><?php echo $ft['legal_notice']; ?></a>
+                    <a href="<?php echo $lang_prefix; ?>/politica-privacidad.html"><?php echo $ft['privacy']; ?></a>
+                    <a href="<?php echo $lang_prefix; ?>/politica-cookies.html"><?php echo $ft['cookies']; ?></a>
+                    <a href="<?php echo $lang_prefix; ?>/agradecimientos.html"><?php echo $ft['acknowledgments']; ?></a>
+                    <a href="<?php echo $lang_prefix; ?>/compromiso-social.html"><?php echo $ft['social_commitment']; ?></a>
+                </div>
+            </div>
+        </div>
         
-        <div class="footer-info" style="display: flex; flex-direction: column; gap: 15px; font-size: 0.95rem;">
-            <span style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                <i class="fas fa-envelope" style="color: #d4a574;"></i> 
-                <a href="mailto:olgamarin@rutasrurales.io" style="color: white; text-decoration: none;">olgamarin@rutasrurales.io</a>
-            </span>
-            <span style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                <i class="fas fa-phone" style="color: #d4a574;"></i> 
-                <a href="tel:+34605249696" style="color: white; text-decoration: none;">+34 605 249 696</a>
-            </span>
-        </div>
-
-        <div class="footer-links" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 20px 0; width: 100%;">
-            <a href="aviso-legal.html" style="color: #d4a574; text-decoration: none; padding: 5px 10px;">Aviso Legal</a>
-            <a href="politica-privacidad.html" style="color: #d4a574; text-decoration: none; padding: 5px 10px;">Privacidad</a>
-            <a href="politica-cookies.html" style="color: #d4a574; text-decoration: none; padding: 5px 10px;">Cookies</a>
-            <a href="agradecimientos.html" style="color: #d4a574; text-decoration: none; padding: 5px 10px;">Agradecimientos</a>
-        </div>
-
-        <div class="footer-copyright" style="font-size: 0.75rem; opacity: 0.8;">
-            <p style="margin: 0;">&copy; 2026 <strong>rutasrurales.io</strong>. Todos los derechos reservados.</p>
+        <div class="footer-bottom">
+            <div class="footer-copyright">
+                <p><?php echo $ft['copyright']; ?></p>
+            </div>
         </div>
     </div>
 </footer>
+
+<style>
+.footer {
+    background-color: #2c5f2d;
+    color: white;
+    padding: 40px 20px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.footer-section h3 {
+    color: #d4a574;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+}
+
+.footer-item i {
+    color: #d4a574;
+    width: 20px;
+    text-align: center;
+}
+
+.footer-item a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-item a:hover {
+    color: #d4a574;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.footer-social a:hover {
+    background: #d4a574;
+    transform: translateY(-3px);
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 4px 0;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #d4a574;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    text-align: center;
+}
+
+.footer-copyright {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.footer-copyright p {
+    margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .footer {
+        padding: 30px 15px;
+    }
+}
+</style>
 
 <script src="script.js?v=20260114"></script>
 
