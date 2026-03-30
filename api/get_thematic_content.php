@@ -38,7 +38,7 @@ try {
     if (!empty($config['filters']['events']['category_ids'])) {
         $ids = implode(',', $config['filters']['events']['category_ids']);
         $today = date('Y-m-d');
-        $stmt = $pdo->query("SELECT id, name, slug, poster_image as photo1, municipality, province, start_date FROM cultural_events WHERE category_id IN ($ids) AND is_active = 1 AND start_date >= '$today' ORDER BY start_date ASC LIMIT 8");
+        $stmt = $pdo->query("SELECT id, name, slug, poster_image as photo1, municipality, province, start_date FROM cultural_events WHERE category_id IN ($ids) AND is_active = 1 AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= '$today' ORDER BY start_date ASC LIMIT 8");
         $results['events'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

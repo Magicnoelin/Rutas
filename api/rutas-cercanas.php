@@ -120,7 +120,7 @@ try {
 
     // Obtener eventos culturales cercanos
     if (in_array('eventos', $categorias)) {
-        $stmt = $pdo->query("SELECT id, slug, name, venue_name as location, municipality, province, latitude, longitude, photo1, poster_image, ticket_price as price, category_id as category, created_by as propietario_id, description, start_date FROM cultural_events WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0 AND (start_date >= CURDATE() OR end_date >= CURDATE())");
+        $stmt = $pdo->query("SELECT id, slug, name, venue_name as location, municipality, province, latitude, longitude, photo1, poster_image, ticket_price as price, category_id as category, created_by as propietario_id, description, start_date FROM cultural_events WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0 AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()");
         $eventos = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $distancia = calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude']);

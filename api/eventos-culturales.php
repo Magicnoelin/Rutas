@@ -45,7 +45,7 @@ try {
         latitude,
         longitude
     FROM cultural_events 
-    WHERE status = 'scheduled' AND is_active = 1 AND start_date >= CURDATE()";
+    WHERE status = 'scheduled' AND is_active = 1 AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()";
 
     $conditions = [];
     $params = [];

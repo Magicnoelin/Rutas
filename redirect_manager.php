@@ -352,7 +352,7 @@ if (file_exists($templateFile)) {
                         if (!empty($data['municipality']) || !empty($data['province'])) {
                             try {
                                 $today = date('Y-m-d');
-                                $stmtEvents = $pdo->prepare("SELECT * FROM cultural_events WHERE (municipality = :municipality OR province = :province) AND is_active = 1 AND start_date >= :today ORDER BY start_date ASC, CASE WHEN municipality = :municipality THEN 0 ELSE 1 END LIMIT 5");
+                                $stmtEvents = $pdo->prepare("SELECT * FROM cultural_events WHERE (municipality = :municipality OR province = :province) AND is_active = 1 AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= :today ORDER BY start_date ASC, CASE WHEN municipality = :municipality THEN 0 ELSE 1 END LIMIT 5");
                                 $stmtEvents->execute([':municipality' => $data['municipality'], ':province' => $data['province'], ':today' => $today]);
                                 $events = $stmtEvents->fetchAll(PDO::FETCH_ASSOC);
 
