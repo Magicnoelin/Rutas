@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descubre eventos culturales en Rutas Rurales - Red Unificada de Turistas, Alojamientos y Servicios">
+    <title>Detalle del Evento | Rutas Rurales</title>
+    
+    <!-- Preconnect para mejorar rendimiento -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://maps.googleapis.com">
+    
+    <!-- Google Tag Manager (async) -->
+    <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MBP57VQM');
+    </script>
+    
+    <link rel="canonical" id="dynamic-canonical" href="https://www.rutasrurales.io/evento-detalle.html">
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    
+    <!-- CSS crítico (inline para primera pintura rápida) -->
+    <style>
+        /* Variables y reset */
+        :root {
+            --primary-color: #2F5233;
+            --secondary-color: #6B8E6B;
+            --accent-color: #B8956A;
+            --dark-color: #1A2E1A;
+            --light-color: #f5f5f5;
+            --white: #ffffff;
+            --focus-color: #0056b3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: var(--white);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            background-color: var(--primary-color);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 0.8rem 0;
+        }
+        
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+        
+        /* Estados de carga */
+        #loading {
+            text-align: center;
+            padding: 5rem;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fa-spinner {
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Error */
+        #error-msg {
+            text-align: center;
+            padding: 5rem;
+            min-height: 60vh;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Main content */
+        main {
+            margin-top: 100px;
+            min-height: 600px;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            padding: 2rem 0;
+            background: #2F5233;
+            color: white;
+            text-align: center;
+        }
+        
+        /* Accesibilidad */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        :focus {
+            outline: 3px solid var(--focus-color);
+            outline-offset: 2px;
+        }
+        
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        :focus-visible {
+            outline: 3px solid var(--focus-color);
+            outline-offset: 2px;
+        }
+        
+        /* Soporte alto contraste */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-color: #1A2E1A;
+                --accent-color: #8B4513;
+            }
+        }
+        
+        /* Reducción de movimiento */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+    
+    <!-- CSS no crítico (cargado diferido) -->
+    <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+    
+    <!-- Font Awesome diferido -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json" id="event-schema">
+    </script>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    
+    <header class="header" role="banner">
+        <nav class="navbar" aria-label="Navegación principal">
+            <div class="container">
+                <div class="logo">
+                    <a href="/index.html" aria-label="Inicio - Rutas Rurales">
+                        <img src="/menu_images/Logo%20transparente.webp" alt="Logo Rutas Rurales" width="150" height="50">
+                    </a>
+                </div>
+                
+                <button class="hamburger" aria-label="Menú" aria-expanded="false" aria-controls="navMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                
+                <div class="nav-menu" id="navMenu" role="navigation">
+                    <ul class="nav-row">
+                        <li><a href="/alojamientos-turisticos.html" aria-label="Alojamientos">
+                            <i class="fas fa-bed" aria-hidden="true"></i>
+                            <span>Alojamientos</span>
+                        </a></li>
+                        <li><a href="/lugares-interes-paginacion.html" aria-label="Lugares de interés">
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                            <span>Lugares</span>
+                        </a></li>
+                        <li><a href="/eventos-culturales-paginacion.html" aria-label="Eventos culturales">
+                            <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+                            <span>Eventos</span>
+                        </a></li>
+                        <li><a href="/actividades-turisticas.html" aria-label="Actividades turísticas">
+                            <i class="fas fa-hiking" aria-hidden="true"></i>
+                            <span>Actividades</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container" id="main-content" role="main">
+        <div id="loading" aria-live="polite" aria-busy="true">
+            <i class="fas fa-spinner fa-spin fa-3x" aria-hidden="true"></i>
+            <p>Cargando detalles del evento...</p>
+        </div>
+
+        <div id="error-msg" aria-live="assertive" style="display: none;">
+            <i class="fas fa-exclamation-circle fa-4x" aria-hidden="true"></i>
+            <h2>No pudimos encontrar este evento</h2>
+            <a href="/eventos-culturales-paginacion.html" class="btn-primary">
+                Ver todos los eventos
+            </a>
+        </div>
+
+        <div id="detail-content" style="display: none;" aria-live="polite">
+            <!-- Contenido cargado dinámicamente -->
+        </div>
+        
+        <!-- Carrusel de alojamientos -->
+        <section id="accommodations-carousel" class="accommodations-carousel-section" style="display: none;" aria-label="Alojamientos cercanos">
+            <div class="container">
+                <h2 class="accommodations-carousel-header">
+                    <i class="fas fa-bed" aria-hidden="true"></i> Alojamientos Turísticos Cercanos
+                </h2>
+                <p>Descubre los mejores alojamientos turísticos en <span id="carousel-province-name"></span></p>
+                
+                <div class="carousel-wrapper" role="region" aria-label="Carrusel de alojamientos">
+                    <button class="carousel-nav-btn prev" id="carousel-prev" aria-label="Anterior">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                        <span class="sr-only">Anterior</span>
+                    </button>
+                    <button class="carousel-nav-btn next" id="carousel-next" aria-label="Siguiente">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                        <span class="sr-only">Siguiente</span>
+                    </button>
+                    
+                    <div class="carousel-track" id="carousel-track" role="list" aria-label="Lista de alojamientos">
+                        <!-- Tarjetas cargadas dinámicamente -->
+                    </div>
+                    
+                    <div class="carousel-dots" id="carousel-dots" role="tablist" aria-label="Navegación por puntos">
+                        <!-- Puntos cargados dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sección de comentarios -->
+        <section id="comments-section" class="comments-section" style="display: none;" aria-label="Comentarios">
+            <h2><i class="fas fa-comments" aria-hidden="true"></i> <span id="comments-title">Comentarios</span></h2>
+            <p class="comments-subtitle" id="comments-subtitle">Comparte tu experiencia sobre este evento</p>
+
+            <!-- Formulario de comentario -->
+            <form id="comment-form" class="comment-form" aria-label="Formulario de comentario">
+                <h3><i class="fas fa-pen" aria-hidden="true"></i> <span id="form-title">Deja tu comentario</span></h3>
+                
+                <div class="comment-form-row">
+                    <div class="form-group">
+                        <label for="comment-name" class="sr-only">Tu nombre</label>
+                        <input type="text" id="comment-name" placeholder="Tu nombre *" maxlength="100" required
+                               aria-required="true" aria-describedby="name-error">
+                        <span id="name-error" class="error-message" aria-live="polite"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment-email" class="sr-only">Tu email</label>
+                        <input type="email" id="comment-email" placeholder="Tu email (opcional)" maxlength="255"
+                               aria-describedby="email-error">
+                        <span id="email-error" class="error-message" aria-live="polite"></span>
+                    </div>
+                </div>
+                
+                <fieldset class="star-rating" id="star-rating" aria-label="Valoración">
+                    <legend class="sr-only">Valoración</legend>
+                    <div role="radiogroup" aria-label="Selecciona una valoración">
+                        <button type="button" class="star-btn" data-value="1" aria-label="1 estrella, Malo">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-value="2" aria-label="2 estrellas, Regular">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-value="3" aria-label="3 estrellas, Bueno">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-value="4" aria-label="4 estrellas, Muy bueno">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-value="5" aria-label="5 estrellas, Excelente">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <span class="star-label" id="star-label" aria-live="polite"></span>
+                </fieldset>
+                
+                <div class="form-group">
+                    <label for="comment-text" class="sr-only">Tu comentario</label>
+                    <textarea id="comment-text" placeholder="Escribe tu comentario... *" maxlength="2000" 
+                              required aria-required="true" aria-describedby="comment-error char-count"></textarea>
+                    <span id="comment-error" class="error-message" aria-live="polite"></span>
+                    <span class="comment-char-count" id="char-count" aria-live="polite">0 / 2000</span>
+                </div>
+                
+                <div class="comment-form-footer">
+                    <button type="submit" class="btn-submit-comment" id="btn-submit-comment">
+                        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                        <span id="btn-submit-text">Publicar comentario</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Lista de comentarios -->
+            <div id="comments-list" class="comments-list" role="feed" aria-label="Lista de comentarios">
+                <div class="comments-loading">
+                    <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                    <p>Cargando comentarios...</p>
+                </div>
+            </div>
+
+            <!-- Paginación -->
+            <nav id="comments-pagination" class="comments-pagination" style="display: none;" aria-label="Paginación de comentarios">
+                <!-- Paginación cargada dinámicamente -->
+            </nav>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript optimizado -->
+    <script>
+        // Cargar Google Maps solo cuando sea necesario
+        function loadGoogleMaps() {
+            if (!window.mapsLoaded) {
+                window.mapsLoaded = true;
+                const script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNdQ1eauGeKUTMLAJ5_TwwRxo91wWsPg&libraries=places&callback=initMapCallback&loading=async';
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+        }
+        
+        // Sistema de cache simple
+        const eventCache = new Map();
+        const CACHE_TTL = 300000; // 5 minutos
+        
+        async function fetchEvent(slug, lang = 'es') {
+            const cacheKey = `${slug}-${lang}`;
+            const cached = eventCache.get(cacheKey);
+            
+            if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+                return cached.data;
+            }
+            
+            try {
+                const response = await fetch(`/api/evento-detalle.php?slug=${encodeURIComponent(slug)}&lang=${lang}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    eventCache.set(cacheKey, {
+                        data: data.data,
+                        timestamp: Date.now()
+                    });
+                    return data.data;
+                }
+            } catch (error) {
+                console.error('Error fetching event:', error);
+            }
+            
+            return null;
+        }
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug') || window.location.pathname.split('/').pop();
+            
+            if (slug) {
+                const event = await fetchEvent(slug);
+                if (event
