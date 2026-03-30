@@ -6,6 +6,7 @@
 // ESTADO DE LA CONVERSACIÓN
 let antonioState = {
     // Información del usuario
+    provincia: null,
     dias: null,
     intereses: [],
     presupuesto: null,
@@ -27,131 +28,24 @@ let antonioState = {
     }
 };
 
-// DATOS DE EJEMPLO (simulando las 4 tablas)
+// BASE DE DATOS VACÍA - SE LLENARÁ CON DATOS REALES
 const antonioDatabase = {
-    accommodations: [
-        {
-            id: 1,
-            nombre: 'Casa Rural El Roble',
-            descripcion: 'Casa tradicional con chimenea y vistas espectaculares a la montaña. Capacidad para 6 personas.',
-            ubicacion: 'Valle de Hoyocasero',
-            precio: 'Desde 120€/noche',
-            icono: '🏨',
-            categoria: 'accommodations'
-        },
-        {
-            id: 2,
-            nombre: 'Hotel Rural Numantino',
-            descripcion: 'Hotel con encanto histórico junto al yacimiento de Numancia. Desayuno incluido.',
-            ubicacion: 'Garray',
-            precio: 'Desde 85€/noche',
-            icono: '🏨',
-            categoria: 'accommodations'
-        },
-        {
-            id: 3,
-            nombre: 'Apartamento La Plaza',
-            descripcion: 'Apartamento céntrico en Vinuesa, ideal para parejas. Parking gratuito.',
-            ubicacion: 'Vinuesa',
-            precio: 'Desde 75€/noche',
-            icono: '🏨',
-            categoria: 'accommodations'
-        }
-    ],
-    
-    places_of_interest: [
-        {
-            id: 1,
-            nombre: 'Yacimiento de Numancia',
-            descripcion: 'Ciudad celtíbera que resistió heroicamente al Imperio Romano. Visita guiada disponible.',
-            ubicacion: 'Garray',
-            entrada: '5€',
-            icono: '🏛️',
-            categoria: 'places_of_interest'
-        },
-        {
-            id: 2,
-            nombre: 'Cañón del Río Lobos',
-            descripcion: 'Parque Natural con formaciones rocosas espectaculares y la ermita de San Bartolomé.',
-            ubicacion: 'Ucero',
-            entrada: 'Gratuita',
-            icono: '🏛️',
-            categoria: 'places_of_interest'
-        },
-        {
-            id: 3,
-            nombre: 'Laguna Negra de Urbión',
-            descripcion: 'Laguna glaciar de ensueño en los Picos de Urbión. Ruta circular de 3-4 horas.',
-            ubicacion: 'Vinuesa',
-            entrada: 'Gratuita',
-            icono: '🏛️',
-            categoria: 'places_of_interest'
-        }
-    ],
-    
-    tourist_activities: [
-        {
-            id: 1,
-            nombre: 'Senderismo Laguna Negra',
-            descripcion: 'Ruta circular de alta montaña con paisajes espectaculares. Dificultad media.',
-            duracion: '3-4 horas',
-            precio: 'Gratuita',
-            icono: '🥾',
-            categoria: 'tourist_activities'
-        },
-        {
-            id: 2,
-            nombre: 'Ruta Micológica',
-            descripcion: 'Recogida de setas con guía experto. Temporada de otoño (septiembre-noviembre).',
-            duracion: '4 horas',
-            precio: 'Desde 25€/persona',
-            icono: '🥾',
-            categoria: 'tourist_activities'
-        },
-        {
-            id: 3,
-            nombre: 'Observación Astronómica',
-            descripcion: 'Experiencia nocturna con telescopios profesionales en zona certificada Starlight.',
-            duracion: '2-3 horas',
-            precio: 'Desde 30€/persona',
-            icono: '🥾',
-            categoria: 'tourist_activities'
-        }
-    ],
-    
-    cultural_events: [
-        {
-            id: 1,
-            nombre: 'Festival de Teatro Clásico',
-            descripcion: 'Obras clásicas en los teatros históricos de la provincia. Programación variada.',
-            fecha: '15-30 agosto',
-            ubicacion: 'Varios lugares',
-            precio: 'Desde 10€',
-            icono: '🎭',
-            categoria: 'cultural_events'
-        },
-        {
-            id: 2,
-            nombre: 'Jornadas Micológicas',
-            descripcion: 'Degustación, talleres y rutas guiadas para amantes de las setas.',
-            fecha: 'Octubre',
-            ubicacion: 'Vinuesa',
-            precio: 'Gratuito',
-            icono: '🎭',
-            categoria: 'cultural_events'
-        },
-        {
-            id: 3,
-            nombre: 'Concierto de Verano',
-            descripcion: 'Música clásica al aire libre en un entorno natural incomparable.',
-            fecha: '15 agosto',
-            ubicacion: 'Monasterio de San Juan de Duero',
-            precio: '15€',
-            icono: '🎭',
-            categoria: 'cultural_events'
-        }
-    ]
+    accommodations: [],
+    places_of_interest: [],
+    tourist_activities: [],
+    cultural_events: []
 };
+
+// PROVINCIAS DISPONIBLES
+const provinciasEspana = [
+    'Álava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona', 
+    'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ciudad Real', 'Córdoba', 'Cuenca', 
+    'Gerona', 'Granada', 'Guadalajara', 'Guipúzcoa', 'Huelva', 'Huesca', 'Islas Baleares', 
+    'Jaén', 'La Coruña', 'La Rioja', 'Las Palmas', 'León', 'Lérida', 'Lugo', 'Madrid', 'Málaga', 
+    'Murcia', 'Navarra', 'Orense', 'Palencia', 'Pontevedra', 'Salamanca', 'Santa Cruz de Tenerife', 
+    'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Teruel', 'Toledo', 'Valencia', 'Valladolid', 
+    'Vizcaya', 'Zamora', 'Zaragoza'
+];
 
 // ===============================================
 // INICIALIZACIÓN DEL WIDGET
@@ -317,10 +211,84 @@ function mostrarMensajeBienvenida() {
             <li>🥾 <strong>Actividades turísticas</strong> - Senderismo, rutas, experiencias</li>
             <li>🎭 <strong>Eventos culturales</strong> - Festivales, conciertos, exposiciones</li>
         </ul>
-        <p>¿En qué puedo ayudarte hoy? 😊</p>
+        <p>Para poder ayudarte mejor, ¿en qué provincia de España te encuentras o planeas visitar?</p>
     `;
     
-    agregarMensajeBot(mensaje);
+    // Crear selector de provincias
+    let selectorProvincias = `<div class="antonio-suggestions">
+        <div class="antonio-suggestions-title">
+            <i class="fas fa-map-marker-alt"></i> Selecciona tu provincia:
+        </div>
+        <div class="antonio-suggestions-list" style="max-height: 200px; overflow-y: auto;">`;
+    
+    // Agrupar provincias por letra inicial para mejor organización
+    const provinciasPorLetra = {};
+    provinciasEspana.forEach(provincia => {
+        const letra = provincia.charAt(0).toUpperCase();
+        if (!provinciasPorLetra[letra]) {
+            provinciasPorLetra[letra] = [];
+        }
+        provinciasPorLetra[letra].push(provincia);
+    });
+    
+    // Ordenar letras alfabéticamente
+    const letrasOrdenadas = Object.keys(provinciasPorLetra).sort();
+    
+    letrasOrdenadas.forEach(letra => {
+        selectorProvincias += `<div style="margin-bottom: 8px;">
+            <div style="font-size: 0.8rem; color: #666; margin-bottom: 4px; font-weight: 600;">${letra}</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">`;
+        
+        provinciasPorLetra[letra].forEach(provincia => {
+            selectorProvincias += `<button class="antonio-suggestion-btn" onclick="seleccionarProvincia('${provincia}')" style="font-size: 0.8rem; padding: 6px 10px;">
+                ${provincia}
+            </button>`;
+        });
+        
+        selectorProvincias += `</div></div>`;
+    });
+    
+    selectorProvincias += `</div></div>`;
+    
+    agregarMensajeBot(mensaje + selectorProvincias);
+}
+
+// Función para seleccionar provincia
+function seleccionarProvincia(provincia) {
+    antonioState.provincia = provincia;
+    
+    const respuesta = `
+        <p>¡Perfecto! Has seleccionado <strong>${provincia}</strong> 🗺️</p>
+        <p>Ahora puedo mostrarte información específica para esta provincia.</p>
+        <p>¿En qué puedo ayudarte?</p>
+    `;
+    
+    agregarMensajeBot(respuesta);
+    
+    // Mostrar opciones rápidas después de seleccionar provincia
+    setTimeout(() => {
+        agregarMensajeBot(`
+            <div class="antonio-suggestions">
+                <div class="antonio-suggestions-title">
+                    <i class="fas fa-bolt"></i> Opciones rápidas para ${provincia}:
+                </div>
+                <div class="antonio-suggestions-list">
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('alojamientos')">
+                        🏨 Ver alojamientos
+                    </button>
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('lugares')">
+                        🏛️ Ver lugares
+                    </button>
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('actividades')">
+                        🥾 Ver actividades
+                    </button>
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('eventos')">
+                        🎭 Ver eventos
+                    </button>
+                </div>
+            </div>
+        `);
+    }, 500);
 }
 
 function enviarMensajeUsuario() {
@@ -631,6 +599,60 @@ function responderSaludo() {
 }
 
 function mostrarCategoria(categoria) {
+    // Verificar si se ha seleccionado provincia
+    if (!antonioState.provincia) {
+        pedirProvinciaParaCategoria(categoria);
+        return;
+    }
+    
+    const datos = antonioDatabase[categoria];
+    const infoCategoria = antonioState.categorias[categoria];
+    
+    if (!datos || datos.length === 0) {
+        agregarMensajeBot(`<p>No tengo información disponible en este momento sobre ${infoCategoria.nombre.toLowerCase()} en ${antonioState.provincia}.</p>`);
+        agregarMensajeBot(`<p>Prueba con otra provincia o pregunta sobre otra categoría.</p>`);
+        return;
+    }
+    
+    // Filtrar por provincia si hay datos de ubicación
+    let datosFiltrados = datos;
+    if (antonioState.provincia) {
+        datosFiltrados = datos.filter(item => {
+            const ubicacion = item.ubicacion || item.location || '';
+            return ubicacion.toLowerCase().includes(antonioState.provincia.toLowerCase());
+        });
+    }
+    
+    if (datosFiltrados.length === 0) {
+        agregarMensajeBot(`<p>No encontré ${infoCategoria.nombre.toLowerCase()} específicos para ${antonioState.provincia}.</p>`);
+        agregarMensajeBot(`<p>¿Te gustaría ver todos los ${infoCategoria.nombre.toLowerCase()} disponibles?</p>`);
+        
+        const botonVerTodos = `<button class="antonio-suggestion-btn" onclick="mostrarCategoriaSinFiltro('${categoria}')">
+            ${infoCategoria.icono} Ver todos los ${infoCategoria.nombre.toLowerCase()}
+        </button>`;
+        
+        agregarMensajeBot(`<div class="antonio-suggestions-list" style="margin-top: 10px;">${botonVerTodos}</div>`);
+        return;
+    }
+    
+    let respuesta = `<p>¡Perfecto! Te muestro los <strong>${infoCategoria.nombre}</strong> disponibles en ${antonioState.provincia} ${infoCategoria.icono}:</p>`;
+    
+    // Crear grid de tarjetas
+    respuesta += `<div class="antonio-cards-grid">`;
+    
+    datosFiltrados.forEach(item => {
+        respuesta += crearTarjetaItem(item, infoCategoria);
+    });
+    
+    respuesta += `</div>`;
+    
+    // Añadir sugerencia relacionada
+    respuesta += generarSugerenciaRelacionada(categoria);
+    
+    agregarMensajeBot(respuesta);
+}
+
+function mostrarCategoriaSinFiltro(categoria) {
     const datos = antonioDatabase[categoria];
     const infoCategoria = antonioState.categorias[categoria];
     
@@ -639,7 +661,7 @@ function mostrarCategoria(categoria) {
         return;
     }
     
-    let respuesta = `<p>¡Perfecto! Te muestro los <strong>${infoCategoria.nombre}</strong> disponibles ${infoCategoria.icono}:</p>`;
+    let respuesta = `<p>Te muestro todos los <strong>${infoCategoria.nombre}</strong> disponibles ${infoCategoria.icono}:</p>`;
     
     // Crear grid de tarjetas
     respuesta += `<div class="antonio-cards-grid">`;
@@ -650,10 +672,70 @@ function mostrarCategoria(categoria) {
     
     respuesta += `</div>`;
     
-    // Añadir sugerencia relacionada
-    respuesta += generarSugerenciaRelacionada(categoria);
+    agregarMensajeBot(respuesta);
+}
+
+function pedirProvinciaParaCategoria(categoria) {
+    const infoCategoria = antonioState.categorias[categoria];
+    
+    const mensaje = `
+        <p>Para mostrarte ${infoCategoria.nombre.toLowerCase()}, necesito saber en qué provincia te encuentras o planeas visitar.</p>
+        <p>¿Podrías seleccionar una provincia?</p>
+    `;
+    
+    // Crear selector de provincias
+    let selectorProvincias = `<div class="antonio-suggestions">
+        <div class="antonio-suggestions-title">
+            <i class="fas fa-map-marker-alt"></i> Selecciona tu provincia:
+        </div>
+        <div class="antonio-suggestions-list" style="max-height: 200px; overflow-y: auto;">`;
+    
+    // Agrupar provincias por letra inicial
+    const provinciasPorLetra = {};
+    provinciasEspana.forEach(provincia => {
+        const letra = provincia.charAt(0).toUpperCase();
+        if (!provinciasPorLetra[letra]) {
+            provinciasPorLetra[letra] = [];
+        }
+        provinciasPorLetra[letra].push(provincia);
+    });
+    
+    // Ordenar letras alfabéticamente
+    const letrasOrdenadas = Object.keys(provinciasPorLetra).sort();
+    
+    letrasOrdenadas.forEach(letra => {
+        selectorProvincias += `<div style="margin-bottom: 8px;">
+            <div style="font-size: 0.8rem; color: #666; margin-bottom: 4px; font-weight: 600;">${letra}</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">`;
+        
+        provinciasPorLetra[letra].forEach(provincia => {
+            selectorProvincias += `<button class="antonio-suggestion-btn" onclick="seleccionarProvinciaYCategoria('${provincia}', '${categoria}')" style="font-size: 0.8rem; padding: 6px 10px;">
+                ${provincia}
+            </button>`;
+        });
+        
+        selectorProvincias += `</div></div>`;
+    });
+    
+    selectorProvincias += `</div></div>`;
+    
+    agregarMensajeBot(mensaje + selectorProvincias);
+}
+
+function seleccionarProvinciaYCategoria(provincia, categoria) {
+    antonioState.provincia = provincia;
+    
+    const respuesta = `
+        <p>¡Perfecto! Has seleccionado <strong>${provincia}</strong> 🗺️</p>
+        <p>Ahora te muestro información sobre ${antonioState.categorias[categoria].nombre.toLowerCase()} en esta provincia:</p>
+    `;
     
     agregarMensajeBot(respuesta);
+    
+    // Mostrar la categoría después de un breve delay
+    setTimeout(() => {
+        mostrarCategoria(categoria);
+    }, 800);
 }
 
 function crearTarjetaItem(item, categoriaInfo) {
@@ -695,34 +777,49 @@ function crearTarjetaItem(item, categoriaInfo) {
 }
 
 function buscarEnCategoria(categoria, terminos) {
+    // Verificar si se ha seleccionado provincia
+    if (!antonioState.provincia) {
+        pedirProvinciaParaBusqueda(categoria, terminos);
+        return;
+    }
+    
     const datos = antonioDatabase[categoria];
     const infoCategoria = antonioState.categorias[categoria];
     
     if (!datos || datos.length === 0) {
-        agregarMensajeBot(`<p>No tengo información disponible sobre eso en ${infoCategoria.nombre.toLowerCase()}.</p>`);
+        agregarMensajeBot(`<p>No tengo información disponible sobre eso en ${infoCategoria.nombre.toLowerCase()} en ${antonioState.provincia}.</p>`);
         return;
     }
     
-    // Filtrar datos por términos de búsqueda
+    // Filtrar datos por términos de búsqueda y provincia
     const resultados = datos.filter(item => {
         const textoBusqueda = `${item.nombre} ${item.descripcion} ${item.ubicacion || ''}`.toLowerCase();
-        return terminos.some(termino => textoBusqueda.includes(termino));
+        const tieneTerminos = terminos.some(termino => textoBusqueda.includes(termino));
+        
+        // Si hay provincia seleccionada, filtrar también por provincia
+        if (antonioState.provincia) {
+            const ubicacion = item.ubicacion || item.location || '';
+            const tieneProvincia = ubicacion.toLowerCase().includes(antonioState.provincia.toLowerCase());
+            return tieneTerminos && tieneProvincia;
+        }
+        
+        return tieneTerminos;
     });
     
     if (resultados.length === 0) {
-        agregarMensajeBot(`<p>No encontré resultados para tu búsqueda en ${infoCategoria.nombre.toLowerCase()}.</p>`);
-        agregarMensajeBot(`<p>¿Te interesa ver todos los ${infoCategoria.nombre.toLowerCase()} disponibles?</p>`);
+        agregarMensajeBot(`<p>No encontré resultados para tu búsqueda en ${infoCategoria.nombre.toLowerCase()} en ${antonioState.provincia}.</p>`);
+        agregarMensajeBot(`<p>¿Te interesa ver todos los ${infoCategoria.nombre.toLowerCase()} disponibles en ${antonioState.provincia}?</p>`);
         
         // Botón para ver todos
         const botonVerTodos = `<button class="antonio-suggestion-btn" onclick="mostrarCategoria('${categoria}')">
-            ${infoCategoria.icono} Ver todos los ${infoCategoria.nombre.toLowerCase()}
+            ${infoCategoria.icono} Ver todos los ${infoCategoria.nombre.toLowerCase()} en ${antonioState.provincia}
         </button>`;
         
         agregarMensajeBot(`<div class="antonio-suggestions-list" style="margin-top: 10px;">${botonVerTodos}</div>`);
         return;
     }
     
-    let respuesta = `<p>Encontré <strong>${resultados.length} resultado(s)</strong> en ${infoCategoria.nombre.toLowerCase()} ${infoCategoria.icono}:</p>`;
+    let respuesta = `<p>Encontré <strong>${resultados.length} resultado(s)</strong> en ${infoCategoria.nombre.toLowerCase()} en ${antonioState.provincia} ${infoCategoria.icono}:</p>`;
     
     respuesta += `<div class="antonio-cards-grid">`;
     
@@ -736,6 +833,69 @@ function buscarEnCategoria(categoria, terminos) {
     respuesta += generarSugerenciaRelacionada(categoria);
     
     agregarMensajeBot(respuesta);
+}
+
+function pedirProvinciaParaBusqueda(categoria, terminos) {
+    const infoCategoria = antonioState.categorias[categoria];
+    
+    const mensaje = `
+        <p>Para buscar "${terminos.join(', ')}" en ${infoCategoria.nombre.toLowerCase()}, necesito saber en qué provincia te encuentras o planeas visitar.</p>
+        <p>¿Podrías seleccionar una provincia?</p>
+    `;
+    
+    // Crear selector de provincias
+    let selectorProvincias = `<div class="antonio-suggestions">
+        <div class="antonio-suggestions-title">
+            <i class="fas fa-map-marker-alt"></i> Selecciona tu provincia:
+        </div>
+        <div class="antonio-suggestions-list" style="max-height: 200px; overflow-y: auto;">`;
+    
+    // Agrupar provincias por letra inicial
+    const provinciasPorLetra = {};
+    provinciasEspana.forEach(provincia => {
+        const letra = provincia.charAt(0).toUpperCase();
+        if (!provinciasPorLetra[letra]) {
+            provinciasPorLetra[letra] = [];
+        }
+        provinciasPorLetra[letra].push(provincia);
+    });
+    
+    // Ordenar letras alfabéticamente
+    const letrasOrdenadas = Object.keys(provinciasPorLetra).sort();
+    
+    letrasOrdenadas.forEach(letra => {
+        selectorProvincias += `<div style="margin-bottom: 8px;">
+            <div style="font-size: 0.8rem; color: #666; margin-bottom: 4px; font-weight: 600;">${letra}</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">`;
+        
+        provinciasPorLetra[letra].forEach(provincia => {
+            selectorProvincias += `<button class="antonio-suggestion-btn" onclick="seleccionarProvinciaYBuscar('${provincia}', '${categoria}', ${JSON.stringify(terminos)})" style="font-size: 0.8rem; padding: 6px 10px;">
+                ${provincia}
+            </button>`;
+        });
+        
+        selectorProvincias += `</div></div>`;
+    });
+    
+    selectorProvincias += `</div></div>`;
+    
+    agregarMensajeBot(mensaje + selectorProvincias);
+}
+
+function seleccionarProvinciaYBuscar(provincia, categoria, terminos) {
+    antonioState.provincia = provincia;
+    
+    const respuesta = `
+        <p>¡Perfecto! Has seleccionado <strong>${provincia}</strong> 🗺️</p>
+        <p>Ahora busco "${terminos.join(', ')}" en ${antonioState.categorias[categoria].nombre.toLowerCase()} en esta provincia:</p>
+    `;
+    
+    agregarMensajeBot(respuesta);
+    
+    // Realizar la búsqueda después de un breve delay
+    setTimeout(() => {
+        buscarEnCategoria(categoria, terminos);
+    }, 800);
 }
 
 function generarSugerenciaRelacionada(categoriaActual) {
