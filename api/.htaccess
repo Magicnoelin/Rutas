@@ -1,0 +1,79 @@
+# Configuración de seguridad para la API
+# Rutas - Sistema de Gestión de Alojamientos
+
+# Habilitar reescritura de URLs
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Forzar HTTPS (descomenta si tienes SSL)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Configuración de CORS - Permitir desde cualquier origen durante desarrollo
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+    Header set Access-Control-Max-Age "3600"
+</IfModule>
+
+# Responder a preflight requests (OPTIONS)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>
+
+# Proteger archivos sensibles (pero permitir que PHP los use internamente)
+<FilesMatch "^\.htaccess$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Permitir acceso a config.php solo desde PHP (no desde navegador)
+<Files "config.php">
+    Order Deny,Allow
+    Deny from all
+    <IfModule mod_php.c>
+        Allow from all
+    </IfModule>
+</Files>
+
+# Prevenir listado de directorios
+Options -Indexes
+
+# Protección contra inyección SQL y XSS
+<IfModule mod_security.c>
+    SecFilterEngine On
+    SecFilterScanPOST On
+</IfModule>
+
+# Límites de tamaño de archivo (para subida de fotos)
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_value max_execution_time 300
+php_value max_input_time 300
+
+# Configuración de errores
+php_flag display_errors Off
+php_flag log_errors On
+
+# Tipos MIME
+<IfModule mod_mime.c>
+    AddType application/json .json
+    AddType text/html .html
+</IfModule>
+
+# Compresión GZIP
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/plain
+</IfModule>
+
+# Cache control
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType application/json "access plus 0 seconds"
+</IfModule>

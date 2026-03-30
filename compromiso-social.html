@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Google tag (gtag.js) -->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descubre nuestro compromiso social en el turismo: accesibilidad, inclusión, sostenibilidad y desarrollo local. Construyendo un turismo más justo, responsable y transformador." />
+    <title>Compromiso Social - Rutas</title>
+    <link rel="canonical" href="https://www.rutasrurales.io/compromiso-social.html">
+    <link rel="icon" href="menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* RESET GLOBAL */
+        #navMenu a, #navMenu a:visited, #navMenu a:active {
+            text-decoration: none !important;
+            color: inherit !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- DISEÑO PARA PC --- */
+        @media (min-width: 993px) {
+            .hamburger { display: none !important; }
+            .nav-menu {
+                display: flex !important;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+                font-family: 'Montserrat', sans-serif;
+                margin-left: auto;
+            }
+            .nav-row {
+                display: flex !important;
+                list-style: none !important;
+                margin: 0; padding: 0;
+                width: 650px;
+                justify-content: center;
+            }
+            .nav-row li { flex: 1; text-align: center; }
+            .nav-row li a {
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                text-transform: capitalize;
+                color: var(--accent-color) !important;
+                font-weight: 600;
+            }
+            .nav-row li a span { color: var(--accent-color) !important; }
+            .nav-row li a i { color: var(--accent-color) !important; font-size: 1.1rem; }
+            .nav-row li a:hover, .nav-row li a:hover span, .nav-row li a:hover i { color: #ffffff !important; }
+        }
+
+        /* --- DISEÑO PARA MÓVIL --- */
+        @media (max-width: 992px) {
+            html, body { overflow-x: hidden !important; width: 100% !important; position: relative; }
+            .header, .navbar { height: auto !important; padding: 2px 0 !important; position: fixed !important; top: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #2c5f2d !important; }
+            .navbar .container { flex-direction: row !important; justify-content: flex-start !important; align-items: center !important; gap: 5px !important; padding: 0 5px !important; display: flex !important; width: 100% !important; }
+            .logo { flex-shrink: 0 !important; margin-right: 2px !important; display: block !important; }
+            .logo img { height: 35px !important; width: auto !important; }
+            .nav-menu { display: flex !important; position: static !important; width: auto !important; height: auto !important; background: transparent !important; flex-direction: column !important; flex: 1 !important; gap: 1px !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+            .nav-row { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 2px !important; width: 100% !important; list-style: none !important; padding: 0 !important; margin: 0 !important; }
+            .nav-row li { display: block !important; }
+            .nav-row li a { background: rgba(255, 255, 255, 0.1) !important; min-height: 30px !important; padding: 1px !important; border-radius: 4px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center; }
+            .nav-row li a span { font-size: 0.50rem !important; font-weight: 600 !important; line-height: 1 !important; text-align: center !important; white-space: nowrap !important; color: #d4a574 !important; margin: 0 !important; }
+            .nav-row li a i { font-size: 0.8rem !important; margin-bottom: 0px !important; color: #ffffff !important; }
+            input[type="text"], input[type="number"], input[type="search"], textarea, select { font-size: 16px !important; }
+        }
+
+        .asistente-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid #ffffff; vertical-align: middle; }
+        @media (max-width: 992px) { .asistente-avatar { width: 18px !important; height: 18px !important; margin-bottom: 0px; } }
+
+        /* Estilos inline para mantener styles.css intacto */
+        :root {
+            --primary-color: #2F5233;
+            --secondary-color: #6B8E6B;
+            --accent-color: #B8956A;
+            --accent-light: #d4a574;
+            --white: #ffffff;
+            --bg-light: #f8f9fa;
+            --bg-cream: #fdf8f3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 60vh;
+            min-height: 400px;
+            background: linear-gradient(135deg, #1a3d22 0%, #2F5233 50%, #3d6b42 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            color: var(--white);
+            margin: 0 0 15px 0;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-section h1 i {
+            color: #e8b86d;
+            margin-right: 15px;
+        }
+
+        .hero-section .subtitle {
+            font-size: 1.4rem;
+            color: rgba(255,255,255,0.95);
+            margin: 0 0 20px 0;
+            font-weight: 400;
+        }
+
+        .hero-section .description {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.85);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Sections */
+        .section {
+            padding: 80px 20px;
+        }
+
+        .section-light {
+            background: var(--bg-light);
+        }
+
+        .section-white {
+            background: var(--white);
+        }
+
+        .section-cream {
+            background: var(--bg-cream);
+        }
+
+        .section-gradient {
+            background: linear-gradient(135deg, #2F5233 0%, #3d6b42 100%);
+            color: var(--white);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 0 0 15px 0;
+            font-weight: 700;
+        }
+
+        .section-title h2 i {
+            color: var(--accent-color);
+            margin-right: 12px;
+        }
+
+        .section-title-gradient h2 {
+            color: var(--white);
+        }
+
+        .section-title-gradient h2 i {
+            color: #e8b86d;
+        }
+
+        /* Intro Section */
+        .intro-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intro-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color), var(--accent-color));
+        }
+
+        .intro-box h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin: 0 0 20px 0;
+        }
+
+        .intro-box p {
+            font-size: 1.15rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .intro-box strong {
+            color: var(--primary-color);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), #3d6b42);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(47, 82, 51, 0.3);
+        }
+
+        .card-icon i {
+            font-size: 1.8rem;
+            color: var(--white);
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin: 0 0 15px 0;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin: 0 0 20px 0;
+        }
+
+        .card-stat {
+            background: #f8f9f7;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .card-stat i {
+            color: var(--accent-color);
+            margin-right: 8px;
+        }
+
+        .card-stat span {
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Commitment Grid */
+        .commitment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .commitment-item {
+            text-align: center;
+            padding: 40px 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .commitment-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+        }
+
+        .commitment-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 25px rgba(184, 149, 106, 0.4);
+        }
+
+        .commitment-icon i {
+            font-size: 2rem;
+            color: var(--white);
+        }
+
+        .commitment-item h3 {
+            font-size: 1.3rem;
+            color: var(--white);
+            margin: 0 0 12px 0;
+        }
+
+        .commitment-item p {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.85);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Objectives Grid */
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .objective-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .objective-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .objective-label {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .objective-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 2.5rem;
+            color: rgba(47, 82, 51, 0.1);
+        }
+
+        /* CTA Section */
+        .cta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .cta-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .cta-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+        }
+
+        .cta-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+        }
+
+        .cta-icon.green {
+            background: linear-gradient(135deg, #2F5233, #3d6b42);
+        }
+
+        .cta-icon.gold {
+            background: linear-gradient(135deg, #B8956A, #d4a574);
+        }
+
+        .cta-icon.terra {
+            background: linear-gradient(135deg, #8B7355, #a08060);
+        }
+
+        .cta-icon i {
+            font-size: 2rem;
+            color: var(--white);
+        }
+
+        .cta-card h3 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin: 0 0 15px 0;
+        }
+
+        .cta-card p {
+            font-size: 0.95rem;
+            color: #666;
+            margin: 0 0 25px 0;
+            line-height: 1.6;
+        }
+
+        .btn-cta {
+            display: inline-block;
+            padding: 14px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta.primary {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-cta.primary:hover {
+            background: #3d6b42;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(47, 82, 51, 0.3);
+        }
+
+        .btn-cta.secondary {
+            background: var(--accent-color);
+            color: var(--white);
+        }
+
+        .btn-cta.secondary:hover {
+            background: #c9a57a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(184, 149, 106, 0.3);
+        }
+
+        .btn-cta.terra {
+            background: #8B7355;
+            color: var(--white);
+        }
+
+        .btn-cta.terra:hover {
+            background: #a08060;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .footer-info span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .footer-info i {
+            color: var(--accent-color);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-social a {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-social a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-copyright {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #333;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-section .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section {
+                padding: 50px 15px;
+            }
+            
+            .intro-box {
+                padding: 30px 20px;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .objective-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header completo como en el menú de inicio -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <a href="/index.html"><img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo"></a>
+                </div>
+
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-row">
+                        <li><a href="/alojamientos-turisticos.html">
+                            <i class="fas fa-bed"></i>
+                            <span>Alojamientos</span>
+                        </a></li>
+                        <li><a href="/lugares-interes-paginacion.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Lugares</span>
+                        </a></li>
+                        <li><a href="/eventos-culturales-paginacion.html">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Eventos</span>
+                        </a></li>
+                        <li><a href="/actividades-turisticas.html">
+                            <i class="fas fa-hiking"></i>
+                            <span>Actividades</span>
+                        </a></li>
+                    </ul>
+                    
+                    <ul class="nav-row">
+<li><a href="/index.html">
+                            <i class="fas fa-home"></i>
+                            <span>Inicio</span>
+                        </a></li>
+                        <li><a href="/rutas.php">
+                            <i class="fas fa-route"></i>
+                            <span>Rutas</span>
+                        </a></li>
+                        <li><a href="/login.html">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Acceso</span>
+                        </a></li>
+                        <li><a href="/index.html#asistente">
+                            <img src="/antonio.jpg" alt="Antonio" class="asistente-avatar">
+                            <span>Antonio</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1><i class="fas fa-heart"></i> Turismo con Compromiso Social</h1>
+            <p class="subtitle">Cada viaje puede transformar vidas y comunidades</p>
+            <p class="description">En Rutas, creemos que viajar va más allá del destino. Trabajamos para construir un turismo más justo, accesible y sostenible.</p>
+        </div>
+    </section>
+
+    <!-- Intro Section -->
+    <section class="section section-light">
+        <div class="container">
+            <div class="intro-box">
+                <h2>Nuestro Propósito</h2>
+                <p>En <strong>Rutas</strong>, creemos que viajar puede transformar vidas y comunidades. Por eso, trabajamos para construir un turismo más justo, accesible y sostenible, donde cada experiencia contribuya a un mundo mejor.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10 Categorías -->
+    <section class="section section-white">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-hands-helping"></i> Nuestras 9 Categorías de Compromiso</h2>
+            </div>
+            
+            <div class="cards-grid">
+                <!-- 1 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-wheelchair"></i></div>
+                    <h3>Turismo Accesible</h3>
+                    <p>Alojamientos, rutas y actividades adaptadas para personas con discapacidad física, sensorial o cognitiva. Promovemos experiencias inclusivas donde todas las personas puedan viajar sin barreras.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Más de 1.300 millones de personas en el mundo tienen alguna discapacidad. El turismo accesible no es una opción, es un derecho.</span>
+                    </div>
+                </div>
+
+                <!-- 2 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-users"></i></div>
+                    <h3>Turismo Inclusivo</h3>
+                    <p>Iniciativas y servicios pensados para integrar a personas mayores, familias en situación vulnerable y colectivos con necesidades especiales, garantizando un turismo para todos.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Integramos a colectivos tradicionalmente excluidos del turismo, generando experiencias significativas para todos.</span>
+                    </div>
+                </div>
+
+                <!-- 3 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-leaf"></i></div>
+                    <h3>Turismo Sostenible</h3>
+                    <p>Proyectos comprometidos con el respeto al medio ambiente, la conservación del entorno y el uso responsable de los recursos naturales en cada destino.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>El turismo sostenible crece un 20% anual. Nuestros partners reducen su huella ambiental mientras mejoran su rentabilidad.</span>
+                    </div>
+                </div>
+
+                <!-- 4 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-home"></i></div>
+                    <h3>Desarrollo Local</h3>
+                    <p>Rutas, actividades y experiencias que apoyan la economía de comunidades rurales y pequeñas poblaciones, fortaleciendo su crecimiento y preservando su identidad.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>El 70% de nuestros ingresos se reinvierte en economías locales, revitalizando pueblos y creando empleo de calidad.</span>
+                    </div>
+                </div>
+
+                <!-- 5 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-landmark"></i></div>
+                    <h3>Patrimonio Cultural y Natural</h3>
+                    <p>Iniciativas que fomentan la valorización, cuidado y difusión del patrimonio histórico, tradiciones locales, espacios naturales y biodiversidad.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Protegemos la identidad cultural y natural de cada destino, educando a viajeros conscientes.</span>
+                    </div>
+                </div>
+
+                <!-- 6 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-briefcase"></i></div>
+                    <h3>Inserción Laboral</h3>
+                    <p>Programas y colaboraciones que facilitan oportunidades de empleo y formación para personas con discapacidad o riesgo de exclusión dentro del sector turístico.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Facilitamos la incorporación laboral de colectivos vulnerables, generando oportunidades reales de desarrollo profesional.</span>
+                    </div>
+                </div>
+
+                <!-- 7 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <h3>Turismo Social</h3>
+                    <p>Propuestas accesibles y económicas para personas y familias con recursos limitados, con el objetivo de que nadie quede fuera del derecho al ocio y al turismo.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>El turismo es un derecho, no un lujo. Colaboramos con programas sociales para democratizar el acceso a experiencias turísticas.</span>
+                    </div>
+                </div>
+
+                <!-- 8 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-spa"></i></div>
+                    <h3>Turismo de Bienestar</h3>
+                    <p>Actividades enfocadas en la salud física, emocional y mental, como rutas terapéuticas, experiencias en la naturaleza y programas de descanso saludable.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Promovemos el bienestar integral a través de experiencias que conectan a las personas con su entorno y consigo mismas.</span>
+                    </div>
+                </div>
+
+                <!-- 10 -->
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-universal-access"></i></div>
+                    <h3>Accesibilidad en Entornos Turísticos</h3>
+                    <p>Proyectos que trabajan en la mejora de la accesibilidad en hoteles, restaurantes, transporte y lugares de interés, garantizando una experiencia segura y cómoda.</p>
+                    <div class="card-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Certificamos y mejoramos espacios turísticos, creando destinos verdaderamente accesibles para todos.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nuestro Compromiso -->
+    <section class="section section-gradient">
+        <div class="container">
+            <div class="section-title section-title-gradient">
+                <h2><i class="fas fa-handshake"></i> Nuestro Compromiso</h2>
+            </div>
+            
+            <div class="commitment-grid">
+                <div class="commitment-item">
+                    <div class="commitment-icon"><i class="fas fa-percentage"></i></div>
+                    <h3>2-5% de los Ingresos</h3>
+                    <p>Destinamos entre el 2% y 5% de los ingresos de la plataforma a financiar proyectos de compromiso social.</p>
+                </div>
+                
+                <div class="commitment-item">
+                    <div class="commitment-icon"><i class="fas fa-certificate"></i></div>
+                    <h3>Certificación Transparente</h3>
+                    <p>Reporting ESG y auditorías independientes garantizan la transparencia de nuestras acciones.</p>
+                </div>
+                
+                <div class="commitment-item">
+                    <div class="commitment-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3>Alianzas Estratégicas</h3>
+                    <p>Colaboramos con ONGs, administraciones públicas y empresas comprometidas con el cambio social.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Objetivos -->
+    <section class="section section-cream">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-bullseye"></i> Nuestros Objetivos 2025-2028</h2>
+            </div>
+            
+            <div class="objectives-grid">
+                <div class="objective-card">
+                    <div class="objective-number" data-target="50000">0</div>
+                    <div class="objective-label">Beneficiarios Directos</div>
+                    <i class="fas fa-users objetivo-icon"></i>
+                </div>
+                
+                <div class="objective-card">
+                    <div class="objective-number" data-target="1000">0</div>
+                    <div class="objective-label">Empleos Inclusivos</div>
+                    <i class="fas fa-briefcase objetivo-icon"></i>
+                </div>
+                
+                <div class="objective-card">
+                    <div class="objective-number" data-target="300">0</div>
+                    <div class="objective-label">Destinos Sostenibles</div>
+                    <i class="fas fa-award objetivo-icon"></i>
+                </div>
+                
+                <div class="objective-card">
+                    <div class="objective-number" data-target="5000">0</div>
+                    <div class="objective-label">Profesionales Formados</div>
+                    <i class="fas fa-graduation-cap objetivo-icon"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Únete -->
+    <section class="section section-white">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-rocket"></i> Únete al Movimiento</h2>
+            </div>
+            
+            <div class="cta-grid">
+                <div class="cta-card">
+                    <div class="cta-icon green"><i class="fas fa-suitcase-rolling"></i></div>
+                    <h3>Para Viajeros</h3>
+                    <p>Elige experiencias con propósito. Cada reserva es un voto por un turismo más responsable.</p>
+                    <a href="index.html" class="btn-cta primary"><i class="fas fa-compass"></i> Descubre Experiencias</a>
+                </div>
+                
+                <div class="cta-card">
+                    <div class="cta-icon gold"><i class="fas fa-building"></i></div>
+                    <h3>Para Empresas</h3>
+                    <p>Certifica tu compromiso social. Accede a formación, visibilidad y un mercado en crecimiento.</p>
+                    <a href="agregar-alojamiento.html" class="btn-cta secondary"><i class="fas fa-handshake"></i> Únete como Partner</a>
+                </div>
+                
+                <div class="cta-card">
+                    <div class="cta-icon terra"><i class="fas fa-heart"></i></div>
+                    <h3>Para Colaboradores</h3>
+                    <p>Invierte en compromiso. Turismo sostenible = rentabilidad + transformación social.</p>
+                    <a href="mailto:olgamarin@rutasrurales.io?subject=Colaboración Compromiso Social" class="btn-cta terra"><i class="fas fa-envelope"></i> Contáctanos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer usando clases de styles.css -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Animación de contadores
+        function animateCounters() {
+            const counters = document.querySelectorAll('.objective-number');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current).toLocaleString('es-ES');
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target.toLocaleString('es-ES');
+                    }
+                };
+                
+                updateCounter();
+            });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const objetivosSection = document.querySelector('.objectives-grid');
+        if (objetivosSection) {
+            observer.observe(objetivosSection);
+        }
+    </script>
+</body>
+</html>

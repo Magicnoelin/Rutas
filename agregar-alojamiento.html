@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Agregar Alojamiento - Rutas</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k"></script>
+    <!-- Configuración de la aplicación -->
+    <script src="config.js"></script>
+    <style>
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .form-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+
+        .form-group label .optional {
+            color: #95a5a6;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .photo-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .photo-input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .photo-input-group input {
+            flex: 1;
+        }
+
+        .btn-add-photo,
+        .btn-remove-photo {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-add-photo {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-add-photo:hover {
+            background-color: var(--primary-color);
+        }
+
+        .btn-remove-photo {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-remove-photo:hover {
+            background-color: #c0392b;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-submit,
+        .btn-preview,
+        .btn-reset {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-preview {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-preview:hover {
+            background-color: #c49563;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background-color: #7f8c8d;
+        }
+
+        .preview-container {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .preview-container.active {
+            display: block;
+        }
+
+        .preview-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-header h3 {
+            color: var(--primary-color);
+        }
+
+        .json-output {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .copy-btn:hover {
+            background-color: #229954;
+        }
+
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+            border: 1px solid #c3e6cb;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        /* Estilos para el sistema de subida de fotos */
+        .upload-photo-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .photo-upload-area {
+            border: 2px dashed #dadce0;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f8f9fa;
+            transition: all 0.2s;
+            margin: 15px 0;
+        }
+
+        .photo-upload-area:hover {
+            border-color: var(--primary-color);
+            background: #e8f0fe;
+        }
+
+        .photo-upload-area input {
+            display: none;
+        }
+
+        .photo-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .photo-category-btn {
+            padding: 10px;
+            background: white;
+            border: 2px solid #dadce0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .photo-category-btn:hover {
+            border-color: var(--primary-color);
+            background: #e8f0fe;
+        }
+
+        .photo-category-btn.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .btn-upload-photo {
+            background: #0f9d58;
+            width: 100%;
+            font-size: 16px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-upload-photo:hover {
+            background: #0b8043;
+        }
+
+        .btn-upload-photo:disabled {
+            background: #9aa0a6;
+            cursor: not-allowed;
+        }
+
+        .upload-result {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .upload-result.show {
+            display: block;
+        }
+
+        .upload-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .upload-loading.show {
+            display: flex;
+        }
+
+        .upload-loading-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .upload-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e0e0;
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .photo-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            aspect-ratio: 4/3;
+            background: #f0f0f0;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-card .photo-category-tag {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .photo-card .delete-photo {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(244,67,54,0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .upload-message.show {
+            display: block;
+        }
+
+        .upload-message.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border: 2px solid #4caf50;
+        }
+
+        .upload-message.error {
+            background: #ffcdd2;
+            color: #c62828;
+            border: 2px solid #f44336;
+        }
+
+        .slug-preview {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .slug-preview strong {
+            color: #1565c0;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn-submit,
+            .btn-preview,
+            .btn-reset {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo_990x1076_verde.png" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">
+                    <span>Rutas</span>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="alojamientos.html">Alojamientos</a></li>
+                    <li><a href="index.html#actividades">Actividades</a></li>
+                    <li><a href="index.html#lugares">Lugares de Interés</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección de Agregar Alojamiento -->
+    <section class="section" style="margin-top: 100px;">
+        <div class="container">
+            <h1 class="section-title">
+                <i class="fas fa-plus-circle"></i> Agregar Nuevo Alojamiento
+            </h1>
+
+            <!-- Información -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <p style="font-size: 1.1rem; color: var(--secondary-color);">
+                    Completa el formulario para añadir un nuevo alojamiento rural a la plataforma
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="filters" style="max-width: 900px; margin: 0 auto;">
+
+        <form id="alojamientoForm">
+            <!-- Información Básica -->
+            <div class="form-section">
+                <h3><i class="fas fa-info-circle"></i> Información Básica</h3>
+                
+                <div class="form-group">
+                    <label for="nombre">Nombre del Alojamiento <span class="required">*</span></label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Ej: Casa Rural El Roble" oninput="actualizarSlugPreview()">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Alojamiento <span class="required">*</span></label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Piso">Piso</option>
+                            <option value="Chalé">Chalé</option>
+                            <option value="Apartamento">Apartamento</option>
+                            <option value="Hotel Rural">Hotel Rural</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plazas">Número de Plazas <span class="required">*</span></label>
+                        <input type="number" id="plazas" name="plazas" required min="1" max="50" placeholder="Ej: 6">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección <span class="required">*</span></label>
+                    <input type="text" id="direccion" name="direccion" required placeholder="Ej: Calle Mayor 15">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="localidad">Localidad <span class="required">*</span></label>
+                        <input type="text" id="localidad" name="localidad" required placeholder="Ej: Vinuesa" oninput="actualizarSlugPreview()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="provincia">Provincia <span class="required">*</span></label>
+                        <input type="text" id="provincia" name="provincia" required value="Soria" oninput="actualizarSlugPreview()">
+                    </div>
+                </div>
+
+                <!-- Vista previa del slug -->
+                <div class="slug-preview" id="slugPreview" style="display: none;">
+                    <strong>Slug generado:</strong> <span id="slugValue"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción <span class="required">*</span></label>
+                    <textarea id="descripcion" name="descripcion" required placeholder="Describe el alojamiento, sus características principales y lo que lo hace especial..."></textarea>
+                </div>
+            </div>
+
+            <!-- Precio y Contacto -->
+            <div class="form-section">
+                <h3><i class="fas fa-euro-sign"></i> Precio y Contacto</h3>
+                
+                <div class="form-group">
+                    <label for="precio">Precio por Noche (€) <span class="optional">(opcional)</span></label>
+                    <input type="number" id="precio" name="precio" min="0" step="1" placeholder="Ej: 120">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefono">Teléfono Principal <span class="required">*</span></label>
+                        <input type="tel" id="telefono" name="telefono" required placeholder="Ej: 975123456">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono2">Teléfono Secundario <span class="optional">(opcional)</span></label>
+                        <input type="tel" id="telefono2" name="telefono2" placeholder="Ej: 605249696">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email <span class="optional">(opcional)</span></label>
+                    <input type="email" id="email" name="email" placeholder="contacto@ejemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="web">Sitio Web <span class="optional">(opcional)</span></label>
+                    <input type="text" id="web" name="web" placeholder="https://www.ejemplo.com">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="instagram">Instagram <span class="optional">(opcional)</span></label>
+                        <input type="text" id="instagram" name="instagram" placeholder="@usuario">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="booking">Booking URL <span class="optional">(opcional)</span></label>
+                        <input type="url" id="booking" name="booking" placeholder="https://www.booking.com/...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sistema de Subida de Fotos -->
+            <div class="form-section">
+                <h3><i class="fas fa-camera"></i> Fotografías</h3>
+                <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">
+                    Sube fotos del alojamiento directamente desde tu ordenador o móvil
+                </p>
+                
+                <!-- Sección de subida de fotos -->
+                <div class="upload-photo-section">
+                    <!-- Selector de categoría -->
+                    <div class="form-group">
+                        <label>Categoría de la foto <span class="required">*</span></label>
+                        <div class="photo-categories" id="photoCategories">
+                            <div class="photo-category-btn" data-category="fachada">Fachada</div>
+                            <div class="photo-category-btn" data-category="salon">Salón</div>
+                            <div class="photo-category-btn" data-category="cocina">Cocina</div>
+                            <div class="photo-category-btn" data-category="jardin">Jardín</div>
+                            <div class="photo-category-btn" data-category="habitacion">Habitación</div>
+                            <div class="photo-category-btn" data-category="bano">Baño</div>
+                            <div class="photo-category-btn" data-category="exterior">Exterior</div>
+                            <div class="photo-category-btn" data-category="piscina">Piscina</div>
+                            <div class="photo-category-btn" data-category="comedor">Comedor</div>
+                            <div class="photo-category-btn" data-category="terraza">Terraza</div>
+                            <div class="photo-category-btn" data-category="otro">Otro</div>
+                        </div>
+                    </div>
+
+                    <!-- Área de selección de archivo -->
+                    <div class="photo-upload-area" onclick="document.getElementById('photoFileInput').click()">
+                        <p style="margin: 0; font-weight: bold; color: var(--primary-color);">
+                            <i class="fas fa-cloud-upload-alt"></i> Haz clic aquí para elegir una foto
+                        </p>
+                        <p id="photoFileInfo" style="margin: 5px 0 0 0; color: #666; font-size: 13px;">Ningún archivo seleccionado (máx 5MB)</p>
+                        <input type="file" id="photoFileInput" accept="image/*" onchange="handlePhotoFile(this)">
+                    </div>
+
+                    <!-- Mensaje de estado -->
+                    <div id="uploadMessage" class="upload-message"></div>
+
+                    <!-- Botón de subir -->
+                    <button type="button" id="btnUploadPhoto" class="btn-upload-photo" onclick="uploadPhoto()" disabled>
+                        <i class="fas fa-upload"></i> Subir Foto
+                    </button>
+
+                    <!-- Resultado de subida -->
+                    <div id="uploadResult" class="upload-result"></div>
+
+                    <!-- Galería de fotos -->
+                    <div style="margin-top: 20px;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 10px;">
+                            <i class="fas fa-images"></i> Fotos del alojamiento
+                        </h4>
+                        <div id="photoGallery" class="photo-gallery"></div>
+                        <p id="noPhotosMsg" style="text-align: center; padding: 20px; color: #666; background: #f5f5f5; border-radius: 8px;">
+                            No hay fotos todavía
+                        </p>
+                    </div>
+                </div>
+
+                <!-- URLs alternativas (opcional) -->
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #ddd;">
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <i class="fas fa-link"></i> <strong>Opcional:</strong> También puedes añadir URLs de fotos directamente:
+                    </p>
+                    <div class="photo-inputs" id="photoInputs">
+                        <div class="photo-input-group">
+                            <input type="url" name="foto1" placeholder="URL de la foto 1 (principal)">
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-photo" onclick="agregarCampoFoto()" style="margin-top: 0.5rem;">
+                        <i class="fas fa-plus"></i> Añadir otra URL
+                    </button>
+                </div>
+            </div>
+
+            <!-- Características -->
+            <div class="form-section">
+                <h3><i class="fas fa-check-circle"></i> Características</h3>
+                <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">
+                    Selecciona las características que apliquen al alojamiento
+                </p>
+                
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_wifi" name="caracteristicas" value="WiFi">
+                        <label for="car_wifi">WiFi</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_parking" name="caracteristicas" value="Parking">
+                        <label for="car_parking">Parking</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_chimenea" name="caracteristicas" value="Chimenea">
+                        <label for="car_chimenea">Chimenea</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_jardin" name="caracteristicas" value="Jardín">
+                        <label for="car_jardin">Jardín</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_piscina" name="caracteristicas" value="Piscina">
+                        <label for="car_piscina">Piscina</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_mascotas" name="caracteristicas" value="Mascotas">
+                        <label for="car_mascotas">Admite Mascotas</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_vistas" name="caracteristicas" value="Vistas">
+                        <label for="car_vistas">Vistas</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_naturaleza" name="caracteristicas" value="Naturaleza">
+                        <label for="car_naturaleza">Entorno Natural</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_centrico" name="caracteristicas" value="Céntrico">
+                        <label for="car_centrico">Céntrico</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_senderismo" name="caracteristicas" value="Senderismo">
+                        <label for="car_senderismo">Rutas Senderismo</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_tranquilo" name="caracteristicas" value="Tranquilo">
+                        <label for="car_tranquilo">Tranquilo</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="car_familiar" name="caracteristicas" value="Familiar">
+                        <label for="car_familiar">Familiar</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="form-actions">
+                <button type="button" class="btn-preview" onclick="generarVistaPrevia()">
+                    <i class="fas fa-eye"></i> Vista Previa
+                </button>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i> Guardar Alojamiento
+                </button>
+                <button type="reset" class="btn-reset">
+                    <i class="fas fa-redo"></i> Limpiar
+                </button>
+            </div>
+        </form>
+
+        <!-- Resultado -->
+        <div class="preview-container" id="previewContainer">
+            <div class="preview-header">
+                <h3><i class="fas fa-info-circle"></i> Resultado</h3>
+                <p>Información del proceso</p>
+            </div>
+            
+            <div class="json-output" id="jsonOutput" style="display: none;"></div>
+            
+            <button class="copy-btn" onclick="copiarJSON()" style="display: none;">
+                <i class="fas fa-copy"></i> Copiar JSON
+            </button>
+            
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i> ¡Operación completada!
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-chtml">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading overlay -->
+    <div id="uploadLoading" class="upload-loading">
+        <div class="upload-loading-box">
+            <div class="upload-spinner"></div>
+            <p>⏳ Subiendo foto...</p>
+            <small>Convirtiendo a WebP</small>
+        </div>
+    </div>
+
+    <script>
+        // ========== VARIABLES DE ESTADO ==========
+        let fotoCounter = 1;
+        let generatedJSON = '';
+        
+        // Variables para subida de fotos
+        let uploadState = {
+            alojamientoSlug: null,
+            selectedCategory: '',
+            selectedFile: null,
+            uploadedPhotos: []
+        };
+
+        // ========== FUNCIONES DEL SLUG ==========
+        function generarSlug(texto) {
+            if (!texto) return '';
+            return texto.toLowerCase()
+                .trim()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+
+        function actualizarSlugPreview() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const localidad = document.getElementById('localidad').value.trim();
+            const provincia = document.getElementById('provincia').value.trim();
+            
+            const slugPreview = document.getElementById('slugPreview');
+            const slugValue = document.getElementById('slugValue');
+            
+            if (nombre && localidad) {
+                // El slug será: nombre-localidad-provincia
+                const slug = generarSlug(nombre + '-' + localidad + '-' + provincia);
+                slugValue.textContent = slug;
+                slugPreview.style.display = 'block';
+                uploadState.alojamientoSlug = slug;
+            } else {
+                slugPreview.style.display = 'none';
+            }
+        }
+
+        // ========== FUNCIONES DE FOTOS ANTIGUAS ==========
+        function agregarCampoFoto() {
+            fotoCounter++;
+            const photoInputs = document.getElementById('photoInputs');
+            const newPhotoGroup = document.createElement('div');
+            newPhotoGroup.className = 'photo-input-group';
+            newPhotoGroup.innerHTML = `
+                <input type="url" name="foto${fotoCounter}" placeholder="URL de la foto ${fotoCounter}">
+                <button type="button" class="btn-remove-photo" onclick="eliminarCampoFoto(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            photoInputs.appendChild(newPhotoGroup);
+        }
+
+        function eliminarCampoFoto(button) {
+            button.parentElement.remove();
+        }
+
+        // ========== FUNCIONES DE SUBIDA DE FOTOS ==========
+        // Inicializar categorías de fotos
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryButtons = document.querySelectorAll('.photo-category-btn');
+            categoryButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    categoryButtons.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    uploadState.selectedCategory = this.dataset.category;
+                    actualizarBotonSubida();
+                });
+            });
+        });
+
+        function handlePhotoFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                mostrarMensajeUpload('❌ El archivo no es una imagen', 'error');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarMensajeUpload('❌ El archivo excede 5MB', 'error');
+                return;
+            }
+
+            uploadState.selectedFile = file;
+            document.getElementById('photoFileInfo').textContent = `${file.name} (${(file.size/1024).toFixed(0)} KB)`;
+            actualizarBotonSubida();
+        }
+
+        function actualizarBotonSubida() {
+            const btn = document.getElementById('btnUploadPhoto');
+            const hasSlug = uploadState.alojamientoSlug && uploadState.alojamientoSlug.length > 0;
+            const hasCategory = uploadState.selectedCategory.length > 0;
+            const hasFile = uploadState.selectedFile !== null;
+            
+            btn.disabled = !(hasSlug && hasCategory && hasFile);
+        }
+
+        function mostrarMensajeUpload(text, type) {
+            const msg = document.getElementById('uploadMessage');
+            msg.textContent = text;
+            msg.className = `upload-message ${type} show`;
+            setTimeout(() => msg.classList.remove('show'), 5000);
+        }
+
+        async function uploadPhoto() {
+            if (!uploadState.alojamientoSlug || !uploadState.selectedCategory || !uploadState.selectedFile) {
+                mostrarMensajeUpload('❌ Completa todos los campos primero', 'error');
+                return;
+            }
+
+            // Primero guardamos el alojamiento para obtener el slug real
+            const formData = await guardarAlojamientoSilencioso();
+            if (!formData) {
+                mostrarMensajeUpload('❌ Primero guarda el alojamiento', 'error');
+                return;
+            }
+
+            document.getElementById('uploadLoading').classList.add('show');
+            document.getElementById('uploadResult').classList.remove('show');
+
+            try {
+                const formDataUpload = new FormData();
+                formDataUpload.append('accommodation_identifier', uploadState.alojamientoSlug);
+                formDataUpload.append('photo_category', uploadState.selectedCategory);
+                formDataUpload.append('photo', uploadState.selectedFile);
+
+                const response = await fetch('api/upload_accommodation_photo.php', {
+                    method: 'POST',
+                    body: formDataUpload
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const fullUrl = window.location.origin + data.data.url;
+                    const result = document.getElementById('uploadResult');
+                    result.innerHTML = `
+                        <p style="margin: 0; color: #2e7d32;"><strong>✅ Foto subida correctamente</strong></p>
+                        <p style="margin: 5px 0; font-size: 0.9rem;">Categoría: ${data.data.category}</p>
+                        <p style="margin: 0; font-size: 0.85rem; word-break: break-all;">
+                            <a href="${fullUrl}" target="_blank">${fullUrl}</a>
+                        </p>
+                    `;
+                    result.classList.add('show');
+                    mostrarMensajeUpload('✅ Foto subida correctamente', 'success');
+
+                    // Añadir a la galería
+                    uploadState.uploadedPhotos.push({
+                        url: data.data.url,
+                        category: data.data.category
+                    });
+                    actualizarGaleria();
+
+                    // Reset del selector
+                    uploadState.selectedCategory = '';
+                    uploadState.selectedFile = null;
+                    document.getElementById('photoFileInput').value = '';
+                    document.getElementById('photoFileInfo').textContent = 'Ningún archivo seleccionado (máx 5MB)';
+                    document.querySelectorAll('.photo-category-btn').forEach(b => b.classList.remove('selected'));
+                    actualizarBotonSubida();
+                } else {
+                    mostrarMensajeUpload('❌ Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                mostrarMensajeUpload('❌ Error: ' + error.message, 'error');
+            } finally {
+                document.getElementById('uploadLoading').classList.remove('show');
+            }
+        }
+
+        function actualizarGaleria() {
+            const gallery = document.getElementById('photoGallery');
+            const noPhotos = document.getElementById('noPhotosMsg');
+            
+            if (uploadState.uploadedPhotos.length > 0) {
+                noPhotos.style.display = 'none';
+                gallery.style.display = 'grid';
+                
+                gallery.innerHTML = uploadState.uploadedPhotos.map((photo, index) => `
+                    <div class="photo-card">
+                        <img src="${photo.url}" alt="${photo.category}" loading="lazy">
+                        <span class="photo-category-tag">${photo.category}</span>
+                        <button class="delete-photo" onclick="eliminarFoto(${index})">×</button>
+                    </div>
+                `).join('');
+            } else {
+                gallery.style.display = 'none';
+                noPhotos.style.display = 'block';
+            }
+        }
+
+        function eliminarFoto(index) {
+            if (confirm('¿Eliminar esta foto?')) {
+                uploadState.uploadedPhotos.splice(index, 1);
+                actualizarGaleria();
+            }
+        }
+
+        // Guardar alojamiento silenciosamente para obtener el slug
+        async function guardarAlojamientoSilencioso() {
+            const form = document.getElementById('alojamientoForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return null;
+            }
+
+            const formData = recopilarDatosParaAPI();
+            if (!formData) return null;
+
+            try {
+                const apiUrl = window.CONFIG?.API_BASE_URL 
+                    ? `${window.CONFIG.API_BASE_URL}/crear.php`
+                    : 'api/crear.php';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    return formData;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error:', error);
+                return null;
+            }
+        }
+
+        // ========== VISTA PREVIA Y GUARDADO ==========
+        function formatearDescripcion(texto) {
+            if (!texto) return 'Sin descripción disponible.';
+            
+            const busquedas = ["Habitaciones", "Ubicación", "Piscina", "Barbacoa", "Chimenea", "WiFi", "Parking", "Jardín", "Terraza", "Vistas"];
+            const emojis = ["🏨", "📍", "💦", "🍖", "🔥", "📶", "🚗", "🌳", "🌅", "👀"];
+            
+            busquedas.forEach((palabra, index) => {
+                const regex = new RegExp(`\\b${palabra}\\b`, 'gi');
+                texto = texto.replace(regex, `${emojis[index]} ${palabra}`);
+            });
+            
+            texto = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            return texto;
+        }
+
+        function generarVistaPrevia() {
+            const formData = recopilarDatosParaAPI();
+            if (!formData) return;
+
+            const jsonString = JSON.stringify(formData, null, 2);
+            document.getElementById('jsonOutput').textContent = jsonString;
+            document.getElementById('previewContainer').classList.add('active');
+            generatedJSON = jsonString;
+
+            document.querySelector('.preview-header p').textContent = 'Revisa los datos antes de guardar';
+            document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function recopilarDatosParaAPI() {
+            const form = document.getElementById('alojamientoForm');
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return null;
+            }
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const localidad = document.getElementById('localidad').value.trim();
+            const provincia = document.getElementById('provincia').value.trim();
+
+            // Generar slug con nombre + localidad + provincia
+            const slug = generarSlug(nombre + '-' + localidad + '-' + provincia);
+
+            const formData = {
+                Nombre: nombre,
+                Tipo: document.getElementById('tipo').value,
+                Slug: slug,
+                Municipality: localidad,  // Para el slug en la API
+                Province: provincia,       // Para el slug en la API
+                Direccion: document.getElementById('direccion').value.trim() + ', ' + 
+                          localidad + ', ' + provincia,
+                Plazas: parseInt(document.getElementById('plazas').value),
+                Telefono1: document.getElementById('telefono').value.trim(),
+                Notaspublicas: document.getElementById('descripcion').value.trim(),
+                submit_action: 'submit'  // Enviar para moderación
+            };
+
+            const precio = document.getElementById('precio').value;
+            if (precio) formData.Precio = parseInt(precio);
+
+            const telefono2 = document.getElementById('telefono2').value.trim();
+            if (telefono2) formData.Telefono2 = telefono2;
+
+            const email = document.getElementById('email').value.trim();
+            if (email) formData.Email = email;
+
+            const web = document.getElementById('web').value.trim();
+            if (web) formData.Web = web;
+
+            const instagram = document.getElementById('instagram').value.trim();
+            if (instagram) formData.Instagram = instagram;
+
+            const booking = document.getElementById('booking').value.trim();
+            if (booking) formData.Booking = booking;
+
+            // Fotos de URLs
+            const fotoInputs = document.querySelectorAll('.photo-input-group input');
+            fotoInputs.forEach((input, index) => {
+                const url = input.value.trim();
+                if (url && index < 4) {
+                    formData[`Foto${index + 1}`] = url;
+                }
+            });
+
+            // Añadir fotos subidas
+            if (uploadState.uploadedPhotos.length > 0) {
+                uploadState.uploadedPhotos.forEach((photo, index) => {
+                    if (index < 4) {
+                        formData[`Foto${index + 1}`] = photo.url;
+                    }
+                });
+            }
+
+            return formData;
+        }
+
+        async function guardarAlojamiento() {
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando en base de datos...';
+
+                const formData = recopilarDatosParaAPI();
+                if (!formData) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    return;
+                }
+
+                // reCAPTCHA
+                const recaptchaToken = await grecaptcha.execute('6LeHyRgsAAAAAPpK8PcEp2iuvMEE4wSoUpfpH89k', {action: 'submit'});
+                formData.recaptchaToken = recaptchaToken;
+
+                const apiUrl = window.CONFIG?.API_BASE_URL 
+                    ? `${window.CONFIG.API_BASE_URL}/crear.php`
+                    : 'api/crear.php';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch (jsonError) {
+                    const text = await response.text();
+                    mostrarMensajeError('Error del servidor: ' + response.status + ' ' + response.statusText + ' - ' + text);
+                    return;
+                }
+
+                if (response.ok && result.success) {
+                    // Actualizar el slug si la API generó uno diferente
+                    if (result.data.slug) {
+                        uploadState.alojamientoSlug = result.data.slug;
+                    }
+                    mostrarMensajeExito(result);
+                } else {
+                    const errorMsg = result.error || result.message || 'Error desconocido del servidor';
+                    mostrarMensajeError('Error al guardar el alojamiento: ' + errorMsg + ' (Código: ' + response.status + ')');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensajeError('Error de conexión: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function mostrarMensajeExito(result) {
+            const previewContainer = document.getElementById('previewContainer');
+            const previewHeader = document.querySelector('.preview-header');
+
+            let messageHtml = `
+                <h3 style="color: #27ae60;"><i class="fas fa-check-circle"></i> ¡Alojamiento Guardado Exitosamente!</h3>
+                <p style="color: #155724; font-size: 1.1rem; margin-top: 1rem;">
+                    <strong>ID:</strong> ${result.data.id}<br>
+                    <strong>Nombre:</strong> ${result.data.nombre}<br>
+                    <strong>Tipo:</strong> ${result.data.tipo}<br>
+                    <strong>Slug:</strong> ${result.data.slug || uploadState.alojamientoSlug}<br>
+                    <strong>Estado:</strong> Pendiente de verificación
+                </p>
+            `;
+
+            if (result.data.auto_linked !== undefined) {
+                if (result.data.auto_linked) {
+                    messageHtml += `
+                        <p style="color: #27ae60; margin-top: 1rem;">
+                            <i class="fas fa-link"></i> ${result.data.link_message}
+                        </p>
+                    `;
+                } else if (result.data.link_message) {
+                    messageHtml += `
+                        <p style="color: #f39c12; margin-top: 1rem;">
+                            <i class="fas fa-info-circle"></i> ${result.data.link_message}
+                        </p>
+                    `;
+                }
+            }
+
+            previewHeader.innerHTML = messageHtml;
+            document.getElementById('jsonOutput').style.display = 'none';
+            previewContainer.classList.add('active');
+            document.querySelector('.copy-btn').style.display = 'none';
+            previewContainer.scrollIntoView({ behavior: 'smooth' });
+
+            // Botones de acción
+            const actionButtons = document.createElement('div');
+            actionButtons.style.marginTop = '2rem';
+            actionButtons.style.display = 'flex';
+            actionButtons.style.gap = '1rem';
+            actionButtons.style.justifyContent = 'center';
+            actionButtons.style.flexWrap = 'wrap';
+
+            const dashboardBtn = document.createElement('button');
+            dashboardBtn.textContent = '👉 Ir a Mi Dashboard';
+            dashboardBtn.style.padding = '12px 24px';
+            dashboardBtn.style.backgroundColor = 'var(--primary-color)';
+            dashboardBtn.style.color = 'white';
+            dashboardBtn.style.border = 'none';
+            dashboardBtn.style.borderRadius = '25px';
+            dashboardBtn.style.fontSize = '1rem';
+            dashboardBtn.style.cursor = 'pointer';
+            dashboardBtn.style.fontWeight = 'bold';
+            dashboardBtn.onclick = function() {
+                window.location.href = 'user-dashboard.html#mis-alojamientos';
+            };
+
+            // Botón para agregar otro alojamiento - CORREGIDO
+            const botonAgregarOtro = document.createElement('button');
+            botonAgregarOtro.textContent = '➕ Añadir Otro Alojamiento';
+            botonAgregarOtro.style.padding = '12px 24px';
+            botonAgregarOtro.style.backgroundColor = 'var(--secondary-color)';
+            botonAgregarOtro.style.color = 'white';
+            botonAgregarOtro.style.border = 'none';
+            botonAgregarOtro.style.borderRadius = '25px';
+            botonAgregarOtro.style.fontSize = '1rem';
+            botonAgregarOtro.style.cursor = 'pointer';
+            botonAgregarOtro.style.fontWeight = 'bold';
+            botonAgregarOtro.onclick = function() {
+                document.getElementById('alojamientoForm').reset();
+                previewContainer.classList.remove('active');
+                document.querySelector('.copy-btn').style.display = 'flex';
+                document.getElementById('jsonOutput').style.display = 'block';
+                fotoCounter = 1;
+                uploadState.uploadedPhotos = [];
+                uploadState.alojamientoSlug = null;
+                actualizarGaleria();
+                document.getElementById('slugPreview').style.display = 'none';
+                
+                const photoInputs = document.getElementById('photoInputs');
+                photoInputs.innerHTML = `
+                    <div class="photo-input-group">
+                        <input type="url" name="foto1" placeholder="URL de la foto 1 (principal)">
+                    </div>
+                `;
+            };
+
+            actionButtons.appendChild(dashboardBtn);
+            actionButtons.appendChild(botonAgregarOtro);
+            previewHeader.appendChild(actionButtons);
+        }
+
+        function mostrarMensajeError(errorMsg) {
+            const previewContainer = document.getElementById('previewContainer');
+            const previewHeader = document.querySelector('.preview-header');
+            
+            previewHeader.innerHTML = `
+                <h3 style="color: #e74c3c;"><i class="fas fa-exclamation-circle"></i> Error al Guardar</h3>
+                <p style="color: #721c24; margin-top: 1rem;">${errorMsg}</p>
+                <p style="color: #666; margin-top: 1rem; font-size: 0.9rem;">
+                    Por favor, revisa los datos e intenta de nuevo. Si el problema persiste, contacta con soporte.
+                </p>
+            `;
+
+            document.getElementById('jsonOutput').textContent = '';
+            previewContainer.classList.add('active');
+            document.querySelector('.copy-btn').style.display = 'none';
+            previewContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copiarJSON() {
+            const jsonText = document.getElementById('jsonOutput').textContent;
+            
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const successMsg = document.getElementById('successMessage');
+                successMsg.classList.add('active');
+                
+                setTimeout(() => {
+                    successMsg.classList.remove('active');
+                }, 3000);
+            }).catch(err => {
+                alert('Error al copiar: ' + err);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('alojamientoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            guardarAlojamiento();
+        });
+
+        document.getElementById('alojamientoForm').addEventListener('reset', function() {
+            document.getElementById('previewContainer').classList.remove('active');
+            document.querySelector('.copy-btn').style.display = 'flex';
+            document.querySelector('.preview-header h3').innerHTML = '<i class="fas fa-code"></i> JSON Generado';
+            document.querySelector('.preview-header p').textContent = 'Copia este JSON y añádelo al archivo alojamientos.json';
+            fotoCounter = 1;
+            uploadState.uploadedPhotos = [];
+            uploadState.alojamientoSlug = null;
+            actualizarGaleria();
+            document.getElementById('slugPreview').style.display = 'none';
+            
+            const photoInputs = document.getElementById('photoInputs');
+            photoInputs.innerHTML = `
+                <div class="photo-input-group">
+                    <input type="url" name="foto1" placeholder="URL de la foto 1 (principal)">
+                </div>
+            `;
+        });
+
+        // Menú hamburguesa
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', function() {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            const navLinks = navMenu.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navMenu.contains(event.target);
+                const isClickOnHamburger = hamburger.contains(event.target);
+
+                if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

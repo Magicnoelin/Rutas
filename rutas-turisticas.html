@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google tag (gtag.js) -->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descubre rutas turísticas en Castilla y León. Itinerarios recomendados para explorar la región de manera sostenible." />
+
+    <!-- X (Twitter) Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@rutas_rurales">
+    <meta name="twitter:title" content="Rutas Turísticas - Rutas">
+    <meta name="twitter:description" content="Descubre rutas turísticas en Castilla y León. Itinerarios recomendados para explorar la región de manera sostenible.">
+    <meta name="twitter:image" content="https://www.rutasrurales.io/menu_images/Logo%20transparente.webp">
+
+    <title>Rutas Turísticas - Rutas</title>
+    <link rel="canonical" href="https://www.rutasrurales.io/rutas-turisticas.html">
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo">
+                    <div class="logo-text">
+                        <span class="logo-title">Rutas</span>
+                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
+                    </div>
+                </div>
+
+                <!-- Selector de idiomas desktop -->
+                <div class="language-selector-nav">
+                    <button class="language-btn-nav" id="languageBtnNav" aria-label="Seleccionar idioma">
+                        <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español">
+                        <span>ES</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown-nav" id="languageDropdownNav">
+                        <a href="index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español">
+                            Español
+                        </a>
+                        <a href="en/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English">
+                            English
+                        </a>
+                        <a href="fr/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français">
+                            Français
+                        </a>
+                        <a href="de/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch">
+                            Deutsch
+                        </a>
+                        <a href="zh/index.html">
+                            <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文">
+                            中文
+                        </a>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamiento</a></li>
+                    <li><a href="index.html#actividades"><i class="fas fa-hiking"></i> Actividades</a></li>
+                    <li><a href="eventos-culturales-paginacion.html"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+                    <li><a href="rutas.html" class="active"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="index.html#asistente" class="nav-asistente">
+                        <img src="antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                        Antonio
+                    </a></li>
+
+                    <!-- Selector de idiomas móvil -->
+                    <li class="language-selector-mobile">
+                        <h4>🌐 Idiomas</h4>
+                        <div class="language-options-mobile">
+                            <a href="index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español">
+                                ES
+                            </a>
+                            <a href="en/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English">
+                                EN
+                            </a>
+                            <a href="fr/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français">
+                                FR
+                            </a>
+                            <a href="de/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch">
+                                DE
+                            </a>
+                            <a href="zh/index.html">
+                                <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文">
+                                ZH
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section Rutas -->
+    <section class="hero" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&h=1080&fit=crop') center/cover; margin-top: 70px;">
+        <div class="hero-content">
+            <h1><i class="fas fa-route"></i> Descubre las Rutas de Castilla y León</h1>
+            <p>Caminos con historia, naturaleza y cultura</p>
+        </div>
+    </section>
+
+    <!-- 10 Rutas Principales -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-map-marked-alt"></i> Las 12 Rutas Imprescindibles
+            </h2>
+            
+            <div class="grid">
+                <!-- Ruta 1: Camino de Santiago -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/camino_santiago.jpg" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-walking"></i>
+                    </div>
+                    <h3>Camino de Santiago</h3>
+                    <p class="card-description">
+                        Recorre el Camino Francés y la Vía de la Plata, dos de las rutas de peregrinación más 
+                        importantes de Europa. Atraviesa Burgos, León, Palencia y Zamora en tu camino hacia Santiago.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> Variable (desde 100 km) | <strong>Dificultad:</strong> Media | <strong>Duración:</strong> 5-30 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 2: Ruta de los Castillos -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/ruta_castillos.jpg" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-chess-rook"></i>
+                    </div>
+                    <h3>Ruta de los Castillos</h3>
+                    <p class="card-description">
+                        Circuito por las principales fortalezas castellanas: Peñafiel, Coca, Cuéllar, Turégano, 
+                        Castillo de la Mota y muchos más. Un viaje por la historia medieval de Castilla.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 400 km (circular) | <strong>Dificultad:</strong> Baja | <strong>Duración:</strong> 3-5 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 3: Ruta del Duero -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/ruta_duero.jpg" alt="Río Duero" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-wine-glass-alt"></i>
+                    </div>
+                    <h3>Ruta del Duero</h3>
+                    <p class="card-description">
+                        Recorrido fluvial por pueblos ribereños y bodegas de Ribera del Duero, Rueda y Toro. 
+                        Combina paisajes naturales, patrimonio histórico y enoturismo de calidad.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 350 km | <strong>Dificultad:</strong> Baja | <strong>Duración:</strong> 3-4 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 4: Ruta de las Catedrales -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/catedrales2.jpg" alt="Catedrales" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-church"></i>
+                    </div>
+                    <h3>Ruta de las Catedrales</h3>
+                    <p class="card-description">
+                        Visita las impresionantes catedrales de Burgos, León, Palencia, Zamora, Salamanca y Ávila. 
+                        Un recorrido por el arte gótico, románico y renacentista más sublime de España.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 500 km | <strong>Dificultad:</strong> Baja | <strong>Duración:</strong> 4-6 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 5: Camino del Cid -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/camino_cid.jpg" alt="Camino del Cid" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-horse-head"></i>
+                    </div>
+                    <h3>Ruta del Camino del Cid</h3>
+                    <p class="card-description">
+                        Itinerario literario siguiendo el Cantar de Mio Cid desde Vivar del Cid (Burgos) hasta 
+                        Valencia. Atraviesa paisajes épicos y pueblos medievales llenos de historia.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 2.000 km (tramos) | <strong>Dificultad:</strong> Media-Alta | <strong>Duración:</strong> Variable</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 6: Pueblos Negros -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/pueblos_negros.jpg" alt="Pueblos Negros" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Ruta de los Pueblos Negros</h3>
+                    <p class="card-description">
+                        Descubre la arquitectura tradicional de pizarra en pueblos de Guadalajara y Segovia. 
+                        Campillo de Ranas, Valverde de los Arroyos, Majaelrayo y otros tesoros rurales.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 80 km | <strong>Dificultad:</strong> Baja | <strong>Duración:</strong> 1-2 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 7: Ruta de la Lana -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/ruta_lana.jpg" alt="Ruta de la Lana" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h3>Ruta de la Lana (GR-46)</h3>
+                    <p class="card-description">
+                        Antiguo camino de la trashumancia que une Alicante con Burgos. Atraviesa paisajes de 
+                        alta montaña, valles y páramos siguiendo las cañadas reales históricas.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 700 km | <strong>Dificultad:</strong> Alta | <strong>Duración:</strong> 30-40 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 8: Rutas Micológicas -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/rutas_micologicas.jpg" alt="Rutas Micológicas" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Rutas Micológicas</h3>
+                    <p class="card-description">
+                        Senderos en zonas de recolección de setas y hongos en pinares y robledales. 
+                        Especialmente recomendadas en otoño en Soria, Segovia y Ávila.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> Variable | <strong>Dificultad:</strong> Baja-Media | <strong>Temporada:</strong> Sep-Nov</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 9: Ruta de las Icnitas -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/icnitas.jpg" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <h3>Ruta de las Icnitas</h3>
+                    <p class="card-description">
+                        Huellas de dinosaurios en Soria y Burgos. Visita yacimientos paleontológicos únicos 
+                        en Enciso, Regumiel de la Sierra y otros puntos con fósiles de hace 120 millones de años.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 200 km | <strong>Dificultad:</strong> Baja | <strong>Duración:</strong> 2-3 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 10: Rutas Romanas -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/rutas_romanas.jpg" alt="Vía Romana" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3>Rutas Romanas (Vía de la Plata)</h3>
+                    <p class="card-description">
+                        Calzadas y vestigios del Imperio Romano. Recorre la Vía de la Plata desde Astorga
+                        hasta Mérida, pasando por Zamora y Salamanca. Historia viva bajo tus pies.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 700 km | <strong>Dificultad:</strong> Media | <strong>Duración:</strong> 25-30 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 11: Ruta de los Monasterios -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/ruta_monasterios.jpg" alt="Monasterio" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-vihara"></i>
+                    </div>
+                    <h3>Ruta de los Monasterios</h3>
+                    <p class="card-description">
+                        Descubre el rico patrimonio monástico de Castilla y León. Visita monasterios históricos
+                        como Santo Domingo de Silos, San Millán de la Cogolla, Santa María de Huerta y muchos más.
+                        Una ruta espiritual por la historia religiosa de la región.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 300 km | <strong>Dificultad:</strong> Baja | <strong>Duración:</strong> 3-4 días</span>
+                    </div>
+                </div>
+
+                <!-- Ruta 12: Ruta del Queso -->
+                <div class="card">
+                    <img src="https://www.rutasrurales.io/menu_images/queso_artesanal.jpg" alt="Quesos" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0; margin: -2.5rem -2.5rem 1.5rem -2.5rem;">
+                    <div class="card-icon">
+                        <i class="fas fa-cheese"></i>
+                    </div>
+                    <h3>Ruta del Queso Artesanal</h3>
+                    <p class="card-description">
+                        Un viaje gastronómico por las queserías tradicionales de Castilla y León. Degusta quesos
+                        artesanales de oveja, cabra y vaca en pueblos como Villalón de Campos, Peñafiel y Segovia.
+                        Conoce el proceso de elaboración y visita mercados locales.
+                    </p>
+                    <div class="card-stat">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>Distancia:</strong> 250 km | <strong>Dificultad:</strong> Baja | <strong>Duración:</strong> 2-3 días</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cómo Planificar tu Ruta -->
+    <section class="section-compromiso como-funciona">
+        <div class="container">
+            <h2 class="section-title-compromiso">
+                <i class="fas fa-compass"></i> Planifica tu Aventura
+            </h2>
+            
+            <div class="compromiso-grid">
+                <div class="compromiso-item">
+                    <div class="compromiso-icon">
+                        <i class="fas fa-map"></i>
+                    </div>
+                    <h3>Elige tu Ruta</h3>
+                    <p>Selecciona según tu tiempo disponible, condición física y preferencias. Tenemos rutas para todos los niveles.</p>
+                </div>
+                
+                <div class="compromiso-item">
+                    <div class="compromiso-icon">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <h3>Reserva Alojamiento</h3>
+                    <p>Encuentra alojamientos rurales a lo largo de tu ruta. Casas rurales, hostales y hoteles con encanto.</p>
+                </div>
+                
+                <div class="compromiso-item">
+                    <div class="compromiso-icon">
+                        <i class="fas fa-hiking"></i>
+                    </div>
+                    <h3>Prepara tu Equipaje</h3>
+                    <p>Calzado cómodo, ropa adecuada, agua y protección solar. Consulta nuestras guías de equipamiento.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consejos para Viajeros -->
+    <section class="section-compromiso unete-section">
+        <div class="container">
+            <h2 class="section-title-compromiso">
+                <i class="fas fa-lightbulb"></i> Consejos para tu Viaje
+            </h2>
+            
+            <div class="unete-grid">
+                <div class="unete-card">
+                    <div class="unete-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Mejor Época</h3>
+                    <p>Primavera (abril-junio) y otoño (septiembre-octubre) son ideales. Evita el calor extremo del verano en rutas largas.</p>
+                </div>
+                
+                <div class="unete-card">
+                    <div class="unete-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Seguridad</h3>
+                    <p>Informa siempre de tu ruta, lleva móvil cargado, botiquín básico y respeta las señalizaciones del camino.</p>
+                </div>
+                
+                <div class="unete-card">
+                    <div class="unete-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Respeto al Entorno</h3>
+                    <p>No dejes rastro, respeta la flora y fauna local, y apoya la economía de los pueblos que atraviesas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-info">
+                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+                </div>
+                <div class="footer-links">
+                    <a href="aviso-legal.html">Aviso Legal</a>
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                    <a href="agradecimientos.html">Agradecimientos</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
