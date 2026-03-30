@@ -608,9 +608,51 @@ function mostrarCategoria(categoria) {
     const datos = antonioDatabase[categoria];
     const infoCategoria = antonioState.categorias[categoria];
     
+    // Verificar si hay datos cargados
     if (!datos || datos.length === 0) {
-        agregarMensajeBot(`<p>No tengo información disponible en este momento sobre ${infoCategoria.nombre.toLowerCase()} en ${antonioState.provincia}.</p>`);
-        agregarMensajeBot(`<p>Prueba con otra provincia o pregunta sobre otra categoría.</p>`);
+        agregarMensajeBot(`
+            <p>📊 <strong>Base de datos en preparación</strong></p>
+            <p>Actualmente estoy configurando la conexión con nuestras bases de datos internas de ${infoCategoria.nombre.toLowerCase()}.</p>
+            <p>Pronto podré mostrarte información real de:</p>
+            <ul>
+                <li>🏨 Tabla <strong>accommodations</strong> - Alojamientos turísticos</li>
+                <li>🏛️ Tabla <strong>places_of_interest</strong> - Lugares de interés</li>
+                <li>🥾 Tabla <strong>tourist_activities</strong> - Actividades turísticas</li>
+                <li>🎭 Tabla <strong>cultural_events</strong> - Eventos culturales</li>
+            </ul>
+            <p>Mientras tanto, puedes explorar las páginas principales:</p>
+        `);
+        
+        // Mostrar enlaces a las páginas principales
+        let urlPrincipal = '#';
+        switch(categoria) {
+            case 'accommodations':
+                urlPrincipal = 'alojamientos-turisticos.html';
+                break;
+            case 'places_of_interest':
+                urlPrincipal = 'lugares-interes-paginacion.html';
+                break;
+            case 'tourist_activities':
+                urlPrincipal = 'actividades-turisticas.html';
+                break;
+            case 'cultural_events':
+                urlPrincipal = 'eventos-culturales-paginacion.html';
+                break;
+        }
+        
+        agregarMensajeBot(`
+            <div class="antonio-suggestions">
+                <div class="antonio-suggestions-title">
+                    <i class="fas fa-external-link-alt"></i> Acceder directamente:
+                </div>
+                <div class="antonio-suggestions-list">
+                    <a href="${urlPrincipal}" class="antonio-suggestion-btn" style="text-decoration: none; display: inline-block;">
+                        ${infoCategoria.icono} Ver ${infoCategoria.nombre.toLowerCase()}
+                    </a>
+                </div>
+            </div>
+        `);
+        
         return;
     }
     
@@ -739,21 +781,46 @@ function seleccionarProvinciaYCategoria(provincia, categoria) {
 }
 
 function crearTarjetaItem(item, categoriaInfo) {
-    // Determinar la URL según la categoría
+    // Determinar la URL según la categoría y el ID del item
     let url = '#';
-    switch(categoriaInfo.nombre) {
-        case 'Alojamientos':
-            url = 'alojamientos-turisticos.html';
-            break;
-        case 'Lugares de interés':
-            url = 'lugares-interes-paginacion.html';
-            break;
-        case 'Actividades turísticas':
-            url = 'actividades-turisticas.html';
-            break;
-        case 'Eventos culturales':
-            url = 'eventos-culturales-paginacion.html';
-            break;
+    let textoEnlace = `Ver más en ${categoriaInfo.nombre.toLowerCase()}`;
+    
+    if (item.id) {
+        // Si hay ID, enlazar a la página de detalle específica
+        switch(categoriaInfo.nombre) {
+            case 'Alojamientos':
+                url = `alojamiento-detalle.html?id=${item.id}`;
+                textoEnlace = `Ver detalles del alojamiento`;
+                break;
+            case 'Lugares de interés':
+                url = `lugar-interes.html?id=${item.id}`;
+                textoEnlace = `Ver detalles del lugar`;
+                break;
+            case 'Actividades turísticas':
+                url = `actividad.html?id=${item.id}`;
+                textoEnlace = `Ver detalles de la actividad`;
+                break;
+            case 'Eventos culturales':
+                url = `evento-detalle.html?id=${item.id}`;
+                textoEnlace = `Ver detalles del evento`;
+                break;
+        }
+    } else {
+        // Si no hay ID, enlazar a la página general
+        switch(categoriaInfo.nombre) {
+            case 'Alojamientos':
+                url = 'alojamientos-turisticos.html';
+                break;
+            case 'Lugares de interés':
+                url = 'lugares-interes-paginacion.html';
+                break;
+            case 'Actividades turísticas':
+                url = 'actividades-turisticas.html';
+                break;
+            case 'Eventos culturales':
+                url = 'eventos-culturales-paginacion.html';
+                break;
+        }
     }
     
     return `
@@ -770,7 +837,7 @@ function crearTarjetaItem(item, categoriaInfo) {
                 <span>💰 ${item.precio || item.entrada || 'Consultar'}</span>
             </div>
             <div style="margin-top: 8px; font-size: 0.8rem; color: var(--antonio-primary);">
-                <i class="fas fa-external-link-alt"></i> Ver más en ${categoriaInfo.nombre.toLowerCase()}
+                <i class="fas fa-external-link-alt"></i> ${textoEnlace}
             </div>
         </div>
     `;
