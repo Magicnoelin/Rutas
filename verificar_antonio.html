@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Antonio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c5f2d;
+        }
+        .test-result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #ccc;
+        }
+        .success {
+            background: #e8f5e9;
+            border-color: #2c5f2d;
+        }
+        .error {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+        .warning {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+        button {
+            background: #2c5f2d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #4a8c4b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Verificación de Antonio - El Experto Local</h1>
+        
+        <div id="test1" class="test-result">
+            <h3>1. Verificación de archivos</h3>
+            <p id="files-status">Comprobando archivos...</p>
+        </div>
+        
+        <div id="test2" class="test-result">
+            <h3>2. Verificación de funciones JavaScript</h3>
+            <p id="js-status">Comprobando funciones...</p>
+        </div>
+        
+        <div id="test3" class="test-result">
+            <h3>3. Prueba de funcionalidad</h3>
+            <p>Haz clic en los botones para probar:</p>
+            <button onclick="testAbrirAntonio()">Abrir Antonio</button>
+            <button onclick="testMostrarCategoria()">Mostrar Alojamientos</button>
+            <button onclick="testManejarOpcion()">Probar opción rápida</button>
+            <p id="func-status">Esperando prueba...</p>
+        </div>
+        
+        <div id="test4" class="test-result">
+            <h3>4. Verificación de CSS</h3>
+            <p id="css-status">Comprobando estilos...</p>
+        </div>
+        
+        <div id="test5" class="test-result">
+            <h3>5. Estado final</h3>
+            <p id="final-status">Realizando verificación final...</p>
+        </div>
+    </div>
+    
+    <!-- Cargar Antonio para pruebas -->
+    <script src="antonio_improved.js"></script>
+    
+    <script>
+        // Test 1: Verificación de archivos
+        function checkFiles() {
+            const files = ['antonio_improved.css', 'antonio_improved.js', 'antonio.jpg'];
+            const missing = [];
+            
+            files.forEach(file => {
+                try {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('HEAD', file, false);
+                    xhr.send();
+                    if (xhr.status === 404) missing.push(file);
+                } catch(e) {
+                    missing.push(file);
+                }
+            });
+            
+            const test1 = document.getElementById('test1');
+            const status = document.getElementById('files-status');
+            
+            if (missing.length === 0) {
+                test1.className = 'test-result success';
+                status.innerHTML = '✅ Todos los archivos necesarios están presentes';
+            } else {
+                test1.className = 'test-result error';
+                status.innerHTML = `❌ Faltan archivos: ${missing.join(', ')}`;
+            }
+        }
+        
+        // Test 2: Verificación de funciones JavaScript
+        function checkJSFunctions() {
+            const requiredFunctions = ['abrirAntonio', 'mostrarCategoria', 'manejarOpcionRapida'];
+            const missing = [];
+            
+            requiredFunctions.forEach(func => {
+                if (typeof window[func] !== 'function') {
+                    missing.push(func);
+                }
+            });
+            
+            const test2 = document.getElementById('test2');
+            const status = document.getElementById('js-status');
+            
+            if (missing.length === 0) {
+                test2.className = 'test-result success';
+                status.innerHTML = '✅ Todas las funciones JavaScript están disponibles';
+            } else {
+                test2.className = 'test-result error';
+                status.innerHTML = `❌ Faltan funciones: ${missing.join(', ')}`;
+            }
+        }
+        
+        // Test 3: Pruebas de funcionalidad
+        function testAbrirAntonio() {
+            const status = document.getElementById('func-status');
+            try {
+                if (typeof abrirAntonio === 'function') {
+                    abrirAntonio();
+                    status.innerHTML = '✅ Función abrirAntonio() ejecutada correctamente';
+                    document.getElementById('test3').className = 'test-result success';
+                } else {
+                    throw new Error('Función no disponible');
+                }
+            } catch(e) {
+                status.innerHTML = `❌ Error: ${e.message}`;
+                document.getElementById('test3').className = 'test-result error';
+            }
+        }
+        
+        function testMostrarCategoria() {
+            const status = document.getElementById('func-status');
+            try {
+                if (typeof mostrarCategoria === 'function') {
+                    mostrarCategoria('accommodations');
+                    status.innerHTML = '✅ Función mostrarCategoria() ejecutada correctamente';
+                    document.getElementById('test3').className = 'test-result success';
+                } else {
+                    throw new Error('Función no disponible');
+                }
+            } catch(e) {
+                status.innerHTML = `❌ Error: ${e.message}`;
+                document.getElementById('test3').className = 'test-result error';
+            }
+        }
+        
+        function testManejarOpcion() {
+            const status = document.getElementById('func-status');
+            try {
+                if (typeof manejarOpcionRapida === 'function') {
+                    manejarOpcionRapida('alojamientos');
+                    status.innerHTML = '✅ Función manejarOpcionRapida() ejecutada correctamente';
+                    document.getElementById('test3').className = 'test-result success';
+                } else {
+                    throw new Error('Función no disponible');
+                }
+            } catch(e) {
+                status.innerHTML = `❌ Error: ${e.message}`;
+                document.getElementById('test3').className = 'test-result error';
+            }
+        }
+        
+        // Test 4: Verificación de CSS
+        function checkCSS() {
+            const test4 = document.getElementById('test4');
+            const status = document.getElementById('css-status');
+            
+            // Verificar si el CSS de Antonio está cargado
+            const antonioStyles = document.querySelector('link[href*="antonio_improved.css"]');
+            
+            if (antonioStyles) {
+                test4.className = 'test-result success';
+                status.innerHTML = '✅ CSS de Antonio cargado correctamente';
+            } else {
+                test4.className = 'test-result warning';
+                status.innerHTML = '⚠️ CSS de Antonio no detectado (puede estar cargado dinámicamente)';
+            }
+        }
+        
+        // Test 5: Estado final
+        function finalCheck() {
+            const test5 = document.getElementById('test5');
+            const status = document.getElementById('final-status');
+            
+            // Verificar que Antonio se inicialice
+            setTimeout(() => {
+                const widget = document.getElementById('antonio-widget');
+                if (widget) {
+                    test5.className = 'test-result success';
+                    status.innerHTML = '✅ Antonio inicializado correctamente. Widget disponible en la página.';
+                } else {
+                    test5.className = 'test-result warning';
+                    status.innerHTML = '⚠️ Widget de Antonio no encontrado (puede crearse dinámicamente)';
+                }
+            }, 1000);
+        }
+        
+        // Ejecutar todas las verificaciones al cargar
+        window.onload = function() {
+            checkFiles();
+            checkJSFunctions();
+            checkCSS();
+            finalCheck();
+            
+            console.log('✅ Verificación de Antonio completada');
+        };
+    </script>
+</body>
+</html>

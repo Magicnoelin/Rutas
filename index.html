@@ -143,8 +143,8 @@
             <div class="hero-content">
                 <h1>Reserva las Mejores Experiencias de Turismo Rural en España</h1>
                 <p>Tu plataforma unificada para encontrar alojamientos con encanto, rutas únicas y actividades inolvidables en toda España</p>
-                <button class="btn-primary" onclick="abrirAsistente()">
-                    <i class="fas fa-robot"></i> Planifica tu Viaje con IA
+                <button class="btn-primary" onclick="abrirAntonio()">
+                    <i class="fas fa-robot"></i> Hablar con Antonio
                 </button>
             </div>
         </div>
@@ -448,65 +448,53 @@
         </div>
     </section>
 
-    <!-- Sección del Asistente de IA -->
+    <!-- Sección del Asistente de IA (Versión Mejorada) -->
     <section id="asistente" class="section section-alt asistente-section">
         <div class="container">
             <h2 class="section-title">
-                <i class="fas fa-robot"></i> Asistente Inteligente de Rutas
+                <i class="fas fa-robot"></i> Antonio - Tu Experto Local
             </h2>
             <p class="asistente-intro">
-                Nuestro asistente con inteligencia artificial te ayudará a planificar la mejor ruta personalizada 
-                según tus preferencias, días disponibles y tipo de experiencia que buscas.
+                Conoce a <strong>Antonio</strong>, nuestro experto local que te ayudará a descubrir lo mejor de nuestro destino 
+                usando exclusivamente nuestras bases de datos internas de alojamientos, lugares, actividades y eventos.
             </p>
             
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message bot-message">
-                        <div class="message-avatar">
-                            <img src="menu_images/antonio.jpg" alt="Antonio - Asistente" class="bot-avatar">
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <div style="background: linear-gradient(135deg, #f7faf7 0%, #e8f5e9 100%); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; border: 2px solid #2c5f2d;">
+                    <img src="antonio.jpg" alt="Antonio - Experto local" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #2c5f2d; margin-bottom: 1rem;">
+                    <h3 style="color: #2c5f2d; margin-bottom: 0.5rem;">Antonio, el experto local</h3>
+                    <p style="color: #666; margin-bottom: 1.5rem;">Servicial, entusiasta y conciso. Te ayuda mientras caminas por la calle 📱</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏨</div>
+                            <strong>Alojamientos</strong>
+                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Casas rurales, hoteles, apartamentos</p>
                         </div>
-                        <div class="message-content">
-                            <p>¡Hola! Me llamo Antonio y soy tu asistente virtual de turismo 🌄</p>
-                            <p>Puedo ayudarte a planificar tu viaje recomendándote:</p>
-                            <ul>
-                                <li>✨ Rutas personalizadas</li>
-                                <li>🏡 <a href="alojamientos-turisticos.html" style="color: #2c5f2d; font-weight: 600;">Alojamientos turísticos</a> según tus necesidades</li>
-                                <li>🥾 <a href="#actividades" style="color: #2c5f2d; font-weight: 600;">Actividades turísticas</a></li>
-                                <li>🏛️ <a href="#lugares" style="color: #2c5f2d; font-weight: 600;">Lugares de interés</a></li>
-                                <li>🎭 <a href="eventos-culturales.html" style="color: #2c5f2d; font-weight: 600;">Eventos culturales</a></li>
-                            </ul>
-                            <p>Para empezar, cuéntame: ¿Cuántos días planeas viajar por España y qué tipo de actividades te interesan?</p>
+                        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏛️</div>
+                            <strong>Lugares de interés</strong>
+                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Patrimonio, naturaleza, monumentos</p>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="chat-input-container">
-                    <div class="quick-options" id="quickOptions">
-                        <button class="quick-btn" onclick="enviarQuickOption('1 día - naturaleza y senderismo')">
-                            <i class="fas fa-hiking"></i> 1 día / Naturaleza
-                        </button>
-                        <button class="quick-btn" onclick="enviarQuickOption('2-3 días - cultura e historia')">
-                            <i class="fas fa-landmark"></i> 2-3 días / Cultura
-                        </button>
-                        <button class="quick-btn" onclick="enviarQuickOption('fin de semana - relajación rural')">
-                            <i class="fas fa-spa"></i> Fin de semana / Relax
-                        </button>
-                        <button class="quick-btn" onclick="enviarQuickOption('una semana - experiencia completa')">
-                            <i class="fas fa-calendar-week"></i> 1 semana / Completo
-                        </button>
+                        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥾</div>
+                            <strong>Actividades</strong>
+                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Senderismo, rutas, experiencias</p>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎭</div>
+                            <strong>Eventos</strong>
+                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Festivales, conciertos, exposiciones</p>
+                        </div>
                     </div>
                     
-                    <div class="chat-input">
-                        <input 
-                            type="text" 
-                            id="userInput" 
-                            placeholder="Escribe tu mensaje aquí..."
-                            onkeypress="if(event.key === 'Enter') enviarMensaje()"
-                        >
-                        <button class="btn-send" onclick="enviarMensaje()">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
+                    <button class="btn-primary" onclick="abrirAntonio()" style="background: linear-gradient(135deg, #2c5f2d, #4a8c4b);">
+                        <i class="fas fa-comments"></i> Hablar con Antonio
+                    </button>
+                    
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+                        <i class="fas fa-info-circle"></i> Antonio solo usa nuestras 4 bases de datos internas
+                    </p>
                 </div>
             </div>
         </div>
@@ -528,6 +516,8 @@
             <div class="footer-copyright">
                 <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
             </div>
-        </div> </footer> <script src="script.js?v=20260114"></script>
+        </div> </footer> 
+    <script src="script.js?v=20260114"></script>
+    <script src="antonio_improved.js"></script>
 </body>
 </html>
