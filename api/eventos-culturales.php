@@ -20,40 +20,86 @@ try {
     // Obtener idioma del parámetro (por defecto español)
     $lang = isset($_GET['lang']) ? $_GET['lang'] : 'es';
     
-    // Query con los nombres correctos de columnas
-    // Para soporte multilingüe, necesitaríamos columnas de traducción
-    // Por ahora, usamos las columnas en español como base
-    $sql = "SELECT 
-        id,
-        name as titulo,
-        slug,
-        description as descripcion,
-        short_description as descripcion_corta,
-        start_date as fecha_evento,
-        start_time as hora_evento,
-        end_date as fecha_fin,
-        venue_name as ubicacion,
-        venue_address as direccion,
-        municipality as localidad,
-        province as provincia,
-        category_id as categoria,
-        photo1,
-        poster_image,
-        organizer as organizador,
-        email,
-        phone as telefono,
-        website as web,
-        ticket_price as precio,
-        ticket_url as url_entradas,
-        capacity as capacidad,
-        status,
-        latitude,
-        longitude
-    FROM cultural_events 
-    WHERE status = 'scheduled' AND is_active = 1 AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()";
+    // Verificar si la tabla de traducciones existe
+    $hasTradsTable = false;
+    try {
+        $checkTable = $pdo->query("SHOW TABLES LIKE 'cultural_events_trads'");
+        $hasTradsTable = ($checkTable->rowCount() > 0);
+    } catch (Exception $e) {
+        $hasTradsTable = false;
+    }
+    
+    // Construir la consulta según si hay tabla de traducciones y el idioma
+    if ($hasTradsTable && $lang !== 'es') {
+        // CONSULTA CON TRADUCCIONES (solo para idiomas distintos al español)
+        $sql = "SELECT 
+            e.id,
+            COALESCE(t.name, e.name) as titulo,
+            COALESCE(t.slug, e.slug) as slug,
+            COALESCE(t.description, e.description) as descripcion,
+            COALESCE(t.short_description, e.short_description) as descripcion_corta,
+            e.start_date as fecha_evento,
+            e.start_time as hora_evento,
+            e.end_date as fecha_fin,
+            e.venue_name as ubicacion,
+            e.venue_address as direccion,
+            e.municipality as localidad,
+            e.province as provincia,
+            e.category_id as categoria,
+            e.photo1,
+            e.poster_image,
+            e.organizer as organizador,
+            e.email,
+            e.phone as telefono,
+            e.website as web,
+            e.ticket_price as precio,
+            e.ticket_url as url_entradas,
+            e.capacity as capacidad,
+            e.status,
+            e.latitude,
+            e.longitude
+        FROM cultural_events e
+        LEFT JOIN cultural_events_trads t ON e.id = t.event_id AND t.language_code = :lang
+        WHERE e.status = 'scheduled' AND e.is_active = 1 AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()";
+    } else {
+        // CONSULTA SIN TRADUCCIONES (español o sin tabla de traducciones)
+        $sql = "SELECT 
+            id,
+            name as titulo,
+            slug,
+            description as descripcion,
+            short_description as descripcion_corta,
+            start_date as fecha_evento,
+            start_time as hora_evento,
+            end_date as fecha_fin,
+            venue_name as ubicacion,
+            venue_address as direccion,
+            municipality as localidad,
+            province as provincia,
+            category_id as categoria,
+            photo1,
+            poster_image,
+            organizer as organizador,
+            email,
+            phone as telefono,
+            website as web,
+            ticket_price as precio,
+            ticket_url as url_entradas,
+            capacity as capacidad,
+            status,
+            latitude,
+            longitude
+        FROM cultural_events 
+        WHERE status = 'scheduled' AND is_active = 1 AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()";
+    }
 
     $conditions = [];
     $params = [];
+
+    // Agregar parámetro de idioma si estamos usando traducciones
+    if ($hasTradsTable && $lang !== 'es') {
+        $params[':lang'] = $lang;
+    }
 
     // Filtro por categoría
     if (isset($_GET['category']) && !empty($_GET['category'])) {
@@ -67,9 +113,15 @@ try {
         $params[':province'] = $_GET['province'];
     }
 
-    // Filtro por búsqueda
+    // Filtro por búsqueda - actualizado para trabajar con traducciones
     if (isset($_GET['search']) && !empty($_GET['search'])) {
-        $conditions[] = "(name LIKE :search OR description LIKE :search OR venue_name LIKE :search)";
+        if ($hasTradsTable && $lang !== 'es') {
+            // Para búsqueda con traducciones, buscar en ambos campos (originales y traducidos)
+            $conditions[] = "(e.name LIKE :search OR t.name LIKE :search OR e.description LIKE :search OR t.description LIKE :search OR e.venue_name LIKE :search)";
+        } else {
+            // Para búsqueda sin traducciones
+            $conditions[] = "(name LIKE :search OR description LIKE :search OR venue_name LIKE :search)";
+        }
         $params[':search'] = '%' . $_GET['search'] . '%';
     }
 

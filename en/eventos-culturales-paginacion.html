@@ -360,7 +360,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // Sistema de cache para eventos
         async function cargarEventosConCache() {
             const ahora = Date.now();
-            const cacheKey = 'eventos_cache';
+            const cacheKey = 'eventos_cache_en'; // Cache específico para inglés
             
             // Verificar cache válido
             if (eventCache && (ahora - eventCache.timestamp) < CACHE_TTL) {
@@ -374,11 +374,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('eventosGrid').style.display = 'none';
                 
-                // Cargar desde API con timeout
+                // Cargar desde API con timeout y parámetro de idioma
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000);
                 
-                const response = await fetch('/api/eventos-culturales.php', {
+                const response = await fetch('/api/eventos-culturales.php?lang=en', {
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
