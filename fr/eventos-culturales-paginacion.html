@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Culturelle Espagne | Événements, Fêtes et Spectacles | Rutas</title>
+    
+    <!-- Google tag (gtag.js) -->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+<!-- End Google Tag Manager -->
+    
+    <meta name="description" content="Découvrez le meilleur agenda culturel d'Espagne : fêtes populaires, concerts, théâtre, événements sportifs et expériences uniques dans tout le pays.">
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="canonical" href="https://www.rutasrurales.io/fr/eventos-culturales-paginacion.html">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* RESET GLOBAL */
+        #navMenu a, #navMenu a:visited, #navMenu a:active {
+            text-decoration: none !important;
+            color: inherit !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- DISEÑO PARA PC --- */
+        @media (min-width: 993px) {
+                  .nav-menu {
+                display: flex !important;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+                font-family: 'Montserrat', sans-serif;
+                margin-left: auto;
+            }
+            .nav-row {
+                display: flex !important;
+                list-style: none !important;
+                margin: 0; padding: 0;
+                width: 650px;
+                justify-content: center;
+            }
+            .nav-row li { flex: 1; text-align: center; }
+            .nav-row li a {
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                text-transform: capitalize;
+                color: var(--accent-color) !important;
+                font-weight: 600;
+            }
+            .nav-row li a span { color: var(--accent-color) !important; }
+            .nav-row li a i { color: var(--accent-color) !important; font-size: 1.1rem; }
+            .nav-row li a:hover, .nav-row li a:hover span, .nav-row li a:hover i { color: #ffffff !important; }
+        }
+
+        /* --- DISEÑO PARA MÓVIL --- */
+        @media (max-width: 992px) {
+            html, body { overflow-x: hidden !important; width: 100% !important; position: relative; }
+            .header, .navbar { height: auto !important; padding: 2px 0 !important; position: fixed !important; top: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #2c5f2d !important; }
+            .navbar .container { flex-direction: row !important; justify-content: flex-start !important; align-items: center !important; gap: 5px !important; padding: 0 5px !important; display: flex !important; width: 100% !important; }
+            .logo { flex-shrink: 0 !important; margin-right: 2px !important; display: block !important; }
+            .logo img { height: 35px !important; width: auto !important; }
+            .nav-menu { display: flex !important; position: static !important; width: auto !important; height: auto !important; background: transparent !important; flex-direction: column !important; flex: 1 !important; gap: 1px !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+            .nav-row { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 2px !important; width: 100% !important; list-style: none !important; padding: 0 !important; margin: 0 !important; }
+            .nav-row li { display: block !important; }
+            .nav-row li a { background: rgba(255, 255, 255, 0.1) !important; min-height: 30px !important; padding: 1px !important; border-radius: 4px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center; }
+            .nav-row li a span { font-size: 0.50rem !important; font-weight: 600 !important; line-height: 1 !important; text-align: center !important; white-space: nowrap !important; color: #d4a574 !important; margin: 0 !important; }
+            .nav-row li a i { font-size: 0.8rem !important; margin-bottom: 0px !important; color: #ffffff !important; }
+            input[type="text"], input[type="number"], input[type="search"], textarea, select { font-size: 16px !important; }
+        }
+
+        .asistente-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid #ffffff; vertical-align: middle; }
+        @media (max-width: 992px) { .asistente-avatar { width: 18px !important; height: 18px !important; margin-bottom: 0px; } }
+
+        .filters { background-color: white; padding: 2rem; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin: 2rem 0; }
+        .filter-group { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem; }
+        .filter-group label { font-weight: bold; color: var(--primary-color); }
+        .filter-group select, .filter-group input { padding: 0.5rem 1rem; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 1rem; outline: none; }
+        .filter-group select:focus, .filter-group input:focus { border-color: var(--primary-color); }
+        
+        .categorias-wrapper { margin-top: 1rem; }
+        .categorias-group { margin-bottom: 1.5rem; }
+        .categorias-group h4 { color: var(--primary-color); margin-bottom: 0.8rem; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 0.3rem; }
+        .categorias-container { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        
+        .btn-categoria { background: #f0f0f0; color: #444; border: 1px solid #ddd; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.4rem; }
+        .btn-categoria:hover { background: #e0e0e0; transform: translateY(-1px); }
+        .btn-categoria.active { color: white; border-color: transparent; transform: scale(1.05); box-shadow: 0 3px 8px rgba(0,0,0,0.2); }
+        
+        /* Colores de categorías */
+        .btn-categoria[data-categoria="1"].active, .cat-1 { background-color: #FF1493 !important; color: white; }
+        .btn-categoria[data-categoria="2"].active, .cat-2 { background-color: #FF69B4 !important; color: white; }
+        .btn-categoria[data-categoria="3"].active, .cat-3 { background-color: #FF6347 !important; color: white; }
+        .btn-categoria[data-categoria="4"].active, .cat-4 { background-color: #DB7093 !important; color: white; }
+        .btn-categoria[data-categoria="5"].active, .cat-5 { background-color: #FF00FF !important; color: white; }
+        .btn-categoria[data-categoria="6"].active, .cat-6 { background-color: #8A2BE2 !important; color: white; }
+        .btn-categoria[data-categoria="7"].active, .cat-7 { background-color: #9370DB !important; color: white; }
+        .btn-categoria[data-categoria="8"].active, .cat-8 { background-color: #BA55D3 !important; color: white; }
+        .btn-categoria[data-categoria="9"].active, .cat-9 { background-color: #DA70D6 !important; color: white; }
+        .btn-categoria[data-categoria="10"].active, .cat-10 { background-color: #9932CC !important; color: white; }
+        .btn-categoria[data-categoria="11"].active, .cat-11 { background-color: #8B008B !important; color: white; }
+        .btn-categoria[data-categoria="12"].active, .cat-12 { background-color: #FF8C00 !important; color: white; }
+        .btn-categoria[data-categoria="13"].active, .cat-13 { background-color: #FFA500 !important; color: white; }
+        .btn-categoria[data-categoria="14"].active, .cat-14 { background-color: #FFD700 !important; color: white; }
+        .btn-categoria[data-categoria="15"].active, .cat-15 { background-color: #F4A460 !important; color: white; }
+        .btn-categoria[data-categoria="16"].active, .cat-16 { background-color: #DAA520 !important; color: white; }
+        .btn-categoria[data-categoria="17"].active, .cat-17 { background-color: #1E90FF !important; color: white; }
+        .btn-categoria[data-categoria="18"].active, .cat-18 { background-color: #4169E1 !important; color: white; }
+        .btn-categoria[data-categoria="19"].active, .cat-19 { background-color: #0000CD !important; color: white; }
+        .btn-categoria[data-categoria="20"].active, .cat-20 { background-color: #1E90FF !important; color: white; }
+        .btn-categoria[data-categoria="21"].active, .cat-21 { background-color: #4682B4 !important; color: white; }
+        .btn-categoria[data-categoria="22"].active, .cat-22 { background-color: #8B4513 !important; color: white; }
+        .btn-categoria[data-categoria="23"].active, .cat-23 { background-color: #654321 !important; color: white; }
+        .btn-categoria[data-categoria="24"].active, .cat-24 { background-color: #A0522D !important; color: white; }
+        .btn-categoria[data-categoria="25"].active, .cat-25 { background-color: #D2691E !important; color: white; }
+
+        .stats { text-align: center; margin: 2rem 0; font-size: 1.2rem; color: var(--secondary-color); }
+        .loading { text-align: center; padding: 3rem; font-size: 1.5rem; color: var(--primary-color); }
+        .grid-eventos { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .card-evento { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s ease; position: relative; }
+        .card-evento:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .card-evento img { width: 100%; height: 200px; object-fit: cover; }
+        .evento-fecha { position: absolute; top: 10px; left: 10px; background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 10px; text-align: center; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .evento-fecha .dia { font-size: 1.8rem; line-height: 1; }
+        .evento-fecha .mes { font-size: 0.9rem; text-transform: uppercase; }
+        .card-content { padding: 1.5rem; }
+        .card-content h3 { color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .evento-categoria { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; }
+        
+        .location { color: #666; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .evento-descripcion { color: #555; font-size: 0.95rem; line-height: 1.5; margin-bottom: 1rem; }
+        .btn-evento { display: inline-block; padding: 0.7rem 1.5rem; background: var(--primary-color); color: white; text-decoration: none; border-radius: 25px; transition: all 0.3s ease; font-weight: 600; }
+        .btn-evento:hover { background: var(--secondary-color); transform: scale(1.05); }
+        .pagination { display: flex; justify-content: center; gap: 0.5rem; margin: 2.5rem 0 1rem; flex-wrap: wrap; }
+        .pagination button { border: none; background: #f2f2f2; color: #333; padding: 0.6rem 1rem; border-radius: 999px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+        .pagination button:hover { background: var(--primary-color); color: white; }
+        .pagination button.active { background: var(--primary-color); color: white; }
+        .pagination button:disabled { background: #e0e0e0; color: #888; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <!-- Header completo como en el menú de inicio -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <a href="/fr/index.html"><img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo"></a>
+                </div>
+
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-row">
+                        <li><a href="/alojamientos-turisticos.html">
+                            <i class="fas fa-bed"></i>
+                            <span>Hébergements</span>
+                        </a></li>
+                        <li><a href="/lugares-interes-paginacion.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Lieux</span>
+                        </a></li>
+                        <li><a href="/fr/eventos-culturales-paginacion.html">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Événements</span

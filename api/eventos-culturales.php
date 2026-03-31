@@ -17,7 +17,12 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->exec("SET NAMES utf8mb4");
 
+    // Obtener idioma del parámetro (por defecto español)
+    $lang = isset($_GET['lang']) ? $_GET['lang'] : 'es';
+    
     // Query con los nombres correctos de columnas
+    // Para soporte multilingüe, necesitaríamos columnas de traducción
+    // Por ahora, usamos las columnas en español como base
     $sql = "SELECT 
         id,
         name as titulo,
