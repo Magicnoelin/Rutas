@@ -8,15 +8,315 @@
   Ejemplo: /de/evento/volksfest-san-pedro-zamora-2026
 
   GENERADO AUTOMÁTICAMENTE - NO EDITAR MANUALMENTE
-  Última regeneración: 2026-03-26 09:54:48
-  Total traducciones: 28
+  Última regeneración: 2026-04-01 05:25:24
+  Total traducciones: 300
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <!-- ============================================================
-       ALEMÁN (de) - 7 eventos traducidos
+       ALEMÁN (de) - 75 eventos traducidos
        ============================================================ -->
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/arde-lucus-2026-lugo-eventos-previos-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/arde-lucus-2026-lugo-eventos-previos"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/arde-lucus-2026-lugo-eventos-previos-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/astures-y-romanos-astorga-recreacion-historica-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/astures-y-romanos-astorga-recreacion-historica"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/astures-y-romanos-astorga-recreacion-historica-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/bajada-del-angel-penafiel-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/bajada-del-angel-penafiel-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/bajada-del-angel-penafiel-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/calendario-semana-santa-valladolid-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/calendario-semana-santa-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/calendario-semana-santa-valladolid-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/carrera-marcha-de-castilla-y-leon-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/carrera-marcha-de-castilla-y-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/carrera-marcha-de-castilla-y-leon-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/certamen-patios-toledo-2026-fechas-visitas-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/certamen-patios-toledo-2026-fechas-visitas"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/certamen-patios-toledo-2026-fechas-visitas-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/el-judas-villadiego-2026-fiesta-etnografica-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/el-judas-villadiego-2026-fiesta-etnografica"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/el-judas-villadiego-2026-fiesta-etnografica-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/entre-lunas-toledo-2026-rutas-gratis-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/entre-lunas-toledo-2026-rutas-gratis"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/entre-lunas-toledo-2026-rutas-gratis-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/feria-ascension-oviedo-2026-programa-gastronomia-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-ascension-oviedo-2026-programa-gastronomia"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/feria-ascension-oviedo-2026-programa-gastronomia-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/feria-chica-palencia-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-chica-palencia-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/feria-chica-palencia-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/feria-chorizo-cantimpalos-2026-segovia-fechas-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-chorizo-cantimpalos-2026-segovia-fechas"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/feria-chorizo-cantimpalos-2026-segovia-fechas-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/festa-da-troita-a-pontenova-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festa-da-troita-a-pontenova-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/festa-da-troita-a-pontenova-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/festival-jazz-lugo-2026-conciertos-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-jazz-lugo-2026-conciertos"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/festival-jazz-lugo-2026-conciertos-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/festival-monoloco-leon-2026-verano-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-monoloco-leon-2026-verano"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/festival-monoloco-leon-2026-verano-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/festival-raices-sonoras-marchamalo-2026-entradas-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-raices-sonoras-marchamalo-2026-entradas"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/festival-raices-sonoras-marchamalo-2026-entradas-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/festival-trayectos-zaragoza-2026-danza-urbana-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-trayectos-zaragoza-2026-danza-urbana"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/festival-trayectos-zaragoza-2026-danza-urbana-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fiesta-tabera-briviesca-2026-juego-taba-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-tabera-briviesca-2026-juego-taba"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fiesta-tabera-briviesca-2026-juego-taba-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fiestas-ascension-santiago-compostela-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-ascension-santiago-compostela-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fiestas-ascension-santiago-compostela-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fiestas-san-antonio-padua-valle-tietar-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-antonio-padua-valle-tietar-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fiestas-san-antonio-padua-valle-tietar-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fiestas-san-juan-san-pedro-leon-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-san-pedro-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fiestas-san-juan-san-pedro-leon-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fiestas-san-juan-soria-2026-la-saca-programa-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026-la-saca-programa"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fiestas-san-juan-soria-2026-la-saca-programa-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fiestas-san-pedro-zamora-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-pedro-zamora-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fiestas-san-pedro-zamora-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/fuentes-la-granja-segovia-san-fernando-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fuentes-la-granja-segovia-san-fernando-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/fuentes-la-granja-segovia-san-fernando-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/gijon-sound-festival-2026-conciertos-sedes-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/gijon-sound-festival-2026-conciertos-sedes"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/gijon-sound-festival-2026-conciertos-sedes-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/gran-premio-velocidad-la-baneza-motos-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/gran-premio-velocidad-la-baneza-motos"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/gran-premio-velocidad-la-baneza-motos-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria-traditionelles-fest-spanien"/>
+  </url>
 
   <url>
     <loc>https://www.rutasrurales.io/de/evento/keramikmarkt-folklore-festival-benavente-spanien</loc>
@@ -29,13 +329,83 @@
   </url>
 
   <url>
+    <loc>https://www.rutasrurales.io/de/evento/la-caballada-atienza-2026-horarios-guia-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/la-caballada-atienza-2026-horarios-guia"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/la-caballada-atienza-2026-horarios-guia-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
     <loc>https://www.rutasrurales.io/de/evento/la-veguilla-fest-benavente-spanien-volksfest</loc>
-    <lastmod>2026-03-24</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
     <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-la-veguilla-benavente-2026"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/la-veguilla-fest-benavente-spanien-volksfest"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/lev-festival-gijon-2026-entradas-programacion-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/lev-festival-gijon-2026-entradas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/lev-festival-gijon-2026-entradas-programacion-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/lunes-de-aguas-salamanca-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/lunes-de-aguas-salamanca-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/lunes-de-aguas-salamanca-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/mayos-pastrana-2026-tradicion-alcarria-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mayos-pastrana-2026-tradicion-alcarria"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/mayos-pastrana-2026-tradicion-alcarria-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/medina-azahara-burgos-2026-concierto-rock-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/medina-azahara-burgos-2026-concierto-rock"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/medina-azahara-burgos-2026-concierto-rock-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/mercado-medieval-carracedelo-bierzo-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-carracedelo-bierzo"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/mercado-medieval-carracedelo-bierzo-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/mercado-medieval-tamajon-2026-pueblos-negros-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-tamajon-2026-pueblos-negros"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/mercado-medieval-tamajon-2026-pueblos-negros-traditionelles-fest-spanien"/>
   </url>
 
   <url>
@@ -49,6 +419,116 @@
   </url>
 
   <url>
+    <loc>https://www.rutasrurales.io/de/evento/mondidas-sarnago-soria-2026-tradicion-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mondidas-sarnago-soria-2026-tradicion"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/mondidas-sarnago-soria-2026-tradicion-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/obk-concierto-burgos-2026-forum-evolucion-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/obk-concierto-burgos-2026-forum-evolucion"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/obk-concierto-burgos-2026-forum-evolucion-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/pablo-lopez-concierto-burgos-2026-entradas-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pablo-lopez-concierto-burgos-2026-entradas"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/pablo-lopez-concierto-burgos-2026-entradas-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/pasion-viviente-hiendelaencina-2026-viernes-santo-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pasion-viviente-hiendelaencina-2026-viernes-santo"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/pasion-viviente-hiendelaencina-2026-viernes-santo-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/paso-del-fuego-san-pedro-manrique-2026-horarios-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/paso-del-fuego-san-pedro-manrique-2026-horarios"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/paso-del-fuego-san-pedro-manrique-2026-horarios-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio-traditionelles-fest-spanien</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/primer-sidre-anyo-gijon-2026-espicha-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/primer-sidre-anyo-gijon-2026-espicha"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/primer-sidre-anyo-gijon-2026-espicha-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/procesion-capas-pardas-zamora-2026-horario-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-capas-pardas-zamora-2026-horario"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/procesion-capas-pardas-zamora-2026-horario-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/procesion-general-viernes-santo-valladolid-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-general-viernes-santo-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/procesion-general-viernes-santo-valladolid-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/procesion-os-caladinos-semana-santa-a-coruna-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-os-caladinos-semana-santa-a-coruna-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/procesion-os-caladinos-semana-santa-a-coruna-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/procesion-pasos-encuentro-leon-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-pasos-encuentro-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/procesion-pasos-encuentro-leon-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
     <loc>https://www.rutasrurales.io/de/evento/prozession-schweigen-miserere-zamora-2026</loc>
     <lastmod>2026-03-12</lastmod>
     <changefreq>weekly</changefreq>
@@ -59,8 +539,38 @@
   </url>
 
   <url>
-    <loc>https://www.rutasrurales.io/de/evento/san-juan-fest-soria-spanien-stierlauf-tradition</loc>
+    <loc>https://www.rutasrurales.io/de/evento/romeria-cristo-de-la-luz-lanzahita-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/romeria-cristo-de-la-luz-lanzahita-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/romeria-cristo-de-la-luz-lanzahita-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/romeria-san-segundo-avila-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/romeria-san-segundo-avila-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/romeria-san-segundo-avila-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/san-jorge-zaragoza-2026-dia-libro-traditionelles-fest-spanien</loc>
     <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-jorge-zaragoza-2026-dia-libro"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/san-jorge-zaragoza-2026-dia-libro-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/san-juan-fest-soria-spanien-stierlauf-tradition</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
@@ -69,13 +579,183 @@
   </url>
 
   <url>
+    <loc>https://www.rutasrurales.io/de/evento/san-marcos-palencia-2026-caracolada-sotillo-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-marcos-palencia-2026-caracolada-sotillo"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/san-marcos-palencia-2026-caracolada-sotillo-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/san-pascual-bailon-almazan-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-pascual-bailon-almazan-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/san-pascual-bailon-almazan-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/san-pedro-regalado-valladolid-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-pedro-regalado-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/san-pedro-regalado-valladolid-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/san-xoan-santiago-compostela-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-xoan-santiago-compostela-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/san-xoan-santiago-compostela-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/semana-santa-burgos-2026-procesiones-horarios-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-burgos-2026-procesiones-horarios"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/semana-santa-burgos-2026-procesiones-horarios-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/semana-santa-leon-2026-limonada-matar-judios-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-leon-2026-limonada-matar-judios"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/semana-santa-leon-2026-limonada-matar-judios-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/semana-santa-salamanca-descendimiento-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-salamanca-descendimiento-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/semana-santa-salamanca-descendimiento-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/semana-santa-segovia-2026-procesiones-horarios-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-segovia-2026-procesiones-horarios"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/semana-santa-segovia-2026-procesiones-horarios-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/semana-santa-toledo-2026-procesiones-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-toledo-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/semana-santa-toledo-2026-procesiones-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/semana-santa-viveiro-2026-procesiones-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-viveiro-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/semana-santa-viveiro-2026-procesiones-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/semana-santa-zaragoza-2026-procesiones-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-zaragoza-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/semana-santa-zaragoza-2026-procesiones-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/titirimundi-segovia-2026-fechas-programacion-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/titirimundi-segovia-2026-fechas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/titirimundi-segovia-2026-fechas-programacion-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/toledo-beat-festival-2026-musica-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toledo-beat-festival-2026-musica"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/toledo-beat-festival-2026-musica-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
     <loc>https://www.rutasrurales.io/de/evento/toro-enmaromado-benavente-spanien-volksfest</loc>
-    <lastmod>2026-03-26</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
     <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toro-enmaromado-benavente-2026-fechas-recorrido"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/toro-enmaromado-benavente-spanien-volksfest"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/trufa-primavera-abejar-soria-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/trufa-primavera-abejar-soria-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/trufa-primavera-abejar-soria-2026-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/valgame-fest-cabrales-2026-folk-asturiano-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/valgame-fest-cabrales-2026-folk-asturiano"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/valgame-fest-cabrales-2026-folk-asturiano-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/visita-catedral-tarazona-2026-patrimonio-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/visita-catedral-tarazona-2026-patrimonio"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/visita-catedral-tarazona-2026-patrimonio-traditionelles-fest-spanien"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/de/evento/visita-torre-de-hercules-semana-santa-coruna-2026-traditionelles-fest-spanien</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/visita-torre-de-hercules-semana-santa-coruna-2026"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.rutasrurales.io/de/evento/visita-torre-de-hercules-semana-santa-coruna-2026-traditionelles-fest-spanien"/>
   </url>
 
   <url>
@@ -89,17 +769,347 @@
   </url>
 
   <!-- ============================================================
-       INGLÉS (en) - 6 eventos traducidos
+       INGLÉS (en) - 75 eventos traducidos
        ============================================================ -->
 
   <url>
-    <loc>https://www.rutasrurales.io/en/evento/la-veguilla-festival-benavente-spain-dates-program</loc>
+    <loc>https://www.rutasrurales.io/en/evento/arde-lucus-2026-lugo-eventos-previos-traditional-festival-spain</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/arde-lucus-2026-lugo-eventos-previos"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/arde-lucus-2026-lugo-eventos-previos-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/astures-y-romanos-astorga-recreacion-historica-traditional-festival-spain</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/astures-y-romanos-astorga-recreacion-historica"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/astures-y-romanos-astorga-recreacion-historica-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/authentic-traditional-spanish-festival-soria-2026</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/authentic-traditional-spanish-festival-soria-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/bajada-del-angel-penafiel-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/bajada-del-angel-penafiel-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/bajada-del-angel-penafiel-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/calendario-semana-santa-valladolid-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/calendario-semana-santa-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/calendario-semana-santa-valladolid-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/carrera-marcha-de-castilla-y-leon-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/carrera-marcha-de-castilla-y-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/carrera-marcha-de-castilla-y-leon-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/certamen-patios-toledo-2026-fechas-visitas-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/certamen-patios-toledo-2026-fechas-visitas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/certamen-patios-toledo-2026-fechas-visitas-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/el-judas-villadiego-2026-fiesta-etnografica-traditional-festival-spain</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/el-judas-villadiego-2026-fiesta-etnografica"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/el-judas-villadiego-2026-fiesta-etnografica-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas-traditional-festival-spain</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/entre-lunas-toledo-2026-rutas-gratis-traditional-festival-spain</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/entre-lunas-toledo-2026-rutas-gratis"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/entre-lunas-toledo-2026-rutas-gratis-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/feria-ascension-oviedo-2026-programa-gastronomia-traditional-festival-spain</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-ascension-oviedo-2026-programa-gastronomia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/feria-ascension-oviedo-2026-programa-gastronomia-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/feria-chica-palencia-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-chica-palencia-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/feria-chica-palencia-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/feria-chorizo-cantimpalos-2026-segovia-fechas-traditional-festival-spain</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-chorizo-cantimpalos-2026-segovia-fechas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/feria-chorizo-cantimpalos-2026-segovia-fechas-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/festa-da-troita-a-pontenova-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festa-da-troita-a-pontenova-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/festa-da-troita-a-pontenova-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/festival-jazz-lugo-2026-conciertos-traditional-festival-spain</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-jazz-lugo-2026-conciertos"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/festival-jazz-lugo-2026-conciertos-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/festival-monoloco-leon-2026-verano-traditional-festival-spain</loc>
     <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-monoloco-leon-2026-verano"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/festival-monoloco-leon-2026-verano-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/festival-raices-sonoras-marchamalo-2026-entradas-traditional-festival-spain</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-raices-sonoras-marchamalo-2026-entradas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/festival-raices-sonoras-marchamalo-2026-entradas-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/festival-trayectos-zaragoza-2026-danza-urbana-traditional-festival-spain</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-trayectos-zaragoza-2026-danza-urbana"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/festival-trayectos-zaragoza-2026-danza-urbana-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/fiesta-tabera-briviesca-2026-juego-taba-traditional-festival-spain</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-tabera-briviesca-2026-juego-taba"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/fiesta-tabera-briviesca-2026-juego-taba-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/fiestas-ascension-santiago-compostela-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-ascension-santiago-compostela-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/fiestas-ascension-santiago-compostela-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/fiestas-san-antonio-padua-valle-tietar-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-antonio-padua-valle-tietar-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/fiestas-san-antonio-padua-valle-tietar-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/fiestas-san-juan-san-pedro-leon-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-san-pedro-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/fiestas-san-juan-san-pedro-leon-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/fiestas-san-juan-soria-2026-la-saca-programa-traditional-festival-spain</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026-la-saca-programa"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/fiestas-san-juan-soria-2026-la-saca-programa-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/fuentes-la-granja-segovia-san-fernando-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fuentes-la-granja-segovia-san-fernando-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/fuentes-la-granja-segovia-san-fernando-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/gijon-sound-festival-2026-conciertos-sedes-traditional-festival-spain</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/gijon-sound-festival-2026-conciertos-sedes"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/gijon-sound-festival-2026-conciertos-sedes-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/gran-premio-velocidad-la-baneza-motos-traditional-festival-spain</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/gran-premio-velocidad-la-baneza-motos"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/gran-premio-velocidad-la-baneza-motos-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria-traditional-festival-spain</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/la-caballada-atienza-2026-horarios-guia-traditional-festival-spain</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/la-caballada-atienza-2026-horarios-guia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/la-caballada-atienza-2026-horarios-guia-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/la-veguilla-festival-benavente-spain-dates-program</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
     <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-la-veguilla-benavente-2026"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/la-veguilla-festival-benavente-spain-dates-program"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/lev-festival-gijon-2026-entradas-programacion-traditional-festival-spain</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/lev-festival-gijon-2026-entradas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/lev-festival-gijon-2026-entradas-programacion-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/lunes-de-aguas-salamanca-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/lunes-de-aguas-salamanca-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/lunes-de-aguas-salamanca-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/mayos-pastrana-2026-tradicion-alcarria-traditional-festival-spain</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mayos-pastrana-2026-tradicion-alcarria"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/mayos-pastrana-2026-tradicion-alcarria-traditional-festival-spain"/>
   </url>
 
   <url>
@@ -113,6 +1123,96 @@
   </url>
 
   <url>
+    <loc>https://www.rutasrurales.io/en/evento/medina-azahara-burgos-2026-concierto-rock-traditional-festival-spain</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/medina-azahara-burgos-2026-concierto-rock"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/medina-azahara-burgos-2026-concierto-rock-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/mercado-medieval-carracedelo-bierzo-traditional-festival-spain</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-carracedelo-bierzo"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/mercado-medieval-carracedelo-bierzo-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/mercado-medieval-tamajon-2026-pueblos-negros-traditional-festival-spain</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-tamajon-2026-pueblos-negros"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/mercado-medieval-tamajon-2026-pueblos-negros-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/mondidas-sarnago-soria-2026-tradicion-traditional-festival-spain</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mondidas-sarnago-soria-2026-tradicion"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/mondidas-sarnago-soria-2026-tradicion-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/obk-concierto-burgos-2026-forum-evolucion-traditional-festival-spain</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/obk-concierto-burgos-2026-forum-evolucion"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/obk-concierto-burgos-2026-forum-evolucion-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/pablo-lopez-concierto-burgos-2026-entradas-traditional-festival-spain</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pablo-lopez-concierto-burgos-2026-entradas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/pablo-lopez-concierto-burgos-2026-entradas-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/pasion-viviente-hiendelaencina-2026-viernes-santo-traditional-festival-spain</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pasion-viviente-hiendelaencina-2026-viernes-santo"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/pasion-viviente-hiendelaencina-2026-viernes-santo-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/paso-del-fuego-san-pedro-manrique-2026-horarios-traditional-festival-spain</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/paso-del-fuego-san-pedro-manrique-2026-horarios"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/paso-del-fuego-san-pedro-manrique-2026-horarios-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio-traditional-festival-spain</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio-traditional-festival-spain"/>
+  </url>
+
+  <url>
     <loc>https://www.rutasrurales.io/en/evento/pottery-fair-folklore-festival-benavente-spain</loc>
     <lastmod>2026-03-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -123,13 +1223,123 @@
   </url>
 
   <url>
-    <loc>https://www.rutasrurales.io/en/evento/san-juan-festival-soria-spain-2026-bull-run</loc>
+    <loc>https://www.rutasrurales.io/en/evento/primer-sidre-anyo-gijon-2026-espicha-traditional-festival-spain</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/primer-sidre-anyo-gijon-2026-espicha"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/primer-sidre-anyo-gijon-2026-espicha-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/procesion-capas-pardas-zamora-2026-horario-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-capas-pardas-zamora-2026-horario"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/procesion-capas-pardas-zamora-2026-horario-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/procesion-general-viernes-santo-valladolid-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-general-viernes-santo-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/procesion-general-viernes-santo-valladolid-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/procesion-os-caladinos-semana-santa-a-coruna-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-os-caladinos-semana-santa-a-coruna-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/procesion-os-caladinos-semana-santa-a-coruna-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/procesion-pasos-encuentro-leon-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-pasos-encuentro-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/procesion-pasos-encuentro-leon-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/procesion-silencio-miserere-zamora-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-silencio-miserere-zamora-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/procesion-silencio-miserere-zamora-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/romeria-cristo-de-la-luz-lanzahita-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/romeria-cristo-de-la-luz-lanzahita-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/romeria-cristo-de-la-luz-lanzahita-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/romeria-san-segundo-avila-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/romeria-san-segundo-avila-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/romeria-san-segundo-avila-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/san-jorge-zaragoza-2026-dia-libro-traditional-festival-spain</loc>
     <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-jorge-zaragoza-2026-dia-libro"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/san-jorge-zaragoza-2026-dia-libro-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/san-juan-festival-soria-spain-2026-bull-run</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
     <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/san-juan-festival-soria-spain-2026-bull-run"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/san-marcos-palencia-2026-caracolada-sotillo-traditional-festival-spain</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-marcos-palencia-2026-caracolada-sotillo"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/san-marcos-palencia-2026-caracolada-sotillo-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/san-pascual-bailon-almazan-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-pascual-bailon-almazan-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/san-pascual-bailon-almazan-2026-traditional-festival-spain"/>
   </url>
 
   <url>
@@ -143,8 +1353,118 @@
   </url>
 
   <url>
+    <loc>https://www.rutasrurales.io/en/evento/san-pedro-regalado-valladolid-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-pedro-regalado-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/san-pedro-regalado-valladolid-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/san-xoan-santiago-compostela-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-xoan-santiago-compostela-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/san-xoan-santiago-compostela-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/semana-santa-burgos-2026-procesiones-horarios-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-burgos-2026-procesiones-horarios"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/semana-santa-burgos-2026-procesiones-horarios-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/semana-santa-leon-2026-limonada-matar-judios-traditional-festival-spain</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-leon-2026-limonada-matar-judios"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/semana-santa-leon-2026-limonada-matar-judios-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/semana-santa-salamanca-descendimiento-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-salamanca-descendimiento-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/semana-santa-salamanca-descendimiento-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/semana-santa-segovia-2026-procesiones-horarios-traditional-festival-spain</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-segovia-2026-procesiones-horarios"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/semana-santa-segovia-2026-procesiones-horarios-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/semana-santa-toledo-2026-procesiones-traditional-festival-spain</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-toledo-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/semana-santa-toledo-2026-procesiones-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/semana-santa-viveiro-2026-procesiones-traditional-festival-spain</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-viveiro-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/semana-santa-viveiro-2026-procesiones-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/semana-santa-zaragoza-2026-procesiones-traditional-festival-spain</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-zaragoza-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/semana-santa-zaragoza-2026-procesiones-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/titirimundi-segovia-2026-fechas-programacion-traditional-festival-spain</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/titirimundi-segovia-2026-fechas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/titirimundi-segovia-2026-fechas-programacion-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/toledo-beat-festival-2026-musica-traditional-festival-spain</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toledo-beat-festival-2026-musica"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/toledo-beat-festival-2026-musica-traditional-festival-spain"/>
+  </url>
+
+  <url>
     <loc>https://www.rutasrurales.io/en/evento/toro-enmaromado-bull-on-rope-benavente-spain</loc>
-    <lastmod>2026-03-26</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
@@ -152,9 +1472,109 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/toro-enmaromado-bull-on-rope-benavente-spain"/>
   </url>
 
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/trufa-primavera-abejar-soria-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/trufa-primavera-abejar-soria-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/trufa-primavera-abejar-soria-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/valgame-fest-cabrales-2026-folk-asturiano-traditional-festival-spain</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/valgame-fest-cabrales-2026-folk-asturiano"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/valgame-fest-cabrales-2026-folk-asturiano-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/visita-catedral-tarazona-2026-patrimonio-traditional-festival-spain</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/visita-catedral-tarazona-2026-patrimonio"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/visita-catedral-tarazona-2026-patrimonio-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/visita-torre-de-hercules-semana-santa-coruna-2026-traditional-festival-spain</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/visita-torre-de-hercules-semana-santa-coruna-2026"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/visita-torre-de-hercules-semana-santa-coruna-2026-traditional-festival-spain"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/en/evento/zaragoza-florece-2026-fechas-oficiales-traditional-festival-spain</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/zaragoza-florece-2026-fechas-oficiales"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.rutasrurales.io/en/evento/zaragoza-florece-2026-fechas-oficiales-traditional-festival-spain"/>
+  </url>
+
   <!-- ============================================================
-       FRANCÉS (fr) - 14 eventos traducidos
+       FRANCÉS (fr) - 75 eventos traducidos
        ============================================================ -->
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/arde-lucus-2026-lugo-eventos-previos-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/arde-lucus-2026-lugo-eventos-previos"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/arde-lucus-2026-lugo-eventos-previos-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/astures-y-romanos-astorga-recreacion-historica-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/astures-y-romanos-astorga-recreacion-historica"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/astures-y-romanos-astorga-recreacion-historica-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/calendario-semana-santa-valladolid-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/calendario-semana-santa-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/calendario-semana-santa-valladolid-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/carrera-marcha-de-castilla-y-leon-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/carrera-marcha-de-castilla-y-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/carrera-marcha-de-castilla-y-leon-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/certamen-patios-toledo-2026-fechas-visitas-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/certamen-patios-toledo-2026-fechas-visitas"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/certamen-patios-toledo-2026-fechas-visitas-fete-traditionnelle-espagne"/>
+  </url>
 
   <url>
     <loc>https://www.rutasrurales.io/fr/evento/descente-ange-penafiel-2026</loc>
@@ -164,6 +1584,116 @@
     <!-- Versión original en español -->
     <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/bajada-del-angel-penafiel-2026"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/descente-ange-penafiel-2026"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/el-judas-villadiego-2026-fiesta-etnografica-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/el-judas-villadiego-2026-fiesta-etnografica"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/el-judas-villadiego-2026-fiesta-etnografica-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/entre-lunas-toledo-2026-rutas-gratis-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/entre-lunas-toledo-2026-rutas-gratis"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/entre-lunas-toledo-2026-rutas-gratis-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/feria-ascension-oviedo-2026-programa-gastronomia-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-ascension-oviedo-2026-programa-gastronomia"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/feria-ascension-oviedo-2026-programa-gastronomia-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/feria-chica-palencia-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-chica-palencia-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/feria-chica-palencia-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/feria-chorizo-cantimpalos-2026-segovia-fechas-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-chorizo-cantimpalos-2026-segovia-fechas"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/feria-chorizo-cantimpalos-2026-segovia-fechas-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/festa-da-troita-a-pontenova-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festa-da-troita-a-pontenova-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/festa-da-troita-a-pontenova-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/festival-jazz-lugo-2026-conciertos-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-jazz-lugo-2026-conciertos"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/festival-jazz-lugo-2026-conciertos-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/festival-monoloco-leon-2026-verano-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-monoloco-leon-2026-verano"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/festival-monoloco-leon-2026-verano-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/festival-raices-sonoras-marchamalo-2026-entradas-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-raices-sonoras-marchamalo-2026-entradas"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/festival-raices-sonoras-marchamalo-2026-entradas-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/festival-trayectos-zaragoza-2026-danza-urbana-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-trayectos-zaragoza-2026-danza-urbana"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/festival-trayectos-zaragoza-2026-danza-urbana-fete-traditionnelle-espagne"/>
   </url>
 
   <url>
@@ -178,7 +1708,7 @@
 
   <url>
     <loc>https://www.rutasrurales.io/fr/evento/fete-toro-enmaromado-benavente-espagne-tradition</loc>
-    <lastmod>2026-03-26</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
@@ -188,7 +1718,7 @@
 
   <url>
     <loc>https://www.rutasrurales.io/fr/evento/fetes-san-juan-soria-espagne-programme-la-saca</loc>
-    <lastmod>2026-03-18</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
@@ -208,12 +1738,82 @@
 
   <url>
     <loc>https://www.rutasrurales.io/fr/evento/fetes-veguilla-benavente-zamora-tradition-espagne</loc>
-    <lastmod>2026-03-24</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <!-- Versión original en español -->
     <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-la-veguilla-benavente-2026"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fetes-veguilla-benavente-zamora-tradition-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fiesta-tabera-briviesca-2026-juego-taba-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-tabera-briviesca-2026-juego-taba"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fiesta-tabera-briviesca-2026-juego-taba-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fiestas-ascension-santiago-compostela-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-ascension-santiago-compostela-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fiestas-ascension-santiago-compostela-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fiestas-san-antonio-padua-valle-tietar-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-antonio-padua-valle-tietar-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fiestas-san-antonio-padua-valle-tietar-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fiestas-san-juan-san-pedro-leon-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-san-pedro-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fiestas-san-juan-san-pedro-leon-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fiestas-san-juan-soria-2026-la-saca-programa-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026-la-saca-programa"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fiestas-san-juan-soria-2026-la-saca-programa-fete-traditionnelle-espagne"/>
   </url>
 
   <url>
@@ -227,6 +1827,76 @@
   </url>
 
   <url>
+    <loc>https://www.rutasrurales.io/fr/evento/fuentes-la-granja-segovia-san-fernando-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fuentes-la-granja-segovia-san-fernando-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/fuentes-la-granja-segovia-san-fernando-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/gijon-sound-festival-2026-conciertos-sedes-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/gijon-sound-festival-2026-conciertos-sedes"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/gijon-sound-festival-2026-conciertos-sedes-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/gran-premio-velocidad-la-baneza-motos-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/gran-premio-velocidad-la-baneza-motos"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/gran-premio-velocidad-la-baneza-motos-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/la-caballada-atienza-2026-horarios-guia-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/la-caballada-atienza-2026-horarios-guia"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/la-caballada-atienza-2026-horarios-guia-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/lev-festival-gijon-2026-entradas-programacion-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/lev-festival-gijon-2026-entradas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/lev-festival-gijon-2026-entradas-programacion-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
     <loc>https://www.rutasrurales.io/fr/evento/marche-medieval-villalpando-zamora-espagne</loc>
     <lastmod>2026-03-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -234,6 +1904,126 @@
     <!-- Versión original en español -->
     <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-villalpando-2026-fechas-programacion"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/marche-medieval-villalpando-zamora-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/mayos-pastrana-2026-tradicion-alcarria-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mayos-pastrana-2026-tradicion-alcarria"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/mayos-pastrana-2026-tradicion-alcarria-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/medina-azahara-burgos-2026-concierto-rock-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/medina-azahara-burgos-2026-concierto-rock"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/medina-azahara-burgos-2026-concierto-rock-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/mercado-medieval-carracedelo-bierzo-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-carracedelo-bierzo"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/mercado-medieval-carracedelo-bierzo-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/mercado-medieval-tamajon-2026-pueblos-negros-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-tamajon-2026-pueblos-negros"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/mercado-medieval-tamajon-2026-pueblos-negros-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/mondidas-sarnago-soria-2026-tradicion-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mondidas-sarnago-soria-2026-tradicion"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/mondidas-sarnago-soria-2026-tradicion-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/obk-concierto-burgos-2026-forum-evolucion-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/obk-concierto-burgos-2026-forum-evolucion"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/obk-concierto-burgos-2026-forum-evolucion-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/pablo-lopez-concierto-burgos-2026-entradas-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pablo-lopez-concierto-burgos-2026-entradas"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/pablo-lopez-concierto-burgos-2026-entradas-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/pasion-viviente-hiendelaencina-2026-viernes-santo-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pasion-viviente-hiendelaencina-2026-viernes-santo"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/pasion-viviente-hiendelaencina-2026-viernes-santo-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/paso-del-fuego-san-pedro-manrique-2026-horarios-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/paso-del-fuego-san-pedro-manrique-2026-horarios"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/paso-del-fuego-san-pedro-manrique-2026-horarios-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/primer-sidre-anyo-gijon-2026-espicha-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/primer-sidre-anyo-gijon-2026-espicha"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/primer-sidre-anyo-gijon-2026-espicha-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/procesion-os-caladinos-semana-santa-a-coruna-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-os-caladinos-semana-santa-a-coruna-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/procesion-os-caladinos-semana-santa-a-coruna-2026-fete-traditionnelle-espagne"/>
   </url>
 
   <url>
@@ -277,6 +2067,76 @@
   </url>
 
   <url>
+    <loc>https://www.rutasrurales.io/fr/evento/romeria-cristo-de-la-luz-lanzahita-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/romeria-cristo-de-la-luz-lanzahita-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/romeria-cristo-de-la-luz-lanzahita-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/romeria-san-segundo-avila-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/romeria-san-segundo-avila-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/romeria-san-segundo-avila-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/san-jorge-zaragoza-2026-dia-libro-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-jorge-zaragoza-2026-dia-libro"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/san-jorge-zaragoza-2026-dia-libro-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/san-marcos-palencia-2026-caracolada-sotillo-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-marcos-palencia-2026-caracolada-sotillo"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/san-marcos-palencia-2026-caracolada-sotillo-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/san-pascual-bailon-almazan-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-pascual-bailon-almazan-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/san-pascual-bailon-almazan-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/san-pedro-regalado-valladolid-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-pedro-regalado-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/san-pedro-regalado-valladolid-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/san-xoan-santiago-compostela-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-xoan-santiago-compostela-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/san-xoan-santiago-compostela-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
     <loc>https://www.rutasrurales.io/fr/evento/semaine-sainte-leon-limonade-2026</loc>
     <lastmod>2026-03-12</lastmod>
     <changefreq>weekly</changefreq>
@@ -296,9 +2156,699 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/semaine-sainte-salamanque-descente-croix-2026"/>
   </url>
 
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/semana-santa-burgos-2026-procesiones-horarios-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-burgos-2026-procesiones-horarios"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/semana-santa-burgos-2026-procesiones-horarios-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/semana-santa-segovia-2026-procesiones-horarios-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-segovia-2026-procesiones-horarios"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/semana-santa-segovia-2026-procesiones-horarios-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/semana-santa-toledo-2026-procesiones-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-toledo-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/semana-santa-toledo-2026-procesiones-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/semana-santa-viveiro-2026-procesiones-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-viveiro-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/semana-santa-viveiro-2026-procesiones-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/semana-santa-zaragoza-2026-procesiones-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-zaragoza-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/semana-santa-zaragoza-2026-procesiones-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/titirimundi-segovia-2026-fechas-programacion-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/titirimundi-segovia-2026-fechas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/titirimundi-segovia-2026-fechas-programacion-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/toledo-beat-festival-2026-musica-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toledo-beat-festival-2026-musica"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/toledo-beat-festival-2026-musica-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/trufa-primavera-abejar-soria-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/trufa-primavera-abejar-soria-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/trufa-primavera-abejar-soria-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/valgame-fest-cabrales-2026-folk-asturiano-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/valgame-fest-cabrales-2026-folk-asturiano"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/valgame-fest-cabrales-2026-folk-asturiano-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/visita-catedral-tarazona-2026-patrimonio-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/visita-catedral-tarazona-2026-patrimonio"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/visita-catedral-tarazona-2026-patrimonio-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/visita-torre-de-hercules-semana-santa-coruna-2026-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/visita-torre-de-hercules-semana-santa-coruna-2026"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/visita-torre-de-hercules-semana-santa-coruna-2026-fete-traditionnelle-espagne"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/fr/evento/zaragoza-florece-2026-fechas-oficiales-fete-traditionnelle-espagne</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/zaragoza-florece-2026-fechas-oficiales"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.rutasrurales.io/fr/evento/zaragoza-florece-2026-fechas-oficiales-fete-traditionnelle-espagne"/>
+  </url>
+
   <!-- ============================================================
-       CHINO (zh) - 1 eventos traducidos
+       CHINO (zh) - 75 eventos traducidos
        ============================================================ -->
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/arde-lucus-2026-lugo-eventos-previos-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/arde-lucus-2026-lugo-eventos-previos"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/arde-lucus-2026-lugo-eventos-previos-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/astures-y-romanos-astorga-recreacion-historica-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/astures-y-romanos-astorga-recreacion-historica"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/astures-y-romanos-astorga-recreacion-historica-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/bajada-del-angel-penafiel-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/bajada-del-angel-penafiel-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/bajada-del-angel-penafiel-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/calendario-semana-santa-valladolid-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/calendario-semana-santa-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/calendario-semana-santa-valladolid-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/carrera-marcha-de-castilla-y-leon-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/carrera-marcha-de-castilla-y-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/carrera-marcha-de-castilla-y-leon-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/certamen-patios-toledo-2026-fechas-visitas-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/certamen-patios-toledo-2026-fechas-visitas"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/certamen-patios-toledo-2026-fechas-visitas-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/el-judas-villadiego-2026-fiesta-etnografica-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/el-judas-villadiego-2026-fiesta-etnografica"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/el-judas-villadiego-2026-fiesta-etnografica-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/en-clave-rural-burgos-2026-musica-iglesias-romanicas-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/entre-lunas-toledo-2026-rutas-gratis-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/entre-lunas-toledo-2026-rutas-gratis"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/entre-lunas-toledo-2026-rutas-gratis-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/feria-ascension-oviedo-2026-programa-gastronomia-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-ascension-oviedo-2026-programa-gastronomia"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/feria-ascension-oviedo-2026-programa-gastronomia-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/feria-ceramica-festival-folklore-benavente-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-ceramica-festival-folklore-benavente-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/feria-ceramica-festival-folklore-benavente-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/feria-chica-palencia-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-chica-palencia-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/feria-chica-palencia-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/feria-chorizo-cantimpalos-2026-segovia-fechas-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/feria-chorizo-cantimpalos-2026-segovia-fechas"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/feria-chorizo-cantimpalos-2026-segovia-fechas-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/festa-da-troita-a-pontenova-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festa-da-troita-a-pontenova-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/festa-da-troita-a-pontenova-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/festival-jazz-lugo-2026-conciertos-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-jazz-lugo-2026-conciertos"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/festival-jazz-lugo-2026-conciertos-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/festival-monoloco-leon-2026-verano-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-monoloco-leon-2026-verano"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/festival-monoloco-leon-2026-verano-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/festival-raices-sonoras-marchamalo-2026-entradas-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-raices-sonoras-marchamalo-2026-entradas"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/festival-raices-sonoras-marchamalo-2026-entradas-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/festival-trayectos-zaragoza-2026-danza-urbana-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/festival-trayectos-zaragoza-2026-danza-urbana"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/festival-trayectos-zaragoza-2026-danza-urbana-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiesta-paella-ollerense-olleros-de-pisuerga-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiesta-tabera-briviesca-2026-juego-taba-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiesta-tabera-briviesca-2026-juego-taba"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiesta-tabera-briviesca-2026-juego-taba-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiestas-ascension-santiago-compostela-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-ascension-santiago-compostela-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiestas-ascension-santiago-compostela-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiestas-la-veguilla-benavente-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-la-veguilla-benavente-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiestas-la-veguilla-benavente-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiestas-san-antonio-padua-valle-tietar-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-antonio-padua-valle-tietar-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiestas-san-antonio-padua-valle-tietar-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiestas-san-juan-san-pedro-leon-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-san-pedro-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiestas-san-juan-san-pedro-leon-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiestas-san-juan-soria-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiestas-san-juan-soria-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fiestas-san-juan-soria-2026-la-saca-programa-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-juan-soria-2026-la-saca-programa"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fiestas-san-juan-soria-2026-la-saca-programa-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/fuentes-la-granja-segovia-san-fernando-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fuentes-la-granja-segovia-san-fernando-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/fuentes-la-granja-segovia-san-fernando-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/gijon-sound-festival-2026-conciertos-sedes-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/gijon-sound-festival-2026-conciertos-sedes"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/gijon-sound-festival-2026-conciertos-sedes-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/gran-premio-velocidad-la-baneza-motos-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/gran-premio-velocidad-la-baneza-motos"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/gran-premio-velocidad-la-baneza-motos-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/guia-eclipse-solar-total-agosto-2026-donde-verlo-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/la-caballada-atienza-2026-horarios-guia-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/la-caballada-atienza-2026-horarios-guia"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/la-caballada-atienza-2026-horarios-guia-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/lev-festival-gijon-2026-entradas-programacion-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/lev-festival-gijon-2026-entradas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/lev-festival-gijon-2026-entradas-programacion-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/lunes-de-aguas-salamanca-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/lunes-de-aguas-salamanca-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/lunes-de-aguas-salamanca-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/mayos-pastrana-2026-tradicion-alcarria-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mayos-pastrana-2026-tradicion-alcarria"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/mayos-pastrana-2026-tradicion-alcarria-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/medina-azahara-burgos-2026-concierto-rock-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/medina-azahara-burgos-2026-concierto-rock"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/medina-azahara-burgos-2026-concierto-rock-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/mercado-medieval-carracedelo-bierzo-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-carracedelo-bierzo"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/mercado-medieval-carracedelo-bierzo-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/mercado-medieval-tamajon-2026-pueblos-negros-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-tamajon-2026-pueblos-negros"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/mercado-medieval-tamajon-2026-pueblos-negros-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/mercado-medieval-villalpando-2026-fechas-programacion-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mercado-medieval-villalpando-2026-fechas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/mercado-medieval-villalpando-2026-fechas-programacion-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/mondidas-sarnago-soria-2026-tradicion-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/mondidas-sarnago-soria-2026-tradicion"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/mondidas-sarnago-soria-2026-tradicion-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/obk-concierto-burgos-2026-forum-evolucion-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/obk-concierto-burgos-2026-forum-evolucion"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/obk-concierto-burgos-2026-forum-evolucion-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/pablo-lopez-concierto-burgos-2026-entradas-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pablo-lopez-concierto-burgos-2026-entradas"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/pablo-lopez-concierto-burgos-2026-entradas-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/pasion-viviente-hiendelaencina-2026-viernes-santo-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pasion-viviente-hiendelaencina-2026-viernes-santo"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/pasion-viviente-hiendelaencina-2026-viernes-santo-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/paso-del-fuego-san-pedro-manrique-2026-horarios-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/paso-del-fuego-san-pedro-manrique-2026-horarios"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/paso-del-fuego-san-pedro-manrique-2026-horarios-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio-chuantongjieri-xibanya</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/primer-sidre-anyo-gijon-2026-espicha-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/primer-sidre-anyo-gijon-2026-espicha"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/primer-sidre-anyo-gijon-2026-espicha-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/procesion-capas-pardas-zamora-2026-horario-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-capas-pardas-zamora-2026-horario"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/procesion-capas-pardas-zamora-2026-horario-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/procesion-general-viernes-santo-valladolid-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-general-viernes-santo-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/procesion-general-viernes-santo-valladolid-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/procesion-os-caladinos-semana-santa-a-coruna-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-os-caladinos-semana-santa-a-coruna-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/procesion-os-caladinos-semana-santa-a-coruna-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/procesion-pasos-encuentro-leon-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-pasos-encuentro-leon-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/procesion-pasos-encuentro-leon-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/procesion-silencio-miserere-zamora-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/procesion-silencio-miserere-zamora-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/procesion-silencio-miserere-zamora-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/romeria-cristo-de-la-luz-lanzahita-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/romeria-cristo-de-la-luz-lanzahita-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/romeria-cristo-de-la-luz-lanzahita-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/romeria-san-segundo-avila-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/romeria-san-segundo-avila-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/romeria-san-segundo-avila-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/san-jorge-zaragoza-2026-dia-libro-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-jorge-zaragoza-2026-dia-libro"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/san-jorge-zaragoza-2026-dia-libro-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/san-marcos-palencia-2026-caracolada-sotillo-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-marcos-palencia-2026-caracolada-sotillo"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/san-marcos-palencia-2026-caracolada-sotillo-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/san-pascual-bailon-almazan-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-pascual-bailon-almazan-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/san-pascual-bailon-almazan-2026-chuantongjieri-xibanya"/>
+  </url>
 
   <url>
     <loc>https://www.rutasrurales.io/zh/evento/san-pedro-festival-zamora-2026-zh</loc>
@@ -308,6 +2858,176 @@
     <!-- Versión original en español -->
     <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/fiestas-san-pedro-zamora-2026"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/san-pedro-festival-zamora-2026-zh"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/san-pedro-regalado-valladolid-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-pedro-regalado-valladolid-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/san-pedro-regalado-valladolid-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/san-xoan-santiago-compostela-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/san-xoan-santiago-compostela-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/san-xoan-santiago-compostela-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/semana-santa-burgos-2026-procesiones-horarios-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-burgos-2026-procesiones-horarios"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/semana-santa-burgos-2026-procesiones-horarios-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/semana-santa-leon-2026-limonada-matar-judios-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-leon-2026-limonada-matar-judios"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/semana-santa-leon-2026-limonada-matar-judios-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/semana-santa-salamanca-descendimiento-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-salamanca-descendimiento-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/semana-santa-salamanca-descendimiento-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/semana-santa-segovia-2026-procesiones-horarios-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-segovia-2026-procesiones-horarios"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/semana-santa-segovia-2026-procesiones-horarios-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/semana-santa-toledo-2026-procesiones-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-toledo-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/semana-santa-toledo-2026-procesiones-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/semana-santa-viveiro-2026-procesiones-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-viveiro-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/semana-santa-viveiro-2026-procesiones-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/semana-santa-zaragoza-2026-procesiones-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/semana-santa-zaragoza-2026-procesiones"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/semana-santa-zaragoza-2026-procesiones-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/titirimundi-segovia-2026-fechas-programacion-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/titirimundi-segovia-2026-fechas-programacion"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/titirimundi-segovia-2026-fechas-programacion-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/toledo-beat-festival-2026-musica-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toledo-beat-festival-2026-musica"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/toledo-beat-festival-2026-musica-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/toro-enmaromado-benavente-2026-fechas-recorrido-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/toro-enmaromado-benavente-2026-fechas-recorrido"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/toro-enmaromado-benavente-2026-fechas-recorrido-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/trufa-primavera-abejar-soria-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/trufa-primavera-abejar-soria-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/trufa-primavera-abejar-soria-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/valgame-fest-cabrales-2026-folk-asturiano-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/valgame-fest-cabrales-2026-folk-asturiano"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/valgame-fest-cabrales-2026-folk-asturiano-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/visita-catedral-tarazona-2026-patrimonio-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/visita-catedral-tarazona-2026-patrimonio"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/visita-catedral-tarazona-2026-patrimonio-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/visita-torre-de-hercules-semana-santa-coruna-2026-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/visita-torre-de-hercules-semana-santa-coruna-2026"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/visita-torre-de-hercules-semana-santa-coruna-2026-chuantongjieri-xibanya"/>
+  </url>
+
+  <url>
+    <loc>https://www.rutasrurales.io/zh/evento/zaragoza-florece-2026-fechas-oficiales-chuantongjieri-xibanya</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <!-- Versión original en español -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/zaragoza-florece-2026-fechas-oficiales"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.rutasrurales.io/zh/evento/zaragoza-florece-2026-fechas-oficiales-chuantongjieri-xibanya"/>
   </url>
 
 </urlset>
