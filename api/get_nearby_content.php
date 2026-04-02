@@ -182,7 +182,7 @@ function getCulturalEvents($pdo, $municipality, $province, $refLat = null, $refL
     $sql = "SELECT *
             FROM cultural_events 
             WHERE is_active = 1 
-            AND start_date >= ?
+            AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= ?
             AND (municipality = ? OR province = ?)
             ORDER BY 
                 start_date ASC,

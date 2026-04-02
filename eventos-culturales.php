@@ -20,12 +20,13 @@ try {
 }
 
 // 2. Consulta de eventos (Activos, aprobados y futuros)
-// 2. Consulta mejorada: Trae los más cercanos a hoy (pasados o futuros)
+// 2. Consulta mejorada: Trae los más cercanos a hoy (futuros)
 $stmt = $pdo->query("SELECT *, 
                      ABS(DATEDIFF(start_date, CURDATE())) as cercania 
                      FROM cultural_events 
                      WHERE is_active = 1 
                      AND moderation_status = 'approved'
+                     AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()
                      ORDER BY cercania ASC, RAND() 
                      LIMIT 12");
 $eventos = $stmt->fetchAll();

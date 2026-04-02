@@ -170,6 +170,8 @@ try {
         $sqlEvents = "SELECT e.* FROM cultural_events e
                       JOIN accommodation_event_links link ON e.id = link.event_id
                       WHERE link.accommodation_id = :acc_id
+                      AND e.is_active = 1
+                      AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()
                       ORDER BY e.start_date ASC";
         $stmtEvents = $pdo->prepare($sqlEvents);
         $stmtEvents->bindValue(':acc_id', $alojamiento['id']);

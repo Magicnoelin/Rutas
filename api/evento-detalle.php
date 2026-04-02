@@ -70,10 +70,10 @@ try {
             WHERE ";
 
         if (!empty($slug)) {
-            $stmt = $pdo->prepare($sqlBase . " (e.slug = :slug1 OR t.slug = :slug2) AND e.is_active = 1 LIMIT 1");
+            $stmt = $pdo->prepare($sqlBase . " (e.slug = :slug1 OR t.slug = :slug2) AND e.is_active = 1 AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE() LIMIT 1");
             $stmt->execute(['slug1' => $slug, 'slug2' => $slug, 'lang' => $lang]);
         } else {
-            $stmt = $pdo->prepare($sqlBase . " e.id = :id AND e.is_active = 1 LIMIT 1");
+            $stmt = $pdo->prepare($sqlBase . " e.id = :id AND e.is_active = 1 AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE() LIMIT 1");
             $stmt->execute(['id' => $id, 'lang' => $lang]);
         }
         
@@ -98,10 +98,10 @@ try {
             WHERE ";
 
         if (!empty($slug)) {
-            $stmt = $pdo->prepare($sqlSimple . " e.slug = :slug AND e.is_active = 1 LIMIT 1");
+            $stmt = $pdo->prepare($sqlSimple . " e.slug = :slug AND e.is_active = 1 AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE() LIMIT 1");
             $stmt->execute(['slug' => $slug]);
         } else {
-            $stmt = $pdo->prepare($sqlSimple . " e.id = :id AND e.is_active = 1 LIMIT 1");
+            $stmt = $pdo->prepare($sqlSimple . " e.id = :id AND e.is_active = 1 AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE() LIMIT 1");
             $stmt->execute(['id' => $id]);
         }
         
