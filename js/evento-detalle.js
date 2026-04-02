@@ -753,12 +753,18 @@ async function renderEvento(evento) {
     }
 
     // Verificar si el evento ha finalizado
-    const eventDate = new Date(evento.fecha_evento);
+    // Usar end_date si existe, si no usar start_date + 1 día
+    const eventStartDate = new Date(evento.fecha_evento);
+    const eventEndDate = evento.fecha_fin ? new Date(evento.fecha_fin) : new Date(eventStartDate);
+    if (!evento.fecha_fin) {
+        eventEndDate.setDate(eventEndDate.getDate() + 1); // +1 día si no hay fecha fin
+    }
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
     let finishedNoticeHtml = '';
-    if (eventDate < today) {
+    if (eventEndDate < today) {
         finishedNoticeHtml = `
             <div class="finished-notice">
                 <i class="fas fa-info-circle"></i>
