@@ -35,7 +35,7 @@
         grid-template-columns: 420px 1fr; 
         gap: 0; 
         min-height: calc(100vh - 80px);
-        overflow: hidden;
+        overflow: visible;
         margin-top: 80px;
     }
     
