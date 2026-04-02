@@ -845,7 +845,7 @@ body {
 .footer {
     background-color: #2c5f2d !important;
     color: var(--white);
-    padding: 2rem 0 1rem;
+    padding: 1.5rem 0 0.8rem;
     font-size: 0.7rem !important;
     text-align: center;
 }
