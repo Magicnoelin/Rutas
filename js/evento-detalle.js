@@ -753,18 +753,27 @@ async function renderEvento(evento) {
     }
 
     // Verificar si el evento ha finalizado
-    // Usar end_date si existe, si no usar start_date + 1 día
+    // El mensaje debe aparecer el día DESPUÉS de que termine el evento
+    // Si hay fecha_fin: usar fecha_fin + 1 día
+    // Si no hay fecha_fin: usar start_date + 1 día
     const eventStartDate = new Date(evento.fecha_evento);
-    const eventEndDate = evento.fecha_fin ? new Date(evento.fecha_fin) : new Date(eventStartDate);
-    if (!evento.fecha_fin) {
-        eventEndDate.setDate(eventEndDate.getDate() + 1); // +1 día si no hay fecha fin
+    let comparisonDate = new Date(eventStartDate);
+    
+    if (evento.fecha_fin) {
+        // Si hay fecha fin, usar fecha fin + 1 día
+        comparisonDate = new Date(evento.fecha_fin);
+        comparisonDate.setDate(comparisonDate.getDate() + 1);
+    } else {
+        // Si no hay fecha fin, usar start_date + 1 día
+        comparisonDate.setDate(comparisonDate.getDate() + 1);
     }
     
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    comparisonDate.setHours(0, 0, 0, 0);
     
     let finishedNoticeHtml = '';
-    if (eventEndDate < today) {
+    if (comparisonDate < today) {
         finishedNoticeHtml = `
             <div class="finished-notice">
                 <i class="fas fa-info-circle"></i>

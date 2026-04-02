@@ -26,7 +26,7 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // 1. Obtener todos los eventos activos en español
+    // 1. Obtener todos los eventos activos en español que aún no han terminado
     $stmtEs = $pdo->query("
         SELECT 
             id,
@@ -36,11 +36,12 @@ try {
         WHERE is_active = 1
           AND slug IS NOT NULL
           AND slug != ''
+          AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()
         ORDER BY COALESCE(updated_at, created_at) DESC
     ");
     $eventosEs = $stmtEs->fetchAll(PDO::FETCH_ASSOC);
 
-    // 2. Obtener todas las traducciones activas (no español)
+    // 2. Obtener todas las traducciones activas (no español) de eventos que aún no han terminado
     $stmtTrad = $pdo->query("
         SELECT 
             t.event_id,
@@ -53,6 +54,7 @@ try {
           AND e.is_active = 1
           AND t.slug IS NOT NULL
           AND t.slug != ''
+          AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()
         ORDER BY t.event_id, t.language_code
     ");
     $traducciones = $stmtTrad->fetchAll(PDO::FETCH_ASSOC);

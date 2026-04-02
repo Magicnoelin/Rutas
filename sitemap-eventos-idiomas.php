@@ -26,7 +26,7 @@ try {
     /**
      * Consulta: obtener todas las traducciones activas
      * - Solo idiomas distintos al español
-     * - Solo eventos activos (is_active = 1)
+     * - Solo eventos activos (is_active = 1) que aún no han terminado
      * - Incluye el slug original en español para el hreflang
      */
     $stmt = $pdo->prepare("
@@ -41,6 +41,7 @@ try {
           AND e.is_active = 1
           AND t.slug IS NOT NULL
           AND t.slug != ''
+          AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()
         ORDER BY t.language_code, t.slug
     ");
     $stmt->execute();
