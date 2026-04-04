@@ -5,9 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle Alojamiento - Rutas</title>
     <link rel="icon" href="menu_images/Favicon.png" type="image/png">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link id="preload-main-image" rel="preload" as="image" href="" imagesrcset="" imagesizes="100vw">
+    <!-- CSS crítico inline para LCP -->
+    <style>
+        /* CSS mínimo crítico para renderizado inicial */
+        :root {
+            --detail-header-height: 400px;
+            --primary-color: #2c5f2d;
+            --secondary-color: #87a96b;
+            --accent-color: #d4a574;
+            --light-color: #f8f9fa;
+            --dark-color: #333;
+            --white: #fff;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .navbar {
+            padding: 1rem 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .nav-menu a:hover {
+            color: var(--primary-color);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Placeholder para eclipse banner */
+        .eclipse-banner-placeholder {
+            height: 80px;
+            margin: 1.5rem auto;
+            max-width: 1000px;
+        }
+        
+        /* Área de contenido principal */
+        #content-area {
+            min-height: 600px;
+            position: relative;
+            margin-top: 90px;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #666;
+            width: 100%;
+        }
+        
+        .detail-header {
+            height: 400px;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+            margin-top: 90px;
+            background-color: #c94141;
+            min-height: 400px;
+        }
+        
+        .error-msg {
+            text-align: center;
+            padding: 50px;
+            color: #e74c3c;
+        }
+    </style>
+    <!-- CSS no crítico cargado asíncronamente -->
+    <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="styles.css"></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <!-- Preload imagen principal con prioridad alta -->
+    <link id="preload-main-image" rel="preload" as="image" fetchpriority="high" href="" imagesrcset="" imagesizes="100vw">
     <style>
         /* CLS Fixes - Prevent layout shifts */
         :root {
@@ -480,77 +607,38 @@
         </div>
     </footer>
 
+    <!-- JavaScript mínimo crítico inline para funcionalidad básica -->
     <script>
-        // Función para extraer el ID del video de YouTube de una URL
-        function getYouTubeVideoId(url) {
-            if (!url) return null;
+        // Solo funciones críticas para LCP
+        function getImageWithFallback(fotos, alternativos, index = 0) {
+            const foto = fotos && fotos[index];
+            if (!foto) return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
             
-            // Patrones para diferentes formatos de URL de YouTube
-            const patterns = [
-                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\?\/]+)/,
-                /youtube\.com\/shorts\/([^&\?\/]+)/
-            ];
+            // Si ya es URL completa, retornarla
+            if (foto.startsWith('http')) return foto;
             
-            for (const pattern of patterns) {
-                const match = url.match(pattern);
-                if (match && match[1]) {
-                    return match[1];
-                }
-            }
-            
-            // Si no coincide con ningún patrón, verificar si es solo un ID de YouTube
-            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
-                return url;
-            }
-            
-            return null;
+            return foto;
         }
 
-        // Función para abrir el modal de video
-        function openVideoModal(videoUrl) {
-            const videoId = getYouTubeVideoId(videoUrl);
-            if (!videoId) {
-                console.error('No se pudo extraer el ID del video de YouTube:', videoUrl);
-                return;
+        function getImageFallbackScript(fotos, alternativos, index = 0) {
+            if (!fotos || fotos.length === 0) return '';
+            
+            const mainFoto = fotos[index];
+            const altFoto = alternativos && alternativos[index];
+            
+            // Si la foto principal ya es una URL externa (http...), no hay fallback
+            if (mainFoto && mainFoto.startsWith('http') && !mainFoto.includes('rutasrurales.io')) {
+                return '';
             }
             
-            const iframe = document.getElementById('videoIframe');
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            // Generar script para intentar ruta alternativa
+            if (altFoto) {
+                return `onerror="this.onerror=null; this.src='${altFoto}';"`;
+            }
             
-            const modal = document.getElementById('videoModal');
-            modal.classList.add('active');
-            
-            // Prevenir scroll del body
-            document.body.style.overflow = 'hidden';
+            return '';
         }
 
-        // Función para cerrar el modal de video
-        function closeVideoModal() {
-            const iframe = document.getElementById('videoIframe');
-            iframe.src = '';
-            
-            const modal = document.getElementById('videoModal');
-            modal.classList.remove('active');
-            
-            // Restaurar scroll del body
-            document.body.style.overflow = '';
-        }
-
-        // Cerrar modal al hacer clic fuera del contenido
-        document.addEventListener('click', function(e) {
-            const modal = document.getElementById('videoModal');
-            if (e.target === modal) {
-                closeVideoModal();
-            }
-        });
-
-        // Cerrar modal con tecla Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeVideoModal();
-            }
-        });
-        // Función formateadora de descripciones
         function formatearDescripcion(texto) {
             if (!texto) return 'Sin descripción disponible.';
             
@@ -568,6 +656,173 @@
             
             return texto;
         }
+
+        // Cargar datos del alojamiento inmediatamente
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ocultar spinner después de 3 segundos máximo (reducido de 8s)
+            const spinnerTimeout = setTimeout(() => {
+                const loadingEl = document.querySelector('.loading');
+                if (loadingEl && loadingEl.style.display !== 'none') {
+                    loadingEl.style.display = 'none';
+                }
+            }, 3000);
+
+            // Usar slug inyectado por PHP si existe, sino obtener de URL
+            let slug = window.currentSlug || '';
+            let id = '';
+
+            if (!slug) {
+                const urlParams = new URLSearchParams(window.location.search);
+                id = urlParams.get('id');
+                slug = urlParams.get('slug');
+            }
+
+            let apiUrl = '';
+            if (id) {
+                apiUrl = `api/alojamiento-slug.php?id=${id}`;
+            } else if (slug) {
+                apiUrl = `api/alojamiento-slug.php?slug=${encodeURIComponent(slug)}`;
+            } else {
+                document.getElementById('content-area').innerHTML = '<div class="error-msg">Alojamiento no especificado</div>';
+                clearTimeout(spinnerTimeout);
+                return;
+            }
+
+            // Fetch con timeout más corto
+            const fetchTimeout = setTimeout(() => {
+                console.log('Fetch timeout, mostrando contenido básico');
+                document.getElementById('content-area').innerHTML = '<div class="error-msg">Tiempo de carga excedido. Por favor, recarga la página.</div>';
+                clearTimeout(spinnerTimeout);
+            }, 5000);
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    clearTimeout(fetchTimeout);
+                    clearTimeout(spinnerTimeout);
+                    if (data.success) {
+                        renderAlojamientoBasico(data.data);
+                        // Cargar contenido adicional después del LCP
+                        setTimeout(() => {
+                            loadContenidoAdicional(data.data);
+                        }, 100);
+                    } else {
+                        document.getElementById('content-area').innerHTML = `<div class="error-msg">${data.error || 'Alojamiento no encontrado'}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    clearTimeout(fetchTimeout);
+                    clearTimeout(spinnerTimeout);
+                    document.getElementById('content-area').innerHTML = '<div class="error-msg">Error al cargar el alojamiento</div>';
+                });
+        });
+
+        function renderAlojamientoBasico(alojamiento) {
+            // Actualizar título
+            document.title = `${alojamiento.name || alojamiento.Nombre} - Rutas`;
+            
+            // Imagen principal - intentar fotos, luego photo1/photo2, luego default
+            const fotosPrincipales = alojamiento.Fotos || [];
+            const fotosAlternativas = alojamiento.FotosAlternativos || [];
+            const mainImage = getImageWithFallback(
+                fotosPrincipales.length > 0 ? fotosPrincipales : [alojamiento.photo1, alojamiento.photo2, alojamiento.image1],
+                fotosAlternativas.length > 0 ? fotosAlternativas : [],
+                0
+            );
+
+            // Actualizar preload link con la imagen principal
+            const preloadLink = document.getElementById('preload-main-image');
+            if (preloadLink && mainImage) {
+                preloadLink.href = mainImage;
+                preloadLink.setAttribute('imagesrcset', `${mainImage} 800w, ${mainImage} 1200w`);
+                preloadLink.setAttribute('imagesizes', '100vw');
+            }
+
+            // MUESTRA SIEMPRE: Usamos 'Registro' que es la clave que devuelve la API
+            const regNum = alojamiento.Registro || alojamiento.registration_number;
+            let regHTML = '';
+            if (typeof regNum === 'string' && regNum.trim().length > 0) {
+                regHTML = '<p style="margin: 0.5rem 0; color: var(--primary-color); font-weight: 500;">Nº Registro: ' + regNum.trim() + '</p>';
+            } else {
+                regHTML = '<p style="margin: 0.5rem 0; color: #888; font-style: italic;">La información del registro turístico es responsabilidad del alojamiento</p>';
+            }
+
+            const html = `
+                <div class="detail-header" style="background-image: url('${mainImage}'); background-color: #c94141;" ${getImageFallbackScript(fotosPrincipales, fotosAlternativas, 0)}>
+                    <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px;">
+                        ${regHTML}
+                    </div>
+                </div>
+
+                <div class="detail-content">
+                    <div class="main-info">
+                        <h1 style="color: var(--primary-color); margin-bottom: 0.5rem;">${alojamiento.name || alojamiento.Nombre}</h1>
+                        ${regHTML}
+                        <p style="color: #666; margin-bottom: 1.5rem;">
+                            <i class="fas fa-map-marker-alt"></i> 
+                            ${alojamiento.municipality || alojamiento.Localidad || ''}, ${alojamiento.province || alojamiento.Provincia || ''}
+                        </p>
+                        
+                        <h3>Descripción</h3>
+                        <p>${formatearDescripcion(alojamiento.description || alojamiento.Notaspublicas)}</p>
+                        
+                        <h3 style="margin-top: 1.5rem;">Detalles</h3>
+                        <ul style="list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                            <li><i class="fas fa-users" style="color: var(--primary-color);"></i> Capacidad: ${alojamiento.capacity || alojamiento.Plazas || 0} personas</li>
+                            <li><i class="fas fa-home" style="color: var(--primary-color);"></i> Tipo: ${alojamiento.Tipo || alojamiento.category_name || alojamiento.accommodation_type || 'Alojamiento Rural'}</li>
+                            ${alojamiento.website ? `<li><i class="fas fa-globe" style="color: var(--primary-color);"></i> <a href="${alojamiento.website}" target="_blank">Sitio Web</a></li>` : ''}
+                            ${alojamiento.phone ? `<li><i class="fas fa-phone" style="color: var(--primary-color);"></i> ${alojamiento.phone}</li>` : ''}
+                        </ul>
+                    </div>
+
+                    <aside>
+                        <div class="host-card">
+                            ${alojamiento.host_info && alojamiento.host_info.avatar_url ? 
+                                `<img src="${alojamiento.host_info.avatar_url}" alt="Anfitrión" class="host-avatar">` :
+                                `<div class="host-avatar" style="background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white;">
+                                    <i class="fas fa-user"></i>
+                                </div>`
+                            }
+                            <h3>${alojamiento.host_info ? (alojamiento.host_info.first_name + ' ' + (alojamiento.host_info.last_name || '')) : 'Anfitrión'}</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Propietario verificado</p>
+                            
+                            <div style="margin: 1rem 0; text-align: left; font-size: 0.9rem;">
+                                ${alojamiento.phone ? `<p><i class="fas fa-phone" style="color: var(--primary-color); width: 20px;"></i> ${alojamiento.phone}</p>` : ''}
+                                ${alojamiento.email ? `<p><i class="fas fa-envelope" style="color: var(--primary-color); width: 20px;"></i> ${alojamiento.email}</p>` : ''}
+                            </div>
+
+                            <!-- BOTÓN DE CONTACTO -->
+                            <a href="user-dashboard.html?chat_with=${alojamiento.created_by || 1}#mensajes" class="btn-contact">
+                                <i class="fas fa-comment-dots"></i> Contactar al Anfitrión
+                            </a>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; text-align: center;">
+                            <h2 style="color: var(--primary-color);">${alojamiento.price_per_night || alojamiento.Precio || 'Consultar'}€ <span style="font-size: 1rem; color: #666;">/ noche</span></h2>
+                        </div>
+                    </aside>
+                </div>
+            `;
+            
+            document.getElementById('content-area').innerHTML = html;
+            
+            // Guardar datos para contenido adicional
+            window.currentAccommodation = alojamiento;
+        }
+
+        function loadContenidoAdicional(alojamiento) {
+            // Cargar contenido relacionado después del LCP
+            if (window.loadContenidoCompleto) {
+                window.loadContenidoCompleto(alojamiento);
+            }
+        }
+    </script>
+
+    <!-- JavaScript no crítico cargado diferido -->
+    <script defer src="/js/alojamiento-detalle-completo.js"></script>
+</body>
+</html>
 
         // Nueva función para verificar eclipse usando la API y regions table
         async function checkEclipseRegion(accommodationId) {
