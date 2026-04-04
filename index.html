@@ -24,6 +24,17 @@
   <link rel="stylesheet" href="styles.css?v=20260114">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* Ajuste para que el logo no rompa el diseño en móviles */
+    @media (max-width: 768px) {
+      .logo-subtitle {
+        display: none; /* Ocultamos el subtítulo largo en móviles */
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
   </style>
 
   <!-- Google Tag Manager -->
@@ -53,7 +64,7 @@
         <nav class="navbar">
             <div class="container">
                 <div class="logo">
-                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="60" height="60">
+                    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="60" height="60">
                     <div class="logo-text">
                         <span class="logo-title">Rutas</span>
                         <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
@@ -106,7 +117,7 @@
                     <li><a href="compromiso-social.html"><i class="fas fa-heart"></i> Compromiso Social</a></li>
                     <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
                     <li><a href="#asistente" class="nav-asistente">
-                        <img src="menu_images/antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
+                        <img src="/menu_images/antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
                         Antonio
                     </a></li>
                     
@@ -461,7 +472,7 @@
             
             <div style="max-width: 800px; margin: 0 auto; text-align: center;">
                 <div style="background: linear-gradient(135deg, #f7faf7 0%, #e8f5e9 100%); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; border: 2px solid #2c5f2d;">
-                    <img src="antonio.jpg" alt="Antonio - Experto local" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #2c5f2d; margin-bottom: 1rem;">
+                    <img src="/antonio.jpg" alt="Antonio - Experto local" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #2c5f2d; margin-bottom: 1rem;">
                     <h3 style="color: #2c5f2d; margin-bottom: 0.5rem;">Antonio, el experto local</h3>
                     <p style="color: #666; margin-bottom: 1.5rem;">Servicial, entusiasta y conciso. Te ayuda mientras caminas por la calle 📱</p>
                     
