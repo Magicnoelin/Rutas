@@ -9,122 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link id="preload-main-image" rel="preload" as="image" href="" imagesrcset="" imagesizes="100vw">
     <style>
-        /* CLS Fixes - Prevent layout shifts */
-        :root {
-            --detail-header-height: 400px;
-            --detail-content-min-height: 600px;
-        }
-        
         .detail-header {
-            height: var(--detail-header-height);
+            height: 400px;
             background-position: center;
             background-size: cover;
             position: relative;
             margin-top: 90px;
             background-color: #c94141;
-            /* Reserve space for image */
-            min-height: var(--detail-header-height);
-        }
-        
-        /* Reserve space for content before it loads */
-        #content-area {
-            min-height: var(--detail-content-min-height);
-            position: relative;
-        }
-        
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            padding: 50px;
-            font-size: 1.2rem;
-            color: #666;
-            width: 100%;
-        }
-        
-        /* Image aspect ratio containers to prevent CLS */
-        .image-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            overflow: hidden;
-        }
-        
-        .image-container img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        /* Nearby cards image containers */
-        .nearby-card-image-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 66.67%; /* 3:2 aspect ratio */
-            overflow: hidden;
-            background: #f0f0f0;
-        }
-        
-        .nearby-card-image-container img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        /* Font loading optimization */
-        @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aXo.woff2) format('woff2');
-        }
-        
-        @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 600;
-            font-display: swap;
-            src: url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCu173w5aXo.woff2) format('woff2');
-        }
-        
-        /* Preload critical fonts */
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-        
-        .font-loaded {
-            font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-        
-        /* Prevent layout shifts from hidden elements */
-        [style*="display: none"] {
-            display: none !important;
-        }
-        
-        /* Smooth transitions for dynamic content */
-        .nearby-section {
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Reserve space for eclipse banner */
-        .eclipse-banner-placeholder {
-            height: 0;
-            visibility: hidden;
-        }
-        
-        .eclipse-banner {
-            animation: fadeIn 0.3s ease-out;
-            position: relative;
-            z-index: 1;
         }
         .detail-content {
             max-width: 1000px;
@@ -423,7 +314,7 @@
         <nav class="navbar">
             <div class="container">
                 <a href="index.html" class="logo">
-                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="150" height="50">
+                    <img src="menu_images/Logo%20transparente.webp" alt="Rutas Logo">
                 </a>
                 <ul class="nav-menu">
                     <li><a href="index.html">Inicio</a></li>
@@ -434,9 +325,6 @@
             </div>
         </nav>
     </header>
-
-    <!-- Placeholder for eclipse banner to reserve space -->
-    <div class="eclipse-banner-placeholder" style="height: 80px; margin: 1.5rem auto; max-width: 1000px;"></div>
 
     <div id="content-area">
         <div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando datos del alojamiento...</div>
@@ -913,7 +801,7 @@
             }
 
             const html = `
-                <div class="detail-header" style="background-image: url('${mainImage}'); background-color: #c94141;" ${getImageFallbackScript(fotosPrincipales, fotosAlternativas, 0)}>
+                <div class="detail-header" style="background-image: url('${mainImage}');" ${getImageFallbackScript(fotosPrincipales, fotosAlternativas, 0)}>
                     <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px;">
                         ${regHTML}
                     </div>
@@ -1093,10 +981,7 @@
             const grid = document.getElementById('places-grid');
             grid.innerHTML = places.map(place => `
                 <div class="nearby-card" onclick="window.location.href='${place.slug ? `/lugar-interes.html?slug=${place.slug}` : '#lugares-de-interes'}'">
-                    <div class="nearby-card-image-container">
-                        <img src="${place.main_photo}" alt="${place.name}" loading="lazy"
-                             onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'">
-                    </div>
+                    <img src="${place.main_photo}" alt="${place.name}" class="nearby-card-image" loading="lazy">
                     <div class="nearby-card-content">
                         <h3>${place.name}</h3>
                         <div class="nearby-card-location">
@@ -1118,10 +1003,7 @@
             const grid = document.getElementById('activities-grid');
             grid.innerHTML = activities.map(activity => `
                 <div class="nearby-card" onclick="window.location.href='${activity.slug ? `/actividad.html?slug=${activity.slug}` : '#actividades-turisticas'}'">
-                    <div class="nearby-card-image-container">
-                        <img src="${activity.main_photo}" alt="${activity.name}" loading="lazy"
-                             onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'">
-                    </div>
+                    <img src="${activity.main_photo}" alt="${activity.name}" class="nearby-card-image" loading="lazy">
                     <div class="nearby-card-content">
                         <h3>${activity.name}</h3>
                         <div class="nearby-card-location">
@@ -1169,11 +1051,9 @@
                 
                 return `
                     <div class="nearby-card" onclick="window.location.href='/evento/${event.slug || '#'}">
-                        <div class="nearby-card-image-container">
-                            <img src="${event.main_photo || 'https://rutasrurales.io/menu_images/evento-default.jpg'}" 
-                                 alt="${title}" loading="lazy"
-                                 onerror="this.src='https://rutasrurales.io/menu_images/evento-default.jpg'">
-                        </div>
+                        <img src="${event.main_photo || 'https://rutasrurales.io/menu_images/evento-default.jpg'}" 
+                             alt="${title}" class="nearby-card-image" loading="lazy"
+                             onerror="this.src='https://rutasrurales.io/menu_images/evento-default.jpg'">
                         <div class="nearby-card-content">
                             ${eventDate ? `
                                 <div class="event-date-badge">
