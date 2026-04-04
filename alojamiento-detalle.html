@@ -15,7 +15,7 @@
             background-size: cover;
             position: relative;
             margin-top: 90px;
-            background-color: #f0f0f0;
+            background-color: #c94141;
         }
         .detail-content {
             max-width: 1000px;
@@ -66,88 +66,75 @@
         .loading { text-align: center; padding: 50px; font-size: 1.2rem; color: #666; }
         .error-msg { text-align: center; padding: 50px; color: #e74c3c; }
         
-        /* Banner Eclipse Solar */
+        /* Simplified Eclipse Banner - Optimized for speed */
         .eclipse-banner {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
-            padding: 1.5rem 2rem;
-            margin: 2rem auto;
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem auto;
             max-width: 1000px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             position: relative;
             overflow: hidden;
-            animation: fadeIn 0.5s ease-out;
-        }
-        .eclipse-banner::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,200,0,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            animation: fadeIn 0.3s ease-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .eclipse-banner-content {
-            position: relative;
-            z-index: 1;
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1rem;
             flex-wrap: wrap;
         }
         .eclipse-banner-icon {
-            font-size: 3rem;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            font-size: 2rem;
         }
         .eclipse-banner-text {
             flex: 1;
         }
         .eclipse-banner h3 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.4rem;
+            margin: 0 0 0.3rem 0;
+            font-size: 1.2rem;
             color: #ffd700;
         }
         .eclipse-banner p {
             margin: 0;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             opacity: 0.9;
+            line-height: 1.4;
         }
         .eclipse-banner-date {
             background: #ffd700;
             color: #1a1a2e;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            white-space: nowrap;
         }
         .eclipse-banner-close {
             position: absolute;
-            top: 10px;
-            right: 15px;
+            top: 8px;
+            right: 10px;
             background: none;
             border: none;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
             opacity: 0.7;
-            transition: opacity 0.3s;
+            transition: opacity 0.2s;
+            padding: 4px;
+            line-height: 1;
         }
         .eclipse-banner-close:hover {
             opacity: 1;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
         }
 
         /* Secciones de contenido relacionado */
@@ -470,113 +457,88 @@
             return texto;
         }
 
-        // Configuración del Eclipse Solar 2026
-        const ECLIPSE_CONFIG = {
-            date: '12 de agosto de 2026',
-            time: '20:26 - 20:33 CEST',
-            // Provincias con eclipse total
-            totalEclipseProvinces: [
-                'A Coruña', 'La Coruña', 'Almería', 'Cádiz', 'Córdoba', 'Huelva', 'Jaén', 'Málaga', 'Sevilla',
-                'Huesca', 'Teruel', 'Zaragoza',
-                'Asturias', 'Oviedo', 'Gijón',
-                'Islas Baleares', 'Baleares', 'Mallorca', 'Menorca', 'Ibiza',
-                'Álava', 'Vizcaya', 'Guipúzcoa', 'Bizkaia', 'Gipuzkoa', 'País Vasco', 'Bilbao', 'San Sebastián',
-                'Cantabria', 'Santander',
-                'Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo', 'Castilla-La Mancha',
-                'Ávila', 'Burgos', 'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora', 'Castilla y León',
-                'Barcelona', 'Girona', 'Lleida', 'Tarragona', 'Cataluña', 'Gerona',
-                'Lugo', 'Ourense', 'Pontevedra', 'Galicia',
-                'La Rioja', 'Logroño',
-                'Madrid', 'Alcalá de Henares',
-                'Navarra', 'Pamplona', 'Navarra',
-                'Alicante', 'Castellón', 'Valencia', 'Comunidad Valenciana'
-            ],
-            // Ciudades con información específica
-            citiesInfo: {
-                'A Coruña': { duration: '1m 32s', coverage: '100%' },
-                'Bilbao': { duration: '1m 29s', coverage: '100%' },
-                'Palma': { duration: '1m 36s', coverage: '100%' },
-                'Valencia': { duration: '1m 29s', coverage: '100%' },
-                'Zaragoza': { duration: '1m 25s', coverage: '100%', note: 'Menor nubosidad (19%)' }
-            }
-        };
-
-        // Función para verificar si una provincia tiene eclipse
-        function hasEclipse(province) {
-            if (!province) return { affected: false };
+        // Nueva función para verificar eclipse usando la API y regions table
+        async function checkEclipseRegion(accommodationId) {
+            if (!accommodationId) return false;
             
-            const normalizedProvince = province.toLowerCase().trim();
-            
-            // Buscar coincidencia exacta o parcial
-            const matchedProvince = ECLIPSE_CONFIG.totalEclipseProvinces.find(p => 
-                p.toLowerCase() === normalizedProvince || 
-                p.toLowerCase().includes(normalizedProvince) ||
-                normalizedProvince.includes(p.toLowerCase())
-            );
-            
-            if (matchedProvince) {
-                // Buscar información de ciudad específica
-                const cityInfo = ECLIPSE_CONFIG.citiesInfo[matchedProvince] || 
-                                ECLIPSE_CONFIG.citiesInfo[Object.keys(ECLIPSE_CONFIG.citiesInfo).find(c => 
-                                    c.toLowerCase().includes(normalizedProvince) || 
-                                    normalizedProvince.includes(c.toLowerCase())
-                                )];
+            try {
+                const response = await fetch(`/api/check_eclipse_region.php?accommodation_id=${accommodationId}`);
+                const data = await response.json();
                 
-                return {
-                    affected: true,
-                    province: matchedProvince,
-                    cityInfo: cityInfo
-                };
+                if (data.success && data.data.has_eclipse) {
+                    return data.data;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error al verificar región de eclipse:', error);
+                return false;
             }
-            
-            return { affected: false };
         }
 
-        // Función para mostrar el banner del eclipse
-        function showEclipseBanner(province) {
-            const eclipseInfo = hasEclipse(province);
-            
-            if (!eclipseInfo.affected) return;
-            
+        // Función para mostrar el banner del eclipse (nueva versión optimizada)
+        async function showEclipseBannerOptimized(accommodationId, province) {
             // Verificar si el usuario ya cerró el banner
             const bannerClosed = localStorage.getItem('eclipse_banner_closed');
             if (bannerClosed) return;
+            
+            // Primero intentar con la nueva API
+            const eclipseData = await checkEclipseRegion(accommodationId);
+            
+            if (!eclipseData) {
+                // Fallback: verificar provincia (lógica antigua simplificada)
+                const eclipseProvinces = [
+                    'A Coruña', 'La Coruña', 'Almería', 'Cádiz', 'Córdoba', 'Huelva', 'Jaén', 'Málaga', 'Sevilla',
+                    'Huesca', 'Teruel', 'Zaragoza', 'Asturias', 'Islas Baleares', 'Álava', 'Vizcaya', 'Guipúzcoa',
+                    'Cantabria', 'Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo', 'Ávila', 'Burgos',
+                    'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora', 'Barcelona',
+                    'Girona', 'Lleida', 'Tarragona', 'Lugo', 'Ourense', 'Pontevedra', 'La Rioja', 'Madrid',
+                    'Navarra', 'Alicante', 'Castellón', 'Valencia'
+                ];
+                
+                const hasEclipse = eclipseProvinces.some(p => 
+                    province && province.toLowerCase().includes(p.toLowerCase())
+                );
+                
+                if (!hasEclipse) return;
+            }
             
             const banner = document.createElement('div');
             banner.className = 'eclipse-banner';
             banner.id = 'eclipse-banner';
             
-            let extraInfo = '';
-            if (eclipseInfo.cityInfo) {
-                extraInfo = `<br><small style="opacity: 0.8;">🕐 Duración de la totalidad: ${eclipseInfo.cityInfo.duration}</small>`;
-                if (eclipseInfo.cityInfo.note) {
-                    extraInfo += `<br><small style="opacity: 0.8;">☁️ ${eclipseInfo.cityInfo.note}</small>`;
-                }
-            } else {
-                extraInfo = `<br><small style="opacity: 0.8;">☀️ Este alojamiento está dentro de la zona de eclipse solar total</small>`;
-            }
+            // Usar datos de la API si están disponibles, sino usar datos por defecto
+            const regionName = eclipseData?.region?.name || 'Zona Eclipse 2026';
+            const bannerTitle = eclipseData?.region?.banner_title || '🌟 Eclipse Solar Total - 12 de Agosto 2026';
+            const bannerText = eclipseData?.region?.banner_text || `${province} será uno de los mejores lugares del mundo para observar este fenómeno único`;
+            const bannerIcon = eclipseData?.region?.banner_icon || '🌑';
+            const eclipseDate = '12 de agosto de 2026';
             
             banner.innerHTML = `
                 <button class="eclipse-banner-close" onclick="closeEclipseBanner()">
                     <i class="fas fa-times"></i>
                 </button>
                 <div class="eclipse-banner-content">
-                    <div class="eclipse-banner-icon">🌑</div>
+                    <div class="eclipse-banner-icon">${bannerIcon}</div>
                     <div class="eclipse-banner-text">
-                        <h3>🌟 Eclipse Solar Total - 12 de Agosto 2026</h3>
-                        <p>${eclipseInfo.province} será uno de los mejores lugares del mundo para observar este fenómeno único${extraInfo}</p>
+                        <h3>${bannerTitle}</h3>
+                        <p>${bannerText}</p>
                     </div>
                     <div class="eclipse-banner-date">
-                        <i class="fas fa-calendar-alt"></i> ${ECLIPSE_CONFIG.date}
+                        <i class="fas fa-calendar-alt"></i> ${eclipseDate}
                     </div>
                 </div>
             `;
             
             // Insertar después del header
-            document.body.insertBefore(banner, document.body.firstChild);
+            const header = document.querySelector('header');
+            if (header && header.nextSibling) {
+                header.parentNode.insertBefore(banner, header.nextSibling);
+            } else {
+                document.body.insertBefore(banner, document.body.firstChild);
+            }
         }
 
-        // Función para cerrar el banner
+        // Función para cerrar el banner (mantenida)
         function closeEclipseBanner() {
             const banner = document.getElementById('eclipse-banner');
             if (banner) {
@@ -586,16 +548,6 @@
                 localStorage.setItem('eclipse_banner_closed', 'true');
             }
         }
-
-        // Agregar animación de fadeOut
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                from { opacity: 1; transform: translateY(0); }
-                to { opacity: 0; transform: translateY(-20px); }
-            }
-        `;
-        document.head.appendChild(style);
 
         // Función para agregar datos estructurados JSON-LD
         function addStructuredData(alojamiento) {
@@ -942,10 +894,13 @@
             
             document.getElementById('content-area').innerHTML = html;
             
-            // Mostrar banner del eclipse solar si la provincia está afectada
+            // Mostrar banner del eclipse solar usando la nueva función optimizada
             const province = alojamiento.province || alojamiento.Provincia || '';
-            if (province) {
-                showEclipseBanner(province);
+            const accommodationId = alojamiento.id || alojamiento.ID;
+            
+            if (province && accommodationId) {
+                // Llamar a la función optimizada de forma asíncrona
+                showEclipseBannerOptimized(accommodationId, province);
             }
             
             // Cargar contenido relacionado
