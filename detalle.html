@@ -18,6 +18,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/styles.css"></noscript>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link id="preload-main-image" rel="preload" as="image" href="" imagesrcset="" imagesizes="100vw">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
     <style>
@@ -521,6 +522,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         window.addEventListener('DOMContentLoaded', async () => {
             console.log('Cargando detalle de alojamiento...');
 
+            // Ocultar spinner después de 8 segundos máximo para no bloquear LCP
+            const spinnerTimeout = setTimeout(() => {
+                const loadingEl = document.getElementById('loading');
+                if (loadingEl && loadingEl.style.display !== 'none') {
+                    console.log('Ocultando spinner por timeout para mejorar LCP');
+                    loadingEl.style.display = 'none';
+                }
+            }, 8000);
+
             // Usar slug inyectado por PHP si existe, sino obtener de URL
             let slug = window.currentSlug || '';
 
@@ -539,6 +549,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             if (!slug) {
                 console.error('No slug found');
+                clearTimeout(spinnerTimeout);
                 mostrarError();
                 return;
             }
@@ -546,6 +557,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             // Set a timeout to show error if loading takes too long
             const loadingTimeout = setTimeout(() => {
                 console.error('Loading timeout reached');
+                clearTimeout(spinnerTimeout);
                 mostrarError();
             }, 15000); // 15 seconds timeout
 
@@ -703,11 +715,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 currentPhotos = [img];
             }
 
+            // Actualizar preload link con la imagen principal
+            const mainImage = currentPhotos[0];
+            const preloadLink = document.getElementById('preload-main-image');
+            if (preloadLink && mainImage) {
+                preloadLink.href = mainImage;
+                preloadLink.setAttribute('imagesrcset', `${mainImage} 800w, ${mainImage} 1200w`);
+                preloadLink.setAttribute('imagesizes', '100vw');
+            }
+
             // Generar HTML de galería
             const galleryHtml = `
                 <div class="gallery-container">
                     ${currentPhotos.map((foto, index) => 
-                        `<img src="${foto}" class="gallery-img ${index === 0 ? 'active' : ''}" alt="${a.Nombre || a.name}">`
+                        `<img src="${foto}" class="gallery-img ${index === 0 ? 'active' : ''}" alt="${a.Nombre || a.name}" ${index === 0 ? 'fetchpriority="high"' : ''}>`
                     ).join('')}
                     ${currentPhotos.length > 1 ? `
                         <div class="gallery-nav">

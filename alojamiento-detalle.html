@@ -7,6 +7,7 @@
     <link rel="icon" href="menu_images/Favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link id="preload-main-image" rel="preload" as="image" href="" imagesrcset="" imagesizes="100vw">
     <style>
         .detail-header {
             height: 400px;
@@ -730,6 +731,15 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Ocultar spinner después de 8 segundos máximo para no bloquear LCP
+            const spinnerTimeout = setTimeout(() => {
+                const loadingEl = document.querySelector('.loading');
+                if (loadingEl && loadingEl.style.display !== 'none') {
+                    console.log('Ocultando spinner por timeout para mejorar LCP');
+                    loadingEl.style.display = 'none';
+                }
+            }, 8000);
+
             // Usar slug inyectado por PHP si existe, sino obtener de URL
             let slug = window.currentSlug || '';
             let id = '';
@@ -747,12 +757,14 @@
                 apiUrl = `api/alojamiento-slug.php?slug=${encodeURIComponent(slug)}`;
             } else {
                 document.getElementById('content-area').innerHTML = '<div class="error-msg">Alojamiento no especificado</div>';
+                clearTimeout(spinnerTimeout);
                 return;
             }
 
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
+                    clearTimeout(spinnerTimeout);
                     if (data.success) {
                         renderAlojamiento(data.data);
                         // Trackear la vista del alojamiento
@@ -764,6 +776,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    clearTimeout(spinnerTimeout);
                     document.getElementById('content-area').innerHTML = '<div class="error-msg">Error al cargar el alojamiento</div>';
                 });
         });
@@ -817,6 +830,14 @@
                 fotosAlternativas.length > 0 ? fotosAlternativas : [],
                 0
             );
+
+            // Actualizar preload link con la imagen principal
+            const preloadLink = document.getElementById('preload-main-image');
+            if (preloadLink && mainImage) {
+                preloadLink.href = mainImage;
+                preloadLink.setAttribute('imagesrcset', `${mainImage} 800w, ${mainImage} 1200w`);
+                preloadLink.setAttribute('imagesizes', '100vw');
+            }
 
             // MUESTRA SIEMPRE: Usamos 'Registro' que es la clave que devuelve la API
             const regNum = alojamiento.Registro || alojamiento.registration_number;
