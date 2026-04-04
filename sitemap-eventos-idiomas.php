@@ -4,7 +4,7 @@
  * 
  * Genera automáticamente el sitemap con TODAS las traducciones de eventos
  * que existan en la tabla cultural_events_trads (excepto español 'es',
- * que ya está en sitemap-eventos.xml).
+ * que ya está en sitemap-eventos.php).
  * 
  * URL: https://www.rutasrurales.io/sitemap-eventos-idiomas.php
  */
@@ -60,7 +60,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<!--' . "\n";
 echo '  Sitemap generado automáticamente desde la base de datos.' . "\n";
 echo '  Contiene SOLO eventos en idiomas distintos al español (de, en, fr, zh...).' . "\n";
-echo '  Las URLs en español están en sitemap-eventos.xml' . "\n";
+echo '  Las URLs en español están en sitemap-eventos.php' . "\n";
 echo '  Generado: ' . date('Y-m-d H:i:s') . "\n";
 echo '  Total traducciones: ' . count($traducciones) . "\n";
 echo '-->' . "\n";

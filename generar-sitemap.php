@@ -36,7 +36,16 @@ if ($type == 'estatico') {
 
     if (isset($config[$type])) {
         $c = $config[$type];
-        $stmt = $pdo->query("SELECT slug, updated_at FROM {$c['tabla']} WHERE is_active = 1 AND slug IS NOT NULL");
+        
+        // Build the SQL query with appropriate filtering
+        $sql = "SELECT slug, updated_at FROM {$c['tabla']} WHERE is_active = 1 AND slug IS NOT NULL";
+        
+        // Add date filtering for events to exclude past events
+        if ($type == 'eventos') {
+            $sql .= " AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()";
+        }
+        
+        $stmt = $pdo->query($sql);
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $lastmod = !empty($row['updated_at']) ? date('Y-m-d', strtotime($row['updated_at'])) : date('Y-m-d');
             echo "  <url>\n";

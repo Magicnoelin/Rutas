@@ -55,6 +55,7 @@ try {
           AND e.is_active = 1
           AND t.slug IS NOT NULL
           AND t.slug != ''
+          AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()
         ORDER BY t.language_code, t.slug
     ");
     $stmt->execute();
@@ -81,7 +82,7 @@ try {
     $xml .= '<!--' . "\n";
     $xml .= '  SITEMAP: Eventos Culturales - Versiones Internacionales' . "\n";
     $xml .= '  Contiene SOLO las URLs de idiomas distintos al español (de, en, fr, zh).' . "\n";
-    $xml .= '  Las URLs en español están en sitemap-eventos.xml' . "\n";
+    $xml .= '  Las URLs en español están en sitemap-eventos.php' . "\n";
     $xml .= '' . "\n";
     $xml .= '  Formato de URL: /[lang]/evento/[slug-traducido]' . "\n";
     $xml .= '  Ejemplo: /de/evento/volksfest-san-pedro-zamora-2026' . "\n";
