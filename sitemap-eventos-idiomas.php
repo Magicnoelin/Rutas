@@ -26,14 +26,17 @@ try {
     /**
      * Consulta: obtener todas las traducciones activas
      * - Solo idiomas distintos al español
-     * - Solo eventos activos (is_active = 1) que aún no han terminado
+     * - Solo eventos activos (is_active = 1) que son futuros o actuales
      * - Incluye el slug original en español para el hreflang
+     * CORRECCIÓN: Se cambió la lógica de fechas para coincidir con sitemap-eventos.php
      */
     $stmt = $pdo->prepare("
         SELECT 
             t.language_code,
             t.slug AS slug_traducido,
             e.slug AS slug_original,
+            e.start_date,
+            e.end_date,
             COALESCE(e.updated_at, e.created_at, NOW()) AS fecha_mod
         FROM cultural_events_trads t
         INNER JOIN cultural_events e ON e.id = t.event_id
@@ -41,7 +44,11 @@ try {
           AND e.is_active = 1
           AND t.slug IS NOT NULL
           AND t.slug != ''
-          AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()
+          AND (
+            -- Eventos que NO han terminado todavía (misma lógica que sitemap-eventos.php)
+            (e.end_date IS NULL AND e.start_date >= CURDATE()) OR  -- Eventos sin fecha fin que empiezan hoy o después
+            (e.end_date IS NOT NULL AND e.end_date >= CURDATE())   -- Eventos con fecha fin que terminan hoy o después
+          )
         ORDER BY t.language_code, t.slug
     ");
     $stmt->execute();

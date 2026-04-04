@@ -41,8 +41,12 @@ if ($type == 'estatico') {
         $sql = "SELECT slug, updated_at FROM {$c['tabla']} WHERE is_active = 1 AND slug IS NOT NULL";
         
         // Add date filtering for events to exclude past events
+        // CORRECCIÓN: Se cambió la lógica para coincidir con sitemap-eventos.php
         if ($type == 'eventos') {
-            $sql .= " AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()";
+            $sql .= " AND (
+                (end_date IS NULL AND start_date >= CURDATE()) OR
+                (end_date IS NOT NULL AND end_date >= CURDATE())
+            )";
         }
         
         $stmt = $pdo->query($sql);

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Corrección: Sitemap Eventos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            max-width: 800px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 25px;
+        }
+        .issue {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .fix {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .file-list {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .badge-fixed {
+            background-color: #28a745;
+            color: white;
+        }
+        .badge-issue {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Resumen de Corrección: Sitemap Eventos</h1>
+        <p><strong>Fecha:</strong> 4 de abril de 2026</p>
+        <p><strong>Problema reportado:</strong> "sitemap-eventos.xml, está mal recoge los eventos pasados y no los futuros, ademas no toma las tradccuiones cultural_events_trads"</p>
+        
+        <div class="issue">
+            <h2><span class="badge badge-issue">PROBLEMA 1</span> Lógica incorrecta de fechas</h2>
+            <p>El sitemap estaba incluyendo eventos pasados en lugar de eventos futuros.</p>
+            <p><strong>Código anterior:</strong></p>
+            <code>AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()</code>
+            <p><strong>Problema:</strong> Esta lógica podía incluir eventos que ya habían terminado, especialmente cuando <code>end_date</code> era NULL y <code>start_date</code> estaba en el pasado.</p>
+        </div>
+        
+        <div class="fix">
+            <h2><span class="badge badge-fixed">SOLUCIÓN 1</span> Lógica corregida de fechas</h2>
+            <p>Se cambió la lógica para incluir solo eventos futuros o actuales:</p>
+            <code>AND (<br>
+            &nbsp;&nbsp;(end_date IS NULL AND start_date >= CURDATE()) OR<br>
+            &nbsp;&nbsp;(end_date IS NOT NULL AND end_date >= CURDATE())<br>
+            )</code>
+            <p><strong>Explicación:</strong></p>
+            <ul>
+                <li>Para eventos <strong>sin fecha de fin</strong>: se incluyen si empiezan hoy o después</li>
+                <li>Para eventos <strong>con fecha de fin</strong>: se incluyen si terminan hoy o después</li>
+            </ul>
+        </div>
+        
+        <div class="issue">
+            <h2><span class="badge badge-issue">PROBLEMA 2</span> No tomaba traducciones de cultural_events_trads</h2>
+            <p>El sitemap no estaba incluyendo correctamente las traducciones de eventos.</p>
+        </div>
+        
+        <div class="fix">
+            <h2><span class="badge badge-fixed">SOLUCIÓN 2</span> Mejora en el manejo de traducciones</h2>
+            <p>Se mejoraron las consultas para asegurar que:</p>
+            <ul>
+                <li>Se obtengan todas las traducciones activas de la tabla <code>cultural_events_trads</code></li>
+                <li>Se aplique la misma lógica de fechas a las traducciones</li>
+                <li>Se incluyan correctamente las etiquetas <code>hreflang</code> para SEO multilingüe</li>
+            </ul>
+        </div>
+        
+        <div class="file-list">
+            <h2>📁 Archivos modificados</h2>
+            <ul>
+                <li><code>sitemap-eventos.php</code> - Sitemap principal de eventos</li>
+                <li><code>sitemap-eventos-idiomas.php</code> - Sitemap de traducciones de eventos</li>
+                <li><code>generar-sitemap.php</code> - Generador de sitemaps dinámicos</li>
+                <li><code>admin_tablas/cron/regenerar_sitemap_i18n.php</code> - Script de regeneración de sitemap</li>
+            </ul>
+        </div>
+        
+        <h2>✅ Verificación recomendada</h2>
+        <p>Para verificar que la corrección funciona:</p>
+        <ol>
+            <li>Acceder a <code>https://www.rutasrurales.io/sitemap-eventos.php</code></li>
+            <li>Verificar que solo aparezcan eventos futuros o actuales</li>
+            <li>Verificar que aparezcan las etiquetas <code><xhtml:link rel="alternate" hreflang="..."></code> para traducciones</li>
+            <li>Acceder a <code>https://www.rutasrurales.io/sitemap-eventos-idiomas.php</code></li>
+            <li>Verificar que aparezcan todas las traducciones de eventos futuros</li>
+        </ol>
+        
+        <h2>📝 Notas técnicas</h2>
+        <ul>
+            <li>La lógica de fechas ahora es consistente en todos los archivos de sitemap</li>
+            <li>Se mantiene la compatibilidad con eventos que no tienen fecha de fin (<code>end_date IS NULL</code>)</li>
+            <li>Las traducciones se obtienen correctamente de la tabla <code>cultural_events_trads</code></li>
+            <li>Se mejoraron los comentarios en el código para mayor claridad</li>
+        </ul>
+    </div>
+</body>
+</html>

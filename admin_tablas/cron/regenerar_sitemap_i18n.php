@@ -43,11 +43,14 @@ try {
 
     // Obtener todas las traducciones activas (no español)
     // NOTA: cultural_events_trads NO tiene updated_at/created_at, usamos las de cultural_events
+    // CORRECCIÓN: Se cambió la lógica de fechas para coincidir con sitemap-eventos.php
     $stmt = $pdo->prepare("
         SELECT 
             t.language_code,
             t.slug AS slug_traducido,
             e.slug AS slug_original,
+            e.start_date,
+            e.end_date,
             COALESCE(e.updated_at, e.created_at, NOW()) AS fecha_mod
         FROM cultural_events_trads t
         INNER JOIN cultural_events e ON e.id = t.event_id
@@ -55,7 +58,11 @@ try {
           AND e.is_active = 1
           AND t.slug IS NOT NULL
           AND t.slug != ''
-          AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()
+          AND (
+            -- Eventos que NO han terminado todavía (misma lógica que sitemap-eventos.php)
+            (e.end_date IS NULL AND e.start_date >= CURDATE()) OR  -- Eventos sin fecha fin que empiezan hoy o después
+            (e.end_date IS NOT NULL AND e.end_date >= CURDATE())   -- Eventos con fecha fin que terminan hoy o después
+          )
         ORDER BY t.language_code, t.slug
     ");
     $stmt->execute();
@@ -155,14 +162,32 @@ try {
     $sitemapIndexPath = $baseDir . '/sitemap.xml';
     if (file_exists($sitemapIndexPath)) {
         $sitemapContent = file_get_contents($sitemapIndexPath);
-        // Actualizar la fecha del sitemap-eventos-i18n.xml
+        
+        // Verificar si sitemap-eventos-i18n.xml ya está en el índice
+        if (strpos($sitemapContent, 'sitemap-eventos-i18n.xml') === false) {
+            // No existe, agregarlo antes del cierre de </sitemapindex>
+            $newEntry = "  <sitemap>\n    <loc>https://rutasrurales.io/sitemap-eventos-i18n.xml</loc>\n    <lastmod>{$today}</lastmod>\n  </sitemap>\n</sitemapindex>";
+            $sitemapContent = str_replace('</sitemapindex>', $newEntry, $sitemapContent);
+            $log[] = "OK: Agregado sitemap-eventos-i18n.xml al índice principal";
+        } else {
+            // Ya existe, actualizar solo la fecha
+            $sitemapContent = preg_replace(
+                '/(sitemap-eventos-i18n\.xml<\/loc>\s*<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/',
+                '${1}' . $today . '${2}',
+                $sitemapContent
+            );
+            $log[] = "OK: Actualizado lastmod de sitemap-eventos-i18n.xml en sitemap.xml";
+        }
+        
+        // También actualizar la fecha de sitemap-eventos.php
         $sitemapContent = preg_replace(
-            '/(sitemap-eventos-i18n\.xml<\/loc>\s*<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/',
+            '/(sitemap-eventos\.php<\/loc>\s*<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/',
             '${1}' . $today . '${2}',
             $sitemapContent
         );
+        $log[] = "OK: Actualizado lastmod de sitemap-eventos.php en sitemap.xml";
+        
         file_put_contents($sitemapIndexPath, $sitemapContent);
-        $log[] = "OK: Actualizado lastmod en sitemap.xml";
     }
 
 } catch (PDOException $e) {

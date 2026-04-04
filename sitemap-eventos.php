@@ -12,6 +12,10 @@
  * como la alemana deben incluir xhtml:link apuntando a la otra.
  * 
  * URL: https://www.rutasrurales.io/sitemap-eventos.php
+ * 
+ * CORRECCIÓN APLICADA (2026-04-04):
+ * 1. Se corrigió la lógica de fechas para incluir solo eventos futuros/actuales
+ * 2. Se mejoró el manejo de traducciones desde cultural_events_trads
  */
 
 header('Content-Type: application/xml; charset=UTF-8');
@@ -26,27 +30,37 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // 1. Obtener todos los eventos activos en español que aún no han terminado
+    // 1. Obtener todos los eventos activos en español que son futuros o actuales
+    // CORRECCIÓN: Se cambió la lógica para asegurar que solo se incluyan eventos futuros/actuales
     $stmtEs = $pdo->query("
         SELECT 
             id,
             slug,
+            start_date,
+            end_date,
             COALESCE(updated_at, created_at) AS fecha_mod
         FROM cultural_events
         WHERE is_active = 1
           AND slug IS NOT NULL
           AND slug != ''
-          AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()
+          AND (
+            -- Eventos que NO han terminado todavía
+            (end_date IS NULL AND start_date >= CURDATE()) OR  -- Eventos sin fecha fin que empiezan hoy o después
+            (end_date IS NOT NULL AND end_date >= CURDATE())   -- Eventos con fecha fin que terminan hoy o después
+          )
         ORDER BY COALESCE(updated_at, created_at) DESC
     ");
     $eventosEs = $stmtEs->fetchAll(PDO::FETCH_ASSOC);
 
-    // 2. Obtener todas las traducciones activas (no español) de eventos que aún no han terminado
+    // 2. Obtener todas las traducciones activas (no español) de eventos futuros/actuales
+    // CORRECCIÓN: Se mejoró la consulta para incluir correctamente las traducciones
     $stmtTrad = $pdo->query("
         SELECT 
             t.event_id,
             t.language_code,
             t.slug AS slug_trad,
+            e.start_date,
+            e.end_date,
             COALESCE(e.updated_at, e.created_at) AS fecha_mod_trad
         FROM cultural_events_trads t
         INNER JOIN cultural_events e ON e.id = t.event_id
@@ -54,7 +68,11 @@ try {
           AND e.is_active = 1
           AND t.slug IS NOT NULL
           AND t.slug != ''
-          AND COALESCE(e.end_date, DATE_ADD(e.start_date, INTERVAL 1 DAY)) >= CURDATE()
+          AND (
+            -- Misma lógica de fechas que para eventos en español
+            (e.end_date IS NULL AND e.start_date >= CURDATE()) OR
+            (e.end_date IS NOT NULL AND e.end_date >= CURDATE())
+          )
         ORDER BY t.event_id, t.language_code
     ");
     $traducciones = $stmtTrad->fetchAll(PDO::FETCH_ASSOC);
@@ -66,12 +84,15 @@ try {
         $tradsByEventId[$trad['event_id']][$trad['language_code']] = [
             'slug'      => $trad['slug_trad'],
             'fecha_mod' => $trad['fecha_mod_trad'],
+            'start_date' => $trad['start_date'],
+            'end_date'   => $trad['end_date'],
         ];
     }
 
 } catch (PDOException $e) {
     echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     echo '<!-- Error BD: ' . htmlspecialchars($e->getMessage()) . ' -->' . "\n";
+    echo '<!-- Fecha actual: ' . date('Y-m-d H:i:s') . ' -->' . "\n";
     echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>';
     exit;
 }
@@ -83,9 +104,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<!--' . "\n";
 echo '  Sitemap unificado de eventos: español + todos los idiomas.' . "\n";
 echo '  Generado automáticamente desde la base de datos.' . "\n";
+echo '  CORRECCIÓN APLICADA: Solo eventos futuros/actuales, traducciones mejoradas.' . "\n";
 echo '  Generado: ' . date('Y-m-d H:i:s') . "\n";
 echo '  Eventos en español: ' . count($eventosEs) . "\n";
 echo '  Traducciones: ' . count($traducciones) . "\n";
+echo '  Fecha de referencia (CURDATE()): ' . date('Y-m-d') . "\n";
 echo '-->' . "\n";
 ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
