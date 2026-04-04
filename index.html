@@ -21,9 +21,71 @@
   <link rel="canonical" href="https://rutasrurales.io/">
 
   <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.css?v=20260114">
+  <link rel="preload" href="/fonts/montserrat-v31-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/montserrat-v31-latin-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/montserrat-v31-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css?v=20260114" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="styles.css?v=20260114"></noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* CSS crítico inline */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #1A2E1A;
+        background-color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        will-change: transform;
+    }
+    
+    main {
+        flex: 1 0 auto;
+    }
+    
+    .navbar {
+        background-color: #2F5233;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        padding: 0.8rem 0;
+    }
+    
+    .hero {
+        height: 100vh;
+        background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                    url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop') center/cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #ffffff;
+        margin-top: 70px;
+    }
+    
+    .card img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        aspect-ratio: 16/9;
+    }
+    
+    .footer {
+        background-color: #2c5f2d !important;
+        color: #ffffff;
+        padding: 1.5rem 0 0.8rem;
+        font-size: 0.7rem !important;
+        text-align: center;
+    }
   </style>
 
   <!-- Google Tag Manager -->
@@ -164,7 +226,7 @@
             </p>
             <div class="grid">
                 <div class="card">
-                    <img src="https://drive.google.com/thumbnail?id=1lCFCuPzjFknI25AJG5yMhDvs9l6c2FS6&sz=w400" alt="Casa Enrique" onerror="this.src='https://www.rutasrurales.io/menu_images/Casa_enrique.jpg'">
+                    <img src="https://drive.google.com/thumbnail?id=1lCFCuPzjFknI25AJG5yMhDvs9l6c2FS6&sz=w400" alt="Casa Enrique" loading="lazy" decoding="async" onerror="this.src='https://www.rutasrurales.io/menu_images/Casa_enrique.jpg'">
                     <div class="card-content">
                         <h3><strong>Casa Enrique</strong> 🏔️</h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Santervas de la Sierra, Soria</p>
@@ -181,7 +243,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/Alojamientos_Images/4758.Foto1.213750.jpg" alt="La Plaza Vinuesa">
+                    <img src="https://www.rutasrurales.io/Alojamientos_Images/4758.Foto1.213750.jpg" alt="La Plaza Vinuesa" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3><strong>La Plaza</strong> 💑</h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Vinuesa, Soria</p>
@@ -198,7 +260,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/casa_chaparrete_1.jpg" alt="Casa Chaparrete">
+                    <img src="https://www.rutasrurales.io/menu_images/casa_chaparrete_1.jpg" alt="Casa Chaparrete" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3><strong>Casa Chaparrete</strong> 🔥</h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Deza, Soria</p>
@@ -231,7 +293,7 @@
             </p>
             <div class="grid">
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/Yacimiento_Numancia.jpg" alt="Numancia">
+                    <img src="https://www.rutasrurales.io/menu_images/Yacimiento_Numancia.jpg" alt="Numancia" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>⚔️ <strong>Yacimiento de Numancia</strong></h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Garray | <strong>¡Leyenda viva!</strong></p>
@@ -243,7 +305,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/San_Juan_de_Duero.jpg" alt="San Juan de Duero">
+                    <img src="https://www.rutasrurales.io/menu_images/San_Juan_de_Duero.jpg" alt="San Juan de Duero" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>⛪ <strong>Monasterio de San Juan de Duero</strong></h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Soria Capital | <strong>¡Espectacular!</strong></p>
@@ -255,7 +317,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/villa_de_medinaceli.jpg" alt="Medinaceli">
+                    <img src="https://www.rutasrurales.io/menu_images/villa_de_medinaceli.jpg" alt="Medinaceli" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>👑 <strong>Villa de Medinaceli</strong></h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Medinaceli | <strong>Historia UNESCO</strong></p>
@@ -267,7 +329,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/El_burgo_de_Osma.jpg" alt="Burgo de Osma">
+                    <img src="https://www.rutasrurales.io/menu_images/El_burgo_de_Osma.jpg" alt="Burgo de Osma" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>🏰 <strong>El Burgo de Osma</strong></h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Burgo de Osma | <strong>¡Maravilloso!</strong></p>
@@ -279,7 +341,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/urbion.jpg" alt="Picos de Urbión">
+                    <img src="https://www.rutasrurales.io/menu_images/urbion.jpg" alt="Picos de Urbión" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>🏔️ <strong>Picos de Urbión</strong></h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Sistema Ibérico | <strong>2.228m de emoción</strong></p>
@@ -291,7 +353,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/almenar.jpg" alt="Castillo de Almenar">
+                    <img src="https://www.rutasrurales.io/menu_images/almenar.jpg" alt="Castillo de Almenar" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>🏰 <strong>Castillo de Almenar</strong></h3>
                         <p class="location"><i class="fas fa-map-marker-alt"></i> Almenar de Soria | <strong>¡Imponente!</strong></p>
@@ -319,7 +381,7 @@
             </p>
             <div class="grid">
                 <div class="card">
-                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop" alt="Senderismo">
+                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop" alt="Senderismo" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>🏔️ <strong>Senderismo en la Laguna Negra</strong></h3>
                         <p class="location"><i class="fas fa-clock"></i> 3-4 horas | <strong>12 km</strong></p>
@@ -331,7 +393,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/canon_rio_lobos.jpg" alt="Cañón del Río Lobos">
+                    <img src="https://www.rutasrurales.io/menu_images/canon_rio_lobos.jpg" alt="Cañón del Río Lobos" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>🌄 <strong>Cañón del Río Lobos</strong></h3>
                         <p class="location"><i class="fas fa-clock"></i> 2-5 horas | <strong>¡Imprescindible!</strong></p>
@@ -343,7 +405,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/ruta_micologica.jpg" alt="Micología">
+                    <img src="https://www.rutasrurales.io/menu_images/ruta_micologica.jpg" alt="Micología" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>🍄 <strong>Ruta Micológica</strong></h3>
                         <p class="location"><i class="fas fa-clock"></i> <strong>Otoño (Sep-Nov)</strong></p>
@@ -355,7 +417,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/observación_astronomica.png" alt="Astronomía">
+                    <img src="https://www.rutasrurales.io/menu_images/observación_astronomica.png" alt="Astronomía" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>✨ <strong>Observación Astronómica</strong></h3>
                         <p class="location"><i class="fas fa-clock"></i> <strong>Experiencia nocturna única</strong></p>
@@ -367,7 +429,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/ciclismo.jpg" alt="Ciclismo">
+                    <img src="https://www.rutasrurales.io/menu_images/ciclismo.jpg" alt="Ciclismo" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>🚴 <strong>Ciclismo de Montaña</strong></h3>
                         <p class="location"><i class="fas fa-clock"></i> 2-4 horas | <strong>Adrenalina pura</strong></p>
@@ -379,7 +441,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <img src="https://www.rutasrurales.io/menu_images/torreznos.jpg" alt="Gastronomía">
+                    <img src="https://www.rutasrurales.io/menu_images/torreznos.jpg" alt="Gastronomía" loading="lazy" decoding="async">
                     <div class="card-content">
                         <h3>🍖 <strong>Gastronomía Soriana</strong></h3>
                         <p class="location"><i class="fas fa-clock"></i> <strong>Todo el año</strong> | <strong>Sabores auténticos</strong></p>
@@ -411,7 +473,7 @@
                         <span class="dia">15</span>
                         <span class="mes">AGO</span>
                     </div>
-                    <img src="menu_images/concierto_verano.webp" alt="Concierto">
+                    <img src="menu_images/concierto_verano.webp" alt="Concierto" loading="lazy" decoding="async">
                     <div class="card-content">
                         <span class="evento-categoria musica"><i class="fas fa-music"></i> Música</span>
                         <h3>Concierto de Verano</h3>
@@ -424,7 +486,7 @@
                         <span class="dia">22</span>
                         <span class="mes">SEP</span>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&h=300&fit=crop" alt="Teatro">
+                    <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&h=300&fit=crop" alt="Teatro" loading="lazy" decoding="async">
                     <div class="card-content">
                         <span class="evento-categoria teatro"><i class="fas fa-theater-masks"></i> Teatro</span>
                         <h3>Festival de Teatro</h3>
@@ -437,7 +499,7 @@
                         <span class="dia">10</span>
                         <span class="mes">OCT</span>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop" alt="Gastronomía">
+                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop" alt="Gastronomía" loading="lazy" decoding="async">
                     <div class="card-content">
                         <span class="evento-categoria gastronomia"><i class="fas fa-utensils"></i> Gastronomía</span>
                         <h3>Jornadas Micológicas</h3>
@@ -519,7 +581,7 @@
                 <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
             </div>
         </div> </footer> 
-    <script src="script.js?v=20260114"></script>
-    <script src="antonio_improved.js"></script>
+    <script src="script.js?v=20260114" defer></script>
+    <script src="antonio_improved.js" defer></script>
 </body>
 </html>
