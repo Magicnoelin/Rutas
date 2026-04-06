@@ -859,6 +859,11 @@ DOCTYPE html>
             if (data.success) {
                 const user = data.data;
                 
+                // Guardar ID del usuario para el sistema de mensajes
+                if (user.id) {
+                    currentUserId = user.id;
+                }
+                
                 // Actualizar nombre en el header
                 const userNameDisplay = document.getElementById('userNameDisplay');
                 if (userNameDisplay) {
@@ -1394,5 +1399,328 @@ DOCTYPE html>
                 cerrarModalRoles();
             }
         });
+
+        // Cargar conversaciones si estamos en la sección de mensajes
+        if (hash === 'mensajes') {
+            loadConversations();
+        }
     });
+
+    // ============================================
+    // SISTEMA DE MENSAJES
+    // ============================================
+
+    let currentConversationId = null;
+    let messagePollInterval = null;
+    let currentUserId = null;
+
+    // Cargar conversaciones del usuario
+    async function loadConversations() {
+        try {
+            const response = await fetch('api/chat.php?action=list_conversations');
+            const data = await response.json();
+            
+            if (!data.success) {
+                document.getElementById('conversationsList').innerHTML = 
+                    '<div style="text-align: center; padding: 2rem; color: #f88;">Error al cargar conversaciones</div>';
+                return;
+            }
+
+            const conversations = data.data || [];
+            const container = document.getElementById('conversationsList');
+            
+            if (conversations.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #999;">
+                        <i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                        No tienes conversaciones aún
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = conversations.map(conv => {
+                const lastMessage = conv.last_message ? 
+                    (conv.last_message.length > 50 ? conv.last_message.substring(0, 50) + '...' : conv.last_message) : 
+                    'Sin mensajes';
+                
+                const unreadBadge = conv.unread_count > 0 ? 
+                    `<span style="background: var(--primary-color); color: white; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; margin-left: auto;">${conv.unread_count}</span>` : 
+                    '';
+                
+                const timeAgo = conv.last_message_at ? getTimeAgo(conv.last_message_at) : '';
+                
+                return `
+                    <div class="chat-item" onclick="selectConversation(${conv.conversation_id}, ${conv.other_user_id})" id="conv-${conv.conversation_id}">
+                        <div class="chat-avatar">
+                            ${conv.avatar_url ? 
+                                `<img src="${conv.avatar_url}" alt="${conv.first_name}">` : 
+                                `<i class="fas fa-user"></i>`
+                            }
+                        </div>
+                        <div class="chat-info" style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong>${conv.first_name} ${conv.last_name}</strong>
+                                ${unreadBadge}
+                            </div>
+                            <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #666;">${lastMessage}</p>
+                            <small style="color: #999; font-size: 0.75rem;">${timeAgo}</small>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+        } catch (error) {
+            console.error('Error cargando conversaciones:', error);
+            document.getElementById('conversationsList').innerHTML = 
+                '<div style="text-align: center; padding: 2rem; color: #f88;">Error de conexión</div>';
+        }
+    }
+
+    // Seleccionar una conversación
+    async function selectConversation(conversationId, otherUserId) {
+        currentConversationId = conversationId;
+        
+        // Resaltar conversación seleccionada
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        const selectedItem = document.getElementById(`conv-${conversationId}`);
+        if (selectedItem) {
+            selectedItem.classList.add('active');
+        }
+        
+        // Cargar mensajes
+        await loadMessages(conversationId);
+        
+        // Iniciar polling para nuevos mensajes
+        startMessagePolling(conversationId);
+    }
+
+    // Cargar mensajes de una conversación
+    async function loadMessages(conversationId) {
+        try {
+            const response = await fetch(`api/chat.php?action=get_messages&conversation_id=${conversationId}`);
+            const data = await response.json();
+            
+            if (!data.success) {
+                showChatError('Error al cargar mensajes');
+                return;
+            }
+
+            const messages = data.data || [];
+            const chatWindow = document.querySelector('.chat-window');
+            
+            if (messages.length === 0) {
+                chatWindow.innerHTML = `
+                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+                        <div style="flex: 1; display: flex; align-items: center; justify-content: center; color: #aaa;">
+                            <div style="text-align: center;">
+                                <i class="fas fa-comments" style="font-size: 4rem; margin-bottom: 1rem; display: block;"></i>
+                                No hay mensajes aún. ¡Envía el primero!
+                            </div>
+                        </div>
+                        ${renderMessageInput()}
+                    </div>
+                `;
+                return;
+            }
+
+            chatWindow.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+                    <div id="messagesContainer" style="flex: 1; overflow-y: auto; padding: 1rem;">
+                        ${renderMessages(messages)}
+                    </div>
+                    ${renderMessageInput()}
+                </div>
+            `;
+
+            // Scroll al final
+            const container = document.getElementById('messagesContainer');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+
+            // Configurar envío de mensajes
+            setupMessageSending(conversationId);
+            
+        } catch (error) {
+            console.error('Error cargando mensajes:', error);
+            showChatError('Error de conexión');
+        }
+    }
+
+    // Renderizar lista de mensajes
+    function renderMessages(messages) {
+        return messages.map(msg => {
+            const isMe = currentUserId && msg.sender_id == currentUserId;
+            const time = new Date(msg.created_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            
+            return `
+                <div style="display: flex; margin-bottom: 1rem; ${isMe ? 'justify-content: flex-end;' : ''}">
+                    <div style="max-width: 70%; ${isMe ? 'background: var(--primary-color); color: white;' : 'background: #f0f0f0; color: #333;'} 
+                        padding: 0.8rem 1rem; border-radius: 15px; ${isMe ? 'border-bottom-right-radius: 5px;' : 'border-bottom-left-radius: 5px;'}">
+                        <div style="font-size: 0.9rem;">${msg.content}</div>
+                        <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.3rem; text-align: ${isMe ? 'right' : 'left'};">${time}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Renderizar área de entrada de mensajes
+    function renderMessageInput() {
+        return `
+            <div style="border-top: 1px solid #eee; padding: 1rem; background: white;">
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="messageInput" placeholder="Escribe un mensaje..." 
+                        style="flex: 1; padding: 0.8rem; border: 1px solid #ddd; border-radius: 25px; font-size: 0.9rem;">
+                    <button id="sendMessageBtn" style="background: var(--primary-color); color: white; border: none; 
+                        border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.1rem;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div id="messageStatus" style="font-size: 0.8rem; color: #666; margin-top: 0.5rem; min-height: 1.2rem;"></div>
+            </div>
+        `;
+    }
+
+    // Configurar envío de mensajes
+    function setupMessageSending(conversationId) {
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendMessageBtn');
+        const statusDiv = document.getElementById('messageStatus');
+        
+        if (!messageInput || !sendBtn) return;
+        
+        const sendMessage = async () => {
+            const content = messageInput.value.trim();
+            if (!content) return;
+            
+            // Mostrar "enviando..."
+            statusDiv.textContent = 'Enviando...';
+            sendBtn.disabled = true;
+            
+            try {
+                const response = await fetch('api/chat.php?action=send_message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        conversation_id: conversationId,
+                        content: content
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Limpiar input
+                    messageInput.value = '';
+                    statusDiv.textContent = '✓ Enviado';
+                    
+                    // Recargar mensajes
+                    await loadMessages(conversationId);
+                    
+                    // Actualizar lista de conversaciones
+                    await loadConversations();
+                    
+                    // Limpiar status después de 2 segundos
+                    setTimeout(() => {
+                        statusDiv.textContent = '';
+                    }, 2000);
+                } else {
+                    statusDiv.textContent = `Error: ${data.error || 'No se pudo enviar'}`;
+                    statusDiv.style.color = '#f00';
+                }
+            } catch (error) {
+                console.error('Error enviando mensaje:', error);
+                statusDiv.textContent = 'Error de conexión';
+                statusDiv.style.color = '#f00';
+            } finally {
+                sendBtn.disabled = false;
+            }
+        };
+        
+        // Eventos
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    }
+
+    // Mostrar error en el chat
+    function showChatError(message) {
+        const chatWindow = document.querySelector('.chat-window');
+        chatWindow.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #f88;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                ${message}
+            </div>
+        `;
+    }
+
+    // Iniciar polling para nuevos mensajes
+    function startMessagePolling(conversationId) {
+        // Limpiar intervalo anterior
+        if (messagePollInterval) {
+            clearInterval(messagePollInterval);
+        }
+        
+        // Poll cada 10 segundos
+        messagePollInterval = setInterval(async () => {
+            if (currentConversationId === conversationId) {
+                await loadConversations(); // Actualizar lista de conversaciones
+            }
+        }, 10000);
+    }
+
+    // Mostrar modal para nueva conversación
+    async function showNewConversationModal() {
+        // Por ahora, mostrar un mensaje simple
+        alert('Para iniciar una nueva conversación, visita la página del alojamiento, restaurante o servicio que te interese y haz clic en "Contactar".\n\nEsta funcionalidad estará disponible próximamente en el dashboard.');
+        
+        // TODO: Implementar búsqueda de usuarios/entidades para iniciar conversación
+    }
+
+    // Función auxiliar: calcular tiempo transcurrido
+    function getTimeAgo(timestamp) {
+        const now = new Date();
+        const past = new Date(timestamp);
+        const diffMs = now - past;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 1) return 'Ahora';
+        if (diffMins < 60) return `Hace ${diffMins} min`;
+        if (diffHours < 24) return `Hace ${diffHours} h`;
+        if (diffDays < 7) return `Hace ${diffDays} d`;
+        return past.toLocaleDateString('es-ES');
+    }
+
+    // ============================================
+    // INICIALIZACIÓN DEL SISTEMA DE MENSAJES
+    // ============================================
+
+    // Sobrescribir showSection para cargar conversaciones cuando se muestra la sección de mensajes
+    const originalShowSection = showSection;
+    showSection = function(sectionId) {
+        originalShowSection(sectionId);
+        
+        if (sectionId === 'mensajes') {
+            loadConversations();
+            
+            // Limpiar intervalo si cambiamos de sección
+            if (messagePollInterval) {
+                clearInterval(messagePollInterval);
+                messagePollInterval = null;
+            }
+        } else if (messagePollInterval) {
+            // Si cambiamos a otra sección, detener polling
+            clearInterval(messagePollInterval);
+            messagePollInterval = null;
+        }
+    };
     </script>
