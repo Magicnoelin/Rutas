@@ -276,15 +276,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </div>
 
-                <div class="section" id="secProveedor">
-                    <h2 class="section-title"><i class="fas fa-user-tie"></i> Proveedor</h2>
-                    <div id="actividadProveedor">
-                        <p id="pProveedorNombre"><strong>Nombre:</strong> <span id="actividadProveedorNombre"></span></p>
-                        <p id="pTelefono"><strong>Teléfono:</strong> <span id="actividadTelefono"></span></p>
-                        <p id="pEmail"><strong>Email:</strong> <span id="actividadEmail"></span></p>
-                        <p id="pWeb"><strong>Web:</strong> <span id="actividadWeb"></span></p>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -441,36 +432,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 // Punto de encuentro
                 setContentOrHide('actividadPuntoEncuentro', 'pPuntoEncuentro', actividad.punto_encuentro);
-
-                // Proveedor
-                setContentOrHide('actividadProveedorNombre', 'pProveedorNombre', actividad.proveedor);
-                
-                if (actividad.telefono) {
-                    setContentOrHide('actividadTelefono', 'pTelefono', `<a href="tel:${actividad.telefono}">${actividad.telefono}</a>`, true);
-                } else {
-                    document.getElementById('pTelefono').style.display = 'none';
-                }
-
-                if (actividad.email) {
-                    setContentOrHide('actividadEmail', 'pEmail', `<a href="mailto:${actividad.email}">${actividad.email}</a>`, true);
-                } else {
-                    document.getElementById('pEmail').style.display = 'none';
-                }
-
-                if (actividad.web) {
-                    let anchorText = 'Visitar Web';
-                    if (actividad.web.includes('instagram.com')) anchorText = 'Ver en Instagram';
-                    else if (actividad.web.includes('facebook.com')) anchorText = 'Ver en Facebook';
-                    
-                    const webHtml = `<a href="${actividad.web}" target="_blank" rel="noopener noreferrer">${anchorText}</a>`;
-                    setContentOrHide('actividadWeb', 'pWeb', webHtml, true);
-                } else {
-                    document.getElementById('pWeb').style.display = 'none';
-                }
-                
-                if (!actividad.proveedor && !actividad.telefono && !actividad.email && !actividad.web) {
-                    document.getElementById('secProveedor').style.display = 'none';
-                }
 
             // Carrusel de imágenes (reemplaza imagen principal y galería)
             const headerContainer = document.querySelector('.actividad-header');
