@@ -71,19 +71,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 // Si es un campo con restricción JSON
                 elseif (in_array($columna, $campos_json_con_restricciones)) {
-                    // Si parece JSON vacío, convertir a NULL
-                    if ($valor_trim === '[]' || $valor_trim === '{}' || $valor_trim === '""' || 
-                        $valor_trim === 'null' || $valor_trim === 'NULL') {
+                    // Si está vacío o parece JSON vacío, convertir a NULL
+                    if ($valor_trim === '' || $valor_trim === '[]' || $valor_trim === '{}' || 
+                        $valor_trim === '""' || $valor_trim === 'null' || $valor_trim === 'NULL') {
                         $valor = null;
                     }
-                    // Si no es JSON válido, intentar convertirlo a JSON simple
+                    // Si no es JSON válido, FORZAR conversión a JSON simple
                     elseif (!isValidJson($valor_trim)) {
-                        // Para texto simple como "9:00-14:00", convertirlo a JSON simple
+                        // Para schedule específicamente
                         if ($columna === 'schedule') {
-                            // Si es texto de horario, crear un JSON simple
-                            $valor = json_encode(['horario' => $valor_trim]);
-                        } else {
-                            // Para otros campos, crear un array simple
+                            // Intentar detectar si es texto de horario simple
+                            if (preg_match('/\d+[:\.]\d+/', $valor_trim)) {
+                                $valor = json_encode(['horario' => $valor_trim]);
+                            } else {
+                                // Si no parece horario, crear array simple
+                                $valor = json_encode([$valor_trim]);
+                            }
+                        } 
+                        // Para available_days, available_seasons, languages_available
+                        elseif (in_array($columna, ['available_days', 'available_seasons', 'languages_available'])) {
+                            // Si tiene comas, separar en array
+                            if (strpos($valor_trim, ',') !== false) {
+                                $items = array_map('trim', explode(',', $valor_trim));
+                                $valor = json_encode($items);
+                            } else {
+                                $valor = json_encode([$valor_trim]);
+                            }
+                        }
+                        // Para otros campos
+                        else {
                             $valor = json_encode([$valor_trim]);
                         }
                     }
@@ -111,34 +127,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Añadimos el ID con un nombre diferente para evitar conflictos si existiera una columna llamada 'id' en el loop
         $params['id_param'] = $id;
 
-        // Para debug: mostrar SQL y parámetros
-        // echo "SQL: $sql<br>";
-        // echo "Params: ";
-        // print_r($params);
-        // echo "<br>";
+        // DEBUG: Mostrar información antes de ejecutar
+        echo "<div style='background: #f0f0f0; padding: 20px; margin: 20px; border: 1px solid #ccc;'>";
+        echo "<h3>DEBUG - Información antes de guardar</h3>";
+        echo "<p><strong>SQL:</strong> $sql</p>";
+        echo "<p><strong>Parámetros:</strong><br>";
+        foreach ($params as $key => $value) {
+            echo "  $key = " . (is_null($value) ? 'NULL' : "'" . htmlspecialchars($value) . "'") . "<br>";
+        }
+        echo "</p>";
+        echo "<p><strong>Campos con restricciones JSON:</strong> " . implode(', ', $campos_json_con_restricciones) . "</p>";
+        echo "</div>";
 
         $stmt->execute($params);
 
-        // Redirección con éxito
-        header("Location: actividades_index.php?status=ok");
+        echo "<div style='background: #d4edda; padding: 20px; margin: 20px; border: 1px solid #c3e6cb;'>";
+        echo "<h3>✅ Guardado exitoso</h3>";
+        echo "<p>Los cambios se han guardado correctamente.</p>";
+        echo "<p><a href='actividades_index.php'>Volver al listado</a> | <a href='actividades_editar.php?id=$id'>Seguir editando</a></p>";
+        echo "</div>";
         exit();
 
     } catch (PDOException $e) {
         // Mostrar información detallada del error para debugging
         $error_info = $stmt->errorInfo();
-        echo "<h3>Error al guardar en la base de datos</h3>";
+        echo "<div style='background: #f8d7da; padding: 20px; margin: 20px; border: 1px solid #f5c6cb;'>";
+        echo "<h3>❌ Error al guardar en la base de datos</h3>";
         echo "<p><strong>Mensaje:</strong> " . $e->getMessage() . "</p>";
         echo "<p><strong>Código error:</strong> " . $e->getCode() . "</p>";
         if (!empty($error_info)) {
-            echo "<p><strong>Info error:</strong> " . print_r($error_info, true) . "</p>";
+            echo "<p><strong>Info error PDO:</strong><br>";
+            echo "SQLSTATE: " . $error_info[0] . "<br>";
+            echo "Código: " . $error_info[1] . "<br>";
+            echo "Mensaje: " . $error_info[2] . "</p>";
         }
-        echo "<p><strong>SQL:</strong> $sql</p>";
-        echo "<p><strong>Parámetros:</strong><br>";
+        
+        // Información adicional sobre el error
+        if (strpos($e->getMessage(), 'CHECK') !== false) {
+            echo "<p><strong>⚠️ ERROR DE RESTRICCIÓN CHECK:</strong></p>";
+            echo "<p>La base de datos tiene una restricción que valida el formato de los datos.</p>";
+            echo "<p>Posibles causas:</p>";
+            echo "<ul>";
+            echo "<li>Campo 'schedule' debe ser JSON válido</li>";
+            echo "<li>Campo 'available_days' debe ser JSON válido</li>";
+            echo "<li>Campo 'contact_email' debe tener formato de email válido</li>";
+            echo "<li>Otros campos con restricciones de formato</li>";
+            echo "</ul>";
+        }
+        
+        echo "<p><strong>SQL ejecutado:</strong><br><code>$sql</code></p>";
+        echo "<p><strong>Valores de parámetros:</strong><br>";
         foreach ($params as $key => $value) {
-            echo "  $key = " . (is_null($value) ? 'NULL' : "'$value'") . "<br>";
+            $display_value = is_null($value) ? 'NULL' : "'" . htmlspecialchars($value) . "'";
+            echo "<code>$key = $display_value</code><br>";
         }
         echo "</p>";
-        echo "<p><a href='actividades_index.php'>Volver al listado</a></p>";
+        
+        echo "<p><a href='actividades_index.php'>Volver al listado</a> | <a href='actividades_editar.php?id=$id'>Corregir datos</a></p>";
+        echo "</div>";
         exit();
     }
 } else {
