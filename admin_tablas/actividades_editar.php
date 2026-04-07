@@ -93,6 +93,7 @@ if (!$item) { die("Actividad no encontrada."); }
                     <div class="col-md-4">
                         <label class="form-label">Dificultad</label>
                         <select name="difficulty_level" class="form-select">
+                            <option value="">-- Seleccionar --</option>
                             <?php $niveles = ['facil', 'moderado', 'dificil', 'muy_dificil']; 
                             foreach($niveles as $n): ?>
                                 <option value="<?= $n ?>" <?= $item['difficulty_level']==$n ? 'selected':'' ?>><?= ucfirst($n) ?></option>
@@ -132,6 +133,36 @@ if (!$item) { die("Actividad no encontrada."); }
                         <label class="form-label">¿Qué llevar?</label>
                         <textarea name="what_to_bring" class="form-control" rows="3"><?= htmlspecialchars($item['what_to_bring']) ?></textarea>
                     </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Equipo Proporcionado (JSON)</label>
+                        <textarea name="provided_equipment" class="form-control" rows="3" placeholder='["casco", "arnés", "cuerdas"]'><?= htmlspecialchars($item['provided_equipment']) ?></textarea>
+                        <small class="text-muted">Formato JSON: array de strings</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Idiomas Disponibles (JSON)</label>
+                        <textarea name="languages_available" class="form-control" rows="3" placeholder='["es", "en", "fr"]'><?= htmlspecialchars($item['languages_available']) ?></textarea>
+                        <small class="text-muted">Formato JSON: array de códigos de idioma</small>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Temporadas (JSON)</label>
+                        <textarea name="available_seasons" class="form-control" rows="2" placeholder='["primavera", "verano", "otoño"]'><?= htmlspecialchars($item['available_seasons']) ?></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Días Disponibles (JSON)</label>
+                        <textarea name="available_days" class="form-control" rows="2" placeholder='["lunes", "miércoles", "viernes"]'><?= htmlspecialchars($item['available_days']) ?></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Horario (JSON)</label>
+                        <textarea name="schedule" class="form-control" rows="2" placeholder='{"mañana": "9:00-13:00", "tarde": "16:00-20:00"}'><?= htmlspecialchars($item['schedule']) ?></textarea>
+                    </div>
+                    
+                    <div class="col-12">
+                        <label class="form-label">Accesibilidad (JSON)</label>
+                        <textarea name="accessibility" class="form-control" rows="2" placeholder='{"silla_ruedas": true, "baño_adaptado": false}'><?= htmlspecialchars($item['accessibility']) ?></textarea>
+                        <small class="text-muted">Formato JSON: objeto con características de accesibilidad</small>
+                    </div>
                 </div>
             </div>
 
@@ -143,14 +174,49 @@ if (!$item) { die("Actividad no encontrada."); }
                     <div class="col-md-4"><label class="form-label">Precio Grupo (€)</label><input type="number" step="0.01" name="price_group" class="form-control" value="<?= $item['price_group'] ?>"></div>
                     
                     <div class="col-md-6">
+                        <label class="form-label">Detalles del Precio</label>
+                        <textarea name="price_details" class="form-control" rows="2"><?= htmlspecialchars($item['price_details']) ?></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Días de Antelación para Reserva</label>
+                        <input type="number" name="advance_booking_days" class="form-control" value="<?= $item['advance_booking_days'] ?>">
+                    </div>
+                    
+                    <div class="col-md-6">
                         <label class="form-label">Proveedor / Empresa</label>
                         <input type="text" name="provider_name" class="form-control" value="<?= htmlspecialchars($item['provider_name']) ?>">
                     </div>
                     <div class="col-md-6">
+                        <label class="form-label">ID del Proveedor</label>
+                        <input type="number" name="provider_id" class="form-control" value="<?= $item['provider_id'] ?>">
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Teléfono de Contacto</label>
+                        <input type="text" name="contact_phone" class="form-control" value="<?= htmlspecialchars($item['contact_phone']) ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Email de Contacto</label>
+                        <input type="email" name="contact_email" class="form-control" value="<?= htmlspecialchars($item['contact_email']) ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Sitio Web</label>
+                        <input type="text" name="website" class="form-control" value="<?= htmlspecialchars($item['website']) ?>">
+                    </div>
+                    
+                    <div class="col-md-6">
                         <label class="form-label">URL Reserva Directa</label>
                         <input type="text" name="booking_url" class="form-control" value="<?= htmlspecialchars($item['booking_url']) ?>">
                     </div>
-
+                    <div class="col-md-6">
+                        <label class="form-label">Categoría ID</label>
+                        <input type="number" name="category_id" class="form-control" value="<?= $item['category_id'] ?>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Subcategoría ID</label>
+                        <input type="number" name="subcategory_id" class="form-control" value="<?= $item['subcategory_id'] ?>">
+                    </div>
+                    
                     <div class="col-md-4">
                         <div class="form-check form-switch border p-3 rounded">
                             <input type="hidden" name="booking_required" value="0">
@@ -172,6 +238,15 @@ if (!$item) { die("Actividad no encontrada."); }
                             <label class="ms-4 fw-bold">Depende del clima</label>
                         </div>
                     </div>
+                    
+                    <div class="col-md-4">
+                        <div class="form-check form-switch border p-3 rounded">
+                            <input type="hidden" name="suitable_for_families" value="0">
+                            <input class="form-check-input ms-1" type="checkbox" name="suitable_for_families" value="1" <?= $item['suitable_for_families'] ? 'checked':'' ?>>
+                            <label class="ms-4 fw-bold">Apto para Familias</label>
+                        </div>
+                    </div>
+                    
                     <div class="col-12">
                         <label class="form-label">Política de Cancelación</label>
                         <textarea name="cancellation_policy" class="form-control" rows="2"><?= htmlspecialchars($item['cancellation_policy']) ?></textarea>
@@ -180,7 +255,7 @@ if (!$item) { die("Actividad no encontrada."); }
             </div>
 
             <div class="tab-pane fade" id="media">
-                <h4 class="section-title">Galería de Fotos (URLs)</h4>
+                <h4 class="section-title">Multimedia e Imágenes</h4>
                 <div class="row g-3">
                     <?php for($i=1; $i<=4; $i++): ?>
                     <div class="col-md-6">
@@ -191,6 +266,11 @@ if (!$item) { die("Actividad no encontrada."); }
                         <?php endif; ?>
                     </div>
                     <?php endfor; ?>
+                    <div class="col-12">
+                        <label class="form-label">Galería JSON (Array de URLs)</label>
+                        <textarea name="gallery" class="form-control" rows="3" placeholder='["https://...", "https://..."]'><?= htmlspecialchars($item['gallery']) ?></textarea>
+                        <small class="text-muted">Formato JSON: array de URLs de imágenes</small>
+                    </div>
                     <div class="col-12">
                         <label class="form-label">Video URL (YouTube/Vimeo)</label>
                         <input type="text" name="video_url" class="form-control" value="<?= htmlspecialchars($item['video_url']) ?>">
