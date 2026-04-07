@@ -22,13 +22,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Error al verificar la estructura de la tabla: " . $e->getMessage());
     }
 
+    // Lista de campos que pueden tener restricciones CHECK y deben ser NULL si están vacíos
+    $campos_con_restricciones = [
+        'schedule', 'available_days', 'available_seasons', 'languages_available',
+        'provided_equipment', 'accessibility', 'gallery', 'price_details'
+    ];
+    
     foreach ($datos as $columna => $valor) {
         // Solo procesamos si la columna existe en la base de datos
         if (in_array($columna, $columnas_reales)) {
             
             // Tratamiento de valores según su contenido
-            if (is_string($valor) && trim($valor) === '') {
-                $valor = null; // Convertir strings vacíos en NULL
+            if (is_string($valor)) {
+                $valor_trim = trim($valor);
+                if ($valor_trim === '') {
+                    $valor = null; // Convertir strings vacíos en NULL
+                }
+                // Para campos con restricciones CHECK, asegurarnos de que si están "vacíos" sean NULL
+                elseif (in_array($columna, $campos_con_restricciones) && 
+                       ($valor_trim === '[]' || $valor_trim === '{}' || $valor_trim === '""')) {
+                    $valor = null;
+                }
             }
 
             $campos .= "`$columna` = :$columna, ";

@@ -107,6 +107,7 @@ if (!$item) { die("Actividad no encontrada."); }
                     <div class="col-md-4">
                         <label class="form-label">Entorno</label>
                         <select name="indoor_outdoor" class="form-select">
+                            <option value="">-- Seleccionar --</option>
                             <option value="interior" <?= $item['indoor_outdoor']=='interior'?'selected':'' ?>>Interior</option>
                             <option value="exterior" <?= $item['indoor_outdoor']=='exterior'?'selected':'' ?>>Exterior</option>
                             <option value="mixto" <?= $item['indoor_outdoor']=='mixto'?'selected':'' ?>>Mixto</option>

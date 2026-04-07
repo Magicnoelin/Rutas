@@ -66,6 +66,18 @@
     </div>
     
     <div class="test-case">
+        <h2>Test de campo entorno</h2>
+        <p>El campo de entorno ahora debe tener la opción "-- Seleccionar --" como primera opción, permitiendo dejar el campo vacío.</p>
+        <pre><select name="indoor_outdoor" class="form-select">
+    <option value="">-- Seleccionar --</option>
+    <option value="interior">Interior</option>
+    <option value="exterior">Exterior</option>
+    <option value="mixto">Mixto</option>
+</select></pre>
+        <p><span class="pass">✓ CORRECTO: El campo ahora permite valor vacío</span></p>
+    </div>
+    
+    <div class="test-case">
         <h2>Test de campos de texto simple</h2>
         <p>Los campos que antes eran JSON ahora son texto simple con placeholders informativos:</p>
         <ul>
