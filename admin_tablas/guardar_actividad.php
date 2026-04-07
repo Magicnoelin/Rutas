@@ -47,6 +47,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($valor_trim === '') {
                     $valor = null;
                 }
+                // Validación específica para email
+                elseif ($columna === 'contact_email' && $valor_trim !== '') {
+                    // Validar formato de email
+                    if (!filter_var($valor_trim, FILTER_VALIDATE_EMAIL)) {
+                        // Si no es un email válido, convertirlo a NULL para evitar error de restricción
+                        $valor = null;
+                    } else {
+                        // Limitar longitud a 255 caracteres (típico máximo para campos email)
+                        if (strlen($valor_trim) > 255) {
+                            $valor = substr($valor_trim, 0, 255);
+                        }
+                    }
+                }
+                // Validación para teléfono (evitar caracteres problemáticos)
+                elseif ($columna === 'contact_phone' && $valor_trim !== '') {
+                    // Limpiar teléfono: mantener solo números, +, espacios, paréntesis y guiones
+                    $valor = preg_replace('/[^\d\s\+\-\(\)]/', '', $valor_trim);
+                    // Limitar longitud
+                    if (strlen($valor) > 50) {
+                        $valor = substr($valor, 0, 50);
+                    }
+                }
                 // Si es un campo con restricción JSON
                 elseif (in_array($columna, $campos_json_con_restricciones)) {
                     // Si parece JSON vacío, convertir a NULL
@@ -89,6 +111,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Añadimos el ID con un nombre diferente para evitar conflictos si existiera una columna llamada 'id' en el loop
         $params['id_param'] = $id;
 
+        // Para debug: mostrar SQL y parámetros
+        // echo "SQL: $sql<br>";
+        // echo "Params: ";
+        // print_r($params);
+        // echo "<br>";
+
         $stmt->execute($params);
 
         // Redirección con éxito
@@ -96,8 +124,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
 
     } catch (PDOException $e) {
-        // En producción, sería mejor loguear el error y mostrar un mensaje genérico
-        die("Error crítico al guardar en la base de datos: " . $e->getMessage());
+        // Mostrar información detallada del error para debugging
+        $error_info = $stmt->errorInfo();
+        echo "<h3>Error al guardar en la base de datos</h3>";
+        echo "<p><strong>Mensaje:</strong> " . $e->getMessage() . "</p>";
+        echo "<p><strong>Código error:</strong> " . $e->getCode() . "</p>";
+        if (!empty($error_info)) {
+            echo "<p><strong>Info error:</strong> " . print_r($error_info, true) . "</p>";
+        }
+        echo "<p><strong>SQL:</strong> $sql</p>";
+        echo "<p><strong>Parámetros:</strong><br>";
+        foreach ($params as $key => $value) {
+            echo "  $key = " . (is_null($value) ? 'NULL' : "'$value'") . "<br>";
+        }
+        echo "</p>";
+        echo "<p><a href='actividades_index.php'>Volver al listado</a></p>";
+        exit();
     }
 } else {
     header("Location: actividades_index.php");
