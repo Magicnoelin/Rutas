@@ -198,12 +198,30 @@ if (!$item) { die("Actividad no encontrada."); }
                         <input type="text" name="contact_phone" class="form-control" value="<?= htmlspecialchars($item['contact_phone']) ?>">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Email de Contacto</label>
-                        <input type="email" name="contact_email" class="form-control" value="<?= htmlspecialchars($item['contact_email']) ?>">
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Sitio Web</label>
                         <input type="text" name="website" class="form-control" value="<?= htmlspecialchars($item['website']) ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Email de Contacto</label>
+                        <div class="form-control bg-light">
+                            <?php 
+                            // Obtener información del usuario creador
+                            $user_email = 'No asignado';
+                            $user_name = 'Usuario desconocido';
+                            if (!empty($item['created_by'])) {
+                                $user_stmt = $pdo->prepare("SELECT email, first_name, last_name FROM users WHERE id = ?");
+                                $user_stmt->execute([$item['created_by']]);
+                                $user = $user_stmt->fetch();
+                                if ($user) {
+                                    $user_email = htmlspecialchars($user['email']);
+                                    $user_name = htmlspecialchars(trim($user['first_name'] . ' ' . $user['last_name']));
+                                }
+                            }
+                            ?>
+                            <small><strong>Email del perfil:</strong> <?= $user_email ?></small><br>
+                            <small><strong>Usuario:</strong> <?= $user_name ?></small><br>
+                            <small class="text-muted">(Se toma del perfil del usuario creador)</small>
+                        </div>
                     </div>
                     
                     <div class="col-md-6">

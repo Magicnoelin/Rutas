@@ -47,19 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($valor_trim === '') {
                     $valor = null;
                 }
-                // Validación específica para email
-                elseif ($columna === 'contact_email' && $valor_trim !== '') {
-                    // Validar formato de email
-                    if (!filter_var($valor_trim, FILTER_VALIDATE_EMAIL)) {
-                        // Si no es un email válido, convertirlo a NULL para evitar error de restricción
-                        $valor = null;
-                    } else {
-                        // Limitar longitud a 255 caracteres (típico máximo para campos email)
-                        if (strlen($valor_trim) > 255) {
-                            $valor = substr($valor_trim, 0, 255);
-                        }
-                    }
-                }
                 // Validación para teléfono (evitar caracteres problemáticos)
                 elseif ($columna === 'contact_phone' && $valor_trim !== '') {
                     // Limpiar teléfono: mantener solo números, +, espacios, paréntesis y guiones
