@@ -30,13 +30,13 @@
             <div class="field-item"><strong>✓ category_id:</strong> Categoría ID</div>
             <div class="field-item"><strong>✓ subcategory_id:</strong> Subcategoría ID</div>
             <div class="field-item"><strong>✓ suitable_for_families:</strong> Apto para familias (checkbox)</div>
-            <div class="field-item"><strong>✓ provided_equipment:</strong> Equipo proporcionado (JSON)</div>
-            <div class="field-item"><strong>✓ languages_available:</strong> Idiomas disponibles (JSON)</div>
-            <div class="field-item"><strong>✓ available_seasons:</strong> Temporadas (JSON)</div>
-            <div class="field-item"><strong>✓ available_days:</strong> Días disponibles (JSON)</div>
-            <div class="field-item"><strong>✓ schedule:</strong> Horario (JSON)</div>
-            <div class="field-item"><strong>✓ accessibility:</strong> Accesibilidad (JSON)</div>
-            <div class="field-item"><strong>✓ gallery:</strong> Galería de imágenes (JSON)</div>
+                    <div class="field-item"><strong>✓ provided_equipment:</strong> Equipo proporcionado (texto simple)</div>
+                    <div class="field-item"><strong>✓ languages_available:</strong> Idiomas disponibles (texto simple)</div>
+                    <div class="field-item"><strong>✓ available_seasons:</strong> Temporadas (texto simple)</div>
+                    <div class="field-item"><strong>✓ available_days:</strong> Días disponibles (texto simple)</div>
+                    <div class="field-item"><strong>✓ schedule:</strong> Horario (texto simple - ej: 9:00-14:00)</div>
+                    <div class="field-item"><strong>✓ accessibility:</strong> Accesibilidad (texto simple)</div>
+                    <div class="field-item"><strong>✓ gallery:</strong> Galería de imágenes (URLs separadas por comas)</div>
         </div>
     </div>
     
@@ -66,19 +66,19 @@
     </div>
     
     <div class="test-case">
-        <h2>Test de campos JSON</h2>
-        <p>Los campos JSON ahora tienen placeholders que indican el formato esperado:</p>
+        <h2>Test de campos de texto simple</h2>
+        <p>Los campos que antes eran JSON ahora son texto simple con placeholders informativos:</p>
         <ul>
-            <li><strong>provided_equipment</strong>: placeholder='["casco", "arnés", "cuerdas"]'</li>
-            <li><strong>languages_available</strong>: placeholder='["es", "en", "fr"]'</li>
-            <li><strong>available_seasons</strong>: placeholder='["primavera", "verano", "otoño"]'</li>
-            <li><strong>available_days</strong>: placeholder='["lunes", "miércoles", "viernes"]'</li>
-            <li><strong>schedule</strong>: placeholder='{"mañana": "9:00-13:00", "tarde": "16:00-20:00"}'</li>
-            <li><strong>accessibility</strong>: placeholder='{"silla_ruedas": true, "baño_adaptado": false}'</li>
-            <li><strong>gallery</strong>: placeholder='["https://...", "https://..."]'</li>
+            <li><strong>provided_equipment</strong>: placeholder='casco, arnés, cuerdas'</li>
+            <li><strong>languages_available</strong>: placeholder='español, inglés, francés'</li>
+            <li><strong>available_seasons</strong>: placeholder='primavera, verano, otoño'</li>
+            <li><strong>available_days</strong>: placeholder='lunes, miércoles, viernes'</li>
+            <li><strong>schedule</strong>: placeholder='9:00-14:00, 9.00-13.00'</li>
+            <li><strong>accessibility</strong>: placeholder='Silla de ruedas, baño adaptado'</li>
+            <li><strong>gallery</strong>: placeholder='https://imagen1.jpg, https://imagen2.jpg'</li>
         </ul>
-        <p><span class="pass">✓ CORRECTO: Todos los campos JSON tienen placeholders informativos</span></p>
-    </div>
+        <p><span class="pass">✓ CORRECTO: Todos los campos ahora son texto simple con placeholders informativos</span></p>
+        <p><span class="pass">✓ CORRECCIÓN: El campo "horario" ahora permite escribir texto libre como "9:00-14:00, 9.00-13.00"</span
     
     <div class="test-case">
         <h2>Instrucciones para probar</h2>

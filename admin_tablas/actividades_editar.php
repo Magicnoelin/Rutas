@@ -135,33 +135,34 @@ if (!$item) { die("Actividad no encontrada."); }
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Equipo Proporcionado (JSON)</label>
-                        <textarea name="provided_equipment" class="form-control" rows="3" placeholder='["casco", "arnés", "cuerdas"]'><?= htmlspecialchars($item['provided_equipment']) ?></textarea>
-                        <small class="text-muted">Formato JSON: array de strings</small>
+                        <label class="form-label">Equipo Proporcionado</label>
+                        <textarea name="provided_equipment" class="form-control" rows="3" placeholder='casco, arnés, cuerdas'><?= htmlspecialchars($item['provided_equipment']) ?></textarea>
+                        <small class="text-muted">Separar por comas: casco, arnés, cuerdas</small>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Idiomas Disponibles (JSON)</label>
-                        <textarea name="languages_available" class="form-control" rows="3" placeholder='["es", "en", "fr"]'><?= htmlspecialchars($item['languages_available']) ?></textarea>
-                        <small class="text-muted">Formato JSON: array de códigos de idioma</small>
+                        <label class="form-label">Idiomas Disponibles</label>
+                        <textarea name="languages_available" class="form-control" rows="3" placeholder='español, inglés, francés'><?= htmlspecialchars($item['languages_available']) ?></textarea>
+                        <small class="text-muted">Separar por comas: español, inglés, francés</small>
                     </div>
                     
                     <div class="col-md-4">
-                        <label class="form-label">Temporadas (JSON)</label>
-                        <textarea name="available_seasons" class="form-control" rows="2" placeholder='["primavera", "verano", "otoño"]'><?= htmlspecialchars($item['available_seasons']) ?></textarea>
+                        <label class="form-label">Temporadas</label>
+                        <textarea name="available_seasons" class="form-control" rows="2" placeholder='primavera, verano, otoño'><?= htmlspecialchars($item['available_seasons']) ?></textarea>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Días Disponibles (JSON)</label>
-                        <textarea name="available_days" class="form-control" rows="2" placeholder='["lunes", "miércoles", "viernes"]'><?= htmlspecialchars($item['available_days']) ?></textarea>
+                        <label class="form-label">Días Disponibles</label>
+                        <textarea name="available_days" class="form-control" rows="2" placeholder='lunes, miércoles, viernes'><?= htmlspecialchars($item['available_days']) ?></textarea>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Horario (JSON)</label>
-                        <textarea name="schedule" class="form-control" rows="2" placeholder='{"mañana": "9:00-13:00", "tarde": "16:00-20:00"}'><?= htmlspecialchars($item['schedule']) ?></textarea>
+                        <label class="form-label">Horario</label>
+                        <textarea name="schedule" class="form-control" rows="2" placeholder='9:00-14:00, 9.00-13.00'><?= htmlspecialchars($item['schedule']) ?></textarea>
+                        <small class="text-muted">Ejemplos: 9:00-14:00, 9.00-13.00</small>
                     </div>
                     
                     <div class="col-12">
-                        <label class="form-label">Accesibilidad (JSON)</label>
-                        <textarea name="accessibility" class="form-control" rows="2" placeholder='{"silla_ruedas": true, "baño_adaptado": false}'><?= htmlspecialchars($item['accessibility']) ?></textarea>
-                        <small class="text-muted">Formato JSON: objeto con características de accesibilidad</small>
+                        <label class="form-label">Accesibilidad</label>
+                        <textarea name="accessibility" class="form-control" rows="2" placeholder='Silla de ruedas, baño adaptado'><?= htmlspecialchars($item['accessibility']) ?></textarea>
+                        <small class="text-muted">Características de accesibilidad separadas por comas</small>
                     </div>
                 </div>
             </div>
@@ -267,9 +268,9 @@ if (!$item) { die("Actividad no encontrada."); }
                     </div>
                     <?php endfor; ?>
                     <div class="col-12">
-                        <label class="form-label">Galería JSON (Array de URLs)</label>
-                        <textarea name="gallery" class="form-control" rows="3" placeholder='["https://...", "https://..."]'><?= htmlspecialchars($item['gallery']) ?></textarea>
-                        <small class="text-muted">Formato JSON: array de URLs de imágenes</small>
+                        <label class="form-label">Galería de Imágenes (URLs)</label>
+                        <textarea name="gallery" class="form-control" rows="3" placeholder='https://imagen1.jpg, https://imagen2.jpg'><?= htmlspecialchars($item['gallery']) ?></textarea>
+                        <small class="text-muted">Separar URLs por comas: https://imagen1.jpg, https://imagen2.jpg</small>
                     </div>
                     <div class="col-12">
                         <label class="form-label">Video URL (YouTube/Vimeo)</label>
