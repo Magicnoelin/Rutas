@@ -59,18 +59,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         /* --- DISEÑO PARA MÓVIL --- */
         @media (max-width: 992px) {
-            html, body { overflow-x: hidden !important; width: 100% !important; position: relative; }
-            .header, .navbar { height: auto !important; padding: 2px 0 !important; position: fixed !important; top: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #2c5f2d !important; }
-            .navbar .container { flex-direction: row !important; justify-content: flex-start !important; align-items: center !important; gap: 5px !important; padding: 0 5px !important; display: flex !important; width: 100% !important; }
+            html, body { overflow-x: hidden !important; width: 100% !important; position: relative; min-height: 100vh; }
+            .header, .navbar { height: auto !important; padding: 2px 0 !important; position: fixed !important; top: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #2c5f2d !important; box-sizing: border-box; }
+            .navbar .container { flex-direction: row !important; justify-content: flex-start !important; align-items: center !important; gap: 5px !important; padding: 0 5px !important; display: flex !important; width: 100% !important; box-sizing: border-box; }
             .logo { flex-shrink: 0 !important; margin-right: 2px !important; display: block !important; }
-            .logo img { height: 35px !important; width: auto !important; }
-            .nav-menu { display: flex !important; position: static !important; width: auto !important; height: auto !important; background: transparent !important; flex-direction: column !important; flex: 1 !important; gap: 1px !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
-            .nav-row { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 2px !important; width: 100% !important; list-style: none !important; padding: 0 !important; margin: 0 !important; }
-            .nav-row li { display: block !important; }
-            .nav-row li a { background: rgba(255, 255, 255, 0.1) !important; min-height: 30px !important; padding: 1px !important; border-radius: 4px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center; }
+            .logo img { height: 35px !important; width: auto !important; max-width: 100% !important; }
+            .nav-menu { display: flex !important; position: static !important; width: auto !important; height: auto !important; background: transparent !important; flex-direction: column !important; flex: 1 !important; gap: 1px !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; box-sizing: border-box; }
+            .nav-row { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 2px !important; width: 100% !important; list-style: none !important; padding: 0 !important; margin: 0 !important; box-sizing: border-box; }
+            .nav-row li { display: block !important; box-sizing: border-box; }
+            .nav-row li a { background: rgba(255, 255, 255, 0.1) !important; min-height: 30px !important; padding: 1px !important; border-radius: 4px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center; box-sizing: border-box; text-decoration: none !important; }
             .nav-row li a span { font-size: 0.50rem !important; font-weight: 600 !important; line-height: 1 !important; text-align: center !important; white-space: nowrap !important; color: #d4a574 !important; margin: 0 !important; }
             .nav-row li a i { font-size: 0.8rem !important; margin-bottom: 0px !important; color: #ffffff !important; }
             input[type="text"], input[type="number"], input[type="search"], textarea, select { font-size: 16px !important; }
+            
+            /* Mejoras para contenido embebido */
+            .container { padding: 0 10px !important; max-width: 100% !important; }
+            .section { padding: 1rem !important; margin-bottom: 1rem !important; }
+            .actividad-info { padding: 1rem !important; }
+            .actividad-detalles { gap: 0.75rem !important; margin-top: 1rem !important; }
+            .detalle-item { margin-bottom: 0.5rem !important; }
+            .action-buttons { flex-direction: column !important; gap: 0.5rem !important; }
+            .btn-reserva, .btn-contacto { width: 100% !important; justify-content: center !important; margin-left: 0 !important; }
+            .map-container { height: 300px !important; }
+            .gallery { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important; gap: 0.5rem !important; }
+            .gallery img { height: 100px !important; }
         }
 
         .asistente-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid #ffffff; vertical-align: middle; }
@@ -356,7 +368,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const setContentOrHide = (elementId, containerId, content, isHtml = false) => {
                     const el = document.getElementById(elementId);
                     const container = document.getElementById(containerId);
-                    if (!content || content === 'N/A' || content === '0' || content === 0 || content === 'Ninguno' || content === 'Nada especial') {
+                    // Check for null, undefined, empty string, 'null' string, 'N/A', '0', 0, 'Ninguno', 'Nada especial'
+                    if (!content || content === 'null' || content === 'N/A' || content === '0' || content === 0 || content === 'Ninguno' || content === 'Nada especial') {
                         if (container) container.style.display = 'none';
                     } else {
                         if (container) container.style.display = 'block'; // o 'flex' según corresponda, pero block suele funcionar para p/div
@@ -397,13 +410,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 }
 
                 // Disponibilidad
-                const temporadas = Array.isArray(actividad.temporadas) ? actividad.temporadas.join(', ') : actividad.temporadas;
+                const temporadas = Array.isArray(actividad.temporadas) && actividad.temporadas.length > 0 ? actividad.temporadas.join(', ') : null;
                 setContentOrHide('actividadTemporadas', 'pTemporadas', temporadas);
                 
-                const dias = Array.isArray(actividad.dias_disponibles) ? actividad.dias_disponibles.join(', ') : actividad.dias_disponibles;
+                const dias = Array.isArray(actividad.dias_disponibles) && actividad.dias_disponibles.length > 0 ? actividad.dias_disponibles.join(', ') : null;
                 setContentOrHide('actividadDias', 'pDias', dias);
                 
-                const horario = typeof actividad.horario === 'object' ? JSON.stringify(actividad.horario) : actividad.horario;
+                const horario = actividad.horario && typeof actividad.horario === 'object' ? JSON.stringify(actividad.horario) : actividad.horario;
                 setContentOrHide('actividadHorario', 'pHorario', horario);
                 
                 // Ocultar sección completa si todo está vacío
@@ -413,13 +426,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 setContentOrHide('actividadIncluye', 'pIncluye', actividad.incluye);
                 setContentOrHide('actividadNoIncluye', 'pNoIncluye', actividad.no_incluye);
                 
-                const requisitos = Array.isArray(actividad.requisitos) ? actividad.requisitos.join(', ') : actividad.requisitos;
+                const requisitos = Array.isArray(actividad.requisitos) && actividad.requisitos.length > 0 ? actividad.requisitos.join(', ') : null;
                 setContentOrHide('actividadRequisitos', 'pRequisitos', requisitos);
                 
-                const queLlevar = Array.isArray(actividad.que_llevar) ? actividad.que_llevar.join(', ') : actividad.que_llevar;
+                const queLlevar = Array.isArray(actividad.que_llevar) && actividad.que_llevar.length > 0 ? actividad.que_llevar.join(', ') : null;
                 setContentOrHide('actividadQueLlevar', 'pQueLlevar', queLlevar);
                 
-                const equipo = Array.isArray(actividad.equipo_proporcionado) ? actividad.equipo_proporcionado.join(', ') : actividad.equipo_proporcionado;
+                const equipo = Array.isArray(actividad.equipo_proporcionado) && actividad.equipo_proporcionado.length > 0 ? actividad.equipo_proporcionado.join(', ') : null;
                 setContentOrHide('actividadEquipo', 'pEquipo', equipo);
                 
                 if (!actividad.incluye && !actividad.no_incluye && !requisitos && !queLlevar && !equipo) {
