@@ -1,6 +1,13 @@
 <?php
 include 'db.php';
 
+// Función auxiliar para verificar si un string es JSON válido
+function isValidJson($string) {
+    if (empty($string)) return false;
+    json_decode($string);
+    return json_last_error() === JSON_ERROR_NONE;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
     if (!$id) {
@@ -22,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Error al verificar la estructura de la tabla: " . $e->getMessage());
     }
 
-    // Lista de campos que pueden tener restricciones CHECK y deben ser NULL si están vacíos
-    $campos_con_restricciones = [
+    // Lista de campos que pueden tener restricciones CHECK de JSON
+    $campos_json_con_restricciones = [
         'schedule', 'available_days', 'available_seasons', 'languages_available',
         'provided_equipment', 'accessibility', 'gallery', 'price_details'
     ];
@@ -35,13 +42,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Tratamiento de valores según su contenido
             if (is_string($valor)) {
                 $valor_trim = trim($valor);
+                
+                // Si está vacío, convertir a NULL
                 if ($valor_trim === '') {
-                    $valor = null; // Convertir strings vacíos en NULL
-                }
-                // Para campos con restricciones CHECK, asegurarnos de que si están "vacíos" sean NULL
-                elseif (in_array($columna, $campos_con_restricciones) && 
-                       ($valor_trim === '[]' || $valor_trim === '{}' || $valor_trim === '""')) {
                     $valor = null;
+                }
+                // Si es un campo con restricción JSON
+                elseif (in_array($columna, $campos_json_con_restricciones)) {
+                    // Si parece JSON vacío, convertir a NULL
+                    if ($valor_trim === '[]' || $valor_trim === '{}' || $valor_trim === '""' || 
+                        $valor_trim === 'null' || $valor_trim === 'NULL') {
+                        $valor = null;
+                    }
+                    // Si no es JSON válido, intentar convertirlo a JSON simple
+                    elseif (!isValidJson($valor_trim)) {
+                        // Para texto simple como "9:00-14:00", convertirlo a JSON simple
+                        if ($columna === 'schedule') {
+                            // Si es texto de horario, crear un JSON simple
+                            $valor = json_encode(['horario' => $valor_trim]);
+                        } else {
+                            // Para otros campos, crear un array simple
+                            $valor = json_encode([$valor_trim]);
+                        }
+                    }
+                    // Si ya es JSON válido, mantenerlo
                 }
             }
 
