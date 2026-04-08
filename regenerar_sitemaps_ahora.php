@@ -172,18 +172,18 @@ try {
         $priority = (strpos($slugEs, 'eclipse') !== false) ? '0.9' : '0.8';
         
         $xml .= "\n  <url>\n";
-        $xml .= "    <loc>https://www.rutasrurales.io/evento/" . $slugEs . "</loc>\n";
+        $xml .= "    <loc>https://rutasrurales.io/evento/" . $slugEs . "</loc>\n";
         $xml .= "    <lastmod>" . $fechaMod . "</lastmod>\n";
         $xml .= "    <changefreq>weekly</changefreq>\n";
         $xml .= "    <priority>" . $priority . "</priority>\n";
         $xml .= "    <!-- x-default: versión por defecto -->\n";
-        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://www.rutasrurales.io/evento/" . $slugEs . "\"/>\n";
-        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"https://www.rutasrurales.io/evento/" . $slugEs . "\"/>\n";
+        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://rutasrurales.io/evento/" . $slugEs . "\"/>\n";
+        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"https://rutasrurales.io/evento/" . $slugEs . "\"/>\n";
         
         foreach ($trads as $lang => $tradData) {
             $slugTrad = htmlspecialchars($tradData['slug']);
             $langCode = htmlspecialchars($lang);
-            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"" . $langCode . "\" href=\"https://www.rutasrurales.io/" . $langCode . "/evento/" . $slugTrad . "\"/>\n";
+            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"" . $langCode . "\" href=\"https://rutasrurales.io/" . $langCode . "/evento/" . $slugTrad . "\"/>\n";
         }
         
         $xml .= "  </url>\n";

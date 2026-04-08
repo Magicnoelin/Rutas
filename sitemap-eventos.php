@@ -137,7 +137,7 @@ foreach ($eventosEs as $evento):
     $slugTrad = htmlspecialchars($tradData['slug']);
     $langCode = htmlspecialchars($lang);
 ?>
-    <xhtml:link rel="alternate" hreflang="<?= $langCode ?>" href="https://www.rutasrurales.io/<?= $langCode ?>/evento/<?= $slugTrad ?>"/>
+    <xhtml:link rel="alternate" hreflang="<?= $langCode ?>" href="https://rutasrurales.io/<?= $langCode ?>/evento/<?= $slugTrad ?>"/>
 <?php endforeach; ?>
   </url>
 
@@ -165,21 +165,21 @@ foreach ($traducciones as $trad):
     $priority = (strpos($slugTrad, 'eclipse') !== false || strpos($slugTrad, 'sonnenfinsternis') !== false) ? '0.9' : '0.7';
 ?>
   <url>
-    <loc>https://www.rutasrurales.io/<?= $lang ?>/evento/<?= $slugTrad ?></loc>
+    <loc>https://rutasrurales.io/<?= $lang ?>/evento/<?= $slugTrad ?></loc>
     <lastmod><?= $fechaMod ?></lastmod>
     <changefreq>weekly</changefreq>
     <priority><?= $priority ?></priority>
     <!-- x-default apunta siempre a la versión española (original) -->
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.rutasrurales.io/evento/<?= $slugEs ?>"/>
-    <xhtml:link rel="alternate" hreflang="es"        href="https://www.rutasrurales.io/evento/<?= $slugEs ?>"/>
-    <xhtml:link rel="alternate" hreflang="<?= $lang ?>" href="https://www.rutasrurales.io/<?= $lang ?>/evento/<?= $slugTrad ?>"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/evento/<?= $slugEs ?>"/>
+    <xhtml:link rel="alternate" hreflang="es"        href="https://rutasrurales.io/evento/<?= $slugEs ?>"/>
+    <xhtml:link rel="alternate" hreflang="<?= $lang ?>" href="https://rutasrurales.io/<?= $lang ?>/evento/<?= $slugTrad ?>"/>
 <?php // Añadir también los otros idiomas disponibles para este evento
 foreach ($trads as $otroLang => $otraTrad):
     if ($otroLang === $trad['language_code']) continue; // No repetir el idioma actual
     $otroSlug = htmlspecialchars($otraTrad['slug']);
     $otroLangCode = htmlspecialchars($otroLang);
 ?>
-    <xhtml:link rel="alternate" hreflang="<?= $otroLangCode ?>" href="https://www.rutasrurales.io/<?= $otroLangCode ?>/evento/<?= $otroSlug ?>"/>
+    <xhtml:link rel="alternate" hreflang="<?= $otroLangCode ?>" href="https://rutasrurales.io/<?= $otroLangCode ?>/evento/<?= $otroSlug ?>"/>
 <?php endforeach; ?>
   </url>
 
