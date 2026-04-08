@@ -33,9 +33,7 @@ define('GOOGLE_CLIENT_SECRET', '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');
 if (!defined('API_NO_HEADERS')) {
     $allowed_origins = [
         'https://rutasrurales.io',
-        'https://www.rutasrurales.io',
-        'http://rutasrurales.io',
-        'http://www.rutasrurales.io'
+        'http://rutasrurales.io'
     ];
 
     $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
