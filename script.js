@@ -341,13 +341,13 @@ function generarDia1(intereses) {
     if (intereses.includes('naturaleza')) {
         contenido += `<p><strong>Mañana:</strong> Laguna Negra de Urbión 🌲 - La joya natural de Soria. Ruta circular (3-4h, dificultad media).</p>
                       <p><strong>Tarde:</strong> Vinuesa - Pueblo con encanto, arquitectura tradicional pinariega.</p>
-                      <button class="btn-add-route" onclick="addToRoute('lugar', 'laguna-negra-urbion', 'Laguna Negra de Urbión', 41.8167, -2.8333, 'https://www.rutasrurales.io/menu_images/laguna_negra.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
+                      <button class="btn-add-route" onclick="addToRoute('lugar', 'laguna-negra-urbion', 'Laguna Negra de Urbión', 41.8167, -2.8333, 'https://rutasrurales.io/menu_images/laguna_negra.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
                           <i class="fas fa-plus-circle"></i> Añadir a mi ruta
                       </button>`;
     } else if (intereses.includes('cultura')) {
         contenido += `<p><strong>Mañana:</strong> Yacimiento de Numancia 🏛️ - Ciudad celtíbera heroica.</p>
                       <p><strong>Tarde:</strong> Soria capital - Monasterio de San Juan de Duero, Concatedral y casco histórico.</p>
-                      <button class="btn-add-route" onclick="addToRoute('lugar', 'yacimiento-numancia', 'Yacimiento de Numancia', 41.7589, -2.4683, 'https://www.rutasrurales.io/menu_images/Yacimiento_Numancia.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
+                      <button class="btn-add-route" onclick="addToRoute('lugar', 'yacimiento-numancia', 'Yacimiento de Numancia', 41.7589, -2.4683, 'https://rutasrurales.io/menu_images/Yacimiento_Numancia.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
                           <i class="fas fa-plus-circle"></i> Añadir a mi ruta
                       </button>`;
     } else {
@@ -366,13 +366,13 @@ function generarDia2(intereses) {
     if (intereses.includes('naturaleza')) {
         contenido += `<p><strong>Mañana:</strong> Cañón del Río Lobos 🦅 - Parque Natural con la ermita de San Bartolomé.</p>
                       <p><strong>Tarde:</strong> Ucero - Pueblo medieval y mirador del castillo.</p>
-                      <button class="btn-add-route" onclick="addToRoute('lugar', 'canon-rio-lobos', 'Cañón del Río Lobos', 41.7333, -3.5333, 'https://www.rutasrurales.io/menu_images/canon_rio_lobos.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
+                      <button class="btn-add-route" onclick="addToRoute('lugar', 'canon-rio-lobos', 'Cañón del Río Lobos', 41.7333, -3.5333, 'https://rutasrurales.io/menu_images/canon_rio_lobos.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
                           <i class="fas fa-plus-circle"></i> Añadir a mi ruta
                       </button>`;
     } else if (intereses.includes('cultura')) {
         contenido += `<p><strong>Mañana:</strong> El Burgo de Osma - Catedral gótica impresionante 🏰.</p>
                       <p><strong>Tarde:</strong> Medinaceli - Villa medieval con Arco Romano único en España.</p>
-                      <button class="btn-add-route" onclick="addToRoute('lugar', 'burgo-osma', 'El Burgo de Osma', 41.5833, -3.0667, 'https://www.rutasrurales.io/menu_images/El_burgo_de_Osma.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
+                      <button class="btn-add-route" onclick="addToRoute('lugar', 'burgo-osma', 'El Burgo de Osma', 41.5833, -3.0667, 'https://rutasrurales.io/menu_images/El_burgo_de_Osma.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
                           <i class="fas fa-plus-circle"></i> Añadir a mi ruta
                       </button>`;
     } else {
@@ -391,7 +391,7 @@ function generarDia3(intereses) {
     if (intereses.includes('naturaleza') || intereses.includes('aventura')) {
         contenido += `<p><strong>Mañana:</strong> Picos de Urbión - Senderismo a la cima (2228m) para los más aventureros ⛰️.</p>
                       <p><strong>Tarde:</strong> Molinos de Duero - Pueblo serrano tranquilo.</p>
-                      <button class="btn-add-route" onclick="addToRoute('lugar', 'picos-urbion', 'Picos de Urbión', 41.8333, -2.8667, 'https://www.rutasrurales.io/menu_images/urbion.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
+                      <button class="btn-add-route" onclick="addToRoute('lugar', 'picos-urbion', 'Picos de Urbión', 41.8333, -2.8667, 'https://rutasrurales.io/menu_images/urbion.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
                           <i class="fas fa-plus-circle"></i> Añadir a mi ruta
                       </button>`;
     } else if (intereses.includes('gastronomia')) {
@@ -400,7 +400,7 @@ function generarDia3(intereses) {
     } else if (intereses.includes('cultura')) {
         contenido += `<p><strong>Mañana:</strong> Monasterio de San Juan de Duero - Claustro románico único con arcos mudéjares 🏛️.</p>
                       <p><strong>Tarde:</strong> Ruta del Románico Soriano - Iglesias medievales excepcionales.</p>
-                      <button class="btn-add-route" onclick="addToRoute('lugar', 'san-juan-duero', 'Monasterio de San Juan de Duero', 41.7639, -2.4561, 'https://www.rutasrurales.io/menu_images/San_Juan_de_Duero.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
+                      <button class="btn-add-route" onclick="addToRoute('lugar', 'san-juan-duero', 'Monasterio de San Juan de Duero', 41.7639, -2.4561, 'https://rutasrurales.io/menu_images/San_Juan_de_Duero.jpg')" style="background: #2F5233; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px;">
                           <i class="fas fa-plus-circle"></i> Añadir a mi ruta
                       </button>`;
     } else {
@@ -565,31 +565,31 @@ function generarEnlacesPromocionales() {
     enlaces += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
     
     enlaces += `
-        <a href="https://www.rutasrurales.io/alojamientos-turisticos.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+        <a href="https://rutasrurales.io/alojamientos-turisticos.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
             <i class="fas fa-bed" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
             <strong>Alojamientos Turísticos</strong><br>
             <small style="color: #666;">Reserva tu estancia</small>
         </a>
         
-        <a href="https://www.rutasrurales.io/lugares-interes-paginacion.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+        <a href="https://rutasrurales.io/lugares-interes-paginacion.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
             <i class="fas fa-landmark" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
             <strong>Lugares de Interés</strong><br>
             <small style="color: #666;">Patrimonio y cultura</small>
         </a>
         
-        <a href="https://www.rutasrurales.io/actividades-turisticas.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+        <a href="https://rutasrurales.io/actividades-turisticas.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
             <i class="fas fa-hiking" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
             <strong>Actividades Turísticas</strong><br>
             <small style="color: #666;">Naturaleza y aventura</small>
         </a>
         
-        <a href="https://www.rutasrurales.io/eventos-culturales-paginacion.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+        <a href="https://rutasrurales.io/eventos-culturales-paginacion.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
             <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
             <strong>Eventos Culturales</strong><br>
             <small style="color: #666;">Agenda cultural</small>
         </a>
         
-        <a href="https://www.rutasrurales.io/rutas-turisticas.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+        <a href="https://rutasrurales.io/rutas-turisticas.html" style="display: block; padding: 1rem; background-color: white; border-radius: 10px; text-decoration: none; color: #2c5f2d; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 15px rgba(44,95,45,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
             <i class="fas fa-route" style="font-size: 2rem; color: #87a96b; margin-bottom: 0.5rem;"></i><br>
             <strong>Rutas Turísticas</strong><br>
             <small style="color: #666;">Itinerarios completos</small>
