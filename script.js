@@ -490,7 +490,7 @@ function generarRecomendacionesAlojamiento(intereses) {
     
     // Enlace principal a todos los alojamientos
     contenido += `<p style="margin-top: 1rem;">
-                  <a href="https://www.rutasrurales.io/alojamientos-turisticos.html" style="display: inline-block; background: #2F5233; color: white; padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 10px;">
+                  <a href="https://rutasrurales.io/alojamientos-turisticos.html" style="display: inline-block; background: #2F5233; color: white; padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 10px;">
                       <i class="fas fa-bed"></i> Ver todos los alojamientos →
                   </a>
                   </p>`;
