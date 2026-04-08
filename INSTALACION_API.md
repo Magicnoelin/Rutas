@@ -144,9 +144,9 @@ Los archivos HTML ya están preparados para conectarse a la API. Solo necesitas:
    header('Access-Control-Allow-Origin: https://rutasrurales.io');
    ```
 
-2. **Si usas `www.rutasrurales.io`, cambia a:**
+2. **Evita usar `www.rutasrurales.io`. Si es necesario permitirlo temporalmente:**
    ```php
-   header('Access-Control-Allow-Origin: https://www.rutasrurales.io');
+   header('Access-Control-Allow-Origin: https://rutasrurales.io');
    ```
 
 ---
