@@ -978,6 +978,8 @@
             .then(data => {
                 if (data.success) {
                     console.log('Vista registrada para lugar:', placeId, data.data);
+                    // Recargar estadísticas para que la visita actual se refleje de inmediato
+                    if (typeof loadCommentsStats === 'function') loadCommentsStats();
                 } else {
                     console.error('Error al registrar vista:', data.error);
                 }
@@ -1521,12 +1523,14 @@
             
             try {
                 // Cargar estadísticas de visitas
-                const statsResponse = await fetch(`/api/place_of_interest-visitas.php?place_id=${currentPlaceId}`);
-                const statsData = await statsResponse.json();
+                const statsResp = await fetch(`/api/place_of_interest-visitas.php?place_id=${currentPlaceId}`);
+                const statsJson = await statsResp.json();
+                const statsData = statsJson.success ? statsJson.data : {};
                 
                 // Cargar estadísticas de comentarios
-                const commentsResponse = await fetch(`/api/place_of_interest-comentarios.php?place_id=${currentPlaceId}&count=1`);
-                const commentsData = await commentsResponse.json();
+                const commResp = await fetch(`/api/place_of_interest-comentarios.php?place_id=${currentPlaceId}&count=1`);
+                const commJson = await commResp.json();
+                const commentsData = commJson.success ? commJson : {};
                 
                 // Crear barra de estadísticas
                 createStatsBar(statsData, commentsData);
@@ -2047,4 +2051,3 @@
     </script>
 </body>
 </html>
-
