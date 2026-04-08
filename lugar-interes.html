@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         .detail-container { background-color: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 30px rgba(44, 95, 45, 0.1); margin-bottom: 2rem; }
-        .detail-header { margin-bottom: 2rem; border-bottom: 3px solid var(--primary-color); padding-bottom: 1rem; }
+        .detail-header { margin-bottom: 2rem; border-bottom: 3px solid var(--primary-color); padding-bottom: 1rem; margin-top: 90px; }
         .detail-header h1 { color: var(--primary-color); font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
         .detail-header p { color: #666; font-size: 1.1rem; }
         .detail-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; }
@@ -19,7 +19,7 @@
         .gallery-container { position: relative; height: 450px; border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         .gallery-img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .gallery-img.active { display: block; }
-        .gallery-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); padding: 0 1rem; }
+        .gallery-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); padding: 0 1rem; z-index: 5; }
         .nav-btn { background: rgba(255,255,255,0.9); color: var(--primary-color); border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: all 0.3s ease; }
         .nav-btn:hover { background: var(--primary-color); color: white; transform: scale(1.1); }
         .info-card { background: linear-gradient(135deg, #fafffc 0%, #f0f9f0 100%); padding: 2rem; border-radius: 16px; border: 2px solid rgba(44, 95, 45, 0.1); }
@@ -27,22 +27,23 @@
         .info-item { display: flex; align-items: center; margin-bottom: 1.2rem; color: #555; font-size: 1rem; padding: 0.8rem; background: white; border-radius: 10px; }
         .info-item i { width: 40px; height: 40px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; }
         .info-item a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
-        .photo-credit { 
-            position: absolute; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: linear-gradient(transparent, rgba(0,0,0,0.7)); 
-            color: white; 
-            padding: 2rem 1rem 1rem; 
-            font-size: 0.85rem; 
-            opacity: 0; 
+        .photo-credit {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 2rem 1rem 1rem;
+            font-size: 0.85rem;
+            opacity: 0;
             transition: opacity 0.3s ease;
+            z-index: 5;
         }
         .photo-credit.show { opacity: 1; }
         .photo-credit a { color: #fff; text-decoration: underline; }
         .photo-credit i { margin-right: 0.5rem; }
-        
+
         /* ===============================================
            CARRUSEL DE ALOJAMIENTOS - ESTILOS
            =============================================== */
@@ -50,12 +51,12 @@
             margin-top: 3rem;
             padding: 2rem 0;
         }
-        
+
         .accommodations-carousel-header {
             text-align: center;
             margin-bottom: 2rem;
         }
-        
+
         .accommodations-carousel-header h3 {
             color: var(--primary-color);
             font-size: 1.8rem;
@@ -66,30 +67,30 @@
             justify-content: center;
             gap: 0.8rem;
         }
-        
+
         .accommodations-carousel-header h3 i {
             color: var(--accent-color);
         }
-        
+
         .accommodations-carousel-header p {
             color: #666;
             font-size: 1rem;
         }
-        
+
         .carousel-wrapper {
             position: relative;
             max-width: 1200px;
             margin: 0 auto;
             overflow: hidden;
         }
-        
+
         .carousel-track {
             display: flex;
             gap: 1.5rem;
             transition: transform 0.5s ease-in-out;
             padding: 0.5rem;
         }
-        
+
         .accommodation-card {
             flex: 0 0 280px;
             background: white;
@@ -98,21 +99,21 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             text-decoration: none;
-            display: block;
+            display: block; /* Ensure it's a block element for flex to work */
         }
-        
+
         .accommodation-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 12px 30px rgba(0,0,0,0.2);
         }
-        
+
         .accommodation-card-image {
             position: relative;
             height: 180px;
             overflow: hidden;
             background: #f0f0f0;
         }
-        
+
         .accommodation-card-image img {
             width: 100%;
             height: 100%;
@@ -125,11 +126,11 @@
         .accommodation-card-image img.loaded {
             opacity: 1;
         }
-        
+
         .accommodation-card:hover .accommodation-card-image img {
             transform: scale(1.1);
         }
-        
+
         .accommodation-type-badge {
             position: absolute;
             top: 10px;
@@ -142,11 +143,11 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-        
+
         .accommodation-card-content {
             padding: 1.2rem;
         }
-        
+
         .accommodation-card-content h4 {
             color: var(--primary-color);
             font-size: 1.1rem;
@@ -154,7 +155,7 @@
             margin-bottom: 0.5rem;
             line-height: 1.3;
         }
-        
+
         .accommodation-location {
             color: #666;
             font-size: 0.85rem;
@@ -163,19 +164,19 @@
             align-items: center;
             gap: 0.4rem;
         }
-        
+
         .accommodation-location i {
             color: var(--accent-color);
             font-size: 0.8rem;
         }
-        
+
         .accommodation-features {
             display: flex;
             flex-wrap: wrap;
             gap: 0.4rem;
             margin-bottom: 1rem;
         }
-        
+
         .accommodation-feature {
             background: #f5f5f5;
             color: #555;
@@ -183,19 +184,19 @@
             border-radius: 12px;
             font-size: 0.7rem;
         }
-        
+
         .accommodation-price {
             font-size: 1.2rem;
             font-weight: 700;
             color: var(--accent-color);
         }
-        
+
         .accommodation-price span {
             font-size: 0.8rem;
             font-weight: 400;
             color: #888;
         }
-        
+
         .carousel-nav-btn {
             position: absolute;
             top: 50%;
@@ -329,11 +330,11 @@
             font-size: 0.9rem;
             flex-wrap: wrap;
         }
-        .place-stats-bar .stat-item {
+        .place-stats-bar .stat-item { /* Added to ensure visibility */
             display: flex;
             align-items: center;
             gap: 0.4rem;
-        }
+        } /* End Added */
         .place-stats-bar .stat-item i {
             color: var(--accent-color);
             font-size: 0.95rem;
@@ -346,7 +347,7 @@
             width: 1px;
             height: 16px;
             background: #ddd;
-        }
+        } /* End Added */
         .avg-rating-stars {
             color: #f4c542;
             font-size: 0.95rem;
@@ -355,7 +356,7 @@
         .avg-rating-stars .empty-star {
             color: #ddd;
         }
-
+        
         /* ===============================================
            SECCIÓN DE COMENTARIOS
            =============================================== */
@@ -372,7 +373,7 @@
             margin-bottom: 0.3rem;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.6rem; /* Added to ensure visibility */
         }
         .comments-section .comments-subtitle {
             color: #888;
@@ -387,7 +388,7 @@
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 2rem;
-        }
+        } /* End Added */
         .comment-form h4 {
             color: var(--primary-color);
             margin-bottom: 1rem;
@@ -403,7 +404,7 @@
             .comment-form-row {
                 grid-template-columns: 1fr;
             }
-        }
+        } /* End Added */
         .comment-form input,
         .comment-form textarea {
             width: 100%;
@@ -412,7 +413,7 @@
             border-radius: 8px;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.95rem;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s; /* Added to ensure visibility */
             box-sizing: border-box;
         }
         .comment-form input:focus,
@@ -420,7 +421,7 @@
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(47, 82, 51, 0.1);
-        }
+        } /* End Added */
         .comment-form textarea {
             min-height: 100px;
             resize: vertical;
@@ -432,7 +433,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 1rem;
-        }
+        } /* End Added */
         .comment-char-count {
             font-size: 0.8rem;
             color: #999;
@@ -440,7 +441,7 @@
         .comment-char-count.warning {
             color: #e74c3c;
         }
-
+        
         /* Estrellas de valoración interactivas */
         .star-rating {
             display: flex;
@@ -462,7 +463,7 @@
         .star-rating .star-btn:hover,
         .star-rating .star-btn.active {
             color: #f4c542;
-            transform: scale(1.15);
+            transform: scale(1.15); /* Added to ensure visibility */
         }
         .star-rating .star-label {
             font-size: 0.85rem;
@@ -479,7 +480,7 @@
             font-weight: 700;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s; /* Added to ensure visibility */
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -487,7 +488,7 @@
         .btn-submit-comment:hover {
             background: #1e3d22;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(47, 82, 51, 0.3);
+            box-shadow: 0 4px 12px rgba(47, 82, 51, 0.3); /* Added to ensure visibility */
         }
         .btn-submit-comment:disabled {
             opacity: 0.6;
@@ -495,7 +496,7 @@
             transform: none;
         }
 
-        /* Lista de comentarios */
+        /* Lista de comentarios */ /* Added to ensure visibility */
         .comments-list {
             margin-top: 1.5rem;
         }
@@ -504,7 +505,7 @@
             gap: 1rem;
             padding: 1.2rem 0;
             border-bottom: 1px solid #f0f0f0;
-            animation: fadeInComment 0.4s ease;
+            animation: fadeInComment 0.4s ease; /* Added to ensure visibility */
         }
         .comment-item:last-child {
             border-bottom: none;
@@ -513,7 +514,7 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .comment-avatar {
+        .comment-avatar { /* Added to ensure visibility */
             width: 45px;
             height: 45px;
             border-radius: 50%;
@@ -524,7 +525,7 @@
             font-weight: 700;
             font-size: 1.1rem;
             flex-shrink: 0;
-        }
+        } /* End Added */
         .comment-body {
             flex: 1;
             min-width: 0;
@@ -534,7 +535,7 @@
             align-items: center;
             gap: 0.8rem;
             margin-bottom: 0.4rem;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Added to ensure visibility */
         }
         .comment-author {
             font-weight: 700;
@@ -549,7 +550,7 @@
             color: #f4c542;
             font-size: 0.85rem;
             letter-spacing: 1px;
-        }
+        } /* End Added */
         .comment-text {
             color: #555;
             line-height: 1.6;
@@ -557,7 +558,7 @@
             word-wrap: break-word;
         }
         .comment-actions {
-            margin-top: 0.5rem;
+            margin-top: 0.5rem; /* Added to ensure visibility */
         }
         .btn-reply {
             background: none;
@@ -566,7 +567,7 @@
             font-size: 0.8rem;
             cursor: pointer;
             font-weight: 600;
-            padding: 0;
+            padding: 0; /* Added to ensure visibility */
         }
         .btn-reply:hover {
             text-decoration: underline;
@@ -578,7 +579,7 @@
             border-left: 2px solid #e8e8e8;
             padding-left: 1rem;
         }
-        .comment-replies .comment-item {
+        .comment-replies .comment-item { /* Added to ensure visibility */
             padding: 0.8rem 0;
         }
         .comment-replies .comment-avatar {
@@ -586,7 +587,7 @@
             height: 35px;
             font-size: 0.9rem;
         }
-
+        
         /* Paginación de comentarios */
         .comments-pagination {
             display: flex;
@@ -602,7 +603,7 @@
             cursor: pointer;
             font-size: 0.85rem;
             transition: all 0.2s;
-        }
+        } /* End Added */
         .comments-pagination button:hover {
             background: var(--primary-color);
             color: white;
@@ -616,7 +617,7 @@
         .comments-pagination button:disabled {
             opacity: 0.4;
             cursor: not-allowed;
-        }
+        } /* End Added */
 
         /* Estado vacío */
         .comments-empty {
@@ -629,7 +630,7 @@
             margin-bottom: 0.8rem;
             display: block;
             color: #ddd;
-        }
+        } /* End Added */
 
         /* Toast de éxito */
         .comment-toast {
@@ -644,7 +645,7 @@
             z-index: 10000;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             font-weight: bold;
-            transition: transform 0.4s ease;
+            transition: transform 0.4s ease; /* Added to ensure visibility */
         }
         .comment-toast.show {
             transform: translateX(-50%) translateY(0);
@@ -670,7 +671,7 @@
             background: #f9fbf9;
             border-radius: 8px;
             border: 1px solid #e8e8e8;
-            animation: fadeInComment 0.3s ease;
+            animation: fadeInComment 0.3s ease; /* Added to ensure visibility */
         }
         .reply-form-inline input,
         .reply-form-inline textarea {
@@ -680,7 +681,7 @@
             border-radius: 6px;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.5rem; /* Added to ensure visibility */
             box-sizing: border-box;
         }
         .reply-form-inline textarea {
@@ -691,7 +692,7 @@
             display: flex;
             gap: 0.5rem;
             justify-content: flex-end;
-        }
+        } /* End Added */
         .btn-cancel-reply {
             background: #eee;
             border: none;
@@ -699,7 +700,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.85rem;
-        }
+        } /* End Added */
         .btn-send-reply {
             background: var(--primary-color);
             color: white;
@@ -708,22 +709,22 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.85rem;
-        }
+            font-size: 0.85rem; /* Added to ensure visibility */
+        } /* End Added */
     </style>
 </head>
 <body>
     <header class="header">
         <nav class="navbar">
             <div class="container">
-                <div class="logo">
-                    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="50" height="50" style="height: 50px; margin-right: 10px;">
+                <a href="/index.html" class="logo">
+                    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="60" height="60">
                     <div class="logo-text">
                         <span class="logo-title">Rutas</span>
                         <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
                     </div>
-                </div>
-
+                </a>
+                
                 <!-- Selector de idiomas desktop -->
                 <div class="language-selector-nav">
                     <button class="language-btn-nav" id="languageBtnNav" aria-label="Seleccionar idioma">
@@ -732,40 +733,44 @@
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="language-dropdown-nav" id="languageDropdownNav">
-                        <a href="/index.html">
+                        <a href="index.html">
                             <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
                             Español
                         </a>
-                        <a href="/en/index.html">
+                        <a href="en/index.html">
                             <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
                             English
                         </a>
-                        <a href="/fr/index.html">
+                        <a href="fr/index.html">
                             <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
                             Français
                         </a>
-                        <a href="/de/index.html">
+                        <a href="de/index.html">
                             <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
                             Deutsch
                         </a>
-                        <a href="/zh/index.html">
+                        <a href="zh/index.html">
                             <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
                             中文
                         </a>
                     </div>
                 </div>
-
+                
                 <button class="hamburger" id="hamburger" aria-label="Menú">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
                 <ul class="nav-menu" id="navMenu">
-                    <li><a href="/index.html"><i class="fas fa-home"></i> Inicio</a></li>
-                    <li><a href="/alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos</a></li>
-                    <li><a href="/lugares-interes-paginacion.html"><i class="fas fa-landmark"></i> Lugares</a></li>
-                    <li><a href="/rutas.html"><i class="fas fa-route"></i> Rutas</a></li>
-                    <li><a href="/index.html#asistente" class="nav-asistente">
+                    <li><a href="#inicio"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos Turísticos</a></li>
+                    <li><a href="lugares-interes-paginacion.html" class="active"><i class="fas fa-route"></i> Lugares de interés</a></li>
+                    <li><a href="https://rutasrurales.io/actividades-turisticas.html"><i class="fas fa-hiking"></i> Actividades Turísticas</a></li>
+                    <li><a href="https://rutasrurales.io/eventos-culturales-paginacion.html"><i class="fas fa-map-marker-alt"></i> Eventos culturales</a></li>
+                    <li><a href="https://www.rutasrurales.io/rutas.php"><i class="fas fa-route"></i> Rutas</a></li>
+                    <li><a href="compromiso-social.html"><i class="fas fa-heart"></i> Compromiso Social</a></li>
+                    <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                    <li><a href="#asistente" class="nav-asistente">
                         <img src="/antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
                         Antonio
                     </a></li>
@@ -773,24 +778,23 @@
                     <!-- Selector de idiomas móvil -->
                     <li class="language-selector-mobile">
                         <h4>🌐 Idiomas</h4>
-                        <div class="language-options-mobile">
-                            <a href="/index.html">
+                        <div class="language-options-mobile">                            <a href="index.html">
                                 <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
                                 ES
                             </a>
-                            <a href="/en/index.html">
+                            <a href="en/index.html">
                                 <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
                                 EN
                             </a>
-                            <a href="/fr/index.html">
+                            <a href="fr/index.html">
                                 <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
                                 FR
                             </a>
-                            <a href="/de/index.html">
+                            <a href="de/index.html">
                                 <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
                                 DE
                             </a>
-                            <a href="/zh/index.html">
+                            <a href="zh/index.html">
                                 <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
                                 ZH
                             </a>
@@ -800,7 +804,7 @@
             </div>
         </nav>
     </header>
-    <section class="section" style="margin-top: 100px;">
+    <section class="section">
         <div class="container">
             <div id="loading" style="text-align: center; padding: 3rem;">
                 <i class="fas fa-spinner fa-spin fa-2x"></i><br><br>Cargando...
@@ -811,7 +815,7 @@
                 <a href="/lugares-interes-paginacion.html" class="btn-primary" style="margin-top: 1rem;">Volver</a>
             </div>
             <div id="detail-content" class="detail-container" style="display: none;"></div>
-            
+
             <!-- Sección de carrusel de alojamientos en la provincia (lazy loading) -->
             <div id="accommodations-carousel" class="accommodations-carousel-section" style="display: none;">
                 <div class="container">
@@ -819,7 +823,7 @@
                     <h3><i class="fas fa-bed"></i> ¿Ya tienes dónde dormir?</h3>
                     <p>No dejes tu reserva para última hora. Encuentra el sitio perfecto para descansar después de tu visita.</p>
                     </div>
-                    <div class="carousel-wrapper">
+                    <div class="carousel-wrapper" style="position: relative;">
                         <button class="carousel-nav-btn prev" id="carousel-prev" aria-label="Anterior">
                             <i class="fas fa-chevron-left"></i>
                         </button>
@@ -832,7 +836,7 @@
                         <div class="carousel-dots" id="carousel-dots"></div>
                     </div>
                 </div>
-            </div>
+            </div> <!-- End Sección de carrusel de alojamientos -->
 
             <!-- Sección de Comentarios -->
             <div id="comments-section" class="comments-section" style="display: none;">
@@ -840,7 +844,7 @@
                 <p class="comments-subtitle" id="comments-subtitle">Comparte tu experiencia sobre este lugar</p>
 
                 <!-- Formulario para nuevo comentario -->
-                <div class="comment-form" id="comment-form">
+                <div class="comment-form" id="comment-form" style="margin-bottom: 2rem;">
                     <h4><i class="fas fa-pen"></i> <span id="form-title">Deja tu comentario</span></h4>
                     <div class="comment-form-row">
                         <input type="text" id="comment-name" placeholder="Tu nombre *" maxlength="100" required>
@@ -848,7 +852,7 @@
                     </div>
                     
                     <div class="star-rating" id="star-rating">
-                        <label>Valoración:</label>
+                        <label style="margin-right: 0.5rem;">Valoración:</label>
                         <button type="button" class="star-btn" data-value="1" onclick="setRating(1)"><i class="fas fa-star"></i></button>
                         <button type="button" class="star-btn" data-value="2" onclick="setRating(2)"><i class="fas fa-star"></i></button>
                         <button type="button" class="star-btn" data-value="3" onclick="setRating(3)"><i class="fas fa-star"></i></button>
@@ -861,7 +865,7 @@
                     
                     <div class="comment-form-footer">
                         <span class="comment-char-count" id="char-count">0 / 2000</span>
-                        <button class="btn-submit-comment" id="btn-submit-comment" onclick="submitComment()">
+                        <button class="btn-submit-comment" id="btn-submit-comment" onclick="submitComment()" style="margin-left: auto;">
                             <i class="fas fa-paper-plane"></i> <span id="btn-submit-text">Publicar comentario</span>
                         </button>
                     </div>
@@ -869,7 +873,7 @@
 
                 <!-- Lista de comentarios -->
                 <div id="comments-list" class="comments-list">
-                    <div class="comments-loading">
+                    <div class="comments-loading" style="text-align: center; padding: 2rem;">
                         <i class="fas fa-spinner fa-spin"></i>
                         <p>Cargando comentarios...</p>
                     </div>
@@ -880,6 +884,7 @@
             </div>
         </div>
     </section>
+
     <footer class="footer">
         <div class="container">
             <div class="footer-content-simple">
@@ -887,15 +892,1164 @@
                     <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
                     <span><i class="fas fa-phone"></i> +34 605 249 696</span>
                 </div>
-                <div class="footer-links">
-                    <a href="/aviso-legal.html">Aviso Legal</a>
-                    <a href="/politica-cookies.html">Política de Cookies</a>
-                    <a href="/agradecimientos.html">Agradecimientos</a>
+            <div class="footer-links">
+                <a href="aviso-legal.html">Aviso Legal</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="agradecimientos.html">Agradecimientos</a>
+            </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+            </div>
+        </div> </footer>
+    <script src="/script.js?v=20260114"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Función formateadora de descripciones
+        function formatearDescripcion(texto) {
+            if (!texto) return 'Sin descripción.';
+
+            // Añadir emojis a palabras clave automáticamente
+            const busquedas = ["Horario", "Ubicación", "Entrada", "Precio", "Teléfono", "Email", "Web", "Dirección", "Historia"];
+            const emojis = ["🕐", "📍", "🎫", "💰", "📞", "📧", "🌐", "🏠", "📜"];
+
+            busquedas.forEach((palabra, index) => {
+                const regex = new RegExp(`\\b${palabra}\\b`, 'gi');
+                texto = texto.replace(regex, `${emojis[index]} ${palabra}`);
+            });
+
+            // Convertir asteriscos **texto** en negritas <strong>texto</strong>
+            texto = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            return texto;
+        }
+
+        let currentImageIndex = 0, currentPhotos = [], currentPhotoCredits = {}, currentFirstCredit = null;
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Usar slug inyectado por PHP si existe, sino obtener de URL
+            let slug = window.currentSlug || '';
+
+            if (!slug) {
+                slug = urlParams.get('slug');
+            }
+
+            if (!slug) {
+                // Si viene de URL amigable, extraer slug de la URL
+                const path = window.location.pathname;
+                // Buscar slug tanto en /lugar/ (nuevo) como en /lugares-interes/ (antiguo)
+                const match = path.match(/\/(?:lugar|lugares-interes)\/([^\/]+)/);
+                if (match) slug = match[1];
+            }
+
+            // Redirección específica para Restaurante Santo Domingo II
+            if (slug === 'restaurante-santo-domingo-ii') {
+                window.location.replace('/lugar/restaurante-santo-domingo-2-soria');
+                return;
+            }
+
+            if (!slug) { mostrarError(); return; }
+            // Canonical URL amigable
+            const canonicalUrl = 'https://www.rutasrurales.io/lugar/' + slug;
+            const canonicalLink = document.getElementById('canonical-url');
+            if (canonicalLink) {
+                canonicalLink.setAttribute('href', canonicalUrl);
+            }
+            cargarLugar(slug);
+        });
+
+        // Función para trackear vistas de lugares de interés
+        function trackPlaceView(placeId) {
+            if (!placeId) return;
+
+            fetch('/api/track_resource_stat.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    resource_type: 'place',
+                    resource_id: placeId,
+                    stat_type: 'view'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Vista registrada para lugar:', placeId, data.data);
+                    // Recargar estadísticas para que la visita actual se refleje de inmediato
+                    if (typeof loadCommentsStats === 'function') loadCommentsStats();
+                } else {
+                    console.error('Error al registrar vista:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error al trackear vista:', error);
+            });
+        }
+
+        async function cargarLugar(slug) {
+            try {
+                const response = await fetch('/api/lugar-interes.php?slug=' + slug);
+                const data = await response.json();
+                if (data.success && data.data) {
+                    renderizarDetalle(data.data);
+                    // Trackear la vista del lugar
+                    const placeId = data.data.id || data.data.ID;
+                    trackPlaceView(placeId);
+                } else {
+                    mostrarError();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarError();
+            }
+        }
+
+        function mostrarError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-msg').style.display = 'block';
+        }
+
+        function renderizarDetalle(lugar) {
+            document.getElementById('loading').style.display = 'none';
+            const c = document.getElementById('detail-content');
+            c.style.display = 'block';
+            const nom = lugar.nombre || lugar.name || 'Lugar';
+            document.title = nom + ' | Rutas Rurales';
+
+            currentPhotos = lugar.fotos || [];
+            currentPhotoCredits = lugar.foto_creditos || {};
+            currentFirstCredit = lugar.primer_credito || null;
+            if (!currentPhotos.length) {
+                ['photo1','photo2','photo3','photo4'].forEach(p => {
+                    if (lugar[p]) currentPhotos.push(lugar[p]);
+                });
+            }
+            if (!currentPhotos.length) currentPhotos = ['interest_places_images/Patrocinio.webp'];
+
+            const gh = '<div class="gallery-container">' +
+                currentPhotos.map((f,i) => '<img src="' + f + '" class="gallery-img ' + (i===0?'active':'') + '" alt="' + nom + '" ' + (i===0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"') + ' onerror="this.src=\'interest_places_images/Patrocinio.webp\'">').join('') +
+                (currentPhotos.length>1 ? '<div class="gallery-nav"><button class="nav-btn" onclick="cambiarFoto(-1)"><i class="fas fa-chevron-left"></i></button><button class="nav-btn" onclick="cambiarFoto(1)"><i class="fas fa-chevron-right"></i></button></div>' : '') +
+                '<div class="photo-credit" id="photoCredit"></div>' +
+                '</div>';
+
+            const des = lugar.descripcion || lugar.description || 'Sin descripción';
+            const tel = lugar.telefono || lugar.phone || '';
+            const em = lugar.email || '';
+            let web = lugar.web || lugar.website || '';
+
+            // Asegurar que la URL tenga protocolo
+            if (web && !web.match(/^https?:\/\//i)) {
+                web = 'https://' + web;
+            }
+
+            let bh = '';
+            if (tel) bh += '<div class="info-item"><i class="fas fa-phone-alt"></i> <a href="tel:' + tel + '">' + tel + '</a></div>';
+            if (em) bh += '<div class="info-item"><i class="fas fa-envelope"></i> <a href="mailto:' + em + '">' + em + '</a></div>';
+            if (web) bh += '<div class="info-item"><i class="fas fa-globe"></i> <a href="' + web + '" target="_blank" rel="noopener noreferrer">Visitar Web</a></div>';
+
+            let mapaHTML = '';
+            const lat = lugar.latitud || lugar.latitude;
+            const lng = lugar.longitud || lugar.longitude;
+            const provincia = lugar.provincia || lugar.Provincia || lugar.province || '';
+
+            if (lat && lng) {
+                mapaHTML = '<div style="margin-top: 2rem;"><h3>Ubicación</h3><div id="map-lugar" style="height: 300px; width: 100%; border-radius: 12px; z-index: 1;"></div></div>';
+                setTimeout(() => initMap(lat, lng, nom), 100);
+            }
+
+            // Guardar datos para Mi Ruta
+            window.currentPlace = lugar;
+
+            const btnMyRoute = '<button onclick="addToMyRouteFromDetail()" class="btn-primary" style="width: 100%; margin-top: 1rem; background: var(--accent-color); border: none;">' +
+                '<i class="fas fa-plus-circle"></i> Añadir a mi Itinerario</button>';
+
+            // Botón de rutas cercanas - reutilizar las variables ya declaradas
+
+            const btnRutasCercanas = (provincia || lat) ? `
+                <a href="/rutas.php?${lat && lng ? 'lat=' + lat + '&lng=' + lng + '&' : ''}provincia=${encodeURIComponent(provincia)}&radius=100&alojamientos=1&lugares=1&actividades=1&eventos=1" class="btn-primary" style="display: block; text-align: center; text-decoration: none; background: linear-gradient(135deg, #e67e22, #d35400); color: white; padding: 14px; border-radius: 10px; font-weight: 700; margin-top: 12px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4); transition: all 0.3s ease;">
+                    <i class="fas fa-compass"></i> 🌟 ¡No te pierdas todo lo que hay cerca!
+                    <span style="display: block; font-size: 0.75rem; font-weight: 500; margin-top: 4px; opacity: 0.95;">
+                        Alojamientos, actividades, lugares únicos y eventos en 100km
+                    </span>
+                </a>
+            ` : '';
+
+            c.innerHTML = '<div class="detail-header"><h1>' + nom + '</h1><p><i class="fas fa-map-marker-alt"></i> ' + (lugar.direccion||'') + ' ' + (lugar.localidad||'') + ' ' + (lugar.provincia||'') + '</p></div>' +
+                gh + '<div class="detail-grid"><div><h3>Descripción</h3><p>' + formatearDescripcion(des) + '</p>' + mapaHTML + '</div><div><div class="info-card"><h3>Información</h3>' + bh + btnMyRoute + btnRutasCercanas + '</div></div></div>';
+
+            // Mostrar botón de otros alojamientos si hay provincia (reutilizar variable provincia ya declarada)
+            if (provincia) {
+                mostrarBotonOtrosAlojamientos(provincia);
+            }
+
+            // Mostrar crédito de la primera foto
+            setTimeout(() => updatePhotoCredit(0), 100);
+        }
+
+        // Función para actualizar el crédito de la foto
+        function updatePhotoCredit(index) {
+            const creditEl = document.getElementById('photoCredit');
+            if (!creditEl || !currentPhotos.length) return;
+
+            const photoUrl = currentPhotos[index];
+            let credit = currentPhotoCredits[photoUrl];
+
+            // Si no hay crédito específico para esta foto, usar el primer crédito
+            if (!credit || !credit.author) {
+                credit = currentFirstCredit;
+            }
+
+            if (credit && credit.author) {
+                const instaHtml = credit.instagram
+                    ? ` · <a href="https://instagram.com/${credit.instagram.replace('@','')}" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> ${credit.instagram}</a>`
+                    : '';
+                creditEl.innerHTML = `<i class="fas fa-camera"></i> <span>Foto: ${credit.author}${instaHtml}</span>`;
+                creditEl.classList.add('show');
+            } else {
+                creditEl.classList.remove('show');
+            }
+        }
+
+        window.cambiarFoto = function(d) {
+            if (currentPhotos.length <= 1) return;
+            const imgs = document.querySelectorAll('.gallery-img');
+            imgs[currentImageIndex].classList.remove('active');
+            currentImageIndex += d;
+            if (currentImageIndex >= imgs.length) currentImageIndex = 0;
+            if (currentImageIndex < 0) currentImageIndex = imgs.length - 1;
+            imgs[currentImageIndex].classList.add('active');
+            // Actualizar crédito de la foto
+            updatePhotoCredit(currentImageIndex);
+        }
+
+        function initMap(lat, lng, title) {
+            if (typeof L === 'undefined') return;
+            const map = L.map('map-lugar').setView([lat, lng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            L.marker([lat, lng]).addTo(map).bindPopup('<b>' + title + '</b>').openPopup();
+        }
+
+        // Función para mostrar el botón de otros alojamientos
+        function mostrarBotonOtrosAlojamientos(provincia) {
+            if (!provincia || provincia.trim() === '') return;
+
+            const seccionOtros = document.getElementById('otros-alojamientos');
+            const btnOtros = document.getElementById('btn-otros-alojamientos');
+
+            if (seccionOtros && btnOtros) {
+                // Establecer el enlace con la provincia
+                btnOtros.href = `/alojamientos-turisticos.html?provincia=${encodeURIComponent(provincia)}`;
+                seccionOtros.style.display = 'block';
+            }
+        }
+
+        // Lógica de Mi Ruta Personal
+        function addToMyRouteFromDetail() {
+            const item = window.currentPlace;
+            if (!item) {
+                alert('Error: No se pudo obtener la información del lugar');
+                return;
+            }
+
+            let myRoute = JSON.parse(localStorage.getItem('myPersonalRoute') || '[]');
+
+            const id = item.id;
+            const tipo = 'lugar';
+
+            if (myRoute.some(i => i.id === id && i.tipo === tipo)) {
+                alert('Este lugar ya está en tu ruta');
+                return;
+            }
+
+            myRoute.push({
+                id: id,
+                nombre: item.nombre || item.name,
+                tipo: tipo,
+                lat: item.latitud || item.latitude,
+                lng: item.longitud || item.longitude,
+                slug: item.slug,
+                foto: (item.fotos && item.fotos.length > 0) ? item.fotos[0] : (item.photo1 || 'interest_places_images/Patrocinio.webp'),
+                localidad: item.localidad || item.municipality,
+                description: (item.descripcion || item.description || '').substring(0, 300) + '...'
+            });
+
+            localStorage.setItem('myPersonalRoute', JSON.stringify(myRoute));
+
+            // Mostrar confirmación y opción de ir al itinerario
+            if (confirm(`✅ Añadido a tu itinerario (${myRoute.length} ${myRoute.length === 1 ? 'parada' : 'paradas'})\n\n¿Quieres ver tu itinerario completo?`)) {
+                window.location.href = '/mi-ruta.html';
+            }
+
+            const toast = document.createElement('div');
+            toast.style = "position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary-color); color: white; padding: 1rem 2rem; border-radius: 30px; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-weight: bold;";
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ¡Añadido a tu ruta! <a href="/mi-ruta.html" style="color: white; text-decoration: underline; margin-left: 10px;">Ver mi ruta</a>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ===============================================
+        // CARRUSEL DE ALOJAMIENTOS CON LAZY LOADING
+        // ===============================================
+
+        // Variables del carrusel
+        let accommodationsData = [];
+        let currentCarouselIndex = 0;
+        let carouselItemsPerView = 3;
+
+        // Función para cargar alojamientos por provincia (lazy loading)
+        async function loadAccommodationsByProvince(provincia) {
+            const carouselSection = document.getElementById('accommodations-carousel');
+            const track = document.getElementById('carousel-track');
+            const provinceNameEl = document.getElementById('carousel-province-name');
+
+            console.log('DEBUG: Cargando alojamientos para provincia:', provincia);
+
+            if (!carouselSection || !track || !provincia) {
+                console.log('DEBUG: Faltan elementos o provincia');
+                return;
+            }
+
+            // Mostrar sección con indicador de carga
+            carouselSection.style.display = 'block';
+            track.innerHTML = '<div class="carousel-loading"><i class="fas fa-spinner"></i><br>Cargando alojamientos...</div>';
+
+            // Actualizar nombre de provincia en el título
+            if (provinceNameEl) {
+                provinceNameEl.textContent = provincia;
+            }
+
+            try {
+                // Llamada a la API
+                const apiUrl = `/api/get_accommodations_by_province.php?provincia=${encodeURIComponent(provincia)}&limit=10`;
+                console.log('DEBUG: Llamando API:', apiUrl);
+
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                console.log('DEBUG: Respuesta API:', data);
+
+                if (data.success && data.data && data.data.length > 0) {
+                    accommodationsData = data.data;
+                    console.log('DEBUG: Alojamientos encontrados:', accommodationsData.length);
+                    renderCarousel();
+                } else {
+                    console.log('DEBUG: No hay alojamientos o error:', data.message);
+                    // Ocultar sección
+                    carouselSection.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('DEBUG Error al cargar alojamientos:', error);
+                carouselSection.style.display = 'none';
+            }
+        }
+
+        // Función para renderizar el carrusel
+        function renderCarousel() {
+            const track = document.getElementById('carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+
+            if (!track || accommodationsData.length === 0) return;
+
+            // Calcular elementos visibles según el ancho de pantalla
+            updateCarouselSettings();
+
+            // Generar HTML de las tarjetas
+            track.innerHTML = accommodationsData.map((acc, index) => createAccommodationCard(acc, index)).join('');
+
+            // Generar puntos de navegación
+            const totalDots = Math.ceil(accommodationsData.length / carouselItemsPerView);
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalDots; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Ir a grupo ${i + 1}`);
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+
+            // Configurar botones de navegación
+            prevBtn.onclick = () => navigateCarousel(-1);
+            nextBtn.onclick = () => navigateCarousel(1);
+
+            // Actualizar estado de botones
+            updateCarouselButtons();
+
+            // Aplicar lazy loading a las imágenes
+            applyLazyLoading();
+        }
+
+        // Función para crear HTML de una tarjeta de alojamiento
+        function createAccommodationCard(accommodation, index) {
+            const tipo = accommodation.tipo || accommodation.Tipo || 'Casa Rural';
+            const nombre = accommodation.nombre || accommodation.Nombre || 'Alojamiento';
+            const localidad = accommodation.localidad || accommodation.Localidad || '';
+            const provincia = accommodation.provincia || accommodation.Provincia || '';
+            const precio = accommodation.precio || accommodation.Precio || 0;
+            const caracteristicas = accommodation.caracteristicas || accommodation.Caracteristicas || [];
+
+            // Obtener la foto principal - buscar en múltiples campos
+            let foto = '';
+            if (accommodation.foto) {
+                foto = accommodation.foto;
+            } else if (accommodation.fotos && Array.isArray(accommodation.fotos) && accommodation.fotos.length > 0) {
+                foto = accommodation.fotos[0];
+            } else if (accommodation.Foto1) {
+                foto = accommodation.Foto1;
+            } else if (accommodation.foto1) {
+                foto = accommodation.foto1;
+            }
+
+            // Si no hay foto, usar imagen por defecto
+            if (!foto) {
+                foto = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
+            }
+
+            // Generar badge de tipo
+            let tipoBadge = tipo;
+            if (tipo.toLowerCase().includes('casa')) tipoBadge = 'Casa Rural';
+            else if (tipo.toLowerCase().includes('piso') || tipo.toLowerCase().includes('apartamento')) tipoBadge = 'Apartamento';
+            else if (tipo.toLowerCase().includes('hotel')) tipoBadge = 'Hotel';
+            else if (tipo.toLowerCase().includes('hostal')) tipoBadge = 'Hostal';
+
+            // Generar precio
+            const precioHTML = precio > 0
+                ? `<span class="accommodation-price">${precio}€ <span>/noche</span></span>`
+                : `<span class="accommodation-price"><span>Consultar</span></span>`;
+
+            // Generar características (máximo 3)
+            const featuresHTML = caracteristicas.slice(0, 3).map(f =>
+                `<span class="accommodation-feature">${f}</span>`
+            ).join('');
+
+            // Generar enlace al detalle del alojamiento
+            // Usar slug si está disponible y es válido (no demasiado largo ni con caracteres extraños)
+            let slug = accommodation.slug || accommodation.Slug || '';
+            // Si el slug está vacío o es muy largo (más de 80 caracteres), usar ID
+            if (!slug || slug.length > 80 || slug.includes('alojamiento') || slug.includes('undefined')) {
+                slug = '';
+            }
+            const accommodationLink = slug
+                ? `/alojamiento/${slug}`
+                : `/alojamiento.html?id=${accommodation.id}`;
+
+            return `
+                <a href="${accommodationLink}" class="accommodation-card" data-index="${index}">
+                    <div class="accommodation-card-image">
+                        <span class="accommodation-type-badge">${tipoBadge}</span>
+                        <img data-src="${foto}" alt="${nombre}" class="lazy-img">
+                        <noscript><img src="${foto}" alt="${nombre}" class="lazy-img-noscript"></noscript>
+                        <div class="image-placeholder"></div>
+                    </div>
+                    <div class="accommodation-card-content">
+                        <h4>${nombre}</h4>
+                        <p class="accommodation-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${localidad}${localidad && provincia ? ', ' : ''}${provincia}
+                        </p>
+                        <div class="accommodation-features">${featuresHTML}</div>
+                        ${precioHTML}
+                    </div>
+                </a>
+            `;
+        }
+
+        // Función para aplicar lazy loading a las imágenes
+        function applyLazyLoading() {
+            const images = document.querySelectorAll('.lazy-img');
+
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.getAttribute('data-src');
+                            if (src) {
+                                img.src = src;
+                                img.onload = () => {
+                                    img.classList.add('loaded');
+                                    // Ocultar placeholder
+                                    const placeholder = img.parentElement.querySelector('.image-placeholder');
+                                    if (placeholder) placeholder.style.display = 'none';
+                                };
+                                img.onerror = () => {
+                                    // Imagen por defecto en caso de error
+                                    img.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
+                                    img.classList.add('loaded');
+                                };
+                            }
+                            observer.unobserve(img);
+                        }
+                    });
+                }, {
+                    rootMargin: '50px 0px',
+                    threshold: 0.1
+                });
+
+                images.forEach(img => imageObserver.observe(img));
+            } else {
+                // Fallback para navegadores sin IntersectionObserver
+                images.forEach(img => {
+                    const src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                        img.classList.add('loaded');
+                    }
+                });
+            }
+        }
+
+        // Función para actualizar configuración según ancho de pantalla
+        function updateCarouselSettings() {
+            const width = window.innerWidth;
+            if (width < 600) {
+                carouselItemsPerView = 1;
+            } else if (width < 900) {
+                carouselItemsPerView = 2;
+            } else {
+                carouselItemsPerView = 3;
+            }
+        }
+
+        // Función para navegar entre slides
+        function navigateCarousel(direction) {
+            const maxIndex = Math.ceil(accommodationsData.length / carouselItemsPerView) - 1;
+            currentCarouselIndex += direction;
+
+            if (currentCarouselIndex < 0) currentCarouselIndex = 0;
+            if (currentCarouselIndex > maxIndex) currentCarouselIndex = maxIndex;
+
+            updateCarouselPosition();
+        }
+
+        // Función para ir a un slide específico
+        function goToSlide(index) {
+            currentCarouselIndex = index;
+            updateCarouselPosition();
+        }
+
+        // Función para actualizar la posición del carrusel
+        function updateCarouselPosition() {
+            const track = document.getElementById('carousel-track');
+            const cards = track.querySelectorAll('.accommodation-card');
+
+            if (cards.length === 0) return;
+
+            const cardWidth = cards[0].offsetWidth + 24; // Ancho + gap
+            const offset = currentCarouselIndex * cardWidth * carouselItemsPerView;
+            track.style.transform = `translateX(-${offset}px)`;
+
+            // Actualizar botones
+            updateCarouselButtons();
+
+            // Actualizar puntos
+            updateCarouselDots();
+        }
+
+        // Función para actualizar estado de botones
+        function updateCarouselButtons() {
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            const maxIndex = Math.ceil(accommodationsData.length / carouselItemsPerView) - 1;
+
+            if (prevBtn) prevBtn.disabled = currentCarouselIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentCarouselIndex >= maxIndex;
+        }
+
+        // Función para actualizar puntos de navegación
+        function updateCarouselDots() {
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentCarouselIndex);
+            });
+        }
+
+        // Modificar la función mostrarBotonOtrosAlojamientos para cargar el carrusel con lazy loading
+        const originalMostrarBotonOtrosAlojamientos = mostrarBotonOtrosAlojamientos;
+        mostrarBotonOtrosAlojamientos = function(provincia) {
+            // Llamar a la función original
+            if (provincia && provincia.trim() !== '') {
+                // Actualizar enlace existente
+                const btnOtros = document.getElementById('btn-otros-alojamientos');
+                const seccionOtros = document.getElementById('otros-alojamientos');
+                if (btnOtros) {
+                    btnOtros.href = `/alojamientos-turisticos.html?provincia=${encodeURIComponent(provincia)}`;
+                }
+                if (seccionOtros) {
+                    seccionOtros.style.display = 'block';
+                }
+
+                // Cargar carrusel con lazy loading (después de un pequeño delay para no bloquear la carga inicial)
+                setTimeout(() => {
+                    loadAccommodationsByProvince(provincia);
+                }, 1500); // 1.5 segundos de delay para lazy loading
+            }
+        };
+
+        // Reemplazar la función original
+        window.mostrarBotonOtrosAlojamientos = mostrarBotonOtrosAlojamientos;
+
+        // ===============================================
+        // SISTEMA DE COMENTARIOS Y CONTADOR DE VISITAS
+        // ===============================================
+
+        // Variables globales para comentarios
+        let currentPlaceId = null;
+        let currentCommentsPage = 1;
+        let commentsPerPage = 10;
+        let currentRating = 0;
+        let currentReplyTo = null;
+
+        // Función para mostrar la sección de comentarios
+        function showCommentsSection(placeId) {
+            currentPlaceId = placeId;
+            const commentsSection = document.getElementById('comments-section');
+            if (commentsSection) {
+                commentsSection.style.display = 'block';
+                loadCommentsStats();
+                loadComments();
+            }
+        }
+
+        // Función para cargar estadísticas de comentarios y visitas
+        async function loadCommentsStats() {
+            if (!currentPlaceId) return;
+
+            try {
+                // Cargar estadísticas de visitas
+                const statsResp = await fetch(`/api/place_of_interest-visitas.php?place_id=${currentPlaceId}`);
+                const statsJson = await statsResp.json();
+                const statsData = statsJson.success ? statsJson.data : {};
+
+                // Cargar estadísticas de comentarios
+                const commResp = await fetch(`/api/place_of_interest-comentarios.php?place_id=${currentPlaceId}&count=1`);
+                const commJson = await commResp.json();
+                const commentsData = commJson.success ? commJson : {};
+
+                // Crear barra de estadísticas
+                createStatsBar(statsData, commentsData);
+
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+
+        // Función para crear la barra de estadísticas
+        function createStatsBar(statsData, commentsData) {
+            const detailContent = document.querySelector('.detail-container');
+            if (!detailContent) return;
+
+            // Buscar si ya existe una barra de estadísticas
+            let statsBar = document.querySelector('.place-stats-bar');
+            if (statsBar) statsBar.remove();
+
+            // Crear nueva barra
+            statsBar = document.createElement('div');
+            statsBar.className = 'place-stats-bar';
+
+            const views = statsData.views_count || 0;
+            const favorites = statsData.favorites_count || 0;
+            const comments = commentsData.total || 0;
+            const avgRating = commentsData.avg_rating || 0;
+            const ratingCount = commentsData.rating_count || 0;
+
+            // Crear estrellas para la valoración promedio
+            let starsHtml = '';
+            if (avgRating > 0) {
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= Math.floor(avgRating)) {
+                        starsHtml += '<i class="fas fa-star"></i>';
+                    } else if (i === Math.ceil(avgRating) && avgRating % 1 >= 0.5) {
+                        starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                    } else {
+                        starsHtml += '<i class="fas fa-star empty-star"></i>';
+                    }
+                }
+            }
+
+            statsBar.innerHTML = `
+                <div class="stat-item">
+                    <i class="fas fa-eye"></i>
+                    <span class="stat-number">${views}</span>
+                    <span>visitas</span>
                 </div>
-                <div class="footer-social">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <i class="fas fa-heart"></i>
+                    <span class="stat-number">${favorites}</span>
+                    <span>favoritos</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <i class="fas fa-comment"></i>
+                    <span class="stat-number">${comments}</span>
+                    <span>comentarios</span>
+                </div>
+                ${avgRating > 0 ? `
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="avg-rating-stars">${starsHtml}</div>
+                        <span class="stat-number">${avgRating.toFixed(1)}</span>
+                        <span>(${ratingCount})</span>
+                    </div>
+                ` : ''}
+            `;
+
+            // Insertar después del header del detalle
+            const detailHeader = detailContent.querySelector('.detail-header');
+            if (detailHeader) {
+                detailHeader.parentNode.insertBefore(statsBar, detailHeader.nextSibling);
+            }
+        }
+
+        // Función para cargar comentarios
+        async function loadComments(page = 1) {
+            if (!currentPlaceId) return;
+
+            const commentsList = document.getElementById('comments-list');
+            const pagination = document.getElementById('comments-pagination');
+
+            if (!commentsList) return;
+
+            commentsList.innerHTML = '<div class="comments-loading"><i class="fas fa-spinner fa-spin"></i><p>Cargando comentarios...</p></div>';
+
+            try {
+                const response = await fetch(`/api/place_of_interest-comentarios.php?place_id=${currentPlaceId}&page=${page}&limit=${commentsPerPage}`);
+                const data = await response.json();
+
+                if (data.success && data.comments) {
+                    renderComments(data.comments);
+                    renderPagination(data.total_pages, page);
+                } else {
+                    showNoComments();
+                }
+            } catch (error) {
+                console.error('Error al cargar comentarios:', error);
+                commentsList.innerHTML = '<div class="comments-empty"><i class="fas fa-exclamation-circle"></i><p>Error al cargar comentarios</p></div>';
+            }
+        }
+
+        // Función para renderizar comentarios
+        function renderComments(comments) {
+            const commentsList = document.getElementById('comments-list');
+            if (!commentsList) return;
+
+            if (comments.length === 0) {
+                showNoComments();
+                return;
+            }
+
+            let html = '';
+            comments.forEach(comment => {
+                html += renderCommentItem(comment);
+            });
+
+            commentsList.innerHTML = html;
+        }
+
+        // Función para renderizar un comentario individual
+        function renderCommentItem(comment) {
+            const date = new Date(comment.created_at);
+            const timeAgo = getTimeAgo(date);
+            const ratingStars = comment.rating ? getRatingStars(comment.rating) : '';
+
+            let repliesHtml = '';
+            if (comment.replies && comment.replies.length > 0) {
+                repliesHtml = '<div class="comment-replies">';
+                comment.replies.forEach(reply => {
+                    repliesHtml += renderCommentItem(reply);
+                });
+                repliesHtml += '</div>';
+            }
+
+            return `
+                <div class="comment-item" data-id="${comment.id}">
+                    <div class="comment-avatar" style="background-color: ${comment.author_avatar || '#2F5233'}">
+                        ${comment.author_name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <span class="comment-author">${comment.author_name}</span>
+                            <span class="comment-date">${timeAgo}</span>
+                            ${ratingStars ? `<span class="comment-rating">${ratingStars}</span>` : ''}
+                        </div>
+                        <div class="comment-text">${comment.comment_text}</div>
+                        <div class="comment-actions">
+                            <button class="btn-reply" onclick="showReplyForm(${comment.id})">
+                                <i class="fas fa-reply"></i> Responder
+                            </button>
+                        </div>
+                        ${repliesHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para mostrar formulario de respuesta
+        function showReplyForm(commentId) {
+            // Ocultar formularios de respuesta existentes
+            document.querySelectorAll('.reply-form-inline').forEach(form => form.remove());
+
+            currentReplyTo = commentId;
+
+            const commentItem = document.querySelector(`.comment-item[data-id="${commentId}"]`);
+            if (!commentItem) return;
+
+            const replyForm = document.createElement('div');
+            replyForm.className = 'reply-form-inline';
+            replyForm.innerHTML = `
+                <input type="text" id="reply-name-${commentId}" placeholder="Tu nombre *" maxlength="100" required>
+                <textarea id="reply-text-${commentId}" placeholder="Tu respuesta... *" maxlength="1000"></textarea>
+                <div class="reply-form-actions">
+                    <button class="btn-cancel-reply" onclick="cancelReply()">Cancelar</button>
+                    <button class="btn-send-reply" onclick="submitReply(${commentId})">Enviar respuesta</button>
+                </div>
+            `;
+
+            const commentBody = commentItem.querySelector('.comment-body');
+            if (commentBody) {
+                commentBody.appendChild(replyForm);
+            }
+        }
+
+        // Función para cancelar respuesta
+        function cancelReply() {
+            currentReplyTo = null;
+            document.querySelectorAll('.reply-form-inline').forEach(form => form.remove());
+        }
+
+        // Función para enviar respuesta
+        async function submitReply(parentId) {
+            const nameInput = document.getElementById(`reply-name-${parentId}`);
+            const textInput = document.getElementById(`reply-text-${parentId}`);
+
+            if (!nameInput || !textInput) return;
+
+            const authorName = nameInput.value.trim();
+            const commentText = textInput.value.trim();
+
+            if (!authorName || authorName.length < 2) {
+                alert('El nombre debe tener al menos 2 caracteres');
+                return;
+            }
+
+            if (!commentText || commentText.length < 5) {
+                alert('La respuesta debe tener al menos 5 caracteres');
+                return;
+            }
+
+            const submitBtn = document.querySelector(`.btn-send-reply[onclick="submitReply(${parentId})"]`);
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            }
+
+            try {
+                const response = await fetch('/api/place_of_interest-comentarios.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        place_id: currentPlaceId,
+                        author_name: authorName,
+                        comment_text: commentText,
+                        parent_id: parentId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('✅ ¡Respuesta publicada!');
+                    cancelReply();
+                    loadComments(currentCommentsPage);
+                } else {
+                    alert(data.error || 'Error al publicar la respuesta');
+                }
+            } catch (error) {
+                console.error('Error al enviar respuesta:', error);
+                alert('Error de conexión');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Enviar respuesta';
+                }
+            }
+        }
+
+        // Función para mostrar estado sin comentarios
+        function showNoComments() {
+            const commentsList = document.getElementById('comments-list');
+            if (commentsList) {
+                commentsList.innerHTML = `
+                    <div class="comments-empty">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>Aún no hay comentarios. ¡Sé el primero en opinar!</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Función para renderizar paginación
+        function renderPagination(totalPages, currentPage) {
+            const pagination = document.getElementById('comments-pagination');
+            if (!pagination || totalPages <= 1) {
+                if (pagination) pagination.style.display = 'none';
+                return;
+            }
+
+            pagination.style.display = 'flex';
+
+            let html = '';
+
+            // Botón anterior
+            html += `<button onclick="changeCommentsPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+
+            // Páginas
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+            if (endPage - startPage + 1 < maxVisible) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button onclick="changeCommentsPage(${i})" ${i === currentPage ? 'class="active"' : ''}>${i}</button>`;
+            }
+
+            // Botón siguiente
+            html += `<button onclick="changeCommentsPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+
+            pagination.innerHTML = html;
+        }
+
+        // Función para cambiar de página
+        function changeCommentsPage(page) {
+            if (page < 1) return;
+            currentCommentsPage = page;
+            loadComments(page);
+            window.scrollTo({
+                top: document.getElementById('comments-section').offsetTop - 100,
+                behavior: 'smooth'
+            });
+        }
+
+        // Función para establecer valoración
+        function setRating(rating) {
+            currentRating = rating;
+
+            // Actualizar estrellas visualmente
+            const starBtns = document.querySelectorAll('.star-btn');
+            starBtns.forEach((btn, index) => {
+                if (index < rating) {
+                    btn.classList.add('active');
+                    btn.querySelector('i').className = 'fas fa-star';
+                } else {
+                    btn.classList.remove('active');
+                    btn.querySelector('i').className = 'far fa-star';
+                }
+            });
+
+            // Actualizar etiqueta
+            const labels = ['Malo', 'Regular', 'Bueno', 'Muy bueno', 'Excelente'];
+            const labelEl = document.getElementById('star-label');
+            if (labelEl) {
+                labelEl.textContent = labels[rating - 1] || '';
+            }
+        }
+
+        // Función para actualizar contador de caracteres
+        function updateCharCount() {
+            const textarea = document.getElementById('comment-text');
+            const charCount = document.getElementById('char-count');
+            if (!textarea || !charCount) return;
+
+            const length = textarea.value.length;
+            charCount.textContent = `${length} / 2000`;
+
+            if (length > 1900) {
+                charCount.classList.add('warning');
+            } else {
+                charCount.classList.remove('warning');
+            }
+        }
+
+        // Función para enviar comentario
+        async function submitComment() {
+            const nameInput = document.getElementById('comment-name');
+            const emailInput = document.getElementById('comment-email');
+            const textInput = document.getElementById('comment-text');
+            const submitBtn = document.getElementById('btn-submit-comment');
+
+            if (!nameInput || !textInput || !submitBtn) return;
+
+            const authorName = nameInput.value.trim();
+            const authorEmail = emailInput ? emailInput.value.trim() : '';
+            const commentText = textInput.value.trim();
+
+            // Validaciones
+            if (!authorName || authorName.length < 2) {
+                alert('El nombre debe tener al menos 2 caracteres');
+                return;
+            }
+
+            if (!commentText || commentText.length < 5) {
+                alert('El comentario debe tener al menos 5 caracteres');
+                return;
+            }
+
+            if (authorEmail && !isValidEmail(authorEmail)) {
+                alert('Por favor, introduce un email válido');
+                return;
+            }
+
+            // Deshabilitar botón durante el envío
+            submitBtn.disabled = true;
+            const originalText = submitBtn.querySelector('#btn-submit-text').textContent;
+            submitBtn.querySelector('#btn-submit-text').textContent = 'Enviando...';
+
+            try {
+                const response = await fetch('/api/place_of_interest-comentarios.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        place_id: currentPlaceId,
+                        author_name: authorName,
+                        author_email: authorEmail || null,
+                        comment_text: commentText,
+                        rating: currentRating || null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Limpiar formulario
+                    nameInput.value = '';
+                    if (emailInput) emailInput.value = '';
+                    textInput.value = '';
+                    setRating(0);
+                    updateCharCount();
+
+                    // Mostrar toast de éxito
+                    showToast('✅ ¡Comentario publicado!');
+
+                    // Recargar comentarios
+                    loadComments(currentCommentsPage);
+                    loadCommentsStats();
+                } else {
+                    alert(data.error || 'Error al publicar el comentario');
+                }
+            } catch (error) {
+                console.error('Error al enviar comentario:', error);
+                alert('Error de conexión');
+            } finally {
+                // Restaurar botón
+                submitBtn.disabled = false;
+                submitBtn.querySelector('#btn-submit-text').textContent = originalText;
+            }
+        }
+
+        // Función para mostrar toast
+        function showToast(message) {
+            // Eliminar toast existente
+            const existingToast = document.querySelector('.comment-toast');
+            if (existingToast) existingToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'comment-toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // Mostrar toast
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            // Ocultar y eliminar después de 3 segundos
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // Función para obtener estrellas de valoración
+        function getRatingStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            return stars;
+        }
+
+        // Función para formatear tiempo relativo
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffSec = Math.floor(diffMs / 1000);
+            const diffMin = Math.floor(diffSec / 60);
+            const diffHour = Math.floor(diffMin / 60);
+            const diffDay = Math.floor(diffHour / 24);
+
+            if (diffSec < 60) {
+                return 'Ahora mismo';
+            } else if (diffMin < 60) {
+                return `Hace ${diffMin} min`;
+            } else if (diffHour < 24) {
+                return `Hace ${diffHour}h`;
+            } else if (diffDay === 1) {
+                return 'Ayer';
+            } else if (diffDay < 7) {
+                return `Hace ${diffDay} días`;
+            } else {
+                return date.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
+        }
+
+        // Función para validar email
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Modificar la función renderizarDetalle para mostrar la sección de comentarios
+        const originalRenderizarDetalle = renderizarDetalle;
+        renderizarDetalle = function(lugar) {
+            originalRenderizarDetalle(lugar);
+
+            // Mostrar sección de comentarios después de cargar el lugar
+            const placeId = lugar.id || lugar.ID;
+            if (placeId) {
+                setTimeout(() => {
+                    showCommentsSection(placeId);
+                }, 500);
+            }
+        };
+
+        // Reemplazar la función original
+        window.renderizarDetalle = renderizarDetalle;
+    </script>
+</body>
+</html>
                 </div>
             </div>
             <div class="footer-copyright">
