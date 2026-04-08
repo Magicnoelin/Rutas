@@ -124,13 +124,13 @@ try {
 
             $xml .= "\n";
             $xml .= "  <url>\n";
-            $xml .= "    <loc>https://www.rutasrurales.io/{$lang}/evento/{$slugTrad}</loc>\n";
+            $xml .= "    <loc>https://rutasrurales.io/{$lang}/evento/{$slugTrad}</loc>\n";
             $xml .= "    <lastmod>{$fechaMod}</lastmod>\n";
             $xml .= "    <changefreq>weekly</changefreq>\n";
             $xml .= "    <priority>{$priority}</priority>\n";
             $xml .= "    <!-- Versión original en español -->\n";
-            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"https://www.rutasrurales.io/evento/{$slugEs}\"/>\n";
-            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$lang}\" href=\"https://www.rutasrurales.io/{$lang}/evento/{$slugTrad}\"/>\n";
+            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"https://rutasrurales.io/evento/{$slugEs}\"/>\n";
+            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$lang}\" href=\"https://rutasrurales.io/{$lang}/evento/{$slugTrad}\"/>\n";
             $xml .= "  </url>\n";
         }
     }

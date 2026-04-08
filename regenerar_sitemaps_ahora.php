@@ -212,20 +212,20 @@ try {
         $priority = (strpos($slugTrad, 'eclipse') !== false || strpos($slugTrad, 'sonnenfinsternis') !== false) ? '0.9' : '0.7';
         
         $xml .= "\n  <url>\n";
-        $xml .= "    <loc>https://www.rutasrurales.io/" . $lang . "/evento/" . $slugTrad . "</loc>\n";
+        $xml .= "    <loc>https://rutasrurales.io/" . $lang . "/evento/" . $slugTrad . "</loc>\n";
         $xml .= "    <lastmod>" . $fechaMod . "</lastmod>\n";
         $xml .= "    <changefreq>weekly</changefreq>\n";
         $xml .= "    <priority>" . $priority . "</priority>\n";
         $xml .= "    <!-- x-default apunta a la versión española -->\n";
-        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://www.rutasrurales.io/evento/" . $slugEs . "\"/>\n";
-        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"https://www.rutasrurales.io/evento/" . $slugEs . "\"/>\n";
-        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"" . $lang . "\" href=\"https://www.rutasrurales.io/" . $lang . "/evento/" . $slugTrad . "\"/>\n";
+        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://rutasrurales.io/evento/" . $slugEs . "\"/>\n";
+        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"https://rutasrurales.io/evento/" . $slugEs . "\"/>\n";
+        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"" . $lang . "\" href=\"https://rutasrurales.io/" . $lang . "/evento/" . $slugTrad . "\"/>\n";
         
         foreach ($trads as $otroLang => $otraTrad) {
             if ($otroLang === $trad['language_code']) continue;
             $otroSlug = htmlspecialchars($otraTrad['slug']);
             $otroLangCode = htmlspecialchars($otroLang);
-            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"" . $otroLangCode . "\" href=\"https://www.rutasrurales.io/" . $otroLangCode . "/evento/" . $otroSlug . "\"/>\n";
+            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"" . $otroLangCode . "\" href=\"https://rutasrurales.io/" . $otroLangCode . "/evento/" . $otroSlug . "\"/>\n";
         }
         
         $xml .= "  </url>\n";
