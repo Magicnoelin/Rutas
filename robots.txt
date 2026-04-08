@@ -16,4 +16,4 @@ Disallow: /alojamiento/8017
 Disallow: /detalle.html?slug=8017
 
 # La ruta a tu nuevo mapa del sitio
-Sitemap: https://www.rutasrurales.io/sitemap.xml
+Sitemap: https://rutasrurales.io/sitemap.xml

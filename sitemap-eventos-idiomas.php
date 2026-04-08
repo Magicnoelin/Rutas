@@ -6,7 +6,7 @@
  * que existan en la tabla cultural_events_trads (excepto español 'es',
  * que ya está en sitemap-eventos.php).
  * 
- * URL: https://www.rutasrurales.io/sitemap-eventos-idiomas.php
+ * URL: https://rutasrurales.io/sitemap-eventos-idiomas.php
  */
 
 header('Content-Type: application/xml; charset=UTF-8');
@@ -84,12 +84,12 @@ echo '-->' . "\n";
     $priority = (strpos($slugTrad, 'eclipse') !== false || strpos($slugTrad, 'sonnenfinsternis') !== false) ? '0.9' : '0.7';
 ?>
   <url>
-    <loc>https://www.rutasrurales.io/<?= $lang ?>/evento/<?= $slugTrad ?></loc>
+    <loc>https://rutasrurales.io/<?= $lang ?>/evento/<?= $slugTrad ?></loc>
     <lastmod><?= $fechaMod ?></lastmod>
     <changefreq>weekly</changefreq>
     <priority><?= $priority ?></priority>
-    <xhtml:link rel="alternate" hreflang="es" href="https://www.rutasrurales.io/evento/<?= $slugEs ?>"/>
-    <xhtml:link rel="alternate" hreflang="<?= $lang ?>" href="https://www.rutasrurales.io/<?= $lang ?>/evento/<?= $slugTrad ?>"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://rutasrurales.io/evento/<?= $slugEs ?>"/>
+    <xhtml:link rel="alternate" hreflang="<?= $lang ?>" href="https://rutasrurales.io/<?= $lang ?>/evento/<?= $slugTrad ?>"/>
   </url>
 <?php endforeach; ?>
 </urlset>

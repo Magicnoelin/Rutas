@@ -11,7 +11,7 @@
  * Regla de oro: si un evento tiene traducción al alemán, TANTO la URL española
  * como la alemana deben incluir xhtml:link apuntando a la otra.
  * 
- * URL: https://www.rutasrurales.io/sitemap-eventos.php
+ * URL: https://rutasrurales.io/sitemap-eventos.php
  * 
  * CORRECCIÓN APLICADA (2026-04-04):
  * 1. Se corrigió la lógica de fechas para incluir solo eventos futuros/actuales
@@ -126,13 +126,13 @@ foreach ($eventosEs as $evento):
     $priority = (strpos($slugEs, 'eclipse') !== false) ? '0.9' : '0.8';
 ?>
   <url>
-    <loc>https://www.rutasrurales.io/evento/<?= $slugEs ?></loc>
+    <loc>https://rutasrurales.io/evento/<?= $slugEs ?></loc>
     <lastmod><?= $fechaMod ?></lastmod>
     <changefreq>weekly</changefreq>
     <priority><?= $priority ?></priority>
     <!-- x-default: versión por defecto para usuarios sin idioma específico -->
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.rutasrurales.io/evento/<?= $slugEs ?>"/>
-    <xhtml:link rel="alternate" hreflang="es"        href="https://www.rutasrurales.io/evento/<?= $slugEs ?>"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/evento/<?= $slugEs ?>"/>
+    <xhtml:link rel="alternate" hreflang="es"        href="https://rutasrurales.io/evento/<?= $slugEs ?>"/>
 <?php foreach ($trads as $lang => $tradData):
     $slugTrad = htmlspecialchars($tradData['slug']);
     $langCode = htmlspecialchars($lang);
