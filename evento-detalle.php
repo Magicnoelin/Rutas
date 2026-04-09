@@ -43,7 +43,7 @@ try {
             e.short_description AS descripcion_corta,
             e.meta_title,
             e.meta_description,
-            e.fecha_evento,
+            e.start_date,
             e.localidad,
             e.provincia,
             e.organizador,
@@ -139,7 +139,7 @@ try {
             
             <div class="meta-info">
                 <p><strong>Ubicación:</strong> <?php echo htmlspecialchars($evento['localidad'] . ', ' . $evento['provincia'], ENT_QUOTES, 'UTF-8'); ?></p>
-                <p><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($evento['fecha_evento'])); ?></p>
+                <p><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($evento['start_date'])); ?></p>
                 <?php if (!empty($evento['organizador'])): ?>
                     <p><strong>Organizador:</strong> <?php echo htmlspecialchars($evento['organizador'], ENT_QUOTES, 'UTF-8'); ?></p>
                 <?php endif; ?>
