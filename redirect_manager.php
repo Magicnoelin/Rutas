@@ -129,6 +129,23 @@ if (file_exists($templateFile)) {
         $html = str_ireplace('</head>', $slugInject . "\n</head>", $html);
     }
 
+    // INYECTAR HEADER Y FOOTER PARA PÁGINAS DE ACTIVIDAD
+    if ($type === 'actividad') {
+        // Obtener contenido del header
+        ob_start();
+        include 'header.php';
+        $headerContent = ob_get_clean();
+        
+        // Obtener contenido del footer
+        ob_start();
+        include 'footer.php';
+        $footerContent = ob_get_clean();
+        
+        // Reemplazar marcadores
+        $html = str_replace('<!-- HEADER_PLACEHOLDER -->', $headerContent, $html);
+        $html = str_replace('<!-- FOOTER_PLACEHOLDER -->', $footerContent, $html);
+    }
+
     // 6. INYECCIÓN SEO: Cambiar título dinámicamente
     if (!empty($slug)) {
         // Usamos buffering para capturar cualquier error invisible y evitar que rompa el HTML
