@@ -28,7 +28,7 @@ if (!empty($slug)) {
     $api_url = "/api/evento-slug.php?slug=" . urlencode($slug);
     $context = stream_context_create([
         'http' => [
-            'timeout' => 5,
+            'timeout' => 3, // Timeout más corto
             'ignore_errors' => true
         ]
     ]);
@@ -47,12 +47,12 @@ if (!empty($slug)) {
                                (!empty($evento['descripcion_corta']) ? $evento['descripcion_corta'] : $meta_description);
             $short_description = !empty($evento['descripcion_corta']) ? $evento['descripcion_corta'] : $meta_description;
             
-            // Canonical URL
+            // Canonical URL - SIEMPRE con el slug correcto
             $canonical_url = "https://rutasrurales.io";
             if ($lang !== 'es') {
                 $canonical_url .= "/" . $lang;
             }
-            $canonical_url .= "/evento/" . $evento['slug'];
+            $canonical_url .= "/evento/" . $slug; // Usar el slug de la URL, no de la base de datos
             
             // Datos para mostrar
             $evento_titulo = htmlspecialchars($evento['titulo'], ENT_QUOTES, 'UTF-8');
@@ -65,7 +65,31 @@ if (!empty($slug)) {
             $evento_municipality = !empty($evento['municipality']) ? htmlspecialchars($evento['municipality'], ENT_QUOTES, 'UTF-8') : '';
             
             $tiene_datos = true;
+        } else {
+            // Si la API falla pero tenemos slug, al menos actualizar canonical
+            $canonical_url = "https://rutasrurales.io";
+            if ($lang !== 'es') {
+                $canonical_url .= "/" . $lang;
+            }
+            $canonical_url .= "/evento/" . $slug;
+            
+            // Intentar crear un título básico desde el slug
+            $titulo_desde_slug = str_replace('-', ' ', $slug);
+            $titulo_desde_slug = ucwords($titulo_desde_slug);
+            $meta_title = $titulo_desde_slug . " | Rutas Rurales";
         }
+    } else {
+        // Si no se puede conectar a la API, al menos actualizar canonical
+        $canonical_url = "https://rutasrurales.io";
+        if ($lang !== 'es') {
+            $canonical_url .= "/" . $lang;
+        }
+        $canonical_url .= "/evento/" . $slug;
+        
+        // Intentar crear un título básico desde el slug
+        $titulo_desde_slug = str_replace('-', ' ', $slug);
+        $titulo_desde_slug = ucwords($titulo_desde_slug);
+        $meta_title = $titulo_desde_slug . " | Rutas Rurales";
     }
 }
 
