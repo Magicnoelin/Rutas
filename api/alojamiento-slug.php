@@ -143,6 +143,9 @@ try {
     $alojamiento['Localidad'] = $alojamiento['municipality'] ?? '';
     $alojamiento['Provincia'] = $alojamiento['province'] ?? '';
     $alojamiento['Registro'] = $alojamiento['registration_number'] ?? '';
+
+    // URL Canónica para SEO
+    $alojamiento['canonical_url'] = 'https://rutasrurales.io/alojamiento/' . $alojamiento['slug'];
     
     // Incluir virtual_tour_url y video_url para videos de YouTube
     $alojamiento['virtual_tour_url'] = $alojamiento['virtual_tour_url'] ?? '';
