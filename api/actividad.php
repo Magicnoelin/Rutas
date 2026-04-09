@@ -23,8 +23,10 @@ try {
     // Procesar datos
     $fotos = array_filter([$actividad['photo1'], $actividad['photo2'], $actividad['photo3'], $actividad['photo4']]);
     $precioAdulto = !empty($actividad['price_adult']) && $actividad['price_adult'] > 0 ? $actividad['price_adult'].'€' : 'Gratis';
-    $precioNino = !empty($actividad['price_child']) && $actividad['price_child'] > 0 ? $actividad['price_child'].'€' : 'Gratis';
-    $precioGrupo = !empty($actividad['price_group']) && $actividad['price_group'] > 0 ? $actividad['price_group'].'€' : 'Gratis';
+    // Si el precio del niño es negativo o 0, no mostrar nada (en lugar de "Gratis")
+    $precioNino = !empty($actividad['price_child']) && $actividad['price_child'] > 0 ? $actividad['price_child'].'€' : '';
+    // Si el precio del grupo es negativo o 0, no mostrar nada (en lugar de "Gratis")
+    $precioGrupo = !empty($actividad['price_group']) && $actividad['price_group'] > 0 ? $actividad['price_group'].'€' : '';
 
     // Procesar JSON fields
     $temporadas = json_decode($actividad['available_seasons'], true);
