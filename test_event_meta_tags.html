@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Event Meta Tags</title>
+</head>
+<body>
+    <h1>Test de Meta Tags para Eventos</h1>
+    
+    <h2>Cambios realizados en evento-detalle.html:</h2>
+    <ol>
+        <li><strong>Meta tag short_description añadido:</strong> Se añadió <code><meta name="short_description" id="dynamic-short-description" content="Descubre eventos culturales en Rutas Rurales..."></code> en el head</li>
+        <li><strong>Canonical sin www:</strong> Se cambió de <code>https://www.rutasrurales.io/evento-detalle.html</code> a <code>https://rutasrurales.io/evento-detalle.html</code></li>
+        <li><strong>Actualización dinámica en JavaScript:</strong> En la función <code>renderEvento()</code> se añadió:
+            <pre>
+// Actualizar <meta name="short_description"> con descripcion_corta
+const shortDescMeta = document.querySelector('meta[name="short_description"]');
+if (shortDescMeta && evento.descripcion_corta && evento.descripcion_corta.trim() !== '') {
+    shortDescMeta.setAttribute('content', evento.descripcion_corta.trim());
+}
+
+// Actualizar canonical URL dinámicamente con el slug del evento
+// SIN "www." como solicitado
+const canonicalEl = document.getElementById('dynamic-canonical');
+if (canonicalEl && evento.slug) {
+    const lang = window.currentLang || 'es';
+    const canonicalUrl = lang !== 'es'
+        ? 'https://rutasrurales.io/' + lang + '/evento/' + evento.slug
+        : 'https://rutasrurales.io/evento/' + evento.slug;
+    canonicalEl.setAttribute('href', canonicalUrl);
+}
+            </pre>
+        </li>
+    </ol>
+    
+    <h2>Cambios realizados en evento-v2.html:</h2>
+    <ol>
+        <li><strong>Meta tag short_description añadido:</strong> Se añadió <code><meta name="short_description" content="Descubre eventos culturales en Rutas Rurales..."></code></li>
+        <li><strong>Canonical sin www:</strong> Se cambió de <code>https://www.rutasrurales.io/evento-v2.html</code> a <code>https://rutasrurales.io/evento-v2.html</code></li>
+    </ol>
+    
+    <h2>Verificación:</h2>
+    <p>Para verificar los cambios, puedes:</p>
+    <ul>
+        <li>Abrir <code>evento-detalle.html</code> en el navegador y ver el código fuente</li>
+        <li>Verificar que el canonical no tiene "www."</li>
+        <li>Verificar que existe el meta tag <code>short_description</code></li>
+        <li>Probar con un slug de evento real para ver que se actualizan dinámicamente</li>
+    </ul>
+    
+    <h2>Ejemplo de URLs afectadas:</h2>
+    <ul>
+        <li><code>https://rutasrurales.io/evento/mi-evento-slug</code> (redirige a <code>evento-detalle.html?slug=mi-evento-slug</code>)</li>
+        <li><code>https://rutasrurales.io/es/evento/mi-evento-slug</code> (para versiones en otros idiomas)</li>
+    </ul>
+</body>
+</html>

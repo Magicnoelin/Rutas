@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="description" content="Descubre eventos culturales en Rutas Rurales - Red Unificada de Turistas, Alojamientos y Servicios">
+    <meta name="short_description" id="dynamic-short-description" content="Descubre eventos culturales en Rutas Rurales - Red Unificada de Turistas, Alojamientos y Servicios">
     <title>Detalle del Evento | Rutas Rurales</title>
     
     <!-- Google tag (gtag.js) -->
@@ -15,7 +16,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
 <!-- End Google Tag Manager -->
     
-    <link rel="canonical" id="dynamic-canonical" href="https://www.rutasrurales.io/evento-detalle.html">
+    <link rel="canonical" id="dynamic-canonical" href="https://rutasrurales.io/evento-detalle.html">
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
     <!-- CSS asíncrono para evitar bloqueo de renderizado -->
     <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -1748,6 +1749,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 }
             }
 
+            // Actualizar <meta name="short_description"> con descripcion_corta
+            const shortDescMeta = document.querySelector('meta[name="short_description"]');
+            if (shortDescMeta && evento.descripcion_corta && evento.descripcion_corta.trim() !== '') {
+                shortDescMeta.setAttribute('content', evento.descripcion_corta.trim());
+            }
+
             // Actualizar <meta property="og:title"> y <meta property="og:description"> si existen
             const ogTitle = document.querySelector('meta[property="og:title"]');
             if (ogTitle) ogTitle.setAttribute('content', document.title);
@@ -1756,12 +1763,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             // Actualizar canonical URL dinámicamente con el slug del evento
             // Si hay idioma distinto al español, la canonical apunta a la URL localizada
+            // SIN "www." como solicitado
             const canonicalEl = document.getElementById('dynamic-canonical');
             if (canonicalEl && evento.slug) {
                 const lang = window.currentLang || 'es';
                 const canonicalUrl = lang !== 'es'
-                    ? 'https://www.rutasrurales.io/' + lang + '/evento/' + evento.slug
-                    : 'https://www.rutasrurales.io/evento/' + evento.slug;
+                    ? 'https://rutasrurales.io/' + lang + '/evento/' + evento.slug
+                    : 'https://rutasrurales.io/evento/' + evento.slug;
                 canonicalEl.setAttribute('href', canonicalUrl);
             }
 
