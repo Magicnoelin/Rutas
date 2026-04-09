@@ -1,7 +1,7 @@
 <?php
 /**
- * Página de Detalle de Evento - VERSIÓN FINAL CON ESTILO MEJORADO
- * Diseño responsive con fotos y campos de interés público
+ * Página de Detalle de Evento - VERSIÓN SIMPLE Y COMPLETA
+ * CSS completo incluido, diseño responsive
  */
 
 // Obtener slug de la URL
@@ -23,7 +23,7 @@ if ($lang !== 'es') {
 }
 $canonical_url .= "/evento/" . $slug;
 
-// Crear título desde el slug (formato amigable)
+// Crear título desde el slug
 $titulo_desde_slug = str_replace('-', ' ', $slug);
 $titulo_desde_slug = ucwords($titulo_desde_slug);
 
@@ -31,7 +31,7 @@ $titulo_desde_slug = ucwords($titulo_desde_slug);
 $slug_parts = explode('-', $slug);
 $year = '';
 $location = '';
-$event_type = '';
+$event_type = 'Evento Cultural';
 
 // Buscar año
 foreach ($slug_parts as $part) {
@@ -64,7 +64,6 @@ $event_keywords = [
     'arte' => 'Exposición de Arte'
 ];
 
-$event_type = 'Evento Cultural';
 foreach ($event_keywords as $keyword => $type) {
     if (strpos($slug, $keyword) !== false) {
         $event_type = $type;
@@ -72,10 +71,10 @@ foreach ($event_keywords as $keyword => $type) {
     }
 }
 
-// Meta tags personalizados
+// Meta tags
 $meta_title = $titulo_desde_slug . " | " . $event_type . " | Rutas Rurales";
-$meta_description = "Descubre " . $titulo_desde_slug . " en Rutas Rurales. " . $event_type . ($location ? " en " . $location : "") . ($year ? " " . $year : "") . ". Información, horarios y reservas.";
-$short_description = $titulo_desde_slug . " - " . $event_type . ($location ? " en " . $location : "") . ". Información completa para visitantes.";
+$meta_description = "Descubre " . $titulo_desde_slug . " en Rutas Rurales. " . $event_type . ($location ? " en " . $location : "") . ($year ? " " . $year : "") . ". Información completa.";
+$short_description = $titulo_desde_slug . " - " . $event_type . ($location ? " en " . $location : "") . ". Información para visitantes.";
 
 // Información del evento
 $evento_titulo = $titulo_desde_slug;
@@ -84,244 +83,162 @@ $evento_tipo = $event_type;
 // Ubicación
 if ($location) {
     $evento_localidad = $location;
-    $evento_provincia = ucfirst($location);
+    $evento_provincia = $location;
 } else {
-    $possible_locations = ['El Burgo de Osma', 'Soria', 'Burgos', 'Valladolid'];
-    foreach ($possible_locations as $loc) {
-        if (stripos($slug, str_replace(' ', '-', strtolower($loc))) !== false) {
-            $evento_localidad = $loc;
-            $evento_provincia = $loc;
-            break;
-        }
-    }
-    
-    if (empty($evento_localidad)) {
-        $evento_localidad = 'Varias localidades';
-        $evento_provincia = 'Castilla y León';
-    }
+    $evento_localidad = 'Castilla y León';
+    $evento_provincia = 'Castilla y León';
 }
 
 // Fecha
-if ($year) {
-    $evento_fecha = '15/06/' . $year;
-} else {
-    $evento_fecha = 'Próximamente';
-}
+$evento_fecha = $year ? '15/06/' . $year : 'Próximamente';
 
-// Descripción específica
+// Descripción
 $descripciones = [
-    'Jornadas Gastronómicas' => 'Disfruta de una experiencia gastronómica única con los mejores productos de la tierra. Degustaciones, talleres y showcooking con chefs expertos.',
-    'Fiestas Populares' => 'Vive la auténtica tradición castellana con fiestas populares llenas de color, música y folclore. Una experiencia cultural inolvidable.',
-    'Feria Tradicional' => 'Mercado artesanal, productos locales y tradiciones ancestrales. Descubre la esencia de la cultura rural en esta feria única.',
-    'Festival Cultural' => 'Espectáculos, exposiciones y actividades culturales para todos los públicos. Sumérgete en la riqueza cultural de la región.',
-    'Jornadas de Matanza' => 'Revive la tradición más ancestral de la matanza del cerdo. Demostraciones, degustaciones y todo el saber hacer tradicional.',
-    'Evento Gastronómico' => 'Sabores auténticos, productos de calidad y recetas tradicionales. Una celebración de la gastronomía local.',
-    'Evento Cultural' => 'Arte, historia y tradición se unen en este evento cultural único. Descubre el patrimonio de la región.',
-    'Concierto' => 'Disfruta de la mejor música en un entorno único. Conciertos acústicos, grupos locales y artistas invitados.',
-    'Obra de Teatro' => 'Representaciones teatrales que rescatan historias y tradiciones locales. Cultura y entretenimiento para toda la familia.',
-    'Exposición de Arte' => 'Descubre el talento local a través de exposiciones de pintura, escultura y fotografía. Arte y cultura en el medio rural.'
+    'Jornadas Gastronómicas' => 'Disfruta de una experiencia gastronómica única con los mejores productos locales.',
+    'Fiestas Populares' => 'Vive la auténtica tradición castellana con fiestas llenas de color y folclore.',
+    'Feria Tradicional' => 'Mercado artesanal y productos locales en un ambiente tradicional.',
+    'Festival Cultural' => 'Espectáculos y actividades culturales para todos los públicos.',
+    'Jornadas de Matanza' => 'Revive la tradición ancestral de la matanza del cerdo.',
+    'Evento Gastronómico' => 'Sabores auténticos y recetas tradicionales.',
+    'Evento Cultural' => 'Arte, historia y tradición en un evento único.',
+    'Concierto' => 'Disfruta de la mejor música en un entorno especial.',
+    'Obra de Teatro' => 'Representaciones teatrales con historias locales.',
+    'Exposición de Arte' => 'Descubre el talento local a través del arte.'
 ];
 
-$evento_descripcion = isset($descripciones[$event_type]) ? $descripciones[$event_type] : 'Descubre este evento único que combina tradición, cultura y experiencias inolvidables en el corazón de la España rural.';
+$evento_descripcion = isset($descripciones[$event_type]) ? $descripciones[$event_type] : 'Evento cultural único en el corazón de la España rural.';
 
 // Precio
-$precios = [
-    'Jornadas Gastronómicas' => 'Desde 35€',
-    'Fiestas Populares' => 'Gratuito',
-    'Feria Tradicional' => 'Entrada libre',
-    'Festival Cultural' => 'Desde 15€',
-    'Jornadas de Matanza' => 'Desde 45€',
-    'Evento Gastronómico' => 'Desde 25€',
-    'Evento Cultural' => 'Desde 10€',
-    'Concierto' => 'Desde 20€',
-    'Obra de Teatro' => 'Desde 12€',
-    'Exposición de Arte' => 'Gratuito'
-];
-
-$evento_precio = isset($precios[$event_type]) ? $precios[$event_type] : 'Consultar precios';
-
-// Horario según tipo de evento
-$horarios = [
-    'Jornadas Gastronómicas' => '12:00 - 18:00h',
-    'Fiestas Populares' => 'Todo el día',
-    'Feria Tradicional' => '10:00 - 20:00h',
-    'Festival Cultural' => 'Varía según actividad',
-    'Jornadas de Matanza' => '11:00 - 17:00h',
-    'Evento Gastronómico' => '13:00 - 16:00h',
-    'Evento Cultural' => 'Varía según programación',
-    'Concierto' => '20:00 - 23:00h',
-    'Obra de Teatro' => '19:00 - 21:00h',
-    'Exposición de Arte' => '10:00 - 14:00 y 16:00 - 20:00h'
-];
-
-$evento_horario = isset($horarios[$event_type]) ? $horarios[$event_type] : 'Consultar horarios';
-
-// Duración
-$duraciones = [
-    'Jornadas Gastronómicas' => '1 día',
-    'Fiestas Populares' => 'Varios días',
-    'Feria Tradicional' => 'Fin de semana',
-    'Festival Cultural' => 'Varios días',
-    'Jornadas de Matanza' => '1 día',
-    'Evento Gastronómico' => '3-4 horas',
-    'Evento Cultural' => 'Varía',
-    'Concierto' => '2-3 horas',
-    'Obra de Teatro' => '2 horas',
-    'Exposición de Arte' => '1 mes'
-];
-
-$evento_duracion = isset($duraciones[$event_type]) ? $duraciones[$event_type] : 'Consultar duración';
-
-// Imagen según tipo de evento
-$imagenes_eventos = [
-    'Jornadas Gastronómicas' => '/img/eventos/gastronomia.jpg',
-    'Fiestas Populares' => '/img/eventos/fiestas.jpg',
-    'Feria Tradicional' => '/img/eventos/feria.jpg',
-    'Festival Cultural' => '/img/eventos/festival.jpg',
-    'Jornadas de Matanza' => '/img/eventos/matanza.jpg',
-    'Evento Gastronómico' => '/img/eventos/gastronomia2.jpg',
-    'Evento Cultural' => '/img/eventos/cultural.jpg',
-    'Concierto' => '/img/eventos/concierto.jpg',
-    'Obra de Teatro' => '/img/eventos/teatro.jpg',
-    'Exposición de Arte' => '/img/eventos/arte.jpg'
-];
-
-$evento_imagen = isset($imagenes_eventos[$event_type]) ? $imagenes_eventos[$event_type] : '/img/eventos/default.jpg';
-
-// Verificar si la imagen existe, si no usar una por defecto
-if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $evento_imagen)) {
-    $evento_imagen = 'https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80';
-}
+$evento_precio = 'Consultar precios';
 
 // Variables para header.php
 $page_title = $meta_title;
 $page_description = $meta_description;
-$page_keywords = "evento, " . strtolower($event_type) . ", " . strtolower($evento_localidad) . ", turismo rural, rutas rurales";
+$page_keywords = "evento, " . strtolower($event_type) . ", turismo rural";
 
 // Incluir header
 include 'header.php';
 ?>
 
 <!-- Contenido principal -->
-<main class="evento-detalle-main">
+<main class="evento-detalle">
     <div class="container">
         <?php if (!empty($slug)): ?>
             <!-- Header con imagen -->
-            <div class="evento-header">
-                <div class="evento-imagen-container">
-                    <img src="<?php echo $evento_imagen; ?>" alt="<?php echo $evento_titulo; ?>" class="evento-imagen">
+            <div class="evento-header-con-imagen">
+                <div class="evento-imagen-fondo">
                     <div class="evento-imagen-overlay">
                         <h1 class="evento-titulo"><?php echo $evento_titulo; ?></h1>
                         <div class="evento-subtitulo">
-                            <span><i class="fas fa-map-marker-alt"></i> <?php echo $evento_localidad . ', ' . $evento_provincia; ?></span>
-                            <span><i class="fas fa-calendar-alt"></i> <?php echo $evento_fecha; ?></span>
-                            <span><i class="fas fa-tag"></i> <?php echo $evento_tipo; ?></span>
+                            <span class="evento-lugar"><i class="fas fa-map-marker-alt"></i> <?php echo $evento_localidad . ', ' . $evento_provincia; ?></span>
+                            <span class="evento-fecha"><i class="fas fa-calendar-alt"></i> <?php echo $evento_fecha; ?></span>
+                            <span class="evento-tipo"><i class="fas fa-tag"></i> <?php echo $evento_tipo; ?></span>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Información principal -->
+            <!-- Contenido principal -->
             <div class="evento-contenido">
-                <div class="evento-info-grid">
-                    <!-- Información básica -->
-                    <div class="info-card">
-                        <h3><i class="fas fa-info-circle"></i> Información básica</h3>
-                        <div class="info-list">
-                            <div class="info-item">
-                                <span class="info-label">Fecha:</span>
-                                <span class="info-value"><?php echo $evento_fecha; ?></span>
+                <!-- Información básica -->
+                <div class="evento-info">
+                    <h2><i class="fas fa-info-circle"></i> Información del evento</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-calendar"></i></div>
+                            <div class="info-content">
+                                <h3>Fecha</h3>
+                                <p><?php echo $evento_fecha; ?></p>
                             </div>
-                            <div class="info-item">
-                                <span class="info-label">Horario:</span>
-                                <span class="info-value"><?php echo $evento_horario; ?></span>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-clock"></i></div>
+                            <div class="info-content">
+                                <h3>Horario</h3>
+                                <p>Consultar programación</p>
                             </div>
-                            <div class="info-item">
-                                <span class="info-label">Duración:</span>
-                                <span class="info-value"><?php echo $evento_duracion; ?></span>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-ticket-alt"></i></div>
+                            <div class="info-content">
+                                <h3>Precio</h3>
+                                <p><?php echo $evento_precio; ?></p>
                             </div>
-                            <div class="info-item">
-                                <span class="info-label">Precio:</span>
-                                <span class="info-value"><?php echo $evento_precio; ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Ubicación:</span>
-                                <span class="info-value"><?php echo $evento_localidad . ', ' . $evento_provincia; ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Tipo de evento:</span>
-                                <span class="info-value"><?php echo $evento_tipo; ?></span>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="info-content">
+                                <h3>Ubicación</h3>
+                                <p><?php echo $evento_localidad . ', ' . $evento_provincia; ?></p>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Descripción -->
+                <div class="evento-descripcion">
+                    <h2><i class="fas fa-align-left"></i> Descripción</h2>
+                    <div class="descripcion-texto">
+                        <p><?php echo $evento_descripcion; ?></p>
+                        <p>Este evento ofrece una experiencia única para conocer la cultura y tradiciones locales en un ambiente auténtico y acogedor.</p>
+                    </div>
                     
-                    <!-- Descripción -->
-                    <div class="descripcion-card">
-                        <h3><i class="fas fa-align-left"></i> Descripción</h3>
-                        <div class="descripcion-contenido">
-                            <p><?php echo $evento_descripcion; ?></p>
-                            
-                            <div class="caracteristicas">
-                                <h4><i class="fas fa-check"></i> Características principales</h4>
-                                <ul>
-                                    <li>Experiencia auténtica y tradicional</li>
-                                    <li>Productos locales de calidad</li>
-                                    <li>Ambiente familiar y acogedor</li>
-                                    <li>Actividades para todas las edades</li>
-                                    <li>Oportunidad para conocer la cultura local</li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div class="evento-caracteristicas">
+                        <h3><i class="fas fa-check-circle"></i> Características</h3>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Experiencia auténtica</li>
+                            <li><i class="fas fa-check"></i> Productos locales</li>
+                            <li><i class="fas fa-check"></i> Ambiente familiar</li>
+                            <li><i class="fas fa-check"></i> Actividades variadas</li>
+                            <li><i class="fas fa-check"></i> Cultura tradicional</li>
+                        </ul>
                     </div>
                 </div>
                 
                 <!-- Información adicional -->
-                <div class="info-adicional">
-                    <h3><i class="fas fa-clipboard-list"></i> Información para visitantes</h3>
+                <div class="evento-adicional">
+                    <h2><i class="fas fa-clipboard-list"></i> Información práctica</h2>
                     <div class="adicional-grid">
                         <div class="adicional-item">
                             <i class="fas fa-car"></i>
                             <h4>Cómo llegar</h4>
-                            <p>Acceso por carretera con parking disponible. Transporte público disponible desde la capital provincial.</p>
+                            <p>Acceso por carretera con parking disponible.</p>
                         </div>
                         <div class="adicional-item">
                             <i class="fas fa-utensils"></i>
                             <h4>Servicios</h4>
-                            <p>Zona de restauración, aseos públicos, área de descanso y puntos de información.</p>
+                            <p>Zona de restauración y aseos públicos.</p>
                         </div>
                         <div class="adicional-item">
                             <i class="fas fa-users"></i>
-                            <h4>Recomendaciones</h4>
-                            <p>Llegar con antelación, consultar programación específica y seguir indicaciones del personal.</p>
+                            <h4>Para familias</h4>
+                            <p>Actividades adecuadas para todas las edades.</p>
                         </div>
                         <div class="adicional-item">
-                            <i class="fas fa-phone"></i>
-                            <h4>Contacto</h4>
-                            <p>Para más información: info@rutasrurales.io o consulta nuestra web.</p>
+                            <i class="fas fa-info"></i>
+                            <h4>Más info</h4>
+                            <p>Consulta nuestra web o redes sociales.</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Botones de acción -->
-                <div class="botones-accion">
-                    <a href="/eventos-culturales-paginacion.html" class="btn btn-volver">
+                <!-- Botones -->
+                <div class="evento-botones">
+                    <a href="/eventos-culturales-paginacion.html" class="btn btn-primario">
                         <i class="fas fa-arrow-left"></i> Volver a Eventos
                     </a>
-                    <a href="/" class="btn btn-inicio">
+                    <a href="/" class="btn btn-secundario">
                         <i class="fas fa-home"></i> Ir al Inicio
-                    </a>
-                    <a href="/contacto" class="btn btn-info">
-                        <i class="fas fa-envelope"></i> Más información
                     </a>
                 </div>
             </div>
             
         <?php else: ?>
             <!-- Si no hay slug -->
-            <div class="evento-no-encontrado">
+            <div class="evento-error">
                 <h2>Evento no encontrado</h2>
-                <p>No se ha especificado un evento válido en la URL.</p>
-                <a href="/eventos-culturales-paginacion.html" class="btn btn-volver">
+                <p>No se ha especificado un evento válido.</p>
+                <a href="/eventos-culturales-paginacion.html" class="btn btn-primario">
                     <i class="fas fa-arrow-left"></i> Volver a Eventos
                 </a>
             </div>
@@ -330,25 +247,358 @@ include 'header.php';
 </main>
 
 <style>
-    /* Estilos principales */
-    .evento-detalle-main {
-        padding: 20px 0 40px;
+    /* Estilos generales */
+    .evento-detalle {
+        padding: 30px 0;
         background: #f8f9fa;
         min-height: 70vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
     .container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 15px;
+        padding: 0 20px;
     }
     
     /* Header con imagen */
-    .evento-header {
+    .evento-header-con-imagen {
         margin-bottom: 30px;
-        border-radius: 12px;
+        border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     
-    .evento-imagen
+    .evento-imagen-fondo {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), 
+                    url('https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');
+        background-size: cover;
+        background-position: center;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+    
+    .evento-imagen-overlay {
+        text-align: center;
+        color: white;
+        max-width: 800px;
+    }
+    
+    .evento-titulo {
+        color: white;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        font-weight: 700;
+        line-height: 1.2;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .evento-subtitulo {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 25px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.2rem;
+    }
+    
+    .evento-subtitulo span {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(47, 82, 51, 0.8);
+        padding: 8px 15px;
+        border-radius: 20px;
+    }
+    
+    .evento-subtitulo i {
+        color: #a3d9a5;
+    }
+    
+    /* Contenido principal */
+    .evento-contenido {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    /* Información básica */
+    .evento-info h2 {
+        color: #2F5233;
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .info-item {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #2F5233;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .info-icon {
+        background: #2F5233;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .info-content h3 {
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+    
+    .info-content p {
+        color: #666;
+        margin: 0;
+    }
+    
+    /* Descripción */
+    .evento-descripcion {
+        margin-bottom: 40px;
+    }
+    
+    .evento-descripcion h2 {
+        color: #2F5233;
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .descripcion-texto {
+        line-height: 1.7;
+        color: #444;
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+    }
+    
+    .evento-caracteristicas {
+        background: #f0f7f0;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #4CAF50;
+    }
+    
+    .evento-caracteristicas h3 {
+        color: #2F5233;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .evento-caracteristicas ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .evento-caracteristicas li {
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #555;
+    }
+    
+    .evento-caracteristicas li i {
+        color: #4CAF50;
+    }
+    
+    /* Información adicional */
+    .evento-adicional {
+        margin-bottom: 40px;
+    }
+    
+    .evento-adicional h2 {
+        color: #2F5233;
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .adicional-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .adicional-item {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .adicional-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .adicional-item i {
+        font-size: 2rem;
+        color: #2F5233;
+        margin-bottom: 15px;
+    }
+    
+    .adicional-item h4 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .adicional-item p {
+        color: #666;
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    /* Botones */
+    .evento-botones {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    
+    .btn {
+        padding: 12px 25px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+    
+    .btn-primario {
+        background: #2F5233;
+        color: white;
+    }
+    
+    .btn-primario:hover {
+        background: #246634;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .btn-secundario {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secundario:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Error */
+    .evento-error {
+        text-align: center;
+        padding: 60px 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    .evento-error h2 {
+        color: #2F5233;
+        margin-bottom: 15px;
+    }
+    
+    .evento-error p {
+        color: #666;
+        margin-bottom: 25px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .evento-titulo {
+            font-size: 1.8rem;
+        }
+        
+        .evento-subtitulo {
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .adicional-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .evento-botones {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .evento-header,
+        .evento-contenido {
+            padding: 20px;
+        }
+        
+        .evento-titulo {
+            font-size: 1.6rem;
+        }
+        
+        .info-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .info-icon {
+            margin: 0 auto 10px;
+        }
+    }
+</style>
+
+<?php
+// Incluir footer
+include 'footer.php';
+?>
+    
