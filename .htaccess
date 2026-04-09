@@ -1,0 +1,120 @@
+# ============================================================
+# CONFIGURACIÓN BÁSICA
+# ============================================================
+RewriteEngine On
+RewriteBase /
+
+# No redirigir carpetas del sistema (DEBE IR PRIMERO)
+RewriteRule ^(api|admin_tablas|dashboard|de|en|fr|zh)/ - [L]
+
+# Excepciones: Archivos PHP directamente accesibles
+RewriteRule ^.*\.php$ - [L]
+
+# ============================================================
+# 1. CORRECCIONES CRÍTICAS (LA CASERÍA Y BUCLES)
+# ============================================================
+RewriteRule ^alojamiento/la-caseria-1/?$ /alojamiento/la-caseria [R=301,L]
+
+# ============================================================
+# 2. REDIRECCIONES ESPECÍFICAS DE ALOJAMIENTOS
+# ============================================================
+RewriteRule ^alojamiento/puerta-del-r-o-lobos-2/?$ /alojamiento/puerta-del-rio-lobos-2 [R=301,L]
+RewriteRule ^alojamiento/puerta-del-r-o-lobos-ii/?$ /alojamiento/puerta-del-rio-lobos-ii [R=301,L]
+RewriteRule ^alojamiento/villa-mar-a/?$ /alojamiento/villa-maria [R=301,L]
+RewriteRule ^alojamiento/casa-del-t-o-marcelo/?$ /alojamiento/casa-del-tio-marcelo [R=301,L]
+RewriteRule ^alojamiento/puerta-del-rio-lobos/?$ /alojamiento/la-puerta-del-rio-lobos-1 [R=301,L]
+RewriteRule ^alojamiento/puerta-del-r-o-lobos/?$ /alojamiento/la-puerta-del-rio-lobos-1 [R=301,L]
+RewriteRule ^alojamiento/viriato-i/?$ /alojamiento/viriato-1-zamora [R=301,L]
+RewriteRule ^alojamiento/viriato-1/?$ /alojamiento/viriato-1-zamora [R=301,L]
+RewriteRule ^alojamiento/el-balcon-del-duero-1/?$ /alojamiento/el-balcon-del-duero [R=301,L]
+RewriteRule ^alojamiento/viriato-3-zamora/?$ /alojamiento/viriato-3 [R=301,L]
+RewriteRule ^alojamiento/casa-media-lua-allariz-turismo-rural-en-requeixo-de-valverde-ourense/?$ /alojamiento/casa-media-lua [R=301,L]
+RewriteRule ^alojamiento/a-los-ojos-del-r-o-duero/?$ /alojamiento/a-los-ojos-del-rio-duero [R=301,L]
+RewriteRule ^alojamiento/casa-trabancos/?$ /alojamiento/casa-trabancos-valladolid [R=301,L]
+RewriteRule ^alojamiento/a-casi-a-dos-laranxos/?$ /alojamiento/a-casina-dos-laranxos [R=301,L]
+RewriteRule ^alojamiento/casa-los-cuncos/?$ /alojamiento/casa-los-cuncos-cobreros [R=301,L]
+RewriteRule ^alojamiento/paleol-tico-rural/?$ /alojamiento/paleolitico-rural [R=301,L]
+RewriteRule ^alojamiento/el-rincon-en-el-cabaco/?$ /alojamiento/rincon-el-cabaco-Salamanca [R=301,L]
+RewriteRule ^alojamiento/rincon-el-cabaco-Salamanc/?$ /alojamiento/rincon-el-cabaco-Salamanca [R=301,L]
+RewriteRule ^alojamiento/la-posada-de-tamaj-n/?$ /alojamiento/la-posada-de-tamajon [R=301,L]
+RewriteRule ^alojamiento/le-n-confort-centro/?$ /alojamiento/leon-confort-centro [R=301,L]
+RewriteRule ^alojamiento/casa-tur-stica-maderavieja/?$ /alojamiento/casa-turistica-maderavieja [R=301,L]
+RewriteRule ^alojamiento/arco-le-n/?$ /alojamiento/arco-leon [R=301,L]
+RewriteRule ^alojamiento/casa-cha-n/?$ /alojamiento/casa-chain [R=301,L]
+RewriteRule ^alojamiento/piso-ca-o-badillo-pl-mayor-parking/?$ /alojamiento/piso-cano-badillo-con-parkin [R=301,L]
+RewriteRule ^alojamiento/casa-fr-mista/?$ /alojamiento/casa-fromista [R=301,L]
+RewriteRule ^alojamiento/en-el-coraz-n-de-zamora/?$ /alojamiento/en-el-corazon-de-zamora [R=301,L]
+RewriteRule ^alojamiento/apartamento-el-patio-de-miren-confort-y-terraza-privada-en-zamora/?$ /alojamiento/el-patio-de-miren [R=301,L]
+RewriteRule ^alojamiento/canada-real-sigueruelo-turismo-rural-en-la-sierra-de-segovia/?$ /alojamiento/canada-real [R=301,L]
+RewriteRule ^alojamiento/alojamiento-rural-el-mirador-del-cid-en-mecerreyes-burgos/?$ /alojamiento/alojamiento-el-mirador-del-cid [R=301,L]
+RewriteRule ^alojamiento/mansi\%C3\%B3n\%20de\%20la\%20adrada/?$ /alojamiento/mansion-de-la-adrada [R=301,L]
+
+# ============================================================
+# 3. REDIRECCIONES ESPECÍFICAS DE LUGARES
+# ============================================================
+RewriteRule ^lugar/castroviejo-duruelo/?$ /lugar/castroviejo-duruelo-de-la-sierra [R=301,L]
+RewriteRule ^lugar/restaurante_baluarte/?$ /lugar/restaurante-baluarte [R=301,L]
+RewriteRule ^lugar/las-piscinas/?$ /lugar/las-piscinas-tinto-y-lena-burgo-de-osma [R=301,L]
+RewriteRule ^lugar/home/?$ /lugares-interes-paginacion.html [R=301,L]
+RewriteRule ^lugares-interes/restaurante-argaela/?$ /lugar/restaurante-argaela-burgo-de-osma [R=301,L]
+RewriteRule ^lugar/restaurante-argaela/?$ /lugar/restaurante-argaela-burgo-de-osma [R=301,L]
+RewriteRule ^lugar/aviso-legal\.html$ /aviso-legal.html [R=301,L]
+RewriteRule ^lugar/avenida/?$ /lugar/avenida-burgo-de-osma [R=301,L]
+RewriteRule ^lugar/lagunas-urbion/?$ /lugar/reserva-natural-de-las-lagunas-de-urbion-vinuesa [R=301,L]
+RewriteRule ^lugar/bodegas-la-loba-matanza-de-soria/?$ /lugar/bodegas-la-loba [R=301,L]
+RewriteRule ^lugar/puente-real/?$ /lugar/puente-real-el-burgo-de-osma [R=301,L]
+RewriteRule ^lugar/taberna-mercedes/?$ /lugar/taberna-mercedes-soria [R=301,L]
+RewriteRule ^lugar/berlanga-duero-pueblo/?$ /lugar/berlanga-de-duero [R=301,L]
+
+# ============================================================
+# 4. PARÁMETROS ANTIGUOS (?slug= o ?id=)
+# ============================================================
+RewriteCond %{THE_REQUEST} \s/+lugar-interes\.html\?slug=([^\s&]+) [NC]
+RewriteRule ^ /lugar/%1? [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+detalle\.html\?slug=(alojamiento/)?([^\s&]+) [NC]
+RewriteRule ^ /alojamiento/%2? [R=301,L]
+
+RewriteCond %{QUERY_STRING} ^id=(.+)$ [NC]
+RewriteRule ^(alojamiento|lugar-interes|actividad)\.html$ /api/external-id-redirect.php?type=$1&id=%1 [R=302,L]
+
+# ============================================================
+# 5. LIMPIEZA DE URLs ANTIGUAS
+# ============================================================
+RewriteRule ^alojamiento/lugar/(.+)$ /alojamiento/$1 [R=301,L]
+RewriteRule ^alojamientos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
+RewriteRule ^alojamientos-turisticos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
+RewriteRule ^lugares-interes/([^/]+)/?$ /lugar/$1 [R=301,L]
+
+# ============================================================
+# 6. MOTOR INTERNO (No cambian la URL del navegador)
+# ============================================================
+RewriteRule ^alojamiento/([^/]+)/?$ redirect_manager.php?type=alojamiento&slug=$1 [L,QSA]
+RewriteRule ^lugar/([^/]+)/?$ redirect_manager.php?type=lugar&slug=$1 [L,QSA]
+RewriteRule ^actividad/([^/]+)/?$ redirect_manager.php?type=actividad&slug=$1 [L,QSA]
+RewriteRule ^evento/([^/]+)/?$ evento-detalle.html?slug=$1 [L,QSA]
+
+# ============================================================
+# 7. REGLA CATCH-ALL (Solo para slugs limpios, no archivos)
+# ============================================================
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/(lugar|alojamiento|actividad|evento|api|admin_tablas|dashboard|de|en|fr|zh)/ [NC]
+RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|php|html)$ [NC]
+RewriteRule ^([^/]+)/?$ /lugar/$1 [R=301,L]
+
+# ============================================================
+# 8. PÁGINAS OBSOLETAS Y 410
+# ============================================================
+RewriteRule ^evento/(asdg|test)/?$ - [G,L]
+RewriteRule ^my-account/?$ / [R=301,L]
+RewriteRule ^about/?$ / [R=301,L]
+RewriteRule ^home/?$ / [R=301,L]
+
+# URLs eliminadas
+RewriteRule ^8017-2/?$ - [G,L]
+RewriteRule ^alojamiento/8017/?$ - [G,L]
+RewriteRule ^lugar/antik-soria/?$ - [G,L]
+
+RewriteCond %{QUERY_STRING} ^slug=8017$ [NC]
+RewriteRule ^detalle\.html$ - [G,L]

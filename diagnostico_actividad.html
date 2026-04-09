@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Página de Actividad</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        h1 { color: #2c5f2d; }
+        h2 { color: #333; margin-top: 30px; }
+        .test { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .warning { color: orange; font-weight: bold; }
+        pre { background: #eee; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        button { background: #2c5f2d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #1a3a1c; }
+    </style>
+</head>
+<body>
+    <h1>Diagnóstico de Página de Actividad</h1>
+    
+    <div class="test">
+        <h2>Prueba 1: Verificar JavaScript</h2>
+        <p id="test1">Comprobando detección de slug...</p>
+        <button onclick="runTest1()">Ejecutar Prueba 1</button>
+    </div>
+    
+    <div class="test">
+        <h2>Prueba 2: Verificar API de Actividad</h2>
+        <p id="test2">Comprobando conexión a API...</p>
+        <button onclick="runTest2()">Ejecutar Prueba 2</button>
+    </div>
+    
+    <div class="test">
+        <h2>Prueba 3: Verificar URLs de Actividad</h2>
+        <p id="test3">Comprobando diferentes formatos de URL...</p>
+        <button onclick="runTest3()">Ejecutar Prueba 3</button>
+    </div>
+    
+    <div class="test">
+        <h2>Prueba 4: Verificar .htaccess y Rewrite Rules</h2>
+        <p id="test4">Comprobando reglas de reescritura...</p>
+        <button onclick="runTest4()">Ejecutar Prueba 4</button>
+    </div>
+    
+    <h2>Resumen de Problemas Conocidos y Soluciones</h2>
+    <ul>
+        <li><strong>Problema:</strong> El archivo <code>actividad.html</code> no detectaba correctamente el slug de URLs limpias.</li>
+        <li><strong>Solución:</strong> Se actualizó el JavaScript para detectar slugs desde: <code>window.currentSlug</code>, parámetros URL, y extracción de path.</li>
+        
+        <li><strong>Problema:</strong> Falta de JavaScript para cargar y mostrar datos de actividad.</li>
+        <li><strong>Solución:</strong> Se implementó JavaScript completo para cargar datos desde <code>/api/actividad.php</code>.</li>
+        
+        <li><strong>Problema:</strong> El archivo <code>actividad-slug.php</code> consultaba la tabla incorrecta (<code>activities</code> en lugar de <code>tourist_activities</code>).</li>
+        <li><strong>Solución:</strong> Se corrigió la consulta SQL para usar la tabla correcta.</li>
+        
+        <li><strong>Problema:</strong> Falta de archivo <code>.htaccess</code> para manejar URLs limpias.</li>
+        <li><strong>Solución:</strong> Se creó el archivo <code>.htaccess</code> con las reglas de reescritura correctas.</li>
+    </ul>
+    
+    <h2>Instrucciones para el Servidor</h2>
+    <ol>
+        <li>Asegurarse de que el archivo <code>.htaccess</code> esté en el directorio raíz del sitio web.</li>
+        <li>Verificar que el módulo <code>mod_rewrite</code> de Apache esté habilitado.</li>
+        <li>Confirmar que las actividades existan en la tabla <code>tourist_activities</code> de la base de datos.</li>
+        <li>Verificar que las actividades tengan <code>is_active = 1</code> y <code>moderation_status = 'approved'</code>.</li>
+        <li>Probar las URLs:
+            <ul>
+                <li><code>https://www.rutasrurales.io/actividad/kayak-cuerda-del-pozo</code></li>
+                <li><code>https://www.rutasrurales.io/actividad/micologia-picos-urbion</code></li>
+                <li><code>https://www.rutasrurales.io/actividad.html?slug=kayak-cuerda-del-pozo</code> (formato antiguo)</li>
+            </ul>
+        </li>
+    </ol>
+
+    <script>
+        function runTest1() {
+            const test1 = document.getElementById('test1');
+            test1.innerHTML = 'Ejecutando prueba de detección de slug...';
+            
+            // Simular diferentes escenarios de URL
+            const testCases = [
+                { name: 'URL limpia', path: '/actividad/kayak-cuerda-del-pozo', expected: 'kayak-cuerda-del-pozo' },
+                { name: 'URL con parámetros', search: '?slug=kayak-cuerda-del-pozo', expected: 'kayak-cuerda-del-pozo' },
+                { name: 'URL con parámetros y más', search: '?slug=kayak-cuerda-del-pozo&other=param', expected: 'kayak-cuerda-del-pozo' }
+            ];
+            
+            let results = [];
+            
+            testCases.forEach(testCase => {
+                // Simular window.location
+                const mockLocation = {
+                    pathname: testCase.path || '/actividad.html',
+                    search: testCase.search || ''
+                };
+                
+                let slug = '';
+                
+                // Prueba 1: Extraer de pathname
+                if (mockLocation.pathname) {
+                    const match = mockLocation.pathname.match(/\/actividad\/([^\/]+)/);
+                    if (match) {
+                        slug = match[1];
+                    }
+                }
+                
+                // Prueba 2: Extraer de search params
+                if (!slug && mockLocation.search) {
+                    const urlParams = new URLSearchParams(mockLocation.search);
+                    slug = urlParams.get('slug');
+                }
+                
+                const passed = slug === testCase.expected;
+                results.push(`${testCase.name}: ${passed ? '✓' : '✗'} (obtenido: "${slug}", esperado: "${testCase.expected}")`);
+            });
+            
+            test1.innerHTML = '<strong>Resultados de detección de slug:</strong><br>' + results.join('<br>');
+        }
+        
+        function runTest2() {
+            const test2 = document.getElementById('test2');
+            test2.innerHTML = 'Probando conexión a API...';
+            
+            // Probar la API de actividad
+            fetch('/api/actividad.php?slug=kayak-cuerda-del-pozo')
+                .then(response => {
+                    test2.innerHTML = `Estado de API: ${response.status} ${response.statusText}<br>`;
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        test2.innerHTML += `<span class="success">✓ API responde correctamente</span><br>`;
+                        test2.innerHTML += `Actividad: ${data.data.nombre || 'Sin nombre'}<br>`;
+                        test2.innerHTML += `Slug: ${data.data.slug || 'Sin slug'}`;
+                    } else {
+                        test2.innerHTML += `<span class="error">✗ API devuelve error: ${data.message || 'Error desconocido'}</span>`;
+                    }
+                })
+                .catch(error => {
+                    test2.innerHTML += `<span class="error">✗ Error de conexión: ${error.message}</span>`;
+                });
+        }
+        
+        function runTest3() {
+            const test3 = document.getElementById('test3');
+            test3.innerHTML = 'Probando diferentes formatos de URL...';
+            
+            // Probar la página actual
+            const currentUrl = window.location.href;
+            const isActivityPage = currentUrl.includes('/actividad/');
+            
+            test3.innerHTML = `URL actual: ${currentUrl}<br>`;
+            test3.innerHTML += `¿Es página de actividad? ${isActivityPage ? '✓ Sí' : '✗ No'}<br>`;
+            
+            // Verificar si hay contenido cargado
+            const contentElement = document.getElementById('actividadContent');
+            if (contentElement) {
+                const isVisible = contentElement.style.display !== 'none';
+                test3.innerHTML += `Contenido de actividad: ${isVisible ? '✓ Visible' : '✗ Oculto'}<br>`;
+                
+                const loadingElement = document.getElementById('loading');
+                const errorElement = document.getElementById('error');
+                
+                if (loadingElement && loadingElement.style.display !== 'none') {
+                    test3.innerHTML += `Estado: <span class="warning">Cargando...</span>`;
+                } else if (errorElement && errorElement.style.display !== 'none') {
+                    test3.innerHTML += `Estado: <span class="error">Error: ${errorElement.textContent}</span>`;
+                } else if (isVisible) {
+                    test3.innerHTML += `Estado: <span class="success">✓ Contenido cargado</span>`;
+                }
+            } else {
+                test3.innerHTML += `Contenido de actividad: <span class="error">✗ Elemento no encontrado</span>`;
+            }
+        }
+        
+        function runTest4() {
+            const test4 = document.getElementById('test4');
+            test4.innerHTML = 'Probando reglas de reescritura...';
+            
+            // Probar si .htaccess está funcionando
+            // Intentar acceder a una URL que debería redirigir
+            fetch('/actividad/test-rewrite-123', { method: 'HEAD' })
+                .then(response => {
+                    test4.innerHTML = `Prueba de reescritura: ${response.status} ${response.statusText}<br>`;
+                    
+                    // Verificar headers para ver si hay redirección
+                    const contentType = response.headers.get('content-type');
+                    const location = response.headers.get('location');
+                    
+                    if (location) {
+                        test4.innerHTML += `<span class="success">✓ Redirección detectada: ${location}</span>`;
+                    } else if (contentType && contentType.includes('text/html')) {
+                        test4.innerHTML += `<span class="success">✓ Página HTML servida (rewrite funcionando)</span>`;
+                    } else {
+                        test4.innerHTML += `<span class="warning">⚠ No se pudo determinar el estado de reescritura</span>`;
+                    }
+                })
+                .catch(error => {
+                    test4.innerHTML += `<span class="error">✗ Error de prueba: ${error.message}</span>`;
+                });
+        }
+        
+        // Ejecutar pruebas automáticamente si estamos en una página de actividad
+        if (window.location.pathname.includes('/actividad/')) {
+            setTimeout(() => {
+                runTest3();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
