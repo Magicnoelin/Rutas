@@ -1,7 +1,7 @@
 <?php
 /**
  * Verificar versión de archivos
- * Accede a: https://www.rutasrurales.io/api/verify_files.php
+ * Accede a: https://rutasurales.io/api/verify_files.php
  */
 
 header('Content-Type: application/json; charset=utf-8');

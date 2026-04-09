@@ -1,7 +1,7 @@
 <?php
 /**
  * Script de diagnóstico para tokens de recuperación
- * Accede a: https://www.rutasrurales.io/api/test_reset_token.php?email=TU_EMAIL
+ * Accede a: https://rutasurales.io/api/test_reset_token.php?email=TU_EMAIL
  */
 
 require_once 'config.php';

@@ -23,9 +23,9 @@ define('RECAPTCHA_SECRET_KEY', '6LeHyRgsAAAAAHMWHsn2Som5LjQxDCFIsKqv0O2F');
 // CORS configuration
 $allowed_origins = [
     'https://rutasrurales.io',
-    'https://www.rutasrurales.io',
+    'https://rutasurales.io',
     'http://rutasrurales.io',
-    'http://www.rutasrurales.io'
+    'http://rutasurales.io'
 ];
 
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';

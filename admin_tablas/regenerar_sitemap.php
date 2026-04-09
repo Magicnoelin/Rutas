@@ -2,7 +2,7 @@
 /**
  * DISPARADOR MANUAL - Regenerar Sitemap i18n
  * 
- * URL: https://www.rutasrurales.io/admin_tablas/regenerar_sitemap.php
+ * URL: https://rutasurales.io/admin_tablas/regenerar_sitemap.php
  * 
  * Úsalo después de insertar/modificar traducciones en cultural_events_trads.
  * Protegido por el .htaccess/.htpasswd de admin_tablas.
@@ -76,7 +76,7 @@ $ok = !empty($logLines) && !preg_grep('/^ERROR/', $logLines);
     
     <div class="mt-4 text-muted small">
         <p><strong>Tip:</strong> Guarda esta URL en favoritos para regenerar rápidamente después de insertar traducciones:</p>
-        <code>https://www.rutasrurales.io/admin_tablas/regenerar_sitemap.php</code>
+        <code>https://rutasurales.io/admin_tablas/regenerar_sitemap.php</code>
     </div>
     
 </div>

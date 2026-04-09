@@ -170,7 +170,7 @@ try {
         : 'Entrada gratuita';
 
     // Canonical URL
-    $canonicalUrl = 'https://www.rutasrurales.io/lugar-interes.html?slug=' . $lugar['slug'];
+    $canonicalUrl = 'https://rutasurales.io/lugar-interes.html?slug=' . $lugar['slug'];
 
     // Construir respuesta
     $response['success'] = true;
