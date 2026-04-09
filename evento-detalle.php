@@ -39,7 +39,7 @@ $evento_provincia = '';
 $evento_fecha = '';
 $evento_organizador = '';
 $evento_precio = '';
-$evento_descripcion = 'Estamos actualizando la información detallada de este evento. Pronto tendrás todos los detalles disponibles.';
+$evento_descripcion = 'Descubre este evento cultural único en Rutas Rurales. Una experiencia inolvidable que combina tradición, cultura y gastronomía local.';
 $evento_municipality = '';
 
 // Intentar cargar datos REALES desde la API
