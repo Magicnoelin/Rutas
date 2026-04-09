@@ -57,13 +57,278 @@
             </div>
     </main>
     <script>
-        // Original code remains largely unchanged except for URL handling
-        const urlParams = new URLSearchParams(window.location.search);
-        let slug = urlParams.get('slug');
+        // Usar slug inyectado por PHP si existe, sino obtener de URL
+        let slug = window.currentSlug || '';
+
+        if (!slug) {
+            const urlParams = new URLSearchParams(window.location.search);
+            slug = urlParams.get('slug');
+            console.log('Slug from URL params:', slug);
+        }
+
+        if (!slug) {
+            const path = window.location.pathname;
+            const match = path.match(/\/actividad\/([^\/]+)/);
+            if (match) {
+                slug = match[1];
+                console.log('Slug from clean URL:', slug);
+            }
+        }
+
+        console.log('Final slug:', slug);
 
         // SUGGESTED EDIT: Correct domain to https://rutasrurales.io/
         if (window.location.protocol === 'http:') {
             window.location.replace(window.location.href.replace("http:", "https:"));
+        }
+
+        // Cargar datos de la actividad si hay un slug
+        if (slug) {
+            loadActivityData(slug);
+        } else {
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').textContent = 'No se pudo identificar la actividad.';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        async function loadActivityData(slug) {
+            try {
+                console.log('Cargando actividad con slug:', slug);
+                const response = await fetch('/api/actividad.php?slug=' + encodeURIComponent(slug));
+                
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    displayActivityData(result.data);
+                } else {
+                    throw new Error(result.message || 'Actividad no encontrada');
+                }
+            } catch (error) {
+                console.error('Error cargando actividad:', error);
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error al cargar la actividad: ' + error.message;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function displayActivityData(activity) {
+            // Ocultar loading y mostrar contenido
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('actividadContent').style.display = 'block';
+            
+            // Actualizar título de la página
+            if (activity.nombre) {
+                document.title = activity.nombre + ' | Rutas Rurales';
+            }
+            
+            // Llenar campos de información
+            if (activity.descripcion) {
+                document.getElementById('actividadDescripcion').innerHTML = activity.descripcion;
+            }
+            
+            // Precios
+            if (activity.precio_adulto || activity.precio_nino || activity.precio_grupo) {
+                const priceElement = document.createElement('p');
+                let priceText = '<strong>Precios:</strong> ';
+                if (activity.precio_adulto) priceText += `Adulto: ${activity.precio_adulto} `;
+                if (activity.precio_nino) priceText += `Niño: ${activity.precio_nino} `;
+                if (activity.precio_grupo) priceText += `Grupo: ${activity.precio_grupo}`;
+                priceElement.innerHTML = priceText;
+                document.getElementById('secInformacion').appendChild(priceElement);
+            }
+            
+            if (activity.duracion) {
+                const durationElement = document.createElement('p');
+                durationElement.innerHTML = `<strong>Duración:</strong> ${activity.duracion}`;
+                document.getElementById('secInformacion').appendChild(durationElement);
+            }
+            
+            if (activity.dificultad) {
+                const difficultyElement = document.createElement('p');
+                difficultyElement.innerHTML = `<strong>Dificultad:</strong> ${activity.dificultad}`;
+                document.getElementById('secInformacion').appendChild(difficultyElement);
+            }
+            
+            // Punto de encuentro
+            if (activity.punto_encuentro) {
+                document.getElementById('actividadPuntoEncuentro').textContent = activity.punto_encuentro;
+            }
+            
+            // Temporadas, días y horario (JSON fields)
+            if (activity.temporadas && Array.isArray(activity.temporadas)) {
+                document.getElementById('actividadTemporadas').textContent = activity.temporadas.join(', ');
+            }
+            
+            if (activity.dias_disponibles && Array.isArray(activity.dias_disponibles)) {
+                document.getElementById('actividadDias').textContent = activity.dias_disponibles.join(', ');
+            }
+            
+            if (activity.horario) {
+                if (typeof activity.horario === 'object') {
+                    let horarioText = '';
+                    for (const [key, value] of Object.entries(activity.horario)) {
+                        horarioText += `${key}: ${value}\n`;
+                    }
+                    document.getElementById('actividadHorario').textContent = horarioText;
+                } else {
+                    document.getElementById('actividadHorario').textContent = activity.horario;
+                }
+            }
+            
+            // Campos JSON adicionales
+            if (activity.requisitos && Array.isArray(activity.requisitos)) {
+                document.getElementById('actividadRequisitos').textContent = activity.requisitos.join(', ');
+            }
+            
+            if (activity.que_llevar && Array.isArray(activity.que_llevar)) {
+                document.getElementById('actividadQueLlevar').textContent = activity.que_llevar.join(', ');
+            }
+            
+            if (activity.equipo_proporcionado && Array.isArray(activity.equipo_proporcionado)) {
+                document.getElementById('actividadEquipo').textContent = activity.equipo_proporcionado.join(', ');
+            }
+            
+            // Campos de incluye/no incluye
+            if (activity.incluye) {
+                document.getElementById('actividadIncluye').textContent = activity.incluye;
+            }
+            
+            if (activity.no_incluye) {
+                document.getElementById('actividadNoIncluye').textContent = activity.no_incluye;
+            }
+                    document.getElementById('btnContacto').style.display = 'inline-block';
+                    document.getElementById('btnContacto').onclick = () => {
+                        let contactInfo = '';
+                        if (activity.telefono) contactInfo += `Teléfono: ${activity.telefono}\n`;
+                        if (activity.email) contactInfo += `Email: ${activity.email}\n`;
+                        if (activity.web) contactInfo += `Web: ${activity.web}`;
+                        alert('Información de contacto:\n\n' + contactInfo);
+                    };
+                }
+            }
+            
+            // Cargar imágenes si existen
+            loadActivityImages(activity);
+            
+            // Mostrar mapa si hay coordenadas
+            if (activity.latitud && activity.longitud) {
+                showActivityMap(activity.latitud, activity.longitud, activity.nombre);
+            }
+        }
+
+        function loadActivityImages(activity) {
+            const images = [];
+            // Buscar fotos en diferentes campos posibles
+            if (activity.fotos && Array.isArray(activity.fotos)) {
+                images.push(...activity.fotos.filter(img => img));
+            }
+            // También buscar en campos individuales (nombres en español)
+            for (let i = 1; i <= 4; i++) {
+                const photoKey = `foto${i}`;
+                if (activity[photoKey]) {
+                    images.push(activity[photoKey]);
+                }
+            }
+            // También buscar en campos en inglés por compatibilidad
+            for (let i = 1; i <= 4; i++) {
+                const photoKey = `photo${i}`;
+                if (activity[photoKey]) {
+                    images.push(activity[photoKey]);
+                }
+            }
+            
+            // Eliminar duplicados
+            const uniqueImages = [...new Set(images.filter(img => img))];
+            
+            if (uniqueImages.length > 0) {
+                const carouselContainer = document.querySelector('.actividad-header');
+                carouselContainer.innerHTML = '';
+                
+                uniqueImages.forEach((imgSrc, index) => {
+                    const img = document.createElement('img');
+                    img.src = imgSrc;
+                    img.alt = activity.nombre || activity.name || 'Imagen de actividad';
+                    img.style.width = '100%';
+                    img.style.height = '300px';
+                    img.style.objectFit = 'cover';
+                    img.style.display = index === 0 ? 'block' : 'none';
+                    img.className = 'activity-image';
+                    carouselContainer.appendChild(img);
+                });
+                
+                // Si hay más de una imagen, agregar navegación
+                if (uniqueImages.length > 1) {
+                    addImageNavigation(uniqueImages.length);
+                }
+            }
+        }
+
+        function addImageNavigation(totalImages) {
+            const carouselContainer = document.querySelector('.actividad-header');
+            const navDiv = document.createElement('div');
+            navDiv.style.position = 'absolute';
+            navDiv.style.top = '50%';
+            navDiv.style.width = '100%';
+            navDiv.style.display = 'flex';
+            navDiv.style.justifyContent = 'space-between';
+            navDiv.style.padding = '0 1rem';
+            navDiv.style.transform = 'translateY(-50%)';
+            
+            const prevButton = document.createElement('button');
+            prevButton.innerHTML = '<';
+            prevButton.onclick = () => navigateImages(-1);
+            prevButton.style.background = 'rgba(255,255,255,0.9)';
+            prevButton.style.color = '#2c5f2d';
+            prevButton.style.border = 'none';
+            prevButton.style.width = '40px';
+            prevButton.style.height = '40px';
+            prevButton.style.borderRadius = '50%';
+            prevButton.style.cursor = 'pointer';
+            
+            const nextButton = document.createElement('button');
+            nextButton.innerHTML = '>';
+            nextButton.onclick = () => navigateImages(1);
+            nextButton.style.background = 'rgba(255,255,255,0.9)';
+            nextButton.style.color = '#2c5f2d';
+            nextButton.style.border = 'none';
+            nextButton.style.width = '40px';
+            nextButton.style.height = '40px';
+            nextButton.style.borderRadius = '50%';
+            nextButton.style.cursor = 'pointer';
+            
+            navDiv.appendChild(prevButton);
+            navDiv.appendChild(nextButton);
+            carouselContainer.appendChild(navDiv);
+            
+            let currentImageIndex = 0;
+            
+            function navigateImages(direction) {
+                const images = document.querySelectorAll('.activity-image');
+                images[currentImageIndex].style.display = 'none';
+                currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
+                images[currentImageIndex].style.display = 'block';
+            }
+        }
+
+        function showActivityMap(lat, lng, title) {
+            const mapContainer = document.getElementById('actividadMapa');
+            mapContainer.innerHTML = `
+                <iframe 
+                    width="100%" 
+                    height="300" 
+                    frameborder="0" 
+                    style="border:0; border-radius: 8px;" 
+                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${lat},${lng}&zoom=15" 
+                    allowfullscreen>
+                </iframe>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                    Ubicación aproximada de la actividad
+                </p>
+            `;
         }
     </script>
 </body>

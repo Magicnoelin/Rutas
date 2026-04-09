@@ -26,7 +26,7 @@ try {
     
     $conn->set_charset("utf8mb4");
     
-    $sql = "SELECT * FROM activities WHERE slug = ?";
+    $sql = "SELECT * FROM tourist_activities WHERE slug = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $slug);
     $stmt->execute();
