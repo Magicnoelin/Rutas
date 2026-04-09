@@ -86,7 +86,7 @@ $page_description = $page_description ?? $t['description'];
     
     <meta name="description" content="<?php echo $page_description; ?>" />
     <title><?php echo $page_title ?? $t['title']; ?></title>
-    <link rel="canonical" href="<?php echo $page_canonical ?? 'https://www.rutasrurales.io' . $_SERVER['REQUEST_URI']; ?>">
+    <link rel="canonical" href="<?php echo $page_canonical ?? 'https://rutasurales.io' . $_SERVER['REQUEST_URI']; ?>">
     
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
     <link rel="stylesheet" href="/styles.css">
