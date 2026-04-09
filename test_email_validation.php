@@ -89,7 +89,7 @@ echo "3. Teléfonos se limpian de caracteres no permitidos\n";
 echo "4. Campos demasiado largos se truncarán automáticamente\n";
 echo "\n";
 echo "Para probar en el formulario:\n";
-echo "1. Ve a https://www.rutasrurales.io/admin_tablas/actividades_editar.php?id=15\n";
+echo "1. Ve a https://rutasurales.io/admin_tablas/actividades_editar.php?id=15\n";
 echo "2. Rellena el campo 'Email de Contacto' con un email válido\n";
 echo "3. Rellena el campo 'Teléfono de Contacto'\n";
 echo "4. Haz clic en 'Guardar Todo'\n";

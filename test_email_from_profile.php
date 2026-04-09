@@ -48,7 +48,7 @@ echo "4. ✅ Más fácil de mantener: Un solo lugar para actualizar emails\n";
 echo "5. ✅ Mejor experiencia: Los usuarios ven su email actualizado automáticamente\n\n";
 
 echo "=== PARA PROBAR ===\n";
-echo "1. Ve a: https://www.rutasrurales.io/admin_tablas/actividades_editar.php?id=15\n";
+echo "1. Ve a: https://rutasurales.io/admin_tablas/actividades_editar.php?id=15\n";
 echo "2. Verifica que NO hay campo 'Email de Contacto' para editar\n";
 echo "3. Verifica que SÍ hay información del email del usuario creador\n";
 echo "4. Haz cambios en otros campos y guarda\n";

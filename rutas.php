@@ -1,6 +1,6 @@
 <?php 
     $page_title = "Rutas Cercanas | Rutas Rurales";
-    $page_canonical = "https://www.rutasrurales.io/rutas.php";
+    $page_canonical = "https://rutasurales.io/rutas.php";
     include 'header.php'; 
     
     // Parámetros URL para pre-seleccionar valores

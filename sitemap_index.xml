@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>https://www.rutasrurales.io/sitemap-estatico.xml</loc>
+    <loc>https://rutasurales.io/sitemap-estatico.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://www.rutasrurales.io/sitemap-alojamientos.xml</loc>
+    <loc>https://rutasurales.io/sitemap-alojamientos.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://www.rutasrurales.io/sitemap-lugares.xml</loc>
+    <loc>https://rutasurales.io/sitemap-lugares.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://www.rutasrurales.io/sitemap-actividades.xml</loc>
+    <loc>https://rutasurales.io/sitemap-actividades.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://www.rutasrurales.io/sitemap-eventos.php</loc>
+    <loc>https://rutasurales.io/sitemap-eventos.php</loc>
   </sitemap>
   <sitemap>
-    <loc>https://www.rutasrurales.io/sitemap-eventos-i18n.xml</loc>
+    <loc>https://rutasurales.io/sitemap-eventos-i18n.xml</loc>
   </sitemap>
 </sitemapindex>
