@@ -178,7 +178,7 @@
             
             try {
                 // Hacer petición a la API para obtener datos del evento
-                const response = await fetch(`/api/actividad-slug.php?slug=${encodeURIComponent(slug)}&type=cultural_events`);
+                const response = await fetch(`/api/evento-slug.php?slug=${encodeURIComponent(slug)}`);
                 const data = await response.json();
                 
                 if (data.success && data.data) {
