@@ -92,7 +92,12 @@ RewriteRule ^lugares-interes/([^/]+)/?$ /lugar/$1 [R=301,L]
 RewriteRule ^alojamiento/([^/]+)/?$ redirect_manager.php?type=alojamiento&slug=$1 [L,QSA]
 RewriteRule ^lugar/([^/]+)/?$ redirect_manager.php?type=lugar&slug=$1 [L,QSA]
 RewriteRule ^actividad/([^/]+)/?$ redirect_manager.php?type=actividad&slug=$1 [L,QSA]
-RewriteRule ^evento/([^/]+)/?$ evento-detalle.html?slug=$1 [L,QSA]
+
+# Eventos con idiomas: /es/evento/slug, /de/evento/slug, etc.
+RewriteRule ^(es|de|en|fr|zh)/evento/([^/]+)/?$ evento-detalle.php?slug=$2&lang=$1 [L,QSA]
+
+# Eventos sin idioma (por defecto español)
+RewriteRule ^evento/([^/]+)/?$ evento-detalle.php?slug=$1 [L,QSA]
 
 # ============================================================
 # 7. REGLA CATCH-ALL (Solo para slugs limpios, no archivos)
