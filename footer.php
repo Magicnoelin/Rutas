@@ -160,7 +160,7 @@ $lang_prefix = ($lang != 'es') ? '/' . $lang : '';
 
 <style>
 .footer {
-    background-color: #2c5f2d;
+    background-color: var(--primary-color);
     color: white;
     padding: 25px 15px;
     font-family: 'Montserrat', sans-serif;

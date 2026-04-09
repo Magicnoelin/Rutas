@@ -179,7 +179,7 @@ $page_description = $page_description ?? $t['description'];
                 top: 0 !important;
                 width: 100% !important;
                 z-index: 9999 !important;
-                background-color: #2c5f2d !important;
+                background-color: #2F5233 !important;
             }
             
             .navbar .container {

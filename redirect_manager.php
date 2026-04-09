@@ -60,7 +60,7 @@ if (isset($gone[$type]) && in_array($slug, $gone[$type])) {
     <title>Alojamiento no disponible - Rutas Rurales</title>
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
     <style>
-        :root { --primary-color: #2c5f2d; }
+        :root { --primary-color: #2F5233; }
         body { text-align: center; padding: 50px; font-family: 'Poppins', sans-serif, system-ui; color: #333; background-color: #f9f9f9; margin: 0; }
         .container { max-width: 600px; margin: 0 auto; }
         h1 { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; }
