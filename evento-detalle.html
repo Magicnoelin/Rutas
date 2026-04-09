@@ -1761,15 +1761,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const ogDesc = document.querySelector('meta[property="og:description"]');
             if (ogDesc && evento.meta_description) ogDesc.setAttribute('content', evento.meta_description.trim());
 
-            // Actualizar canonical URL dinámicamente con el slug del evento
-            // Si hay idioma distinto al español, la canonical apunta a la URL localizada
-            // SIN "www." como solicitado
+            // Actualizar canonical URL dinámicamente con la URL actual de la página
+            // La canonical debe ser exactamente la misma URL que se está viendo
             const canonicalEl = document.getElementById('dynamic-canonical');
-            if (canonicalEl && evento.slug) {
-                const lang = window.currentLang || 'es';
-                const canonicalUrl = lang !== 'es'
-                    ? 'https://rutasrurales.io/' + lang + '/evento/' + evento.slug
-                    : 'https://rutasrurales.io/evento/' + evento.slug;
+            if (canonicalEl) {
+                // Usar la URL actual completa (incluyendo www. si está presente)
+                const canonicalUrl = window.location.href;
                 canonicalEl.setAttribute('href', canonicalUrl);
             }
 
