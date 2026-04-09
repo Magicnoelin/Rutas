@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Header/Footer Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-case { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Test de Corrección de Header/Footer en Móvil</h1>
+    
+    <div class="test-case">
+        <h2>Problema Identificado</h2>
+        <p>Las páginas de detalle de lugares (ej: <code>/lugar/acenas-de-olivares-molinos-duero</code>) no mostraban correctamente el header y footer en vista móvil.</p>
+        <p class="info">✓ El problema era que las plantillas <code>lugar-interes.html</code> y <code>detalle.html</code> tenían sus propios headers/footers hardcodeados que no eran responsivos.</p>
+    </div>
+    
+    <div class="test-case">
+        <h2>Solución Implementada</h2>
+        <p>Se modificó <code>redirect_manager.php</code> para:</p>
+        <ol>
+            <li class="success">✓ Inyectar el header responsivo de <code>header.php</code> para tipos <code>lugar</code> y <code>alojamiento</code></li>
+            <li class="success">✓ Inyectar el footer responsivo de <code>footer.php</code> para tipos <code>lugar</code> y <code>alojamiento</code></li>
+            <li class="success">✓ Mantener la funcionalidad existente para tipo <code>actividad</code> (que ya usaba placeholders)</li>
+        </ol>
+    </div>
+    
+    <div class="test-case">
+        <h2>Cambios Técnicos</h2>
+        <p><strong>Archivo modificado:</strong> <code>redirect_manager.php</code></p>
+        <p><strong>Líneas modificadas:</strong> ~133-147 (original) → ~133-180 (nuevo)</p>
+        <p><strong>Lógica añadida:</strong></p>
+        <pre>
+// INYECTAR HEADER Y FOOTER PARA TODAS LAS PÁGINAS (LUGAR, ALOJAMIENTO, ACTIVIDAD)
+if ($type === 'lugar' || $type === 'alojamiento' || $type === 'actividad') {
+    // Obtener contenido del header y footer
+    if ($type === 'actividad') {
+        // Para actividad, reemplazar marcadores existentes
+        $html = str_replace('<!-- HEADER_PLACEHOLDER -->', $headerContent, $html);
+        $html = str_replace('<!-- FOOTER_PLACEHOLDER -->', $footerContent, $html);
+    } else {
+        // Para lugar y alojamiento, reemplazar el header y footer existentes
+        // usando regex para encontrar y reemplazar las secciones
+        $headerPattern = '/<header\b[^>]*\bclass\s*=\s*["\']header["\'][^>]*>.*?<\/header>/is';
+        $html = preg_replace($headerPattern, $headerContent, $html, 1);
+        
+        $footerPattern = '/<footer\b[^>]*\bclass\s*=\s*["\']footer["\'][^>]*>.*?<\/footer>/is';
+        $html = preg_replace($footerPattern, $footerContent, $html, 1);
+        
+        // Patrones de respaldo por si los primeros no funcionan
+        if (strpos($html, $headerContent) === false) {
+            $headerPattern2 = '/<header\b[^>]*\bclass\s*=\s*["\'][^"\']*header[^"\']*["\'][^>]*>.*?<\/header>/is';
+            $html = preg_replace($headerPattern2, $headerContent, $html, 1);
+        }
+        
+        if (strpos($html, $footerContent) === false) {
+            $footerPattern2 = '/<footer\b[^>]*\bclass\s*=\s*["\'][^"\']*footer[^"\']*["\'][^>]*>.*?<\/footer>/is';
+            $html = preg_replace($footerPattern2, $footerContent, $html, 1);
+        }
+    }
+}
+        </pre>
+    </div>
+    
+    <div class="test-case">
+        <h2>Beneficios de la Corrección</h2>
+        <ul>
+            <li class="success">✓ Header responsivo en móvil con diseño compacto (grid de 4 columnas)</li>
+            <li class="success">✓ Header fijo en la parte superior en móvil (<code>position: fixed</code>)</li>
+            <li class="success">✓ Footer responsivo con diseño adaptativo</li>
+            <li class="success">✓ Consistencia visual en todas las páginas del sitio</li>
+            <li class="success">✓ Mejor experiencia de usuario en dispositivos móviles</li>
+        </ul>
+    </div>
+    
+    <div class="test-case">
+        <h2>Pruebas Recomendadas</h2>
+        <ol>
+            <li>Acceder a una página de lugar desde móvil: <code>https://www.rutasrurales.io/lugar/acenas-de-olivares-molinos-duero</code></li>
+            <li>Verificar que el header se muestra correctamente (logo + menú compacto)</li>
+            <li>Verificar que el footer se muestra correctamente</li>
+            <li>Probar también con páginas de alojamiento</li>
+            <li>Probar en diferentes tamaños de pantalla</li>
+        </ol>
+    </div>
+    
+    <div class="test-case">
+        <h2>Notas Importantes</h2>
+        <p class="info">⚠ La solución usa regex para reemplazar las secciones de header/footer. Esto es robusto pero depende de la estructura HTML consistente.</p>
+        <p class="info">✓ Se incluyen patrones de respaldo para manejar variaciones en los atributos class.</p>
+        <p class="info">✓ La funcionalidad para actividades (que ya usaba placeholders) se mantiene intacta.</p>
+    </div>
+</body>
+</html>

@@ -129,8 +129,8 @@ if (file_exists($templateFile)) {
         $html = str_ireplace('</head>', $slugInject . "\n</head>", $html);
     }
 
-    // INYECTAR HEADER Y FOOTER PARA PÁGINAS DE ACTIVIDAD
-    if ($type === 'actividad') {
+    // INYECTAR HEADER Y FOOTER PARA TODAS LAS PÁGINAS (LUGAR, ALOJAMIENTO, ACTIVIDAD)
+    if ($type === 'lugar' || $type === 'alojamiento' || $type === 'actividad') {
         // Obtener contenido del header
         ob_start();
         include 'header.php';
@@ -141,9 +141,34 @@ if (file_exists($templateFile)) {
         include 'footer.php';
         $footerContent = ob_get_clean();
         
-        // Reemplazar marcadores
-        $html = str_replace('<!-- HEADER_PLACEHOLDER -->', $headerContent, $html);
-        $html = str_replace('<!-- FOOTER_PLACEHOLDER -->', $footerContent, $html);
+        if ($type === 'actividad') {
+            // Para actividad, reemplazar marcadores existentes
+            $html = str_replace('<!-- HEADER_PLACEHOLDER -->', $headerContent, $html);
+            $html = str_replace('<!-- FOOTER_PLACEHOLDER -->', $footerContent, $html);
+        } else {
+            // Para lugar y alojamiento, reemplazar el header y footer existentes
+            // Eliminar el header existente (desde <header class="header"> hasta el siguiente </header>)
+            // Usamos un patrón más robusto que maneja contenido anidado
+            $headerPattern = '/<header\b[^>]*\bclass\s*=\s*["\']header["\'][^>]*>.*?<\/header>/is';
+            $html = preg_replace($headerPattern, $headerContent, $html, 1);
+            
+            // Eliminar el footer existente (desde <footer class="footer"> hasta el siguiente </footer>)
+            $footerPattern = '/<footer\b[^>]*\bclass\s*=\s*["\']footer["\'][^>]*>.*?<\/footer>/is';
+            $html = preg_replace($footerPattern, $footerContent, $html, 1);
+            
+            // Si no se reemplazó (por ejemplo, si el patrón no coincide), intentar con un patrón más simple
+            if (strpos($html, $headerContent) === false) {
+                // Intentar con cualquier header que tenga class que contenga "header"
+                $headerPattern2 = '/<header\b[^>]*\bclass\s*=\s*["\'][^"\']*header[^"\']*["\'][^>]*>.*?<\/header>/is';
+                $html = preg_replace($headerPattern2, $headerContent, $html, 1);
+            }
+            
+            if (strpos($html, $footerContent) === false) {
+                // Intentar con cualquier footer que tenga class que contenga "footer"
+                $footerPattern2 = '/<footer\b[^>]*\bclass\s*=\s*["\'][^"\']*footer[^"\']*["\'][^>]*>.*?<\/footer>/is';
+                $html = preg_replace($footerPattern2, $footerContent, $html, 1);
+            }
+        }
     }
 
     // 6. INYECCIÓN SEO: Cambiar título dinámicamente
