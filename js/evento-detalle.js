@@ -747,8 +747,8 @@ async function renderEvento(evento) {
     if (canonicalEl && evento.slug) {
         const lang = window.currentLang || 'es';
         const canonicalUrl = lang !== 'es'
-            ? 'https://rutasurales.io/' + lang + '/evento/' + evento.slug
-            : 'https://rutasurales.io/evento/' + evento.slug;
+            ? 'https://www.rutasrurales.io/' + lang + '/evento/' + evento.slug
+            : 'https://www.rutasrurales.io/evento/' + evento.slug;
         canonicalEl.setAttribute('href', canonicalUrl);
     }
 
