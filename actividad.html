@@ -516,19 +516,16 @@
             const uniqueImages = [...new Set(images.filter(img => img))];
             
             if (uniqueImages.length > 0) {
-                const carouselContainer = document.querySelector('.actividad-header');
-                carouselContainer.innerHTML = '';
+                const galleryContainer = document.getElementById('actividadGallery');
+                galleryContainer.innerHTML = '';
                 
                 uniqueImages.forEach((imgSrc, index) => {
                     const img = document.createElement('img');
                     img.src = imgSrc;
                     img.alt = activity.nombre || activity.name || 'Imagen de actividad';
-                    img.style.width = '100%';
-                    img.style.height = '300px';
-                    img.style.objectFit = 'cover';
+                    img.className = 'actividad-image';
                     img.style.display = index === 0 ? 'block' : 'none';
-                    img.className = 'activity-image';
-                    carouselContainer.appendChild(img);
+                    galleryContainer.appendChild(img);
                 });
                 
                 // Si hay más de una imagen, agregar navegación
@@ -539,46 +536,28 @@
         }
 
         function addImageNavigation(totalImages) {
-            const carouselContainer = document.querySelector('.actividad-header');
+            const galleryContainer = document.getElementById('actividadGallery');
             const navDiv = document.createElement('div');
-            navDiv.style.position = 'absolute';
-            navDiv.style.top = '50%';
-            navDiv.style.width = '100%';
-            navDiv.style.display = 'flex';
-            navDiv.style.justifyContent = 'space-between';
-            navDiv.style.padding = '0 1rem';
-            navDiv.style.transform = 'translateY(-50%)';
+            navDiv.className = 'gallery-nav';
             
             const prevButton = document.createElement('button');
-            prevButton.innerHTML = '<';
+            prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevButton.className = 'nav-btn';
             prevButton.onclick = () => navigateImages(-1);
-            prevButton.style.background = 'rgba(255,255,255,0.9)';
-            prevButton.style.color = '#2c5f2d';
-            prevButton.style.border = 'none';
-            prevButton.style.width = '40px';
-            prevButton.style.height = '40px';
-            prevButton.style.borderRadius = '50%';
-            prevButton.style.cursor = 'pointer';
             
             const nextButton = document.createElement('button');
-            nextButton.innerHTML = '>';
+            nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextButton.className = 'nav-btn';
             nextButton.onclick = () => navigateImages(1);
-            nextButton.style.background = 'rgba(255,255,255,0.9)';
-            nextButton.style.color = '#2c5f2d';
-            nextButton.style.border = 'none';
-            nextButton.style.width = '40px';
-            nextButton.style.height = '40px';
-            nextButton.style.borderRadius = '50%';
-            nextButton.style.cursor = 'pointer';
             
             navDiv.appendChild(prevButton);
             navDiv.appendChild(nextButton);
-            carouselContainer.appendChild(navDiv);
+            galleryContainer.appendChild(navDiv);
             
             let currentImageIndex = 0;
             
             function navigateImages(direction) {
-                const images = document.querySelectorAll('.activity-image');
+                const images = document.querySelectorAll('.actividad-image');
                 images[currentImageIndex].style.display = 'none';
                 currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
                 images[currentImageIndex].style.display = 'block';
