@@ -1,0 +1,3070 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="description" content="Descubre eventos culturales en Rutas Rurales - Red Unificada de Turistas, Alojamientos y Servicios">
+    <title>Detalle del Evento | Rutas Rurales</title>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+    <!-- End Google Tag Manager -->
+    
+    <link rel="canonical" id="dynamic-canonical" href="https://rutasurales.io/evento-detalle.html">
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <!-- CSS optimizado para eventos -->
+    <link rel="preload" href="/css/evento-optimizado.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/evento-optimizado.css"></noscript>
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    
+    <style>
+        /* Fuentes locales Montserrat - cargadas desde el servidor */
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: local('Montserrat Regular'), local('Montserrat-Regular'), url('/fonts/montserrat-v31-latin-regular.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: local('Montserrat Medium'), local('Montserrat-Medium'), url('/fonts/montserrat-v31-latin-500.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: local('Montserrat SemiBold'), local('Montserrat-SemiBold'), url('/fonts/montserrat-v31-latin-600.woff2') format('woff2');
+        }
+
+        :root {
+            --primary-color: #2F5233;
+            --secondary-color: #6B8E6B;
+            --accent-color: #B8956A;
+        }
+
+        .detail-container { background-color: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 30px rgba(0,0,0,0.1); margin-top: 1.5rem; }
+        .detail-header { margin-bottom: 1.5rem; border-bottom: 2px solid #eee; padding-bottom: 1rem; }
+        .detail-header h1 { color: var(--primary-color); font-size: clamp(1.8rem, 5vw, 2.2rem); margin-bottom: 0.5rem; line-height: 1.2; }
+        
+        .event-badge { display: inline-block; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; background: var(--primary-color); color: white; }
+        
+        .detail-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; margin-top: 2rem; }
+        @media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; gap: 1.5rem; } }
+
+        .gallery-container { position: relative; height: 400px; border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; background: #f0f0f0; }
+        @media (max-width: 768px) { .gallery-container { height: 300px; } }
+        @media (max-width: 480px) { .gallery-container { height: 250px; } }
+        .gallery-img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .gallery-img.active { display: block; }
+        .gallery-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); padding: 0 1rem; }
+        .nav-btn { background: rgba(255,255,255,0.9); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .nav-btn:hover { background: white; transform: scale(1.1); }
+        /* Crédito del autor de la foto */
+        .photo-credit {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.55));
+            color: white;
+            font-size: .78rem;
+            padding: .6rem .9rem .5rem;
+            display: none;
+            align-items: center;
+            gap: .4rem;
+        }
+        .photo-credit.show { display: flex; }
+        .photo-credit i { font-size: .8rem; opacity: .85; }
+        .photo-credit a { color: #fff; text-decoration: none; opacity: .9; }
+        .photo-credit a:hover { opacity: 1; text-decoration: underline; }
+        .gallery-counter {
+            position: absolute;
+            top: .6rem; right: .7rem;
+            background: rgba(0,0,0,.45);
+            color: white;
+            font-size: .78rem;
+            padding: .2rem .6rem;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .info-card { background: #f9fbf9; padding: 1.5rem; border-radius: 12px; border: 1px solid #eee; margin-bottom: 1.5rem; }
+        .info-item { display: flex; align-items: center; margin-bottom: 1rem; color: #444; }
+        .info-item i { width: 30px; color: var(--primary-color); margin-right: 10px; text-align: center; }
+        
+        .event-date-box { background: var(--primary-color); color: white; padding: 1.5rem; border-radius: 12px; text-align: center; margin-bottom: 1.5rem; }
+        .event-date-box .day { font-size: clamp(2rem, 8vw, 3rem); font-weight: 700; line-height: 1; }
+        .event-date-box .month { font-size: clamp(1rem, 3vw, 1.25rem); text-transform: uppercase; margin-top: 0.5rem; }
+        .event-date-box .time { margin-top: 1rem; font-size: 1.1rem; }
+
+        .event-description { line-height: 1.7; color: #333; font-size: clamp(1rem, 2vw, 1.05rem); }
+        .event-description p { margin-bottom: 1.2rem; }
+
+        .google-map-container { height: 350px; width: 100%; border-radius: 12px; margin-top: 1rem; overflow: hidden; border: 1px solid #ddd; }
+        @media (max-width: 768px) { .google-map-container { height: 250px; } }
+        @media (max-width: 480px) { .google-map-container { height: 200px; } }
+        #google-map { height: 100%; width: 100%; }
+
+        .finished-notice {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        .finished-notice a {
+            color: #856404;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        
+        /* ===============================================
+           CARRUSEL DE ALOJAMIENTOS - ESTILOS
+           =============================================== */
+        .accommodations-carousel-section {
+            margin-top: 3rem;
+            padding: 2rem 0;
+        }
+        
+        .accommodations-carousel-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .accommodations-carousel-header h3 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        
+        .accommodations-carousel-header h3 i {
+            color: var(--accent-color);
+        }
+        
+        .accommodations-carousel-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .carousel-wrapper {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .carousel-track {
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.5s ease-in-out;
+            padding: 0.5rem;
+        }
+        
+        .accommodation-card {
+            flex: 0 0 280px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .accommodation-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+        
+        .accommodation-card-image {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+        
+        .accommodation-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .accommodation-card-image img.loaded {
+            opacity: 1;
+        }
+        
+        .accommodation-card:hover .accommodation-card-image img {
+            transform: scale(1.1);
+        }
+        
+        .accommodation-type-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .accommodation-card-content {
+            padding: 1.2rem;
+        }
+        
+        .accommodation-card-content h4 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .accommodation-location {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .accommodation-location i {
+            color: var(--accent-color);
+            font-size: 0.8rem;
+        }
+        
+        .accommodation-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .accommodation-feature {
+            background: #f5f5f5;
+            color: #555;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+        
+        .accommodation-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        
+        .accommodation-price span {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #888;
+        }
+        
+        .carousel-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .carousel-nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .carousel-nav-btn.prev {
+            left: 10px;
+        }
+        
+        .carousel-nav-btn.next {
+            right: 10px;
+        }
+        
+        .carousel-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .carousel-nav-btn:disabled:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-50%);
+        }
+        
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1.5rem;
+        }
+        
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+        
+        .carousel-loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .carousel-loading i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .carousel-empty {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+        }
+        
+        .carousel-empty i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+        
+        /* Placeholder para lazy loading */
+        .image-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .accommodation-card {
+                flex: 0 0 240px;
+            }
+            
+            .carousel-nav-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+        }
+
+        /* ===============================================
+           CONTADOR DE VISITAS
+           =============================================== */
+        .event-stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 0.8rem 0;
+            color: #777;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        .event-stats-bar .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .event-stats-bar .stat-item i {
+            color: var(--accent-color);
+            font-size: 0.95rem;
+        }
+        .event-stats-bar .stat-item .stat-number {
+            font-weight: 700;
+            color: #555;
+        }
+        .event-stats-bar .stat-divider {
+            width: 1px;
+            height: 16px;
+            background: #ddd;
+        }
+        .avg-rating-stars {
+            color: #f4c542;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+        .avg-rating-stars .empty-star {
+            color: #ddd;
+        }
+
+        /* ===============================================
+           SECCIÓN DE COMENTARIOS
+           =============================================== */
+        .comments-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+        }
+        .comments-section h3 {
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .comments-section .comments-subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Formulario de comentario */
+        .comment-form {
+            background: #f9fbf9;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .comment-form h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        .comment-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 600px) {
+            .comment-form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .comment-form input,
+        .comment-form textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        .comment-form input:focus,
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(47, 82, 51, 0.1);
+        }
+        .comment-form textarea {
+            min-height: 100px;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+        .comment-form-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .comment-char-count {
+            font-size: 0.8rem;
+            color: #999;
+        }
+        .comment-char-count.warning {
+            color: #e74c3c;
+        }
+
+        /* Estrellas de valoración interactivas */
+        .star-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .star-rating label {
+            font-size: 0;
+        }
+        .star-rating .star-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #ddd;
+            transition: color 0.2s, transform 0.15s;
+            padding: 2px;
+        }
+        .star-rating .star-btn:hover,
+        .star-rating .star-btn.active {
+            color: #f4c542;
+            transform: scale(1.15);
+        }
+        .star-rating .star-label {
+            font-size: 0.85rem;
+            color: #888;
+            margin-left: 0.5rem;
+        }
+
+        .btn-submit-comment {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-submit-comment:hover {
+            background: #1e3d22;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(47, 82, 51, 0.3);
+        }
+        .btn-submit-comment:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Lista de comentarios */
+        .comments-list {
+            margin-top: 1.5rem;
+        }
+        .comment-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            animation: fadeInComment 0.4s ease;
+        }
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+        @keyframes fadeInComment {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .comment-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .comment-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.4rem;
+            flex-wrap: wrap;
+        }
+        .comment-author {
+            font-weight: 700;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        .comment-date {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        .comment-rating {
+            color: #f4c542;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+        .comment-text {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+        .comment-actions {
+            margin-top: 0.5rem;
+        }
+        .btn-reply {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 0;
+        }
+        .btn-reply:hover {
+            text-decoration: underline;
+        }
+
+        /* Respuestas */
+        .comment-replies {
+            margin-left: 2.5rem;
+            border-left: 2px solid #e8e8e8;
+            padding-left: 1rem;
+        }
+        .comment-replies .comment-item {
+            padding: 0.8rem 0;
+        }
+        .comment-replies .comment-avatar {
+            width: 35px;
+            height: 35px;
+            font-size: 0.9rem;
+        }
+
+        /* Paginación de comentarios */
+        .comments-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        .comments-pagination button {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .comments-pagination button:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .comments-pagination button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .comments-pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Estado vacío */
+        .comments-empty {
+            text-align: center;
+            padding: 2rem;
+            color: #aaa;
+        }
+        .comments-empty i {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+            display: block;
+            color: #ddd;
+        }
+
+        /* Toast de éxito */
+        .comment-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            z-index: 10000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-weight: bold;
+            transition: transform 0.4s ease;
+        }
+        .comment-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Loading de comentarios */
+        .comments-loading {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+        }
+        .comments-loading i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        /* Formulario de respuesta inline */
+        .reply-form-inline {
+            margin-top: 0.8rem;
+            margin-left: 0;
+            padding: 1rem;
+            background: #f9fbf9;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
+            animation: fadeInComment 0.3s ease;
+        }
+        .reply-form-inline input,
+        .reply-form-inline textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            box-sizing: border-box;
+        }
+        .reply-form-inline textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .reply-form-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+        .btn-cancel-reply {
+            background: #eee;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-send-reply {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+    </style>
+
+    <script>
+        // Callback global para la API de Google Maps
+        window.initMapCallback = function() {
+            window.mapsApiLoaded = true;
+            if (window.pendingMapData) {
+                initGoogleMap(window.pendingMapData);
+            }
+        };
+    </script>
+    
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNdQ1eauGeKUTMLAJ5_TwwRxo91wWsPg&libraries=places,marker&callback=initMapCallback&loading=async" async defer></script>
+    
+    <!-- JSON-LD Structured Data - Se generará dinámicamente -->
+    <script type="application/ld+json" id="event-schema">
+    </script>
+</head>
+<body>
+    <?php include 'header.php'; ?>
+
+    <main class="container" style="margin-top: 80px; min-height: 500px;">
+        <div id="loading" style="text-align: center; padding: 5rem;">
+            <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary-color);"></i>
+            <p style="margin-top: 1rem;">Cargando detalles del evento...</p>
+        </div>
+
+        <div id="error-msg" style="display: none; text-align: center; padding: 5rem;">
+            <i class="fas fa-exclamation-circle fa-4x" style="color: #e74c3c;"></i>
+            <h2 style="margin-top: 1.5rem;">No pudimos encontrar este evento</h2>
+            <a href="/eventos-culturales-paginacion.html" class="btn-primary" style="margin-top: 1rem; display: inline-block; text-decoration: none; padding: 10px 20px; background: var(--primary-color); color: white; border-radius: 5px;">Ver todos los eventos</a>
+        </div>
+
+        <div id="detail-content" style="display: none;">
+            <!-- El contenido se cargará aquí -->
+        </div>
+        
+        <!-- Sección de carrusel de alojamientos en la provincia (lazy loading) -->
+        <div id="accommodations-carousel" class="accommodations-carousel-section" style="display: none;">
+            <div class="container">
+                <div class="accommodations-carousel-header">
+                    <h3><i class="fas fa-bed"></i> Alojamientos Turísticos Cercanos</h3>
+                    <p>Descubre los mejores alojamientos turísticos en <span id="carousel-province-name"></span></p>
+                </div>
+                <div class="carousel-wrapper">
+                    <button class="carousel-nav-btn prev" id="carousel-prev" aria-label="Anterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-nav-btn next" id="carousel-next" aria-label="Siguiente">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="carousel-track" id="carousel-track">
+                        <!-- Las tarjetas se cargan dinámicamente con lazy loading -->
+                    </div>
+                    <div class="carousel-dots" id="carousel-dots"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Banner simple para Eclipse Solar -->
+        <div id="eclipse-accommodations-banner" style="display: none; margin-top: 2rem; text-align: center;">
+            <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 2rem; border-radius: 16px; color: white;">
+                <h3 style="margin: 0 0 1rem 0; font-size: 1.5rem;">
+                    <i class="fas fa-moon" style="color: #f4d03f;"></i> ¡Prepárate para el Eclipse Solar 2026!
+                </h3>
+                <p style="margin: 0 0 1.5rem 0; opacity: 0.9;">
+                    Descubre los mejores alojamientos en zonas con cielo oscuro para observar el eclipse
+                </p>
+                <a href="/alojamientos-turisticos.html" id="eclipse-accommodations-link" 
+                   style="display: inline-block; background: #f4d03f; color: #1a1a2e; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; transition: transform 0.3s;">
+                    <i class="fas fa-bed"></i> Ver Alojamientos para el Eclipse
+                </a>
+            </div>
+        </div>
+
+        <!-- Sección de Comentarios -->
+        <div id="comments-section" class="comments-section" style="display: none;">
+            <h3><i class="fas fa-comments"></i> <span id="comments-title">Comentarios</span></h3>
+            <p class="comments-subtitle" id="comments-subtitle">Comparte tu experiencia sobre este evento</p>
+
+            <!-- Formulario para nuevo comentario -->
+            <div class="comment-form" id="comment-form">
+                <h4><i class="fas fa-pen"></i> <span id="form-title">Deja tu comentario</span></h4>
+                <div class="comment-form-row">
+                    <input type="text" id="comment-name" placeholder="Tu nombre *" maxlength="100" required>
+                    <input type="email" id="comment-email" placeholder="Tu email (opcional)" maxlength="255">
+                </div>
+                
+                <div class="star-rating" id="star-rating">
+                    <label>Valoración:</label>
+                    <button type="button" class="star-btn" data-value="1" onclick="setRating(1)"><i class="fas fa-star"></i></button>
+                    <button type="button" class="star-btn" data-value="2" onclick="setRating(2)"><i class="fas fa-star"></i></button>
+                    <button type="button" class="star-btn" data-value="3" onclick="setRating(3)"><i class="fas fa-star"></i></button>
+                    <button type="button" class="star-btn" data-value="4" onclick="setRating(4)"><i class="fas fa-star"></i></button>
+                    <button type="button" class="star-btn" data-value="5" onclick="setRating(5)"><i class="fas fa-star"></i></button>
+                    <span class="star-label" id="star-label"></span>
+                </div>
+                
+                <textarea id="comment-text" placeholder="Escribe tu comentario... *" maxlength="2000" oninput="updateCharCount()"></textarea>
+                
+                <div class="comment-form-footer">
+                    <span class="comment-char-count" id="char-count">0 / 2000</span>
+                    <button class="btn-submit-comment" id="btn-submit-comment" onclick="submitComment()">
+                        <i class="fas fa-paper-plane"></i> <span id="btn-submit-text">Publicar comentario</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de comentarios -->
+            <div id="comments-list" class="comments-list">
+                <div class="comments-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando comentarios...</p>
+                </div>
+            </div>
+
+            <!-- Paginación -->
+            <div id="comments-pagination" class="comments-pagination" style="display: none;"></div>
+        </div>
+    </main>
+
+    <?php include 'footer.php'; ?>
+
+    <script>
+        // ============================================================
+        // TRADUCCIONES DE LA UI
+        // ============================================================
+        const UI_TRANSLATIONS = {
+            es: {
+                loading: 'Cargando detalles del evento...',
+                notFound: 'No pudimos encontrar este evento',
+                seeAllEvents: 'Ver todos los eventos',
+                nearbyAccommodations: 'Alojamientos Turísticos Cercanos',
+                nearbyAccommodationsDesc: 'Descubre los mejores alojamientos turísticos en',
+                eclipseTitle: '¡Prepárate para el Eclipse Solar 2026!',
+                eclipseDesc: 'Descubre los mejores alojamientos en zonas con cielo oscuro para observar el eclipse',
+                eclipseBtn: 'Ver Alojamientos para el Eclipse',
+                eventFinished: 'Este evento ya ha finalizado,',
+                seeCurrentEvents: 'ver los eventos actuales',
+                description: 'Descripción',
+                location: 'Ubicación',
+                seeOnMaps: 'Ver en Google Maps',
+                information: 'Información',
+                price: 'Precio',
+                organizer: 'Organiza',
+                addToRoute: 'Añadir a mi Itinerario',
+                nearbyAll: '🌟 ¡No te pierdas todo lo que hay cerca!',
+                nearbyAllDesc: 'Alojamientos, actividades, lugares únicos y más eventos en 100km a la redonda',
+                sharePhotos: '📸 ¡Presume tus fotos!',
+                sharePhotosDesc: 'Te publicamos mencionando tu Instagram',
+                promos: '🎁 Promos solo para ti',
+                promosDesc: 'Regístrate gratis y sin spam',
+                program: 'Programa',
+                navAccommodations: 'Alojamientos',
+                navPlaces: 'Lugares',
+                navEvents: 'Eventos',
+                navActivities: 'Actividades',
+                navHome: 'Inicio',
+                navRoutes: 'Rutas',
+                navAccess: 'Acceso',
+                footerRights: 'Todos los derechos reservados.',
+                loadingCarousel: 'Cargando alojamientos...',
+                noAccommodations: 'No se encontraron alojamientos',
+                errorAccommodations: 'Error al cargar alojamientos',
+                searchingDarkSky: 'Buscando zonas con cielo oscuro...',
+                eclipseCarouselTitle: 'Mejores Alojamientos para Ver el Eclipse Solar 2026',
+                eclipseCarouselDesc: 'las mejores zonas de España para ver el eclipse',
+                addedToRoute: '¡Añadido a tu ruta!',
+                seeMyRoute: 'Ver mi ruta',
+                alreadyInRoute: 'Este evento ya está en tu ruta',
+                addedConfirm: '¿Quieres ver tu itinerario completo?',
+                stops: 'parada',
+                stopsPlural: 'paradas',
+                addedToItinerary: 'Añadido a tu itinerario',
+                mapError: 'No se pudo encontrar la ubicación en el mapa.',
+                mapNoAddress: 'Dirección no disponible para el mapa.',
+                eventBadge: 'Evento',
+                consultPrice: 'Consultar',
+                perNight: '/noche',
+                commentsTitle: 'Comentarios',
+                commentsSubtitle: 'Comparte tu experiencia sobre este evento',
+                leaveComment: 'Deja tu comentario',
+                yourName: 'Tu nombre *',
+                yourEmail: 'Tu email (opcional)',
+                ratingLabel: 'Valoración:',
+                writeComment: 'Escribe tu comentario... *',
+                publishComment: 'Publicar comentario',
+                loadingComments: 'Cargando comentarios...',
+                noComments: 'Aún no hay comentarios. ¡Sé el primero en opinar!',
+                errorComments: 'Error al cargar comentarios',
+                reply: 'Responder',
+                cancel: 'Cancelar',
+                yourReply: 'Tu respuesta... *',
+                views: 'visitas',
+                comment: 'comentario',
+                comments: 'comentarios',
+                commentPublished: '✅ ¡Comentario publicado!',
+                replyPublished: '✅ ¡Respuesta publicada!',
+                sending: 'Enviando...',
+                connectionError: '❌ Error de conexión',
+                ratingBad: 'Malo',
+                ratingFair: 'Regular',
+                ratingGood: 'Bueno',
+                ratingVeryGood: 'Muy bueno',
+                ratingExcellent: 'Excelente',
+                justNow: 'Ahora mismo',
+                minutesAgo: 'Hace {n} min',
+                hoursAgo: 'Hace {n}h',
+                daysAgo: 'Hace {n} día',
+                daysAgoPlural: 'Hace {n} días',
+                beFirst: '¡Sé el primero en opinar!',
+            },
+            de: {
+                loading: 'Veranstaltungsdetails werden geladen...',
+                notFound: 'Diese Veranstaltung konnte nicht gefunden werden',
+                seeAllEvents: 'Alle Veranstaltungen ansehen',
+                nearbyAccommodations: 'Touristische Unterkünfte in der Nähe',
+                nearbyAccommodationsDesc: 'Entdecken Sie die besten touristischen Unterkünfte in',
+                eclipseTitle: 'Bereiten Sie sich auf die Sonnenfinsternis 2026 vor!',
+                eclipseDesc: 'Entdecken Sie die besten Unterkünfte in Gebieten mit dunklem Himmel',
+                eclipseBtn: 'Unterkünfte für die Sonnenfinsternis ansehen',
+                eventFinished: 'Diese Veranstaltung ist bereits beendet,',
+                seeCurrentEvents: 'aktuelle Veranstaltungen ansehen',
+                description: 'Beschreibung',
+                location: 'Standort',
+                seeOnMaps: 'In Google Maps ansehen',
+                information: 'Informationen',
+                price: 'Preis',
+                organizer: 'Veranstalter',
+                addToRoute: 'Zu meiner Route hinzufügen',
+                nearbyAll: '🌟 Verpassen Sie nicht alles in der Nähe!',
+                nearbyAllDesc: 'Unterkünfte, Aktivitäten, einzigartige Orte und mehr Veranstaltungen im Umkreis von 100 km',
+                sharePhotos: '📸 Zeigen Sie Ihre Fotos!',
+                sharePhotosDesc: 'Wir veröffentlichen Sie mit Ihrem Instagram',
+                promos: '🎁 Angebote nur für Sie',
+                promosDesc: 'Kostenlos registrieren, kein Spam',
+                program: 'Programm',
+                navAccommodations: 'Unterkünfte',
+                navPlaces: 'Sehenswürdigkeiten',
+                navEvents: 'Veranstaltungen',
+                navActivities: 'Aktivitäten',
+                navHome: 'Startseite',
+                navRoutes: 'Routen',
+                navAccess: 'Anmelden',
+                footerRights: 'Alle Rechte vorbehalten.',
+                loadingCarousel: 'Unterkünfte werden geladen...',
+                noAccommodations: 'Keine Unterkünfte gefunden',
+                errorAccommodations: 'Fehler beim Laden der Unterkünfte',
+                searchingDarkSky: 'Suche nach Gebieten mit dunklem Himmel...',
+                eclipseCarouselTitle: 'Beste Unterkünfte für die Sonnenfinsternis 2026',
+                eclipseCarouselDesc: 'die besten Gebiete Spaniens für die Sonnenfinsternis',
+                addedToRoute: 'Zur Route hinzugefügt!',
+                seeMyRoute: 'Meine Route ansehen',
+                alreadyInRoute: 'Diese Veranstaltung ist bereits in Ihrer Route',
+                addedConfirm: 'Möchten Sie Ihr vollständiges Reiseprogramm ansehen?',
+                stops: 'Halt',
+                stopsPlural: 'Halte',
+                addedToItinerary: 'Zum Reiseprogramm hinzugefügt',
+                mapError: 'Der Standort konnte nicht auf der Karte gefunden werden.',
+                mapNoAddress: 'Adresse für die Karte nicht verfügbar.',
+                eventBadge: 'Veranstaltung',
+                consultPrice: 'Anfragen',
+                perNight: '/Nacht',
+                commentsTitle: 'Kommentare',
+                commentsSubtitle: 'Teilen Sie Ihre Erfahrung über diese Veranstaltung',
+                leaveComment: 'Hinterlassen Sie einen Kommentar',
+                yourName: 'Ihr Name *',
+                yourEmail: 'Ihre E-Mail (optional)',
+                ratingLabel: 'Bewertung:',
+                writeComment: 'Schreiben Sie Ihren Kommentar... *',
+                publishComment: 'Kommentar veröffentlichen',
+                loadingComments: 'Kommentare werden geladen...',
+                noComments: 'Noch keine Kommentare. Seien Sie der Erste!',
+                errorComments: 'Fehler beim Laden der Kommentare',
+                reply: 'Antworten',
+                cancel: 'Abbrechen',
+                yourReply: 'Ihre Antwort... *',
+                views: 'Aufrufe',
+                comment: 'Kommentar',
+                comments: 'Kommentare',
+                commentPublished: '✅ Kommentar veröffentlicht!',
+                replyPublished: '✅ Antwort veröffentlicht!',
+                sending: 'Wird gesendet...',
+                connectionError: '❌ Verbindungsfehler',
+                ratingBad: 'Schlecht',
+                ratingFair: 'Mäßig',
+                ratingGood: 'Gut',
+                ratingVeryGood: 'Sehr gut',
+                ratingExcellent: 'Ausgezeichnet',
+                justNow: 'Gerade eben',
+                minutesAgo: 'Vor {n} Min.',
+                hoursAgo: 'Vor {n} Std.',
+                daysAgo: 'Vor {n} Tag',
+                daysAgoPlural: 'Vor {n} Tagen',
+                beFirst: 'Seien Sie der Erste!',
+            },
+            en: {
+                loading: 'Loading event details...',
+                notFound: 'We could not find this event',
+                seeAllEvents: 'See all events',
+                nearbyAccommodations: 'Nearby Tourist Accommodations',
+                nearbyAccommodationsDesc: 'Discover the best tourist accommodations in',
+                eclipseTitle: 'Get ready for the Solar Eclipse 2026!',
+                eclipseDesc: 'Discover the best accommodations in dark sky areas to observe the eclipse',
+                eclipseBtn: 'See Accommodations for the Eclipse',
+                eventFinished: 'This event has already ended,',
+                seeCurrentEvents: 'see current events',
+                description: 'Description',
+                location: 'Location',
+                seeOnMaps: 'View on Google Maps',
+                information: 'Information',
+                price: 'Price',
+                organizer: 'Organizer',
+                addToRoute: 'Add to my Itinerary',
+                nearbyAll: '🌟 Don\'t miss everything nearby!',
+                nearbyAllDesc: 'Accommodations, activities, unique places and more events within 100km',
+                sharePhotos: '📸 Show off your photos!',
+                sharePhotosDesc: 'We\'ll publish you mentioning your Instagram',
+                promos: '🎁 Promos just for you',
+                promosDesc: 'Register free, no spam',
+                program: 'Program',
+                navAccommodations: 'Accommodations',
+                navPlaces: 'Places',
+                navEvents: 'Events',
+                navActivities: 'Activities',
+                navHome: 'Home',
+                navRoutes: 'Routes',
+                navAccess: 'Login',
+                footerRights: 'All rights reserved.',
+                loadingCarousel: 'Loading accommodations...',
+                noAccommodations: 'No accommodations found',
+                errorAccommodations: 'Error loading accommodations',
+                searchingDarkSky: 'Searching for dark sky areas...',
+                eclipseCarouselTitle: 'Best Accommodations to See the Solar Eclipse 2026',
+                eclipseCarouselDesc: 'the best areas in Spain to see the eclipse',
+                addedToRoute: 'Added to your route!',
+                seeMyRoute: 'See my route',
+                alreadyInRoute: 'This event is already in your route',
+                addedConfirm: 'Do you want to see your full itinerary?',
+                stops: 'stop',
+                stopsPlural: 'stops',
+                addedToItinerary: 'Added to itinerary',
+                mapError: 'The location could not be found on the map.',
+                mapNoAddress: 'Address not available for the map.',
+                eventBadge: 'Event',
+                consultPrice: 'Enquire',
+                perNight: '/night',
+                commentsTitle: 'Comments',
+                commentsSubtitle: 'Share your experience about this event',
+                leaveComment: 'Leave a comment',
+                yourName: 'Your name *',
+                yourEmail: 'Your email (optional)',
+                ratingLabel: 'Rating:',
+                writeComment: 'Write your comment... *',
+                publishComment: 'Post comment',
+                loadingComments: 'Loading comments...',
+                noComments: 'No comments yet. Be the first to share your opinion!',
+                errorComments: 'Error loading comments',
+                reply: 'Reply',
+                cancel: 'Cancel',
+                yourReply: 'Your reply... *',
+                views: 'views',
+                comment: 'comment',
+                comments: 'comments',
+                commentPublished: '✅ Comment posted!',
+                replyPublished: '✅ Reply posted!',
+                sending: 'Sending...',
+                connectionError: '❌ Connection error',
+                ratingBad: 'Bad',
+                ratingFair: 'Fair',
+                ratingGood: 'Good',
+                ratingVeryGood: 'Very good',
+                ratingExcellent: 'Excellent',
+                justNow: 'Just now',
+                minutesAgo: '{n} min ago',
+                hoursAgo: '{n}h ago',
+                daysAgo: '{n} day ago',
+                daysAgoPlural: '{n} days ago',
+                beFirst: 'Be the first to share your opinion!',
+            },
+            fr: {
+                loading: 'Chargement des détails de l\'événement...',
+                notFound: 'Nous n\'avons pas pu trouver cet événement',
+                seeAllEvents: 'Voir tous les événements',
+                nearbyAccommodations: 'Hébergements Touristiques à Proximité',
+                nearbyAccommodationsDesc: 'Découvrez les meilleurs hébergements touristiques à',
+                eclipseTitle: 'Préparez-vous pour l\'Éclipse Solaire 2026 !',
+                eclipseDesc: 'Découvrez les meilleurs hébergements dans des zones à ciel sombre',
+                eclipseBtn: 'Voir les hébergements pour l\'éclipse',
+                eventFinished: 'Cet événement est déjà terminé,',
+                seeCurrentEvents: 'voir les événements actuels',
+                description: 'Description',
+                location: 'Lieu',
+                seeOnMaps: 'Voir sur Google Maps',
+                information: 'Informations',
+                price: 'Prix',
+                organizer: 'Organisateur',
+                addToRoute: 'Ajouter à mon itinéraire',
+                nearbyAll: '🌟 Ne manquez pas tout ce qu\'il y a à proximité !',
+                nearbyAllDesc: 'Hébergements, activités, lieux uniques et plus d\'événements dans un rayon de 100 km',
+                sharePhotos: '📸 Montrez vos photos !',
+                sharePhotosDesc: 'Nous vous publions en mentionnant votre Instagram',
+                promos: '🎁 Promos rien que pour vous',
+                promosDesc: 'Inscrivez-vous gratuitement, sans spam',
+                program: 'Programme',
+                navAccommodations: 'Hébergements',
+                navPlaces: 'Lieux',
+                navEvents: 'Événements',
+                navActivities: 'Activités',
+                navHome: 'Accueil',
+                navRoutes: 'Itinéraires',
+                navAccess: 'Connexion',
+                footerRights: 'Tous droits réservés.',
+                loadingCarousel: 'Chargement des hébergements...',
+                noAccommodations: 'Aucun hébergement trouvé',
+                errorAccommodations: 'Erreur lors du chargement des hébergements',
+                searchingDarkSky: 'Recherche de zones à ciel sombre...',
+                eclipseCarouselTitle: 'Meilleurs Hébergements pour Voir l\'Éclipse Solaire 2026',
+                eclipseCarouselDesc: 'les meilleures zones d\'Espagne pour voir l\'éclipse',
+                addedToRoute: 'Ajouté à votre itinéraire !',
+                seeMyRoute: 'Voir mon itinéraire',
+                alreadyInRoute: 'Cet événement est déjà dans votre itinéraire',
+                addedConfirm: 'Voulez-vous voir votre itinéraire complet ?',
+                stops: 'étape',
+                stopsPlural: 'étapes',
+                addedToItinerary: 'Ajouté à l\'itinéraire',
+                mapError: 'L\'emplacement n\'a pas pu être trouvé sur la carte.',
+                mapNoAddress: 'Adresse non disponible pour la carte.',
+                eventBadge: 'Événement',
+                consultPrice: 'Renseignements',
+                perNight: '/nuit',
+                commentsTitle: 'Commentaires',
+                commentsSubtitle: 'Partagez votre expérience sur cet événement',
+                leaveComment: 'Laissez un commentaire',
+                yourName: 'Votre nom *',
+                yourEmail: 'Votre email (optionnel)',
+                ratingLabel: 'Note :',
+                writeComment: 'Écrivez votre commentaire... *',
+                publishComment: 'Publier le commentaire',
+                loadingComments: 'Chargement des commentaires...',
+                noComments: 'Pas encore de commentaires. Soyez le premier à donner votre avis !',
+                errorComments: 'Erreur lors du chargement des commentaires',
+                reply: 'Répondre',
+                cancel: 'Annuler',
+                yourReply: 'Votre réponse... *',
+                views: 'vues',
+                comment: 'commentaire',
+                comments: 'commentaires',
+                commentPublished: '✅ Commentaire publié !',
+                replyPublished: '✅ Réponse publiée !',
+                sending: 'Envoi en cours...',
+                connectionError: '❌ Erreur de connexion',
+                ratingBad: 'Mauvais',
+                ratingFair: 'Moyen',
+                ratingGood: 'Bon',
+                ratingVeryGood: 'Très bon',
+                ratingExcellent: 'Excellent',
+                justNow: 'À l\'instant',
+                minutesAgo: 'Il y a {n} min',
+                hoursAgo: 'Il y a {n}h',
+                daysAgo: 'Il y a {n} jour',
+                daysAgoPlural: 'Il y a {n} jours',
+                beFirst: 'Soyez le premier à donner votre avis !',
+            },
+            zh: {
+                loading: '正在加载活动详情...',
+                notFound: '未能找到此活动',
+                seeAllEvents: '查看所有活动',
+                nearbyAccommodations: '附近旅游住宿',
+                nearbyAccommodationsDesc: '发现最佳旅游住宿，位于',
+                eclipseTitle: '为2026年日食做好准备！',
+                eclipseDesc: '在暗天区发现最佳住宿，观测日食',
+                eclipseBtn: '查看日食住宿',
+                eventFinished: '此活动已结束，',
+                seeCurrentEvents: '查看当前活动',
+                description: '描述',
+                location: '地点',
+                seeOnMaps: '在谷歌地图上查看',
+                information: '信息',
+                price: '价格',
+                organizer: '主办方',
+                addToRoute: '添加到我的行程',
+                nearbyAll: '🌟 不要错过附近的一切！',
+                nearbyAllDesc: '100公里范围内的住宿、活动、独特地点和更多活动',
+                sharePhotos: '📸 展示您的照片！',
+                sharePhotosDesc: '我们将提及您的Instagram发布',
+                promos: '🎁 专属优惠',
+                promosDesc: '免费注册，无垃圾邮件',
+                program: '节目单',
+                navAccommodations: '住宿',
+                navPlaces: '景点',
+                navEvents: '活动',
+                navActivities: '体验',
+                navHome: '首页',
+                navRoutes: '路线',
+                navAccess: '登录',
+                footerRights: '版权所有。',
+                loadingCarousel: '正在加载住宿...',
+                noAccommodations: '未找到住宿',
+                errorAccommodations: '加载住宿时出错',
+                searchingDarkSky: '正在搜索暗天区...',
+                eclipseCarouselTitle: '观看2026年日食的最佳住宿',
+                eclipseCarouselDesc: '西班牙观看日食的最佳地区',
+                addedToRoute: '已添加到您的路线！',
+                seeMyRoute: '查看我的路线',
+                alreadyInRoute: '此活动已在您的路线中',
+                addedConfirm: '您想查看完整行程吗？',
+                stops: '站',
+                stopsPlural: '站',
+                addedToItinerary: '已添加到行程',
+                mapError: '无法在地图上找到该位置。',
+                mapNoAddress: '地图地址不可用。',
+                eventBadge: '活动',
+                consultPrice: '咨询',
+                perNight: '/晚',
+                commentsTitle: '评论',
+                commentsSubtitle: '分享您对此活动的体验',
+                leaveComment: '发表评论',
+                yourName: '您的姓名 *',
+                yourEmail: '您的邮箱（可选）',
+                ratingLabel: '评分：',
+                writeComment: '写下您的评论... *',
+                publishComment: '发布评论',
+                loadingComments: '正在加载评论...',
+                noComments: '暂无评论。成为第一个发表意见的人！',
+                errorComments: '加载评论时出错',
+                reply: '回复',
+                cancel: '取消',
+                yourReply: '您的回复... *',
+                views: '浏览',
+                comment: '条评论',
+                comments: '条评论',
+                commentPublished: '✅ 评论已发布！',
+                replyPublished: '✅ 回复已发布！',
+                sending: '发送中...',
+                connectionError: '❌ 连接错误',
+                ratingBad: '差',
+                ratingFair: '一般',
+                ratingGood: '好',
+                ratingVeryGood: '很好',
+                ratingExcellent: '优秀',
+                justNow: '刚刚',
+                minutesAgo: '{n}分钟前',
+                hoursAgo: '{n}小时前',
+                daysAgo: '{n}天前',
+                daysAgoPlural: '{n}天前',
+                beFirst: '成为第一个发表意见的人！',
+            }
+        };
+
+        // Función helper para obtener traducción
+        function t(key) {
+            const lang = window.currentLang || 'es';
+            return (UI_TRANSLATIONS[lang] && UI_TRANSLATIONS[lang][key]) || UI_TRANSLATIONS['es'][key] || key;
+        }
+
+        let currentImageIndex = 0;
+        let currentPhotos = []; // Array de objetos {url, author, instagram}
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let slug = urlParams.get('slug');
+            // Leer idioma: puede venir como ?lang=de o desde la ruta /{lang}/evento/{slug}
+            let lang = urlParams.get('lang') || 'es';
+            
+            if (!slug) {
+                const path = window.location.pathname;
+                // Detectar slug desde /evento/slug o /de/evento/slug
+                const match = path.match(/\/(?:[a-z]{2}\/)?evento\/([^\/]+)/);
+                if (match) slug = match[1];
+                // Detectar idioma desde la ruta si no vino por query string
+                if (!urlParams.get('lang')) {
+                    const langMatch = path.match(/^\/([a-z]{2})\/evento\//);
+                    if (langMatch) lang = langMatch[1];
+                }
+            }
+
+            if (!slug) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error-msg').style.display = 'block';
+                return;
+            }
+
+            // Guardar idioma globalmente para usarlo en el resto de la página
+            window.currentLang = lang;
+
+            // Aplicar idioma al HTML y a los textos estáticos de la página
+            document.documentElement.lang = lang;
+            applyStaticTranslations(lang);
+
+            fetchEvento(slug, lang);
+        });
+
+        // Aplica las traducciones a los elementos estáticos del HTML (header, footer, loading, error)
+        function applyStaticTranslations(lang) {
+            window.currentLang = lang;
+
+            // Loading
+            const loadingEl = document.querySelector('#loading p');
+            if (loadingEl) loadingEl.textContent = t('loading');
+
+            // Error
+            const errorTitle = document.querySelector('#error-msg h2');
+            if (errorTitle) errorTitle.textContent = t('notFound');
+            const errorBtn = document.querySelector('#error-msg a');
+            if (errorBtn) errorBtn.textContent = t('seeAllEvents');
+
+            // Header nav
+            const navLinks = document.querySelectorAll('.nav-row li a span');
+            const navKeys = ['navAccommodations', 'navPlaces', 'navEvents', 'navActivities', 'navHome', 'navRoutes', 'navAccess'];
+            navLinks.forEach((el, i) => {
+                if (navKeys[i]) el.textContent = t(navKeys[i]);
+            });
+
+            // Carrusel header
+            const carouselTitle = document.querySelector('.accommodations-carousel-header h3');
+            if (carouselTitle) carouselTitle.innerHTML = `<i class="fas fa-bed"></i> ${t('nearbyAccommodations')}`;
+            const carouselDesc = document.querySelector('.accommodations-carousel-header p');
+            if (carouselDesc) {
+                const span = carouselDesc.querySelector('span');
+                const provinceName = span ? span.textContent : '';
+                carouselDesc.innerHTML = `${t('nearbyAccommodationsDesc')} <span id="carousel-province-name">${provinceName}</span>`;
+            }
+
+            // Eclipse banner
+            const eclipseTitle = document.querySelector('#eclipse-accommodations-banner h3');
+            if (eclipseTitle) eclipseTitle.innerHTML = `<i class="fas fa-moon" style="color: #f4d03f;"></i> ${t('eclipseTitle')}`;
+            const eclipseDesc = document.querySelector('#eclipse-accommodations-banner p');
+            if (eclipseDesc) eclipseDesc.textContent = t('eclipseDesc');
+            const eclipseBtn = document.getElementById('eclipse-accommodations-link');
+            if (eclipseBtn) eclipseBtn.innerHTML = `<i class="fas fa-bed"></i> ${t('eclipseBtn')}`;
+
+            // Footer
+            const footerP = document.querySelector('.footer p');
+            if (footerP) footerP.innerHTML = `&copy; 2026 rutasrurales.io. ${t('footerRights')}`;
+        }
+
+        // Función para trackear vistas de eventos culturales
+        function trackEventView(eventId) {
+            if (!eventId) return;
+            
+            fetch('/api/track_resource_stat.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    resource_type: 'event',
+                    resource_id: eventId,
+                    stat_type: 'view'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Vista registrada para evento:', eventId, data.data);
+                } else {
+                    console.error('Error al registrar vista:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error al trackear vista:', error);
+            });
+        }
+
+        async function fetchEvento(slug, lang) {
+            try {
+                // Pasar el idioma a la API para que devuelva la traducción correcta
+                const langParam = lang && lang !== 'es' ? '&lang=' + lang : '';
+                const response = await fetch('/api/evento-detalle.php?slug=' + encodeURIComponent(slug) + langParam);
+                const data = await response.json();
+                if (data.success && data.data) {
+                    renderEvento(data.data);
+                    // Trackear la vista del evento
+                    trackEventView(data.data.id);
+                } else {
+                    throw new Error('Evento no encontrado');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        async function fetchCommunityPhotos(entityId) {
+            // 1. Si no hay ID o si detectamos un bot común, salimos rápido
+            if (!entityId || /bot|googlebot|bingbot|crawler|spider/i.test(navigator.userAgent)) {
+                return [];
+            }
+
+            try {
+                const resp = await fetch(`/api/get_entity_photos.php?entity_type=cultural_events&entity_id=${entityId}`);
+                const data = await resp.json();
+                if (data.success && data.data.all && data.data.all.length > 0) {
+                    return data.data.all.map(p => ({
+                        url:       p.file_url || p.file_path || '',
+                        author:    p.author_name || ((p.first_name || '') + ' ' + (p.last_name || '')).trim() || null,
+                        instagram: p.author_instagram || null,
+                        community: true,
+                    })).filter(p => p.url);
+                }
+            } catch(e) { /* silencioso */ }
+            return [];
+        }
+
+        async function renderEvento(evento) {
+            window.currentEvent = evento;
+            document.getElementById('loading').style.display = 'none';
+            const container = document.getElementById('detail-content');
+            container.style.display = 'block';
+            
+            // Actualizar <title> con meta_title traducido (o título automático)
+            if (evento.meta_title && evento.meta_title.trim() !== '') {
+                document.title = evento.meta_title.trim();
+            } else {
+                document.title = evento.titulo + ' en ' + evento.localidad;
+            }
+
+            // Actualizar <meta name="description"> con meta_description traducido
+            // La API ya devuelve COALESCE(traducción, español) en meta_description
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) {
+                if (evento.meta_description && evento.meta_description.trim() !== '') {
+                    metaDesc.setAttribute('content', evento.meta_description.trim());
+                } else if (evento.descripcion_corta && evento.descripcion_corta.trim() !== '') {
+                    // Fallback: usar descripción corta si no hay meta_description
+                    metaDesc.setAttribute('content', evento.descripcion_corta.trim().substring(0, 160));
+                }
+            }
+
+            // Actualizar <meta property="og:title"> y <meta property="og:description"> si existen
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) ogTitle.setAttribute('content', document.title);
+            const ogDesc = document.querySelector('meta[property="og:description"]');
+            if (ogDesc && evento.meta_description) ogDesc.setAttribute('content', evento.meta_description.trim());
+
+            // Actualizar canonical URL dinámicamente con el slug del evento
+            // Si hay idioma distinto al español, la canonical apunta a la URL localizada
+            const canonicalEl = document.getElementById('dynamic-canonical');
+            if (canonicalEl && evento.slug) {
+                const lang = window.currentLang || 'es';
+                const canonicalUrl = lang !== 'es'
+                    ? 'https://rutasurales.io/' + lang + '/evento/' + evento.slug
+                    : 'https://rutasurales.io/evento/' + evento.slug;
+                canonicalEl.setAttribute('href', canonicalUrl);
+            }
+
+            // Verificar si el evento ha finalizado
+            // El mensaje debe aparecer el día DESPUÉS de que termine el evento
+            // Si hay fecha_fin: usar fecha_fin + 1 día
+            // Si no hay fecha_fin: usar start_date + 1 día
+            const eventStartDate = new Date(evento.fecha_evento);
+            let comparisonDate = new Date(eventStartDate);
+            
+            if (evento.fecha_fin) {
+                // Si hay fecha fin, usar fecha fin + 1 día
+                comparisonDate = new Date(evento.fecha_fin);
+                comparisonDate.setDate(comparisonDate.getDate() + 1);
+            } else {
+                // Si no hay fecha fin, usar start_date + 1 día
+                comparisonDate.setDate(comparisonDate.getDate() + 1);
+            }
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            comparisonDate.setHours(0, 0, 0, 0);
+            
+            let finishedNoticeHtml = '';
+            if (comparisonDate < today) {
+                finishedNoticeHtml = `
+                    <div class="finished-notice">
+                        <i class="fas fa-info-circle"></i>
+                        <span>${t('eventFinished')} <a href="https://rutasrurales.io/eventos-culturales-paginacion.html">${t('seeCurrentEvents')}</a></span>
+                    </div>
+                `;
+            }
+
+            // Fotos propias del evento (sin crédito)
+            const ownPhotos = (evento.fotos && evento.fotos.length > 0)
+                ? evento.fotos.map(url => ({ url, author: null, instagram: null, community: false }))
+                : [{ url: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop', author: null, instagram: null, community: false }];
+
+            // Fotos de la comunidad (con crédito) — carga en paralelo
+            const communityPhotos = evento.id ? await fetchCommunityPhotos(evento.id) : [];
+
+            // Combinar: fotos propias primero, luego comunidad
+            currentPhotos = [...ownPhotos, ...communityPhotos];
+
+            const galleryHtml = `
+                <div class="gallery-container" id="galleryContainer">
+                    ${currentPhotos.map((foto, i) => {
+                        const photoNum = i + 1;
+                        const altText = `${evento.titulo} - Foto ${photoNum} de ${currentPhotos.length} - ${evento.localidad || ''} ${evento.provincia || ''} - Evento cultural en Rutas Rurales`;
+                        return `<img src="${foto.url}" class="gallery-img ${i === 0 ? 'active' : ''}" alt="${altText}" loading="${i === 0 ? 'eager' : 'lazy'}" title="${evento.titulo}">`;
+                    }).join('')}
+                    ${currentPhotos.length > 1 ? `
+                        <div class="gallery-nav">
+                            <button class="nav-btn" onclick="changePhoto(-1)"><i class="fas fa-chevron-left"></i></button>
+                            <button class="nav-btn" onclick="changePhoto(1)"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="gallery-counter" id="galleryCounter" style="display:block;">${currentPhotos.length > 1 ? '1 / ' + currentPhotos.length : ''}</div>
+                    ` : ''}
+                    <div class="photo-credit" id="photoCredit"></div>
+                </div>
+            `;
+
+            const fechaParts = evento.fecha_formateada ? evento.fecha_formateada.split('/') : ['', '', ''];
+            const dia = fechaParts[0];
+            const mes = getMonthName(fechaParts[1]);
+
+            const descriptionHtml = formatearDescripcion(evento.descripcion);
+            const programHtml = evento.program ? `
+                <div class="detail-section" style="margin-top: 2rem;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">${t('program')}</h3>
+                    <div class="event-description">${formatearDescripcion(evento.program)}</div>
+                </div>
+            ` : '';
+
+            const targetAudienceHtml = evento.target_audience ? `
+                <div class="info-item">
+                    <i class="fas fa-users"></i>
+                    <span>${evento.target_audience}</span>
+                </div>
+            ` : '';
+
+            const accessibilityHtml = evento.accessibility ? `
+                <div class="info-item">
+                    <i class="fas fa-wheelchair"></i>
+                    <span>${evento.accessibility}</span>
+                </div>
+            ` : '';
+
+            // Preparar datos para el mapa
+            console.log('Coordenadas del evento:', evento.latitud, evento.longitud, '| Provincia:', evento.provincia);
+            const mapData = {
+                lat: evento.latitud,
+                lng: evento.longitud,
+                address: (evento.direccion || '') + ' ' + (evento.localidad || '') + ' ' + (evento.provincia || ''),
+                venue: evento.ubicacion || '',
+                title: evento.titulo
+            };
+
+            container.innerHTML = `
+                <div class="detail-container">
+                    ${finishedNoticeHtml}
+                    <div class="detail-header">
+                        <span class="event-badge">${evento.categoria_nombre || 'Evento'}</span>
+                        <h1>${evento.titulo}</h1>
+                        <p><i class="fas fa-map-marker-alt"></i> ${evento.ubicacion || evento.localidad || ''}</p>
+                    </div>
+
+                    ${galleryHtml}
+
+                    <div class="detail-grid">
+                        <div class="main-col">
+                            <div class="detail-section">
+                                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">${t('description')}</h3>
+                                <div class="event-description">${descriptionHtml}</div>
+                            </div>
+
+                            ${programHtml}
+                            
+                            <div class="detail-section">
+                                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">${t('location')}</h3>
+                                <div class="google-map-container">
+                                    <div id="google-map"></div>
+                                </div>
+                                <div style="text-align: right; margin-top: 10px;">
+                                    <a href="https://www.google.com/maps?q=${encodeURIComponent(mapData.venue || mapData.address)}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-size: 0.9rem;">
+                                        <i class="fas fa-external-link-alt"></i> ${t('seeOnMaps')}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <aside class="side-col">
+                            <div class="event-date-box">
+                                <div class="day">${dia}</div>
+                                <div class="month">${mes}</div>
+                                ${evento.hora_formateada ? `<div style="margin-top:10px; font-size: 1.2rem;"><i class="fas fa-clock"></i> ${evento.hora_formateada}</div>` : ''}
+                            </div>
+
+                            <div class="info-card">
+                                <h3 style="color: var(--primary-color); margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">${t('information')}</h3>
+                                ${evento.precio ? `<div class="info-item"><i class="fas fa-euro-sign"></i> <strong>${t('price')}:</strong> ${evento.precio}</div>` : ''}
+                                ${evento.organizador ? `<div class="info-item"><i class="fas fa-user"></i> <strong>${t('organizer')}:</strong> ${evento.organizador}</div>` : ''}
+                                ${evento.telefono ? `<div class="info-item"><i class="fas fa-phone"></i> ${evento.telefono}</div>` : ''}
+                                ${evento.email ? `<div class="info-item"><i class="fas fa-envelope"></i> ${evento.email}</div>` : ''}
+                                ${targetAudienceHtml}
+                                ${accessibilityHtml}
+                                <button onclick="addToMyRouteFromDetail()" class="btn-primary" style="width: 100%; margin-top: 1rem; background: var(--accent-color); border: none; cursor: pointer; padding: 10px; border-radius: 8px; color: white; font-weight: bold;">
+                                    <i class="fas fa-plus-circle"></i> ${t('addToRoute')}
+                                </button>
+                            </div>
+
+                            ${(evento.provincia || evento.latitud) ? (() => {
+                                const lat = parseFloat(evento.latitud);
+                                const lng = parseFloat(evento.longitud);
+                                const hasCoords = !isNaN(lat) && !isNaN(lng) && Math.abs(lat) > 0.1 && Math.abs(lng) > 0.1;
+                                const coordParams = hasCoords ? `lat=${lat}&lng=${lng}&` : '';
+                                return `<a href="/rutas.php?${coordParams}provincia=${encodeURIComponent(evento.provincia || '')}&radius=100&alojamientos=1&lugares=1&actividades=1&eventos=1" class="btn-primary" style="display: block; text-align: center; text-decoration: none; background: linear-gradient(135deg, #e67e22, #d35400); color: white; padding: 14px; border-radius: 10px; font-weight: 700; margin-top: 12px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4); transition: all 0.3s ease;">
+                                    <i class="fas fa-compass"></i> ${t('nearbyAll')}
+                                    <span style="display: block; font-size: 0.75rem; font-weight: 500; margin-top: 4px; opacity: 0.95;">
+                                        ${t('nearbyAllDesc')}
+                                    </span>
+                                </a>`;
+                            })() : ''}
+
+                            <a href="#" id="btnPresumeFotos" target="_blank" class="action-button" style="display: block; text-decoration: none; background: linear-gradient(135deg, #E1306C, #C13584); color: white; padding: 14px; border-radius: 10px; font-weight: 700; margin-top: 16px; box-shadow: 0 4px 15px rgba(193, 53, 132, 0.4); transition: all 0.3s ease; text-align: center;">
+                                <i class="fas fa-camera"></i> ${t('sharePhotos')}
+                                <span style="display: block; font-size: 0.7rem; font-weight: 500; margin-top: 4px; opacity: 0.9;">
+                                    ${t('sharePhotosDesc')}
+                                </span>
+                            </a>
+
+                            <a href="https://rutasrurales.io/login.html?role=turista" target="_blank" class="action-button" style="display: block; text-decoration: none; background: linear-gradient(135deg, #FFD700, #FFA500); color: #333; padding: 14px; border-radius: 10px; font-weight: 700; margin-top: 12px; box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4); transition: all 0.3s ease; text-align: center;">
+                                <i class="fas fa-gift"></i> ${t('promos')}
+                                <span style="display: block; font-size: 0.7rem; font-weight: 500; margin-top: 4px; opacity: 0.85;">
+                                    ${t('promosDesc')}
+                                </span>
+                            </a>
+                        </aside>
+                    </div>
+                </div>
+            `;
+
+            // Inicializar mapa
+            if (window.mapsApiLoaded) {
+                initGoogleMap(mapData);
+            } else {
+                window.pendingMapData = mapData;
+            }
+
+            // Generar JSON-LD para Schema.org
+            generateEventSchema(evento);
+        }
+
+        function generateEventSchema(evento) {
+            // Validar que tenemos los datos mínimos necesarios
+            if (!evento || !evento.fecha_evento) {
+                console.error('No se puede generar schema: faltan datos del evento');
+                return;
+            }
+
+            // Si end_date está vacío, usar start_date como endDate
+            const endDate = evento.fecha_fin || evento.fecha_evento;
+            
+            // Construir startDate con hora si está disponible
+            let startDateTime = evento.fecha_evento;
+            if (evento.hora_evento && evento.hora_evento !== '00:00:00') {
+                startDateTime = evento.fecha_evento + 'T' + evento.hora_evento;
+            } else {
+                startDateTime = evento.fecha_evento + 'T10:00:00';
+            }
+            
+            // Construir endDate con hora si está disponible
+            let endDateTime = endDate;
+            if (evento.hora_fin && evento.hora_fin !== '00:00:00') {
+                endDateTime = endDate + 'T' + evento.hora_fin;
+            } else if (evento.hora_evento && evento.hora_evento !== '00:00:00') {
+                // Si no hay hora de fin pero sí de inicio, asumir 2 horas de duración
+                const startTime = new Date(startDateTime);
+                startTime.setHours(startTime.getHours() + 2);
+                endDateTime = endDate + 'T' + startTime.toTimeString().substring(0, 8);
+            } else {
+                endDateTime = endDate + 'T18:00:00';
+            }
+            
+            // Añadir zona horaria de España
+            startDateTime += '+01:00';
+            endDateTime += '+01:00';
+
+            // Imagen principal
+            const mainImage = (evento.fotos && evento.fotos.length > 0) 
+                ? evento.fotos[0] 
+                : 'https://rutasrurales.io/menu_images/Logo%20transparente.webp';
+
+            // Determinar nombre de ubicación (OBLIGATORIO)
+            const locationName = evento.ubicacion || evento.localidad || evento.provincia || 'Soria';
+            
+            // Construir el objeto Schema.org con TODOS los campos obligatorios
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "Event",
+                "name": evento.titulo || 'Evento Cultural',
+                "description": evento.descripcion_corta || (evento.descripcion ? evento.descripcion.substring(0, 200) : 'Evento cultural en Soria'),
+                "startDate": startDateTime,
+                "endDate": endDateTime,
+                "eventStatus": "https://schema.org/EventScheduled",
+                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                "location": {
+                    "@type": "Place",
+                    "name": locationName,
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": evento.direccion || '',
+                        "addressLocality": evento.localidad || 'Soria',
+                        "addressRegion": evento.provincia || 'Soria',
+                        "addressCountry": "ES"
+                    }
+                },
+                "image": [mainImage],
+                "url": evento.canonical_url || window.location.href,
+                "organizer": {
+                    "@type": "Organization",
+                    "name": evento.organizador || "Organizador del evento"
+                },
+                "offers": {
+                    "@type": "Offer",
+                    "price": evento.precio_numerico || "0",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "url": evento.url_entradas || window.location.href
+                }
+            };
+
+            // Añadir email y teléfono al organizador si existen
+            if (evento.email) {
+                schema.organizer.email = evento.email;
+            }
+            if (evento.telefono) {
+                schema.organizer.telephone = evento.telefono;
+            }
+
+            // Añadir coordenadas si existen
+            if (evento.latitud && evento.longitud && Math.abs(parseFloat(evento.latitud)) > 1) {
+                schema.location.geo = {
+                    "@type": "GeoCoordinates",
+                    "latitude": parseFloat(evento.latitud),
+                    "longitude": parseFloat(evento.longitud)
+                };
+            }
+
+            // Insertar el JSON-LD en el documento
+            const schemaScript = document.getElementById('event-schema');
+            if (schemaScript) {
+                schemaScript.textContent = JSON.stringify(schema, null, 2);
+            }
+            
+            console.log('Schema.org generado correctamente:', schema);
+        }
+
+        function updatePhotoCredit(index) {
+            const creditEl  = document.getElementById('photoCredit');
+            const counterEl = document.getElementById('galleryCounter');
+            if (!creditEl) return;
+
+            const photo = currentPhotos[index];
+            if (photo && photo.author) {
+                const instaHtml = photo.instagram
+                    ? ` · <a href="https://instagram.com/${photo.instagram.replace('@','')}" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> ${photo.instagram}</a>`
+                    : '';
+                creditEl.innerHTML = `<i class="fas fa-camera"></i> <span>Foto: ${photo.author}${instaHtml}</span>`;
+                creditEl.classList.add('show');
+            } else {
+                creditEl.innerHTML = '';
+                creditEl.classList.remove('show');
+            }
+
+            if (counterEl && currentPhotos.length > 1) {
+                counterEl.textContent = (index + 1) + ' / ' + currentPhotos.length;
+            }
+        }
+
+        function changePhoto(dir) {
+            const imgs = document.querySelectorAll('.gallery-img');
+            if (imgs.length <= 1) return;
+            imgs[currentImageIndex].classList.remove('active');
+            currentImageIndex = (currentImageIndex + dir + imgs.length) % imgs.length;
+            imgs[currentImageIndex].classList.add('active');
+            updatePhotoCredit(currentImageIndex);
+        }
+
+        // Inicializar crédito de la primera foto cuando el DOM esté listo
+        document.addEventListener('click', function initFirstCredit(e) {
+            // Esperar a que la galería esté en el DOM
+            const creditEl = document.getElementById('photoCredit');
+            if (creditEl && currentPhotos.length > 0) {
+                updatePhotoCredit(0);
+                document.removeEventListener('click', initFirstCredit);
+            }
+        }, { once: false });
+
+        // También inicializar tras renderizar (usando MutationObserver)
+        const _creditObserver = new MutationObserver(() => {
+            const creditEl = document.getElementById('photoCredit');
+            if (creditEl && currentPhotos.length > 0) {
+                updatePhotoCredit(0);
+                _creditObserver.disconnect();
+            }
+        });
+        _creditObserver.observe(document.body, { childList: true, subtree: true });
+
+        // Función formateadora de descripciones
+        function formatearDescripcion(texto) {
+            if (!texto) return '<p>Sin descripción disponible.</p>';
+            
+            // Verificar si el texto ya contiene HTML (etiquetas como <p>, <strong>, <ul>, etc.)
+            const hasHtml = /<\/?[a-z][\s\S]*>/i.test(texto);
+            
+            if (hasHtml) {
+                // Si ya tiene HTML, solo añadir emojis a palabras clave sin romper la estructura
+                const busquedas = ["Horario", "Ubicación", "Entrada", "Precio", "Organiza", "Programa", "Fecha", "Lugar"];
+                const emojis = ["🕐", "📍", "🎫", "💰", "👥", "📋", "📅", "🏛️"];
+                
+                // Reemplazar solo texto que no esté dentro de etiquetas HTML
+                let resultado = texto;
+                busquedas.forEach((palabra, index) => {
+                    // Usar una expresión que no capture dentro de etiquetas HTML
+                    const regex = new RegExp(`(?<![a-zA-Z/])${palabra}(?![a-zA-Z=])`, 'gi');
+                    resultado = resultado.replace(regex, `${emojis[index]} ${palabra}`);
+                });
+                
+                // Convertir saltos de línea simples en <br> si no hay saltos ya
+                resultado = resultado.replace(/(?<!<br\s*\/?>)\n(?!\s*<)/g, '<br>');
+                
+                return resultado;
+            } else {
+                // Si no tiene HTML, aplicar el formato completo (para texto plano antiguo)
+                // Añadir emojis a palabras clave automáticamente
+                const busquedas = ["Horario", "Ubicación", "Entrada", "Precio", "Organiza", "Programa", "Fecha", "Lugar"];
+                const emojis = ["🕐", "📍", "🎫", "💰", "👥", "📋", "📅", "🏛️"];
+                
+                busquedas.forEach((palabra, index) => {
+                    const regex = new RegExp(`\\b${palabra}\\b`, 'gi');
+                    texto = texto.replace(regex, `${emojis[index]} ${palabra}`);
+                });
+                
+                // Convertir asteriscos **texto** en negritas <strong>texto</strong>
+                texto = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Convertir saltos de línea en párrafos
+                return texto.split(/\n+/).filter(p => p.trim()).map(p => `<p>${p.trim()}</p>`).join('');
+            }
+        }
+
+        function getMonthName(num) {
+            const lang = window.currentLang || 'es';
+            const monthsByLang = {
+                es: ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                de: ['', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                en: ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                fr: ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                zh: ['', '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            };
+            const months = monthsByLang[lang] || monthsByLang['es'];
+            return months[parseInt(num)] || '';
+        }
+
+        function initGoogleMap(data) {
+            const mapDiv = document.getElementById('google-map');
+            if (!mapDiv || typeof google === 'undefined') {
+                console.error('Google Maps API no disponible o div del mapa no encontrado');
+                return;
+            }
+
+            // Usar mapa clásico sin mapId (más compatible)
+            const map = new google.maps.Map(mapDiv, {
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
+                streetViewControl: true,
+                fullscreenControl: false,
+                center: { lat: 0, lng: 0 } // Centro inicial
+            });
+
+            const geocoder = new google.maps.Geocoder();
+            const lat = parseFloat(data.lat);
+            const lng = parseFloat(data.lng);
+
+            const setLocation = (location) => {
+                map.setCenter(location);
+                map.panTo(location);
+                addMarker(map, location, data.title);
+            };
+
+            // 1. Intentar con coordenadas si son válidas (evitar 0,0 que apunta a África)
+            if (!isNaN(lat) && !isNaN(lng) && Math.abs(lat) > 1) {
+                setLocation({ lat, lng });
+            } 
+            // 2. Fallback a Geocoding (Búsqueda por texto)
+            else {
+                // Construimos una consulta robusta: Lugar + Dirección + Soria + España
+                let queryParts = [data.venue, data.address];
+                if (!queryParts.some(p => p && p.toLowerCase().includes('soria'))) queryParts.push('Soria');
+                queryParts.push('España');
+                
+                const query = queryParts.filter(p => p && p.trim().length > 1).join(', ');
+                
+                if (query.length > 10) { // Evitar búsquedas demasiado genéricas
+                    geocoder.geocode({ address: query }, (results, status) => {
+                        if (status === 'OK' && results[0]) {
+                            setLocation(results[0].geometry.location);
+                        } else {
+                            // Último intento solo con la dirección
+                            const fallbackQuery = (data.address || '') + ', Soria, España';
+                            geocoder.geocode({ address: fallbackQuery }, (results2, status2) => {
+                                if (status2 === 'OK' && results2[0]) {
+                                    setLocation(results2[0].geometry.location);
+                                } else {
+                                    mapDiv.innerHTML = '<div class="map-error">No se pudo encontrar la ubicación en el mapa.</div>';
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    mapDiv.innerHTML = '<div class="map-error">Dirección no disponible para el mapa.</div>';
+                }
+            }
+        }
+
+        function addMarker(map, position, title) {
+            // Usar marcador estándar de Google Maps (más compatible)
+            const marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: title,
+                animation: google.maps.Animation.DROP
+            });
+            
+            const infoWindow = new google.maps.InfoWindow({ 
+                content: `<div style="color:var(--primary-color);font-weight:bold;padding:5px;">${title}</div>`
+            });
+            
+            marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+            });
+            
+            // Abrir infoWindow automáticamente después de un breve retraso
+            setTimeout(() => {
+                infoWindow.open(map, marker);
+            }, 1000);
+        }
+
+        // Lógica de Mi Ruta Personal
+        function addToMyRouteFromDetail() {
+            const item = window.currentEvent;
+            if (!item) {
+                alert('Error: No se pudo obtener la información del evento');
+                return;
+            }
+
+            let myRoute = JSON.parse(localStorage.getItem('myPersonalRoute') || '[]');
+
+            const id = item.id;
+            const tipo = 'evento';
+
+            if (myRoute.some(i => i.id === id && i.tipo === tipo)) {
+                alert('Este evento ya está en tu ruta');
+                return;
+            }
+
+            myRoute.push({
+                id: id,
+                nombre: item.titulo,
+                tipo: tipo,
+                lat: item.latitud || item.latitude,
+                lng: item.longitud || item.longitude,
+                slug: item.slug,
+                foto: (item.fotos && item.fotos.length > 0) ? item.fotos[0] : 'https://rutasrurales.io/menu_images/evento-default.jpg',
+                localidad: item.localidad,
+                description: (item.descripcion || '').substring(0, 300) + '...'
+            });
+
+            localStorage.setItem('myPersonalRoute', JSON.stringify(myRoute));
+            
+            // Mostrar confirmación y opción de ir al itinerario
+            if (confirm(`✅ Añadido a tu itinerario (${myRoute.length} ${myRoute.length === 1 ? 'parada' : 'paradas'})\n\n¿Quieres ver tu itinerario completo?`)) {
+                window.location.href = '/mi-ruta.html';
+            }
+            
+            const toast = document.createElement('div');
+            toast.style = "position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary-color); color: white; padding: 1rem 2rem; border-radius: 30px; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-weight: bold;";
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ¡Añadido a tu ruta! <a href="/mi-ruta.html" style="color: white; text-decoration: underline; margin-left: 10px;">Ver mi ruta</a>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // ===============================================
+        // CARRUSEL DE ALOJAMIENTOS CON LAZY LOADING
+        // ===============================================
+        
+        // Variables del carrusel
+        let accommodationsData = [];
+        let currentCarouselIndex = 0;
+        let carouselItemsPerView = 3;
+        let currentEventSlug = '';
+        
+        // Obtener slug de la URL al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentEventSlug = urlParams.get('slug') || '';
+            
+            if (!currentEventSlug) {
+                const path = window.location.pathname;
+                const match = path.match(/\/evento\/([^\/]+)/);
+                if (match) currentEventSlug = match[1];
+            }
+            
+            console.log('DEBUG: Slug detectado:', currentEventSlug);
+        });
+        
+        // Configuración especial para el Eclipse Solar 2026
+        const ECLIPSE_SOLAR_2026 = {
+            // Provincias con eclipse total
+            provinces: [
+                'A Coruña', 'La Coruña', 'Almería', 'Cádiz', 'Córdoba', 'Huelva', 'Jaén', 'Málaga', 'Sevilla',
+                'Huesca', 'Teruel', 'Zaragoza',
+                'Asturias', 'Oviedo', 'Gijón',
+                'Islas Baleares', 'Baleares', 'Mallorca', 'Menorca', 'Ibiza',
+                'Álava', 'Vizcaya', 'Guipúzcoa', 'Bizkaia', 'Gipuzkoa', 'País Vasco', 'Bilbao', 'San Sebastián',
+                'Cantabria', 'Santander',
+                'Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo', 'Castilla-La Mancha',
+                'Ávila', 'Burgos', 'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora', 'Castilla y León',
+                'Barcelona', 'Girona', 'Lleida', 'Tarragona', 'Cataluña', 'Gerona',
+                'Lugo', 'Ourense', 'Pontevedra', 'Galicia',
+                'La Rioja', 'Logroño',
+                'Madrid', 'Alcalá de Henares',
+                'Navarra', 'Pamplona',
+                'Alicante', 'Castellón', 'Valencia', 'Comunidad Valenciana'
+            ],
+            // Capitales de provincia a excluir (contaminación lumínica)
+            excludeCapitals: [
+                'A Coruña', 'La Coruña', 'Almería', 'Cádiz', 'Córdoba', 'Huelva', 'Jaén', 'Málaga', 'Sevilla',
+                'Huesca', 'Teruel', 'Zaragoza',
+                'Oviedo', 'Gijón',
+                'Palma', 'Palma de Mallorca',
+                'Bilbao', 'San Sebastián', 'Vitoria', 'Gasteiz',
+                'Santander',
+                'Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo',
+                'Ávila', 'Burgos', 'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora',
+                'Barcelona', 'Girona', 'Lleida', 'Tarragona',
+                'Lugo', 'Ourense', 'Pontevedra', 'Santiago de Compostela',
+                'Logroño',
+                'Madrid', 'Alcalá de Henares',
+                'Pamplona', ' Tudela', 'Barañain',
+                'Alicante', 'Castellón', 'Valencia'
+            ],
+            // Slugs o keywords que identifican el evento del eclipse
+            keywords: ['eclipse-solar', 'eclipse-solar-total', 'eclipse-agosto-2026', 'eclipse', 'solar'],
+            // Keywords SEO para el carrusel del eclipse
+            seoKeywords: [
+                'eclipse solar 2026', 'ver eclipse solar', 'eclipse total', 'eclipse solar España',
+                'observatorio astronomico', 'cielo oscuro', 'turismo astronomico', 'eclipse solar Castilla',
+                'eclipse solar Galicia', 'eclipse solar Pais Vasco', 'eclipse solar Asturias'
+            ]
+        };
+
+        // Función para verificar si es el evento del eclipse solar
+        function isEclipseEvent(slug, titulo) {
+            const textToCheck = (slug + ' ' + (titulo || '')).toLowerCase();
+            return ECLIPSE_SOLAR_2026.keywords.some(keyword => 
+                textToCheck.includes(keyword.toLowerCase())
+            );
+        }
+
+        // Función para cargar alojamientos por provincia (lazy loading)
+        async function loadAccommodationsByProvince(provincia, eventoTitulo = '') {
+            const carouselSection = document.getElementById('accommodations-carousel');
+            const track = document.getElementById('carousel-track');
+            const provinceNameEl = document.getElementById('carousel-province-name');
+            
+            console.log('DEBUG: Cargando alojamientos para provincia:', provincia);
+            
+            if (!carouselSection || !track || !provincia) {
+                console.log('DEBUG: Faltan elementos o provincia');
+                return;
+            }
+            
+            // Mostrar sección con indicador de carga
+            carouselSection.style.display = 'block';
+            track.innerHTML = '<div class="carousel-loading"><i class="fas fa-spinner"></i><br>Cargando alojamientos...</div>';
+            
+            // Actualizar nombre de provincia en el título
+            if (provinceNameEl) {
+                provinceNameEl.textContent = provincia;
+            }
+            
+            try {
+                // Llamada a la API
+                const apiUrl = `/api/get_accommodations_by_province.php?provincia=${encodeURIComponent(provincia)}&limit=10`;
+                console.log('DEBUG: Llamando API:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                console.log('DEBUG: Respuesta API:', data);
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    accommodationsData = data.data;
+                    console.log('DEBUG: Alojamientos encontrados:', accommodationsData.length);
+                    renderCarousel();
+                } else {
+                    console.log('DEBUG: No hay alojamientos o error:', data.message);
+                    // Ocultar sección
+                    carouselSection.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('DEBUG Error al cargar alojamientos:', error);
+                carouselSection.style.display = 'none';
+            }
+        }
+        
+        // Función para verificar si la localidad es una capital de provincia
+        function isCapitalCity(localidad, provincia) {
+            if (!localidad) return false;
+            const loc = localidad.toLowerCase().trim();
+            const prov = (provincia || '').toLowerCase().trim();
+            
+            // Verificar contra lista de capitales
+            const isCapital = ECLIPSE_SOLAR_2026.excludeCapitals.some(capital => 
+                loc.includes(capital.toLowerCase()) || capital.toLowerCase().includes(loc)
+            );
+            
+            // También excluir si la localidad es la misma que la provincia (indica capital)
+            if (loc === prov) return true;
+            
+            return isCapital;
+        }
+
+        // Función especial para cargar alojamientos del eclipse solar - OPTIMIZADA
+        async function loadEclipseAccommodations() {
+            const carouselSection = document.getElementById('accommodations-carousel');
+            const track = document.getElementById('carousel-track');
+            const provinceNameEl = document.getElementById('carousel-province-name');
+            const headerEl = document.querySelector('.accommodations-carousel-header h3');
+            
+            if (!carouselSection || !track) return;
+            
+            // Actualizar título para el eclipse
+            if (provinceNameEl) {
+                provinceNameEl.textContent = 'las mejores zonas de España para ver el eclipse';
+            }
+            if (headerEl) {
+                headerEl.innerHTML = '<i class="fas fa-star"></i> Mejores Alojamientos para Ver el Eclipse Solar 2026';
+            }
+            
+            carouselSection.style.display = 'block';
+            track.innerHTML = '<div class="carousel-loading"><i class="fas fa-spinner"></i><br>Buscando zonas con cielo oscuro...</div>';
+            
+            // Provincias principales con eclipse total (reducido a 5 para rapidez)
+            const provincesToLoad = ['Soria', 'León', 'Zamora', 'Ávila', 'Burgos'];
+            
+            try {
+                // Cargar todas las provincias en PARALELO con Promise.all
+                const results = await Promise.all(
+                    provincesToLoad.map(prov => 
+                        fetch(`/api/get_accommodations_by_province.php?provincia=${encodeURIComponent(prov)}&limit=5`)
+                            .then(res => res.json())
+                            .catch(() => ({ success: false, data: [] }))
+                    )
+                );
+                
+                let allAccommodations = [];
+                results.forEach(data => {
+                    if (data.success && data.data) {
+                        allAccommodations = [...allAccommodations, ...data.data];
+                    }
+                });
+                
+                console.log('DEBUG Eclipse: Total cargados:', allAccommodations.length);
+                
+                if (allAccommodations.length > 0) {
+                    // Filtrar: excluir capitales de provincia (contaminación lumínica)
+                    const filteredAccommodations = allAccommodations.filter(acc => {
+                        const localidad = acc.localidad || acc.Localidad || '';
+                        const provincia = acc.provincia || acc.Provincia || '';
+                        return !isCapitalCity(localidad, provincia);
+                    });
+                    
+                    console.log('DEBUG Eclipse: Filtrados (sin capitales):', filteredAccommodations.length);
+                    
+                    // Tomar hasta 10 resultados aleatorios
+                    accommodationsData = filteredAccommodations
+                        .sort(() => Math.random() - 0.5)
+                        .slice(0, 10);
+                    
+                    // Marcar que es el carrusel del eclipse para usar SEO keywords
+                    window.isEclipseCarousel = true;
+                    
+                    renderCarousel();
+                } else {
+                    track.innerHTML = '<div class="carousel-empty"><i class="fas fa-bed"></i><br>No se encontraron alojamientos</div>';
+                }
+            } catch (error) {
+                console.error('Error cargando alojamientos del eclipse:', error);
+                track.innerHTML = '<div class="carousel-empty"><i class="fas fa-exclamation-triangle"></i><br>Error al cargar alojamientos</div>';
+            }
+        }
+        
+        // Función para renderizar el carrusel
+        function renderCarousel() {
+            const track = document.getElementById('carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            
+            if (!track || accommodationsData.length === 0) return;
+            
+            // Calcular elementos visibles según el ancho de pantalla
+            updateCarouselSettings();
+            
+            // Generar HTML de las tarjetas
+            // Obtener el título del evento para SEO del carrusel
+            const eventoTitulo = window.currentEvent ? window.currentEvent.titulo : '';
+            track.innerHTML = accommodationsData.map((acc, index) => createAccommodationCard(acc, index, eventoTitulo)).join('');
+            
+            // Generar puntos de navegación
+            const totalDots = Math.ceil(accommodationsData.length / carouselItemsPerView);
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalDots; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Ir a grupo ${i + 1}`);
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+            
+            // Configurar botones de navegación
+            prevBtn.onclick = () => navigateCarousel(-1);
+            nextBtn.onclick = () => navigateCarousel(1);
+            
+            // Actualizar estado de botones
+            updateCarouselButtons();
+            
+            // Aplicar lazy loading a las imágenes
+            applyLazyLoading();
+        }
+        
+        // Función para obtener una keyword SEO aleatoria para el eclipse
+        function getRandomEclipseSEO() {
+            const keywords = ECLIPSE_SOLAR_2026.seoKeywords;
+            return keywords[Math.floor(Math.random() * keywords.length)];
+        }
+
+        // Función para crear HTML de una tarjeta de alojamiento
+        function createAccommodationCard(accommodation, index, eventoTitulo) {
+            const tipo = accommodation.tipo || accommodation.Tipo || 'Casa Rural';
+            const nombre = accommodation.nombre || accommodation.Nombre || 'Alojamiento';
+            const localidad = accommodation.localidad || accommodation.Localidad || '';
+            const provincia = accommodation.provincia || accommodation.Provincia || '';
+            const precio = accommodation.precio || accommodation.Precio || 0;
+            const caracteristicas = accommodation.caracteristicas || accommodation.Caracteristicas || [];
+            
+            // Obtener la foto principal - buscar en múltiples campos
+            let foto = '';
+            if (accommodation.foto) {
+                foto = accommodation.foto;
+            } else if (accommodation.fotos && Array.isArray(accommodation.fotos) && accommodation.fotos.length > 0) {
+                foto = accommodation.fotos[0];
+            } else if (accommodation.Foto1) {
+                foto = accommodation.Foto1;
+            } else if (accommodation.foto1) {
+                foto = accommodation.foto1;
+            }
+            
+            // Si no hay foto, usar imagen por defecto
+            if (!foto) {
+                foto = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
+            }
+            
+            // Generar badge de tipo
+            let tipoBadge = tipo;
+            if (tipo.toLowerCase().includes('casa')) tipoBadge = 'Casa Rural';
+            else if (tipo.toLowerCase().includes('piso') || tipo.toLowerCase().includes('apartamento')) tipoBadge = 'Apartamento';
+            else if (tipo.toLowerCase().includes('hotel')) tipoBadge = 'Hotel';
+            else if (tipo.toLowerCase().includes('hostal')) tipoBadge = 'Hostal';
+            
+            // Generar precio
+            const precioHTML = precio > 0 
+                ? `<span class="accommodation-price">${precio}€ <span>/noche</span></span>`
+                : `<span class="accommodation-price"><span>Consultar</span></span>`;
+            
+            // Generar características (máximo 3)
+            const featuresHTML = caracteristicas.slice(0, 3).map(f => 
+                `<span class="accommodation-feature">${f}</span>`
+            ).join('');
+            
+            // Generar enlace al detalle del alojamiento
+            // Usar slug si está disponible y es válido (no demasiado largo ni con caracteres extraños)
+            let slug = accommodation.slug || accommodation.Slug || '';
+            // Si el slug está vacío o es muy largo (más de 80 caracteres), limpiar
+            if (slug.length > 80 || slug.includes('alojamiento') || slug.includes('undefined')) {
+                slug = '';
+            }
+            // Generar slug a partir del nombre si no hay slug disponible
+            if (!slug && (accommodation.nombre || accommodation.name || accommodation.Nombre)) {
+                const nombre = accommodation.nombre || accommodation.name || accommodation.Nombre;
+                slug = nombre.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/ñ/g, 'n')
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+            }
+            const accommodationLink = slug 
+                ? `/alojamiento/${slug}` 
+                : `/alojamientos-turisticos.html`;
+            
+            // SEO: Alt dinámico con relevancia semántica cruzada evento-alojamiento
+            // Si es el carrusel del eclipse, usar keywords SEO específicas
+            let altText;
+            if (window.isEclipseCarousel) {
+                const seoKeyword = getRandomEclipseSEO();
+                altText = `${seoKeyword} - Alojamiento rural ${nombre} en ${localidad}, ${provincia} - Ideal para ver el eclipse solar`;
+            } else if (eventoTitulo) {
+                altText = `Alojamiento rural ${nombre} cerca de ${eventoTitulo}`;
+            } else {
+                altText = `Alojamiento rural ${nombre} en ${localidad}${provincia ? ', ' + provincia : ''}`;
+            }
+            
+            return `
+                <a href="${accommodationLink}" class="accommodation-card" data-index="${index}">
+                    <div class="accommodation-card-image">
+                        <span class="accommodation-type-badge">${tipoBadge}</span>
+                        <img data-src="${foto}" alt="${altText}" class="lazy-img">
+                        <noscript><img src="${foto}" alt="${altText}" class="lazy-img-noscript"></noscript>
+                        <div class="image-placeholder"></div>
+                    </div>
+                    <div class="accommodation-card-content">
+                        <h4>${nombre}</h4>
+                        <p class="accommodation-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${localidad}${localidad && provincia ? ', ' : ''}${provincia}
+                        </p>
+                        <div class="accommodation-features">${featuresHTML}</div>
+                        ${precioHTML}
+                    </div>
+                </a>
+            `;
+        }
+        
+        // Función para aplicar lazy loading a las imágenes
+        function applyLazyLoading() {
+            const images = document.querySelectorAll('.lazy-img');
+            
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.getAttribute('data-src');
+                            if (src) {
+                                img.src = src;
+                                img.onload = () => {
+                                    img.classList.add('loaded');
+                                    // Ocultar placeholder
+                                    const placeholder = img.parentElement.querySelector('.image-placeholder');
+                                    if (placeholder) placeholder.style.display = 'none';
+                                };
+                                img.onerror = () => {
+                                    // Imagen por defecto en caso de error
+                                    img.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
+                                    img.classList.add('loaded');
+                                };
+                            }
+                            observer.unobserve(img);
+                        }
+                    });
+                }, {
+                    rootMargin: '50px 0px',
+                    threshold: 0.1
+                });
+                
+                images.forEach(img => imageObserver.observe(img));
+            } else {
+                // Fallback para navegadores sin IntersectionObserver
+                images.forEach(img => {
+                    const src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                        img.classList.add('loaded');
+                    }
+                });
+            }
+        }
+        
+        // Función para actualizar configuración según ancho de pantalla
+        function updateCarouselSettings() {
+            const width = window.innerWidth;
+            if (width < 600) {
+                carouselItemsPerView = 1;
+            } else if (width < 900) {
+                carouselItemsPerView = 2;
+            } else {
+                carouselItemsPerView = 3;
+            }
+        }
+        
+        // Función para navegar entre slides
+        function navigateCarousel(direction) {
+            const maxIndex = Math.ceil(accommodationsData.length / carouselItemsPerView) - 1;
+            currentCarouselIndex += direction;
+            
+            if (currentCarouselIndex < 0) currentCarouselIndex = 0;
+            if (currentCarouselIndex > maxIndex) currentCarouselIndex = maxIndex;
+            
+            updateCarouselPosition();
+        }
+        
+        // Función para ir a un slide específico
+        function goToSlide(index) {
+            currentCarouselIndex = index;
+            updateCarouselPosition();
+        }
+        
+        // Función para actualizar la posición del carrusel
+        function updateCarouselPosition() {
+            const track = document.getElementById('carousel-track');
+            const cards = track.querySelectorAll('.accommodation-card');
+            
+            if (cards.length === 0) return;
+            
+            const cardWidth = cards[0].offsetWidth + 24; // Ancho + gap
+            const offset = currentCarouselIndex * cardWidth * carouselItemsPerView;
+            track.style.transform = `translateX(-${offset}px)`;
+            
+            // Actualizar botones
+            updateCarouselButtons();
+            
+            // Actualizar puntos
+            updateCarouselDots();
+        }
+        
+        // Función para actualizar estado de botones
+        function updateCarouselButtons() {
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            const maxIndex = Math.ceil(accommodationsData.length / carouselItemsPerView) - 1;
+            
+            if (prevBtn) prevBtn.disabled = currentCarouselIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentCarouselIndex >= maxIndex;
+        }
+        
+        // Función para actualizar puntos de navegación
+        function updateCarouselDots() {
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentCarouselIndex);
+            });
+        }
+        
+        // Función para cargar el carrusel después de renderizar el evento
+        function loadEventAccommodationsCarousel(evento) {
+            // Verificar si es el evento del eclipse solar
+            const slug = currentEventSlug || '';
+            const titulo = evento.titulo || '';
+            
+            console.log('DEBUG loadEventAccommodationsCarousel - slug:', slug, 'titulo:', titulo);
+            
+            if (isEclipseEvent(slug, titulo)) {
+                console.log('DEBUG: Detectado evento de Eclipse Solar, mostrando banner...');
+                
+                // Mostrar banner simple del eclipse
+                const banner = document.getElementById('eclipse-accommodations-banner');
+                if (banner) {
+                    banner.style.display = 'block';
+                }
+                return;
+            }
+            
+            // Para eventos normales, mostrar carrusel por provincia
+            const provincia = evento.provincia;
+            const carouselSection = document.getElementById('accommodations-carousel');
+            
+            if (provincia && provincia.trim() !== '' && carouselSection) {
+                carouselSection.style.display = 'block';
+                // Cargar carrusel
+                setTimeout(function() {
+                    loadAccommodationsByProvince(provincia);
+                }, 800);
+            }
+        }
+        
+        // Modificar la función renderEvento para cargar el carrusel
+        const originalRenderEvento = renderEvento;
+        renderEvento = async function(evento) {
+            // Ejecutar renderizado original
+            await originalRenderEvento.call(this, evento);
+            
+            // Después de renderizar, cargar el carrusel de alojamientos
+            loadEventAccommodationsCarousel(evento);
+            
+            // Configurar el botón de "Presume tus fotos" con los datos del evento
+            const btnPresumeFotos = document.getElementById('btnPresumeFotos');
+            if (btnPresumeFotos && evento.id && evento.titulo) {
+                const fotosUrl = 'https://rutasrurales.io/gestion-fotos-universal.html?' +
+                    'type=cultural_events' +
+                    '&entity_id=' + encodeURIComponent(evento.id) +
+                    '&entity_name=' + encodeURIComponent(evento.titulo) +
+                    '&municipality=' + encodeURIComponent(evento.localidad || '') +
+                    '&province=' + encodeURIComponent(evento.provincia || '');
+                btnPresumeFotos.href = fotosUrl;
+            }
+        };
+        
+        // Reemplazar la función original
+        window.renderEvento = renderEvento;
+
+        // ===============================================
+        // CONTADOR DE VISITAS Y COMENTARIOS
+        // ===============================================
+
+        let currentCommentPage = 1;
+        let selectedRating = null;
+
+        // Cargar visitas y comentarios después de que el evento se renderice
+        const _origRenderForComments = window.renderEvento;
+        window.renderEvento = async function(evento) {
+            await _origRenderForComments.call(this, evento);
+            
+            // Cargar estadísticas de visitas y mostrar barra
+            if (evento.id) {
+                loadEventStats(evento.id);
+                initCommentsSection(evento.id);
+            }
+        };
+
+        // ── Cargar estadísticas de visitas ──
+        async function loadEventStats(eventId) {
+            try {
+                const [statsResp, commentsResp] = await Promise.all([
+                    fetch(`/api/evento-visitas.php?event_id=${eventId}`).then(r => r.json()).catch(() => null),
+                    fetch(`/api/evento-comentarios.php?event_id=${eventId}&count`).then(r => r.json()).catch(() => null)
+                ]);
+
+                const views = statsResp?.data?.views_count || 0;
+                const commentsTotal = commentsResp?.data?.total || 0;
+                const avgRating = commentsResp?.data?.avg_rating || null;
+                const ratingCount = commentsResp?.data?.rating_count || 0;
+
+                // Insertar barra de estadísticas después del header del detalle
+                const detailHeader = document.querySelector('.detail-header');
+                if (detailHeader) {
+                    const statsBar = document.createElement('div');
+                    statsBar.className = 'event-stats-bar';
+                    
+                    let statsHtml = `
+                        <div class="stat-item">
+                            <i class="fas fa-eye"></i>
+                            <span><span class="stat-number">${formatNumber(views)}</span> ${t('views')}</span>
+                        </div>
+                    `;
+
+                    if (commentsTotal > 0) {
+                        statsHtml += `
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <i class="fas fa-comments"></i>
+                                <a href="#comments-section" style="color: inherit; text-decoration: none;">
+                                    <span class="stat-number">${commentsTotal}</span> ${commentsTotal !== 1 ? t('comments') : t('comment')}
+                                </a>
+                            </div>
+                        `;
+                    }
+
+                    if (avgRating && ratingCount > 0) {
+                        statsHtml += `
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="avg-rating-stars">${renderStarsHtml(avgRating)}</span>
+                                <span>${avgRating} (${ratingCount})</span>
+                            </div>
+                        `;
+                    }
+
+                    statsBar.innerHTML = statsHtml;
+                    detailHeader.appendChild(statsBar);
+                }
+            } catch (e) {
+                console.error('Error cargando estadísticas:', e);
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function renderStarsHtml(rating) {
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(rating)) {
+                    html += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 <= rating) {
+                    html += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    html += '<i class="fas fa-star empty-star"></i>';
+                }
+            }
+            return html;
+        }
+
+        // ── Inicializar sección de comentarios ──
+        function initCommentsSection(eventId) {
+            const section = document.getElementById('comments-section');
+            if (!section) return;
+            
+            section.style.display = 'block';
+            window.currentEventIdForComments = eventId;
+
+            // Aplicar traducciones a la sección de comentarios
+            const titleEl = document.getElementById('comments-title');
+            if (titleEl) titleEl.textContent = t('commentsTitle');
+            const subtitleEl = document.getElementById('comments-subtitle');
+            if (subtitleEl) subtitleEl.textContent = t('commentsSubtitle');
+            const formTitleEl = document.getElementById('form-title');
+            if (formTitleEl) formTitleEl.textContent = t('leaveComment');
+            const nameInput = document.getElementById('comment-name');
+            if (nameInput) nameInput.placeholder = t('yourName');
+            const emailInput = document.getElementById('comment-email');
+            if (emailInput) emailInput.placeholder = t('yourEmail');
+            const textArea = document.getElementById('comment-text');
+            if (textArea) textArea.placeholder = t('writeComment');
+            const btnText = document.getElementById('btn-submit-text');
+            if (btnText) btnText.textContent = t('publishComment');
+            const ratingLabel = document.querySelector('#star-rating label');
+            if (ratingLabel) ratingLabel.textContent = t('ratingLabel');
+
+            // Restaurar nombre del localStorage si existe
+            const savedName = localStorage.getItem('commentAuthorName');
+            const savedEmail = localStorage.getItem('commentAuthorEmail');
+            if (savedName) document.getElementById('comment-name').value = savedName;
+            if (savedEmail) document.getElementById('comment-email').value = savedEmail;
+
+            // Cargar comentarios
+            loadComments(eventId, 1);
+        }
+
+        // ── Cargar comentarios ──
+        async function loadComments(eventId, page) {
+            const listEl = document.getElementById('comments-list');
+            const paginationEl = document.getElementById('comments-pagination');
+            
+            listEl.innerHTML = `<div class="comments-loading"><i class="fas fa-spinner fa-spin"></i><p>${t('loadingComments')}</p></div>`;
+
+            try {
+                const resp = await fetch(`/api/evento-comentarios.php?event_id=${eventId}&page=${page}&limit=10`);
+                const data = await resp.json();
+
+                if (data.success && data.data) {
+                    const { comments, total, total_pages } = data.data;
+                    currentCommentPage = page;
+
+                    if (comments.length === 0) {
+                        listEl.innerHTML = `
+                            <div class="comments-empty">
+                                <i class="fas fa-comment-dots"></i>
+                                <p>${t('noComments')}</p>
+                            </div>
+                        `;
+                        paginationEl.style.display = 'none';
+                        return;
+                    }
+
+                    listEl.innerHTML = comments.map(c => renderCommentHtml(c)).join('');
+
+                    // Paginación
+                    if (total_pages > 1) {
+                        paginationEl.style.display = 'flex';
+                        let pagHtml = '';
+                        pagHtml += `<button ${page <= 1 ? 'disabled' : ''} onclick="loadComments(${eventId}, ${page - 1})"><i class="fas fa-chevron-left"></i></button>`;
+                        for (let i = 1; i <= total_pages; i++) {
+                            pagHtml += `<button class="${i === page ? 'active' : ''}" onclick="loadComments(${eventId}, ${i})">${i}</button>`;
+                        }
+                        pagHtml += `<button ${page >= total_pages ? 'disabled' : ''} onclick="loadComments(${eventId}, ${page + 1})"><i class="fas fa-chevron-right"></i></button>`;
+                        paginationEl.innerHTML = pagHtml;
+                    } else {
+                        paginationEl.style.display = 'none';
+                    }
+                } else {
+                    listEl.innerHTML = `<div class="comments-empty"><i class="fas fa-comment-dots"></i><p>${t('noComments')}</p></div>`;
+                    paginationEl.style.display = 'none';
+                }
+            } catch (e) {
+                console.error('Error cargando comentarios:', e);
+                listEl.innerHTML = '<div class="comments-empty"><i class="fas fa-exclamation-triangle"></i><p>Error al cargar comentarios</p></div>';
+            }
+        }
+
+        // ── Renderizar un comentario ──
+        function renderCommentHtml(comment) {
+            const initial = comment.author_name ? comment.author_name.charAt(0).toUpperCase() : '?';
+            const avatarColor = comment.author_avatar || '#2F5233';
+            const date = formatCommentDate(comment.created_at);
+            const ratingHtml = comment.rating ? `<span class="comment-rating">${renderStarsHtml(comment.rating)}</span>` : '';
+
+            let repliesHtml = '';
+            if (comment.replies && comment.replies.length > 0) {
+                repliesHtml = `<div class="comment-replies">${comment.replies.map(r => {
+                    const rInitial = r.author_name ? r.author_name.charAt(0).toUpperCase() : '?';
+                    const rColor = r.author_avatar || '#6B8E6B';
+                    const rDate = formatCommentDate(r.created_at);
+                    return `
+                        <div class="comment-item">
+                            <div class="comment-avatar" style="background: ${rColor};">${rInitial}</div>
+                            <div class="comment-body">
+                                <div class="comment-header">
+                                    <span class="comment-author">${escapeHtml(r.author_name)}</span>
+                                    <span class="comment-date">${rDate}</span>
+                                </div>
+                                <div class="comment-text">${escapeHtml(r.comment_text)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}</div>`;
+            }
+
+            return `
+                <div class="comment-item" id="comment-${comment.id}">
+                    <div class="comment-avatar" style="background: ${avatarColor};">${initial}</div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <span class="comment-author">${escapeHtml(comment.author_name)}</span>
+                            ${ratingHtml}
+                            <span class="comment-date">${date}</span>
+                        </div>
+                        <div class="comment-text">${escapeHtml(comment.comment_text)}</div>
+                        <div class="comment-actions">
+                            <button class="btn-reply" onclick="showReplyForm(${comment.id})">
+                                <i class="fas fa-reply"></i> ${t('reply')}
+                            </button>
+                        </div>
+                        <div id="reply-form-${comment.id}"></div>
+                        ${repliesHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatCommentDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return t('justNow');
+            if (diffMins < 60) return t('minutesAgo').replace('{n}', diffMins);
+            if (diffHours < 24) return t('hoursAgo').replace('{n}', diffHours);
+            if (diffDays < 7) return (diffDays > 1 ? t('daysAgoPlural') : t('daysAgo')).replace('{n}', diffDays);
+            
+            const lang = window.currentLang || 'es';
+            const localeMap = { es: 'es-ES', de: 'de-DE', en: 'en-GB', fr: 'fr-FR', zh: 'zh-CN' };
+            return date.toLocaleDateString(localeMap[lang] || 'es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ── Estrellas interactivas ──
+        function setRating(value) {
+            selectedRating = value;
+            const stars = document.querySelectorAll('#star-rating .star-btn');
+            const label = document.getElementById('star-label');
+            const labels = ['', t('ratingBad'), t('ratingFair'), t('ratingGood'), t('ratingVeryGood'), t('ratingExcellent')];
+            
+            stars.forEach((star, i) => {
+                star.classList.toggle('active', i < value);
+            });
+            
+            if (label) label.textContent = labels[value] || '';
+        }
+
+        // ── Contador de caracteres ──
+        function updateCharCount() {
+            const textarea = document.getElementById('comment-text');
+            const counter = document.getElementById('char-count');
+            if (!textarea || !counter) return;
+            
+            const len = textarea.value.length;
+            counter.textContent = `${len} / 2000`;
+            counter.classList.toggle('warning', len > 1800);
+        }
+
+        // ── Enviar comentario ──
+        async function submitComment() {
+            const nameEl = document.getElementById('comment-name');
+            const emailEl = document.getElementById('comment-email');
+            const textEl = document.getElementById('comment-text');
+            const btnEl = document.getElementById('btn-submit-comment');
+            const eventId = window.currentEventIdForComments;
+
+            if (!eventId) return;
+
+            const name = nameEl.value.trim();
+            const email = emailEl.value.trim();
+            const text = textEl.value.trim();
+
+            // Validaciones
+            if (!name || name.length < 2) {
+                nameEl.focus();
+                nameEl.style.borderColor = '#e74c3c';
+                return;
+            }
+            if (!text || text.length < 5) {
+                textEl.focus();
+                textEl.style.borderColor = '#e74c3c';
+                return;
+            }
+
+            // Deshabilitar botón
+            btnEl.disabled = true;
+            btnEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t('sending')}`;
+
+            try {
+                const resp = await fetch('/api/evento-comentarios.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        event_id: eventId,
+                        author_name: name,
+                        author_email: email || null,
+                        comment_text: text,
+                        rating: selectedRating
+                    })
+                });
+
+                const data = await resp.json();
+
+                if (data.success) {
+                    // Guardar nombre en localStorage para próximas veces
+                    localStorage.setItem('commentAuthorName', name);
+                    if (email) localStorage.setItem('commentAuthorEmail', email);
+
+                    // Limpiar formulario
+                    textEl.value = '';
+                    selectedRating = null;
+                    document.querySelectorAll('#star-rating .star-btn').forEach(s => s.classList.remove('active'));
+                    document.getElementById('star-label').textContent = '';
+                    updateCharCount();
+
+                    // Mostrar toast
+                    showCommentToast(t('commentPublished'));
+
+                    // Recargar comentarios
+                    loadComments(eventId, 1);
+
+                    // Actualizar barra de stats
+                    loadEventStats(eventId);
+                } else {
+                    showCommentToast('❌ ' + (data.error || 'Error al publicar'));
+                }
+            } catch (e) {
+                console.error('Error enviando comentario:', e);
+                showCommentToast(t('connectionError'));
+            } finally {
+                btnEl.disabled = false;
+                btnEl.innerHTML = `<i class="fas fa-paper-plane"></i> <span>${t('publishComment')}</span>`;
+            }
+        }
+
+        // ── Formulario de respuesta inline ──
+        function showReplyForm(parentId) {
+            // Cerrar otros formularios de respuesta abiertos
+            document.querySelectorAll('.reply-form-inline').forEach(f => f.remove());
+
+            const container = document.getElementById(`reply-form-${parentId}`);
+            if (!container) return;
+
+            const savedName = localStorage.getItem('commentAuthorName') || '';
+
+            container.innerHTML = `
+                <div class="reply-form-inline">
+                    <input type="text" placeholder="${t('yourName')}" value="${escapeHtml(savedName)}" id="reply-name-${parentId}" maxlength="100">
+                    <textarea placeholder="${t('yourReply')}" id="reply-text-${parentId}" maxlength="2000"></textarea>
+                    <div class="reply-form-actions">
+                        <button class="btn-cancel-reply" onclick="cancelReply(${parentId})">${t('cancel')}</button>
+                        <button class="btn-send-reply" onclick="submitReply(${parentId})">
+                            <i class="fas fa-reply"></i> ${t('reply')}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Focus en el textarea
+            setTimeout(() => {
+                const textarea = document.getElementById(`reply-text-${parentId}`);
+                if (textarea) textarea.focus();
+            }, 100);
+        }
+
+        function cancelReply(parentId) {
+            const container = document.getElementById(`reply-form-${parentId}`);
+            if (container) container.innerHTML = '';
+        }
+
+        async function submitReply(parentId) {
+            const nameEl = document.getElementById(`reply-name-${parentId}`);
+            const textEl = document.getElementById(`reply-text-${parentId}`);
+            const eventId = window.currentEventIdForComments;
+
+            if (!eventId) return;
+
+            const name = nameEl.value.trim();
+            const text = textEl.value.trim();
+
+            if (!name || name.length < 2) { nameEl.focus(); return; }
+            if (!text || text.length < 5) { textEl.focus(); return; }
+
+            try {
+                const resp = await fetch('/api/evento-comentarios.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        event_id: eventId,
+                        author_name: name,
+                        comment_text: text,
+                        parent_id: parentId
+                    })
+                });
+
+                const data = await resp.json();
+
+                if (data.success) {
+                    localStorage.setItem('commentAuthorName', name);
+                    showCommentToast(t('replyPublished'));
+                    loadComments(eventId, currentCommentPage);
+                } else {
+                    showCommentToast('❌ ' + (data.error || 'Error'));
+                }
+            } catch (e) {
+                showCommentToast(t('connectionError'));
+            }
+        }
+
+        // ── Toast de notificación ──
+        function showCommentToast(message) {
+            // Eliminar toast anterior si existe
+            const existing = document.querySelector('.comment-toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'comment-toast';
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+
+            // Animar entrada
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            // Eliminar después de 3 segundos
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // Resetear borde rojo al escribir
+        document.addEventListener('input', function(e) {
+            if (e.target.id === 'comment-name' || e.target.id === 'comment-text') {
+                e.target.style.borderColor = '#ddd';
+            }
+        });
+    </script>
+</body>
+</html>
