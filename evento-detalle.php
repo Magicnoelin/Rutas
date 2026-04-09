@@ -6,14 +6,13 @@
     <meta name="description" content="Descubre eventos culturales en Rutas Rurales - Red Unificada de Turistas, Alojamientos y Servicios">
     <title>Detalle del Evento | Rutas Rurales</title>
     
-    <!-- Google tag (gtag.js) -->
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
-<!-- End Google Tag Manager -->
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+    <!-- End Google Tag Manager -->
     
     <link rel="canonical" id="dynamic-canonical" href="https://rutasurales.io/evento-detalle.html">
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
@@ -49,94 +48,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         :root {
-            --primary-colo2F5233;
+            --primary-color: #2F5233;
             --secondary-color: #6B8E6B;
             --accent-color: #B8956A;
-        }
-
-        /* Header simplificado como en alojamiento-detalle.html */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .navbar {
-            padding: 1rem 0;
-        }
-
-        .navbar .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo img {
-            height: 50px;
-            width: auto;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-menu a:hover {
-            color: var(--primary-color);
-        }
-
-        .asistente-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1.5px solid var(--primary-color);
-            vertical-align: middle;
-        }
-
-        /* Responsive para móvil */
-        @media (max-width: 768px) {
-            .nav-menu {
-                gap: 1rem;
-            }
-            
-            .logo img {
-                height: 40px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-menu {
-                gap: 0.5rem;
-                font-size: 0.9rem;
-            }
-            
-            .logo img {
-                height: 35px;
-            }
-            
-            .asistente-avatar {
-                width: 20px;
-                height: 20px;
-            }
         }
 
         .detail-container { background-color: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 30px rgba(0,0,0,0.1); margin-top: 1.5rem; }
@@ -886,155 +800,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             font-size: 0.85rem;
         }
 
-        /* ===============================================
-           FOOTER ESTILOS (como en footer.php)
-           =============================================== */
-        .footer {
-            background-color: #2c5f2d;
-            color: white;
-            padding: 25px 15px;
-            font-family: 'Montserrat', sans-serif;
-            margin-top: 50px;
-        }
-
-        .footer .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .footer-section h3 {
-            color: #d4a574;
-            font-size: 1rem;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .footer-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .footer-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-        }
-
-        .footer-item i {
-            color: #d4a574;
-            width: 16px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .footer-item a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.3s;
-            font-size: 0.85rem;
-        }
-
-        .footer-item a:hover {
-            color: #d4a574;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 10px;
-        }
-
-        .footer-social a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .footer-social a:hover {
-            background: #d4a574;
-            transform: translateY(-2px);
-        }
-
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .footer-links a {
-            color: white;
-            text-decoration: none;
-            font-size: 0.85rem;
-            padding: 3px 0;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: #d4a574;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-            text-align: center;
-        }
-
-        .footer-copyright {
-            font-size: 0.7rem;
-            opacity: 0.8;
-        }
-
-        .footer-copyright p {
-            margin: 0;
-        }
-
-        /* Responsive design para footer */
-        @media (max-width: 768px) {
-            .footer-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            
-            .footer {
-                padding: 20px 10px;
-            }
-            
-            .footer-section h3 {
-                font-size: 0.9rem;
-                margin-bottom: 8px;
-            }
-            
-            .footer-item {
-                font-size: 0.8rem;
-            }
-            
-            .footer-links a {
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-        }
     </style>
 
     <script>
@@ -1055,50 +820,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </script>
 </head>
 <body>
-    <header class="header">
-        <nav class="navbar">
-            <div class="container">
-                <div class="logo">
-                    <a href="/index.html"><img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo"></a>
-                </div>
-
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="/alojamientos-turisticos.html">
-                        <i class="fas fa-bed"></i>
-                        <span>Alojamientos</span>
-                    </a></li>
-                    <li><a href="/lugares-interes-paginacion.html">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Lugares</span>
-                    </a></li>
-                    <li><a href="/eventos-culturales-paginacion.html">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Eventos</span>
-                    </a></li>
-                    <li><a href="/actividades-turisticas.html">
-                        <i class="fas fa-hiking"></i>
-                        <span>Actividades</span>
-                    </a></li>
-                    <li><a href="/index.html#inicio">
-                        <i class="fas fa-home"></i>
-                        <span>Inicio</span>
-                    </a></li>
-                    <li><a href="/rutas.php">
-                        <i class="fas fa-route"></i>
-                        <span>Rutas</span>
-                    </a></li>
-                    <li><a href="/login.html">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Acceso</span>
-                    </a></li>
-                    <li><a href="/index.html#asistente">
-                        <img src="/antonio.jpg" alt="Antonio" class="asistente-avatar">
-                        <span>Antonio</span>
-                    </a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+    <?php include 'header.php'; ?>
 
     <main class="container" style="margin-top: 80px; min-height: 500px;">
         <div id="loading" style="text-align: center; padding: 5rem;">
@@ -1200,69 +922,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-section">
-                    <h3>Contacto</h3>
-                    <div class="footer-info">
-                        <span class="footer-item">
-                            <i class="fas fa-envelope"></i> 
-                            <a href="mailto:olgamarin@rutasrurales.io">olgamarin@rutasrurales.io</a>
-                        </span>
-                        <span class="footer-item">
-                            <i class="fas fa-phone"></i> 
-                            <a href="tel:+34605249696">+34 605 249 696</a>
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Síguenos</h3>
-                    <div class="footer-social">
-                        <a href="https://www.facebook.com/rutasrurales.io" target="_blank" aria-label="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://twitter.com/rutasrurales" target="_blank" aria-label="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://www.instagram.com/rutasrurales.io" target="_blank" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/company/rutasrurales" target="_blank" aria-label="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Información Eclipse 2026</h3>
-                    <div class="footer-links">
-                        <a href="/mapa-eclipse.php">Información Eclipse 2026</a>
-                        <a href="/alojamientos-turisticos.html">Alojamientos</a>
-                        <a href="/lugares-interes-paginacion.html">Lugares de interés</a>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Aviso Legal</h3>
-                    <div class="footer-links">
-                        <a href="/aviso-legal.html">Aviso Legal</a>
-                        <a href="/politica-privacidad.html">Privacidad</a>
-                        <a href="/politica-cookies.html">Cookies</a>
-                        <a href="/agradecimientos.html">Agradecimientos</a>
-                        <a href="/compromiso-social.html">Compromiso Social</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <div class="footer-copyright">
-                    <p>&copy; 2026 <strong>rutasrurales.io</strong>. Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include 'footer.php'; ?>
 
     <script>
         // ============================================================
