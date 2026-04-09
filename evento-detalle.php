@@ -1,7 +1,7 @@
 <?php
 /**
- * Página PHP para Detalle de Evento - VERSIÓN DEFINITIVA
- * Esta versión SIEMPRE funciona y genera meta tags correctos
+ * Página de Detalle de Evento - Versión Simple y Funcional
+ * Usa header.php y footer.php existentes
  */
 
 // Obtener slug de la URL
@@ -32,12 +32,22 @@ $meta_title = $titulo_desde_slug . " | Eventos Culturales | Rutas Rurales";
 $meta_description = "Descubre " . $titulo_desde_slug . " en Rutas Rurales. Eventos culturales, gastronómicos y turísticos en toda España.";
 $short_description = "Información sobre " . $titulo_desde_slug . ". Descubre eventos culturales en Rutas Rurales.";
 
-// Intentar cargar datos REALES desde la API (opcional)
+// Variables para el evento
+$evento_titulo = $titulo_desde_slug;
+$evento_localidad = '';
+$evento_provincia = '';
+$evento_fecha = '';
+$evento_organizador = '';
+$evento_precio = '';
+$evento_descripcion = 'Estamos actualizando la información detallada de este evento. Pronto tendrás todos los detalles disponibles.';
+$evento_municipality = '';
+
+// Intentar cargar datos REALES desde la API
 if (!empty($slug)) {
     $api_url = "/api/evento-slug.php?slug=" . urlencode($slug);
     $context = stream_context_create([
         'http' => [
-            'timeout' => 2, // Timeout muy corto
+            'timeout' => 2,
             'ignore_errors' => true
         ]
     ]);
@@ -71,161 +81,315 @@ if (!empty($slug)) {
     }
 }
 
-// Escapar para HTML
-$meta_title_escaped = htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8');
-$meta_description_escaped = htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8');
-$short_description_escaped = htmlspecialchars($short_description, ENT_QUOTES, 'UTF-8');
+// Establecer variables para header.php
+$page_title = $meta_title;
+$page_description = $meta_description;
+$page_keywords = "evento, " . $titulo_desde_slug . ", cultura, turismo, rutas rurales";
+
+// Incluir header
+include 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?php echo $lang; ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <meta name="description" content="<?php echo $meta_description_escaped; ?>">
-    <meta name="short_description" content="<?php echo $short_description_escaped; ?>">
-    <title><?php echo $meta_title_escaped; ?></title>
-    
-    <!-- Google tag (gtag.js) -->
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
-    <!-- End Google Tag Manager -->
-    
-    <link rel="canonical" href="<?php echo $canonical_url; ?>">
-    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
-    
-    <!-- CSS asíncrono para evitar bloqueo de renderizado -->
-    <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
-    
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .header { background: #2F5233; color: white; padding: 15px 0; }
-        .event-detail { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-top: 20px; }
-        h1 { color: #2F5233; margin-bottom: 20px; border-bottom: 2px solid #2F5233; padding-bottom: 10px; }
-        .meta-info { background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #4caf50; }
-        .description { line-height: 1.6; margin: 25px 0; }
-        .btn { background: #2F5233; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold; }
-        .btn:hover { background: #246634; }
-        .event-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
-        .info-box { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
-    </style>
-</head>
-<body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    
-    <div class="header">
-        <div class="container">
-            <a href="/" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.2em;">
-                <i class="fas fa-route"></i> Rutas Rurales
-            </a>
-        </div>
-    </div>
-    
+
+<!-- Contenido principal -->
+<main class="main-content">
     <div class="container">
-        <div class="event-detail">
-            <?php if (isset($tiene_datos_reales) && $tiene_datos_reales): ?>
-                <!-- MOSTRAR EVENTO REAL -->
-                <h1><?php echo $evento_titulo; ?></h1>
-                
-                <div class="meta-info">
-                    <p><strong><i class="fas fa-map-marker-alt"></i> Ubicación:</strong> <?php 
-                        $ubicacion = $evento_localidad;
-                        if (!empty($evento_municipality) && $evento_municipality != $evento_localidad) {
-                            $ubicacion .= ' (' . $evento_municipality . ')';
-                        }
-                        $ubicacion .= ', ' . $evento_provincia;
-                        echo $ubicacion;
-                    ?></p>
-                    <?php if (!empty($evento_fecha)): ?>
-                        <p><strong><i class="fas fa-calendar-alt"></i> Fecha:</strong> <?php echo $evento_fecha; ?></p>
-                    <?php endif; ?>
-                    <?php if (!empty($evento_organizador)): ?>
-                        <p><strong><i class="fas fa-user-tie"></i> Organizador:</strong> <?php echo $evento_organizador; ?></p>
-                    <?php endif; ?>
-                    <?php if (!empty($evento_precio)): ?>
-                        <p><strong><i class="fas fa-tag"></i> Precio:</strong> <?php echo $evento_precio; ?></p>
-                    <?php endif; ?>
-                </div>
-                
-                <div class="description">
-                    <h2><i class="fas fa-info-circle"></i> Descripción</h2>
-                    <p><?php echo $evento_descripcion; ?></p>
-                </div>
-                
-                <div class="info-box">
-                    <p><strong>✅ Meta tags generados correctamente:</strong></p>
-                    <ul>
-                        <li><strong>Title:</strong> <?php echo $meta_title_escaped; ?></li>
-                        <li><strong>Canonical:</strong> <?php echo $canonical_url; ?> (sin "www.")</li>
-                        <li><strong>Short Description:</strong> <?php echo $short_description_escaped; ?></li>
-                    </ul>
-                </div>
-                
-            <?php else: ?>
-                <!-- MOSTRAR PÁGINA GENÉRICA CON META TAGS CORRECTOS -->
-                <h1><?php echo $titulo_desde_slug; ?></h1>
-                
-                <div class="meta-info">
-                    <p><strong><i class="fas fa-info-circle"></i> Información del Evento</strong></p>
-                    <p>Estamos actualizando la información detallada de este evento. Pronto tendrás todos los detalles disponibles.</p>
-                </div>
-                
-                <div class="description">
-                    <h2><i class="fas fa-calendar-check"></i> Próximamente</h2>
-                    <p>Este evento cultural está siendo actualizado en nuestro sistema. Mientras tanto, puedes explorar otros eventos disponibles.</p>
+        <?php if (!empty($slug)): ?>
+            <!-- Header del evento -->
+            <div class="page-header">
+                <h1 class="page-title"><?php echo $evento_titulo; ?></h1>
+                <?php if (!empty($evento_localidad) && !empty($evento_provincia)): ?>
+                    <div class="page-subtitle">
+                        <i class="fas fa-map-marker-alt"></i> 
+                        <?php 
+                            $ubicacion = $evento_localidad;
+                            if (!empty($evento_municipality) && $evento_municipality != $evento_localidad) {
+                                $ubicacion .= ' (' . $evento_municipality . ')';
+                            }
+                            $ubicacion .= ', ' . $evento_provincia;
+                            echo $ubicacion;
+                        ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Información del evento -->
+            <div class="event-details">
+                <div class="event-info-card">
+                    <h2><i class="fas fa-info-circle"></i> Información del Evento</h2>
                     
-                    <div class="info-box">
-                        <p><strong>📅 ¿Qué incluirá esta página?</strong></p>
-                        <ul>
-                            <li>Información detallada sobre el evento</li>
-                            <li>Fechas y horarios exactos</li>
-                            <li>Ubicación y cómo llegar</li>
-                            <li>Precios y formas de reserva</li>
-                            <li>Galería de fotos</li>
-                        </ul>
+                    <div class="info-grid">
+                        <?php if (!empty($evento_fecha)): ?>
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-calendar-alt"></i> Fecha:</span>
+                                <span class="info-value"><?php echo $evento_fecha; ?></span>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($evento_organizador)): ?>
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-user-tie"></i> Organizador:</span>
+                                <span class="info-value"><?php echo $evento_organizador; ?></span>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($evento_precio)): ?>
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-tag"></i> Precio:</span>
+                                <span class="info-value"><?php echo $evento_precio; ?></span>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($evento_localidad) && !empty($evento_provincia)): ?>
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-map-marker-alt"></i> Ubicación:</span>
+                                <span class="info-value">
+                                    <?php 
+                                        $ubicacion = $evento_localidad;
+                                        if (!empty($evento_municipality) && $evento_municipality != $evento_localidad) {
+                                            $ubicacion .= ' (' . $evento_municipality . ')';
+                                        }
+                                        $ubicacion .= ', ' . $evento_provincia;
+                                        echo $ubicacion;
+                                    ?>
+                                </span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
-                <div class="info-box" style="background: #fff3cd; border-left: 4px solid #ffc107;">
-                    <p><strong>✅ Meta tags funcionando correctamente:</strong></p>
-                    <ul>
-                        <li><strong>Title:</strong> <?php echo $meta_title_escaped; ?></li>
-                        <li><strong>Canonical:</strong> <?php echo $canonical_url; ?> (sin "www.")</li>
-                        <li><strong>Short Description:</strong> <?php echo $short_description_escaped; ?></li>
-                        <li><strong>Description:</strong> <?php echo $meta_description_escaped; ?></li>
-                    </ul>
-                    <p><em>Los motores de búsqueda ya pueden indexar esta página correctamente.</em></p>
+                <!-- Descripción del evento -->
+                <div class="event-description">
+                    <h2><i class="fas fa-align-left"></i> Descripción</h2>
+                    <div class="description-content">
+                        <?php echo $evento_descripcion; ?>
+                    </div>
                 </div>
                 
-            <?php endif; ?>
+                <!-- Botones de acción -->
+                <div class="action-buttons">
+                    <a href="/eventos-culturales-paginacion.html" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Volver a Eventos
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i> Ir al Inicio
+                    </a>
+                </div>
+            </div>
             
-            <div style="margin-top: 40px; text-align: center;">
-                <a href="/eventos-culturales-paginacion.html" class="btn">
+        <?php else: ?>
+            <!-- Si no hay slug -->
+            <div class="error-message">
+                <h2>Evento no encontrado</h2>
+                <p>No se ha especificado un evento válido en la URL.</p>
+                <a href="/eventos-culturales-paginacion.html" class="btn btn-primary">
                     <i class="fas fa-arrow-left"></i> Volver a Eventos
                 </a>
-                <a href="/" class="btn" style="background: #6c757d; margin-left: 10px;">
-                    <i class="fas fa-home"></i> Inicio
-                </a>
             </div>
-        </div>
+        <?php endif; ?>
     </div>
+</main>
+
+<style>
+    /* Estilos específicos para la página de evento */
+    .main-content {
+        padding: 40px 0;
+        background: #f8f9fa;
+        min-height: 70vh;
+    }
     
-    <script>
-        // JavaScript mínimo para funcionalidad básica
-        console.log("Página de evento cargada: <?php echo $slug; ?>");
-        console.log("Meta tags generados:");
-        console.log("Title: <?php echo $meta_title_escaped; ?>");
-        console.log("Canonical: <?php echo $canonical_url; ?>");
-    </script>
-</body>
-</html>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .page-header {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    
+    .page-title {
+        color: #2F5233;
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+    
+    .page-subtitle {
+        color: #666;
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+    }
+    
+    .page-subtitle i {
+        margin-right: 10px;
+        color: #2F5233;
+    }
+    
+    .event-details {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+    
+    .event-info-card {
+        margin-bottom: 30px;
+        padding-bottom: 25px;
+        border-bottom: 2px solid #e8f5e9;
+    }
+    
+    .event-info-card h2 {
+        color: #2F5233;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+    }
+    
+    .event-info-card h2 i {
+        margin-right: 10px;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #2F5233;
+    }
+    
+    .info-label {
+        font-weight: bold;
+        color: #2F5233;
+        margin-right: 10px;
+        min-width: 120px;
+    }
+    
+    .info-label i {
+        margin-right: 8px;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .info-value {
+        color: #333;
+        flex: 1;
+    }
+    
+    .event-description {
+        margin-bottom: 30px;
+    }
+    
+    .event-description h2 {
+        color: #2F5233;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+    }
+    
+    .event-description h2 i {
+        margin-right: 10px;
+    }
+    
+    .description-content {
+        line-height: 1.8;
+        color: #444;
+        font-size: 1.1rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 12px 25px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: #2F5233;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #246634;
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+    }
+    
+    .error-message {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+    
+    .error-message h2 {
+        color: #2F5233;
+        margin-bottom: 20px;
+    }
+    
+    .error-message p {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .info-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .info-label {
+            margin-bottom: 5px;
+            min-width: auto;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<?php
+// Incluir footer
+include 'footer.php';
+?>
