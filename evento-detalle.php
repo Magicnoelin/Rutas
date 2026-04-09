@@ -1,8 +1,7 @@
 <?php
 /**
- * Página PHP para Detalle de Evento - Versión Simplificada
- * Genera meta tags en el servidor para SEO
- * URL: /evento/{slug} -> redirige internamente a este archivo
+ * Página PHP para Detalle de Evento - Versión Ultra Simple
+ * Esta versión funciona en cualquier servidor que soporte PHP
  */
 
 // Obtener slug de la URL
@@ -12,91 +11,77 @@ $lang = isset($_GET['lang']) ? $_GET['lang'] : 'es';
 // Si no hay slug, intentar obtenerlo de la URL amigable
 if (empty($slug)) {
     $request_uri = $_SERVER['REQUEST_URI'];
-    // Extraer slug de /evento/slug o /{lang}/evento/slug
     if (preg_match('/\/(?:[a-z]{2}\/)?evento\/([^\/\?]+)/', $request_uri, $matches)) {
         $slug = $matches[1];
     }
 }
 
-// Si todavía no hay slug, mostrar error
-if (empty($slug)) {
-    header("HTTP/1.0 404 Not Found");
-    echo "<h1>404 - Evento no encontrado</h1>";
-    echo "<p>No se especificó un slug de evento.</p>";
-    exit;
+// Valores por defecto
+$meta_title = "Detalle del Evento | Rutas Rurales";
+$meta_description = "Descubre eventos culturales en Rutas Rurales - Red Unificada de Turistas, Alojamientos y Servicios";
+$short_description = "Descubre eventos culturales en Rutas Rurales - Red Unificada de Turistas, Alojamientos y Servicios";
+$canonical_url = "https://rutasrurales.io/evento-detalle.html";
+
+// Si hay slug, intentar cargar datos
+if (!empty($slug)) {
+    // Intentar cargar datos desde la API
+    $api_url = "/api/evento-slug.php?slug=" . urlencode($slug);
+    $context = stream_context_create([
+        'http' => [
+            'timeout' => 5,
+            'ignore_errors' => true
+        ]
+    ]);
+    
+    $api_response = @file_get_contents($api_url, false, $context);
+    
+    if ($api_response !== false) {
+        $data = json_decode($api_response, true);
+        
+        if ($data['success'] && !empty($data['data'])) {
+            $evento = $data['data'];
+            
+            // Actualizar meta tags con datos reales
+            $meta_title = !empty($evento['meta_title']) ? $evento['meta_title'] : $evento['titulo'] . ' en ' . $evento['localidad'];
+            $meta_description = !empty($evento['meta_description']) ? $evento['meta_description'] : 
+                               (!empty($evento['descripcion_corta']) ? $evento['descripcion_corta'] : $meta_description);
+            $short_description = !empty($evento['descripcion_corta']) ? $evento['descripcion_corta'] : $meta_description;
+            
+            // Canonical URL
+            $canonical_url = "https://rutasrurales.io";
+            if ($lang !== 'es') {
+                $canonical_url .= "/" . $lang;
+            }
+            $canonical_url .= "/evento/" . $evento['slug'];
+            
+            // Datos para mostrar
+            $evento_titulo = htmlspecialchars($evento['titulo'], ENT_QUOTES, 'UTF-8');
+            $evento_localidad = htmlspecialchars($evento['localidad'], ENT_QUOTES, 'UTF-8');
+            $evento_provincia = htmlspecialchars($evento['provincia'], ENT_QUOTES, 'UTF-8');
+            $evento_fecha = !empty($evento['start_date']) ? date('d/m/Y', strtotime($evento['start_date'])) : '';
+            $evento_organizador = !empty($evento['organizador']) ? htmlspecialchars($evento['organizador'], ENT_QUOTES, 'UTF-8') : '';
+            $evento_precio = !empty($evento['precio']) ? htmlspecialchars($evento['precio'], ENT_QUOTES, 'UTF-8') : '';
+            $evento_descripcion = nl2br(htmlspecialchars($evento['descripcion'], ENT_QUOTES, 'UTF-8'));
+            $evento_municipality = !empty($evento['municipality']) ? htmlspecialchars($evento['municipality'], ENT_QUOTES, 'UTF-8') : '';
+            
+            $tiene_datos = true;
+        }
+    }
 }
 
-// Conectar a la base de datos
-require_once 'api/config.php';
-
-try {
-    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->exec("SET NAMES utf8mb4");
-    
-    // Consulta simplificada para obtener el evento
-    $sql = "SELECT 
-            e.id,
-            e.name AS titulo,
-            e.slug,
-            e.description AS descripcion,
-            e.short_description AS descripcion_corta,
-            e.meta_title,
-            e.meta_description,
-            e.start_date,
-            e.venue_name AS localidad,
-            e.municipality,
-            e.province AS provincia,
-            e.organizer AS organizador,
-            e.ticket_price AS precio
-        FROM cultural_events e
-        WHERE e.slug = :slug AND e.is_active = 1
-        LIMIT 1";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':slug' => $slug]);
-    $evento = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if (!$evento) {
-        header("HTTP/1.0 404 Not Found");
-        echo "<h1>404 - Evento no encontrado</h1>";
-        echo "<p>El evento con slug '$slug' no existe o no está activo.</p>";
-        exit;
-    }
-    
-    // Determinar canonical URL
-    $canonical_url = "https://rutasrurales.io";
-    if ($lang !== 'es') {
-        $canonical_url .= "/" . $lang;
-    }
-    $canonical_url .= "/evento/" . $evento['slug'];
-    
-    // Determinar meta tags
-    $meta_title = !empty($evento['meta_title']) ? $evento['meta_title'] : $evento['titulo'] . ' en ' . $evento['localidad'];
-    $meta_description = !empty($evento['meta_description']) ? $evento['meta_description'] : 
-                       (!empty($evento['descripcion_corta']) ? $evento['descripcion_corta'] : 
-                       'Descubre eventos culturales en Rutas Rurales - Red Unificada de Turistas, Alojamientos y Servicios');
-    $short_description = !empty($evento['descripcion_corta']) ? $evento['descripcion_corta'] : $meta_description;
-    
-} catch (Exception $e) {
-    // Error de base de datos - mostrar información de depuración
-    error_log("Error en evento-detalle.php: " . $e->getMessage());
-    header("HTTP/1.0 500 Internal Server Error");
-    echo "<h1>500 - Error interno del servidor</h1>";
-    echo "<p>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
-    echo "<p>Archivo: " . htmlspecialchars(__FILE__) . "</p>";
-    echo "<p>Línea: " . htmlspecialchars($e->getLine()) . "</p>";
-    exit;
-}
+// Escapar para HTML
+$meta_title_escaped = htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8');
+$meta_description_escaped = htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8');
+$short_description_escaped = htmlspecialchars($short_description, ENT_QUOTES, 'UTF-8');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $lang; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <meta name="description" content="<?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?>">
-    <meta name="short_description" content="<?php echo htmlspecialchars($short_description, ENT_QUOTES, 'UTF-8'); ?>">
-    <title><?php echo htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8'); ?></title>
+    <meta name="description" content="<?php echo $meta_description_escaped; ?>">
+    <meta name="short_description" content="<?php echo $short_description_escaped; ?>">
+    <title><?php echo $meta_title_escaped; ?></title>
     
     <!-- Google tag (gtag.js) -->
     <!-- Google Tag Manager -->
@@ -124,10 +109,14 @@ try {
         .event-detail { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px; }
         h1 { color: #2F5233; margin-bottom: 20px; }
         .meta-info { background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .debug-info { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107; }
+        .loading { text-align: center; padding: 50px; }
     </style>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
     <div class="header">
         <div class="container">
             <a href="/" style="color: white; text-decoration: none; font-weight: bold;">Rutas Rurales</a>
@@ -135,57 +124,48 @@ try {
     </div>
     
     <div class="container">
-        <div class="event-detail">
-            <h1><?php echo htmlspecialchars($evento['titulo'], ENT_QUOTES, 'UTF-8'); ?></h1>
-            
-            <div class="meta-info">
-                <p><strong>Ubicación:</strong> <?php 
-                    $ubicacion = $evento['localidad'];
-                    if (!empty($evento['municipality']) && $evento['municipality'] != $evento['localidad']) {
-                        $ubicacion .= ' (' . $evento['municipality'] . ')';
-                    }
-                    $ubicacion .= ', ' . $evento['provincia'];
-                    echo htmlspecialchars($ubicacion, ENT_QUOTES, 'UTF-8'); 
-                ?></p>
-                <p><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($evento['start_date'])); ?></p>
-                <?php if (!empty($evento['organizador'])): ?>
-                    <p><strong>Organizador:</strong> <?php echo htmlspecialchars($evento['organizador'], ENT_QUOTES, 'UTF-8'); ?></p>
-                <?php endif; ?>
-                <?php if (!empty($evento['precio'])): ?>
-                    <p><strong>Precio:</strong> <?php echo htmlspecialchars($evento['precio'], ENT_QUOTES, 'UTF-8'); ?></p>
-                <?php endif; ?>
+        <?php if (isset($tiene_datos) && $tiene_datos): ?>
+            <div class="event-detail">
+                <h1><?php echo $evento_titulo; ?></h1>
+                
+                <div class="meta-info">
+                    <p><strong>Ubicación:</strong> <?php 
+                        $ubicacion = $evento_localidad;
+                        if (!empty($evento_municipality) && $evento_municipality != $evento_localidad) {
+                            $ubicacion .= ' (' . $evento_municipality . ')';
+                        }
+                        $ubicacion .= ', ' . $evento_provincia;
+                        echo $ubicacion;
+                    ?></p>
+                    <?php if (!empty($evento_fecha)): ?>
+                        <p><strong>Fecha:</strong> <?php echo $evento_fecha; ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($evento_organizador)): ?>
+                        <p><strong>Organizador:</strong> <?php echo $evento_organizador; ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($evento_precio)): ?>
+                        <p><strong>Precio:</strong> <?php echo $evento_precio; ?></p>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="description">
+                    <h2>Descripción</h2>
+                    <p><?php echo $evento_descripcion; ?></p>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <a href="/eventos-culturales-paginacion.html" style="background: #2F5233; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver a Eventos</a>
+                </div>
             </div>
-            
-            <div class="description">
-                <h2>Descripción</h2>
-                <p><?php echo nl2br(htmlspecialchars($evento['descripcion'], ENT_QUOTES, 'UTF-8')); ?></p>
+        <?php else: ?>
+            <div class="event-detail">
+                <h1>Evento no encontrado</h1>
+                <p>El evento solicitado no está disponible en este momento.</p>
+                <div style="margin-top: 30px;">
+                    <a href="/eventos-culturales-paginacion.html" style="background: #2F5233; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver a Eventos</a>
+                </div>
             </div>
-            
-            <div class="debug-info">
-                <p><strong>✅ Meta tags generados correctamente en el servidor:</strong></p>
-                <ul>
-                    <li><strong>Title:</strong> <?php echo htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8'); ?></li>
-                    <li><strong>Description:</strong> <?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?></li>
-                    <li><strong>Short Description:</strong> <?php echo htmlspecialchars($short_description, ENT_QUOTES, 'UTF-8'); ?></li>
-                    <li><strong>Canonical:</strong> <?php echo $canonical_url; ?> (sin "www.")</li>
-                    <li><strong>Slug:</strong> <?php echo htmlspecialchars($evento['slug'], ENT_QUOTES, 'UTF-8'); ?></li>
-                    <li><strong>ID:</strong> <?php echo htmlspecialchars($evento['id'], ENT_QUOTES, 'UTF-8'); ?></li>
-                </ul>
-                <p><em>Estos meta tags son visibles en el código fuente estático y para motores de búsqueda.</em></p>
-            </div>
-            
-            <div style="margin-top: 30px;">
-                <a href="/eventos-culturales-paginacion.html" style="background: #2F5233; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver a Eventos</a>
-            </div>
-        </div>
+        <?php endif; ?>
     </div>
-    
-    <script>
-        // JavaScript para funcionalidad adicional
-        console.log("Evento cargado: <?php echo $evento['titulo']; ?>");
-        console.log("Meta tags generados en servidor:");
-        console.log("Title: <?php echo $meta_title; ?>");
-        console.log("Canonical: <?php echo $canonical_url; ?>");
-    </script>
 </body>
 </html>
