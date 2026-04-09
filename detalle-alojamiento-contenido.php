@@ -61,7 +61,7 @@ $descripcionTexto = $alojamiento ? htmlspecialchars($alojamiento['description'] 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?php echo htmlspecialchars($tituloPagina, ENT_QUOTES, 'UTF-8'); ?></title>
 <meta name="description" content="<?php echo htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8'); ?>">
-<link rel="canonical" href="https://rutasrurales.io/alojamientos/<?php echo $slug; ?>">
+<link rel="canonical" href="https://rutasrurales.io/alojamiento/<?php echo $slug; ?>">
 <link rel="icon" href="/favicon.png" type="image/png">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

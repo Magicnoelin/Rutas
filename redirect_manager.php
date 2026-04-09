@@ -190,7 +190,7 @@ if (file_exists($templateFile)) {
                     // Si se encontró, hacer redirect 301 al slug correcto
                     if ($data) {
                         $correctSlug = $originalSlug;
-                        $canonicalURL = 'https://rutasurales.io' . rtrim($basePath, '/') . '/' . $correctSlug;
+                        $canonicalURL = 'https://rutasrurales.io' . rtrim($basePath, '/') . '/' . $correctSlug;
                         header("Location: " . $canonicalURL, true, 301);
                         exit;
                     }
@@ -207,7 +207,7 @@ if (file_exists($templateFile)) {
                     }
 
                     // Inyectar URL Canónica
-                    $canonicalURL = 'https://rutasurales.io' . rtrim($basePath, '/') . '/' . $slug;
+                    $canonicalURL = 'https://rutasrurales.io' . rtrim($basePath, '/') . '/' . $slug;
                     // Buscar la etiqueta canonical con cualquier formato (con o sin href, con id, etc.)
                     // Primero intentar con regex más flexible que capture cualquier variant
                     $canonicalPattern = '/<link\s+[^>]*rel\s*=\s*["\']canonical["\'][^>]*>/i';
