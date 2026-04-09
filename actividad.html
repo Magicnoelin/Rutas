@@ -77,14 +77,12 @@
 
         console.log('Final slug:', slug);
 
-        // SUGGESTED EDIT: Correct domain to https://rutasrurales.io/
-        if (window.location.protocol === 'http:') {
-            window.location.replace(window.location.href.replace("http:", "https:"));
-        }
-
         // Cargar datos de la actividad si hay un slug
         if (slug) {
-            loadActivityData(slug);
+            // Usar setTimeout para asegurar que el DOM esté completamente cargado
+            setTimeout(() => {
+                loadActivityData(slug);
+            }, 100);
         } else {
             document.getElementById('error').style.display = 'block';
             document.getElementById('error').textContent = 'No se pudo identificar la actividad.';
@@ -200,6 +198,15 @@
             if (activity.no_incluye) {
                 document.getElementById('actividadNoIncluye').textContent = activity.no_incluye;
             }
+            
+            // Mostrar botones si hay información de contacto
+            if (activity.telefono || activity.email || activity.web || activity.url_reserva) {
+                if (activity.url_reserva) {
+                    document.getElementById('btnReserva').style.display = 'inline-block';
+                    document.getElementById('btnReserva').onclick = () => window.open(activity.url_reserva, '_blank');
+                }
+                
+                if (activity.telefono || activity.email) {
                     document.getElementById('btnContacto').style.display = 'inline-block';
                     document.getElementById('btnContacto').onclick = () => {
                         let contactInfo = '';

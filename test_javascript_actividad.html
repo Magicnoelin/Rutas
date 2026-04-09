@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test JavaScript Actividad</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .warning { color: orange; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Test de JavaScript en Página de Actividad</h1>
+    
+    <div class="test">
+        <h2>1. Verificar si JavaScript se ejecuta</h2>
+        <p id="test1">Esperando ejecución de JavaScript...</p>
+        <script>
+            document.getElementById('test1').innerHTML = '<span class="success">✓ JavaScript se está ejecutando en esta página</span>';
+            console.log('Test: JavaScript ejecutándose correctamente');
+        </script>
+    </div>
+    
+    <div class="test">
+        <h2>2. Simular carga de actividad</h2>
+        <p>Esta prueba simula lo que debería hacer la página real:</p>
+        
+        <div id="simulatedLoading" style="background: yellow; padding: 10px;">Simulación: Cargando...</div>
+        <div id="simulatedContent" style="display: none; background: lightgreen; padding: 10px; margin-top: 10px;">
+            Simulación: Contenido cargado ✓
+        </div>
+        
+        <script>
+            // Simular lo que hace loadActivityData
+            setTimeout(function() {
+                document.getElementById('simulatedLoading').style.display = 'none';
+                document.getElementById('simulatedContent').style.display = 'block';
+                console.log('Simulación: Contenido mostrado correctamente');
+            }, 1000);
+        </script>
+    </div>
+    
+    <div class="test">
+        <h2>3. Probar fetch a API de actividad</h2>
+        <p id="test3">Probando conexión a API...</p>
+        <button onclick="testAPI()">Probar API</button>
+        
+        <script>
+            function testAPI() {
+                const test3 = document.getElementById('test3');
+                test3.innerHTML = 'Conectando a API...';
+                
+                fetch('/api/actividad.php?slug=kayak-cuerda-del-pozo')
+                    .then(response => {
+                        test3.innerHTML = `Estado: ${response.status} ${response.statusText}<br>`;
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            test3.innerHTML += `<span class="success">✓ API responde correctamente</span><br>`;
+                            test3.innerHTML += `Actividad: ${data.data.nombre || 'Sin nombre'}`;
+                        } else {
+                            test3.innerHTML += `<span class="error">✗ API error: ${data.message}</span>`;
+                        }
+                    })
+                    .catch(error => {
+                        test3.innerHTML += `<span class="error">✗ Error de conexión: ${error.message}</span>`;
+                    });
+            }
+        </script>
+    </div>
+    
+    <div class="test">
+        <h2>4. Instrucciones para probar página real</h2>
+        <p>Para diagnosticar la página real de actividad:</p>
+        <ol>
+            <li>Abre <a href="/actividad/kayak-cuerda-del-pozo" target="_blank">/actividad/kayak-cuerda-del-pozo</a></li>
+            <li>Presiona F12 para abrir las herramientas de desarrollador</li>
+            <li>Ve a la pestaña "Console" (Consola)</li>
+            <li>Busca errores en rojo</li>
+            <li>Comparte cualquier error que veas</li>
+        </ol>
+        
+        <p><strong>Errores comunes a buscar:</strong></p>
+        <ul>
+            <li><code>Uncaught SyntaxError</code> - Error de sintaxis en JavaScript</li>
+            <li><code>Uncaught ReferenceError</code> - Variable o función no definida</li>
+            <li><code>Failed to load resource</code> - Archivo no encontrado</li>
+            <li><code>Cross-Origin</code> - Problema de CORS</li>
+        </ul>
+    </div>
+    
+    <script>
+        // Verificar si hay errores comunes en la página actual
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error('Error global capturado:', message, 'en', source, 'línea', lineno);
+            alert('Error JavaScript detectado: ' + message + '\nRevisa la consola para más detalles.');
+        };
+    </script>
+</body>
+</html>
