@@ -1,6 +1,6 @@
 <?php
 /**
- * Página PHP para Detalle de Evento
+ * Página PHP para Detalle de Evento - Versión Simplificada
  * Genera meta tags en el servidor para SEO
  * URL: /evento/{slug} -> redirige internamente a este archivo
  */
@@ -21,7 +21,8 @@ if (empty($slug)) {
 // Si todavía no hay slug, mostrar error
 if (empty($slug)) {
     header("HTTP/1.0 404 Not Found");
-    include '404.html';
+    echo "<h1>404 - Evento no encontrado</h1>";
+    echo "<p>No se especificó un slug de evento.</p>";
     exit;
 }
 
@@ -33,7 +34,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->exec("SET NAMES utf8mb4");
     
-    // Consulta básica para obtener el evento
+    // Consulta simplificada para obtener el evento
     $sql = "SELECT 
             e.id,
             e.name AS titulo,
@@ -43,20 +44,11 @@ try {
             e.meta_title,
             e.meta_description,
             e.fecha_evento,
-            e.direccion,
             e.localidad,
             e.provincia,
-            e.latitud,
-            e.longitud,
-            e.ubicacion,
             e.organizador,
-            e.telefono,
-            e.email,
-            e.precio,
-            e.fotos,
-            c.name AS categoria_nombre
+            e.precio
         FROM cultural_events e
-        LEFT JOIN cultural_event_categories c ON e.categoria_id = c.id
         WHERE e.slug = :slug AND e.estado = 'activo'
         LIMIT 1";
     
@@ -66,7 +58,8 @@ try {
     
     if (!$evento) {
         header("HTTP/1.0 404 Not Found");
-        include '404.html';
+        echo "<h1>404 - Evento no encontrado</h1>";
+        echo "<p>El evento con slug '$slug' no existe o no está activo.</p>";
         exit;
     }
     
@@ -85,10 +78,13 @@ try {
     $short_description = !empty($evento['descripcion_corta']) ? $evento['descripcion_corta'] : $meta_description;
     
 } catch (Exception $e) {
-    // Error de base de datos
+    // Error de base de datos - mostrar información de depuración
     error_log("Error en evento-detalle.php: " . $e->getMessage());
     header("HTTP/1.0 500 Internal Server Error");
-    echo "Error interno del servidor";
+    echo "<h1>500 - Error interno del servidor</h1>";
+    echo "<p>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p>Archivo: " . htmlspecialchars(__FILE__) . "</p>";
+    echo "<p>Línea: " . htmlspecialchars($e->getLine()) . "</p>";
     exit;
 }
 ?>
@@ -127,6 +123,7 @@ try {
         .event-detail { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px; }
         h1 { color: #2F5233; margin-bottom: 20px; }
         .meta-info { background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .debug-info { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107; }
     </style>
 </head>
 <body>
@@ -156,14 +153,17 @@ try {
                 <p><?php echo nl2br(htmlspecialchars($evento['descripcion'], ENT_QUOTES, 'UTF-8')); ?></p>
             </div>
             
-            <div style="margin-top: 30px; padding: 15px; background: #e8f5e9; border-radius: 5px;">
-                <p><strong>Meta tags generados en el servidor:</strong></p>
+            <div class="debug-info">
+                <p><strong>✅ Meta tags generados correctamente en el servidor:</strong></p>
                 <ul>
                     <li><strong>Title:</strong> <?php echo htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8'); ?></li>
                     <li><strong>Description:</strong> <?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?></li>
                     <li><strong>Short Description:</strong> <?php echo htmlspecialchars($short_description, ENT_QUOTES, 'UTF-8'); ?></li>
-                    <li><strong>Canonical:</strong> <?php echo $canonical_url; ?></li>
+                    <li><strong>Canonical:</strong> <?php echo $canonical_url; ?> (sin "www.")</li>
+                    <li><strong>Slug:</strong> <?php echo htmlspecialchars($evento['slug'], ENT_QUOTES, 'UTF-8'); ?></li>
+                    <li><strong>ID:</strong> <?php echo htmlspecialchars($evento['id'], ENT_QUOTES, 'UTF-8'); ?></li>
                 </ul>
+                <p><em>Estos meta tags son visibles en el código fuente estático y para motores de búsqueda.</em></p>
             </div>
             
             <div style="margin-top: 30px;">
@@ -175,6 +175,9 @@ try {
     <script>
         // JavaScript para funcionalidad adicional
         console.log("Evento cargado: <?php echo $evento['titulo']; ?>");
+        console.log("Meta tags generados en servidor:");
+        console.log("Title: <?php echo $meta_title; ?>");
+        console.log("Canonical: <?php echo $canonical_url; ?>");
     </script>
 </body>
 </html>
