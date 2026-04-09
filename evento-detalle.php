@@ -44,12 +44,13 @@ try {
             e.meta_title,
             e.meta_description,
             e.start_date,
-            e.localidad,
-            e.provincia,
-            e.organizador,
-            e.precio
+            e.venue_name AS localidad,
+            e.municipality,
+            e.province AS provincia,
+            e.organizer AS organizador,
+            e.ticket_price AS precio
         FROM cultural_events e
-        WHERE e.slug = :slug AND e.estado = 'activo'
+        WHERE e.slug = :slug AND e.is_active = 1
         LIMIT 1";
     
     $stmt = $pdo->prepare($sql);
@@ -138,7 +139,14 @@ try {
             <h1><?php echo htmlspecialchars($evento['titulo'], ENT_QUOTES, 'UTF-8'); ?></h1>
             
             <div class="meta-info">
-                <p><strong>Ubicación:</strong> <?php echo htmlspecialchars($evento['localidad'] . ', ' . $evento['provincia'], ENT_QUOTES, 'UTF-8'); ?></p>
+                <p><strong>Ubicación:</strong> <?php 
+                    $ubicacion = $evento['localidad'];
+                    if (!empty($evento['municipality']) && $evento['municipality'] != $evento['localidad']) {
+                        $ubicacion .= ' (' . $evento['municipality'] . ')';
+                    }
+                    $ubicacion .= ', ' . $evento['provincia'];
+                    echo htmlspecialchars($ubicacion, ENT_QUOTES, 'UTF-8'); 
+                ?></p>
                 <p><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($evento['start_date'])); ?></p>
                 <?php if (!empty($evento['organizador'])): ?>
                     <p><strong>Organizador:</strong> <?php echo htmlspecialchars($evento['organizador'], ENT_QUOTES, 'UTF-8'); ?></p>
