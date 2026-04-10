@@ -75,11 +75,19 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
     <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
     
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
+    <!-- Google Tag Manager - Cargado de forma diferida -->
+    <script>
+        // Cargar GTM después de que la página esté lista
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','GTM-MBP57VQM');
+            }, 1000); // Retraso de 1 segundo
+        });
+    </script>
     
     <!-- Preconnect para recursos externos (optimización segura) -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -300,18 +308,62 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
                 </div>
             </div>
 
-            <div id="map" style="height: 400px; width: 100%; border-radius: 10px; margin-top: 20px;"></div>
+            <div id="map" style="height: 400px; width: 100%; border-radius: 10px; margin-top: 20px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                <div id="map-loading" style="text-align: center;">
+                    <p style="color: #666; margin-bottom: 10px;">Cargando mapa...</p>
+                    <button id="load-map-btn" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                        Cargar Mapa
+                    </button>
+                </div>
+            </div>
             <script>
-                function initMap() {
-                    const pos = { lat: <?php echo $evento['latitude'] ?? 0; ?>, lng: <?php echo $evento['longitude'] ?? 0; ?> };
-                    const map = new google.maps.Map(document.getElementById("map"), {
-                        zoom: 15,
-                        center: pos,
-                    });
-                    new google.maps.Marker({ position: pos, map: map });
+                // Función para cargar Google Maps solo cuando sea necesario
+                function loadGoogleMaps() {
+                    const mapElement = document.getElementById('map');
+                    const loadingElement = document.getElementById('map-loading');
+                    
+                    // Mostrar que está cargando
+                    loadingElement.innerHTML = '<p style="color: #666;">Cargando mapa...</p>';
+                    
+                    // Crear script para Google Maps
+                    const script = document.createElement('script');
+                    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNdQ1eauGeKUTMLAJ5_TwwRxo91wWsPg&callback=initMap';
+                    script.async = true;
+                    script.defer = true;
+                    
+                    // Definir función initMap
+                    window.initMap = function() {
+                        const pos = { lat: <?php echo $evento['latitude'] ?? 0; ?>, lng: <?php echo $evento['longitude'] ?? 0; ?> };
+                        const map = new google.maps.Map(mapElement, {
+                            zoom: 15,
+                            center: pos,
+                        });
+                        new google.maps.Marker({ position: pos, map: map });
+                        
+                        // Ocultar elemento de carga
+                        loadingElement.style.display = 'none';
+                        mapElement.style.background = 'transparent';
+                    };
+                    
+                    // Agregar script al documento
+                    document.head.appendChild(script);
                 }
+                
+                // Cargar mapa cuando el usuario haga clic en el botón
+                document.getElementById('load-map-btn').addEventListener('click', loadGoogleMaps);
+                
+                // También cargar automáticamente cuando el usuario haga scroll cerca del mapa
+                window.addEventListener('scroll', function() {
+                    const mapElement = document.getElementById('map');
+                    const rect = mapElement.getBoundingClientRect();
+                    const isNearViewport = rect.top < window.innerHeight + 300;
+                    
+                    if (isNearViewport && !window.googleMapsLoaded) {
+                        window.googleMapsLoaded = true;
+                        loadGoogleMaps();
+                    }
+                }, { once: true });
             </script>
-            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNdQ1eauGeKUTMLAJ5_TwwRxo91wWsPg&callback=initMap" async defer></script>
 
         <?php else: ?>
             <div style="text-align:center; padding: 50px;">
