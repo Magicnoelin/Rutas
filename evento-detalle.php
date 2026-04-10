@@ -156,6 +156,39 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
             color: var(--primary); 
             margin-right: 10px; 
         }
+        /* Estilos para la descripción del evento */
+        .event-description {
+            margin: 30px 0;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .event-description p {
+            margin-bottom: 1.5rem;
+        }
+        .event-description h2, 
+        .event-description h3, 
+        .event-description h4 {
+            color: var(--primary);
+            margin: 2rem 0 1rem 0;
+        }
+        .event-description ul, 
+        .event-description ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .event-description li {
+            margin-bottom: 0.5rem;
+        }
+        .event-description strong {
+            color: var(--dark-color, #1A2E1A);
+        }
+        .event-description a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        .event-description a:hover {
+            color: var(--accent);
+        }
         /* Solo estilos de galería que necesitan estar inline */
         .gallery-container {
             display: grid;
