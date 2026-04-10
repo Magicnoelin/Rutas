@@ -37,37 +37,64 @@
     }
   </style>
 
-  <!-- Google Tag Manager - Cargado de forma diferida -->
+  <!-- Google Tag Manager - Cargado solo después de interacción del usuario -->
   <script>
-    // Cargar GTM después de que la página esté lista
-    window.addEventListener('load', function() {
-      setTimeout(function() {
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-MBP57VQM');
-      }, 1000); // Retraso de 1 segundo
+    // Cargar GTM solo después de interacción del usuario o cuando la página esté completamente inactiva
+    function loadGTM() {
+      if (window.gtmLoaded) return;
+      window.gtmLoaded = true;
+      
+      (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),
+        dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+        f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-MBP57VQM');
+    }
+    
+    // Cargar después de interacción del usuario
+    ['click', 'scroll', 'keydown', 'mousemove', 'touchstart'].forEach(function(event) {
+      window.addEventListener(event, function() {
+        setTimeout(loadGTM, 3000); // 3 segundos después de interacción
+      }, { once: true });
     });
+    
+    // Cargar después de 10 segundos si no hay interacción
+    setTimeout(loadGTM, 10000);
   </script>
   <!-- End Google Tag Manager -->
 
-  <!-- Google tag (gtag.js) - Cargado de forma diferida -->
+  <!-- Google Analytics - Cargado solo después de interacción del usuario -->
   <script>
-    // Cargar Google Analytics después de que la página esté lista
-    window.addEventListener('load', function() {
-      setTimeout(function() {
-        var script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42';
-        document.head.appendChild(script);
-        
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-X990K5GE42');
-      }, 1500); // Retraso de 1.5 segundos
+    // Cargar Google Analytics solo después de interacción del usuario
+    function loadGoogleAnalytics() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
+      
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42';
+      document.head.appendChild(script);
+      
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-X990K5GE42');
+    }
+    
+    // Cargar después de interacción del usuario (más tarde que GTM)
+    ['click', 'scroll', 'keydown', 'mousemove', 'touchstart'].forEach(function(event) {
+      window.addEventListener(event, function() {
+        setTimeout(loadGoogleAnalytics, 5000); // 5 segundos después de interacción
+      }, { once: true });
     });
+    
+    // Cargar después de 15 segundos si no hay interacción
+    setTimeout(loadGoogleAnalytics, 15000);
   </script>
 </head>
 <body>

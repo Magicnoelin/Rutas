@@ -75,18 +75,34 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
     <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
     
-    <!-- Google Tag Manager - Cargado de forma diferida -->
+    <!-- Google Tag Manager - Cargado solo después de interacción del usuario -->
     <script>
-        // Cargar GTM después de que la página esté lista
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                })(window,document,'script','dataLayer','GTM-MBP57VQM');
-            }, 1000); // Retraso de 1 segundo
+        // Cargar GTM solo después de interacción del usuario o cuando la página esté completamente inactiva
+        function loadGTM() {
+            if (window.gtmLoaded) return;
+            window.gtmLoaded = true;
+            
+            (function(w,d,s,l,i){
+                w[l]=w[l]||[];
+                w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+                var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),
+                dl=l!='dataLayer'?'&l='+l:'';
+                j.async=true;
+                j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+                f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-MBP57VQM');
+        }
+        
+        // Cargar después de interacción del usuario
+        ['click', 'scroll', 'keydown', 'mousemove', 'touchstart'].forEach(function(event) {
+            window.addEventListener(event, function() {
+                setTimeout(loadGTM, 3000); // 3 segundos después de interacción
+            }, { once: true });
         });
+        
+        // Cargar después de 10 segundos si no hay interacción
+        setTimeout(loadGTM, 10000);
     </script>
     
     <!-- Preconnect solo para recursos CRÍTICOS que se usarán inmediatamente -->
