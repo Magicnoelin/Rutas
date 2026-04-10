@@ -18,7 +18,10 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-    Header set Content-Type "text/html; charset=UTF-8"
+    # Solo establecer Content-Type para archivos HTML/PHP
+    <FilesMatch "\.(php|html?)$">
+        Header set Content-Type "text/html; charset=UTF-8"
+    </FilesMatch>
 </IfModule>
 
 # Ahora las reglas de reescritura

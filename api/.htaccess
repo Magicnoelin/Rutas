@@ -71,9 +71,11 @@ php_flag log_errors On
     SetHandler application/x-httpd-php
 </FilesMatch>
 
-# Asegurar que el navegador no lo trate como texto
+# Asegurar que el navegador no lo trate como texto (solo para HTML/PHP)
 <IfModule mod_headers.c>
-    Header set Content-Type "text/html"
+    <FilesMatch "\.(php|html?)$">
+        Header set Content-Type "text/html"
+    </FilesMatch>
 </IfModule>
 
 # Compresión GZIP
