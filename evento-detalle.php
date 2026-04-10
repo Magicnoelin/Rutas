@@ -81,27 +81,24 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
     
-    <!-- Preconnect para recursos externos -->
+    <!-- Preconnect para recursos externos (optimización segura) -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://maps.googleapis.com">
     
-    <!-- Preload para recursos críticos -->
+    <!-- Preload para recursos críticos (optimización segura) -->
     <link rel="preload" href="/styles.css" as="style">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
     
-    <!-- Cargar CSS de forma no bloqueante -->
-    <link rel="stylesheet" href="/styles.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+    <!-- Cargar CSS normalmente (forma segura) -->
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    
-    <!-- CSS crítico inline para renderizado inmediato -->
+    <!-- CSS crítico inline mínimo (solo lo esencial) -->
     <style>
-        /* CSS crítico mínimo para renderizado inicial */
+        /* Solo estilos críticos absolutamente necesarios */
         :root { --primary: #2F5233; --accent: #81C784; }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -137,7 +134,7 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
             color: var(--primary); 
             margin-right: 10px; 
         }
-        /* Estilos mínimos para galería */
+        /* Solo estilos de galería que necesitan estar inline */
         .gallery-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
