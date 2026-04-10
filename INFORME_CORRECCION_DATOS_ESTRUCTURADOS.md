@@ -88,7 +88,7 @@ Resolver el error de Google Search Console: **"La propiedad única está duplica
   },
   "image": [
     "https://drive.google.com/thumbnail?id=1lCFCuPzjFknI25AJG5yMhDvs9l6c2FS6&sz=w400",
-    "https://rutasurales.io/menu_images/Casa_enrique.jpg"
+    "https://rutasrurales.io/menu_images/Casa_enrique.jpg"
   ],
   "url": "https://sites.google.com/view/casaruralenrique/inicio"
 }

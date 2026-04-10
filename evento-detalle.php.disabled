@@ -14,7 +14,7 @@
     })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
     <!-- End Google Tag Manager -->
     
-    <link rel="canonical" id="dynamic-canonical" href="https://rutasurales.io/evento-detalle.html">
+    <link rel="canonical" id="dynamic-canonical" href="https://rutasrurales.io/evento-detalle.html">
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
     <!-- CSS optimizado para eventos -->
     <link rel="preload" href="/css/evento-optimizado.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -1544,8 +1544,8 @@
             if (canonicalEl && evento.slug) {
                 const lang = window.currentLang || 'es';
                 const canonicalUrl = lang !== 'es'
-                    ? 'https://rutasurales.io/' + lang + '/evento/' + evento.slug
-                    : 'https://rutasurales.io/evento/' + evento.slug;
+                    ? 'https://rutasrurales.io/' + lang + '/evento/' + evento.slug
+                    : 'https://rutasrurales.io/evento/' + evento.slug;
                 canonicalEl.setAttribute('href', canonicalUrl);
             }
 

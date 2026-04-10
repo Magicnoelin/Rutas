@@ -10,7 +10,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Semana Santa 2026 | Turismo Rural en Soria y Ávila">
     <meta name="twitter:description" content="Reserva tu escapada rural para esta Semana Santa. Casas con encanto en el Valle del Tiétar y Soria.">
-    <meta name="twitter:image" content="https://rutasurales.io/menu_images/Logo%20transparente.webp">
+    <meta name="twitter:image" content="https://rutasrurales.io/menu_images/Logo%20transparente.webp">
 
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css?v=20260114">
