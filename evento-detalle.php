@@ -112,7 +112,7 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
             color: white; 
             padding: 60px 20px; 
             text-align: center; 
-            margin: 0;
+            margin-top: 80px; /* Espacio para el header */
         }
         .event-container { 
             max-width: 900px; 
@@ -157,6 +157,11 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
 <body>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <?php 
+    // Incluir el header (pasar la variable $lang)
+    include 'header.php'; 
+    ?>
 
     <header class="hero-event">
     <h1><?php echo $evento ? htmlspecialchars($evento['titulo']) : 'Evento no encontrado'; ?></h1>
@@ -317,8 +322,9 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
         <?php endif; ?>
     </main>
 
-    <footer style="text-align: center; padding: 20px; font-size: 0.9em; color: #666;">
-        &copy; <?php echo date('Y'); ?> Rutas Rurales. Todos los derechos reservados.
-    </footer>
+    <?php 
+    // Incluir el footer
+    include 'footer.php'; 
+    ?>
 </body>
 </html>
