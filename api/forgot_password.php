@@ -75,7 +75,7 @@ try {
     $stmt->execute([$user['id'], $tokenHash, $expiresAt]);
 
     // Create reset link
-    $resetLink = "https://rutasurales.io/reset_password.html?token=$token&email=" . urlencode($email);
+    $resetLink = "https://rutasrurales.io/reset_password.html?token=$token&email=" . urlencode($email);
 
     // Email content
     $subject = "Recuperación de Contraseña - Rutas Rurales";

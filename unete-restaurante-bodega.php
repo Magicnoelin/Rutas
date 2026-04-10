@@ -1,7 +1,7 @@
 <?php 
     $page_title = "Únete a Rutas Rurales | Impulsa tu Bodega o Restaurante";
     $page_description = "Forma parte de la red de Rutas Rurales. Aumenta la visibilidad de tu bodega, bar o restaurante conectando directamente con turistas rurales y amantes de la gastronomía.";
-    $page_canonical = "https://rutasurales.io/unete-restaurante-bodega.php";
+    $page_canonical = "https://rutasrurales.io/unete-restaurante-bodega.php";
     include 'header.php'; 
 ?>
 

@@ -78,8 +78,8 @@ $contenido = '<!DOCTYPE html>
             const urlParams = new URLSearchParams(window.location.search);
             const slug = urlParams.get("slug");
             if (!slug) { mostrarError(); return; }
-            document.getElementById("canonical-url").setAttribute("href", "https://rutasurales.io/lugar-interes.html?slug=" + slug);
-            document.querySelector("link[rel=\"canonical\"]").setAttribute("href", "https://rutasurales.io/lugar-interes.html?slug=" + slug);
+            document.getElementById("canonical-url").setAttribute("href", "https://rutasrurales.io/lugar-interes.html?slug=" + slug);
+            document.querySelector("link[rel=\"canonical\"]").setAttribute("href", "https://rutasrurales.io/lugar-interes.html?slug=" + slug);
             cargarLugar(slug);
         });
 

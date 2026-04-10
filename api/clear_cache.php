@@ -1,7 +1,7 @@
 <?php
 /**
  * Limpiar cache de PHP/OPcache
- * Accede a: https://rutasurales.io/api/clear_cache.php
+ * Accede a: https://rutasrurales.io/api/clear_cache.php
  */
 
 header('Content-Type: application/json; charset=utf-8');
@@ -31,6 +31,6 @@ foreach ($files as $file) {
 }
 
 $results['message'] = 'Cache limpiado. Ahora solicita un nuevo enlace de recuperación.';
-$results['next_step'] = 'Ve a https://rutasurales.io/login.html y solicita nuevo enlace';
+$results['next_step'] = 'Ve a https://rutasrurales.io/login.html y solicita nuevo enlace';
 
 echo json_encode($results, JSON_PRETTY_PRINT);
