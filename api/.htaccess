@@ -63,6 +63,7 @@ php_flag log_errors On
 <IfModule mod_mime.c>
     AddType application/json .json
     AddType text/html .html
+    AddType application/x-httpd-php .php
 </IfModule>
 
 # Compresión GZIP

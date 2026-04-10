@@ -4,6 +4,10 @@
 RewriteEngine On
 RewriteBase /
 
+# Asegurar que PHP está habilitado
+AddHandler application/x-httpd-php .php
+AddType application/x-httpd-php .php
+
 # No redirigir carpetas del sistema (DEBE IR PRIMERO)
 RewriteRule ^(api|admin_tablas|dashboard|de|en|fr|zh)/ - [L]
 
