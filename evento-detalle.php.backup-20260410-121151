@@ -10,154 +10,46 @@ $lang = isset($_GET['lang']) ? $_GET['lang'] : 'es'; // Por defecto español
 
 // 2. CONSULTA A BASE DE DATOS
 $evento = null;
-$traduccion = null;
-
 if (!empty($slug)) {
     try {
         $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
         if (!$conn->connect_error) {
             $conn->set_charset("utf8mb4");
-            
-            if ($lang == 'es') {
-                // ESPAÑOL: Buscar directamente en cultural_events
-                $sql = "SELECT 
-                        e.id,
-                        e.name AS titulo,
-                        e.slug,
-                        e.description,
-                        e.short_description,
-                        e.meta_title,
-                        e.meta_description,
-                        e.start_date,
-                        e.end_date,
-                        e.venue_name AS localidad,
-                        e.venue_address,
-                        e.municipality,
-                        e.province,
-                        e.latitude,
-                        e.longitude,
-                        e.is_free,
-                        e.ticket_price,
-                        e.organizer,
-                        e.photo1,
-                        e.photo2,
-                        e.photo3,
-                        e.photo4,
-                        e.poster_image,
-                        e.category_id,
-                        e.is_active,
-                        e.status
-                    FROM cultural_events e 
-                    WHERE e.slug = ? AND e.is_active = 1";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("s", $slug);
-            } else {
-                // IDIOMAS EXTRANJEROS (de, en, fr, zh): Buscar primero en traducciones
-                // 1. Buscar la traducción por slug e idioma
-                $sql_trad = "SELECT 
-                            event_id,
-                            name AS titulo_trad,
-                            slug AS slug_trad,
-                            short_description AS short_desc_trad,
-                            description AS descripcion_trad,
-                            meta_title AS meta_title_trad,
-                            meta_description AS meta_desc_trad,
-                            program AS programa_trad,
-                            target_audience AS audiencia_trad,
-                            accessibility AS accesibilidad_trad
-                        FROM cultural_events_trads 
-                        WHERE slug = ? AND language_code = ?";
-                
-                $stmt_trad = $conn->prepare($sql_trad);
-                $stmt_trad->bind_param("ss", $slug, $lang);
-                $stmt_trad->execute();
-                $result_trad = $stmt_trad->get_result();
-                $traduccion = $result_trad->fetch_assoc();
-                $stmt_trad->close();
-                
-                if ($traduccion) {
-                    // 2. Buscar el evento original por event_id
-                    $sql = "SELECT 
-                            e.id,
-                            e.name AS titulo,
-                            e.slug,
-                            e.description,
-                            e.short_description,
-                            e.meta_title,
-                            e.meta_description,
-                            e.start_date,
-                            e.end_date,
-                            e.venue_name AS localidad,
-                            e.venue_address,
-                            e.municipality,
-                            e.province,
-                            e.latitude,
-                            e.longitude,
-                            e.is_free,
-                            e.ticket_price,
-                            e.organizer,
-                            e.photo1,
-                            e.photo2,
-                            e.photo3,
-                            e.photo4,
-                            e.poster_image,
-                            e.category_id,
-                            e.is_active,
-                            e.status
-                        FROM cultural_events e 
-                        WHERE e.id = ? AND e.is_active = 1";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("i", $traduccion['event_id']);
-                } else {
-                    // No se encontró traducción, buscar como español
-                    $sql = "SELECT 
-                            e.id,
-                            e.name AS titulo,
-                            e.slug,
-                            e.description,
-                            e.short_description,
-                            e.meta_title,
-                            e.meta_description,
-                            e.start_date,
-                            e.end_date,
-                            e.venue_name AS localidad,
-                            e.venue_address,
-                            e.municipality,
-                            e.province,
-                            e.latitude,
-                            e.longitude,
-                            e.is_free,
-                            e.ticket_price,
-                            e.organizer,
-                            e.photo1,
-                            e.photo2,
-                            e.photo3,
-                            e.photo4,
-                            e.poster_image,
-                            e.category_id,
-                            e.is_active,
-                            e.status
-                        FROM cultural_events e 
-                        WHERE e.slug = ? AND e.is_active = 1";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("s", $slug);
-                }
-            }
-            
+            // Buscamos el evento con todos los campos necesarios
+            $sql = "SELECT 
+                    e.id,
+                    e.name AS titulo,
+                    e.slug,
+                    e.description,
+                    e.short_description,
+                    e.meta_title,
+                    e.meta_description,
+                    e.start_date,
+                    e.end_date,
+                    e.venue_name AS localidad,
+                    e.venue_address,
+                    e.municipality,
+                    e.province,
+                    e.latitude,
+                    e.longitude,
+                    e.is_free,
+                    e.ticket_price,
+                    e.organizer,
+                    e.photo1,
+                    e.photo2,
+                    e.photo3,
+                    e.photo4,
+                    e.poster_image,
+                    e.category_id,
+                    e.is_active,
+                    e.status
+                FROM cultural_events e 
+                WHERE e.slug = ? AND e.is_active = 1";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $slug);
             $stmt->execute();
             $result = $stmt->get_result();
             $evento = $result->fetch_assoc();
-            
-            // Combinar datos si hay traducción
-            if ($traduccion && $evento) {
-                // Sobrescribir campos traducibles con la traducción
-                $evento['titulo'] = $traduccion['titulo_trad'] ?? $evento['titulo'];
-                $evento['description'] = $traduccion['descripcion_trad'] ?? $evento['description'];
-                $evento['short_description'] = $traduccion['short_desc_trad'] ?? $evento['short_description'];
-                $evento['meta_title'] = $traduccion['meta_title_trad'] ?? $evento['meta_title'];
-                $evento['meta_description'] = $traduccion['meta_desc_trad'] ?? $evento['meta_description'];
-            }
-            
             $stmt->close();
             $conn->close();
         }
@@ -172,17 +64,7 @@ $page_title = ($evento) ? $evento['meta_title'] : "Evento Cultural | Rutas Rural
 $page_desc = ($evento) ? $evento['meta_description'] : "Descubre este evento en Rutas Rurales";
 
 // El canonical ahora respeta el idioma según tu .htaccess
-// Cada idioma tiene su propia canonical: español usa slug original, otros idiomas usan slug traducido
-$slug_canonical = $slug; // Por defecto el slug de la URL
-if ($evento) {
-    if ($lang == 'es') {
-        $slug_canonical = $evento['slug']; // Español: slug original
-    } else {
-        // Otros idiomas: usar slug traducido si existe, sino slug original
-        $slug_canonical = $traduccion['slug_trad'] ?? $evento['slug'];
-    }
-}
-$canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "evento/" . $slug_canonical;
+$canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "evento/" . ($evento ? $evento['slug'] : $slug);
 ?>
 <!DOCTYPE html>
 <html lang="es">
