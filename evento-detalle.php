@@ -89,12 +89,10 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
         });
     </script>
     
-    <!-- Preconnect para recursos externos (optimización segura) -->
+    <!-- Preconnect solo para recursos CRÍTICOS que se usarán inmediatamente -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://maps.googleapis.com">
+    <!-- NOTA: No se usan Google Fonts en esta página (fuentes locales Montserrat) -->
     
     <!-- Preload para recursos críticos (optimización segura) -->
     <link rel="preload" href="/styles.css" as="style">
