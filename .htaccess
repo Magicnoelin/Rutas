@@ -122,12 +122,12 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(es|de|en|fr|zh)/evento/([^/]+)/?$ evento-detalle.php?slug=$2&lang=$1 [L,QSA]
 
-# Eventos con idiomas SIN "evento" en la URL: /de/slug-de-evento
-# Excluye archivos conocidos en carpetas de idiomas
+# REDIRECCIÓN 301: URLs sin "evento" a URLs con "evento" (para consistencia con sitemap)
+# Ejemplo: /de/slug-traditionelles-fest-spanien → /de/evento/slug-traditionelles-fest-spanien
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/(es|de|en|fr|zh)/(index\.html|login\.html|mapa-eclipse\.php|eventos-culturales-paginacion\.html|rutas-turisticas\.html)$ [NC]
-RewriteRule ^(es|de|en|fr|zh)/([^/]+)/?$ evento-detalle.php?slug=$2&lang=$1 [L,QSA]
+RewriteRule ^(es|de|en|fr|zh)/([^/]+)/?$ /$1/evento/$2 [R=301,L]
 
 # Eventos sin idioma (por defecto español)
 RewriteCond %{REQUEST_FILENAME} !-f
