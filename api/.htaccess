@@ -66,6 +66,16 @@ php_flag log_errors On
     AddType application/x-httpd-php .php
 </IfModule>
 
+# Asegurar que PHP está habilitado (configuración específica para Hostinger)
+<FilesMatch "\.php$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+# Asegurar que el navegador no lo trate como texto
+<IfModule mod_headers.c>
+    Header set Content-Type "text/html"
+</IfModule>
+
 # Compresión GZIP
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE application/json

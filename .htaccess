@@ -1,12 +1,29 @@
 # ============================================================
-# CONFIGURACIÓN BÁSICA
+# CONFIGURACIÓN BÁSICA Y EJECUCIÓN PHP
 # ============================================================
+# PRIMERO: Configurar ejecución de PHP (esto debe ir antes de cualquier RewriteRule)
+<IfModule mod_php.c>
+    # Habilitar PHP
+    php_flag engine on
+</IfModule>
+
+# Configuración específica para Hostinger
+<FilesMatch "\.php$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+<IfModule mod_mime.c>
+    AddHandler application/x-httpd-php .php
+    AddType application/x-httpd-php .php
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header set Content-Type "text/html; charset=UTF-8"
+</IfModule>
+
+# Ahora las reglas de reescritura
 RewriteEngine On
 RewriteBase /
-
-# Asegurar que PHP está habilitado
-AddHandler application/x-httpd-php .php
-AddType application/x-httpd-php .php
 
 # No redirigir carpetas del sistema (DEBE IR PRIMERO)
 RewriteRule ^(api|admin_tablas|dashboard|de|en|fr|zh)/ - [L]
@@ -98,9 +115,13 @@ RewriteRule ^lugar/([^/]+)/?$ redirect_manager.php?type=lugar&slug=$1 [L,QSA]
 RewriteRule ^actividad/([^/]+)/?$ redirect_manager.php?type=actividad&slug=$1 [L,QSA]
 
 # Eventos con idiomas: /es/evento/slug, /de/evento/slug, etc.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(es|de|en|fr|zh)/evento/([^/]+)/?$ evento-detalle.php?slug=$2&lang=$1 [L,QSA]
 
 # Eventos sin idioma (por defecto español)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^evento/([^/]+)/?$ evento-detalle.php?slug=$1 [L,QSA]
 
 # ============================================================
