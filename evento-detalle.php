@@ -15,8 +15,36 @@ if (!empty($slug)) {
         $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
         if (!$conn->connect_error) {
             $conn->set_charset("utf8mb4");
-            // Buscamos el evento
-            $sql = "SELECT e.*, e.name AS titulo FROM cultural_events e WHERE e.slug = ? AND e.is_active = 1";
+            // Buscamos el evento con todos los campos necesarios
+            $sql = "SELECT 
+                    e.id,
+                    e.name AS titulo,
+                    e.slug,
+                    e.description,
+                    e.short_description,
+                    e.meta_title,
+                    e.meta_description,
+                    e.start_date,
+                    e.end_date,
+                    e.venue_name AS localidad,
+                    e.venue_address,
+                    e.municipality,
+                    e.province,
+                    e.latitude,
+                    e.longitude,
+                    e.is_free,
+                    e.ticket_price,
+                    e.organizer,
+                    e.photo1,
+                    e.photo2,
+                    e.photo3,
+                    e.photo4,
+                    e.poster_image,
+                    e.category_id,
+                    e.is_active,
+                    e.status
+                FROM cultural_events e 
+                WHERE e.slug = ? AND e.is_active = 1";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $slug);
             $stmt->execute();
@@ -90,26 +118,120 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
     ?>
 </section>
 
+            <?php
+            // Obtener fotos del evento
+            $fotos = [];
+            if ($evento) {
+                // Revisar campos de fotos: photo1, photo2, photo3, photo4, poster_image
+                $campos_fotos = ['photo1', 'photo2', 'photo3', 'photo4', 'poster_image'];
+                foreach ($campos_fotos as $campo) {
+                    if (!empty($evento[$campo]) && trim($evento[$campo]) !== '') {
+                        $foto_url = $evento[$campo];
+                        // Si la URL no comienza con http, asumimos que es relativa al sitio
+                        if (!preg_match('/^https?:\/\//', $foto_url)) {
+                            // Si no comienza con /, agregarlo
+                            if (strpos($foto_url, '/') !== 0) {
+                                $foto_url = '/' . $foto_url;
+                            }
+                        }
+                        $fotos[] = $foto_url;
+                    }
+                }
+            }
+            
+            // Mostrar galería si hay fotos
+            if (!empty($fotos)): ?>
+            <section class="event-gallery" style="margin: 30px 0;">
+                <h3 style="color: var(--primary); margin-bottom: 20px;">Galería de Fotos</h3>
+                <div class="gallery-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+                    <?php foreach ($fotos as $index => $foto): ?>
+                    <div class="gallery-item" style="border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        <a href="<?php echo htmlspecialchars($foto); ?>" target="_blank" style="display: block;">
+                            <img src="<?php echo htmlspecialchars($foto); ?>" 
+                                 alt="Foto <?php echo $index + 1; ?> del evento <?php echo htmlspecialchars($evento['titulo'] ?? ''); ?>"
+                                 style="width: 100%; height: 200px; object-fit: cover; transition: transform 0.3s ease;"
+                                 onmouseover="this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.transform='scale(1)'">
+                        </a>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+            <?php endif; ?>
+
             <div class="meta-grid">
                 <div class="info-item">
                     <i class="fas fa-map-marker-alt"></i>
                     <strong>Ubicación:</strong><br>
-                    <?php echo htmlspecialchars($evento['location']); ?>
+                    <?php 
+                    $ubicacion = '';
+                    if (!empty($evento['localidad'])) {
+                        $ubicacion = $evento['localidad'];
+                        if (!empty($evento['municipality'])) {
+                            $ubicacion .= ', ' . $evento['municipality'];
+                        }
+                        if (!empty($evento['province'])) {
+                            $ubicacion .= ' (' . $evento['province'] . ')';
+                        }
+                    } elseif (!empty($evento['venue_address'])) {
+                        $ubicacion = $evento['venue_address'];
+                    }
+                    echo htmlspecialchars($ubicacion ?: 'Ubicación no especificada');
+                    ?>
                 </div>
                 <div class="info-item">
                     <i class="fas fa-tag"></i>
                     <strong>Categoría:</strong><br>
-                    <?php echo htmlspecialchars($evento['category_name'] ?? 'Cultura'); ?>
+                    <?php 
+                    // Mapear category_id a nombre de categoría
+                    $categorias = [
+                        1 => 'Fiestas Populares',
+                        2 => 'Fiestas Patronales',
+                        3 => 'Fiestas Tradicionales',
+                        4 => 'Romerías',
+                        5 => 'Carnavales',
+                        6 => 'Cultura y Espectáculos',
+                        7 => 'Conciertos',
+                        8 => 'Teatro',
+                        9 => 'Exposiciones',
+                        10 => 'Festivales de Música',
+                        11 => 'Cine',
+                        12 => 'Gastronomía y Ferias',
+                        13 => 'Ferias Gastronómicas',
+                        14 => 'Jornadas Gastronómicas',
+                        15 => 'Mercados Tradicionales',
+                        16 => 'Ferias de Productos Locales',
+                        17 => 'Deportes',
+                        18 => 'Carreras Populares',
+                        19 => 'Maratones y Medias',
+                        20 => 'Competiciones Ciclistas',
+                        21 => 'Eventos Deportivos',
+                        22 => 'Religión y Tradición',
+                        23 => 'Semana Santa',
+                        24 => 'Procesiones',
+                        25 => 'Celebraciones Religiosas'
+                    ];
+                    $categoria_id = $evento['category_id'] ?? 0;
+                    echo htmlspecialchars($categorias[$categoria_id] ?? 'Cultura');
+                    ?>
                 </div>
                 <div class="info-item">
                     <i class="fas fa-euro-sign"></i>
                     <strong>Precio:</strong><br>
-                    <?php echo ($evento['price'] > 0) ? $evento['price'] . '€' : 'Gratis'; ?>
+                    <?php 
+                    if ($evento['is_free'] == 1) {
+                        echo 'Gratis';
+                    } elseif (!empty($evento['ticket_price']) && $evento['ticket_price'] > 0) {
+                        echo number_format($evento['ticket_price'], 2) . '€';
+                    } else {
+                        echo 'Consultar precio';
+                    }
+                    ?>
                 </div>
                 <div class="info-item">
                     <i class="fas fa-user-tie"></i>
                     <strong>Organiza:</strong><br>
-                    <?php echo htmlspecialchars($evento['organizer_name'] ?? 'Rutas Rurales'); ?>
+                    <?php echo htmlspecialchars($evento['organizer'] ?? 'Rutas Rurales'); ?>
                 </div>
             </div>
 
