@@ -81,16 +81,80 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
     
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Preconnect para recursos externos -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://maps.googleapis.com">
+    
+    <!-- Preload para recursos críticos -->
+    <link rel="preload" href="/styles.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    
+    <!-- Cargar CSS de forma no bloqueante -->
+    <link rel="stylesheet" href="/styles.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    
+    <!-- CSS crítico inline para renderizado inmediato -->
     <style>
-        /* Aquí incluiremos el CSS moderno de tu archivo de 800 líneas */
+        /* CSS crítico mínimo para renderizado inicial */
         :root { --primary: #2F5233; --accent: #81C784; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-        .hero-event { background: var(--primary); color: white; padding: 60px 20px; text-align: center; }
-        .event-container { max-width: 900px; margin: -40px auto 40px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 40px; }
-        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; border-top: 1px solid #eee; padding-top: 20px; }
-        .info-item i { color: var(--primary); margin-right: 10px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .hero-event { 
+            background: var(--primary); 
+            color: white; 
+            padding: 60px 20px; 
+            text-align: center; 
+            margin: 0;
+        }
+        .event-container { 
+            max-width: 900px; 
+            margin: -40px auto 40px; 
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            padding: 40px; 
+        }
+        .meta-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin: 30px 0; 
+            border-top: 1px solid #eee; 
+            padding-top: 20px; 
+        }
+        .info-item i { 
+            color: var(--primary); 
+            margin-right: 10px; 
+        }
+        /* Estilos mínimos para galería */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -143,13 +207,12 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
             if (!empty($fotos)): ?>
             <section class="event-gallery" style="margin: 30px 0;">
                 <h3 style="color: var(--primary); margin-bottom: 20px;">Galería de Fotos</h3>
-                <div class="gallery-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+                <div class="gallery-container">
                     <?php foreach ($fotos as $index => $foto): ?>
-                    <div class="gallery-item" style="border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                        <a href="<?php echo htmlspecialchars($foto); ?>" target="_blank" style="display: block;">
+                    <div class="gallery-item">
+                        <a href="<?php echo htmlspecialchars($foto); ?>" target="_blank">
                             <img src="<?php echo htmlspecialchars($foto); ?>" 
                                  alt="Foto <?php echo $index + 1; ?> del evento <?php echo htmlspecialchars($evento['titulo'] ?? ''); ?>"
-                                 style="width: 100%; height: 200px; object-fit: cover; transition: transform 0.3s ease;"
                                  onmouseover="this.style.transform='scale(1.05)'"
                                  onmouseout="this.style.transform='scale(1)'">
                         </a>
