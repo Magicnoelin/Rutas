@@ -1,84 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="">
+    
+    <title>Cargando Alojamiento | Rutas Rurales</title>
+    
+    <link rel="preconnect" href="https://www.rutasrurales.io">
+    
+    <link rel="modulepreload" href="./alojamiento.js?v=2.1">
+    <link rel="modulepreload" href="./modules/api.js?v=2.1">
+    <link rel="modulepreload" href="./modules/ui.js?v=2.1">
 
-  <title>Alojamiento</title>
-
-  <!-- TU CSS -->
-  <link rel="stylesheet" href="/styles.css">
-
+    <link rel="preload" href="styles/main.css?v=2.1" as="style">
+    <link rel="stylesheet" href="styles/main.css?v=2.1" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="styles/main.css?v=2.1"></noscript>
+    
+    <link rel="icon" href="https://rutasrurales.io/favicon.ico">
 </head>
-
 <body class="page-alojamiento">
 
-  <!-- HEADER (luego lo modularizamos) -->
-  <div id="header"></div>
+    <header id="header">
+        </header>
 
-  <main class="detail-container">
-    <div id="hero"></div>
+    <nav class="breadcrumbs" style="max-width: 1200px; margin: 20px auto; padding: 0 20px; font-size: 0.9rem;">
+        <a href="/">Inicio</a> > <span id="bread-municipio">Provincia</span> > <span id="bread-nombre">Alojamiento</span>
+    </nav>
 
-    <div class="detail-grid">
-      <div>
-        <div id="galeria"></div>
-      </div>
+    <main class="detail-container">
+        <div class="detail-grid">
+            
+            <section class="content-main">
+                <h1 id="nombre" class="title-main">Cargando...</h1>
+                
+                <div id="galeria" class="modern-gallery"></div>
+                
+                <article id="descripcion" class="text-description">
+                    </article>
+                
+                <section id="entorno" class="entorno-section" style="margin-top: 40px;">
+                    <h3>🏞️ El Entorno y Rutas</h3>
+                    <p>Descubre los rincones secretos de la zona pinchando en nuestro mapa interactivo.</p>
+                    <a href="https://rutasrurales.io/rutas.php" class="map-link-container">
+                        <div id="map-preview" style="background: #eee; height: 200px; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 2px dashed #ccc;">
+                            📍 Ver rutas cerca de este alojamiento
+                        </div>
+                    </a>
+                </section>
+            </section>
 
-      <div>
-        <div id="info"></div>
-        <div id="cta"></div>
-      </div>
-    </div>
+            <aside class="sidebar">
+                <div class="card-booking">
+                    <h3 style="margin-top:0">Tu Estancia</h3>
+                    
+                    <div id="servicios" class="services-grid"></div>
+                    
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                    
+                    <div id="contacto-box"></div>
+                    
+                    <div id="premium-extra"></div>
+                </div>
+            </aside>
+            
+        </div>
+    </main>
 
-    <div id="mapa"></div>
-  </main>
-
-  <script type="module" src="./alojamiento.js"></script>
-  <body>
-
-  <!-- tu contenido -->
-  <h1 id="nombre"></h1>
-  <p id="descripcion"></p>
-  <div id="galeria"></div>
-
-  <!-- 👇 AQUÍ -->
-  <script>
-    async function cargarAlojamiento() {
-     const params = new URLSearchParams(window.location.search)
-const slug = params.get("slug")
-
-      const res = await fetch(`/api/getAlojamiento.php?slug=${slug}`)
-      const data = await res.json()
-
-      document.getElementById("nombre").innerText = data.name
-      document.getElementById("descripcion").innerText = data.description
-
-      const galeria = document.getElementById("galeria")
-
-      const fotos = [
-        data.photo1,
-        data.photo2,
-        data.photo3,
-        data.photo4
-      ]
-
-      fotos.forEach(foto => {
-        if (foto) {
-          const img = document.createElement("img")
-          img.src = foto
-          img.loading = "lazy"
-          img.style.width = "100%"
-          img.style.marginBottom = "10px"
-
-          galeria.appendChild(img)
-        }
-      })
-    }
-
-    cargarAlojamiento()
-  </script>
-
-</body>
-
+    <script type="module" src="./alojamiento.js"></script>
 </body>
 </html>

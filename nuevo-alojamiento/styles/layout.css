@@ -1,0 +1,18 @@
+/* layout.css */
+.detail-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px; /* Columna principal y sidebar */
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .detail-grid {
+        grid-template-columns: 1fr; /* En móvil todo va en una columna */
+    }
+}

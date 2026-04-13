@@ -1,32 +1,27 @@
-import { alojamientoData } from './data.js'
-import { renderHero } from './modules/hero.js'
-import { renderGaleria } from './modules/galeria.js'
-import { renderInfo } from './modules/info.js'
-import { renderCTA } from './modules/cta.js'
-import { renderMapa } from './modules/mapa.js'
+// alojamiento.js
+import { fetchAlojamiento } from './modules/api.js';
+import { renderDatos } from './modules/ui.js';
 
-// HERO inmediato
-document.querySelector('#hero').innerHTML = renderHero(alojamientoData)
+async function inicializar() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("slug");
 
-// INFO inmediata
-document.querySelector('#info').innerHTML = renderInfo(alojamientoData)
+    if (!slug) return;
 
-// GALERÍA lazy
-requestIdleCallback(() => {
-  document.querySelector('#galeria').innerHTML = renderGaleria(alojamientoData)
-})
+    try {
+        const data = await fetchAlojamiento(slug);
+        
+        // ESTA ES LA LÍNEA 8 (Asegúrate de que el ID coincida con el HTML)
+        const galeria = document.getElementById("galeria");
+        
+        if (galeria) {
+            renderDatos(data);
+        } else {
+            console.error("El elemento 'galeria' no existe en el DOM aún.");
+        }
+    } catch (error) {
+        console.error("Fallo:", error);
+    }
+}
 
-// CTA
-requestIdleCallback(() => {
-  document.querySelector('#cta').innerHTML = renderCTA(alojamientoData)
-})
-
-// MAPA solo visible
-const observer = new IntersectionObserver(entries => {
-  if (entries[0].isIntersecting) {
-    renderMapa(alojamientoData)
-    observer.disconnect()
-  }
-})
-
-observer.observe(document.querySelector('#mapa'))
+inicializar();

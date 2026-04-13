@@ -1,10 +1,21 @@
-body {
-  font-family: Arial;
-  margin: 0;
-  padding: 1rem;
+/* base.css */
+:root {
+    /* Paleta Corporativa */
+    --verde-primario: #4A6741;  /* El verde del header */
+    --marron-logo: #A68966;    /* El color de los botones/detalles */
+    --naranja-aviso: #D97732;  /* El naranja del cuadro de aviso */
+    --texto-oscuro: #333333;
+    --fondo-gris: #F9F9F9;
+    --blanco: #FFFFFF;
+    
+    /* Tipografía */
+    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-img {
-  width: 100%;
-  height: auto;
+body {
+    font-family: var(--fuente-principal);
+    color: var(--texto-oscuro);
+    background-color: var(--fondo-gris);
+    margin: 0;
+    line-height: 1.6;
 }
