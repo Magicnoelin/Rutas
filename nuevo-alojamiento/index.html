@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Alojamiento</title>
+
+  <!-- TU CSS -->
+  <link rel="stylesheet" href="/styles.css">
+
+</head>
+
+<body class="page-alojamiento">
+
+  <!-- HEADER (luego lo modularizamos) -->
+  <div id="header"></div>
+
+  <main class="detail-container">
+    <div id="hero"></div>
+
+    <div class="detail-grid">
+      <div>
+        <div id="galeria"></div>
+      </div>
+
+      <div>
+        <div id="info"></div>
+        <div id="cta"></div>
+      </div>
+    </div>
+
+    <div id="mapa"></div>
+  </main>
+
+  <script type="module" src="./alojamiento.js"></script>
+  <body>
+
+  <!-- tu contenido -->
+  <h1 id="nombre"></h1>
+  <p id="descripcion"></p>
+  <div id="galeria"></div>
+
+  <!-- 👇 AQUÍ -->
+  <script>
+    async function cargarAlojamiento() {
+     const params = new URLSearchParams(window.location.search)
+const slug = params.get("slug")
+
+      const res = await fetch(`/api/getAlojamiento.php?slug=${slug}`)
+      const data = await res.json()
+
+      document.getElementById("nombre").innerText = data.name
+      document.getElementById("descripcion").innerText = data.description
+
+      const galeria = document.getElementById("galeria")
+
+      const fotos = [
+        data.photo1,
+        data.photo2,
+        data.photo3,
+        data.photo4
+      ]
+
+      fotos.forEach(foto => {
+        if (foto) {
+          const img = document.createElement("img")
+          img.src = foto
+          img.loading = "lazy"
+          img.style.width = "100%"
+          img.style.marginBottom = "10px"
+
+          galeria.appendChild(img)
+        }
+      })
+    }
+
+    cargarAlojamiento()
+  </script>
+
+</body>
+
+</body>
+</html>

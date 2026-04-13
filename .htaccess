@@ -158,3 +158,9 @@ RewriteRule ^lugar/antik-soria/?$ - [G,L]
 
 RewriteCond %{QUERY_STRING} ^slug=8017$ [NC]
 RewriteRule ^detalle\.html$ - [G,L]
+# ============================================================
+# 8. test nuevo alojamiento modularizado
+# ============================================================
+RewriteEngine On
+
+RewriteRule ^nuevo-alojamiento/([a-zA-Z0-9-]+)$ /nuevo-alojamiento.html?slug=$1 [L]
