@@ -37,6 +37,7 @@ $redirects = [
 $gone = [
     'alojamiento' => [
         'entrepinos',
+        'casa-olvido',
     ]
 ];
 
