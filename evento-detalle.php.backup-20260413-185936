@@ -346,6 +346,17 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
 
     <main class="event-container">
         <?php if ($evento): ?>
+            <section class="event-description">
+    <?php 
+    if ($evento) {
+        // Usamos echo directo porque las descripciones suelen traer HTML de la base de datos
+        echo $evento['description']; 
+    } else {
+        echo "No hay información detallada disponible para este evento.";
+    }
+    ?>
+</section>
+
             <?php
             // Obtener fotos del evento
             $fotos = [];
@@ -367,10 +378,10 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
                 }
             }
             
-            // Mostrar galería si hay fotos - MOVIDA ARRIBA
+            // Mostrar galería si hay fotos
             if (!empty($fotos)): ?>
-            <section class="event-gallery" style="margin: 30px 0 40px 0;">
-                <h2 style="color: var(--primary); margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">Galería del Evento</h2>
+            <section class="event-gallery" style="margin: 30px 0;">
+                <h3 style="color: var(--primary); margin-bottom: 20px;">Galería de Fotos</h3>
                 <div class="gallery-container">
                     <?php foreach ($fotos as $index => $foto): ?>
                     <div class="gallery-item">
@@ -378,8 +389,7 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
                             <img src="<?php echo htmlspecialchars($foto); ?>" 
                                  alt="Foto <?php echo $index + 1; ?> del evento <?php echo htmlspecialchars($evento['titulo'] ?? ''); ?>"
                                  onmouseover="this.style.transform='scale(1.05)'"
-                                 onmouseout="this.style.transform='scale(1)'"
-                                 loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>">
+                                 onmouseout="this.style.transform='scale(1)'">
                         </a>
                     </div>
                     <?php endforeach; ?>
@@ -387,84 +397,7 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
             </section>
             <?php endif; ?>
 
-            <section class="event-description">
-    <?php 
-    if ($evento) {
-        // Usamos echo directo porque las descripciones suelen traer HTML de la base de datos
-        echo $evento['description']; 
-    } else {
-        echo "No hay información detallada disponible para este evento.";
-    }
-    ?>
-</section>
-
-            <!-- Información adicional de traducciones si está disponible -->
-            <?php 
-            $programa = $traduccion['programa_trad'] ?? '';
-            $audiencia = $traduccion['audiencia_trad'] ?? '';
-            $accesibilidad = $traduccion['accesibilidad_trad'] ?? '';
-            
-            if (!empty($programa) || !empty($audiencia) || !empty($accesibilidad)): ?>
-            <section class="additional-info" style="margin: 40px 0; padding: 25px; background: #f9f9f9; border-radius: 10px; border-left: 5px solid var(--primary);">
-                <h3 style="color: var(--primary); margin-bottom: 20px; font-size: 1.3rem;">
-                    <i class="fas fa-info-circle" style="margin-right: 10px;"></i> Información Adicional
-                </h3>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                    <?php if (!empty($programa)): ?>
-                    <div class="additional-item">
-                        <h4 style="color: var(--dark-color); margin-bottom: 10px; font-size: 1.1rem;">
-                            <i class="fas fa-calendar-check" style="color: var(--primary); margin-right: 8px;"></i> Programa
-                        </h4>
-                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
-                            <?php echo nl2br(htmlspecialchars($programa)); ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <?php if (!empty($audiencia)): ?>
-                    <div class="additional-item">
-                        <h4 style="color: var(--dark-color); margin-bottom: 10px; font-size: 1.1rem;">
-                            <i class="fas fa-users" style="color: var(--primary); margin-right: 8px;"></i> Público Objetivo
-                        </h4>
-                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
-                            <?php echo nl2br(htmlspecialchars($audiencia)); ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <?php if (!empty($accesibilidad)): ?>
-                    <div class="additional-item">
-                        <h4 style="color: var(--dark-color); margin-bottom: 10px; font-size: 1.1rem;">
-                            <i class="fas fa-wheelchair" style="color: var(--primary); margin-right: 8px;"></i> Accesibilidad
-                        </h4>
-                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
-                            <?php echo nl2br(htmlspecialchars($accesibilidad)); ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </section>
-            <?php endif; ?>
-
             <div class="meta-grid">
-                <!-- Fecha de inicio -->
-                <div class="info-item">
-                    <i class="fas fa-calendar-day"></i>
-                    <strong>Fecha de inicio:</strong><br>
-                    <?php echo date('d/m/Y', strtotime($evento['start_date'])); ?>
-                </div>
-                
-                <!-- Fecha de fin (si existe y es diferente) -->
-                <?php if (!empty($evento['end_date']) && $evento['end_date'] != $evento['start_date']): ?>
-                <div class="info-item">
-                    <i class="fas fa-calendar-check"></i>
-                    <strong>Fecha de fin:</strong><br>
-                    <?php echo date('d/m/Y', strtotime($evento['end_date'])); ?>
-                </div>
-                <?php endif; ?>
-                
-                <!-- Ubicación -->
                 <div class="info-item">
                     <i class="fas fa-map-marker-alt"></i>
                     <strong>Ubicación:</strong><br>
@@ -484,17 +417,6 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
                     echo htmlspecialchars($ubicacion ?: 'Ubicación no especificada');
                     ?>
                 </div>
-                
-                <!-- Dirección detallada -->
-                <?php if (!empty($evento['venue_address'])): ?>
-                <div class="info-item">
-                    <i class="fas fa-map-pin"></i>
-                    <strong>Dirección:</strong><br>
-                    <?php echo htmlspecialchars($evento['venue_address']); ?>
-                </div>
-                <?php endif; ?>
-                
-                <!-- Categoría -->
                 <div class="info-item">
                     <i class="fas fa-tag"></i>
                     <strong>Categoría:</strong><br>
@@ -531,8 +453,6 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
                     echo htmlspecialchars($categorias[$categoria_id] ?? 'Cultura');
                     ?>
                 </div>
-                
-                <!-- Precio -->
                 <div class="info-item">
                     <i class="fas fa-euro-sign"></i>
                     <strong>Precio:</strong><br>
@@ -546,26 +466,18 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
                     }
                     ?>
                 </div>
-                
-                <!-- Organizador -->
                 <div class="info-item">
                     <i class="fas fa-user-tie"></i>
                     <strong>Organiza:</strong><br>
                     <?php echo htmlspecialchars($evento['organizer'] ?? 'Rutas Rurales'); ?>
-                </div>
-                
-                <!-- Estado (si está activo) -->
-                <div class="info-item">
-                    <i class="fas fa-check-circle"></i>
-                    <strong>Estado:</strong><br>
-                    <?php echo ($evento['is_active'] == 1) ? 'Activo' : 'No activo'; ?>
                 </div>
             </div>
 
             <div id="map" style="height: 400px; width: 100%; border-radius: 10px; margin-top: 20px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
                 <div id="map-loading" style="text-align: center;">
                     <p style="color: #666; margin-bottom: 10px;">Cargando mapa...</p>
-                    <button id="load-map-btn" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;                        Cargar Mapa
+                    <button id="load-map-btn" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                        Cargar Mapa
                     </button>
                 </div>
             </div>
