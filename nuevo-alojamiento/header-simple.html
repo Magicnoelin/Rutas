@@ -1,0 +1,139 @@
+<!-- header-simple.html - Header optimizado para páginas modulares -->
+<header class="header-simple">
+    <nav class="navbar-simple">
+        <div class="logo-simple">
+            <a href="/" aria-label="Rutas Rurales - Inicio">
+                <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales" width="120" height="35" loading="lazy">
+            </a>
+        </div>
+        <div class="nav-simple">
+            <a href="/alojamientos-turisticos.html" class="nav-link">
+                <span class="nav-icon">🏨</span>
+                <span class="nav-text">Alojamientos</span>
+            </a>
+            <a href="/lugares-interes-paginacion.html" class="nav-link">
+                <span class="nav-icon">📍</span>
+                <span class="nav-text">Lugares</span>
+            </a>
+            <a href="/eventos-culturales-paginacion.html" class="nav-link">
+                <span class="nav-icon">📅</span>
+                <span class="nav-text">Eventos</span>
+            </a>
+            <a href="/actividades-turisticas.html" class="nav-link">
+                <span class="nav-icon">🥾</span>
+                <span class="nav-text">Actividades</span>
+            </a>
+        </div>
+    </nav>
+</header>
+
+<style>
+    /* CSS crítico para header simple - INLINE para máximo rendimiento */
+    .header-simple {
+        height: 70px;
+        background: #4A6741;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .navbar-simple {
+        max-width: 1200px;
+        margin: 0 auto;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+    }
+    
+    .logo-simple {
+        flex-shrink: 0;
+    }
+    
+    .logo-simple img {
+        height: 35px;
+        width: auto;
+        display: block;
+    }
+    
+    .nav-simple {
+        display: flex;
+        gap: 15px;
+        margin-left: auto;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    
+    .nav-link {
+        color: white;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+        min-width: 70px;
+    }
+    
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-icon {
+        font-size: 1.2rem;
+        margin-bottom: 2px;
+    }
+    
+    .nav-text {
+        font-size: 0.75rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .navbar-simple {
+            padding: 0 15px;
+        }
+        
+        .nav-simple {
+            gap: 10px;
+        }
+        
+        .nav-link {
+            padding: 6px 8px;
+            min-width: 60px;
+        }
+        
+        .nav-icon {
+            font-size: 1rem;
+        }
+        
+        .nav-text {
+            font-size: 0.7rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .nav-simple {
+            gap: 5px;
+        }
+        
+        .nav-link {
+            padding: 4px 6px;
+            min-width: 55px;
+        }
+        
+        .nav-text {
+            font-size: 0.65rem;
+        }
+        
+        .logo-simple img {
+            height: 30px;
+        }
+    }
+</style>

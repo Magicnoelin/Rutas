@@ -110,12 +110,14 @@
     <link rel="icon" href="https://rutasrurales.io/favicon.ico">
 </head>
 <body>
-    <!-- HEADER SIMPLE -->
+    <!-- HEADER SIMPLE OPTIMIZADO -->
     <header id="header">
-        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: white;">
-            <span>Cargando...</span>
-        </div>
+        <!-- Header será cargado dinámicamente por header-simple.js -->
+        <div style="height: 70px; background: #4A6741;"></div>
     </header>
+
+    <!-- ESPACIO PARA HEADER FIJADO -->
+    <div style="height: 70px;"></div>
 
     <!-- BREADCRUMBS -->
     <nav class="breadcrumbs">
@@ -186,20 +188,17 @@
         <p style="margin: 0; font-size: 0.9rem;">&copy; 2026 rutasrurales.io</p>
     </footer>
 
-    <!-- JAVASCRIPT SIMPLE -->
+    <!-- JAVASCRIPT OPTIMIZADO -->
     <script type="module">
-        // Cargar header/footer de forma simple
+        import { loadSimpleHeader } from './modules/header-simple.js';
+        
+        // Cargar elementos corporativos
         async function loadCorporateElements() {
             try {
-                // Header
-                const headerResp = await fetch('../header.php');
-                const headerHtml = await headerResp.text();
-                const headerMatch = headerHtml.match(/<header[^>]*>[\s\S]*?<\/header>/i);
-                if (headerMatch) {
-                    document.getElementById('header').innerHTML = headerMatch[0];
-                }
+                // Cargar header simple optimizado
+                await loadSimpleHeader();
                 
-                // Footer  
+                // Footer simple (mantenemos el actual)
                 const footerResp = await fetch('../footer.php');
                 const footerHtml = await footerResp.text();
                 const footerMatch = footerHtml.match(/<footer[^>]*>[\s\S]*?<\/footer>/i);
@@ -207,7 +206,7 @@
                     document.getElementById('footer').innerHTML = footerMatch[0];
                 }
             } catch (e) {
-                console.log('Usando header/footer simple');
+                console.log('Usando elementos simples de respaldo');
             }
         }
         
@@ -216,24 +215,31 @@
             const params = new URLSearchParams(window.location.search);
             const slug = params.get('slug');
             
-            if (!slug) return;
+            if (!slug) {
+                // Mostrar mensaje si no hay slug
+                document.getElementById('nombre').textContent = 'Alojamiento no encontrado';
+                document.getElementById('nombre').classList.remove('skeleton');
+                return;
+            }
             
             try {
-                // Simular carga de datos
-                await new Promise(resolve => setTimeout(resolve, 800));
+                // Aquí iría la carga real de datos desde la API
+                // Por ahora simulamos con un timeout
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
                 // Remover skeletons
                 document.body.classList.add('loaded');
                 
-                // Actualizar contenido
-                document.getElementById('nombre').textContent = 'Alojamiento de Prueba';
+                // Actualizar contenido de ejemplo
+                document.getElementById('nombre').textContent = 'Alojamiento Ejemplo';
                 document.getElementById('nombre').classList.remove('skeleton');
                 
-                // Aquí iría la carga real de datos desde la API
                 console.log('Cargando datos para:', slug);
                 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error cargando datos:', error);
+                document.getElementById('nombre').textContent = 'Error al cargar';
+                document.getElementById('nombre').classList.remove('skeleton');
             }
         }
         
@@ -246,15 +252,15 @@
         });
     </script>
     
-    <!-- CARGAR CSS SI JS FALLA -->
+    <!-- CARGAR CSS ASÍNCRONO -->
     <script>
-        // Cargar CSS asíncrono
-        setTimeout(() => {
+        // Cargar CSS sin bloquear
+        requestAnimationFrame(() => {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = 'styles/optimized-simple.css';
             document.head.appendChild(link);
-        }, 0);
+        });
     </script>
 </body>
 </html>
