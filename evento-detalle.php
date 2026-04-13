@@ -340,7 +340,29 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
     <h1><?php echo $evento ? htmlspecialchars($evento['titulo']) : 'Evento no encontrado'; ?></h1>
     
     <?php if ($evento && !empty($evento['start_date'])): ?>
-        <p><i class="fas fa-calendar-alt"></i> <?php echo date('d/m/Y', strtotime($evento['start_date'])); ?></p>
+        <p><i class="fas fa-calendar-alt"></i> 
+            <?php 
+            $start_date = date('d/m/Y', strtotime($evento['start_date']));
+            if (!empty($evento['end_date']) && $evento['end_date'] != $evento['start_date']) {
+                $end_date = date('d/m/Y', strtotime($evento['end_date']));
+                // Calcular duración en días
+                $start = new DateTime($evento['start_date']);
+                $end = new DateTime($evento['end_date']);
+                $interval = $start->diff($end);
+                $days = $interval->days + 1; // +1 para incluir el día de inicio
+                
+                if ($days == 1) {
+                    echo $start_date;
+                } elseif ($days == 2) {
+                    echo $start_date . ' y ' . $end_date;
+                } else {
+                    echo $start_date . ' al ' . $end_date . ' (' . $days . ' días)';
+                }
+            } else {
+                echo $start_date;
+            }
+            ?>
+        </p>
     <?php endif; ?>
 </header>
 
