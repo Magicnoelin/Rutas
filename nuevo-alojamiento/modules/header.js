@@ -4,8 +4,11 @@ export async function loadHeader() {
     if (!headerElement) return;
 
     try {
+        // Get base path for relative URLs
+        const basePath = window.location.pathname.includes('/nuevo-alojamiento/') ? '../' : '/';
+        
         // Fetch header content
-        const response = await fetch('/header.php');
+        const response = await fetch(`${basePath}header.php`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const html = await response.text();
@@ -16,28 +19,22 @@ export async function loadHeader() {
             headerElement.innerHTML = headerMatch[0];
             
             // Load any necessary scripts/styles
-            loadHeaderDependencies();
+            loadHeaderDependencies(basePath);
             
             console.log('Header loaded successfully');
         } else {
             console.warn('Header not found in response');
+            loadFallbackHeader(headerElement, basePath);
         }
     } catch (error) {
         console.error('Error loading header:', error);
         // Fallback to simple header
-        headerElement.innerHTML = `
-            <nav class="navbar">
-                <div class="container">
-                    <div class="logo">
-                        <a href="/"><img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales"></a>
-                    </div>
-                </div>
-            </nav>
-        `;
+        const basePath = window.location.pathname.includes('/nuevo-alojamiento/') ? '../' : '/';
+        loadFallbackHeader(headerElement, basePath);
     }
 }
 
-function loadHeaderDependencies() {
+function loadHeaderDependencies(basePath) {
     // Load Font Awesome if not already loaded
     if (!document.querySelector('link[href*="font-awesome"]')) {
         const link = document.createElement('link');
@@ -48,12 +45,44 @@ function loadHeaderDependencies() {
     }
     
     // Load main styles if not already loaded
-    if (!document.querySelector('link[href*="/styles.css"]')) {
+    if (!document.querySelector('link[href*="styles.css"]')) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = '/styles.css';
+        link.href = `${basePath}styles.css`;
         document.head.appendChild(link);
     }
+}
+
+function loadFallbackHeader(headerElement, basePath) {
+    headerElement.innerHTML = `
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <a href="${basePath}"><img src="${basePath}menu_images/Logo%20transparente.webp" alt="Rutas Rurales"></a>
+                </div>
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-row">
+                        <li><a href="${basePath}alojamientos-turisticos.html">
+                            <i class="fas fa-bed"></i>
+                            <span>Alojamientos</span>
+                        </a></li>
+                        <li><a href="${basePath}lugares-interes-paginacion.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Lugares</span>
+                        </a></li>
+                        <li><a href="${basePath}eventos-culturales-paginacion.html">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Eventos</span>
+                        </a></li>
+                        <li><a href="${basePath}actividades-turisticas.html">
+                            <i class="fas fa-hiking"></i>
+                            <span>Actividades</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    `;
 }
 
 // Initialize header when DOM is ready

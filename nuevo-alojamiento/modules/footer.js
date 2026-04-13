@@ -9,8 +9,11 @@ export async function loadFooter() {
     }
 
     try {
+        // Get base path for relative URLs
+        const basePath = window.location.pathname.includes('/nuevo-alojamiento/') ? '../' : '/';
+        
         // Fetch footer content
-        const response = await fetch('/footer.php');
+        const response = await fetch(`${basePath}footer.php`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const html = await response.text();
@@ -21,33 +24,49 @@ export async function loadFooter() {
             footerElement.innerHTML = footerMatch[0];
             
             // Load any necessary scripts
-            loadFooterScripts();
+            loadFooterScripts(basePath);
             
             console.log('Footer loaded successfully');
         } else {
             console.warn('Footer not found in response');
-            loadFallbackFooter(footerElement);
+            loadFallbackFooter(footerElement, basePath);
         }
     } catch (error) {
         console.error('Error loading footer:', error);
-        loadFallbackFooter(footerElement);
+        const basePath = window.location.pathname.includes('/nuevo-alojamiento/') ? '../' : '/';
+        loadFallbackFooter(footerElement, basePath);
     }
 }
 
-function loadFooterScripts() {
+function loadFooterScripts(basePath) {
     // Load main script if not already loaded
     if (!document.querySelector('script[src*="script.js"]')) {
         const script = document.createElement('script');
-        script.src = '/script.js?v=20260114';
+        script.src = `${basePath}script.js?v=20260114`;
         script.defer = true;
         document.body.appendChild(script);
     }
 }
 
-function loadFallbackFooter(footerElement) {
+function loadFallbackFooter(footerElement, basePath) {
     footerElement.innerHTML = `
         <footer class="footer">
             <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-section">
+                        <h3>Contacto</h3>
+                        <div class="footer-info">
+                            <span class="footer-item">
+                                <i class="fas fa-envelope"></i> 
+                                <a href="mailto:olgamarin@rutasrurales.io">olgamarin@rutasrurales.io</a>
+                            </span>
+                            <span class="footer-item">
+                                <i class="fas fa-phone"></i> 
+                                <a href="tel:+34605249696">+34 605 249 696</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
                 <div class="footer-bottom">
                     <div class="footer-copyright">
                         <p>&copy; 2026 <strong>rutasrurales.io</strong>. Todos los derechos reservados.</p>
