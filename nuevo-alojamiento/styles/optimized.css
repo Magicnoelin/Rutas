@@ -1,0 +1,246 @@
+/* optimized.css - Combined and optimized CSS for accommodation pages */
+/* Includes: base.css + layout.css + alojamiento.css + critical styles */
+
+/* ===== BASE STYLES ===== */
+:root {
+    /* Paleta Corporativa */
+    --verde-primario: #4A6741;  /* El verde del header */
+    --marron-logo: #A68966;    /* El color de los botones/detalles */
+    --naranja-aviso: #D97732;  /* El naranja del cuadro de aviso */
+    --texto-oscuro: #333333;
+    --fondo-gris: #F9F9F9;
+    --blanco: #FFFFFF;
+    
+    /* Tipografía */
+    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    font-family: var(--fuente-principal);
+    color: var(--texto-oscuro);
+    background-color: var(--fondo-gris);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ===== LAYOUT STYLES ===== */
+.detail-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px; /* Columna principal y sidebar */
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .detail-grid {
+        grid-template-columns: 1fr; /* En móvil todo va en una columna */
+    }
+}
+
+/* ===== ACCOMMODATION SPECIFIC STYLES ===== */
+#galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.gallery-item {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f0f0f0; /* Placeholder mientras carga */
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* Recorta la imagen para que todas midan igual */
+    transition: transform 0.3s ease;
+}
+
+.gallery-item img:hover {
+    transform: scale(1.05);
+}
+
+/* Sidebar que acompaña el scroll */
+.sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+.card-booking {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.service-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.btn-whatsapp {
+    display: block;
+    background: var(--verde-primario); 
+    color: white;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.btn-whatsapp:hover {
+    transform: translateY(-2px);
+    background: #3e5636;
+}
+
+/* ===== CRITICAL STYLES FOR HEADER/FOOTER ===== */
+/* These ensure header/footer don't cause layout shifts */
+#header {
+    min-height: 70px; /* Reserve space for header */
+}
+
+#footer {
+    margin-top: 40px;
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+/* Reduce layout shifts */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Optimize animations */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== BREADCRUMBS ===== */
+.breadcrumbs {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    font-size: 0.9rem;
+}
+
+.breadcrumbs a {
+    color: var(--verde-primario);
+    text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+/* ===== CONTENT SECTIONS ===== */
+.content-main {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.title-main {
+    margin-top: 0;
+    color: var(--verde-primario);
+    font-size: 2rem;
+}
+
+.text-description {
+    line-height: 1.7;
+    margin: 20px 0;
+}
+
+.entorno-section {
+    margin-top: 40px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid var(--verde-primario);
+}
+
+.map-link-container {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+#map-preview {
+    background: #eee;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 2px dashed #ccc;
+    transition: all 0.3s ease;
+}
+
+#map-preview:hover {
+    background: #e0e0e0;
+    border-color: var(--verde-primario);
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    .detail-container {
+        padding: 0 15px;
+    }
+    
+    .content-main,
+    .card-booking {
+        padding: 20px;
+    }
+    
+    .title-main {
+        font-size: 1.5rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #galeria {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .detail-container {
+        padding: 0 10px;
+    }
+    
+    .content-main,
+    .card-booking {
+        padding: 15px;
+    }
+    
+    #galeria {
+        grid-template-columns: 1fr;
+    }
+}
