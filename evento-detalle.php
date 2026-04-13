@@ -565,7 +565,8 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
             <div id="map" style="height: 400px; width: 100%; border-radius: 10px; margin-top: 20px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
                 <div id="map-loading" style="text-align: center;">
                     <p style="color: #666; margin-bottom: 10px;">Cargando mapa...</p>
-                    <button id="load-map-btn" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;                        Cargar Mapa
+                    <button id="load-map-btn" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                        Cargar Mapa
                     </button>
                 </div>
             </div>
@@ -651,6 +652,6 @@ $canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "
     </div>
 </footer>
 
-<script src="script.js?v=20260114"></script>
+<script src="/script.js?v=20260114"></script>
 </body>
 </html>
