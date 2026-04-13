@@ -116,17 +116,31 @@ body {
 /* These ensure header/footer don't cause layout shifts */
 #header {
     min-height: 70px; /* Reserve space for header */
+    max-height: 70px; /* Prevent expansion */
+    position: relative;
+    z-index: 1000;
 }
 
 #footer {
     margin-top: 40px;
+    min-height: 200px; /* Reserve space for footer */
 }
 
 /* ===== PERFORMANCE OPTIMIZATIONS ===== */
-/* Reduce layout shifts */
-img {
+/* Reduce layout shifts - CRITICAL FOR CLS */
+img, video, embed, object {
     max-width: 100%;
     height: auto;
+    display: block; /* Remove extra space under images */
+}
+
+/* Reserve aspect ratio for images to prevent layout shifts */
+.gallery-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    aspect-ratio: 4/3; /* Standard image ratio */
 }
 
 /* Optimize animations */
@@ -138,6 +152,47 @@ img {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* Font loading optimization to prevent FOIT/FOUT */
+body {
+    font-display: swap;
+}
+
+/* Stable dimensions for critical elements */
+.content-main, .card-booking {
+    min-height: 0; /* Override inline min-height when content loads */
+    transition: min-height 0.3s ease; /* Smooth transition if needed */
+}
+
+/* Remove skeleton animations when content loads */
+.content-loaded .gallery-item-skeleton,
+.content-loaded [style*="animation: pulse"] {
+    animation: none !important;
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Smooth transitions for dynamic content */
+#galeria,
+.text-description,
+.services-grid,
+#contacto-box {
+    transition: min-height 0.3s ease, height 0.3s ease;
+}
+
+/* Ensure images don't cause horizontal scroll */
+body {
+    overflow-x: hidden;
+}
+
+/* Optimize scrolling performance */
+.detail-grid, .content-main, .card-booking {
+    contain: layout style paint; /* Improve rendering performance */
+    will-change: transform; /* Hint for GPU acceleration */
 }
 
 /* ===== BREADCRUMBS ===== */

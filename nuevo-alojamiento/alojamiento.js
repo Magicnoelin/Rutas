@@ -3,8 +3,12 @@ import { fetchAlojamiento } from './modules/api.js';
 import { renderDatos } from './modules/ui.js';
 import { loadHeader } from './modules/header.js';
 import { loadFooter } from './modules/footer.js';
+import { initCLSOptimizer } from './modules/cls-optimizer.js';
 
 async function inicializar() {
+    // Initialize CLS optimizer early
+    initCLSOptimizer();
+    
     try {
         // Load corporate header and footer first for better UX
         await Promise.allSettled([

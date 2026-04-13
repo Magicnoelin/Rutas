@@ -104,8 +104,8 @@
     <link rel="preconnect" href="https://www.rutasrurales.io">
     
     <!-- CSS EXTERNO CARGADO SIN BLOQUEAR -->
-    <link rel="preload" href="styles/optimized-simple.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="styles/optimized-simple.css"></noscript>
+    <link rel="preload" href="styles/optimized.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="styles/optimized.css"></noscript>
     
     <link rel="icon" href="https://rutasrurales.io/favicon.ico">
 </head>
@@ -252,7 +252,7 @@
         setTimeout(() => {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = 'styles/optimized-simple.css';
+            link.href = 'styles/optimized.css';
             document.head.appendChild(link);
         }, 0);
     </script>

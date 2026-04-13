@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="">
+    
+    <title>Cargando Alojamiento | Rutas Rurales</title>
+    
+    <!-- Critical CSS Inline for fastest rendering and low CLS -->
+    <style>
+        /* Critical CSS - Above the fold styles with CLS optimization */
+        :root {
+            --verde-primario: #4A6741;
+            --fondo-gris: #F9F9F9;
+            --texto-oscuro: #333333;
+            --blanco: #FFFFFF;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--texto-oscuro);
+            background-color: var(--fondo-gris);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        
+        /* Fixed header with exact height to prevent shifts */
+        #header {
+            min-height: 70px;
+            max-height: 70px;
+            background: var(--verde-primario);
+            position: relative;
+            z-index: 1000;
+        }
+        
+        /* Reserve exact space for breadcrumbs */
+        .breadcrumbs {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            font-size: 0.9rem;
+            height: 24px; /* Fixed height */
+            overflow: hidden;
+        }
+        
+        /* Main container with stable layout */
+        .detail-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        /* Fixed dimensions for content areas to prevent shifts */
+        .content-main {
+            background: var(--blanco);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            min-height: 400px; /* Reserve space */
+            overflow: hidden; /* Contain content */
+        }
+        
+        .card-booking {
+            background: var(--blanco);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            min-height: 300px; /* Reserve space */
+            overflow: hidden; /* Contain content */
+        }
+        
+        /* Prevent layout shifts - most important for CLS */
+        img, video, embed, object {
+            max-width: 100%;
+            height: auto;
+            display: block; /* Remove extra space under images */
+        }
+        
+        /* Reserve aspect ratio for images */
+        .gallery-item {
+            aspect-ratio: 4/3; /* Standard image ratio */
+            width: 100%;
+        }
+        
+        /* Loading skeleton with exact dimensions */
+        #galeria {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            min-height: 200px;
+            max-height: 200px; /* Fixed height */
+            overflow: hidden;
+        }
+        
+        .gallery-item-skeleton {
+            background: #f0f0f0;
+            border-radius: 8px;
+            height: 200px; /* Fixed height */
+            width: 100%; /* Full width */
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Fixed dimensions for text areas */
+        .text-description {
+            min-height: 120px; /* Reserve space for description */
+            overflow: hidden;
+        }
+        
+        /* Services grid fixed height */
+        .services-grid {
+            min-height: 100px;
+            overflow: hidden;
+        }
+        
+        /* Contact box fixed height */
+        #contacto-box {
+            min-height: 60px;
+            overflow: hidden;
+        }
+        
+        /* Map preview fixed dimensions */
+        #map-preview {
+            background: #eee;
+            height: 200px; /* Fixed height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            border: 2px dashed #ccc;
+            transition: all 0.3s ease;
+            width: 100%; /* Full width */
+        }
+        
+        /* Title fixed height */
+        .title-main {
+            min-height: 48px; /* Approx 2 lines of text */
+            overflow: hidden;
+        }
+        
+        /* Prevent font loading shifts */
+        .fonts-loaded body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://www.rutasrurales.io">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    
+    <link rel="modulepreload" href="./alojamiento.js?v=3.0">
+    <link rel="modulepreload" href="./modules/api.js?v=3.0">
+    <link rel="modulepreload" href="./modules/ui.js?v=3.0">
+    <link rel="modulepreload" href="./modules/header.js?v=3.0">
+    <link rel="modulepreload" href="./modules/footer.js?v=3.0">
+
+    <!-- Load non-critical CSS asynchronously -->
+    <link rel="preload" href="styles/optimized.css?v=3.0" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="styles/optimized.css?v=3.0"></noscript>
+    
+    <!-- Preload Font Awesome -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" crossorigin="anonymous">
+    
+    <link rel="icon" href="https://rutasrurales.io/favicon.ico">
+    
+    <!-- Fallback for browsers that don't support onload -->
+    <script>
+        /*! loadCSS rel=preload polyfill. [c]2017 Filament Group, Inc. MIT License */
+        !function(e){"use strict";var n=function(n,t,o){function i(e){return f.body?e():void setTimeout(function(){i(e)})}var d,r,a,l,f=e.document,s=f.createElement("link"),u=o||"all";return t?d=t:(r=(f.body||f.getElementsByTagName("head")[0]).childNodes,d=r[r.length-1]),a=f.styleSheets,s.rel="stylesheet",s.href=n,s.media="only x",i(function(){d.parentNode.insertBefore(s,t?d:d.nextSibling)}),l=function(e){for(var n=s.href,t=a.length;t--;)if(a[t].href===n)return e();setTimeout(function(){l(e)})},s.addEventListener&&s.addEventListener("load",function(){this.media=u}),s.onloadcssdefined=l,l(function(){s.media!==u&&(s.media=u)}),s};"undefined"!=typeof exports?exports.loadCSS=n:e.loadCSS=n}("undefined"!=typeof global?global:this);
+    </script>
+</head>
+<body class="page-alojamiento">
+
+    <header id="header">
+        <!-- Header will be loaded dynamically by header.js -->
+        <div style="display: flex; align-items: center; justify-content: center; height: 70px; color: white;">
+            <span>Cargando menú...</span>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs">
+        <a href="/">Inicio</a> > <span id="bread-municipio">Provincia</span> > <span id="bread-nombre">Alojamiento</span>
+    </nav>
+
+    <main class="detail-container">
+        <div class="detail-grid">
+            
+            <section class="content-main">
+                <h1 id="nombre" class="title-main">Cargando...</h1>
+                
+                <div id="galeria" class="modern-gallery">
+                    <!-- Skeleton loading for gallery -->
+                    <div class="gallery-item"></div>
+                    <div class="gallery-item"></div>
+                    <div class="gallery-item"></div>
+                </div>
+                
+                <article id="descripcion" class="text-description">
+                    <p style="background: #f0f0f0; height: 20px; border-radius: 4px; margin: 10px 0; animation: pulse 1.5s infinite;"></p>
+                    <p style="background: #f0f0f0; height: 20px; border-radius: 4px; margin: 10px 0; animation: pulse 1.5s infinite; width: 80%;"></p>
+                    <p style="background: #f0f0f0; height: 20px; border-radius: 4px; margin: 10px 0; animation: pulse 1.5s infinite; width: 60%;"></p>
+                </article>
+                
+                <section id="entorno" class="entorno-section">
+                    <h3>🏞️ El Entorno y Rutas</h3>
+                    <p>Descubre los rincones secretos de la zona pinchando en nuestro mapa interactivo.</p>
+                    <a href="https://rutasrurales.io/rutas.php" class="map-link-container">
+                        <div id="map-preview">
+                            📍 Ver rutas cerca de este alojamiento
+                        </div>
+                    </a>
+                </section>
+            </section>
+
+            <aside class="sidebar">
+                <div class="card-booking">
+                    <h3 style="margin-top:0">Tu Estancia</h3>
+                    
+                    <div id="servicios" class="services-grid">
+                        <!-- Skeleton loading for services -->
+                        <div class="service-item" style="background: #f0f0f0; height: 20px; border-radius: 4px; animation: pulse 1.5s infinite;"></div>
+                        <div class="service-item" style="background: #f0f0f0; height: 20px; border-radius: 4px; animation: pulse 1.5s infinite;"></div>
+                        <div class="service-item" style="background: #f0f0f0; height: 20px; border-radius: 4px; animation: pulse 1.5s infinite;"></div>
+                        <div class="service-item" style="background: #f0f0f0; height: 20px; border-radius: 4px; animation: pulse 1.5s infinite;"></div>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                    
+                    <div id="contacto-box">
+                        <div style="background: #f0f0f0; height: 50px; border-radius: 8px; animation: pulse 1.5s infinite;"></div>
+                    </div>
+                    
+                    <div id="premium-extra"></div>
+                </div>
+            </aside>
+            
+        </div>
+    </main>
+
+    <!-- Footer will be added here by footer.js -->
+    
+    <script type="module" src="./alojamiento.js?v=3.0"></script>
+    
+    <!-- Load non-critical CSS if JavaScript is disabled -->
+    <script>
+        // Load non-critical CSS
+        var raf = requestAnimationFrame || function(cb) { setTimeout(cb, 16); };
+        raf(function() {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'styles/optimized.css?v=3.0';
+            document.head.appendChild(link);
+            
+            // Load Font Awesome
+            var fa = document.createElement('link');
+            fa.rel = 'stylesheet';
+            fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+            fa.crossOrigin = 'anonymous';
+            document.head.appendChild(fa);
+        });
+    </script>
+</body>
+</html>
