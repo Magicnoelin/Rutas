@@ -59,7 +59,7 @@ try {
             $stmt = $pdo->prepare("SELECT id FROM places_of_interest WHERE id = ?");
             break;
         case 'activities':
-            $stmt = $pdo->prepare("SELECT id FROM activities WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT id FROM tourist_activities WHERE id = ?");
             break;
     }
     
@@ -166,6 +166,9 @@ try {
     $tableName = $resourceType;
     if ($resourceType === 'places') {
         $tableName = 'places_of_interest';
+    }
+    if ($resourceType === 'activities') {
+        $tableName = 'tourist_activities';
     }
     
     $sql = "UPDATE $tableName SET " . implode(', ', $updateData) . " WHERE id = ?";

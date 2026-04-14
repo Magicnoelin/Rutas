@@ -224,7 +224,7 @@ function searchActivities($pdo, $location, $guests, $budget) {
     try {
         $sql = "SELECT id, name, description, location, duration, price_per_person,
                        max_participants, rating, total_reviews, verified, created_at
-                FROM activities
+                FROM tourist_activities
                 WHERE status = 'active'";
 
         $params = [];

@@ -28,7 +28,7 @@ try {
     
     // Obtener la actividad
     $sql = "SELECT id, name, slug, photo1, photo2, photo3, photo4 
-            FROM activities 
+            FROM tourist_activities 
             WHERE slug = ?";
     
     $stmt = $conn->prepare($sql);

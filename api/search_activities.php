@@ -28,7 +28,7 @@ try {
     
     // Buscar actividades por nombre o municipio
     $sql = "SELECT id, name, slug, activity_type, municipality, province 
-            FROM activities 
+            FROM tourist_activities 
             WHERE (name LIKE ? OR municipality LIKE ?) 
             AND moderation_status = 'approved'
             ORDER BY name ASC 

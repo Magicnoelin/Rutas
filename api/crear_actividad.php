@@ -76,7 +76,7 @@ try {
     $counter = 1;
     
     while (true) {
-        $stmtCheck = $pdo->prepare("SELECT id FROM activities WHERE slug = ?");
+        $stmtCheck = $pdo->prepare("SELECT id FROM tourist_activities WHERE slug = ?");
         $stmtCheck->execute([$slug]);
         if ($stmtCheck->rowCount() === 0) break;
         $slug = $baseSlug . '-' . $counter++;
@@ -86,22 +86,22 @@ try {
     $submitAction = $datosLimpios['submit_action'] ?? 'draft';
     $moderationStatus = ($submitAction === 'submit') ? 'pending' : 'draft';
     
-    // Preparar datos para insertar
+    // Preparar datos para insertar - ajustar a los nombres de columna reales de tourist_activities
     $actData = [
         'name' => $datosLimpios['name'],
         'slug' => $slug,
         'description' => $datosLimpios['description'],
         'activity_type' => $datosLimpios['activity_type'],
-        'difficulty' => $datosLimpios['difficulty'],
+        'difficulty_level' => $datosLimpios['difficulty'],
         'municipality' => $datosLimpios['municipality'],
         'province' => $datosLimpios['province'],
         'duration' => $datosLimpios['duration'] ?? null,
         'season' => $datosLimpios['season'] ?? null,
         'address' => $datosLimpios['address'] ?? null,
-        'price' => !empty($datosLimpios['price']) ? floatval($datosLimpios['price']) : null,
+        'price_adult' => !empty($datosLimpios['price']) ? floatval($datosLimpios['price']) : null,
         'max_participants' => !empty($datosLimpios['max_participants']) ? intval($datosLimpios['max_participants']) : null,
-        'phone' => $datosLimpios['phone'] ?? null,
-        'email' => $datosLimpios['email'] ?? null,
+        'contact_phone' => $datosLimpios['phone'] ?? null,
+        'contact_email' => $datosLimpios['email'] ?? null,
         'website' => $datosLimpios['website'] ?? null,
         'booking_url' => $datosLimpios['booking_url'] ?? null,
         'photo1' => $datosLimpios['photo1'] ?? null,
@@ -125,7 +125,7 @@ try {
     $columnas = array_keys($actData);
     $placeholders = array_map(function($col) { return ":$col"; }, $columnas);
     
-    $sql = "INSERT INTO activities (" . implode(', ', $columnas) . ") VALUES (" . implode(', ', $placeholders) . ")";
+    $sql = "INSERT INTO tourist_activities (" . implode(', ', $columnas) . ") VALUES (" . implode(', ', $placeholders) . ")";
     $stmt = $pdo->prepare($sql);
     
     foreach ($actData as $key => $value) {
@@ -136,7 +136,7 @@ try {
     $id = $pdo->lastInsertId();
 
     // Obtener actividad creada
-    $stmtSelect = $pdo->prepare("SELECT * FROM activities WHERE id = ?");
+    $stmtSelect = $pdo->prepare("SELECT * FROM tourist_activities WHERE id = ?");
     $stmtSelect->execute([$id]);
     $nuevaActividad = $stmtSelect->fetch();
 

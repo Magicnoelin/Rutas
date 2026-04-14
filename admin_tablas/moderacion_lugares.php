@@ -83,7 +83,7 @@ try {
                 CONCAT(u.first_name, ' ', u.last_name) as created_by_name,
                 u.email as user_email,
                 ac.photo1 as photo
-            FROM activities ac
+            FROM tourist_activities ac
             LEFT JOIN users u ON ac.created_by = u.id
             WHERE ac.moderation_status = ?
             ORDER BY ac.last_submitted_at DESC
@@ -139,7 +139,7 @@ try {
     $stmt = $pdo->query("SELECT COUNT(*) FROM cultural_events WHERE moderation_status = 'pending'");
     $stats['event_pending'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->query("SELECT COUNT(*) FROM activities WHERE moderation_status = 'pending'");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM tourist_activities WHERE moderation_status = 'pending'");
     $stats['activity_pending'] = $stmt->fetchColumn();
 
     $stmt = $pdo->query("SELECT COUNT(*) FROM places_of_interest WHERE moderation_status = 'pending'");

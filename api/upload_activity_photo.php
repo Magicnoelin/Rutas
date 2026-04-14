@@ -85,11 +85,11 @@ try {
     $isNumeric = is_numeric($activityIdentifier);
     
     if ($isNumeric) {
-        $sql = "SELECT id, slug, name FROM activities WHERE id = ?";
+        $sql = "SELECT id, slug, name FROM tourist_activities WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $activityIdentifier);
     } else {
-        $sql = "SELECT id, slug, name FROM activities WHERE slug = ?";
+        $sql = "SELECT id, slug, name FROM tourist_activities WHERE slug = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $activityIdentifier);
     }
@@ -168,7 +168,7 @@ try {
     // Buscar el primer campo de foto vacío o usar photo1
     $updateField = 'photo1';
     foreach ($photoFields as $field) {
-        $checkSql = "SELECT $field FROM activities WHERE id = ?";
+        $checkSql = "SELECT $field FROM tourist_activities WHERE id = ?";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->bind_param("i", $activityId);
         $checkStmt->execute();
@@ -182,7 +182,7 @@ try {
         }
     }
     
-    $updateSql = "UPDATE activities SET $updateField = ? WHERE id = ?";
+    $updateSql = "UPDATE tourist_activities SET $updateField = ? WHERE id = ?";
     $updateStmt = $conn->prepare($updateSql);
     $updateStmt->bind_param("si", $finalUrl, $activityId);
     
