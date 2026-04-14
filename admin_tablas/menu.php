@@ -93,10 +93,10 @@
         
         <hr style="border: 0.5px solid #34495e; margin: 15px 0;">
 
-         <li><a href="https://rutasrurales.io/admin_tablas/sql_manager.php"><i class="fas fa-code"></i>sql_manager</a></li>
-          <li><a href="https://rutasrurales.io/admin_tablas/moderacion_alojamientos.php"><i class="fas fa-code"></i>moderacion_alojamientos</a></li>
-            <li><a href="https://rutasrurales.io/admin_tablas/moderacion_lugares.php"><i class="fas fa-code"></i>moderacion_lugares</a></li>
-            <li><a href="https://rutasrurales.io/admin_tablas/moderacion_lugares.php?type=activity"><i class="fas fa-walking"></i>Moderación de Actividades</a></li>
+         <li><a href="https://rutasrurales.io/admin_tablas/sql_manager.php"><i class="fas fa-database"></i>SQL Manager</a></li>
+          <li><a href="https://rutasrurales.io/admin_tablas/moderacion_alojamientos.php"><i class="fas fa-clipboard-check"></i>Moderación Alojamientos</a></li>
+            <li><a href="https://rutasrurales.io/admin_tablas/moderacion_lugares.php"><i class="fas fa-map-marked-alt"></i>Moderación Lugares</a></li>
+            <li><a href="https://rutasrurales.io/admin_tablas/moderacion_lugares.php?type=activity"><i class="fas fa-walking"></i>Moderación Actividades</a></li>
             <li><a href="https://rutasrurales.io/admin_tablas/moderacion_fotos.php"><i class="fas fa-images"></i>Fotos y Lugares Sugeridos</a></li>
         
         <li><a href="cultural_events_trads_index.php"><i class="fas fa-table"></i> Traducciones eventos</a></li>
