@@ -87,18 +87,22 @@ try {
     $moderationStatus = ($submitAction === 'submit') ? 'pending' : 'draft';
     
     // Preparar datos para insertar - ajustar a los nombres de columna reales de tourist_activities
+    // Basado en la estructura observada en otros archivos
     $actData = [
         'name' => $datosLimpios['name'],
         'slug' => $slug,
         'description' => $datosLimpios['description'],
-        'activity_type' => $datosLimpios['activity_type'],
+        'short_description' => substr($datosLimpios['description'], 0, 200) ?? null,
+        'category_id' => 1, // Valor por defecto - deberíamos mapear activity_type a category_id
         'difficulty_level' => $datosLimpios['difficulty'],
         'municipality' => $datosLimpios['municipality'],
         'province' => $datosLimpios['province'],
         'duration' => $datosLimpios['duration'] ?? null,
-        'season' => $datosLimpios['season'] ?? null,
-        'address' => $datosLimpios['address'] ?? null,
+        'available_seasons' => !empty($datosLimpios['season']) ? json_encode([$datosLimpios['season']]) : null,
+        'meeting_point' => $datosLimpios['address'] ?? null,
         'price_adult' => !empty($datosLimpios['price']) ? floatval($datosLimpios['price']) : null,
+        'price_child' => null, // Campo adicional
+        'price_group' => null, // Campo adicional
         'max_participants' => !empty($datosLimpios['max_participants']) ? intval($datosLimpios['max_participants']) : null,
         'contact_phone' => $datosLimpios['phone'] ?? null,
         'contact_email' => $datosLimpios['email'] ?? null,

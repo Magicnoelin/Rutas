@@ -27,7 +27,7 @@ try {
     $conn->set_charset("utf8mb4");
     
     // Buscar actividades por nombre o municipio
-    $sql = "SELECT id, name, slug, activity_type, municipality, province 
+    $sql = "SELECT id, name, slug, category_id, municipality, province 
             FROM tourist_activities 
             WHERE (name LIKE ? OR municipality LIKE ?) 
             AND moderation_status = 'approved'
@@ -46,7 +46,7 @@ try {
             'id' => $row['id'],
             'name' => $row['name'],
             'slug' => $row['slug'],
-            'activity_type' => $row['activity_type'],
+            'category_id' => $row['category_id'],
             'municipality' => $row['municipality'],
             'province' => $row['province']
         ];

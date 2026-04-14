@@ -264,7 +264,7 @@
                 
                 if (data.success && data.data) {
                     const act = data.data;
-                    selectActivity(act.id, act.slug, act.name, act.activity_type || 'Actividad', act.municipality);
+                    selectActivity(act.id, act.slug, act.name, 'Actividad', act.municipality);
                     document.getElementById('searchResults').classList.remove('active');
                 } else {
                     showMessage('❌ No se pudo cargar la actividad especificada', 'error');
@@ -294,9 +294,9 @@
                 if (data.success && data.data.results.length > 0) {
                     let html = '';
                     data.data.results.forEach(item => {
-                        html += `<div class="result-item" onclick="selectActivity(${item.id}, '${item.slug}', '${item.name.replace(/'/g, "\\'")}', '${item.activity_type}', '${item.municipality}')">
+                        html += `<div class="result-item" onclick="selectActivity(${item.id}, '${item.slug}', '${item.name.replace(/'/g, "\\'")}', 'Actividad', '${item.municipality}')">
                             <strong>${item.name}</strong><br>
-                            <small>${item.activity_type} - ${item.municipality} (slug: ${item.slug})</small>
+                            <small>Actividad - ${item.municipality} (slug: ${item.slug})</small>
                         </div>`;
                     });
                     resultsDiv.innerHTML = html;
