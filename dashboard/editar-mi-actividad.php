@@ -11,33 +11,40 @@ $mensaje = "";
 
 // PROCESAR GUARDADO
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
-    $campos = [
+    // Campos que NO tienen restricciones CHECK
+    $campos_sin_restriccion = [
         'name', 'short_description', 'description', 'municipality', 'province', 
         'meeting_point', 'latitude', 'longitude', 'duration', 'difficulty_level',
         'min_age', 'max_age', 'min_participants', 'max_participants',
         'price_adult', 'price_child', 'price_group', 'price_details',
         'includes', 'not_includes', 'what_to_bring', 'provided_equipment',
-        'schedule', 'available_seasons', 'languages_available',
-        'accessibility', 'suitable_for_families', 'pet_friendly', 'indoor_outdoor',
-        'weather_dependent', 'booking_required', 'advance_booking_days',
         'cancellation_policy', 'contact_phone', 'contact_email', 'website', 'booking_url',
         'meta_title', 'meta_description'
+    ];
+
+    // Campos que PUEDEN tener restricciones CHECK (manejarlos con cuidado)
+    $campos_con_posible_restriccion = [
+        'schedule', 'available_seasons', 'available_days', 'languages_available',
+        'accessibility', 'suitable_for_families', 'pet_friendly', 'indoor_outdoor',
+        'weather_dependent', 'booking_required', 'advance_booking_days'
     ];
 
     $setPart = [];
     $values = [];
     
-    foreach ($campos as $campo) {
+    // Procesar campos sin restricción
+    foreach ($campos_sin_restriccion as $campo) {
         $setPart[] = "$campo = ?";
         $values[] = $_POST[$campo] ?? '';
     }
     
-    // Manejar available_days por separado para evitar error de restricción
-    // Si está vacío, no lo actualizamos para mantener el valor actual
-    $available_days = $_POST['available_days'] ?? '';
-    if ($available_days !== '') {
-        $setPart[] = "available_days = ?";
-        $values[] = $available_days;
+    // Procesar campos con posible restricción - solo si no están vacíos
+    foreach ($campos_con_posible_restriccion as $campo) {
+        $valor = $_POST[$campo] ?? '';
+        if ($valor !== '') {
+            $setPart[] = "$campo = ?";
+            $values[] = $valor;
+        }
     }
 
     $values[] = $id;
