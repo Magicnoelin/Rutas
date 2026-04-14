@@ -112,9 +112,7 @@ try {
         'photo2' => $datosLimpios['photo2'] ?? null,
         'photo3' => $datosLimpios['photo3'] ?? null,
         'photo4' => $datosLimpios['photo4'] ?? null,
-        'moderation_status' => $moderationStatus,
-        'is_active' => 0,
-        'last_submitted_at' => ($submitAction === 'submit') ? date('Y-m-d H:i:s') : null
+        'is_active' => 0
     ];
 
     // Si hay sesión, añadir created_by
@@ -148,7 +146,7 @@ try {
         'id' => $id,
         'name' => $nuevaActividad['name'],
         'slug' => $nuevaActividad['slug'],
-        'moderation_status' => $nuevaActividad['moderation_status'],
+        'is_active' => $nuevaActividad['is_active'],
         'recaptcha_score' => $recaptchaResult['score']
     ];
     
