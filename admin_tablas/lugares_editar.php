@@ -4,10 +4,37 @@ include 'db.php';
 // Si es id=0 y viene de una sugerencia, crear nuevo lugar con datos prellenados
 $fromSuggested = isset($_GET['from_suggested']) ? (int)$_GET['from_suggested'] : 0;
 
+// Obtener categorías disponibles para el dropdown
+try {
+    $catStmt = $pdo->query("SELECT id, name FROM categories_places WHERE is_active = 1 ORDER BY name");
+    $categories = $catStmt->fetchAll();
+} catch (Exception $e) {
+    $categories = [];
+    $catError = "No se pudieron cargar las categorías: " . $e->getMessage();
+}
+
 if (!isset($_GET['id']) || empty($_GET['id'])) { 
     // Es un lugar nuevo - crear registro en la base de datos primero
     try {
-        $stmt = $pdo->prepare("INSERT INTO places_of_interest (name, slug, description, municipality, province, is_active, moderation_status, created_at) VALUES (?, ?, ?, ?, ?, 0, 'draft', NOW())");
+        // Usar categoría por defecto (ID 1 - Monumentos) si existe, sino NULL
+        $defaultCategoryId = 1;
+        if (!empty($categories)) {
+            // Verificar que la categoría ID 1 existe
+            $catExists = false;
+            foreach ($categories as $cat) {
+                if ($cat['id'] == 1) {
+                    $catExists = true;
+                    break;
+                }
+            }
+            if (!$catExists && !empty($categories)) {
+                $defaultCategoryId = $categories[0]['id']; // Usar la primera categoría disponible
+            }
+        } else {
+            $defaultCategoryId = NULL;
+        }
+        
+        $stmt = $pdo->prepare("INSERT INTO places_of_interest (name, slug, description, municipality, province, category_id, is_active, moderation_status, created_at) VALUES (?, ?, ?, ?, ?, ?, 0, 'draft', NOW())");
         
         $name = isset($_GET['name']) ? $_GET['name'] : 'Nuevo lugar';
         $desc = isset($_GET['desc']) ? $_GET['desc'] : '';
@@ -19,7 +46,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
         $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
         $slug = preg_replace('/-+/', '-', $slug);
         
-        $stmt->execute([$name, $slug, $desc, $muni, $prov]);
+        $stmt->execute([$name, $slug, $desc, $muni, $prov, $defaultCategoryId]);
         $id = $pdo->lastInsertId();
         
         // Redirigir a la página de edición con el nuevo ID
@@ -109,8 +136,27 @@ if (!$item) { die("El lugar no existe."); }
                 <div class="row g-3">
                     <div class="col-md-3"><label class="fw-bold small">Latitud</label><input type="text" name="latitude" class="form-control" value="<?= $item['latitude'] ?>"></div>
                     <div class="col-md-3"><label class="fw-bold small">Longitud</label><input type="text" name="longitude" class="form-control" value="<?= $item['longitude'] ?>"></div>
-                    <div class="col-md-3"><label class="fw-bold small text-danger">ID Categoría</label><input type="number" name="category_id" class="form-control" value="<?= $item['category_id'] ?>"></div>
-                    <div class="col-md-3"><label class="fw-bold small text-danger">ID Subcategoría</label><input type="number" name="subcategory_id" class="form-control" value="<?= $item['subcategory_id'] ?>"></div>
+                    <div class="col-md-3">
+                        <label class="fw-bold small text-danger">Categoría</label>
+                        <?php if (!empty($categories)): ?>
+                            <select name="category_id" class="form-control">
+                                <option value="">Seleccionar categoría...</option>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= $cat['id'] ?>" <?= ($item['category_id'] == $cat['id']) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($cat['name']) ?> (ID: <?= $cat['id'] ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php else: ?>
+                            <input type="number" name="category_id" class="form-control" value="<?= $item['category_id'] ?>" placeholder="ID de categoría">
+                            <?php if (isset($catError)): ?>
+                                <small class="text-danger"><?= $catError ?></small>
+                            <?php else: ?>
+                                <small class="text-warning">No hay categorías disponibles. Ejecuta el script fix_categories_places.sql</small>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-3"><label class="fw-bold small text-danger">ID Subcategoría</label><input type="number" name="subcategory_id" class="form-control" value="<?= $item['subcategory_id'] ?>" placeholder="Opcional"></div>
                 </div>
                 
                 <input type="hidden" name="short_description" value="<?= htmlspecialchars($item['short_description'] ?? '') ?>">
