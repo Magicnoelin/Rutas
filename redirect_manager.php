@@ -241,7 +241,8 @@ if (file_exists($templateFile)) {
 
                 if ($data) {
                     $tituloSEO = $data['name'];
-                    $descSEO = $data['description'];
+                    // Usar meta_description si existe, de lo contrario usar description
+                    $descSEO = $data['meta_description'] ?? $data['description'] ?? '';
 
                     // Reemplazar el <title> en el HTML
                     if ($tituloSEO) {
