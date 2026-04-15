@@ -71,8 +71,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmtGet->execute([$id]);
             $suggestion = $stmtGet->fetch();
             
+            $newEntityId = 0;
+            $entityTypeName = '';
+            
             if ($suggestion) {
-                // Buscar fotos de esta sugerencia
+                // 1. Crear registro en la tabla correspondiente
+                $entityType = $suggestion['entity_type'];
+                $name = $suggestion['name'];
+                $municipality = $suggestion['municipality'] ?? '';
+                $province = $suggestion['province'] ?? '';
+                $description = $suggestion['description'] ?? '';
+                
+                // Determinar tabla destino y configuraciones
+                $tablesConfig = [
+                    'places_of_interest' => [
+                        'table' => 'places_of_interest',
+                        'name_field' => 'name',
+                        'slug_field' => 'slug',
+                        'default_category' => 1, // Monumentos
+                        'entity_type_name' => 'lugar'
+                    ],
+                    'accommodations' => [
+                        'table' => 'accommodations',
+                        'name_field' => 'name',
+                        'slug_field' => 'slug',
+                        'default_category' => 1,
+                        'entity_type_name' => 'alojamiento'
+                    ],
+                    'cultural_events' => [
+                        'table' => 'cultural_events',
+                        'name_field' => 'title',
+                        'slug_field' => 'slug',
+                        'default_category' => 1,
+                        'entity_type_name' => 'evento'
+                    ],
+                    'activities' => [
+                        'table' => 'activities',
+                        'name_field' => 'title',
+                        'slug_field' => 'slug',
+                        'default_category' => 1,
+                        'entity_type_name' => 'actividad'
+                    ]
+                ];
+                
+                if (isset($tablesConfig[$entityType])) {
+                    $config = $tablesConfig[$entityType];
+                    $entityTypeName = $config['entity_type_name'];
+                    
+                    // Generar slug básico
+                    $slug = strtolower(trim($name));
+                    $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
+                    $slug = preg_replace('/-+/', '-', $slug);
+                    
+                    // Insertar en la tabla correspondiente
+                    if ($entityType === 'places_of_interest') {
+                        $insertSql = "INSERT INTO {$config['table']} 
+                            (name, slug, description, municipality, province, category_id, is_active, moderation_status, created_at) 
+                            VALUES (?, ?, ?, ?, ?, ?, 0, 'draft', NOW())";
+                        $stmtInsert = $pdo->prepare($insertSql);
+                        $stmtInsert->execute([$name, $slug, $description, $municipality, $province, $config['default_category']]);
+                        $newEntityId = $pdo->lastInsertId();
+                        
+                    } elseif ($entityType === 'accommodations') {
+                        $insertSql = "INSERT INTO {$config['table']} 
+                            (name, slug, description, municipality, province, category_id, is_active, moderation_status, created_at) 
+                            VALUES (?, ?, ?, ?, ?, ?, 0, 'draft', NOW())";
+                        $stmtInsert = $pdo->prepare($insertSql);
+                        $stmtInsert->execute([$name, $slug, $description, $municipality, $province, $config['default_category']]);
+                        $newEntityId = $pdo->lastInsertId();
+                        
+                    } elseif ($entityType === 'cultural_events') {
+                        $insertSql = "INSERT INTO {$config['table']} 
+                            (title, slug, description, municipality, province, is_active, moderation_status, created_at) 
+                            VALUES (?, ?, ?, ?, ?, 0, 'draft', NOW())";
+                        $stmtInsert = $pdo->prepare($insertSql);
+                        $stmtInsert->execute([$name, $slug, $description, $municipality, $province]);
+                        $newEntityId = $pdo->lastInsertId();
+                        
+                    } elseif ($entityType === 'activities') {
+                        $insertSql = "INSERT INTO {$config['table']} 
+                            (title, slug, description, municipality, province, is_active, moderation_status, created_at) 
+                            VALUES (?, ?, ?, ?, ?, 0, 'draft', NOW())";
+                        $stmtInsert = $pdo->prepare($insertSql);
+                        $stmtInsert->execute([$name, $slug, $description, $municipality, $province]);
+                        $newEntityId = $pdo->lastInsertId();
+                    }
+                }
+                
+                // 2. Buscar fotos de esta sugerencia
                 $stmtPhotos = $pdo->prepare("SELECT * FROM entity_photos WHERE suggested_entity_id=?");
                 $stmtPhotos->execute([$id]);
                 $photos = $stmtPhotos->fetchAll(PDO::FETCH_ASSOC);
@@ -80,30 +166,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $photosMoved = 0;
                 $webRoot = dirname(__DIR__);
                 
-                // Por cada foto, verificar si existe físicamente y si hay una entidad destino
-                foreach ($photos as $photo) {
-                    $srcPath = $photo['file_path'] ?? '';
-                    if (empty($srcPath)) continue;
-                    
-                    // Si la foto ya tiene entity_id > 0, ya fue movida
-                    if (!empty($photo['entity_id']) && $photo['entity_id'] > 0) {
-                        continue;
+                // 3. Actualizar entity_photos con el nuevo entity_id
+                if ($newEntityId > 0 && count($photos) > 0) {
+                    foreach ($photos as $photo) {
+                        $stmtUpdatePhoto = $pdo->prepare("UPDATE entity_photos SET entity_id = ? WHERE id = ?");
+                        $stmtUpdatePhoto->execute([$newEntityId, $photo['id']]);
+                        $photosMoved++;
                     }
-                    
-                    // La foto aún está en carpeta suggested - la marcamos como transferida 
-                    // (el admin luego la asociará al crear el lugar)
-                    $photosMoved++;
                 }
                 
-                $msg = "Sugerencia aprobada";
+                $msg = "✅ {$entityTypeName} aprobado y creado con ID: {$newEntityId} (is_active=0 - pendiente de revisión final)";
                 if ($photosMoved > 0) {
-                    $msg .= ". {$photosMoved} foto(s) encontrada(s) en carpeta temporal - al crear el lugar se transferirán automáticamente";
+                    $msg .= ". {$photosMoved} foto(s) asociada(s) al nuevo registro.";
                 }
+                
+                // 4. Actualizar suggested_entities con el nuevo entity_id
+                $updateNotes = ($reason ?? '') . " | Creado {$entityTypeName} ID: {$newEntityId}";
+                $stmtUpdate = $pdo->prepare("UPDATE suggested_entities SET status='approved', reviewed_at=NOW(), admin_notes=?, linked_entity_id=? WHERE id=?");
+                $stmtUpdate->execute([$updateNotes, $newEntityId, $id]);
+                
+            } else {
+                $msg = "Sugerencia no encontrada";
+                echo json_encode(['success' => false, 'error' => $msg]);
+                exit;
             }
             
-            $stmt = $pdo->prepare("UPDATE suggested_entities SET status='approved', reviewed_at=NOW(), admin_notes=? WHERE id=?");
-            $stmt->execute([$reason ?? ($msg ?? ''), $id]);
-            echo json_encode(['success' => true, 'message' => $msg ?? 'Sugerencia aprobada']);
+            echo json_encode(['success' => true, 'message' => $msg, 'new_entity_id' => $newEntityId, 'entity_type' => $entityType ?? '']);
 
         } elseif ($action === 'reject_suggestion') {
             $stmt = $pdo->prepare("UPDATE suggested_entities SET status='rejected', reviewed_at=NOW(), admin_notes=? WHERE id=?");
