@@ -1,0 +1,37 @@
+# ─── EVENTO MODULAR - Reglas de Reescritura ───────────────────────────────────
+# URL de prueba: /evento-modular/{slug}
+# Ejemplo: https://rutasrurales.io/evento-modular/pedrea-pan-quesillo-palencia-2026-santo-toribio
+
+Options -Indexes
+RewriteEngine On
+
+# Permitir acceso directo a archivos y carpetas existentes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Ruta principal: /evento-modular/{slug}
+RewriteRule ^([a-zA-Z0-9\-]+)/?$ index.php?slug=$1 [L,QSA]
+
+# Soporte para idiomas: /evento-modular/{lang}/{slug}
+RewriteRule ^(en|fr|de|zh)/([a-zA-Z0-9\-]+)/?$ index.php?lang=$1&slug=$2 [L,QSA]
+
+# Headers de seguridad y rendimiento
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Cache para assets estáticos
+    <FilesMatch "\.(js|css|woff2|png|jpg|webp)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    
+    # Cache para PHP (corto, datos dinámicos)
+    <FilesMatch "\.php$">
+        Header set Cache-Control "private, max-age=300"
+    </FilesMatch>
+</IfModule>
+
+# Compresión gzip
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
