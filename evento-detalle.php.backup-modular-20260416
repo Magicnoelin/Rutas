@@ -1,0 +1,679 @@
+<?php
+/**
+ * EVENTO DETALLE - Fusión SEO + Diseño Moderno
+ */
+require_once 'api/config.php'; 
+
+// 1. OBTENER EL SLUG Y EL IDIOMA DESDE EL HTACCESS
+$slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
+$lang = isset($_GET['lang']) ? $_GET['lang'] : 'es'; // Por defecto español
+
+// 2. CONSULTA A BASE DE DATOS
+$evento = null;
+$traduccion = null;
+
+if (!empty($slug)) {
+    try {
+        $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+        if (!$conn->connect_error) {
+            $conn->set_charset("utf8mb4");
+            
+            if ($lang == 'es') {
+                // ESPAÑOL: Buscar directamente en cultural_events
+                $sql = "SELECT 
+                        e.id,
+                        e.name AS titulo,
+                        e.slug,
+                        e.description,
+                        e.short_description,
+                        e.meta_title,
+                        e.meta_description,
+                        e.start_date,
+                        e.end_date,
+                        e.venue_name AS localidad,
+                        e.venue_address,
+                        e.municipality,
+                        e.province,
+                        e.latitude,
+                        e.longitude,
+                        e.is_free,
+                        e.ticket_price,
+                        e.organizer,
+                        e.photo1,
+                        e.photo2,
+                        e.photo3,
+                        e.photo4,
+                        e.poster_image,
+                        e.category_id,
+                        e.is_active,
+                        e.status
+                    FROM cultural_events e 
+                    WHERE e.slug = ? AND e.is_active = 1";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("s", $slug);
+            } else {
+                // IDIOMAS EXTRANJEROS (de, en, fr, zh): Buscar primero en traducciones
+                // 1. Buscar la traducción por slug e idioma
+                $sql_trad = "SELECT 
+                            event_id,
+                            name AS titulo_trad,
+                            slug AS slug_trad,
+                            short_description AS short_desc_trad,
+                            description AS descripcion_trad,
+                            meta_title AS meta_title_trad,
+                            meta_description AS meta_desc_trad,
+                            program AS programa_trad,
+                            target_audience AS audiencia_trad,
+                            accessibility AS accesibilidad_trad
+                        FROM cultural_events_trads 
+                        WHERE slug = ? AND language_code = ?";
+                
+                $stmt_trad = $conn->prepare($sql_trad);
+                $stmt_trad->bind_param("ss", $slug, $lang);
+                $stmt_trad->execute();
+                $result_trad = $stmt_trad->get_result();
+                $traduccion = $result_trad->fetch_assoc();
+                $stmt_trad->close();
+                
+                if ($traduccion) {
+                    // 2. Buscar el evento original por event_id
+                    $sql = "SELECT 
+                            e.id,
+                            e.name AS titulo,
+                            e.slug,
+                            e.description,
+                            e.short_description,
+                            e.meta_title,
+                            e.meta_description,
+                            e.start_date,
+                            e.end_date,
+                            e.venue_name AS localidad,
+                            e.venue_address,
+                            e.municipality,
+                            e.province,
+                            e.latitude,
+                            e.longitude,
+                            e.is_free,
+                            e.ticket_price,
+                            e.organizer,
+                            e.photo1,
+                            e.photo2,
+                            e.photo3,
+                            e.photo4,
+                            e.poster_image,
+                            e.category_id,
+                            e.is_active,
+                            e.status
+                        FROM cultural_events e 
+                        WHERE e.id = ? AND e.is_active = 1";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("i", $traduccion['event_id']);
+                } else {
+                    // No se encontró traducción, buscar como español
+                    $sql = "SELECT 
+                            e.id,
+                            e.name AS titulo,
+                            e.slug,
+                            e.description,
+                            e.short_description,
+                            e.meta_title,
+                            e.meta_description,
+                            e.start_date,
+                            e.end_date,
+                            e.venue_name AS localidad,
+                            e.venue_address,
+                            e.municipality,
+                            e.province,
+                            e.latitude,
+                            e.longitude,
+                            e.is_free,
+                            e.ticket_price,
+                            e.organizer,
+                            e.photo1,
+                            e.photo2,
+                            e.photo3,
+                            e.photo4,
+                            e.poster_image,
+                            e.category_id,
+                            e.is_active,
+                            e.status
+                        FROM cultural_events e 
+                        WHERE e.slug = ? AND e.is_active = 1";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("s", $slug);
+                }
+            }
+            
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $evento = $result->fetch_assoc();
+            
+            // Combinar datos si hay traducción
+            if ($traduccion && $evento) {
+                // Sobrescribir campos traducibles con la traducción
+                $evento['titulo'] = $traduccion['titulo_trad'] ?? $evento['titulo'];
+                $evento['description'] = $traduccion['descripcion_trad'] ?? $evento['description'];
+                $evento['short_description'] = $traduccion['short_desc_trad'] ?? $evento['short_description'];
+                $evento['meta_title'] = $traduccion['meta_title_trad'] ?? $evento['meta_title'];
+                $evento['meta_description'] = $traduccion['meta_desc_trad'] ?? $evento['meta_description'];
+            }
+            
+            $stmt->close();
+            $conn->close();
+        }
+    } catch (Exception $e) {
+        error_log("Error en detalle: " . $e->getMessage());
+    }
+}
+
+// 3. LÓGICA SEO MEJORADA
+// Si existe el evento, usamos sus metas, si no, unos por defecto.
+$page_title = ($evento) ? $evento['meta_title'] : "Evento Cultural | Rutas Rurales";
+$page_desc = ($evento) ? $evento['meta_description'] : "Descubre este evento en Rutas Rurales";
+
+// El canonical ahora respeta el idioma según tu .htaccess
+// Cada idioma tiene su propia canonical: español usa slug original, otros idiomas usan slug traducido
+$slug_canonical = $slug; // Por defecto el slug de la URL
+if ($evento) {
+    if ($lang == 'es') {
+        $slug_canonical = $evento['slug']; // Español: slug original
+    } else {
+        // Otros idiomas: usar slug traducido si existe, sino slug original
+        $slug_canonical = $traduccion['slug_trad'] ?? $evento['slug'];
+    }
+}
+$canonical = "https://rutasrurales.io/" . ($lang != 'es' ? $lang . '/' : '') . "evento/" . $slug_canonical;
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($page_title); ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
+    <link rel="canonical" href="<?php echo $canonical; ?>">
+    
+    <!-- Google Tag Manager - Cargado solo después de interacción del usuario -->
+    <script>
+        // Cargar GTM solo después de interacción del usuario o cuando la página esté completamente inactiva
+        function loadGTM() {
+            if (window.gtmLoaded) return;
+            window.gtmLoaded = true;
+            
+            (function(w,d,s,l,i){
+                w[l]=w[l]||[];
+                w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+                var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),
+                dl=l!='dataLayer'?'&l='+l:'';
+                j.async=true;
+                j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+                f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-MBP57VQM');
+        }
+        
+        // Cargar después de interacción del usuario
+        ['click', 'scroll', 'keydown', 'mousemove', 'touchstart'].forEach(function(event) {
+            window.addEventListener(event, function() {
+                setTimeout(loadGTM, 3000); // 3 segundos después de interacción
+            }, { once: true });
+        });
+        
+        // Cargar después de 10 segundos si no hay interacción
+        setTimeout(loadGTM, 10000);
+    </script>
+    
+    <!-- Preconnect solo para recursos CRÍTICOS que se usarán inmediatamente -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <!-- NOTA: No se usan Google Fonts en esta página (fuentes locales Montserrat) -->
+    
+    <!-- Preload para recursos críticos (optimización segura) -->
+    <link rel="preload" href="/styles.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    
+    <!-- Cargar CSS normalmente (forma segura) -->
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS crítico inline mínimo (solo lo esencial) -->
+    <style>
+        /* Solo estilos críticos absolutamente necesarios */
+        :root { --primary: #2F5233; --accent: #81C784; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .hero-event { 
+            background: var(--primary); 
+            color: white; 
+            padding: 60px 20px; 
+            text-align: center; 
+            margin-top: 80px; /* Espacio para el header */
+        }
+        .event-container { 
+            max-width: 900px; 
+            margin: -40px auto 40px; 
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            padding: 40px; 
+        }
+        .meta-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin: 30px 0; 
+            border-top: 1px solid #eee; 
+            padding-top: 20px; 
+        }
+        .info-item i { 
+            color: var(--primary); 
+            margin-right: 10px; 
+        }
+        /* Estilos para la descripción del evento */
+        .event-description {
+            margin: 30px 0;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .event-description p {
+            margin-bottom: 1.5rem;
+        }
+        .event-description h2, 
+        .event-description h3, 
+        .event-description h4 {
+            color: var(--primary);
+            margin: 2rem 0 1rem 0;
+        }
+        .event-description ul, 
+        .event-description ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .event-description li {
+            margin-bottom: 0.5rem;
+        }
+        .event-description strong {
+            color: var(--dark-color, #1A2E1A);
+        }
+        .event-description a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        .event-description a:hover {
+            color: var(--accent);
+        }
+        /* Solo estilos de galería que necesitan estar inline */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <?php 
+    // Incluir el header (pasar la variable $lang)
+    include 'header.php'; 
+    ?>
+
+    <header class="hero-event">
+    <h1><?php echo $evento ? htmlspecialchars($evento['titulo']) : 'Evento no encontrado'; ?></h1>
+    
+    <?php if ($evento && !empty($evento['start_date'])): ?>
+        <p><i class="fas fa-calendar-alt"></i> 
+            <?php 
+            $start_date = date('d/m/Y', strtotime($evento['start_date']));
+            if (!empty($evento['end_date']) && $evento['end_date'] != $evento['start_date']) {
+                $end_date = date('d/m/Y', strtotime($evento['end_date']));
+                // Calcular duración en días
+                $start = new DateTime($evento['start_date']);
+                $end = new DateTime($evento['end_date']);
+                $interval = $start->diff($end);
+                $days = $interval->days + 1; // +1 para incluir el día de inicio
+                
+                if ($days == 1) {
+                    echo $start_date;
+                } elseif ($days == 2) {
+                    echo $start_date . ' y ' . $end_date;
+                } else {
+                    echo $start_date . ' al ' . $end_date . ' (' . $days . ' días)';
+                }
+            } else {
+                echo $start_date;
+            }
+            ?>
+        </p>
+    <?php endif; ?>
+</header>
+
+    <main class="event-container">
+        <?php if ($evento): ?>
+            <?php
+            // Obtener fotos del evento
+            $fotos = [];
+            if ($evento) {
+                // Revisar campos de fotos: photo1, photo2, photo3, photo4, poster_image
+                $campos_fotos = ['photo1', 'photo2', 'photo3', 'photo4', 'poster_image'];
+                foreach ($campos_fotos as $campo) {
+                    if (!empty($evento[$campo]) && trim($evento[$campo]) !== '') {
+                        $foto_url = $evento[$campo];
+                        // Si la URL no comienza con http, asumimos que es relativa al sitio
+                        if (!preg_match('/^https?:\/\//', $foto_url)) {
+                            // Si no comienza con /, agregarlo
+                            if (strpos($foto_url, '/') !== 0) {
+                                $foto_url = '/' . $foto_url;
+                            }
+                        }
+                        $fotos[] = $foto_url;
+                    }
+                }
+            }
+            
+            // Mostrar galería si hay fotos - MOVIDA ARRIBA
+            if (!empty($fotos)): ?>
+            <section class="event-gallery" style="margin: 30px 0 40px 0;">
+                <h2 style="color: var(--primary); margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">Galería del Evento</h2>
+                <div class="gallery-container">
+                    <?php foreach ($fotos as $index => $foto): ?>
+                    <div class="gallery-item">
+                        <a href="<?php echo htmlspecialchars($foto); ?>" target="_blank">
+                            <img src="<?php echo htmlspecialchars($foto); ?>" 
+                                 alt="Foto <?php echo $index + 1; ?> del evento <?php echo htmlspecialchars($evento['titulo'] ?? ''); ?>"
+                                 onmouseover="this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.transform='scale(1)'"
+                                 loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>">
+                        </a>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+            <?php endif; ?>
+
+            <section class="event-description">
+    <?php 
+    if ($evento) {
+        // Usamos echo directo porque las descripciones suelen traer HTML de la base de datos
+        echo $evento['description']; 
+    } else {
+        echo "No hay información detallada disponible para este evento.";
+    }
+    ?>
+</section>
+
+            <!-- Información adicional de traducciones si está disponible -->
+            <?php 
+            $programa = $traduccion['programa_trad'] ?? '';
+            $audiencia = $traduccion['audiencia_trad'] ?? '';
+            $accesibilidad = $traduccion['accesibilidad_trad'] ?? '';
+            
+            if (!empty($programa) || !empty($audiencia) || !empty($accesibilidad)): ?>
+            <section class="additional-info" style="margin: 40px 0; padding: 25px; background: #f9f9f9; border-radius: 10px; border-left: 5px solid var(--primary);">
+                <h3 style="color: var(--primary); margin-bottom: 20px; font-size: 1.3rem;">
+                    <i class="fas fa-info-circle" style="margin-right: 10px;"></i> Información Adicional
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <?php if (!empty($programa)): ?>
+                    <div class="additional-item">
+                        <h4 style="color: var(--dark-color); margin-bottom: 10px; font-size: 1.1rem;">
+                            <i class="fas fa-calendar-check" style="color: var(--primary); margin-right: 8px;"></i> Programa
+                        </h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                            <?php echo nl2br(htmlspecialchars($programa)); ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if (!empty($audiencia)): ?>
+                    <div class="additional-item">
+                        <h4 style="color: var(--dark-color); margin-bottom: 10px; font-size: 1.1rem;">
+                            <i class="fas fa-users" style="color: var(--primary); margin-right: 8px;"></i> Público Objetivo
+                        </h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                            <?php echo nl2br(htmlspecialchars($audiencia)); ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if (!empty($accesibilidad)): ?>
+                    <div class="additional-item">
+                        <h4 style="color: var(--dark-color); margin-bottom: 10px; font-size: 1.1rem;">
+                            <i class="fas fa-wheelchair" style="color: var(--primary); margin-right: 8px;"></i> Accesibilidad
+                        </h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                            <?php echo nl2br(htmlspecialchars($accesibilidad)); ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </section>
+            <?php endif; ?>
+
+            <div class="meta-grid">
+                <!-- Fecha de inicio -->
+                <div class="info-item">
+                    <i class="fas fa-calendar-day"></i>
+                    <strong>Fecha de inicio:</strong><br>
+                    <?php echo date('d/m/Y', strtotime($evento['start_date'])); ?>
+                </div>
+                
+                <!-- Fecha de fin (si existe y es diferente) -->
+                <?php if (!empty($evento['end_date']) && $evento['end_date'] != $evento['start_date']): ?>
+                <div class="info-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <strong>Fecha de fin:</strong><br>
+                    <?php echo date('d/m/Y', strtotime($evento['end_date'])); ?>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Ubicación -->
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <strong>Ubicación:</strong><br>
+                    <?php 
+                    $ubicacion = '';
+                    if (!empty($evento['localidad'])) {
+                        $ubicacion = $evento['localidad'];
+                        if (!empty($evento['municipality'])) {
+                            $ubicacion .= ', ' . $evento['municipality'];
+                        }
+                        if (!empty($evento['province'])) {
+                            $ubicacion .= ' (' . $evento['province'] . ')';
+                        }
+                    } elseif (!empty($evento['venue_address'])) {
+                        $ubicacion = $evento['venue_address'];
+                    }
+                    echo htmlspecialchars($ubicacion ?: 'Ubicación no especificada');
+                    ?>
+                </div>
+                
+                <!-- Dirección detallada -->
+                <?php if (!empty($evento['venue_address'])): ?>
+                <div class="info-item">
+                    <i class="fas fa-map-pin"></i>
+                    <strong>Dirección:</strong><br>
+                    <?php echo htmlspecialchars($evento['venue_address']); ?>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Categoría -->
+                <div class="info-item">
+                    <i class="fas fa-tag"></i>
+                    <strong>Categoría:</strong><br>
+                    <?php 
+                    // Mapear category_id a nombre de categoría
+                    $categorias = [
+                        1 => 'Fiestas Populares',
+                        2 => 'Fiestas Patronales',
+                        3 => 'Fiestas Tradicionales',
+                        4 => 'Romerías',
+                        5 => 'Carnavales',
+                        6 => 'Cultura y Espectáculos',
+                        7 => 'Conciertos',
+                        8 => 'Teatro',
+                        9 => 'Exposiciones',
+                        10 => 'Festivales de Música',
+                        11 => 'Cine',
+                        12 => 'Gastronomía y Ferias',
+                        13 => 'Ferias Gastronómicas',
+                        14 => 'Jornadas Gastronómicas',
+                        15 => 'Mercados Tradicionales',
+                        16 => 'Ferias de Productos Locales',
+                        17 => 'Deportes',
+                        18 => 'Carreras Populares',
+                        19 => 'Maratones y Medias',
+                        20 => 'Competiciones Ciclistas',
+                        21 => 'Eventos Deportivos',
+                        22 => 'Religión y Tradición',
+                        23 => 'Semana Santa',
+                        24 => 'Procesiones',
+                        25 => 'Celebraciones Religiosas'
+                    ];
+                    $categoria_id = $evento['category_id'] ?? 0;
+                    echo htmlspecialchars($categorias[$categoria_id] ?? 'Cultura');
+                    ?>
+                </div>
+                
+                <!-- Precio -->
+                <div class="info-item">
+                    <i class="fas fa-euro-sign"></i>
+                    <strong>Precio:</strong><br>
+                    <?php 
+                    if ($evento['is_free'] == 1) {
+                        echo 'Gratis';
+                    } elseif (!empty($evento['ticket_price']) && $evento['ticket_price'] > 0) {
+                        echo number_format($evento['ticket_price'], 2) . '€';
+                    } else {
+                        echo 'Consultar precio';
+                    }
+                    ?>
+                </div>
+                
+                <!-- Organizador -->
+                <div class="info-item">
+                    <i class="fas fa-user-tie"></i>
+                    <strong>Organiza:</strong><br>
+                    <?php echo htmlspecialchars($evento['organizer'] ?? 'Rutas Rurales'); ?>
+                </div>
+                
+                <!-- Estado (si está activo) -->
+                <div class="info-item">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Estado:</strong><br>
+                    <?php echo ($evento['is_active'] == 1) ? 'Activo' : 'No activo'; ?>
+                </div>
+            </div>
+
+            <div id="map" style="height: 400px; width: 100%; border-radius: 10px; margin-top: 20px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                <div id="map-loading" style="text-align: center;">
+                    <p style="color: #666; margin-bottom: 10px;">Cargando mapa...</p>
+                    <button id="load-map-btn" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                        Cargar Mapa
+                    </button>
+                </div>
+            </div>
+            <script>
+                // Función para cargar Google Maps solo cuando sea necesario
+                function loadGoogleMaps() {
+                    const mapElement = document.getElementById('map');
+                    const loadingElement = document.getElementById('map-loading');
+                    
+                    // Mostrar que está cargando
+                    loadingElement.innerHTML = '<p style="color: #666;">Cargando mapa...</p>';
+                    
+                    // Crear script para Google Maps
+                    const script = document.createElement('script');
+                    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNdQ1eauGeKUTMLAJ5_TwwRxo91wWsPg&callback=initMap';
+                    script.async = true;
+                    script.defer = true;
+                    
+                    // Definir función initMap
+                    window.initMap = function() {
+                        const pos = { lat: <?php echo $evento['latitude'] ?? 0; ?>, lng: <?php echo $evento['longitude'] ?? 0; ?> };
+                        const map = new google.maps.Map(mapElement, {
+                            zoom: 15,
+                            center: pos,
+                        });
+                        new google.maps.Marker({ position: pos, map: map });
+                        
+                        // Ocultar elemento de carga
+                        loadingElement.style.display = 'none';
+                        mapElement.style.background = 'transparent';
+                    };
+                    
+                    // Agregar script al documento
+                    document.head.appendChild(script);
+                }
+                
+                // Cargar mapa cuando el usuario haga clic en el botón
+                document.getElementById('load-map-btn').addEventListener('click', loadGoogleMaps);
+                
+                // También cargar automáticamente cuando el usuario haga scroll cerca del mapa
+                window.addEventListener('scroll', function() {
+                    const mapElement = document.getElementById('map');
+                    const rect = mapElement.getBoundingClientRect();
+                    const isNearViewport = rect.top < window.innerHeight + 300;
+                    
+                    if (isNearViewport && !window.googleMapsLoaded) {
+                        window.googleMapsLoaded = true;
+                        loadGoogleMaps();
+                    }
+                }, { once: true });
+            </script>
+
+        <?php else: ?>
+            <div style="text-align:center; padding: 50px;">
+                <h2>Lo sentimos, no encontramos el evento</h2>
+                <p>El evento solicitado no existe o ya no está disponible.</p>
+                <a href="/" style="color: var(--primary);">Volver al inicio</a>
+            </div>
+        <?php endif; ?>
+    </main>
+
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-content-simple">
+            <div class="footer-info">
+                <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
+                <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+            </div>
+            <div class="footer-links">
+                <a href="/aviso-legal.html">Aviso Legal</a>
+                <a href="/politica-cookies.html">Política de Cookies</a>
+                <a href="/agradecimientos.html">Agradecimientos</a>
+            </div>
+            <div class="footer-social">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="/script.js?v=20260114"></script>
+</body>
+</html>
