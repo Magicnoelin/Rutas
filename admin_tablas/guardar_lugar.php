@@ -14,6 +14,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return ($v === '') ? null : $v;
         }
         
+        // Validar category_id antes de proceder
+        $categoryId = clean($_POST['category_id']);
+        if ($categoryId !== null) {
+            // Verificar que la categoría existe en la base de datos
+            $stmtCheck = $pdo->prepare("SELECT COUNT(*) as count FROM categories_places WHERE id = ?");
+            $stmtCheck->execute([$categoryId]);
+            $result = $stmtCheck->fetch();
+            
+            if ($result['count'] == 0) {
+                die("Error: El ID de categoría '$categoryId' no existe en la base de datos. Por favor, selecciona una categoría válida.");
+            }
+        }
+        
+        // Validar subcategory_id si se proporciona
+        $subcategoryId = clean($_POST['subcategory_id']);
+        if ($subcategoryId !== null) {
+            // Verificar que la subcategoría existe (asumiendo que está en la misma tabla)
+            $stmtCheck = $pdo->prepare("SELECT COUNT(*) as count FROM categories_places WHERE id = ?");
+            $stmtCheck->execute([$subcategoryId]);
+            $result = $stmtCheck->fetch();
+            
+            if ($result['count'] == 0) {
+                die("Error: El ID de subcategoría '$subcategoryId' no existe en la base de datos. Por favor, introduce un ID válido o deja el campo vacío.");
+            }
+        }
+        
         // NUEVO: Forzar is_active = 0 siempre (pendiente de revisión)
         // El admin debe revisar slug y activar manualmente
         $isActive = 0;
@@ -142,7 +168,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
-            die("Error: El ID de categoría o subcategoría no existe en la base de datos.");
+            // Get more detailed error information
+            $errorInfo = $e->errorInfo;
+            $errorMessage = "Error de restricción de clave foránea (23000).\n";
+            $errorMessage .= "Mensaje del driver: " . ($errorInfo[2] ?? $e->getMessage()) . "\n";
+            $errorMessage .= "Posibles causas:\n";
+            $errorMessage .= "1. El ID de categoría no existe en la tabla categories_places\n";
+            $errorMessage .= "2. El ID de subcategoría no existe en la tabla correspondiente\n";
+            $errorMessage .= "3. Otro problema de restricción de clave foránea\n\n";
+            $errorMessage .= "Valores enviados:\n";
+            $errorMessage .= "- category_id: " . (isset($_POST['category_id']) ? ($_POST['category_id'] === '' ? '(vacío -> NULL)' : $_POST['category_id']) : '(no enviado)') . "\n";
+            $errorMessage .= "- subcategory_id: " . (isset($_POST['subcategory_id']) ? ($_POST['subcategory_id'] === '' ? '(vacío -> NULL)' : $_POST['subcategory_id']) : '(no enviado)') . "\n";
+            
+            die($errorMessage);
         }
         die("Error al guardar: " . $e->getMessage());
     }
