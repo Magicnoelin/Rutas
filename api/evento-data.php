@@ -9,7 +9,7 @@
  */
 
 define('API_NO_HEADERS', true);
-require_once '../../api/config.php';
+require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
