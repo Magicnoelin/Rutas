@@ -57,7 +57,18 @@ foreach ($secciones as $nombre => $conf) {
     } else {
         // AQUÍ ESTÁ LO QUE FALTABA: La consulta a la base de datos
         try {
-            $stmt = $pdo->query("SELECT slug, updated_at FROM `{$conf['tabla']}` WHERE is_active = 1 AND slug IS NOT NULL AND slug != ''");
+            // Construir la consulta base
+            $sql = "SELECT slug, updated_at FROM `{$conf['tabla']}` WHERE is_active = 1 AND slug IS NOT NULL AND slug != ''";
+            
+            // Añadir filtro de fechas para eventos (solo eventos futuros/actuales)
+            if ($nombre == 'eventos') {
+                $sql .= " AND (
+                    (end_date IS NULL AND start_date >= CURDATE()) OR
+                    (end_date IS NOT NULL AND end_date >= CURDATE())
+                )";
+            }
+            
+            $stmt = $pdo->query($sql);
             
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $contador++;
