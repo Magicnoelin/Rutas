@@ -68,7 +68,7 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/lunes-de-aguas-salamanca-2026</loc>
-    <lastmod>2026-03-21</lastmod>
+    <lastmod>2026-04-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -86,7 +86,7 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/procesion-capas-pardas-zamora-2026-horario</loc>
-    <lastmod>2026-03-12</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -110,7 +110,7 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/pedrea-pan-quesillo-palencia-2026-santo-toribio</loc>
-    <lastmod>2026-02-25</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -146,7 +146,7 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/fiestas-la-veguilla-benavente-2026</loc>
-    <lastmod>2026-03-24</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -170,13 +170,13 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/fiestas-san-pedro-zamora-2026</loc>
-    <lastmod>2026-03-25</lastmod>
+    <lastmod>2026-04-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/fiestas-san-juan-soria-2026</loc>
-    <lastmod>2026-03-18</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -188,7 +188,7 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/festa-da-troita-a-pontenova-2026</loc>
-    <lastmod>2026-03-12</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -230,7 +230,7 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/semana-santa-toledo-2026-procesiones</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -500,7 +500,7 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/festival-monoloco-leon-2026-verano</loc>
-    <lastmod>2026-03-24</lastmod>
+    <lastmod>2026-04-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -512,13 +512,145 @@
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/toro-enmaromado-benavente-2026-fechas-recorrido</loc>
-    <lastmod>2026-03-26</lastmod>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://rutasrurales.io/evento/feria-ceramica-festival-folklore-benavente-2026</loc>
-    <lastmod>2026-03-26</lastmod>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/fiesta-lavalenguas-soria-2026-horarios-autobuses</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/concierto-chayanne-vigo-castrelos-2026</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/sanfermines-pamplona-2026-fechas-guia-completa</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/descenso-internacional-sella-2026-fechas-entradas-tren</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/semana-grande-bilbao-aste-nagusia-2026-fechas-conciertos</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/mad-cool-festival-2026-madrid-cartel-entradas-horarios</loc>
+    <lastmod>2026-04-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/sonorama-ribera-2026-cartel-fechas-entradas</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/z-live-rock-fest-2026-zamora-cartel-entradas</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/conexion-valladolid-2026-cartel-entradas-horarios</loc>
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/facyl-salamanca-2026-programa-artistas-sedes</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/cir-and-co-avila-2026-programa-entradas-sedes</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/centenario-gaudi-leon-2026-casa-botines-exposiciones</loc>
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/encierros-cuellar-2026-fechas-horarios-recorrido</loc>
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/littleopera-zamora-2026-festival-opera-camara</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/festival-hispano-luso-bandas-musica-zamora-2026</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/viernes-flamencos-zamora-2026-teatro-ramos-carrion</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/noches-verano-castillo-zamora-2026-conciertos-teatro</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/romeria-la-hiniesta-zamora-2026-fechas</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/hurra-romeria-pop-zamora-2026-festival</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/aluniza-festival-zamora-2026-musica</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/romeria-cristo-morales-zamora-2026</loc>
+    <lastmod>2026-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/evento/conciertos-cueva-del-jazz-zamora-mayo-2026</loc>
+    <lastmod>2026-04-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
