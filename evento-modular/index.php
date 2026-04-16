@@ -996,6 +996,7 @@ if (file_exists($header_path)) {
                 <button class="map-toggle-btn active" id="btn-evento" onclick="toggleMapLayer('evento')">📍 Evento</button>
                 <button class="map-toggle-btn" id="btn-alojamientos" onclick="toggleMapLayer('alojamientos')">🏠 Alojamientos</button>
                 <button class="map-toggle-btn" id="btn-lugares" onclick="toggleMapLayer('lugares')">🏛️ Lugares</button>
+                <button class="map-toggle-btn" id="btn-actividades" onclick="toggleMapLayer('actividades')">🎯 Actividades</button>
             </div>
         </div>
         <?php endif; ?>
@@ -1030,6 +1031,21 @@ if (file_exists($header_path)) {
             </div>
         </div>
 
+        <!-- Actividades turísticas cercanas (carga diferida) -->
+        <div id="nearby-actividades-section" class="card" style="margin-bottom:24px;display:none;">
+            <div class="card-body">
+                <h2 class="card-title">🎯 Actividades turísticas cercanas</h2>
+                <div id="nearby-actividades" class="nearby-grid">
+                    <div class="skeleton skeleton-card"></div>
+                    <div class="skeleton skeleton-card"></div>
+                    <div class="skeleton skeleton-card"></div>
+                </div>
+                <div class="nearby-show-more" id="more-actividades" style="display:none;">
+                    <button onclick="showMoreNearby('actividades')">Ver más actividades</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Eventos similares (carga diferida) -->
         <div id="similar-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
@@ -1060,9 +1076,20 @@ if (file_exists($header_path)) {
             </a>
         </div>
 
-        <!-- Guardar evento -->
+        <!-- Visitas y Likes -->
         <div class="card" style="margin-bottom:16px;">
             <div class="card-body" style="text-align:center;">
+                <div style="display:flex;justify-content:center;gap:24px;margin-bottom:16px;">
+                    <div style="text-align:center;">
+                        <div style="font-size:1.5rem;font-weight:700;color:var(--primary);" id="view-count">—</div>
+                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;">Visitas</div>
+                    </div>
+                    <div style="width:1px;background:#eee;"></div>
+                    <div style="text-align:center;">
+                        <button id="btn-like" onclick="toggleLike()" style="background:none;border:none;cursor:pointer;font-size:1.8rem;line-height:1;transition:transform 0.2s;">🤍</button>
+                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><span id="like-count">—</span> likes</div>
+                    </div>
+                </div>
                 <button class="btn btn-primary" onclick="saveEvent()" id="btn-save-event" style="margin-bottom:8px;">
                     🔖 Guardar evento
                 </button>

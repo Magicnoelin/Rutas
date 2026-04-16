@@ -44,11 +44,11 @@ try {
         // Alojamientos cercanos (por provincia o coordenadas)
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
-                SELECT id, name, slug, location, municipality, province,
-                       price_per_night, main_image,
+                SELECT id, name, slug, municipality, province,
+                       price_per_night, photo1 AS main_image, latitude, longitude,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM accommodations
-                WHERE status = 'active' AND latitude IS NOT NULL AND longitude IS NOT NULL
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
                 HAVING distance < 50
                 ORDER BY distance ASC
                 LIMIT 8
@@ -56,10 +56,10 @@ try {
             $stmt->execute([$lat, $lng, $lat]);
         } else {
             $stmt = $pdo->prepare("
-                SELECT id, name, slug, location, municipality, province,
-                       price_per_night, main_image, 0 AS distance
+                SELECT id, name, slug, municipality, province,
+                       price_per_night, photo1 AS main_image, latitude, longitude, 0 AS distance
                 FROM accommodations
-                WHERE status = 'active' AND province = ?
+                WHERE is_active = 1 AND province = ?
                 ORDER BY RAND()
                 LIMIT 8
             ");
@@ -67,7 +67,7 @@ try {
         }
         $alojamientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($alojamientos as &$a) {
-            $a['distance'] = round($a['distance'], 1);
+            $a['distance'] = round((float)$a['distance'], 1);
             $a['url'] = '/alojamiento/' . $a['slug'];
         }
         $result['alojamientos'] = $alojamientos;
@@ -75,7 +75,8 @@ try {
         // Lugares de interés cercanos
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
-                SELECT id, name, slug, municipality, province, category, main_image,
+                SELECT id, name, slug, municipality, province, category_id, photo1 AS main_image,
+                       latitude, longitude,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM places_of_interest
                 WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
@@ -86,7 +87,8 @@ try {
             $stmt->execute([$lat, $lng, $lat]);
         } else {
             $stmt = $pdo->prepare("
-                SELECT id, name, slug, municipality, province, category, main_image, 0 AS distance
+                SELECT id, name, slug, municipality, province, category_id, photo1 AS main_image,
+                       latitude, longitude, 0 AS distance
                 FROM places_of_interest
                 WHERE is_active = 1 AND province = ?
                 ORDER BY RAND()
@@ -96,15 +98,47 @@ try {
         }
         $lugares = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($lugares as &$l) {
-            $l['distance'] = round($l['distance'], 1);
+            $l['distance'] = round((float)$l['distance'], 1);
             $l['url'] = '/lugar/' . $l['slug'];
         }
         $result['lugares'] = $lugares;
 
+        // Actividades turísticas cercanas (tabla tourist_activities)
+        if ($lat && $lng) {
+            $stmt = $pdo->prepare("
+                SELECT id, name, slug, municipality, province, category_id, photo1 AS main_image,
+                       latitude, longitude, price_adult AS price,
+                       (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
+                FROM tourist_activities
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
+                HAVING distance < 50
+                ORDER BY distance ASC
+                LIMIT 6
+            ");
+            $stmt->execute([$lat, $lng, $lat]);
+        } else {
+            $stmt = $pdo->prepare("
+                SELECT id, name, slug, municipality, province, category_id, photo1 AS main_image,
+                       latitude, longitude, price_adult AS price, 0 AS distance
+                FROM tourist_activities
+                WHERE is_active = 1 AND province = ?
+                ORDER BY RAND()
+                LIMIT 6
+            ");
+            $stmt->execute([$prov]);
+        }
+        $actividades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($actividades as &$act) {
+            $act['distance'] = round((float)$act['distance'], 1);
+            $act['url'] = '/actividad/' . $act['slug'];
+        }
+        $result['actividades'] = $actividades;
+
         // Eventos similares (misma categoría o provincia, excluyendo el actual)
         $stmt = $pdo->prepare("
             SELECT id, name, slug, start_date, end_date, municipality, province,
-                   is_free, ticket_price, photo1, poster_image, category_id
+                   is_free, ticket_price, photo1, poster_image, category_id,
+                   latitude, longitude
             FROM cultural_events
             WHERE is_active = 1
               AND slug != ?
@@ -125,6 +159,11 @@ try {
         }
         $result['eventos_similares'] = $similares;
         $result['limit_initial'] = $limit_initial;
+
+        // Contador de visitas del evento actual (incrementar)
+        try {
+            $pdo->prepare("UPDATE cultural_events SET views = COALESCE(views, 0) + 1 WHERE slug = ?")->execute([$slug]);
+        } catch (Exception $e) { /* columna views puede no existir */ }
 
         echo json_encode(['success' => true, 'data' => $result]);
         exit;

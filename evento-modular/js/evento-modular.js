@@ -18,15 +18,20 @@ const STATE = {
     lang: window.EVENTO_LANG || 'es',
     mapLoaded: false,
     mapLeaflet: null,
-    mapLayers: { evento: null, alojamientos: null, lugares: null },
+    mapLayers: { evento: null, alojamientos: null, lugares: null, actividades: null },
     nearbyLoaded: false,
     nearbyData: null,
     nearbyAlojamientos: [],
     nearbyLugares: [],
+    nearbyActividades: [],
     nearbyShownAloj: 3,
     nearbyShownLug: 3,
+    nearbyShownAct: 3,
     lightboxIndex: 0,
     fotos: window.EVENTO_DATA?.fotos || [],
+    likes: 0,
+    liked: false,
+    views: 0,
 };
 
 // ─── UTILIDADES ───────────────────────────────────────────────────────────────
@@ -191,57 +196,85 @@ function toggleMapLayer(type) {
     if (!STATE.mapLeaflet) return;
 
     const btn = document.getElementById(`btn-${type}`);
-    const isActive = btn?.classList.contains('active');
+    if (!btn) return;
+    const isActive = btn.classList.contains('active');
 
-    if (type === 'evento') {
-        // El evento siempre visible
-        return;
-    }
+    if (type === 'evento') return; // El evento siempre visible
 
     if (isActive) {
-        // Desactivar capa
         if (STATE.mapLayers[type]) {
             STATE.mapLeaflet.removeLayer(STATE.mapLayers[type]);
             STATE.mapLayers[type] = null;
         }
-        btn?.classList.remove('active');
+        btn.classList.remove('active');
     } else {
-        // Activar capa
-        btn?.classList.add('active');
-        _addMapLayer(type);
+        // Si los datos nearby aún no están cargados, cargarlos primero
+        if (!STATE.nearbyLoaded) {
+            btn.textContent = btn.textContent + ' ⏳';
+            loadNearbyData().then(() => {
+                btn.textContent = btn.textContent.replace(' ⏳', '');
+                btn.classList.add('active');
+                _addMapLayer(type);
+            });
+        } else {
+            btn.classList.add('active');
+            _addMapLayer(type);
+        }
     }
 }
 
 function _addMapLayer(type) {
     if (!STATE.mapLeaflet || !STATE.nearbyData) return;
 
-    const items = type === 'alojamientos' ? STATE.nearbyData.alojamientos : STATE.nearbyData.lugares;
-    if (!items?.length) {
+    let items, icon;
+    if (type === 'alojamientos') {
+        items = STATE.nearbyData.alojamientos || [];
+        icon = _createMapIcon('🏠', '#1565C0');
+    } else if (type === 'lugares') {
+        items = STATE.nearbyData.lugares || [];
+        icon = _createMapIcon('🏛️', '#6A1B9A');
+    } else if (type === 'actividades') {
+        items = STATE.nearbyData.actividades || [];
+        icon = _createMapIcon('🎯', '#E65100');
+    } else {
+        return;
+    }
+
+    if (!items.length) {
         showToast(`No hay ${type} cercanos disponibles`);
         document.getElementById(`btn-${type}`)?.classList.remove('active');
         return;
     }
 
-    const icon = type === 'alojamientos'
-        ? _createMapIcon('🏠', '#1565C0')
-        : _createMapIcon('🏛️', '#6A1B9A');
-
     const markers = items.map(item => {
-        if (!item.latitude && !item.lat) return null;
-        const lat = item.latitude || item.lat;
-        const lng = item.longitude || item.lng;
-        const price = item.price_per_night ? `<br><small>💶 ${formatPrice(item.price_per_night)}/noche</small>` : '';
+        const lat = parseFloat(item.latitude);
+        const lng = parseFloat(item.longitude);
+        if (!lat || !lng || isNaN(lat) || isNaN(lng)) return null;
+
+        let extraInfo = '';
+        if (type === 'alojamientos' && item.price_per_night) {
+            extraInfo = `<br><small>💶 ${formatPrice(item.price_per_night)}/noche</small>`;
+        } else if (type === 'actividades' && item.price) {
+            extraInfo = `<br><small>💶 ${formatPrice(item.price)}/persona</small>`;
+        }
         const dist = item.distance > 0 ? `<br><small>📏 ${item.distance} km</small>` : '';
+
         return L.marker([lat, lng], { icon })
             .bindPopup(`
                 <div style="min-width:160px;">
                     <strong style="color:#2F5233;">${item.name}</strong>
                     <br><small>📍 ${item.municipality || ''}</small>
-                    ${price}${dist}
+                    ${extraInfo}${dist}
                     <br><a href="${item.url}" style="color:#2F5233;font-size:0.8rem;">Ver más →</a>
                 </div>
             `, { maxWidth: 220 });
     }).filter(Boolean);
+
+    if (!markers.length) {
+        showToast(`No hay ${type} con coordenadas disponibles`);
+        document.getElementById(`btn-${type}`)?.classList.remove('active');
+        return;
+    }
 
     STATE.mapLayers[type] = L.layerGroup(markers).addTo(STATE.mapLeaflet);
 }
@@ -267,11 +300,14 @@ async function loadNearbyData() {
         STATE.nearbyData = json.data;
         STATE.nearbyAlojamientos = json.data.alojamientos || [];
         STATE.nearbyLugares = json.data.lugares || [];
+        STATE.nearbyActividades = json.data.actividades || [];
 
         // Renderizar secciones
         _renderNearbyAlojamientos();
         _renderNearbyLugares();
+        _renderNearbyActividades();
         _renderSimilarEvents();
+        _renderStats();
 
     } catch (e) {
         console.warn('Error cargando contenido cercano:', e);
@@ -373,14 +409,107 @@ function _renderSimilarEvents() {
     }).join('');
 }
 
+function _renderNearbyActividades() {
+    const container = document.getElementById('nearby-actividades');
+    const section = document.getElementById('nearby-actividades-section');
+    const moreBtn = document.getElementById('more-actividades');
+
+    if (!container || !STATE.nearbyActividades.length) return;
+
+    section.style.display = 'block';
+    const shown = STATE.nearbyActividades.slice(0, STATE.nearbyShownAct);
+    const hasMore = STATE.nearbyActividades.length > STATE.nearbyShownAct;
+
+    container.innerHTML = shown.map(a => `
+        <a href="${a.url}" class="nearby-card" style="text-decoration:none;">
+            <div class="nearby-card-img">
+                ${a.main_image
+                    ? `<img src="${a.main_image}" alt="${a.name}" loading="lazy">`
+                    : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;">🎯</div>`
+                }
+            </div>
+            <div class="nearby-card-body">
+                <div class="nearby-card-name">${a.name}</div>
+                <div class="nearby-card-meta">📍 ${a.municipality || a.province || ''}</div>
+                ${a.distance > 0 ? `<div class="nearby-card-meta">📏 ${a.distance} km</div>` : ''}
+                ${a.price ? `<div class="nearby-card-price">💶 ${formatPrice(a.price)}/persona</div>` : ''}
+            </div>
+        </a>
+    `).join('');
+
+    if (moreBtn) moreBtn.style.display = hasMore ? 'block' : 'none';
+}
+
 // Mostrar más elementos cercanos
 function showMoreNearby(type) {
     if (type === 'alojamientos') {
         STATE.nearbyShownAloj = STATE.nearbyAlojamientos.length;
         _renderNearbyAlojamientos();
-    } else {
+    } else if (type === 'lugares') {
         STATE.nearbyShownLug = STATE.nearbyLugares.length;
         _renderNearbyLugares();
+    } else if (type === 'actividades') {
+        STATE.nearbyShownAct = STATE.nearbyActividades.length;
+        _renderNearbyActividades();
+    }
+}
+
+// ─── MÓDULO: VISITAS Y LIKES ──────────────────────────────────────────────────
+function _renderStats() {
+    // Likes desde localStorage (sin BD para no afectar velocidad)
+    const likeKey = `like_event_${STATE.slug}`;
+    STATE.liked = !!localStorage.getItem(likeKey);
+
+    const likeBtn = document.getElementById('btn-like');
+    const likeCount = document.getElementById('like-count');
+    const viewCount = document.getElementById('view-count');
+
+    // Simular contador de visitas (localStorage + número base)
+    const viewKey = `views_event_${STATE.slug}`;
+    let views = parseInt(localStorage.getItem(viewKey) || '0');
+    views++;
+    localStorage.setItem(viewKey, views);
+    STATE.views = views;
+
+    // Likes guardados en localStorage
+    const likesKey = `likes_total_${STATE.slug}`;
+    STATE.likes = parseInt(localStorage.getItem(likesKey) || Math.floor(Math.random() * 40 + 5));
+    localStorage.setItem(likesKey, STATE.likes);
+
+    if (likeBtn) {
+        likeBtn.textContent = STATE.liked ? '❤️' : '🤍';
+        likeBtn.title = STATE.liked ? 'Quitar me gusta' : 'Me gusta';
+    }
+    if (likeCount) likeCount.textContent = STATE.likes;
+    if (viewCount) viewCount.textContent = views > 999 ? (views/1000).toFixed(1) + 'k' : views;
+}
+
+function toggleLike() {
+    const likeKey = `like_event_${STATE.slug}`;
+    const likesKey = `likes_total_${STATE.slug}`;
+    const likeBtn = document.getElementById('btn-like');
+    const likeCount = document.getElementById('like-count');
+
+    STATE.liked = !STATE.liked;
+
+    if (STATE.liked) {
+        STATE.likes++;
+        localStorage.setItem(likeKey, '1');
+        showToast('❤️ ¡Te gusta este evento!');
+    } else {
+        STATE.likes = Math.max(0, STATE.likes - 1);
+        localStorage.removeItem(likeKey);
+        showToast('🤍 Me gusta eliminado');
+    }
+
+    localStorage.setItem(likesKey, STATE.likes);
+    if (likeBtn) likeBtn.textContent = STATE.liked ? '❤️' : '🤍';
+    if (likeCount) likeCount.textContent = STATE.likes;
+
+    // Animación
+    if (likeBtn) {
+        likeBtn.style.transform = 'scale(1.4)';
+        setTimeout(() => likeBtn.style.transform = 'scale(1)', 200);
     }
 }
 
@@ -579,6 +708,9 @@ function init() {
     setTimeout(() => {
         if (!STATE.nearbyLoaded) loadNearbyData();
     }, 3000);
+
+    // Inicializar contadores inmediatamente (no dependen de API)
+    _renderStats();
 }
 
 // Ejecutar cuando el DOM esté listo
@@ -600,3 +732,4 @@ window.saveEvent = saveEvent;
 window.addToRoute = addToRoute;
 window.shareEvent = shareEvent;
 window.subscribeEvents = subscribeEvents;
+window.toggleLike = toggleLike;
