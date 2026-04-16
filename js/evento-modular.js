@@ -193,13 +193,24 @@ function _createMapIcon(emoji, color) {
 }
 
 function toggleMapLayer(type) {
-    if (!STATE.mapLeaflet) return;
-
     const btn = document.getElementById(`btn-${type}`);
     if (!btn) return;
-    const isActive = btn.classList.contains('active');
 
     if (type === 'evento') return; // El evento siempre visible
+
+    const isActive = btn.classList.contains('active');
+
+    // Si el mapa NO está cargado aún, cargarlo primero y luego añadir la capa
+    if (!STATE.mapLeaflet) {
+        btn.textContent = btn.textContent + ' ⏳';
+        // Cargar el mapa y esperar a que esté listo
+        _initMapAndThen(() => {
+            btn.textContent = btn.textContent.replace(' ⏳', '');
+            btn.classList.add('active');
+            _ensureNearbyAndAddLayer(type);
+        });
+        return;
+    }
 
     if (isActive) {
         if (STATE.mapLayers[type]) {
@@ -208,18 +219,43 @@ function toggleMapLayer(type) {
         }
         btn.classList.remove('active');
     } else {
-        // Si los datos nearby aún no están cargados, cargarlos primero
-        if (!STATE.nearbyLoaded) {
-            btn.textContent = btn.textContent + ' ⏳';
-            loadNearbyData().then(() => {
-                btn.textContent = btn.textContent.replace(' ⏳', '');
-                btn.classList.add('active');
-                _addMapLayer(type);
-            });
-        } else {
-            btn.classList.add('active');
-            _addMapLayer(type);
+        btn.classList.add('active');
+        _ensureNearbyAndAddLayer(type);
+    }
+}
+
+// Carga el mapa y ejecuta callback cuando esté listo
+function _initMapAndThen(callback) {
+    if (STATE.mapLeaflet) { callback(); return; }
+
+    // Escuchar cuando el mapa esté listo
+    const checkInterval = setInterval(() => {
+        if (STATE.mapLeaflet) {
+            clearInterval(checkInterval);
+            callback();
         }
+    }, 100);
+
+    // Iniciar carga del mapa
+    initMap();
+
+    // Timeout de seguridad (5s)
+    setTimeout(() => clearInterval(checkInterval), 5000);
+}
+
+// Asegura que los datos nearby estén cargados y añade la capa
+function _ensureNearbyAndAddLayer(type) {
+    if (!STATE.nearbyLoaded) {
+        const btn = document.getElementById(`btn-${type}`);
+        if (btn && !btn.textContent.includes('⏳')) {
+            btn.textContent = btn.textContent + ' ⏳';
+        }
+        loadNearbyData().then(() => {
+            if (btn) btn.textContent = btn.textContent.replace(' ⏳', '');
+            _addMapLayer(type);
+        });
+    } else {
+        _addMapLayer(type);
     }
 }
 
