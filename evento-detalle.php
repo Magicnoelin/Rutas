@@ -114,11 +114,7 @@ if ($evento) {
 $foto_og = !empty($fotos[0]) ? $fotos[0] : 'https://rutasrurales.io/menu_images/og-default.jpg';
 
 // ─── TRADUCCIONES DE UI ───────────────────────────────────────────────────────
-// Cargadas desde api/ui-translations.php (define $ui con los 5 idiomas)
-require_once __DIR__ . '/api/ui-translations.php';
-
-// Bloque de compatibilidad: si el require falla, definir $ui mínimo
-if (!isset($ui)) $ui = ['es' => [
+$ui = ['es' => [
         'categorias' => [
             1=>'Fiestas Populares',2=>'Fiestas Patronales',3=>'Fiestas Tradicionales',
             4=>'Romerías',5=>'Carnavales',6=>'Cultura y Espectáculos',7=>'Conciertos',
