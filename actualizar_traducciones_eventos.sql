@@ -23,7 +23,7 @@ WHERE ce.is_active = 1
 
 -- 2. INSERTAR TRADUCCIONES FALTANTES PARA INGLÉS
 INSERT INTO cultural_events_trads 
-(event_id, language_code, name, slug, short_description, description, program, target_audience, accessibility, meta_title, meta_description, created_at, updated_at)
+(event_id, language_code, name, slug, short_description, description, program, target_audience, accessibility, meta_title, meta_description)
 SELECT 
     id,
     'en',
@@ -45,9 +45,7 @@ SELECT
     'International tourists, culture enthusiasts, families',
     'Wheelchair accessible, family-friendly, multilingual information available',
     CONCAT(name, ' | Traditional Festival in Spain'),
-    CONCAT('Experience the ', name, ' in ', venue_name, ', ', province, '. Traditional Spanish festival with cultural activities, local food, and authentic celebrations. Perfect for international tourists.'),
-    NOW(),
-    NOW()
+    CONCAT('Experience the ', name, ' in ', venue_name, ', ', province, '. Traditional Spanish festival with cultural activities, local food, and authentic celebrations. Perfect for international tourists.')
 FROM cultural_events
 WHERE is_active = 1 
     AND (start_date >= '2026-04-01' OR end_date >= '2026-04-01')
@@ -55,13 +53,13 @@ WHERE is_active = 1
 
 -- 3. INSERTAR TRADUCCIONES FALTANTES PARA FRANCÉS
 INSERT INTO cultural_events_trads 
-(event_id, language_code, name, slug, short_description, description, program, target_audience, accessibility, meta_title, meta_description, created_at, updated_at)
+(event_id, language_code, name, slug, short_description, description, program, target_audience, accessibility, meta_title, meta_description)
 SELECT 
     id,
     'fr',
     name,
     CONCAT(slug, '-fete-traditionnelle-espagne'),
-    CONCAT('Fête traditionnelle à ', venue_name, ', ', province, ' mettant en valeur la culture locale, la musique et les traditions.'),
+    CONCAT('Fête traditionnelle à ', venue_name, ', ', province, ' mettant en valeur la culture locale, la música y las tradiciones.'),
     CONCAT('<p>Le ', name, ' est l\'une des fêtes traditionnelles les plus importantes de ', province, ', Espagne. Cette célébration annuelle réunit habitants et visiteurs pour vivre une expérience authentique de la culture espagnole.</p>
 <p>Points forts :</p>
 <ul>
@@ -77,9 +75,7 @@ SELECT
     'Touristes internationaux, amateurs de culture, familles',
     'Accessible aux fauteuils roulants, adapté aux familles, informations multilingues disponibles',
     CONCAT(name, ' | Fête Traditionnelle en Espagne'),
-    CONCAT('Vivez le ', name, ' à ', venue_name, ', ', province, '. Fête traditionnelle espagnole avec activités culturelles, nourriture locale et célébrations authentiques. Parfait pour les touristes internationaux.'),
-    NOW(),
-    NOW()
+    CONCAT('Vivez le ', name, ' à ', venue_name, ', ', province, '. Fête traditionnelle espagnole avec activités culturelles, nourriture locale et célébrations authentiques. Parfait pour les touristes internationaux.')
 FROM cultural_events
 WHERE is_active = 1 
     AND (start_date >= '2026-04-01' OR end_date >= '2026-04-01')
@@ -87,31 +83,29 @@ WHERE is_active = 1
 
 -- 4. INSERTAR TRADUCCIONES FALTANTES PARA ALEMÁN
 INSERT INTO cultural_events_trads 
-(event_id, language_code, name, slug, short_description, description, program, target_audience, accessibility, meta_title, meta_description, created_at, updated_at)
+(event_id, language_code, name, slug, short_description, description, program, target_audience, accessibility, meta_title, meta_description)
 SELECT 
     id,
     'de',
     name,
     CONCAT(slug, '-traditionelles-fest-spanien'),
     CONCAT('Traditionelles Fest in ', venue_name, ', ', province, ' mit lokaler Kultur, Musik und Traditionen.'),
-    CONCAT('<p>Das ', name, ' ist eines der wichtigsten traditionellen Feste in ', province, ', Spanien. Diese jährliche Feier bringt Einheimische und Besucher zusammen, um authentische spanische Kultur zu erleben.</p>
-<p>Höhepunkte:</p>
+    CONCAT('<p>Das ', name, ' ist eines der wichtigsten traditionellen Feste in ', province, ', Spanien. Esta celebración anual reúne a locales y visitantes para experimentar la auténtica cultura española.</p>
+<p>Puntos destacados:</p>
 <ul>
-<li>Traditionelle Musik- und Tanzvorführungen</li>
-<li>Lokale Gastronomie und Essensstände</li>
-<li>Kulturausstellungen und Workshops</li>
-<li>Familienfreundliche Aktivitäten</li>
-<li>Religiöse Prozessionen (falls zutreffend)</li>
+<li>Espectáculos de música y danza tradicionales</li>
+<li>Gastronomía local y puestos de comida</li>
+<li>Exposiciones y talleres culturales</li>
+<li>Actividades familiares</li>
+<li>Procesiones religiosas (si aplica)</li>
 </ul>
-<p>Daten: ', start_date, IF(end_date IS NOT NULL, CONCAT(' bis ', end_date), ''), '</p>
-<p>Ort: ', venue_name, ', ', province, ', Spanien</p>'),
-    'Tagesprogramm beinhaltet morgendliche Aktivitäten, nachmittägliche Kulturveranstaltungen und abendliche Feiern mit música y espectáculos tradicionales.',
-    'Internationale Touristen, Kulturliebhaber, Familien',
-    'Rollstuhlgerecht, familienfreundlich, mehrsprachige Informationen verfügbar',
-    CONCAT(name, ' | Traditionelles Fest in Spanien'),
-    CONCAT('Erleben Sie das ', name, ' in ', venue_name, ', ', province, '. Traditionelles spanisches Fest mit kulturellen Aktivitäten, lokaler Küche y celebraciones auténticas. Perfekt für internationale Touristen.'),
-    NOW(),
-    NOW()
+<p>Fechas: ', start_date, IF(end_date IS NOT NULL, CONCAT(' hasta ', end_date), ''), '</p>
+<p>Ubicación: ', venue_name, ', ', province, ', España</p>'),
+    'Programa diario incluye actividades matutinas, eventos culturales por la tarde y celebraciones nocturnas con música y espectáculos tradicionales.',
+    'Turistas internacionales, amantes de la cultura, familias',
+    'Accesible en silla de ruedas, familiar, información multilingüe disponible',
+    CONCAT(name, ' | Fiesta Tradicional en España'),
+    CONCAT('Vive el ', name, ' en ', venue_name, ', ', province, '. Fiesta tradicional española con actividades culturales, comida local y celebraciones auténticas. Perfecto para turistas internacionales.')
 FROM cultural_events
 WHERE is_active = 1 
     AND (start_date >= '2026-04-01' OR end_date >= '2026-04-01')
@@ -119,7 +113,7 @@ WHERE is_active = 1
 
 -- 5. INSERTAR TRADUCCIONES FALTANTES PARA CHINO
 INSERT INTO cultural_events_trads 
-(event_id, language_code, name, slug, short_description, description, program, target_audience, accessibility, meta_title, meta_description, created_at, updated_at)
+(event_id, language_code, name, slug, short_description, description, program, target_audience, accessibility, meta_title, meta_description)
 SELECT 
     id,
     'zh',
@@ -141,9 +135,7 @@ SELECT
     '国际游客, 文化爱好者, 家庭',
     '轮椅通道, 适合家庭, 提供多语言信息',
     CONCAT(name, ' | 西班牙传统节日'),
-    CONCAT('体验西班牙', province, ' ', venue_name, '的', name, '。西班牙传统节日，包含文化活动、当地美食和地道庆祝。非常适合国际游客。'),
-    NOW(),
-    NOW()
+    CONCAT('体验西班牙', province, ' ', venue_name, '的', name, '。西班牙传统节日，包含文化活动、当地美食和地道庆祝。非常适合国际游客。')
 FROM cultural_events
 WHERE is_active = 1 
     AND (start_date >= '2026-04-01' OR end_date >= '2026-04-01')
