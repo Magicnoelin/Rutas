@@ -1,0 +1,21 @@
+-- ============================================================
+-- SISTEMA DE RUTAS TEMÁTICAS - rutasrurales.io
+-- ARCHIVO CANÓNICO: rutas-tematicas/sql/setup.sql
+--
+-- Este archivo es un alias. Usa el archivo completo en:
+--   rutas-tematicas/sql/setup.sql
+--
+-- Ese archivo incluye:
+--   - CREATE TABLE IF NOT EXISTS routes (con todas las columnas)
+--   - CREATE TABLE IF NOT EXISTS route_items (con todas las columnas)
+--   - ALTER TABLE IF NOT EXISTS (para tablas ya existentes)
+--   - Índices de rendimiento
+--   - INSERT seguro de la ruta puente-1-mayo-soria
+--   - INSERT seguro de los route_items
+--   - SELECT de verificación final
+-- ============================================================
+
+-- INSTRUCCIONES:
+--   1. Abre phpMyAdmin → selecciona u412199647_Rutas
+--   2. Pestaña SQL → importa o pega rutas-tematicas/sql/setup.sql
+--   3. Ajusta los item_id a los IDs reales de tu BD antes de ejecutar

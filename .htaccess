@@ -111,6 +111,13 @@ RewriteRule ^alojamientos-turisticos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
 RewriteRule ^lugares-interes/([^/]+)/?$ /lugar/$1 [R=301,L]
 
 # ============================================================
+# 5b. RUTAS TEMÁTICAS — URL limpia /rutas/{slug}
+# ============================================================
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^rutas/([a-z0-9\-]+)/?$ rutas-tematicas/index.php?slug=$1 [L,QSA]
+
+# ============================================================
 # 6. MOTOR INTERNO (No cambian la URL del navegador)
 # ============================================================
 RewriteRule ^alojamiento/([^/]+)/?$ redirect_manager.php?type=alojamiento&slug=$1 [L,QSA]

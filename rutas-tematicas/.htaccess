@@ -1,0 +1,15 @@
+# ============================================================
+# RUTAS TEMÁTICAS — .htaccess
+# URL limpia: /rutas/{slug} → rutas-tematicas/index.php?slug={slug}
+# ============================================================
+
+RewriteEngine On
+RewriteBase /rutas-tematicas/
+
+# Permitir acceso directo a archivos reales (css, js, php)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirigir /rutas-tematicas/{slug} → index.php?slug={slug}
+RewriteRule ^([a-z0-9\-]+)/?$ index.php?slug=$1 [L,QSA]
