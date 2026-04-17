@@ -183,39 +183,11 @@ try {
         }
     }
 
-    // 3d. Eventos (dinámico por fechas del itinerario)
-    $fechaInicio = $fechaFin = null;
-    if (!empty($ruta['itinerary_json'])) {
-        $dias = $ruta['itinerary_json'];
-        if (!empty($dias[0]['fecha'])) $fechaInicio = $dias[0]['fecha'];
-        if (!empty($dias[count($dias)-1]['fecha'])) $fechaFin = $dias[count($dias)-1]['fecha'];
-    }
-    if ($fechaInicio && $fechaFin) {
-        $stmtEv = $pdo->prepare("
-            SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
-                   e.venue_name, e.municipality, e.province,
-                   e.start_date, e.end_date, e.start_time,
-                   e.is_free, e.ticket_price, e.ticket_url,
-                   e.organizer, e.poster_image, e.photo1
-            FROM cultural_events e
-            WHERE e.is_active = 1
-              AND e.start_date <= :fin
-              AND COALESCE(e.end_date, e.start_date) >= :ini
-            ORDER BY e.start_date ASC LIMIT 12
-        ");
-        $stmtEv->execute([':ini' => $fechaInicio, ':fin' => $fechaFin]);
-        foreach ($stmtEv->fetchAll(PDO::FETCH_ASSOC) as $e) {
-            $img = $e['poster_image'] ?: $e['photo1'] ?: null;
-            if ($img && !preg_match('/^https?:\/\//', $img)) {
-                $img = 'https://rutasrurales.io/cultural_events_images/' . basename($img);
-            }
-            $e['imagen'] = $img;
-            $e['precio_display'] = $e['is_free'] ? 'Entrada gratuita'
-                : (!empty($e['ticket_price']) ? number_format($e['ticket_price'], 2) . '€' : 'Consultar precio');
-            $e['url'] = 'https://rutasrurales.io/evento/' . ($e['slug'] ?? '');
-            $eventos[] = $e;
-        }
-    } elseif (!empty($ids['event'])) {
+    // 3d. Eventos
+    // Prioridad 1: items de tipo 'event' añadidos manualmente en el gestor
+    // Prioridad 2: búsqueda automática por fecha + provincia del itinerario
+    if (!empty($ids['event'])) {
+        // Eventos seleccionados manualmente → mostrar siempre estos
         $ph = implode(',', array_fill(0, count($ids['event']), '?'));
         $stmtEv2 = $pdo->prepare("
             SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
@@ -239,6 +211,50 @@ try {
             $e['url'] = 'https://rutasrurales.io/evento/' . ($e['slug'] ?? '');
             $eventos[] = $e;
         }
+    } else {
+        // Búsqueda automática: SOLO si hay fechas en el itinerario Y filtra por provincia
+        $fechaInicio = $fechaFin = null;
+        if (!empty($ruta['itinerary_json'])) {
+            $dias = $ruta['itinerary_json'];
+            // Buscar primera y última fecha válida en el JSON
+            foreach ($dias as $dia) {
+                if (!empty($dia['fecha']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $dia['fecha'])) {
+                    if (!$fechaInicio) $fechaInicio = $dia['fecha'];
+                    $fechaFin = $dia['fecha'];
+                }
+            }
+        }
+
+        if ($fechaInicio && $fechaFin && !empty($provincia)) {
+            // Filtrar por fecha Y provincia para no mezclar eventos de otras zonas
+            $stmtEv = $pdo->prepare("
+                SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
+                       e.venue_name, e.municipality, e.province,
+                       e.start_date, e.end_date, e.start_time,
+                       e.is_free, e.ticket_price, e.ticket_url,
+                       e.organizer, e.poster_image, e.photo1
+                FROM cultural_events e
+                WHERE e.is_active = 1
+                  AND e.province = :prov
+                  AND e.start_date <= :fin
+                  AND COALESCE(e.end_date, e.start_date) >= :ini
+                ORDER BY e.start_date ASC
+                LIMIT 12
+            ");
+            $stmtEv->execute([':prov' => $provincia, ':ini' => $fechaInicio, ':fin' => $fechaFin]);
+            foreach ($stmtEv->fetchAll(PDO::FETCH_ASSOC) as $e) {
+                $img = $e['poster_image'] ?: $e['photo1'] ?: null;
+                if ($img && !preg_match('/^https?:\/\//', $img)) {
+                    $img = 'https://rutasrurales.io/cultural_events_images/' . basename($img);
+                }
+                $e['imagen'] = $img;
+                $e['precio_display'] = $e['is_free'] ? 'Entrada gratuita'
+                    : (!empty($e['ticket_price']) ? number_format($e['ticket_price'], 2) . '€' : 'Consultar precio');
+                $e['url'] = 'https://rutasrurales.io/evento/' . ($e['slug'] ?? '');
+                $eventos[] = $e;
+            }
+        }
+        // Si no hay fechas en el itinerario o no hay provincia → no mostrar eventos aleatorios
     }
 
     // Incrementar visitas
