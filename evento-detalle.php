@@ -113,18 +113,330 @@ if ($evento) {
 }
 $foto_og = !empty($fotos[0]) ? $fotos[0] : 'https://rutasrurales.io/menu_images/og-default.jpg';
 
-// Categorías
-$categorias = [
-    1=>'Fiestas Populares',2=>'Fiestas Patronales',3=>'Fiestas Tradicionales',
-    4=>'Romerías',5=>'Carnavales',6=>'Cultura y Espectáculos',7=>'Conciertos',
-    8=>'Teatro',9=>'Exposiciones',10=>'Festivales de Música',11=>'Cine',
-    12=>'Gastronomía y Ferias',13=>'Ferias Gastronómicas',14=>'Jornadas Gastronómicas',
-    15=>'Mercados Tradicionales',16=>'Ferias de Productos Locales',17=>'Deportes',
-    18=>'Carreras Populares',19=>'Maratones y Medias',20=>'Competiciones Ciclistas',
-    21=>'Eventos Deportivos',22=>'Religión y Tradición',23=>'Semana Santa',
-    24=>'Procesiones',25=>'Celebraciones Religiosas'
+// ─── TRADUCCIONES DE UI ───────────────────────────────────────────────────────
+$ui = [
+    'es' => [
+        'categorias' => [
+            1=>'Fiestas Populares',2=>'Fiestas Patronales',3=>'Fiestas Tradicionales',
+            4=>'Romerías',5=>'Carnavales',6=>'Cultura y Espectáculos',7=>'Conciertos',
+            8=>'Teatro',9=>'Exposiciones',10=>'Festivales de Música',11=>'Cine',
+            12=>'Gastronomía y Ferias',13=>'Ferias Gastronómicas',14=>'Jornadas Gastronómicas',
+            15=>'Mercados Tradicionales',16=>'Ferias de Productos Locales',17=>'Deportes',
+            18=>'Carreras Populares',19=>'Maratones y Medias',20=>'Competiciones Ciclistas',
+            21=>'Eventos Deportivos',22=>'Religión y Tradición',23=>'Semana Santa',
+            24=>'Procesiones',25=>'Celebraciones Religiosas'
+        ],
+        'gratis'           => 'Gratis',
+        'consultar'        => 'Consultar',
+        'sobre_evento'     => '📋 Sobre el evento',
+        'programa'         => '📅 Programa',
+        'publico'          => '👥 Público',
+        'accesibilidad'    => '♿ Accesibilidad',
+        'info_evento'      => 'ℹ️ Información del evento',
+        'fecha_inicio'     => 'Fecha inicio',
+        'fecha_fin'        => 'Fecha fin',
+        'ubicacion'        => 'Ubicación',
+        'direccion'        => 'Dirección',
+        'categoria'        => 'Categoría',
+        'precio'           => 'Precio',
+        'organiza'         => 'Organiza',
+        'ver_mapa'         => 'Ver en el mapa',
+        'click_mapa'       => 'Haz clic para cargar el mapa interactivo',
+        'btn_evento'       => '📍 Evento',
+        'btn_alojamientos' => '🏠 Alojamientos',
+        'btn_lugares'      => '🏛️ Lugares',
+        'btn_actividades'  => '🎯 Actividades',
+        'aloj_cercanos'    => '🏠 Alojamientos cercanos',
+        'ver_mas_aloj'     => 'Ver más alojamientos',
+        'lugares_cercanos' => '🏛️ Lugares de interés cercanos',
+        'ver_mas_lugares'  => 'Ver más lugares',
+        'activ_cercanas'   => '🎯 Actividades turísticas cercanas',
+        'ver_mas_activ'    => 'Ver más actividades',
+        'eventos_similares'=> '🎭 Eventos similares',
+        'cta_titulo'       => '¡No te pierdas ningún evento!',
+        'cta_desc'         => 'Regístrate gratis y recibe alertas de eventos similares en',
+        'cta_register'     => '✨ Registrarme gratis',
+        'cta_login'        => 'Ya tengo cuenta',
+        'visitas'          => 'Visitas',
+        'likes'            => 'likes',
+        'guardar'          => '🔖 Guardar evento',
+        'anadir_ruta'      => '🗺️ Añadir a mi ruta',
+        'suscripcion_titulo'=> 'Eventos similares',
+        'suscripcion_desc' => 'Avísame cuando haya eventos de',
+        'suscripcion_en'   => 'en',
+        'suscripcion_btn'  => '🔔 Suscribirme',
+        'no_encontrado_h1' => 'Evento no encontrado',
+        'no_encontrado_p'  => 'El evento que buscas no existe o ya no está disponible.',
+        'ver_todos'        => 'Ver todos los eventos',
+        'aviso_legal'      => 'Aviso Legal',
+        'cookies'          => 'Cookies',
+        'agradecimientos'  => 'Agradecimientos',
+        'eventos_link'     => 'Eventos',
+        'aloj_link'        => 'Alojamientos',
+        'acceder_link'     => 'Acceder',
+        'cultura_fallback' => 'Cultura',
+        'dias'             => 'días',
+        'al'               => 'al',
+    ],
+    'en' => [
+        'categorias' => [
+            1=>'Popular Festivals',2=>'Patron Saint Festivals',3=>'Traditional Festivals',
+            4=>'Pilgrimages',5=>'Carnivals',6=>'Culture & Shows',7=>'Concerts',
+            8=>'Theatre',9=>'Exhibitions',10=>'Music Festivals',11=>'Cinema',
+            12=>'Gastronomy & Fairs',13=>'Gastronomic Fairs',14=>'Gastronomic Days',
+            15=>'Traditional Markets',16=>'Local Product Fairs',17=>'Sports',
+            18=>'Popular Races',19=>'Marathons & Half-Marathons',20=>'Cycling Competitions',
+            21=>'Sporting Events',22=>'Religion & Tradition',23=>'Holy Week',
+            24=>'Processions',25=>'Religious Celebrations'
+        ],
+        'gratis'           => 'Free',
+        'consultar'        => 'Check price',
+        'sobre_evento'     => '📋 About the event',
+        'programa'         => '📅 Programme',
+        'publico'          => '👥 Audience',
+        'accesibilidad'    => '♿ Accessibility',
+        'info_evento'      => 'ℹ️ Event information',
+        'fecha_inicio'     => 'Start date',
+        'fecha_fin'        => 'End date',
+        'ubicacion'        => 'Location',
+        'direccion'        => 'Address',
+        'categoria'        => 'Category',
+        'precio'           => 'Price',
+        'organiza'         => 'Organiser',
+        'ver_mapa'         => 'View on map',
+        'click_mapa'       => 'Click to load the interactive map',
+        'btn_evento'       => '📍 Event',
+        'btn_alojamientos' => '🏠 Accommodation',
+        'btn_lugares'      => '🏛️ Places',
+        'btn_actividades'  => '🎯 Activities',
+        'aloj_cercanos'    => '🏠 Nearby accommodation',
+        'ver_mas_aloj'     => 'View more accommodation',
+        'lugares_cercanos' => '🏛️ Nearby places of interest',
+        'ver_mas_lugares'  => 'View more places',
+        'activ_cercanas'   => '🎯 Nearby tourist activities',
+        'ver_mas_activ'    => 'View more activities',
+        'eventos_similares'=> '🎭 Similar events',
+        'cta_titulo'       => 'Don\'t miss any event!',
+        'cta_desc'         => 'Sign up for free and receive alerts for similar events in',
+        'cta_register'     => '✨ Sign up free',
+        'cta_login'        => 'I already have an account',
+        'visitas'          => 'Views',
+        'likes'            => 'likes',
+        'guardar'          => '🔖 Save event',
+        'anadir_ruta'      => '🗺️ Add to my route',
+        'suscripcion_titulo'=> 'Similar events',
+        'suscripcion_desc' => 'Notify me when there are events of',
+        'suscripcion_en'   => 'in',
+        'suscripcion_btn'  => '🔔 Subscribe',
+        'no_encontrado_h1' => 'Event not found',
+        'no_encontrado_p'  => 'The event you are looking for does not exist or is no longer available.',
+        'ver_todos'        => 'View all events',
+        'aviso_legal'      => 'Legal Notice',
+        'cookies'          => 'Cookies',
+        'agradecimientos'  => 'Acknowledgements',
+        'eventos_link'     => 'Events',
+        'aloj_link'        => 'Accommodation',
+        'acceder_link'     => 'Log in',
+        'cultura_fallback' => 'Culture',
+        'dias'             => 'days',
+        'al'               => 'to',
+    ],
+    'fr' => [
+        'categorias' => [
+            1=>'Fêtes Populaires',2=>'Fêtes Patronales',3=>'Fêtes Traditionnelles',
+            4=>'Pèlerinages',5=>'Carnavals',6=>'Culture & Spectacles',7=>'Concerts',
+            8=>'Théâtre',9=>'Expositions',10=>'Festivals de Musique',11=>'Cinéma',
+            12=>'Gastronomie & Foires',13=>'Foires Gastronomiques',14=>'Journées Gastronomiques',
+            15=>'Marchés Traditionnels',16=>'Foires de Produits Locaux',17=>'Sports',
+            18=>'Courses Populaires',19=>'Marathons & Semi-Marathons',20=>'Compétitions Cyclistes',
+            21=>'Événements Sportifs',22=>'Religion & Tradition',23=>'Semaine Sainte',
+            24=>'Processions',25=>'Célébrations Religieuses'
+        ],
+        'gratis'           => 'Gratuit',
+        'consultar'        => 'Consulter le prix',
+        'sobre_evento'     => '📋 À propos de l\'événement',
+        'programa'         => '📅 Programme',
+        'publico'          => '👥 Public',
+        'accesibilidad'    => '♿ Accessibilité',
+        'info_evento'      => 'ℹ️ Informations sur l\'événement',
+        'fecha_inicio'     => 'Date de début',
+        'fecha_fin'        => 'Date de fin',
+        'ubicacion'        => 'Lieu',
+        'direccion'        => 'Adresse',
+        'categoria'        => 'Catégorie',
+        'precio'           => 'Prix',
+        'organiza'         => 'Organisateur',
+        'ver_mapa'         => 'Voir sur la carte',
+        'click_mapa'       => 'Cliquez pour charger la carte interactive',
+        'btn_evento'       => '📍 Événement',
+        'btn_alojamientos' => '🏠 Hébergements',
+        'btn_lugares'      => '🏛️ Lieux',
+        'btn_actividades'  => '🎯 Activités',
+        'aloj_cercanos'    => '🏠 Hébergements à proximité',
+        'ver_mas_aloj'     => 'Voir plus d\'hébergements',
+        'lugares_cercanos' => '🏛️ Sites d\'intérêt à proximité',
+        'ver_mas_lugares'  => 'Voir plus de lieux',
+        'activ_cercanas'   => '🎯 Activités touristiques à proximité',
+        'ver_mas_activ'    => 'Voir plus d\'activités',
+        'eventos_similares'=> '🎭 Événements similaires',
+        'cta_titulo'       => 'Ne manquez aucun événement !',
+        'cta_desc'         => 'Inscrivez-vous gratuitement et recevez des alertes pour des événements similaires à',
+        'cta_register'     => '✨ S\'inscrire gratuitement',
+        'cta_login'        => 'J\'ai déjà un compte',
+        'visitas'          => 'Vues',
+        'likes'            => 'j\'aime',
+        'guardar'          => '🔖 Sauvegarder l\'événement',
+        'anadir_ruta'      => '🗺️ Ajouter à mon itinéraire',
+        'suscripcion_titulo'=> 'Événements similaires',
+        'suscripcion_desc' => 'Prévenez-moi quand il y a des événements de',
+        'suscripcion_en'   => 'à',
+        'suscripcion_btn'  => '🔔 S\'abonner',
+        'no_encontrado_h1' => 'Événement introuvable',
+        'no_encontrado_p'  => 'L\'événement que vous recherchez n\'existe pas ou n\'est plus disponible.',
+        'ver_todos'        => 'Voir tous les événements',
+        'aviso_legal'      => 'Mentions légales',
+        'cookies'          => 'Cookies',
+        'agradecimientos'  => 'Remerciements',
+        'eventos_link'     => 'Événements',
+        'aloj_link'        => 'Hébergements',
+        'acceder_link'     => 'Se connecter',
+        'cultura_fallback' => 'Culture',
+        'dias'             => 'jours',
+        'al'               => 'au',
+    ],
+    'de' => [
+        'categorias' => [
+            1=>'Volksfeste',2=>'Patronatsfeste',3=>'Traditionelle Feste',
+            4=>'Wallfahrten',5=>'Karnevals',6=>'Kultur & Shows',7=>'Konzerte',
+            8=>'Theater',9=>'Ausstellungen',10=>'Musikfestivals',11=>'Kino',
+            12=>'Gastronomie & Messen',13=>'Gastronomische Messen',14=>'Gastronomische Tage',
+            15=>'Traditionelle Märkte',16=>'Messen für lokale Produkte',17=>'Sport',
+            18=>'Volksläufe',19=>'Marathons & Halbmarathons',20=>'Radrennen',
+            21=>'Sportveranstaltungen',22=>'Religion & Tradition',23=>'Karwoche',
+            24=>'Prozessionen',25=>'Religiöse Feiern'
+        ],
+        'gratis'           => 'Kostenlos',
+        'consultar'        => 'Preis anfragen',
+        'sobre_evento'     => '📋 Über die Veranstaltung',
+        'programa'         => '📅 Programm',
+        'publico'          => '👥 Zielgruppe',
+        'accesibilidad'    => '♿ Barrierefreiheit',
+        'info_evento'      => 'ℹ️ Veranstaltungsinfo',
+        'fecha_inicio'     => 'Startdatum',
+        'fecha_fin'        => 'Enddatum',
+        'ubicacion'        => 'Ort',
+        'direccion'        => 'Adresse',
+        'categoria'        => 'Kategorie',
+        'precio'           => 'Preis',
+        'organiza'         => 'Veranstalter',
+        'ver_mapa'         => 'Auf der Karte anzeigen',
+        'click_mapa'       => 'Klicken Sie, um die interaktive Karte zu laden',
+        'btn_evento'       => '📍 Veranstaltung',
+        'btn_alojamientos' => '🏠 Unterkünfte',
+        'btn_lugares'      => '🏛️ Orte',
+        'btn_actividades'  => '🎯 Aktivitäten',
+        'aloj_cercanos'    => '🏠 Unterkünfte in der Nähe',
+        'ver_mas_aloj'     => 'Mehr Unterkünfte anzeigen',
+        'lugares_cercanos' => '🏛️ Sehenswürdigkeiten in der Nähe',
+        'ver_mas_lugares'  => 'Mehr Orte anzeigen',
+        'activ_cercanas'   => '🎯 Touristische Aktivitäten in der Nähe',
+        'ver_mas_activ'    => 'Mehr Aktivitäten anzeigen',
+        'eventos_similares'=> '🎭 Ähnliche Veranstaltungen',
+        'cta_titulo'       => 'Verpassen Sie keine Veranstaltung!',
+        'cta_desc'         => 'Registrieren Sie sich kostenlos und erhalten Sie Benachrichtigungen für ähnliche Veranstaltungen in',
+        'cta_register'     => '✨ Kostenlos registrieren',
+        'cta_login'        => 'Ich habe bereits ein Konto',
+        'visitas'          => 'Aufrufe',
+        'likes'            => 'Likes',
+        'guardar'          => '🔖 Veranstaltung speichern',
+        'anadir_ruta'      => '🗺️ Zur Route hinzufügen',
+        'suscripcion_titulo'=> 'Ähnliche Veranstaltungen',
+        'suscripcion_desc' => 'Benachrichtige mich, wenn es Veranstaltungen von',
+        'suscripcion_en'   => 'in',
+        'suscripcion_btn'  => '🔔 Abonnieren',
+        'no_encontrado_h1' => 'Veranstaltung nicht gefunden',
+        'no_encontrado_p'  => 'Die gesuchte Veranstaltung existiert nicht oder ist nicht mehr verfügbar.',
+        'ver_todos'        => 'Alle Veranstaltungen anzeigen',
+        'aviso_legal'      => 'Impressum',
+        'cookies'          => 'Cookies',
+        'agradecimientos'  => 'Danksagungen',
+        'eventos_link'     => 'Veranstaltungen',
+        'aloj_link'        => 'Unterkünfte',
+        'acceder_link'     => 'Anmelden',
+        'cultura_fallback' => 'Kultur',
+        'dias'             => 'Tage',
+        'al'               => 'bis',
+    ],
+    'zh' => [
+        'categorias' => [
+            1=>'民间节日',2=>'守护神节日',3=>'传统节日',
+            4=>'朝圣活动',5=>'狂欢节',6=>'文化与演出',7=>'音乐会',
+            8=>'戏剧',9=>'展览',10=>'音乐节',11=>'电影',
+            12=>'美食与集市',13=>'美食集市',14=>'美食节',
+            15=>'传统市场',16=>'本地产品集市',17=>'体育',
+            18=>'大众赛跑',19=>'马拉松与半马',20=>'自行车赛',
+            21=>'体育赛事',22=>'宗教与传统',23=>'圣周',
+            24=>'宗教游行',25=>'宗教庆典'
+        ],
+        'gratis'           => '免费',
+        'consultar'        => '咨询价格',
+        'sobre_evento'     => '📋 关于活动',
+        'programa'         => '📅 活动日程',
+        'publico'          => '👥 目标受众',
+        'accesibilidad'    => '♿ 无障碍设施',
+        'info_evento'      => 'ℹ️ 活动信息',
+        'fecha_inicio'     => '开始日期',
+        'fecha_fin'        => '结束日期',
+        'ubicacion'        => '地点',
+        'direccion'        => '地址',
+        'categoria'        => '类别',
+        'precio'           => '价格',
+        'organiza'         => '主办方',
+        'ver_mapa'         => '在地图上查看',
+        'click_mapa'       => '点击加载互动地图',
+        'btn_evento'       => '📍 活动',
+        'btn_alojamientos' => '🏠 住宿',
+        'btn_lugares'      => '🏛️ 景点',
+        'btn_actividades'  => '🎯 活动项目',
+        'aloj_cercanos'    => '🏠 附近住宿',
+        'ver_mas_aloj'     => '查看更多住宿',
+        'lugares_cercanos' => '🏛️ 附近景点',
+        'ver_mas_lugares'  => '查看更多景点',
+        'activ_cercanas'   => '🎯 附近旅游活动',
+        'ver_mas_activ'    => '查看更多活动',
+        'eventos_similares'=> '🎭 类似活动',
+        'cta_titulo'       => '不要错过任何活动！',
+        'cta_desc'         => '免费注册，接收类似活动提醒，地区：',
+        'cta_register'     => '✨ 免费注册',
+        'cta_login'        => '我已有账户',
+        'visitas'          => '浏览量',
+        'likes'            => '点赞',
+        'guardar'          => '🔖 保存活动',
+        'anadir_ruta'      => '🗺️ 添加到我的路线',
+        'suscripcion_titulo'=> '类似活动',
+        'suscripcion_desc' => '当有以下类型的活动时通知我：',
+        'suscripcion_en'   => '地区：',
+        'suscripcion_btn'  => '🔔 订阅',
+        'no_encontrado_h1' => '未找到活动',
+        'no_encontrado_p'  => '您查找的活动不存在或已不再提供。',
+        'ver_todos'        => '查看所有活动',
+        'aviso_legal'      => '法律声明',
+        'cookies'          => 'Cookies',
+        'agradecimientos'  => '致谢',
+        'eventos_link'     => '活动',
+        'aloj_link'        => '住宿',
+        'acceder_link'     => '登录',
+        'cultura_fallback' => '文化',
+        'dias'             => '天',
+        'al'               => '至',
+    ],
 ];
-$categoria_nombre = $categorias[$evento['category_id'] ?? 0] ?? 'Cultura';
+
+$t = $ui[$lang] ?? $ui['es'];
+
+// Categorías (en el idioma correcto)
+$categorias = $t['categorias'];
+$categoria_nombre = $categorias[$evento['category_id'] ?? 0] ?? $t['cultura_fallback'];
 
 // Fechas formateadas
 $fecha_display = '';
@@ -134,7 +446,7 @@ if ($evento && !empty($evento['start_date'])) {
         $end = date('d/m/Y', strtotime($evento['end_date']));
         $diff = (new DateTime($evento['start_date']))->diff(new DateTime($evento['end_date']));
         $days = $diff->days + 1;
-        $fecha_display = $days <= 2 ? "$start - $end" : "$start al $end ($days días)";
+        $fecha_display = $days <= 2 ? "$start - $end" : "$start {$t['al']} $end ($days {$t['dias']})";
     } else {
         $fecha_display = $start;
     }
@@ -143,9 +455,9 @@ if ($evento && !empty($evento['start_date'])) {
 // Precio
 $precio_display = '';
 if ($evento) {
-    if ($evento['is_free'] == 1) $precio_display = 'Gratis';
+    if ($evento['is_free'] == 1) $precio_display = $t['gratis'];
     elseif (!empty($evento['ticket_price']) && $evento['ticket_price'] > 0) $precio_display = number_format($evento['ticket_price'], 2) . '€';
-    else $precio_display = 'Consultar';
+    else $precio_display = $t['consultar'];
 }
 
 // Ubicación
@@ -221,6 +533,15 @@ $evento_js = $evento ? json_encode([
     <title><?php echo htmlspecialchars($page_title); ?></title>
     <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
+
+    <!-- hreflang: SEO multiidioma -->
+    <?php if ($evento): ?>
+    <link rel="alternate" hreflang="es" href="https://rutasrurales.io/evento/<?php echo htmlspecialchars($evento['slug']); ?>">
+    <?php if ($lang !== 'es' && !empty($traduccion['slug_trad'])): ?>
+    <link rel="alternate" hreflang="<?php echo $lang; ?>" href="https://rutasrurales.io/<?php echo $lang; ?>/evento/<?php echo htmlspecialchars($traduccion['slug_trad']); ?>">
+    <?php endif; ?>
+    <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/evento/<?php echo htmlspecialchars($evento['slug']); ?>">
+    <?php endif; ?>
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -839,12 +1160,13 @@ if (file_exists($header_path)) {
     include $header_path;
 } else {
     // Header ligero de fallback
+    $ev_link = $lang !== 'es' ? "/{$lang}/eventos-culturales-paginacion.html" : '/eventos-culturales.html';
     echo '<header class="site-header" style="display:flex;align-items:center;padding:0 20px;gap:16px;">
         <a href="/" style="font-weight:700;color:var(--primary);font-size:1.1rem;text-decoration:none;">🌿 Rutas Rurales</a>
         <nav style="margin-left:auto;display:flex;gap:16px;font-size:0.9rem;">
-            <a href="/eventos-culturales.html" style="color:var(--text);">Eventos</a>
-            <a href="/alojamientos-turisticos.html" style="color:var(--text);">Alojamientos</a>
-            <a href="/login.html" style="color:var(--primary);font-weight:700;">Acceder</a>
+            <a href="' . $ev_link . '" style="color:var(--text);">' . $t['eventos_link'] . '</a>
+            <a href="/alojamientos-turisticos.html" style="color:var(--text);">' . $t['aloj_link'] . '</a>
+            <a href="/login.html" style="color:var(--primary);font-weight:700;">' . $t['acceder_link'] . '</a>
         </nav>
     </header>';
 }
@@ -895,7 +1217,7 @@ if (file_exists($header_path)) {
         <!-- Descripción del evento -->
         <div class="card" style="margin-bottom:24px;">
             <div class="card-body">
-                <h2 class="card-title">📋 Sobre el evento</h2>
+                <h2 class="card-title"><?php echo $t['sobre_evento']; ?></h2>
                 <div class="event-description">
                     <?php echo $evento['description']; ?>
                 </div>
@@ -908,21 +1230,21 @@ if (file_exists($header_path)) {
                 if ($programa || $audiencia || $accesibilidad):
                 ?>
                 <div style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
-                    <?php if ($programa): ?>
-                    <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                        <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;">📅 Programa</h4>
+                     <?php if ($programa): ?>
+                     <div style="background:var(--bg);padding:16px;border-radius:8px;">
+                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo $t['programa']; ?></h4>
                         <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($programa)); ?></div>
                     </div>
                     <?php endif; ?>
-                    <?php if ($audiencia): ?>
-                    <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                        <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;">👥 Público</h4>
+                     <?php if ($audiencia): ?>
+                     <div style="background:var(--bg);padding:16px;border-radius:8px;">
+                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo $t['publico']; ?></h4>
                         <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($audiencia)); ?></div>
                     </div>
                     <?php endif; ?>
-                    <?php if ($accesibilidad): ?>
-                    <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                        <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;">♿ Accesibilidad</h4>
+                     <?php if ($accesibilidad): ?>
+                     <div style="background:var(--bg);padding:16px;border-radius:8px;">
+                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo $t['accesibilidad']; ?></h4>
                         <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($accesibilidad)); ?></div>
                     </div>
                     <?php endif; ?>
@@ -934,48 +1256,48 @@ if (file_exists($header_path)) {
         <!-- Meta información -->
         <div class="card" style="margin-bottom:24px;">
             <div class="card-body">
-                <h2 class="card-title">ℹ️ Información del evento</h2>
+                <h2 class="card-title"><?php echo $t['info_evento']; ?></h2>
                 <div class="meta-grid">
                     <div class="meta-item">
                         <div class="meta-icon">📅</div>
-                        <div class="meta-label">Fecha inicio</div>
+                        <div class="meta-label"><?php echo $t['fecha_inicio']; ?></div>
                         <div class="meta-value"><?php echo date('d/m/Y', strtotime($evento['start_date'])); ?></div>
                     </div>
                     <?php if (!empty($evento['end_date']) && $evento['end_date'] !== $evento['start_date']): ?>
                     <div class="meta-item">
                         <div class="meta-icon">🏁</div>
-                        <div class="meta-label">Fecha fin</div>
+                        <div class="meta-label"><?php echo $t['fecha_fin']; ?></div>
                         <div class="meta-value"><?php echo date('d/m/Y', strtotime($evento['end_date'])); ?></div>
                     </div>
                     <?php endif; ?>
                     <?php if ($ubicacion_display): ?>
                     <div class="meta-item">
                         <div class="meta-icon">📍</div>
-                        <div class="meta-label">Ubicación</div>
+                        <div class="meta-label"><?php echo $t['ubicacion']; ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($ubicacion_display); ?></div>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($evento['venue_address'])): ?>
                     <div class="meta-item">
                         <div class="meta-icon">🗺️</div>
-                        <div class="meta-label">Dirección</div>
+                        <div class="meta-label"><?php echo $t['direccion']; ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($evento['venue_address']); ?></div>
                     </div>
                     <?php endif; ?>
                     <div class="meta-item">
                         <div class="meta-icon">🏷️</div>
-                        <div class="meta-label">Categoría</div>
+                        <div class="meta-label"><?php echo $t['categoria']; ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($categoria_nombre); ?></div>
                     </div>
                     <div class="meta-item">
                         <div class="meta-icon">🎟️</div>
-                        <div class="meta-label">Precio</div>
+                        <div class="meta-label"><?php echo $t['precio']; ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($precio_display); ?></div>
                     </div>
                     <?php if (!empty($evento['organizer'])): ?>
                     <div class="meta-item">
                         <div class="meta-icon">🏛️</div>
-                        <div class="meta-label">Organiza</div>
+                        <div class="meta-label"><?php echo $t['organiza']; ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($evento['organizer']); ?></div>
                     </div>
                     <?php endif; ?>
@@ -988,15 +1310,15 @@ if (file_exists($header_path)) {
         <div id="event-map-container" class="card" style="margin-bottom:24px;">
             <div id="map-placeholder" class="map-placeholder" onclick="initMap()">
                 <div class="map-icon">🗺️</div>
-                <strong style="font-size:1rem;">Ver en el mapa</strong>
-                <p>Haz clic para cargar el mapa interactivo</p>
+                <strong style="font-size:1rem;"><?php echo $t['ver_mapa']; ?></strong>
+                <p><?php echo $t['click_mapa']; ?></p>
             </div>
             <div id="event-map" style="display:none;"></div>
             <div class="map-controls" id="map-controls" style="display:none;">
-                <button class="map-toggle-btn active" id="btn-evento" onclick="toggleMapLayer('evento')">📍 Evento</button>
-                <button class="map-toggle-btn" id="btn-alojamientos" onclick="toggleMapLayer('alojamientos')">🏠 Alojamientos</button>
-                <button class="map-toggle-btn" id="btn-lugares" onclick="toggleMapLayer('lugares')">🏛️ Lugares</button>
-                <button class="map-toggle-btn" id="btn-actividades" onclick="toggleMapLayer('actividades')">🎯 Actividades</button>
+                <button class="map-toggle-btn active" id="btn-evento" onclick="toggleMapLayer('evento')"><?php echo $t['btn_evento']; ?></button>
+                <button class="map-toggle-btn" id="btn-alojamientos" onclick="toggleMapLayer('alojamientos')"><?php echo $t['btn_alojamientos']; ?></button>
+                <button class="map-toggle-btn" id="btn-lugares" onclick="toggleMapLayer('lugares')"><?php echo $t['btn_lugares']; ?></button>
+                <button class="map-toggle-btn" id="btn-actividades" onclick="toggleMapLayer('actividades')"><?php echo $t['btn_actividades']; ?></button>
             </div>
         </div>
         <?php endif; ?>
@@ -1004,7 +1326,7 @@ if (file_exists($header_path)) {
         <!-- Contenido cercano (carga diferida) -->
         <div id="nearby-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
-                <h2 class="card-title">🏠 Alojamientos cercanos</h2>
+                <h2 class="card-title"><?php echo $t['aloj_cercanos']; ?></h2>
                 <div id="nearby-alojamientos" class="nearby-grid">
                     <!-- Skeleton loading -->
                     <div class="skeleton skeleton-card"></div>
@@ -1012,21 +1334,21 @@ if (file_exists($header_path)) {
                     <div class="skeleton skeleton-card"></div>
                 </div>
                 <div class="nearby-show-more" id="more-alojamientos" style="display:none;">
-                    <button onclick="showMoreNearby('alojamientos')">Ver más alojamientos</button>
+                    <button onclick="showMoreNearby('alojamientos')"><?php echo $t['ver_mas_aloj']; ?></button>
                 </div>
             </div>
         </div>
 
         <div id="nearby-lugares-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
-                <h2 class="card-title">🏛️ Lugares de interés cercanos</h2>
+                <h2 class="card-title"><?php echo $t['lugares_cercanos']; ?></h2>
                 <div id="nearby-lugares" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                 </div>
                 <div class="nearby-show-more" id="more-lugares" style="display:none;">
-                    <button onclick="showMoreNearby('lugares')">Ver más lugares</button>
+                    <button onclick="showMoreNearby('lugares')"><?php echo $t['ver_mas_lugares']; ?></button>
                 </div>
             </div>
         </div>
@@ -1034,14 +1356,14 @@ if (file_exists($header_path)) {
         <!-- Actividades turísticas cercanas (carga diferida) -->
         <div id="nearby-actividades-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
-                <h2 class="card-title">🎯 Actividades turísticas cercanas</h2>
+                <h2 class="card-title"><?php echo $t['activ_cercanas']; ?></h2>
                 <div id="nearby-actividades" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                 </div>
                 <div class="nearby-show-more" id="more-actividades" style="display:none;">
-                    <button onclick="showMoreNearby('actividades')">Ver más actividades</button>
+                    <button onclick="showMoreNearby('actividades')"><?php echo $t['ver_mas_activ']; ?></button>
                 </div>
             </div>
         </div>
@@ -1049,7 +1371,7 @@ if (file_exists($header_path)) {
         <!-- Eventos similares (carga diferida) -->
         <div id="similar-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
-                <h2 class="card-title">🎭 Eventos similares</h2>
+                <h2 class="card-title"><?php echo $t['eventos_similares']; ?></h2>
                 <div id="similar-events" class="similar-events-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
@@ -1066,13 +1388,13 @@ if (file_exists($header_path)) {
         <!-- CTA Principal: Registro -->
         <div class="cta-card" id="cta-register">
             <div style="font-size:2rem;margin-bottom:8px;">🌿</div>
-            <h3>¡No te pierdas ningún evento!</h3>
-            <p>Regístrate gratis y recibe alertas de eventos similares en <?php echo htmlspecialchars($evento['province'] ?? 'tu zona'); ?></p>
+            <h3><?php echo $t['cta_titulo']; ?></h3>
+            <p><?php echo $t['cta_desc']; ?> <?php echo htmlspecialchars($evento['province'] ?? ''); ?></p>
             <a href="/login.html?action=register&ref=evento&slug=<?php echo urlencode($slug); ?>" class="btn btn-white">
-                ✨ Registrarme gratis
+                <?php echo $t['cta_register']; ?>
             </a>
             <a href="/login.html?ref=evento&slug=<?php echo urlencode($slug); ?>" class="btn btn-outline-white">
-                Ya tengo cuenta
+                <?php echo $t['cta_login']; ?>
             </a>
         </div>
 
@@ -1082,19 +1404,19 @@ if (file_exists($header_path)) {
                 <div style="display:flex;justify-content:center;gap:24px;margin-bottom:16px;">
                     <div style="text-align:center;">
                         <div style="font-size:1.5rem;font-weight:700;color:var(--primary);" id="view-count">—</div>
-                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;">Visitas</div>
+                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><?php echo $t['visitas']; ?></div>
                     </div>
                     <div style="width:1px;background:#eee;"></div>
                     <div style="text-align:center;">
                         <button id="btn-like" onclick="toggleLike()" style="background:none;border:none;cursor:pointer;font-size:1.8rem;line-height:1;transition:transform 0.2s;">🤍</button>
-                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><span id="like-count">—</span> likes</div>
+                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><span id="like-count">—</span> <?php echo $t['likes']; ?></div>
                     </div>
                 </div>
                 <button class="btn btn-primary" onclick="saveEvent()" id="btn-save-event" style="margin-bottom:8px;">
-                    🔖 Guardar evento
+                    <?php echo $t['guardar']; ?>
                 </button>
                 <button class="btn btn-accent" onclick="addToRoute()">
-                    🗺️ Añadir a mi ruta
+                    <?php echo $t['anadir_ruta']; ?>
                 </button>
                 <div style="margin-top:12px;display:flex;justify-content:center;gap:12px;">
                     <button onclick="shareEvent('whatsapp')" style="background:none;border:none;cursor:pointer;font-size:1.4rem;" title="Compartir en WhatsApp">💬</button>
@@ -1108,11 +1430,11 @@ if (file_exists($header_path)) {
         <!-- Suscripción a eventos similares -->
         <div class="subscribe-card" id="subscribe-card">
             <div style="font-size:1.8rem;margin-bottom:8px;">🔔</div>
-            <h3>Eventos similares</h3>
-            <p>Avísame cuando haya eventos de <strong><?php echo htmlspecialchars($categoria_nombre); ?></strong> en <?php echo htmlspecialchars($evento['province'] ?? 'esta zona'); ?></p>
+            <h3><?php echo $t['suscripcion_titulo']; ?></h3>
+            <p><?php echo $t['suscripcion_desc']; ?> <strong><?php echo htmlspecialchars($categoria_nombre); ?></strong> <?php echo $t['suscripcion_en']; ?> <?php echo htmlspecialchars($evento['province'] ?? ''); ?></p>
             <form class="subscribe-form" onsubmit="subscribeEvents(event)">
                 <input type="email" placeholder="tu@email.com" required id="subscribe-email">
-                <button type="submit" class="btn btn-accent">🔔 Suscribirme</button>
+                <button type="submit" class="btn btn-accent"><?php echo $t['suscripcion_btn']; ?></button>
             </form>
         </div>
 
@@ -1124,9 +1446,9 @@ if (file_exists($header_path)) {
 <!-- Evento no encontrado -->
 <div style="max-width:600px;margin:120px auto 60px;text-align:center;padding:40px;">
     <div style="font-size:4rem;margin-bottom:16px;">😕</div>
-    <h1 style="color:var(--primary);margin-bottom:12px;">Evento no encontrado</h1>
-    <p style="color:var(--text-light);margin-bottom:24px;">El evento que buscas no existe o ya no está disponible.</p>
-    <a href="/eventos-culturales.html" class="btn btn-primary" style="display:inline-flex;width:auto;">Ver todos los eventos</a>
+    <h1 style="color:var(--primary);margin-bottom:12px;"><?php echo $t['no_encontrado_h1']; ?></h1>
+    <p style="color:var(--text-light);margin-bottom:24px;"><?php echo $t['no_encontrado_p']; ?></p>
+    <a href="/eventos-culturales.html" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo $t['ver_todos']; ?></a>
 </div>
 <?php endif; ?>
 
@@ -1149,9 +1471,9 @@ if (file_exists($header_path)) {
         <a href="#" aria-label="Twitter">🐦</a>
     </div>
     <div class="footer-links">
-        <a href="/aviso-legal.html">Aviso Legal</a>
-        <a href="/politica-cookies.html">Cookies</a>
-        <a href="/agradecimientos.html">Agradecimientos</a>
+        <a href="/aviso-legal.html"><?php echo $t['aviso_legal']; ?></a>
+        <a href="/politica-cookies.html"><?php echo $t['cookies']; ?></a>
+        <a href="/agradecimientos.html"><?php echo $t['agradecimientos']; ?></a>
     </div>
     <p style="color:rgba(255,255,255,0.5);font-size:0.8rem;">© 2026 rutasrurales.io · Todos los derechos reservados</p>
 </footer>
