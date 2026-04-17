@@ -100,6 +100,10 @@
             <li><a href="https://rutasrurales.io/admin_tablas/moderacion_fotos.php"><i class="fas fa-images"></i>Fotos y Lugares Sugeridos</a></li>
         
         <li><a href="cultural_events_trads_index.php"><i class="fas fa-table"></i> Traducciones eventos</a></li>
+
+        <hr style="border: 0.5px solid #34495e; margin: 15px 0;">
+
+        <li><a href="https://rutasrurales.io/admin_tablas/rutas.php" style="color:#1abc9c;font-weight:700"><i class="fas fa-route"></i> 🗺️ Gestor de Rutas</a></li>
     </ul>
 </nav>
 
