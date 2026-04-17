@@ -14,10 +14,10 @@ function renderEventos(array $eventos, array $ruta): void
         <div class="rt-section__header">
             <h2 class="rt-section__title">
                 <span class="rt-section__icon" aria-hidden="true">🎭</span>
-                Eventos durante el puente
+                Eventos en <?= $provincia ?>
             </h2>
             <p class="rt-section__subtitle">
-                Lo que pasa en <?= $provincia ?> mientras estás de escapada
+                Cultura, tradición y ocio en <?= $provincia ?> para completar tu escapada
             </p>
         </div>
 

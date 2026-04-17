@@ -212,12 +212,10 @@ try {
             $eventos[] = $e;
         }
     } else {
-        // Búsqueda automática: SOLO si hay fechas en el itinerario Y filtra por provincia
+        // Búsqueda automática por provincia + fechas del itinerario
         $fechaInicio = $fechaFin = null;
         if (!empty($ruta['itinerary_json'])) {
-            $dias = $ruta['itinerary_json'];
-            // Buscar primera y última fecha válida en el JSON
-            foreach ($dias as $dia) {
+            foreach ($ruta['itinerary_json'] as $dia) {
                 if (!empty($dia['fecha']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $dia['fecha'])) {
                     if (!$fechaInicio) $fechaInicio = $dia['fecha'];
                     $fechaFin = $dia['fecha'];
@@ -225,24 +223,51 @@ try {
             }
         }
 
-        if ($fechaInicio && $fechaFin && !empty($provincia)) {
-            // Filtrar por fecha Y provincia para no mezclar eventos de otras zonas
-            $stmtEv = $pdo->prepare("
-                SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
-                       e.venue_name, e.municipality, e.province,
-                       e.start_date, e.end_date, e.start_time,
-                       e.is_free, e.ticket_price, e.ticket_url,
-                       e.organizer, e.poster_image, e.photo1
-                FROM cultural_events e
-                WHERE e.is_active = 1
-                  AND e.province = :prov
-                  AND e.start_date <= :fin
-                  AND COALESCE(e.end_date, e.start_date) >= :ini
-                ORDER BY e.start_date ASC
-                LIMIT 12
-            ");
-            $stmtEv->execute([':prov' => $provincia, ':ini' => $fechaInicio, ':fin' => $fechaFin]);
-            foreach ($stmtEv->fetchAll(PDO::FETCH_ASSOC) as $e) {
+        if (!empty($provincia)) {
+            $evRows = [];
+
+            if ($fechaInicio && $fechaFin) {
+                // Intento 1: eventos que coincidan exactamente con las fechas del puente
+                $rangoIni = date('Y-m-d', strtotime($fechaInicio . ' -30 days'));
+                $rangoFin = date('Y-m-d', strtotime($fechaFin . ' +30 days'));
+                $stmtEv = $pdo->prepare("
+                    SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
+                           e.venue_name, e.municipality, e.province,
+                           e.start_date, e.end_date, e.start_time,
+                           e.is_free, e.ticket_price, e.ticket_url,
+                           e.organizer, e.poster_image, e.photo1
+                    FROM cultural_events e
+                    WHERE e.is_active = 1
+                      AND e.province = :prov
+                      AND e.start_date <= :fin
+                      AND COALESCE(e.end_date, e.start_date) >= :ini
+                    ORDER BY ABS(DATEDIFF(e.start_date, :centro)) ASC
+                    LIMIT 8
+                ");
+                $centro = $fechaInicio; // ordenar por cercanía al inicio del puente
+                $stmtEv->execute([':prov' => $provincia, ':ini' => $rangoIni, ':fin' => $rangoFin, ':centro' => $centro]);
+                $evRows = $stmtEv->fetchAll(PDO::FETCH_ASSOC);
+            }
+
+            // Fallback: si no hay nada en ±30 días, mostrar los próximos eventos de la provincia
+            if (empty($evRows)) {
+                $stmtEv2 = $pdo->prepare("
+                    SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
+                           e.venue_name, e.municipality, e.province,
+                           e.start_date, e.end_date, e.start_time,
+                           e.is_free, e.ticket_price, e.ticket_url,
+                           e.organizer, e.poster_image, e.photo1
+                    FROM cultural_events e
+                    WHERE e.is_active = 1
+                      AND e.province = :prov
+                    ORDER BY e.start_date ASC
+                    LIMIT 6
+                ");
+                $stmtEv2->execute([':prov' => $provincia]);
+                $evRows = $stmtEv2->fetchAll(PDO::FETCH_ASSOC);
+            }
+
+            foreach ($evRows as $e) {
                 $img = $e['poster_image'] ?: $e['photo1'] ?: null;
                 if ($img && !preg_match('/^https?:\/\//', $img)) {
                     $img = 'https://rutasrurales.io/cultural_events_images/' . basename($img);
@@ -254,7 +279,6 @@ try {
                 $eventos[] = $e;
             }
         }
-        // Si no hay fechas en el itinerario o no hay provincia → no mostrar eventos aleatorios
     }
 
     // Incrementar visitas
