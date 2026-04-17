@@ -22,7 +22,9 @@ if (empty($slug) || !preg_match('/^[a-z0-9\-]+$/', $slug)) {
 }
 
 // ── Cargar datos desde la API interna ────────────────────────
-require_once __DIR__ . '/../api/config.php';
+// Usar ruta absoluta para evitar problemas con rewrites de Apache
+$_BASE = dirname(__DIR__); // /home/.../Rutas
+require_once $_BASE . '/api/config.php';
 
 $ruta         = null;
 $alojamientos = [];
@@ -37,7 +39,7 @@ try {
     // 1. Ruta base
     $stmt = $pdo->prepare("
         SELECT r.id, r.name, r.slug, r.description, r.duration_days,
-               r.difficulty_level, r.youtube_url,
+               r.difficulty_level,
                r.status, r.views_count, r.is_public, r.is_featured,
                r.route_type, r.hero_image, r.seo_keywords,
                r.seo_title, r.seo_description, r.province,
@@ -55,13 +57,11 @@ try {
         exit;
     }
 
-    $ruta['map_points']     = json_decode($ruta['map_points'] ?? '[]', true);
-    $ruta['discounts']      = json_decode($ruta['discounts'] ?? '[]', true);
     $ruta['itinerary_json'] = json_decode($ruta['itinerary_json'] ?? '[]', true);
 
-    // 2. Items de la ruta
+    // 2. Items de la ruta (columnas reales confirmadas)
     $stmtItems = $pdo->prepare("
-        SELECT id, item_type, item_id, item_name, display_order,
+        SELECT id, item_type, item_id, title, display_order,
                day_number, time_slot, editorial_note, is_highlight
         FROM route_items
         WHERE route_id = :route_id
@@ -70,8 +70,8 @@ try {
     $stmtItems->execute([':route_id' => $ruta['id']]);
     $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 
-    // Agrupar IDs por tipo
-    $ids = ['alojamiento' => [], 'lugar' => [], 'actividad' => [], 'evento' => []];
+    // Agrupar IDs por tipo (enum real: accommodation, place, activity, event)
+    $ids = ['accommodation' => [], 'place' => [], 'activity' => [], 'event' => []];
     foreach ($items as $item) {
         $t = $item['item_type'];
         if (isset($ids[$t])) $ids[$t][] = (int)$item['item_id'];
@@ -90,8 +90,8 @@ try {
     };
 
     // 3a. Alojamientos
-    if (!empty($ids['alojamiento'])) {
-        $ph = implode(',', array_fill(0, count($ids['alojamiento']), '?'));
+    if (!empty($ids['accommodation'])) {
+        $ph = implode(',', array_fill(0, count($ids['accommodation']), '?'));
         $rows = $pdo->prepare("
             SELECT a.id, a.name, a.slug, a.description, a.short_description,
                    a.municipality, a.province, a.address, a.phone, a.email,
@@ -102,7 +102,7 @@ try {
             LEFT JOIN categories_accommodations c ON a.category_id = c.id
             WHERE a.id IN ($ph) AND a.is_active = 1
         ");
-        $rows->execute($ids['alojamiento']);
+        $rows->execute($ids['accommodation']);
         $map = [];
         foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $a) {
             $a['fotos'] = array_values(array_filter([$a['photo1'], $a['photo2'], $a['photo3']]));
@@ -114,15 +114,15 @@ try {
             $map[$a['id']] = $a;
         }
         foreach ($items as $item) {
-            if ($item['item_type'] === 'alojamiento' && isset($map[$item['item_id']])) {
+            if ($item['item_type'] === 'accommodation' && isset($map[$item['item_id']])) {
                 $alojamientos[] = $mergeItem($map[$item['item_id']], $item);
             }
         }
     }
 
     // 3b. Lugares
-    if (!empty($ids['lugar'])) {
-        $ph = implode(',', array_fill(0, count($ids['lugar']), '?'));
+    if (!empty($ids['place'])) {
+        $ph = implode(',', array_fill(0, count($ids['place']), '?'));
         $rows = $pdo->prepare("
             SELECT p.id, p.name, p.slug, p.description, p.short_description,
                    p.municipality, p.province, p.address, p.phone,
@@ -131,7 +131,7 @@ try {
             FROM places_of_interest p
             WHERE p.id IN ($ph) AND p.is_active = 1
         ");
-        $rows->execute($ids['lugar']);
+        $rows->execute($ids['place']);
         $map = [];
         foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $l) {
             $l['fotos'] = array_values(array_filter([$l['photo1'], $l['photo2'], $l['photo3']]));
@@ -145,15 +145,15 @@ try {
             $map[$l['id']] = $l;
         }
         foreach ($items as $item) {
-            if ($item['item_type'] === 'lugar' && isset($map[$item['item_id']])) {
+            if ($item['item_type'] === 'place' && isset($map[$item['item_id']])) {
                 $lugares[] = $mergeItem($map[$item['item_id']], $item);
             }
         }
     }
 
     // 3c. Actividades
-    if (!empty($ids['actividad'])) {
-        $ph = implode(',', array_fill(0, count($ids['actividad']), '?'));
+    if (!empty($ids['activity'])) {
+        $ph = implode(',', array_fill(0, count($ids['activity']), '?'));
         $rows = $pdo->prepare("
             SELECT t.id, t.name, t.slug, t.description, t.short_description,
                    t.municipality, t.province, t.duration, t.difficulty_level,
@@ -163,7 +163,7 @@ try {
             FROM tourist_activities t
             WHERE t.id IN ($ph) AND t.is_active = 1
         ");
-        $rows->execute($ids['actividad']);
+        $rows->execute($ids['activity']);
         $map = [];
         foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $a) {
             $a['fotos'] = array_values(array_filter([$a['photo1'], $a['photo2'], $a['photo3']]));
@@ -177,7 +177,7 @@ try {
             $map[$a['id']] = $a;
         }
         foreach ($items as $item) {
-            if ($item['item_type'] === 'actividad' && isset($map[$item['item_id']])) {
+            if ($item['item_type'] === 'activity' && isset($map[$item['item_id']])) {
                 $actividades[] = $mergeItem($map[$item['item_id']], $item);
             }
         }
@@ -215,8 +215,8 @@ try {
             $e['url'] = 'https://rutasrurales.io/evento/' . ($e['slug'] ?? '');
             $eventos[] = $e;
         }
-    } elseif (!empty($ids['evento'])) {
-        $ph = implode(',', array_fill(0, count($ids['evento']), '?'));
+    } elseif (!empty($ids['event'])) {
+        $ph = implode(',', array_fill(0, count($ids['event']), '?'));
         $stmtEv2 = $pdo->prepare("
             SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
                    e.venue_name, e.municipality, e.province,
@@ -227,7 +227,7 @@ try {
             WHERE e.id IN ($ph) AND e.is_active = 1
             ORDER BY e.start_date ASC
         ");
-        $stmtEv2->execute($ids['evento']);
+        $stmtEv2->execute($ids['event']);
         foreach ($stmtEv2->fetchAll(PDO::FETCH_ASSOC) as $e) {
             $img = $e['poster_image'] ?: $e['photo1'] ?: null;
             if ($img && !preg_match('/^https?:\/\//', $img)) {
@@ -248,6 +248,9 @@ try {
 } catch (PDOException $e) {
     error_log('rutas-tematicas/index.php ERROR: ' . $e->getMessage());
     $error = 'Error cargando la ruta. Por favor, inténtalo de nuevo.';
+} catch (Throwable $e) {
+    error_log('rutas-tematicas/index.php FATAL: ' . $e->getMessage());
+    $error = 'Error cargando la ruta. Por favor, inténtalo de nuevo.';
 }
 
 // ── Variables SEO ─────────────────────────────────────────────
@@ -259,14 +262,15 @@ $canonUrl  = 'https://rutasrurales.io/rutas/' . ($ruta['slug'] ?? $slug);
 $provincia = $ruta['province'] ?? 'Soria';
 
 // ── Cargar módulos ────────────────────────────────────────────
-require_once __DIR__ . '/modules/schema.php';
-require_once __DIR__ . '/modules/hero.php';
-require_once __DIR__ . '/modules/itinerario.php';
-require_once __DIR__ . '/modules/alojamientos.php';
-require_once __DIR__ . '/modules/lugares.php';
-require_once __DIR__ . '/modules/actividades.php';
-require_once __DIR__ . '/modules/eventos.php';
-require_once __DIR__ . '/modules/faq.php';
+$_MODS = $_BASE . '/rutas-tematicas/modules';
+require_once $_MODS . '/schema.php';
+require_once $_MODS . '/hero.php';
+require_once $_MODS . '/itinerario.php';
+require_once $_MODS . '/alojamientos.php';
+require_once $_MODS . '/lugares.php';
+require_once $_MODS . '/actividades.php';
+require_once $_MODS . '/eventos.php';
+require_once $_MODS . '/faq.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">

@@ -84,7 +84,7 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
                 'position' => $i + 1,
                 'item'     => [
                     '@type'       => 'Event',
-                    'name'        => $e['title'],
+                    'name'        => $e['title'] ?? $e['name'] ?? '',
                     'url'         => $e['url'],
                     'image'       => $e['imagen'] ?? $heroImg,
                     'description' => substr(strip_tags($e['short_description'] ?? $e['description'] ?? ''), 0, 200),
