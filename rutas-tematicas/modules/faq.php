@@ -6,10 +6,10 @@
 
 function renderFaq(array $ruta, array $alojamientos, array $lugares, array $actividades): void
 {
-    $titulo   = htmlspecialchars($ruta['title'] ?? '');
+    $titulo   = htmlspecialchars($ruta['name'] ?? '');
     $prov     = htmlspecialchars($ruta['province'] ?? 'Soria');
     $duracion = (int)($ruta['duration_days'] ?? 3);
-    $precio   = $ruta['estimated_price'] ?? 350;
+    $precio   = 350; // precio estimado editorial (no está en BD)
 
     // Construir preguntas dinámicas
     $faqs = [
