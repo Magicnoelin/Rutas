@@ -292,6 +292,31 @@
         }
 
         function inicializarFiltros() {
+            // Populate province dropdown dynamically
+            const provinciaSelect = document.getElementById('filterProvincia');
+            const existingOptions = Array.from(provinciaSelect.options).map(opt => opt.value);
+            
+            // Get unique provinces from data
+            const uniqueProvinces = [...new Set(todosLosLugares.map(lugar => lugar.provincia).filter(p => p))];
+            
+            // Add missing provinces
+            uniqueProvinces.forEach(provincia => {
+                if (!existingOptions.includes(provincia)) {
+                    const option = document.createElement('option');
+                    option.value = provincia;
+                    option.textContent = provincia;
+                    provinciaSelect.appendChild(option);
+                }
+            });
+            
+            // Sort provinces alphabetically (keeping "Todas" first)
+            const options = Array.from(provinciaSelect.options);
+            const todasOption = options.shift(); // Remove "Todas"
+            options.sort((a, b) => a.textContent.localeCompare(b.textContent));
+            provinciaSelect.innerHTML = '';
+            provinciaSelect.appendChild(todasOption);
+            options.forEach(opt => provinciaSelect.appendChild(opt));
+
             document.getElementById('filterProvincia').addEventListener('change', aplicarFiltros);
             let searchTimeout;
             document.getElementById('filterSearch').addEventListener('input', function() {
