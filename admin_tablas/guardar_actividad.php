@@ -32,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Lista de campos que pueden tener restricciones CHECK de JSON
     $campos_json_con_restricciones = [
         'schedule', 'available_days', 'available_seasons', 'languages_available',
-        'provided_equipment', 'accessibility', 'gallery', 'price_details'
+        'provided_equipment', 'accessibility', 'gallery', 'price_details',
+        'what_to_bring', 'requirements'
     ];
     
     foreach ($datos as $columna => $valor) {
@@ -75,8 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $valor = json_encode([$valor_trim]);
                             }
                         } 
-                        // Para available_days, available_seasons, languages_available
-                        elseif (in_array($columna, ['available_days', 'available_seasons', 'languages_available'])) {
+                        // Para available_days, available_seasons, languages_available, what_to_bring, provided_equipment, requirements, accessibility, gallery, price_details
+                        elseif (in_array($columna, ['available_days', 'available_seasons', 'languages_available', 'what_to_bring', 'provided_equipment', 'requirements', 'accessibility', 'gallery', 'price_details'])) {
                             // Si tiene comas, separar en array
                             if (strpos($valor_trim, ',') !== false) {
                                 $items = array_map('trim', explode(',', $valor_trim));
