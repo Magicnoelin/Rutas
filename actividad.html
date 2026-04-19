@@ -436,31 +436,51 @@
                 document.getElementById('actividadHorarioItem').style.display = 'flex';
             }
             
+            // Contador para campos de Información Importante
+            let infoImportanteCount = 0;
+            
             // Campos JSON adicionales - mostrar elementos si tienen datos
             if (activity.requisitos && Array.isArray(activity.requisitos) && activity.requisitos.length > 0) {
                 document.getElementById('actividadRequisitos').textContent = activity.requisitos.join(', ');
                 document.getElementById('actividadRequisitosItem').style.display = 'flex';
+                infoImportanteCount++;
             }
             
             if (activity.que_llevar && Array.isArray(activity.que_llevar) && activity.que_llevar.length > 0) {
                 document.getElementById('actividadQueLlevar').textContent = activity.que_llevar.join(', ');
                 document.getElementById('actividadQueLlevarItem').style.display = 'flex';
+                infoImportanteCount++;
             }
             
             if (activity.equipo_proporcionado && Array.isArray(activity.equipo_proporcionado) && activity.equipo_proporcionado.length > 0) {
                 document.getElementById('actividadEquipo').textContent = activity.equipo_proporcionado.join(', ');
                 document.getElementById('actividadEquipoItem').style.display = 'flex';
+                infoImportanteCount++;
             }
             
             // Campos de incluye/no incluye
             if (activity.incluye) {
                 document.getElementById('actividadIncluye').textContent = activity.incluye;
                 document.getElementById('actividadIncluyeItem').style.display = 'flex';
+                infoImportanteCount++;
             }
             
             if (activity.no_incluye) {
                 document.getElementById('actividadNoIncluye').textContent = activity.no_incluye;
                 document.getElementById('actividadNoIncluyeItem').style.display = 'flex';
+                infoImportanteCount++;
+            }
+            
+            // Ocultar toda la sección "Información Importante" si no hay ningún campo con datos
+            if (infoImportanteCount === 0) {
+                // Buscar todas las secciones de información
+                const infoSections = document.querySelectorAll('.info-section');
+                infoSections.forEach(section => {
+                    const h2 = section.querySelector('h2');
+                    if (h2 && h2.textContent === 'Información Importante') {
+                        section.style.display = 'none';
+                    }
+                });
             }
             
             // Mostrar botones si hay información de contacto
