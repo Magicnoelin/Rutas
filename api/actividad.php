@@ -28,15 +28,35 @@ try {
     // Si el precio del grupo es negativo o 0, no mostrar nada (en lugar de "Gratis")
     $precioGrupo = !empty($actividad['price_group']) && $actividad['price_group'] > 0 ? $actividad['price_group'].'€' : '';
 
-    // Procesar JSON fields
-    $temporadas = json_decode($actividad['available_seasons'], true);
-    $dias = json_decode($actividad['available_days'], true);
-    $horario = json_decode($actividad['schedule'], true);
-    $requisitos = json_decode($actividad['requirements'], true);
-    $queLlevar = json_decode($actividad['what_to_bring'], true);
-    $equipoProporcionado = json_decode($actividad['provided_equipment'], true);
-    $idiomas = json_decode($actividad['languages_available'], true);
-    $accesibilidad = json_decode($actividad['accessibility'], true);
+    // Procesar JSON fields - manejar casos donde el JSON podría ser inválido
+    $temporadas = !empty($actividad['available_seasons']) ? json_decode($actividad['available_seasons'], true) : null;
+    $dias = !empty($actividad['available_days']) ? json_decode($actividad['available_days'], true) : null;
+    $horario = !empty($actividad['schedule']) ? json_decode($actividad['schedule'], true) : null;
+    
+    // Para campos que podrían ser texto plano o JSON
+    $requisitosRaw = $actividad['requirements'] ?? '';
+    $queLlevarRaw = $actividad['what_to_bring'] ?? '';
+    $equipoProporcionadoRaw = $actividad['provided_equipment'] ?? '';
+    
+    // Intentar decodificar JSON, si falla tratar como texto plano
+    $requisitos = json_decode($requisitosRaw, true);
+    if ($requisitos === null && $requisitosRaw !== '' && $requisitosRaw !== null) {
+        // Si no es JSON válido, tratar como texto plano
+        $requisitos = [$requisitosRaw];
+    }
+    
+    $queLlevar = json_decode($queLlevarRaw, true);
+    if ($queLlevar === null && $queLlevarRaw !== '' && $queLlevarRaw !== null) {
+        $queLlevar = [$queLlevarRaw];
+    }
+    
+    $equipoProporcionado = json_decode($equipoProporcionadoRaw, true);
+    if ($equipoProporcionado === null && $equipoProporcionadoRaw !== '' && $equipoProporcionadoRaw !== null) {
+        $equipoProporcionado = [$equipoProporcionadoRaw];
+    }
+    
+    $idiomas = !empty($actividad['languages_available']) ? json_decode($actividad['languages_available'], true) : null;
+    $accesibilidad = !empty($actividad['accessibility']) ? json_decode($actividad['accessibility'], true) : null;
 
     $data = [
         'id' => $actividad['id'],
