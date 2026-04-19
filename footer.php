@@ -96,161 +96,71 @@ $lang_prefix = ($lang != 'es') ? '/' . $lang : '';
 ?>
 <footer class="footer">
     <div class="container">
-        <div class="footer-grid">
-            <div class="footer-section">
-                <h3><?php echo $ft['contact']; ?></h3>
-                <div class="footer-info">
-                    <span class="footer-item">
-                        <i class="fas fa-envelope"></i> 
-                        <a href="mailto:olgamarin@rutasrurales.io">olgamarin@rutasrurales.io</a>
-                    </span>
-                    <span class="footer-item">
-                        <i class="fas fa-phone"></i> 
-                        <a href="tel:+34605249696">+34 605 249 696</a>
-                    </span>
-                </div>
+        <div class="footer-content-simple">
+            <div class="footer-info">
+                <span><i class="fas fa-envelope"></i> <a href="mailto:olgamarin@rutasrurales.io" style="color:inherit; text-decoration:none;">olgamarin@rutasrurales.io</a></span>
+                <span><i class="fas fa-phone"></i> <a href="tel:+34605249696" style="color:inherit; text-decoration:none;">+34 605 249 696</a></span>
             </div>
-            
-            <div class="footer-section">
-                <h3><?php echo $ft['follow_us']; ?></h3>
-                <div class="footer-social">
-                    <a href="https://www.facebook.com/rutasrurales.io" target="_blank" aria-label="Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://twitter.com/rutasrurales" target="_blank" aria-label="Twitter">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="https://www.instagram.com/rutasrurales.io" target="_blank" aria-label="Instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.linkedin.com/company/rutasrurales" target="_blank" aria-label="LinkedIn">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                </div>
+            <div class="footer-links">
+                <a href="<?php echo $lang_prefix; ?>/aviso-legal.html"><?php echo $ft['legal_notice']; ?></a>
+                <a href="<?php echo $lang_prefix; ?>/politica-cookies.html"><?php echo $ft['cookies']; ?></a>
+                <a href="<?php echo $lang_prefix; ?>/agradecimientos.html"><?php echo $ft['acknowledgments']; ?></a>
             </div>
-            
-            <div class="footer-section">
-                <h3><?php echo $ft['eclipse_info']; ?></h3>
-                <div class="footer-links">
-                    <a href="<?php echo $lang_prefix; ?>/mapa-eclipse.php"><?php echo $ft['eclipse_info']; ?></a>
-                    <a href="<?php echo $lang_prefix; ?>/alojamientos-turisticos.html"><?php echo $ft['accommodations']; ?></a>
-                    <a href="<?php echo $lang_prefix; ?>/lugares-interes-paginacion.html"><?php echo $ft['places']; ?></a>
-                </div>
-            </div>
-            
-            <div class="footer-section">
-                <h3><?php echo $ft['legal_notice']; ?></h3>
-                <div class="footer-links">
-                    <a href="<?php echo $lang_prefix; ?>/aviso-legal.html"><?php echo $ft['legal_notice']; ?></a>
-                    <a href="<?php echo $lang_prefix; ?>/politica-privacidad.html"><?php echo $ft['privacy']; ?></a>
-                    <a href="<?php echo $lang_prefix; ?>/politica-cookies.html"><?php echo $ft['cookies']; ?></a>
-                    <a href="<?php echo $lang_prefix; ?>/agradecimientos.html"><?php echo $ft['acknowledgments']; ?></a>
-                    <a href="<?php echo $lang_prefix; ?>/compromiso-social.html"><?php echo $ft['social_commitment']; ?></a>
-                </div>
+            <div class="footer-social">
+                <a href="https://www.facebook.com/rutasrurales.io" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/rutasrurales" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
             </div>
         </div>
-        
-        <div class="footer-bottom">
-            <div class="footer-copyright">
-                <p><?php echo $ft['copyright']; ?></p>
-            </div>
+        <div class="footer-copyright">
+            <p><?php echo $ft['copyright']; ?></p>
         </div>
     </div>
 </footer>
 
 <style>
 .footer {
-    background-color: var(--primary-color);
+    background-color: #2F5233;
     color: white;
-    padding: 25px 15px;
-    font-family: 'Montserrat', sans-serif;
+    padding: 30px 15px;
+    font-family: 'Montserrat', sans-serif, system-ui;
 }
-
-.footer .container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.footer-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+.footer .container { max-width: 1200px; margin: 0 auto; }
+.footer-content-simple {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
     gap: 20px;
     margin-bottom: 20px;
 }
-
-.footer-section h3 {
-    color: #d4a574;
-    font-size: 1rem;
-    margin-bottom: 12px;
-    font-weight: 600;
-}
-
-.footer-info {
+.footer-info, .footer-links, .footer-social {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.footer-item {
-    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
     align-items: center;
-    gap: 8px;
+}
+.footer-info span, .footer-links a, .footer-copyright p {
     font-size: 0.85rem;
-}
-
-.footer-item i {
-    color: #d4a574;
-    width: 16px;
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-.footer-item a {
     color: white;
     text-decoration: none;
-    transition: color 0.3s;
-    font-size: 0.85rem;
 }
-
-.footer-item a:hover {
-    color: #d4a574;
-}
-
-.footer-social {
-    display: flex;
-    gap: 10px;
-}
-
+.footer-info i { color: #d4a574; }
 .footer-social a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
     color: white;
-    text-decoration: none;
-    transition: all 0.3s;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
 }
-.footer-social a:hover {
-    background: #d4a574;
-    transform: translateY(-2px);
-}
-.footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 20px;
-    text-align: center;
-}
+.footer-social a:hover { transform: translateY(-2px); color: #d4a574; }
 .footer-copyright {
-    font-size: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    text-align: center;
     opacity: 0.7;
 }
 @media (max-width: 768px) {
     .footer-content-simple { flex-direction: column; text-align: center; }
-    .footer-info { align-items: center; }
-    .footer-links { flex-direction: column; gap: 10px; }
+    .footer-info, .footer-links { flex-direction: column; gap: 10px; }
 }
 </style>
 
