@@ -144,7 +144,7 @@ if (file_exists($templateFile)) {
         
         // LIMPIEZA: Eliminar etiquetas de cierre propias de la plantilla para evitar duplicados
         // ya que $footerContent (proveniente de footer.php) ya incluye </body></html>
-        $html = preg_replace('/<\/body>\s*<\/html>\s*$/i', '', $html);
+        $html = preg_replace('/<\/body>\s*<\/html>\s*$/is', '', $html);
         
         if ($type === 'actividad') {
             // Para actividad, reemplazar marcadores existentes
