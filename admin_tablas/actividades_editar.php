@@ -22,6 +22,13 @@ if (!$item) { die("Actividad no encontrada."); }
 </head>
 <body class="bg-light p-4">
 
+<?php if (isset($_GET['status']) && $_GET['status'] === 'success'): ?>
+<div class="alert alert-success alert-dismissible fade show" role="alert" style="max-width: 1200px; margin: 0 auto 20px;">
+    <strong>✅ ¡Guardado exitoso!</strong> Los cambios se han guardado correctamente.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php endif; ?>
+
 <div class="container-fluid" style="max-width: 1200px;">
     <form action="guardar_actividad.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?= $item['id'] ?>">

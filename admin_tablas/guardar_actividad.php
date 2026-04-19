@@ -114,25 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Añadimos el ID con un nombre diferente para evitar conflictos si existiera una columna llamada 'id' en el loop
         $params['id_param'] = $id;
 
-        // DEBUG: Mostrar información antes de ejecutar
-        echo "<div style='background: #f0f0f0; padding: 20px; margin: 20px; border: 1px solid #ccc;'>";
-        echo "<h3>DEBUG - Información antes de guardar</h3>";
-        echo "<p><strong>SQL:</strong> $sql</p>";
-        echo "<p><strong>Parámetros:</strong><br>";
-        foreach ($params as $key => $value) {
-            echo "  $key = " . (is_null($value) ? 'NULL' : "'" . htmlspecialchars($value) . "'") . "<br>";
-        }
-        echo "</p>";
-        echo "<p><strong>Campos con restricciones JSON:</strong> " . implode(', ', $campos_json_con_restricciones) . "</p>";
-        echo "</div>";
-
         $stmt->execute($params);
 
-        echo "<div style='background: #d4edda; padding: 20px; margin: 20px; border: 1px solid #c3e6cb;'>";
-        echo "<h3>✅ Guardado exitoso</h3>";
-        echo "<p>Los cambios se han guardado correctamente.</p>";
-        echo "<p><a href='actividades_index.php'>Volver al listado</a> | <a href='actividades_editar.php?id=$id'>Seguir editando</a></p>";
-        echo "</div>";
+        // Redirigir a la página de edición con mensaje de éxito
+        header("Location: actividades_editar.php?id=$id&status=success");
         exit();
 
     } catch (PDOException $e) {
