@@ -1720,7 +1720,7 @@ const ALO_FOTOS = <?php echo json_encode($fotos, JSON_UNESCAPED_UNICODE | JSON_U
 </script>
 
 <!-- Script principal diferido -->
-<script defer src="/alojamiento-modular/js/alojamiento.js"></script>
+<script defer src="/alojamiento-modular/js/alojamiento.js?v=20260420b"></script>
 
 <!-- Script global del sitio -->
 <script defer src="/script.js?v=20260114"></script>

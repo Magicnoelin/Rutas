@@ -369,23 +369,8 @@
                 });
             });
 
-            var section = document.getElementById('secCercanos');
-            if (!section) return;
-
-            if ('IntersectionObserver' in window) {
-                var observer = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            observer.disconnect();
-                            // Pequeño delay para no bloquear el hilo principal
-                            setTimeout(function() { self.loadAndRender('alojamientos'); }, 100);
-                        }
-                    });
-                }, {rootMargin: '0px', threshold: 0.1});
-                observer.observe(section);
-            } else {
-                setTimeout(function() { self.loadAndRender('alojamientos'); }, 2000);
-            }
+            // Cargar datos cercanos automáticamente tras 1.5s (sin esperar scroll)
+            setTimeout(function() { self.loadAndRender('alojamientos'); }, 1500);
         },
 
         activateTab: function(tabName) {
