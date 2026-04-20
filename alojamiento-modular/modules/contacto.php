@@ -1,3 +1,4 @@
+<?php if ($alojamiento): ?>
 <div class="alojamiento-contact">
     <h2 class="section-title"><i class="fas fa-phone-alt"></i> <?php echo $t['contacto']; ?></h2>
     
@@ -40,3 +41,4 @@
     </div>
     <?php endif; ?>
 </div>
+<?php endif; ?>

@@ -1,3 +1,4 @@
+<?php if ($alojamiento): ?>
 <div class="alojamiento-description">
     <h2 class="section-title"><i class="fas fa-align-left"></i> <?php echo $t['descripcion']; ?></h2>
     
@@ -61,3 +62,4 @@
         <?php endif; ?>
     </div>
 </div>
+<?php endif; ?>

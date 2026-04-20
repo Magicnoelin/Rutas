@@ -733,19 +733,40 @@ include '../header.php';
     
     <main>
         <?php if ($alojamiento): ?>
-            <?php include 'modules/hero.php'; ?>
+            <?php 
+            // Incluir módulos con variables necesarias
+            $module_vars = [
+                'alojamiento' => $alojamiento,
+                'fotos' => $fotos,
+                't' => $t,
+                'lang' => $lang,
+                'tipo_display' => $tipo_display,
+                'capacidad_display' => $capacidad_display,
+                'precio_display' => $precio_display
+            ];
+            
+            // Función para incluir módulos con variables
+            function include_module($module, $vars) {
+                extract($vars);
+                include $module;
+            }
+            
+            include_module('modules/hero.php', $module_vars);
+            ?>
             
             <div class="alojamiento-layout">
                 <div class="main-content">
-                    <?php include 'modules/galeria.php'; ?>
-                    <?php include 'modules/descripcion.php'; ?>
-                    <?php include 'modules/contacto.php'; ?>
-                    <?php include 'modules/mapa.php'; ?>
-                    <?php include 'modules/cercanos.php'; ?>
+                    <?php 
+                    include_module('modules/galeria.php', $module_vars);
+                    include_module('modules/descripcion.php', $module_vars);
+                    include_module('modules/contacto.php', $module_vars);
+                    include_module('modules/mapa.php', $module_vars);
+                    include_module('modules/cercanos.php', $module_vars);
+                    ?>
                 </div>
                 
                 <div class="sidebar">
-                    <?php include 'modules/cta.php'; ?>
+                    <?php include_module('modules/cta.php', $module_vars); ?>
                     <!-- Espacio para más widgets laterales -->
                 </div>
             </div>

@@ -1,3 +1,4 @@
+<?php if ($alojamiento): ?>
 <div class="alojamiento-gallery">
     <h2 class="section-title"><i class="fas fa-camera"></i> <?php echo $t['fotos']; ?></h2>
     
@@ -29,3 +30,4 @@
     </div>
     <?php endif; ?>
 </div>
+<?php endif; ?>

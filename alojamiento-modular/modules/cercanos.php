@@ -1,3 +1,4 @@
+<?php if ($alojamiento): ?>
 <div class="alojamiento-nearby">
     <h2 class="section-title"><i class="fas fa-compass"></i> <?php echo $t['cercanos']; ?></h2>
     
@@ -43,3 +44,4 @@
         </div>
     </div>
 </div>
+<?php endif; ?>

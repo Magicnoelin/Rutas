@@ -1,3 +1,4 @@
+<?php if ($alojamiento): ?>
 <div class="alojamiento-map">
     <h2 class="section-title"><i class="fas fa-map"></i> <?php echo $t['ubicacion']; ?></h2>
     
@@ -22,3 +23,4 @@
     </script>
     <?php endif; ?>
 </div>
+<?php endif; ?>

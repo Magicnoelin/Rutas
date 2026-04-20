@@ -1,8 +1,12 @@
+<?php 
+// Verificar que todas las variables necesarias existan
+if (isset($alojamiento) && $alojamiento && isset($t) && isset($tipo_display) && isset($capacidad_display) && isset($precio_display)):
+?>
 <div class="alojamiento-hero">
     <div class="hero-breadcrumb">
         <nav class="breadcrumb-nav">
-            <a href="/index.html"><?php echo $t['alojamiento']; ?></a> / 
-            <a href="/alojamientos-turisticos.html"><?php echo $t['alojamiento']; ?>s</a> / 
+            <a href="/index.html"><?php echo isset($t['alojamiento']) ? $t['alojamiento'] : 'Alojamiento'; ?></a> / 
+            <a href="/alojamientos-turisticos.html"><?php echo isset($t['alojamiento']) ? $t['alojamiento'] . 's' : 'Alojamientos'; ?></a> / 
             <span><?php echo htmlspecialchars($alojamiento['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></span>
         </nav>
     </div>
@@ -35,3 +39,4 @@
         </div>
     </div>
 </div>
+<?php endif; ?>

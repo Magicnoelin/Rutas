@@ -1,3 +1,4 @@
+<?php if ($alojamiento): ?>
 <div class="alojamiento-cta">
     <div class="cta-card">
         <h3><?php echo $t['cta_titulo']; ?></h3>
@@ -15,3 +16,4 @@
         </div>
     </div>
 </div>
+<?php endif; ?>
