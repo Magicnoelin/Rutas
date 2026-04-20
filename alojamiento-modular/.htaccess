@@ -3,7 +3,6 @@
 # Ejemplo: /alojamiento-modular/casa-enrique → index.php?slug=casa-enrique
 
 RewriteEngine On
-RewriteBase /alojamiento-modular/
 
 # Redirigir /alojamiento-modular/ a index.php (sin slug)
 RewriteRule ^$ index.php [L,QSA]
@@ -31,16 +30,14 @@ RewriteRule ^([a-z]{2})/([a-z0-9\-]+)/?$ index.php?lang=$1&slug=$2 [L,QSA]
 </IfModule>
 
 # ─── SEGURIDAD ───────────────────────────────────────────────────────────────
-# Proteger archivos sensibles
-<FilesMatch "\.(php|sql|log|env)$">
-    Order Allow,Deny
-    Deny from all
+# Proteger archivos sensibles (sintaxis Apache 2.4)
+<FilesMatch "\.(sql|log|env|ini)$">
+    Require all denied
 </FilesMatch>
 
 # Permitir acceso solo a archivos necesarios
-<FilesMatch "^(index\.php|alojamiento\.css|alojamiento\.js|alojamiento-data\.php)$">
-    Order Allow,Deny
-    Allow from all
+<FilesMatch "^(index\.php|alojamiento\.css|alojamiento\.js|alojamiento-data\.php|test\.html)$">
+    Require all granted
 </FilesMatch>
 
 # ─── HEADERS DE SEGURIDAD ────────────────────────────────────────────────────
@@ -59,8 +56,21 @@ RewriteRule ^([a-z]{2})/([a-z0-9\-]+)/?$ index.php?lang=$1&slug=$2 [L,QSA]
     
     # Permissions Policy
     Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    
+    # CORS para API
+    <FilesMatch "alojamiento-data\.php$">
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, OPTIONS"
+        Header set Access-Control-Allow-Headers "Content-Type"
+    </FilesMatch>
 </IfModule>
 
 # ─── ERROR PAGES ─────────────────────────────────────────────────────────────
 ErrorDocument 404 /alojamiento-modular/index.php
-ErrorDocument 500 /alojamiento-modular/index.php?slug=error
+ErrorDocument 500 /alojamiento-modular/index.php
+
+# ─── OPTIONS PARA API ────────────────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>

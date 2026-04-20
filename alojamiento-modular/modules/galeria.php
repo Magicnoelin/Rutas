@@ -1,6 +1,9 @@
-<?php if ($alojamiento): ?>
+<?php 
+// Verificar que todas las variables necesarias existan
+if (isset($alojamiento) && $alojamiento && isset($t) && isset($fotos)):
+?>
 <div class="alojamiento-gallery">
-    <h2 class="section-title"><i class="fas fa-camera"></i> <?php echo $t['fotos']; ?></h2>
+    <h2 class="section-title"><i class="fas fa-camera"></i> <?php echo isset($t['fotos']) ? $t['fotos'] : 'Fotos'; ?></h2>
     
     <?php if (!empty($fotos)): ?>
     <div class="gallery-main">

@@ -1,6 +1,9 @@
-<?php if ($alojamiento): ?>
+<?php 
+// Verificar que todas las variables necesarias existan
+if (isset($alojamiento) && $alojamiento && isset($t) && isset($tipo_display) && isset($capacidad_display)):
+?>
 <div class="alojamiento-description">
-    <h2 class="section-title"><i class="fas fa-align-left"></i> <?php echo $t['descripcion']; ?></h2>
+    <h2 class="section-title"><i class="fas fa-align-left"></i> <?php echo isset($t['descripcion']) ? $t['descripcion'] : 'Descripción'; ?></h2>
     
     <?php if (!empty($alojamiento['description'])): ?>
     <div class="description-content">
@@ -15,7 +18,7 @@
         <div class="feature-item">
             <i class="fas fa-home"></i>
             <div>
-                <strong><?php echo $t['tipo']; ?></strong>
+                <strong><?php echo isset($t['tipo']) ? $t['tipo'] : 'Tipo'; ?></strong>
                 <p><?php echo $tipo_display; ?></p>
             </div>
         </div>
@@ -25,7 +28,7 @@
         <div class="feature-item">
             <i class="fas fa-users"></i>
             <div>
-                <strong><?php echo $t['capacidad']; ?></strong>
+                <strong><?php echo isset($t['capacidad']) ? $t['capacidad'] : 'Capacidad'; ?></strong>
                 <p><?php echo $capacidad_display; ?></p>
             </div>
         </div>
@@ -55,7 +58,7 @@
         <div class="feature-item">
             <i class="fas fa-concierge-bell"></i>
             <div>
-                <strong><?php echo $t['servicios']; ?></strong>
+                <strong><?php echo isset($t['servicios']) ? $t['servicios'] : 'Servicios'; ?></strong>
                 <p><?php echo htmlspecialchars($alojamiento['services'], ENT_QUOTES, 'UTF-8'); ?></p>
             </div>
         </div>
