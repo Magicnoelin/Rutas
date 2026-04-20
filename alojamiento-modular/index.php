@@ -1414,7 +1414,7 @@ a:hover { color: var(--primary-light); }
                 <div class="feature-item">
                     <i class="fas fa-sign-in-alt"></i>
                     <div>
-                        <strong><?php echo ($t['checkin'] ?? 'Entrada'); ?></strong>
+                        <strong><?php echo ($t['checkin'] ?? 'Check-in'); ?></strong>
                         <p><?php echo htmlspecialchars($alojamiento['check_in_time'], ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
                 </div>
@@ -1424,7 +1424,7 @@ a:hover { color: var(--primary-light); }
                 <div class="feature-item">
                     <i class="fas fa-sign-out-alt"></i>
                     <div>
-                        <strong><?php echo ($t['checkout'] ?? 'Salida'); ?></strong>
+                        <strong><?php echo ($t['checkout'] ?? 'Check-out'); ?></strong>
                         <p><?php echo htmlspecialchars($alojamiento['check_out_time'], ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
                 </div>
@@ -1481,7 +1481,7 @@ a:hover { color: var(--primary-light); }
                 <a href="<?php echo htmlspecialchars($alojamiento['website'], ENT_QUOTES, 'UTF-8'); ?>"
                    target="_blank" rel="noopener"
                    class="btn-contact btn-website">
-                    <i class="fas fa-globe"></i> <?php echo ($t['web'] ?? 'Web'); ?>
+                    <i class="fas fa-globe"></i> <?php echo ($t['web'] ?? 'Sitio Web'); ?>
                 </a>
                 <?php endif; ?>
             </div>
@@ -1577,9 +1577,9 @@ a:hover { color: var(--primary-light); }
             <div class="price-card">
                 <?php if (!empty($alojamiento['price_per_night']) && $alojamiento['price_per_night'] > 0): ?>
                 <div class="price-card-amount"><?php echo htmlspecialchars($precio_display, ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="price-card-label"><?php echo $t['precio_noche']; ?></div>
+                <div class="price-card-label"><?php echo ($t['precio_noche'] ?? 'noche'); ?></div>
                 <?php else: ?>
-                <div class="price-card-amount" style="font-size:1.2rem;"><?php echo $t['consultar']; ?></div>
+                <div class="price-card-amount" style="font-size:1.2rem;"><?php echo ($t['consultar'] ?? 'Consultar'); ?></div>
                 <div class="price-card-label" style="margin-bottom:18px;"></div>
                 <?php endif; ?>
 
@@ -1588,10 +1588,10 @@ a:hover { color: var(--primary-light); }
                     <li><i class="fas fa-users"></i> <?php echo htmlspecialchars($capacidad_display, ENT_QUOTES, 'UTF-8'); ?></li>
                     <?php endif; ?>
                     <?php if (!empty($alojamiento['check_in_time'])): ?>
-                    <li><i class="fas fa-sign-in-alt"></i> <?php echo $t['checkin']; ?>: <?php echo htmlspecialchars($alojamiento['check_in_time'], ENT_QUOTES, 'UTF-8'); ?></li>
+                    <li><i class="fas fa-sign-in-alt"></i> <?php echo ($t['checkin'] ?? 'Check-in'); ?>: <?php echo htmlspecialchars($alojamiento['check_in_time'], ENT_QUOTES, 'UTF-8'); ?></li>
                     <?php endif; ?>
                     <?php if (!empty($alojamiento['check_out_time'])): ?>
-                    <li><i class="fas fa-sign-out-alt"></i> <?php echo $t['checkout']; ?>: <?php echo htmlspecialchars($alojamiento['check_out_time'], ENT_QUOTES, 'UTF-8'); ?></li>
+                    <li><i class="fas fa-sign-out-alt"></i> <?php echo ($t['checkout'] ?? 'Check-out'); ?>: <?php echo htmlspecialchars($alojamiento['check_out_time'], ENT_QUOTES, 'UTF-8'); ?></li>
                     <?php endif; ?>
                     <?php if (!empty($alojamiento['municipality'])): ?>
                     <li><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($alojamiento['municipality'], ENT_QUOTES, 'UTF-8'); ?></li>
@@ -1600,15 +1600,15 @@ a:hover { color: var(--primary-light); }
 
                 <?php if (!empty($alojamiento['phone'])): ?>
                 <a href="tel:<?php echo htmlspecialchars($alojamiento['phone'], ENT_QUOTES, 'UTF-8'); ?>" class="btn-reservar">
-                    <i class="fas fa-phone"></i> <?php echo $t['reservar']; ?>
+                    <i class="fas fa-phone"></i> <?php echo ($t['reservar'] ?? 'Reservar'); ?>
                 </a>
                 <?php elseif (!empty($alojamiento['email'])): ?>
                 <a href="mailto:<?php echo htmlspecialchars($alojamiento['email'], ENT_QUOTES, 'UTF-8'); ?>" class="btn-reservar">
-                    <i class="fas fa-envelope"></i> <?php echo $t['reservar']; ?>
+                    <i class="fas fa-envelope"></i> <?php echo ($t['reservar'] ?? 'Reservar'); ?>
                 </a>
                 <?php else: ?>
                 <a href="#secContacto" class="btn-reservar">
-                    <i class="fas fa-calendar-check"></i> <?php echo $t['reservar']; ?>
+                    <i class="fas fa-calendar-check"></i> <?php echo ($t['reservar'] ?? 'Reservar'); ?>
                 </a>
                 <?php endif; ?>
 
@@ -1622,14 +1622,14 @@ a:hover { color: var(--primary-light); }
 
             <!-- CTA Registro -->
             <div class="cta-card">
-                <h3><?php echo $t['cta_titulo']; ?></h3>
-                <p><?php echo $t['cta_desc']; ?></p>
+                <h3><?php echo ($t['cta_titulo'] ?? '¿Te gusta este alojamiento?'); ?></h3>
+                <p><?php echo ($t['cta_desc'] ?? 'Regístrate para guardarlo en favoritos.'); ?></p>
                 <div class="cta-btns">
                     <a href="/register.html" class="btn-cta-register">
-                        <i class="fas fa-user-plus"></i> <?php echo $t['cta_register']; ?>
+                        <i class="fas fa-user-plus"></i> <?php echo ($t['cta_register'] ?? 'Regístrate'); ?>
                     </a>
                     <a href="/login.html" class="btn-cta-login">
-                        <i class="fas fa-sign-in-alt"></i> <?php echo $t['cta_login']; ?>
+                        <i class="fas fa-sign-in-alt"></i> <?php echo ($t['cta_login'] ?? 'Ya tengo cuenta'); ?>
                     </a>
                 </div>
             </div>
