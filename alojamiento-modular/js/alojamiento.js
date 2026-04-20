@@ -11,7 +11,10 @@
 (function () {
     'use strict';
 
-    if (!window.ALO) return;
+    if (!window.ALO) {
+        console.error("Error: Variable global ALO no encontrada. El script no puede continuar.");
+        return;
+    }
 
     var API    = '/alojamiento-modular/api/alojamiento-data.php';
     var RADIUS = 50;
@@ -44,12 +47,14 @@
             fetch(url)
                 .then(function(r){ return r.json(); })
                 .then(function(data){
+                    console.log("Datos cercanos recibidos:", data);
                     nearbyCache   = (data.success && data.data) ? data.data : {};
                     nearbyLoading = false;
                     nearbyCallbacks.forEach(function(cb){ cb.resolve(nearbyCache); });
                     nearbyCallbacks = [];
                 })
                 .catch(function(err){
+                    console.error("Error al obtener datos cercanos:", err);
                     nearbyLoading = false;
                     nearbyCallbacks.forEach(function(cb){ cb.reject(err); });
                     nearbyCallbacks = [];
@@ -237,6 +242,7 @@
         load: function() {
             if (this.loaded) return;
             this.loaded = true;
+            console.log("Iniciando carga de mapa y Leaflet...");
             var self        = this;
             var placeholder = document.getElementById('mapPlaceholder');
             var mapEl       = document.getElementById('alo-map');
@@ -256,7 +262,8 @@
                         .then(function(data) { self.addNearbyMarkers(data); })
                         .catch(function() {});
                 })
-                .catch(function() {
+                .catch(function(err) {
+                    console.error("Error cargando Leaflet:", err);
                     self.loaded = false;
                     if (placeholder) {
                         placeholder.style.display = 'flex';
