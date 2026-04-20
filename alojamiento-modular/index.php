@@ -1251,11 +1251,6 @@ a:hover { color: var(--primary-light); }
 <link rel="preload" as="image" href="<?php echo htmlspecialchars($fotos[0]); ?>">
 <?php endif; ?>
 
-<!-- Font Awesome no bloqueante: se carga después del render -->
-<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-
 <main>
 <?php if ($alojamiento): ?>
 
@@ -1669,12 +1664,44 @@ a:hover { color: var(--primary-light); }
 <?php endif; ?>
 </main>
 
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     JAVASCRIPT — diferido, no bloquea render
-     Debe ir ANTES del footer (que cierra </body></html>)
-     ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- ── FOOTER PROPIO (sin include compartido para evitar conflictos) ── -->
+<footer class="site-footer" style="background:#2F5233;color:#fff;padding:30px 15px;font-family:'Montserrat',sans-serif;">
+    <div style="max-width:1200px;margin:0 auto;">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px;margin-bottom:20px;">
+            <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:center;font-size:0.85rem;">
+                <span><a href="mailto:olgamarin@rutasrurales.io" style="color:#fff;text-decoration:none;">✉ olgamarin@rutasrurales.io</a></span>
+                <span><a href="tel:+34605249696" style="color:#fff;text-decoration:none;">📞 +34 605 249 696</a></span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:20px;font-size:0.85rem;">
+                <a href="/aviso-legal.html" style="color:#fff;text-decoration:none;">Aviso Legal</a>
+                <a href="/politica-cookies.html" style="color:#fff;text-decoration:none;">Cookies</a>
+                <a href="/agradecimientos.html" style="color:#fff;text-decoration:none;">Agradecimientos</a>
+            </div>
+            <div style="display:flex;gap:16px;">
+                <a href="https://www.facebook.com/rutasrurales.io" target="_blank" style="color:#fff;font-size:1.1rem;text-decoration:none;">📘</a>
+                <a href="https://www.instagram.com/rutas_rurales/" target="_blank" style="color:#fff;font-size:1.1rem;text-decoration:none;">📸</a>
+                <a href="https://twitter.com/rutasrurales" target="_blank" style="color:#fff;font-size:1.1rem;text-decoration:none;">🐦</a>
+            </div>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:15px;text-align:center;opacity:0.7;font-size:0.8rem;">
+            <p>&copy; 2026 <strong>rutasrurales.io</strong>. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- ── SCRIPTS DIFERIDOS ── -->
+
+<!-- Font Awesome diferido -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+<!-- Leaflet CSS diferido (solo si hay mapa) -->
+<?php if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])): ?>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
+<?php endif; ?>
+
+<!-- Datos del alojamiento para JS -->
 <script>
-// Datos del alojamiento (SSR, sin llamada extra a la API)
 const ALO = <?php echo $alojamiento_js; ?>;
 const ALO_LANG = <?php echo json_encode([
     'ver_mas'        => $t['ver_mas'],
@@ -1687,6 +1714,12 @@ const ALO_LANG = <?php echo json_encode([
 ]); ?>;
 const ALO_FOTOS = <?php echo json_encode($fotos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
 </script>
-<script src="/alojamiento-modular/js/alojamiento.js" defer></script>
 
-<?php include '../footer.php'; ?>
+<!-- Script principal diferido -->
+<script defer src="/alojamiento-modular/js/alojamiento.js"></script>
+
+<!-- Script global del sitio -->
+<script defer src="/script.js?v=20260114"></script>
+
+</body>
+</html>

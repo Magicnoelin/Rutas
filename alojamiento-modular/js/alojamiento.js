@@ -15,9 +15,8 @@
 
     var API    = '/alojamiento-modular/api/alojamiento-data.php';
     var RADIUS = 50;
-    // Leaflet servido localmente — sin dependencia de CDN externo
-    var L_CSS  = '/alojamiento-modular/js/leaflet/leaflet.css';
-    var L_JS   = '/alojamiento-modular/js/leaflet/leaflet.js';
+    // Leaflet desde unpkg (igual que evento-modular que funciona)
+    var L_JS   = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
 
     var alo   = window.ALO;
     var lang  = window.ALO_LANG  || {};
@@ -259,13 +258,7 @@
             return new Promise(function(resolve, reject) {
                 if (window.L) { resolve(); return; }
 
-                // CSS de Leaflet (local, sin integrity)
-                var css = document.createElement('link');
-                css.rel  = 'stylesheet';
-                css.href = L_CSS;
-                document.head.appendChild(css);
-
-                // JS de Leaflet (local, sin integrity)
+                // Solo cargamos el JS — el CSS ya se carga en el HTML con media="print"
                 var js = document.createElement('script');
                 js.src    = L_JS;
                 js.onload  = resolve;
