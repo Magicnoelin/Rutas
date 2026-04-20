@@ -4,6 +4,11 @@
 
 RewriteEngine On
 
+# NO reescribir archivos y directorios que existen físicamente
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
 # Redirigir /alojamiento-modular/ a index.php (sin slug)
 RewriteRule ^$ index.php [L,QSA]
 
@@ -35,8 +40,8 @@ RewriteRule ^([a-z]{2})/([a-z0-9\-]+)/?$ index.php?lang=$1&slug=$2 [L,QSA]
     Require all denied
 </FilesMatch>
 
-# Permitir acceso solo a archivos necesarios
-<FilesMatch "^(index\.php|alojamiento\.css|alojamiento\.js|alojamiento-data\.php|test\.html)$">
+# Permitir acceso a archivos necesarios (incluidos Leaflet y assets estáticos)
+<FilesMatch "\.(php|css|js|png|jpg|jpeg|webp|svg|woff2|html)$">
     Require all granted
 </FilesMatch>
 

@@ -1669,10 +1669,9 @@ a:hover { color: var(--primary-light); }
 <?php endif; ?>
 </main>
 
-<?php include '../footer.php'; ?>
-
 <!-- ═══════════════════════════════════════════════════════════════════════════
      JAVASCRIPT — diferido, no bloquea render
+     Debe ir ANTES del footer (que cierra </body></html>)
      ═══════════════════════════════════════════════════════════════════════════ -->
 <script>
 // Datos del alojamiento (SSR, sin llamada extra a la API)
@@ -1689,4 +1688,5 @@ const ALO_LANG = <?php echo json_encode([
 const ALO_FOTOS = <?php echo json_encode($fotos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
 </script>
 <script src="/alojamiento-modular/js/alojamiento.js" defer></script>
-</html>
+
+<?php include '../footer.php'; ?>
