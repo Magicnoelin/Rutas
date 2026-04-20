@@ -369,7 +369,10 @@ $alojamiento_js = $alojamiento ? json_encode([
     'email'       => $alojamiento['email'] ?? '',
 ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) : 'null';
 
-// Incluir header.php (emite <!DOCTYPE html>, <html>, <head> con GTM, styles.css, FA, etc.)
+// Indicar al header que NO cargue FA de forma bloqueante (lo cargamos nosotros de forma diferida)
+$defer_fontawesome = true;
+
+// Incluir header.php (emite <!DOCTYPE html>, <html>, <head> con GTM, styles.css, etc.)
 include '../header.php';
 ?>
 
@@ -1247,6 +1250,11 @@ a:hover { color: var(--primary-light); }
 <?php if (!empty($fotos[0])): ?>
 <link rel="preload" as="image" href="<?php echo htmlspecialchars($fotos[0]); ?>">
 <?php endif; ?>
+
+<!-- Font Awesome no bloqueante: se carga después del render -->
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
 <main>
 <?php if ($alojamiento): ?>

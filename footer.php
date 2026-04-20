@@ -164,7 +164,7 @@ $lang_prefix = ($lang != 'es') ? '/' . $lang : '';
 }
 </style>
 
-<script src="script.js?v=20260114"></script>
+<script src="/script.js?v=20260114"></script>
 
 </body>
 </html>

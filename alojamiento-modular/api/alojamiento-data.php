@@ -13,7 +13,7 @@ require_once '../../api/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Cache-Control: public, max-age=300'); // Cache 5 minutos
+header('Cache-Control: public, max-age=900'); // Cache 15 minutos
 
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 $lat = isset($_GET['lat']) ? floatval($_GET['lat']) : null;

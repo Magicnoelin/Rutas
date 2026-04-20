@@ -15,10 +15,9 @@
 
     var API    = '/alojamiento-modular/api/alojamiento-data.php';
     var RADIUS = 50;
-    var L_CSS  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-    var L_JS   = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-    var L_CSS_INT = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-    var L_JS_INT  = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+    // Leaflet servido localmente — sin dependencia de CDN externo
+    var L_CSS  = '/alojamiento-modular/js/leaflet/leaflet.css';
+    var L_JS   = '/alojamiento-modular/js/leaflet/leaflet.js';
 
     var alo   = window.ALO;
     var lang  = window.ALO_LANG  || {};
@@ -204,7 +203,7 @@
     };
 
     /* ══════════════════════════════════════════════════════
-       MAPA (Leaflet lazy)
+       MAPA (Leaflet lazy — solo al hacer clic)
        ══════════════════════════════════════════════════════ */
     var MapModule = {
         loaded: false,
@@ -216,22 +215,11 @@
             var placeholder = document.getElementById('mapPlaceholder');
             if (!placeholder) return;
 
+            // Solo carga al hacer clic o pulsar Enter/Espacio — NO auto-load
             placeholder.addEventListener('click', function() { self.load(); });
             placeholder.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); self.load(); }
             });
-
-            if ('IntersectionObserver' in window) {
-                var observer = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            observer.disconnect();
-                            setTimeout(function() { self.load(); }, 300);
-                        }
-                    });
-                }, {rootMargin: '200px'});
-                observer.observe(placeholder);
-            }
         },
 
         load: function() {
@@ -271,17 +259,15 @@
             return new Promise(function(resolve, reject) {
                 if (window.L) { resolve(); return; }
 
+                // CSS de Leaflet (local, sin integrity)
                 var css = document.createElement('link');
-                css.rel = 'stylesheet';
+                css.rel  = 'stylesheet';
                 css.href = L_CSS;
-                css.integrity = L_CSS_INT;
-                css.crossOrigin = '';
                 document.head.appendChild(css);
 
+                // JS de Leaflet (local, sin integrity)
                 var js = document.createElement('script');
-                js.src = L_JS;
-                js.integrity = L_JS_INT;
-                js.crossOrigin = '';
+                js.src    = L_JS;
                 js.onload  = resolve;
                 js.onerror = reject;
                 document.head.appendChild(js);
@@ -385,13 +371,14 @@
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
                             observer.disconnect();
-                            self.loadAndRender('alojamientos');
+                            // Pequeño delay para no bloquear el hilo principal
+                            setTimeout(function() { self.loadAndRender('alojamientos'); }, 100);
                         }
                     });
-                }, {rootMargin: '300px'});
+                }, {rootMargin: '0px', threshold: 0.1});
                 observer.observe(section);
             } else {
-                setTimeout(function() { self.loadAndRender('alojamientos'); }, 1500);
+                setTimeout(function() { self.loadAndRender('alojamientos'); }, 2000);
             }
         },
 

@@ -90,7 +90,9 @@ $page_description = $page_description ?? $t['description'];
     
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
     <link rel="stylesheet" href="/styles.css">
+    <?php if (empty($defer_fontawesome)): ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <?php endif; ?>
     
     <style>
         /* Fuentes locales Montserrat - cargadas desde el servidor */
