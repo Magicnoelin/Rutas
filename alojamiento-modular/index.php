@@ -1261,10 +1261,10 @@ a:hover { color: var(--primary-light); }
 
     <!-- Botones flotantes -->
     <div class="alo-hero-actions">
-        <button class="alo-hero-action-btn" id="btnShare" title="<?php echo $t['compartir']; ?>" aria-label="<?php echo $t['compartir']; ?>">
+        <button class="alo-hero-action-btn" id="btnShare" title="<?php echo $t['compartir'] ?? 'Compartir'; ?>" aria-label="<?php echo $t['compartir'] ?? 'Compartir'; ?>">
             <i class="fas fa-share-alt"></i>
         </button>
-        <button class="alo-hero-action-btn" id="btnFav" title="<?php echo $t['favorito']; ?>" aria-label="<?php echo $t['favorito']; ?>">
+        <button class="alo-hero-action-btn" id="btnFav" title="<?php echo $t['favorito'] ?? 'Favorito'; ?>" aria-label="<?php echo $t['favorito'] ?? 'Favorito'; ?>">
             <i class="far fa-heart"></i>
         </button>
     </div>
@@ -1274,7 +1274,7 @@ a:hover { color: var(--primary-light); }
         <nav class="alo-breadcrumb" aria-label="breadcrumb">
             <a href="/index.html"><i class="fas fa-home"></i></a>
             <span class="sep">/</span>
-            <a href="/alojamientos-turisticos.html"><?php echo $t['alojamientos']; ?></a>
+            <a href="/alojamientos-turisticos.html"><?php echo $t['alojamientos'] ?? 'Alojamientos'; ?></a>
             <span class="sep">/</span>
             <span class="current"><?php echo htmlspecialchars($alojamiento['name'], ENT_QUOTES, 'UTF-8'); ?></span>
         </nav>
@@ -1317,7 +1317,7 @@ a:hover { color: var(--primary-light); }
 
             <?php if (!empty($precio_display)): ?>
             <div class="alo-hero-price-badge">
-                <?php echo ($t['precio_desde'] ?? 'Desde'); ?> <?php echo htmlspecialchars($precio_display, ENT_QUOTES, 'UTF-8'); ?> / <?php echo ($t['noche'] ?? 'noche'); ?>
+                <?php echo $t['precio_desde'] ?? 'Desde'; ?> <?php echo htmlspecialchars($precio_display, ENT_QUOTES, 'UTF-8'); ?> / <?php echo $t['noche'] ?? 'noche'; ?>
             </div>
             <?php endif; ?>
         </div>
@@ -1335,7 +1335,7 @@ a:hover { color: var(--primary-light); }
         <!-- GALERÍA -->
         <?php if (!empty($fotos)): ?>
         <div class="alo-card" id="secGaleria">
-            <h2 class="section-title"><i class="fas fa-images"></i> <?php echo ($t['fotos'] ?? 'Galería'); ?></h2>
+            <h2 class="section-title"><i class="fas fa-images"></i> <?php echo $t['fotos'] ?? 'Fotos'; ?></h2>
 
             <div class="gallery-main" id="galleryMain" role="button" tabindex="0" aria-label="Abrir galería">
                 <img id="galleryMainImg"
@@ -1372,7 +1372,7 @@ a:hover { color: var(--primary-light); }
 
         <!-- DESCRIPCIÓN -->
         <div class="alo-card" id="secDescripcion">
-            <h2 class="section-title"><i class="fas fa-align-left"></i> <?php echo ($t['descripcion'] ?? 'Descripción'); ?></h2>
+            <h2 class="section-title"><i class="fas fa-align-left"></i> <?php echo $t['descripcion'] ?? 'Descripción'; ?></h2>
 
             <?php if (!empty($alojamiento['description'])): ?>
             <?php $desc = nl2br(htmlspecialchars($alojamiento['description'], ENT_QUOTES, 'UTF-8')); ?>
@@ -1394,7 +1394,7 @@ a:hover { color: var(--primary-light); }
                 <div class="feature-item">
                     <i class="fas fa-home"></i>
                     <div>
-                        <strong><?php echo ($t['tipo'] ?? 'Tipo'); ?></strong>
+                        <strong><?php echo $t['tipo'] ?? 'Tipo'; ?></strong>
                         <p><?php echo htmlspecialchars($tipo_display, ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
                 </div>
@@ -1404,7 +1404,7 @@ a:hover { color: var(--primary-light); }
                 <div class="feature-item">
                     <i class="fas fa-users"></i>
                     <div>
-                        <strong><?php echo ($t['capacidad'] ?? 'Capacidad'); ?></strong>
+                        <strong><?php echo $t['capacidad'] ?? 'Capacidad'; ?></strong>
                         <p><?php echo htmlspecialchars($capacidad_display, ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
                 </div>
@@ -1414,7 +1414,7 @@ a:hover { color: var(--primary-light); }
                 <div class="feature-item">
                     <i class="fas fa-sign-in-alt"></i>
                     <div>
-                        <strong><?php echo ($t['checkin'] ?? 'Check-in'); ?></strong>
+                        <strong><?php echo $t['checkin'] ?? 'Entrada'; ?></strong>
                         <p><?php echo htmlspecialchars($alojamiento['check_in_time'], ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
                 </div>
@@ -1424,7 +1424,7 @@ a:hover { color: var(--primary-light); }
                 <div class="feature-item">
                     <i class="fas fa-sign-out-alt"></i>
                     <div>
-                        <strong><?php echo ($t['checkout'] ?? 'Check-out'); ?></strong>
+                        <strong><?php echo $t['checkout'] ?? 'Salida'; ?></strong>
                         <p><?php echo htmlspecialchars($alojamiento['check_out_time'], ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
                 </div>
@@ -1434,7 +1434,7 @@ a:hover { color: var(--primary-light); }
                 <div class="feature-item">
                     <i class="fas fa-concierge-bell"></i>
                     <div>
-                        <strong><?php echo ($t['servicios'] ?? 'Servicios'); ?></strong>
+                        <strong><?php echo $t['servicios'] ?? 'Servicios'; ?></strong>
                         <p><?php echo htmlspecialchars($alojamiento['services'], ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
                 </div>
@@ -1444,7 +1444,7 @@ a:hover { color: var(--primary-light); }
                 <div class="feature-item">
                     <i class="fas fa-euro-sign"></i>
                     <div>
-                        <strong><?php echo ($t['precio_noche'] ?? 'Precio'); ?></strong>
+                        <strong><?php echo $t['precio_noche'] ?? 'Precio'; ?></strong>
                         <p><?php echo htmlspecialchars($precio_display, ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
                 </div>
@@ -1455,25 +1455,25 @@ a:hover { color: var(--primary-light); }
         <!-- CONTACTO -->
         <?php if (!empty($alojamiento['phone']) || !empty($alojamiento['email']) || !empty($alojamiento['website'])): ?>
         <div class="alo-card" id="secContacto">
-            <h2 class="section-title"><i class="fas fa-phone-alt"></i> <?php echo ($t['contacto'] ?? 'Contacto'); ?></h2>
+            <h2 class="section-title"><i class="fas fa-phone-alt"></i> <?php echo $t['contacto'] ?? 'Contacto'; ?></h2>
 
             <div class="contact-btns">
                 <?php if (!empty($alojamiento['phone'])): ?>
                 <a href="tel:<?php echo htmlspecialchars($alojamiento['phone'], ENT_QUOTES, 'UTF-8'); ?>"
                    class="btn-contact btn-phone">
-                    <i class="fas fa-phone"></i> <?php echo ($t['llamar'] ?? 'Llamar'); ?>
+                    <i class="fas fa-phone"></i> <?php echo $t['llamar'] ?? 'Llamar'; ?>
                 </a>
                 <a href="https://wa.me/34<?php echo preg_replace('/[^0-9]/', '', $alojamiento['phone']); ?>"
                    target="_blank" rel="noopener"
                    class="btn-contact btn-whatsapp">
-                    <i class="fab fa-whatsapp"></i> <?php echo ($t['whatsapp'] ?? 'WhatsApp'); ?>
+                    <i class="fab fa-whatsapp"></i> <?php echo $t['whatsapp'] ?? 'WhatsApp'; ?>
                 </a>
                 <?php endif; ?>
 
                 <?php if (!empty($alojamiento['email'])): ?>
                 <a href="mailto:<?php echo htmlspecialchars($alojamiento['email'], ENT_QUOTES, 'UTF-8'); ?>"
                    class="btn-contact btn-email">
-                    <i class="fas fa-envelope"></i> <?php echo ($t['email'] ?? 'Email'); ?>
+                    <i class="fas fa-envelope"></i> <?php echo $t['email'] ?? 'Email'; ?>
                 </a>
                 <?php endif; ?>
 
@@ -1481,7 +1481,7 @@ a:hover { color: var(--primary-light); }
                 <a href="<?php echo htmlspecialchars($alojamiento['website'], ENT_QUOTES, 'UTF-8'); ?>"
                    target="_blank" rel="noopener"
                    class="btn-contact btn-website">
-                    <i class="fas fa-globe"></i> <?php echo ($t['web'] ?? 'Sitio Web'); ?>
+                    <i class="fas fa-globe"></i> <?php echo $t['web'] ?? 'Web'; ?>
                 </a>
                 <?php endif; ?>
             </div>
@@ -1501,13 +1501,13 @@ a:hover { color: var(--primary-light); }
         <!-- MAPA -->
         <?php if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])): ?>
         <div class="alo-card" id="secMapa">
-            <h2 class="section-title"><i class="fas fa-map"></i> <?php echo ($t['ubicacion'] ?? 'Ubicación'); ?></h2>
+            <h2 class="section-title"><i class="fas fa-map"></i> <?php echo $t['ubicacion'] ?? 'Ubicación'; ?></h2>
             <div class="map-wrapper">
-                <div id="mapPlaceholder" class="map-placeholder" role="button" tabindex="0" aria-label="<?php echo ($t['ver_mapa'] ?? 'Ver mapa'); ?>">
+                <div id="mapPlaceholder" class="map-placeholder" role="button" tabindex="0" aria-label="<?php echo $t['ver_mapa'] ?? 'Ver mapa'; ?>">
                     <div class="map-placeholder-icon">🗺️</div>
-                    <h3><?php echo ($t['ver_mapa'] ?? 'Ver mapa'); ?></h3>
+                    <h3><?php echo $t['ver_mapa'] ?? 'Ver mapa'; ?></h3>
                     <p><?php echo htmlspecialchars($alojamiento['municipality'] ?? '', ENT_QUOTES, 'UTF-8'); ?><?php echo !empty($alojamiento['province']) ? ', ' . htmlspecialchars($alojamiento['province'], ENT_QUOTES, 'UTF-8') : ''; ?></p>
-                    <span class="map-hint"><i class="fas fa-mouse-pointer"></i> <?php echo ($t['click_mapa'] ?? 'Click para cargar mapa'); ?></span>
+                    <span class="map-hint"><i class="fas fa-mouse-pointer"></i> <?php echo $t['click_mapa'] ?? 'Haz clic para ver mapa'; ?></span>
                 </div>
                 <div id="alo-map"></div>
             </div>
@@ -1516,20 +1516,20 @@ a:hover { color: var(--primary-light); }
 
         <!-- CONTENIDO CERCANO -->
         <div class="alo-card" id="secCercanos">
-            <h2 class="section-title"><i class="fas fa-compass"></i> <?php echo ($t['cercanos'] ?? 'Cerca de aquí'); ?></h2>
+            <h2 class="section-title"><i class="fas fa-compass"></i> <?php echo $t['cercanos'] ?? '¿Qué hay cerca?'; ?></h2>
 
             <div class="nearby-tabs" role="tablist">
                 <button class="nearby-tab active" data-tab="alojamientos" role="tab" aria-selected="true">
-                    <?php echo ($t['alojamientos_cercanos'] ?? 'Alojamientos'); ?>
+                    <?php echo $t['alojamientos_cercanos'] ?? 'Alojamientos'; ?>
                 </button>
                 <button class="nearby-tab" data-tab="lugares" role="tab" aria-selected="false">
-                    <?php echo ($t['lugares_cercanos'] ?? 'Lugares'); ?>
+                    <?php echo $t['lugares_cercanos'] ?? 'Lugares'; ?>
                 </button>
                 <button class="nearby-tab" data-tab="eventos" role="tab" aria-selected="false">
-                    <?php echo ($t['eventos_cercanos'] ?? 'Eventos'); ?>
+                    <?php echo $t['eventos_cercanos'] ?? 'Eventos'; ?>
                 </button>
                 <button class="nearby-tab" data-tab="actividades" role="tab" aria-selected="false">
-                    <?php echo ($t['actividades_cercanas'] ?? 'Actividades'); ?>
+                    <?php echo $t['actividades_cercanas'] ?? 'Actividades'; ?>
                 </button>
             </div>
 
@@ -1537,7 +1537,7 @@ a:hover { color: var(--primary-light); }
                 <div class="nearby-grid">
                     <div class="nearby-loading">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <span><?php echo ($t['cargando'] ?? 'Cargando...'); ?></span>
+                        <span><?php echo $t['cargando'] ?? 'Cargando...'; ?></span>
                     </div>
                 </div>
             </div>
@@ -1545,7 +1545,7 @@ a:hover { color: var(--primary-light); }
                 <div class="nearby-grid">
                     <div class="nearby-loading">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <span><?php echo ($t['cargando'] ?? 'Cargando...'); ?></span>
+                        <span><?php echo $t['cargando'] ?? 'Cargando...'; ?></span>
                     </div>
                 </div>
             </div>
@@ -1553,7 +1553,7 @@ a:hover { color: var(--primary-light); }
                 <div class="nearby-grid">
                     <div class="nearby-loading">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <span><?php echo ($t['cargando'] ?? 'Cargando...'); ?></span>
+                        <span><?php echo $t['cargando'] ?? 'Cargando...'; ?></span>
                     </div>
                 </div>
             </div>
@@ -1561,7 +1561,7 @@ a:hover { color: var(--primary-light); }
                 <div class="nearby-grid">
                     <div class="nearby-loading">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <span><?php echo ($t['cargando'] ?? 'Cargando...'); ?></span>
+                        <span><?php echo $t['cargando'] ?? 'Cargando...'; ?></span>
                     </div>
                 </div>
             </div>
@@ -1577,9 +1577,9 @@ a:hover { color: var(--primary-light); }
             <div class="price-card">
                 <?php if (!empty($alojamiento['price_per_night']) && $alojamiento['price_per_night'] > 0): ?>
                 <div class="price-card-amount"><?php echo htmlspecialchars($precio_display, ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="price-card-label"><?php echo ($t['precio_noche'] ?? 'noche'); ?></div>
+                <div class="price-card-label"><?php echo $t['precio_noche'] ?? 'Precio por noche'; ?></div>
                 <?php else: ?>
-                <div class="price-card-amount" style="font-size:1.2rem;"><?php echo ($t['consultar'] ?? 'Consultar'); ?></div>
+                <div class="price-card-amount" style="font-size:1.2rem;"><?php echo $t['consultar'] ?? 'Consultar'; ?></div>
                 <div class="price-card-label" style="margin-bottom:18px;"></div>
                 <?php endif; ?>
 
@@ -1588,10 +1588,10 @@ a:hover { color: var(--primary-light); }
                     <li><i class="fas fa-users"></i> <?php echo htmlspecialchars($capacidad_display, ENT_QUOTES, 'UTF-8'); ?></li>
                     <?php endif; ?>
                     <?php if (!empty($alojamiento['check_in_time'])): ?>
-                    <li><i class="fas fa-sign-in-alt"></i> <?php echo ($t['checkin'] ?? 'Check-in'); ?>: <?php echo htmlspecialchars($alojamiento['check_in_time'], ENT_QUOTES, 'UTF-8'); ?></li>
+                    <li><i class="fas fa-sign-in-alt"></i> <?php echo $t['checkin'] ?? 'Check-in'; ?>: <?php echo htmlspecialchars($alojamiento['check_in_time'], ENT_QUOTES, 'UTF-8'); ?></li>
                     <?php endif; ?>
                     <?php if (!empty($alojamiento['check_out_time'])): ?>
-                    <li><i class="fas fa-sign-out-alt"></i> <?php echo ($t['checkout'] ?? 'Check-out'); ?>: <?php echo htmlspecialchars($alojamiento['check_out_time'], ENT_QUOTES, 'UTF-8'); ?></li>
+                    <li><i class="fas fa-sign-out-alt"></i> <?php echo $t['checkout'] ?? 'Check-out'; ?>: <?php echo htmlspecialchars($alojamiento['check_out_time'], ENT_QUOTES, 'UTF-8'); ?></li>
                     <?php endif; ?>
                     <?php if (!empty($alojamiento['municipality'])): ?>
                     <li><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($alojamiento['municipality'], ENT_QUOTES, 'UTF-8'); ?></li>
@@ -1600,15 +1600,15 @@ a:hover { color: var(--primary-light); }
 
                 <?php if (!empty($alojamiento['phone'])): ?>
                 <a href="tel:<?php echo htmlspecialchars($alojamiento['phone'], ENT_QUOTES, 'UTF-8'); ?>" class="btn-reservar">
-                    <i class="fas fa-phone"></i> <?php echo ($t['reservar'] ?? 'Reservar'); ?>
+                    <i class="fas fa-phone"></i> <?php echo $t['reservar'] ?? 'Reservar'; ?>
                 </a>
                 <?php elseif (!empty($alojamiento['email'])): ?>
                 <a href="mailto:<?php echo htmlspecialchars($alojamiento['email'], ENT_QUOTES, 'UTF-8'); ?>" class="btn-reservar">
-                    <i class="fas fa-envelope"></i> <?php echo ($t['reservar'] ?? 'Reservar'); ?>
+                    <i class="fas fa-envelope"></i> <?php echo $t['reservar'] ?? 'Reservar'; ?>
                 </a>
                 <?php else: ?>
                 <a href="#secContacto" class="btn-reservar">
-                    <i class="fas fa-calendar-check"></i> <?php echo ($t['reservar'] ?? 'Reservar'); ?>
+                    <i class="fas fa-calendar-check"></i> <?php echo $t['reservar'] ?? 'Reservar'; ?>
                 </a>
                 <?php endif; ?>
 
@@ -1622,14 +1622,14 @@ a:hover { color: var(--primary-light); }
 
             <!-- CTA Registro -->
             <div class="cta-card">
-                <h3><?php echo ($t['cta_titulo'] ?? '¿Te gusta este alojamiento?'); ?></h3>
-                <p><?php echo ($t['cta_desc'] ?? 'Regístrate para guardarlo en favoritos.'); ?></p>
+                <h3><?php echo $t['cta_titulo'] ?? '¿Te gusta este alojamiento?'; ?></h3>
+                <p><?php echo $t['cta_desc'] ?? 'Regístrate para guardarlo en favoritos'; ?></p>
                 <div class="cta-btns">
                     <a href="/register.html" class="btn-cta-register">
-                        <i class="fas fa-user-plus"></i> <?php echo ($t['cta_register'] ?? 'Regístrate'); ?>
+                        <i class="fas fa-user-plus"></i> <?php echo $t['cta_register'] ?? 'Regístrate'; ?>
                     </a>
                     <a href="/login.html" class="btn-cta-login">
-                        <i class="fas fa-sign-in-alt"></i> <?php echo ($t['cta_login'] ?? 'Ya tengo cuenta'); ?>
+                        <i class="fas fa-sign-in-alt"></i> <?php echo $t['cta_login'] ?? 'Entrar'; ?>
                     </a>
                 </div>
             </div>
@@ -1652,10 +1652,10 @@ a:hover { color: var(--primary-light); }
 <!-- ERROR: Alojamiento no encontrado -->
 <div class="error-container">
     <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
-    <h1><?php echo $t['no_encontrado_h1']; ?></h1>
-    <p><?php echo $t['no_encontrado_p']; ?></p>
+    <h1><?php echo $t['no_encontrado_h1'] ?? 'No encontrado'; ?></h1>
+    <p><?php echo $t['no_encontrado_p'] ?? 'El alojamiento solicitado no existe.'; ?></p>
     <a href="/alojamientos-turisticos.html" class="btn-back">
-        <i class="fas fa-arrow-left"></i> <?php echo $t['volver_lista']; ?>
+        <i class="fas fa-arrow-left"></i> <?php echo $t['volver_lista'] ?? 'Volver'; ?>
     </a>
 </div>
 <?php endif; ?>
