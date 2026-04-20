@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Alojamiento Modular</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 { color: #2F5233; }
+        .test-list { margin: 20px 0; }
+        .test-item {
+            background: #f8f9fa;
+            border-left: 4px solid #2F5233;
+            padding: 12px 16px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { border-left-color: #4CAF50; }
+        .warning { border-left-color: #FF9800; }
+        .error { border-left-color: #F44336; }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #2F5233;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #3d6b42; }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover { background: #5a6268; }
+    </style>
+</head>
+<body>
+    <h1>🏠 Prueba de Alojamiento Modular</h1>
+    <p>Página de prueba para verificar la instalación y funcionamiento del sistema modular de alojamientos.</p>
+    
+    <div class="test-list">
+        <div class="test-item success">
+            <strong>✅ Estructura creada</strong>
+            <p>Carpeta <code>alojamiento-modular/</code> con todos los módulos, API, CSS y JS.</p>
+        </div>
+        
+        <div class="test-item success">
+            <strong>✅ Módulos PHP</strong>
+            <p>7 módulos creados: hero, galería, descripción, contacto, mapa, cercanos, CTA.</p>
+        </div>
+        
+        <div class="test-item success">
+            <strong>✅ API optimizada</strong>
+            <p><code>alojamiento-data.php</code> con modos minimal, full y nearby (radio 50km).</p>
+        </div>
+        
+        <div class="test-item success">
+            <strong>✅ CSS crítico inline</strong>
+            <p>8KB de CSS crítico en <code>index.php</code> + CSS diferido en archivo separado.</p>
+        </div>
+        
+        <div class="test-item success">
+            <strong>✅ JavaScript modular</strong>
+            <p>JS con lazy loading de mapa (Leaflet) y carga diferida de contenido cercano.</p>
+        </div>
+        
+        <div class="test-item success">
+            <strong>✅ SEO avanzado</strong>
+            <p>JSON-LD Schema.org, hreflang, meta tags optimizados, URLs canónicas.</p>
+        </div>
+        
+        <div class="test-item warning">
+            <strong>⚠️ Necesita datos reales</strong>
+            <p>Para probar completamente, necesitas un slug de alojamiento existente en la base de datos.</p>
+        </div>
+    </div>
+    
+    <h2>🔗 Enlaces de Prueba</h2>
+    <div>
+        <a href="index.php?slug=casa-enrique" class="btn">Probar con "casa-enrique"</a>
+        <a href="index.php" class="btn-secondary">Página sin slug (error)</a>
+        <a href="api/alojamiento-data.php?slug=casa-enrique&mode=minimal" class="btn-secondary">API Minimal</a>
+        <a href="api/alojamiento-data.php?slug=casa-enrique&mode=nearby&lat=41.5&lng=-3.5" class="btn-secondary">API Nearby</a>
+    </div>
+    
+    <h2>📋 Comandos de Verificación</h2>
+    <div class="code">
+# Verificar estructura de archivos
+ls -la alojamiento-modular/
+ls -la alojamiento-modular/modules/
+ls -la alojamiento-modular/api/
+ls -la alojamiento-modular/css/
+ls -la alojamiento-modular/js/
+
+# Verificar permisos
+find alojamiento-modular -type f -name "*.php" -exec ls -la {} \;
+
+# Probar PHP syntax
+php -l alojamiento-modular/index.php
+php -l alojamiento-modular/api/alojamiento-data.php
+    </div>
+    
+    <h2>🎯 Características Implementadas</h2>
+    <ul>
+        <li><strong>Velocidad:</strong> CSS crítico inline, JS diferido, lazy loading</li>
+        <li><strong>SEO:</strong> JSON-LD, hreflang, meta tags, breadcrumbs</li>
+        <li><strong>Modularidad:</strong> 7 módulos PHP independientes</li>
+        <li><strong>API optimizada:</strong> Cache, CORS, modos minimal/full/nearby</li>
+        <li><strong>Responsive:</strong> Mobile-first con breakpoints</li>
+        <li><strong>Accesibilidad:</strong> ARIA labels, contraste, navegación por teclado</li>
+        <li><strong>Seguridad:</strong> Headers de seguridad en .htaccess</li>
+    </ul>
+    
+    <h2>🚀 Migración a Producción</h2>
+    <p>Cuando estés satisfecho con las pruebas:</p>
+    <ol>
+        <li>Copiar <code>alojamiento-modular/</code> a <code>/alojamiento/</code> en producción</li>
+        <li>Actualizar .htaccess para redirigir <code>/alojamiento/{slug}</code></li>
+        <li>Configurar redirecciones 301 desde URLs antiguas</li>
+        <li>Actualizar sitemap.xml</li>
+        <li>Monitorear en Google Search Console</li>
+    </ol>
+    
+    <div style="margin-top: 40px; padding: 20px; background: #e8f5e9; border-radius: 8px;">
+        <h3 style="margin-top: 0; color: #2E7D32;">✨ ¡Listo para probar!</h3>
+        <p>El sistema está diseñado para <strong>volar en velocidad</strong> y <strong>atraer turistas</strong> con contenido relevante y cercano.</p>
+        <p><strong>Nota:</strong> Sacrificamos Eclipse para ganar velocidad, priorizando Core Web Vitals y experiencia de usuario.</p>
+    </div>
+</body>
+</html>

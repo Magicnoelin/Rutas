@@ -1,0 +1,202 @@
+/* 
+ * CSS DIFERIDO para página de alojamiento modular
+ * Cargar después del CSS crítico inline
+ */
+
+/* ── Tarjetas de contenido cercano ── */
+.nearby-card {
+    background: var(--white);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+.nearby-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+.nearby-card-img {
+    height: 120px;
+    overflow: hidden;
+}
+.nearby-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+.nearby-card:hover .nearby-card-img img {
+    transform: scale(1.05);
+}
+.nearby-card-body {
+    padding: 12px;
+}
+.nearby-card-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.nearby-card-meta {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 6px;
+}
+.nearby-card-price {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+/* ── Botón "Ver más" ── */
+.show-more-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: var(--bg);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+}
+.show-more-btn:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+/* ── Estilos para el mapa Leaflet ── */
+.leaflet-container {
+    font-family: 'Montserrat', sans-serif;
+}
+.leaflet-popup-content {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+.leaflet-popup-content b {
+    color: var(--primary);
+}
+
+/* ── Responsive adicional ── */
+@media (max-width: 768px) {
+    .alojamiento-hero {
+        padding: 20px 15px 40px;
+        margin-top: 60px;
+    }
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    .hero-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .main-image {
+        height: 300px;
+    }
+    .gallery-thumbnails {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    }
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    .contact-buttons {
+        flex-direction: column;
+    }
+    .btn-contact {
+        justify-content: center;
+    }
+    .nearby-sections {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .alojamiento-layout {
+        padding: 0 10px;
+    }
+    .section-title {
+        font-size: 1.1rem;
+    }
+    .main-image {
+        height: 250px;
+    }
+    .map-placeholder {
+        height: 250px;
+    }
+    .map {
+        height: 250px;
+    }
+}
+
+/* ── Animaciones suaves ── */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nearby-card {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* ── Estilos para estado de carga ── */
+.loading-placeholder {
+    padding: 30px;
+    text-align: center;
+    color: var(--text-light);
+}
+.loading-placeholder i {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* ── Estilos para Font Awesome (si no está cargado) ── */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ── Mejoras de accesibilidad ── */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── Estilos para modo oscuro (opcional) ── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary: #4CAF50;
+        --primary-light: #66BB6A;
+        --text: #f0f0f0;
+        --text-light: #aaa;
+        --bg: #1a1a1a;
+        --white: #2a2a2a;
+    }
+    .alojamiento-hero {
+        background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+    }
+    .map-placeholder {
+        background: linear-gradient(135deg, #2a3a2a, #1a2a1a);
+    }
+}
