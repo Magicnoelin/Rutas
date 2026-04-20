@@ -202,7 +202,7 @@
     };
 
     /* ══════════════════════════════════════════════════════
-       MAPA (Leaflet lazy — solo al hacer clic)
+       MAPA (Leaflet — carga al hacer clic O al llegar a la sección)
        ══════════════════════════════════════════════════════ */
     var MapModule = {
         loaded: false,
@@ -214,11 +214,24 @@
             var placeholder = document.getElementById('mapPlaceholder');
             if (!placeholder) return;
 
-            // Solo carga al hacer clic o pulsar Enter/Espacio — NO auto-load
+            // Carga al hacer clic
             placeholder.addEventListener('click', function() { self.load(); });
             placeholder.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); self.load(); }
             });
+
+            // También carga automáticamente cuando el mapa es visible en pantalla
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            observer.disconnect();
+                            self.load();
+                        }
+                    });
+                }, {rootMargin: '0px', threshold: 0.1});
+                observer.observe(placeholder);
+            }
         },
 
         load: function() {

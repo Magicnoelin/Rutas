@@ -8,6 +8,10 @@
  * Producción final: /alojamiento/{slug}
  */
 
+// Suprimir warnings en producción para que no rompan el HTML/JS
+error_reporting(E_ERROR | E_PARSE);
+ini_set('display_errors', '0');
+
 define('API_NO_HEADERS', true);
 require_once '../api/config.php';
 
@@ -1704,13 +1708,13 @@ a:hover { color: var(--primary-light); }
 <script>
 const ALO = <?php echo $alojamiento_js; ?>;
 const ALO_LANG = <?php echo json_encode([
-    'ver_mas'        => $t['ver_mas'],
-    'sin_resultados' => $t['sin_resultados'],
-    'cargando'       => $t['cargando'],
-    'gratis'         => $t['gratis'],
-    'km'             => $t['km'],
-    'noche'          => $t['noche'],
-    'desde'          => $t['desde'],
+    'ver_mas'        => $t['ver_mas']        ?? 'Ver más',
+    'sin_resultados' => $t['sin_resultados'] ?? 'Sin resultados',
+    'cargando'       => $t['cargando']       ?? 'Cargando…',
+    'gratis'         => $t['gratis']         ?? 'Gratis',
+    'km'             => $t['km']             ?? 'km',
+    'noche'          => $t['noche']          ?? 'noche',
+    'desde'          => $t['desde']          ?? 'desde',
 ]); ?>;
 const ALO_FOTOS = <?php echo json_encode($fotos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
 </script>
