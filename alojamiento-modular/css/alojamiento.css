@@ -1,202 +1,104 @@
-/* 
- * CSS DIFERIDO para página de alojamiento modular
- * Cargar después del CSS crítico inline
+/*
+ * alojamiento.css — Estilos diferidos para página de alojamiento modular
+ * Se carga de forma asíncrona desde alojamiento.js (no bloquea render)
+ * Los estilos críticos están inline en index.php
  */
 
-/* ── Tarjetas de contenido cercano ── */
+/* ── Animación de entrada para tarjetas cercanas ── */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 .nearby-card {
-    background: var(--white);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-    margin-bottom: 15px;
-}
-.nearby-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
-}
-.nearby-card-img {
-    height: 120px;
-    overflow: hidden;
-}
-.nearby-card-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s;
-}
-.nearby-card:hover .nearby-card-img img {
-    transform: scale(1.05);
-}
-.nearby-card-body {
-    padding: 12px;
-}
-.nearby-card-name {
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-    color: var(--text);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-.nearby-card-meta {
-    font-size: 0.8rem;
-    color: var(--text-light);
-    margin-bottom: 6px;
-}
-.nearby-card-price {
-    font-weight: 700;
-    color: var(--primary);
-    font-size: 0.9rem;
+    animation: fadeInUp 0.3s ease-out both;
 }
 
-/* ── Botón "Ver más" ── */
-.show-more-btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background: var(--bg);
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    color: var(--primary);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 10px;
-}
-.show-more-btn:hover {
-    background: var(--primary);
-    color: var(--white);
-    border-color: var(--primary);
-}
-
-/* ── Estilos para el mapa Leaflet ── */
+/* ── Estilos Leaflet personalizados ── */
 .leaflet-container {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif !important;
+    border-radius: 8px;
+}
+.leaflet-popup-content-wrapper {
+    border-radius: 10px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
 }
 .leaflet-popup-content {
-    font-size: 0.9rem;
-    line-height: 1.4;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin: 10px 14px !important;
 }
-.leaflet-popup-content b {
-    color: var(--primary);
-}
-
-/* ── Responsive adicional ── */
-@media (max-width: 768px) {
-    .alojamiento-hero {
-        padding: 20px 15px 40px;
-        margin-top: 60px;
-    }
-    .hero-title {
-        font-size: 1.8rem;
-    }
-    .hero-meta {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .main-image {
-        height: 300px;
-    }
-    .gallery-thumbnails {
-        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    }
-    .features-grid {
-        grid-template-columns: 1fr;
-    }
-    .contact-buttons {
-        flex-direction: column;
-    }
-    .btn-contact {
-        justify-content: center;
-    }
-    .nearby-sections {
-        grid-template-columns: 1fr;
-    }
+.leaflet-popup-tip-container {
+    margin-top: -1px;
 }
 
-@media (max-width: 480px) {
-    .alojamiento-layout {
-        padding: 0 10px;
-    }
-    .section-title {
-        font-size: 1.1rem;
-    }
-    .main-image {
-        height: 250px;
-    }
-    .map-placeholder {
-        height: 250px;
-    }
-    .map {
-        height: 250px;
-    }
-}
-
-/* ── Animaciones suaves ── */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.nearby-card {
-    animation: fadeInUp 0.3s ease-out;
-}
-
-/* ── Estilos para estado de carga ── */
-.loading-placeholder {
-    padding: 30px;
-    text-align: center;
-    color: var(--text-light);
-}
-.loading-placeholder i {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    display: block;
-}
-
-/* ── Estilos para Font Awesome (si no está cargado) ── */
-.fa-spinner {
-    animation: spin 1s linear infinite;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* ── Mejoras de accesibilidad ── */
+/* ── Mejoras accesibilidad ── */
 @media (prefers-reduced-motion: reduce) {
-    * {
+    *, *::before, *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
 }
 
-/* ── Estilos para modo oscuro (opcional) ── */
+/* ── Modo oscuro ── */
 @media (prefers-color-scheme: dark) {
     :root {
-        --primary: #4CAF50;
+        --primary:       #4CAF50;
         --primary-light: #66BB6A;
-        --text: #f0f0f0;
-        --text-light: #aaa;
-        --bg: #1a1a1a;
-        --white: #2a2a2a;
+        --primary-dark:  #2E7D32;
+        --accent:        #81C784;
+        --text:          #e8e8e8;
+        --text-light:    #aaa;
+        --text-muted:    #777;
+        --bg:            #121212;
+        --bg-card:       #1e1e1e;
+        --white:         #1e1e1e;
+        --shadow:        0 2px 16px rgba(0,0,0,0.3);
+        --shadow-md:     0 4px 24px rgba(0,0,0,0.4);
+        --shadow-hover:  0 8px 32px rgba(0,0,0,0.5);
     }
-    .alojamiento-hero {
-        background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+    .alo-hero-bg::after {
+        background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.2) 0%,
+            rgba(0,0,0,0.35) 40%,
+            rgba(0,0,0,0.82) 100%
+        );
     }
     .map-placeholder {
-        background: linear-gradient(135deg, #2a3a2a, #1a2a1a);
+        background: linear-gradient(135deg, #1a2a1a 0%, #0d1a0d 100%);
     }
+    .gallery-thumb { border-color: transparent; }
+    .gallery-thumb.active { border-color: var(--accent); }
+    .feature-item { background: #2a2a2a; }
+    .contact-address { background: #2a2a2a; }
+    .nearby-tab { background: #2a2a2a; border-color: #444; color: #aaa; }
+    .nearby-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .nearby-card { background: #2a2a2a; }
+    .nearby-card-name { color: #e8e8e8; }
+    .price-card { background: #1e1e1e; }
+    .price-card-features li { border-bottom-color: #333; }
+    .cta-card { background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); }
+    .lightbox-overlay { background: rgba(0,0,0,0.97); }
+    .desc-text.collapsed::after {
+        background: linear-gradient(transparent, #1e1e1e);
+    }
+}
+
+/* ── Print styles ── */
+@media print {
+    .alo-hero-actions,
+    .lightbox-overlay,
+    .nearby-tabs,
+    .nearby-panel:not(.active),
+    .cta-card,
+    .btn-reservar,
+    .btn-contactar,
+    #mapPlaceholder,
+    #alo-map { display: none !important; }
+
+    .alo-hero { min-height: auto; }
+    .alo-layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .alo-card { box-shadow: none; border: 1px solid #ddd; }
 }

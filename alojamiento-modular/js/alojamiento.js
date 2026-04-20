@@ -1,467 +1,702 @@
 /**
- * JavaScript modular para página de alojamiento
- * Carga diferida para mejorar velocidad
+ * alojamiento.js — Módulo JS para página de detalle de alojamiento
+ * Versión 2.0 — Corregido y optimizado
+ *
+ * Depende de variables globales inyectadas por index.php:
+ *   ALO       → datos del alojamiento (o null)
+ *   ALO_LANG  → traducciones de UI
+ *   ALO_FOTOS → array de URLs de fotos
  */
 
-(function() {
+(function () {
     'use strict';
 
-    // ─── CONFIGURACIÓN ─────────────────────────────────────────────────────────────
-    const CONFIG = {
-        API_BASE: '/alojamiento-modular/api/alojamiento-data.php',
-        MAP_ZOOM: 13,
-        RADIUS_KM: 50,
-        NEARBY_LIMIT: 6,
-        LAZY_LOAD_DELAY: 1000
-    };
+    if (!window.ALO) return;
 
-    // ─── ESTADO GLOBAL ────────────────────────────────────────────────────────────
-    let state = {
-        alojamiento: window.alojamientoData || null,
-        map: null,
-        markers: [],
-        nearbyLoaded: false
-    };
+    var API    = '/alojamiento-modular/api/alojamiento-data.php';
+    var RADIUS = 50;
+    var L_CSS  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    var L_JS   = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    var L_CSS_INT = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+    var L_JS_INT  = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
 
-    // ─── UTILIDADES ───────────────────────────────────────────────────────────────
-    const utils = {
-        debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        },
+    var alo   = window.ALO;
+    var lang  = window.ALO_LANG  || {};
+    var fotos = window.ALO_FOTOS || [];
 
-        formatPrice(price) {
-            if (!price || price <= 0) return 'Consultar';
-            return new Intl.NumberFormat('es-ES', {
-                style: 'currency',
-                currency: 'EUR',
-                minimumFractionDigits: 0
-            }).format(price);
-        },
+    /* ── Cache de datos cercanos (una sola llamada API) ── */
+    var nearbyCache     = null;
+    var nearbyLoading   = false;
+    var nearbyCallbacks = [];
 
-        distanceToKm(distance) {
-            if (!distance) return '';
-            return `${distance.toFixed(1)} km`;
-        },
+    function getNearbyData() {
+        return new Promise(function(resolve, reject) {
+            if (nearbyCache)   { resolve(nearbyCache); return; }
+            if (nearbyLoading) { nearbyCallbacks.push({resolve:resolve, reject:reject}); return; }
 
-        createElement(tag, attrs = {}, children = []) {
-            const el = document.createElement(tag);
-            Object.keys(attrs).forEach(key => {
-                if (key === 'className') {
-                    el.className = attrs[key];
-                } else if (key === 'textContent') {
-                    el.textContent = attrs[key];
-                } else if (key === 'innerHTML') {
-                    el.innerHTML = attrs[key];
-                } else {
-                    el.setAttribute(key, attrs[key]);
-                }
-            });
-            children.forEach(child => {
-                if (typeof child === 'string') {
-                    el.appendChild(document.createTextNode(child));
-                } else if (child) {
-                    el.appendChild(child);
-                }
-            });
-            return el;
-        }
-    };
+            nearbyLoading = true;
+            nearbyCallbacks.push({resolve:resolve, reject:reject});
 
-    // ─── GALERÍA DE FOTOS ─────────────────────────────────────────────────────────
-    const gallery = {
-        init() {
-            const thumbnails = document.querySelectorAll('.thumbnail');
-            if (!thumbnails.length) return;
+            var url = API + '?slug=' + encodeURIComponent(alo.slug)
+                + '&lat='    + alo.latitude
+                + '&lng='    + alo.longitude
+                + '&radius=' + RADIUS
+                + '&mode=nearby';
 
-            thumbnails.forEach(thumb => {
-                thumb.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const src = this.getAttribute('src');
-                    const mainImg = document.getElementById('galleryMainImage');
-                    if (mainImg && src) {
-                        mainImg.src = src;
-                        thumbnails.forEach(t => t.classList.remove('active'));
-                        this.classList.add('active');
-                    }
+            fetch(url)
+                .then(function(r){ return r.json(); })
+                .then(function(data){
+                    nearbyCache   = (data.success && data.data) ? data.data : {};
+                    nearbyLoading = false;
+                    nearbyCallbacks.forEach(function(cb){ cb.resolve(nearbyCache); });
+                    nearbyCallbacks = [];
+                })
+                .catch(function(err){
+                    nearbyLoading = false;
+                    nearbyCallbacks.forEach(function(cb){ cb.reject(err); });
+                    nearbyCallbacks = [];
+                });
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════
+       GALERÍA
+       ══════════════════════════════════════════════════════ */
+    var Gallery = {
+        currentIndex: 0,
+
+        init: function() {
+            var self     = this;
+            var mainEl   = document.getElementById('galleryMain');
+            var mainImg  = document.getElementById('galleryMainImg');
+            var thumbs   = document.querySelectorAll('.gallery-thumb');
+            var counter  = document.getElementById('galleryCounter');
+            var expandBtn = document.getElementById('galleryExpandBtn');
+
+            if (!mainImg) return;
+
+            thumbs.forEach(function(thumb) {
+                thumb.addEventListener('click', function() {
+                    var idx = parseInt(thumb.dataset.index, 10);
+                    self.setActive(idx, mainImg, thumbs, counter);
+                });
+                thumb.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); thumb.click(); }
                 });
             });
 
-            // Preload imágenes siguientes
-            if (state.alojamiento && state.alojamiento.fotos) {
-                setTimeout(() => {
-                    state.alojamiento.fotos.slice(1, 4).forEach(src => {
-                        const img = new Image();
-                        img.src = src;
-                    });
-                }, 500);
+            if (mainEl) {
+                mainEl.addEventListener('click', function() { Lightbox.open(self.currentIndex); });
+                mainEl.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') Lightbox.open(self.currentIndex);
+                });
             }
+
+            if (expandBtn) {
+                expandBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    Lightbox.open(self.currentIndex);
+                });
+            }
+
+            if (fotos.length > 1) {
+                setTimeout(function() {
+                    fotos.slice(1, 4).forEach(function(src) {
+                        var img = new Image(); img.src = src;
+                    });
+                }, 600);
+            }
+        },
+
+        setActive: function(idx, mainImg, thumbs, counter) {
+            if (!fotos[idx]) return;
+            this.currentIndex = idx;
+            mainImg.style.opacity = '0.6';
+            mainImg.src = fotos[idx];
+            mainImg.onload = function() { mainImg.style.opacity = '1'; };
+            thumbs.forEach(function(t) {
+                t.classList.toggle('active', parseInt(t.dataset.index, 10) === idx);
+            });
+            if (counter) counter.textContent = (idx + 1) + ' / ' + fotos.length;
         }
     };
 
-    // ─── MAPA (LAZY LOAD) ─────────────────────────────────────────────────────────
-    const mapModule = {
-        init() {
-            const placeholder = document.getElementById('map-placeholder');
+    /* ══════════════════════════════════════════════════════
+       LIGHTBOX
+       ══════════════════════════════════════════════════════ */
+    var Lightbox = {
+        currentIndex: 0,
+
+        init: function() {
+            var self    = this;
+            var overlay = document.getElementById('lightbox');
+            if (!overlay) return;
+
+            var closeBtn = document.getElementById('lightboxClose');
+            var prevBtn  = document.getElementById('lightboxPrev');
+            var nextBtn  = document.getElementById('lightboxNext');
+
+            if (closeBtn) closeBtn.addEventListener('click', function() { self.close(); });
+            if (prevBtn)  prevBtn.addEventListener('click',  function() { self.prev(); });
+            if (nextBtn)  nextBtn.addEventListener('click',  function() { self.next(); });
+
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) self.close();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (!overlay.classList.contains('active')) return;
+                if (e.key === 'Escape')     self.close();
+                if (e.key === 'ArrowLeft')  self.prev();
+                if (e.key === 'ArrowRight') self.next();
+            });
+
+            var touchStartX = 0;
+            overlay.addEventListener('touchstart', function(e) {
+                touchStartX = e.touches[0].clientX;
+            }, {passive: true});
+            overlay.addEventListener('touchend', function(e) {
+                var diff = touchStartX - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 50) { if (diff > 0) self.next(); else self.prev(); }
+            });
+        },
+
+        open: function(idx) {
+            if (!fotos.length) return;
+            this.currentIndex = idx;
+            this.show();
+            document.body.style.overflow = 'hidden';
+        },
+
+        close: function() {
+            var overlay = document.getElementById('lightbox');
+            if (overlay) overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        },
+
+        prev: function() {
+            this.currentIndex = (this.currentIndex - 1 + fotos.length) % fotos.length;
+            this.show();
+        },
+
+        next: function() {
+            this.currentIndex = (this.currentIndex + 1) % fotos.length;
+            this.show();
+        },
+
+        show: function() {
+            var overlay = document.getElementById('lightbox');
+            var img     = document.getElementById('lightboxImg');
+            var caption = document.getElementById('lightboxCaption');
+            if (!overlay || !img) return;
+
+            overlay.classList.add('active');
+            img.src = fotos[this.currentIndex];
+            img.alt = alo.name + ' — foto ' + (this.currentIndex + 1);
+            if (caption) caption.textContent = (this.currentIndex + 1) + ' / ' + fotos.length;
+
+            var prev = document.getElementById('lightboxPrev');
+            var next = document.getElementById('lightboxNext');
+            var show = fotos.length > 1 ? '' : 'none';
+            if (prev) prev.style.display = show;
+            if (next) next.style.display = show;
+        }
+    };
+
+    /* ══════════════════════════════════════════════════════
+       MAPA (Leaflet lazy)
+       ══════════════════════════════════════════════════════ */
+    var MapModule = {
+        loaded: false,
+        map: null,
+
+        init: function() {
+            if (!alo.latitude || !alo.longitude) return;
+            var self        = this;
+            var placeholder = document.getElementById('mapPlaceholder');
             if (!placeholder) return;
 
-            placeholder.addEventListener('click', () => this.loadMap());
-            
-            // Cargar mapa automáticamente si está en viewport después de 2 segundos
-            setTimeout(() => {
-                const rect = placeholder.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    this.loadMap();
-                }
-            }, 2000);
+            placeholder.addEventListener('click', function() { self.load(); });
+            placeholder.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); self.load(); }
+            });
+
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            observer.disconnect();
+                            setTimeout(function() { self.load(); }, 300);
+                        }
+                    });
+                }, {rootMargin: '200px'});
+                observer.observe(placeholder);
+            }
         },
 
-        loadMap() {
-            if (!state.alojamiento || !state.alojamiento.latitude || !state.alojamiento.longitude) {
-                console.warn('No hay coordenadas para el mapa');
-                return;
+        load: function() {
+            if (this.loaded) return;
+            this.loaded = true;
+            var self        = this;
+            var placeholder = document.getElementById('mapPlaceholder');
+            var mapEl       = document.getElementById('alo-map');
+            if (!mapEl) return;
+
+            if (placeholder) {
+                placeholder.innerHTML = '<div style="font-size:2rem">⏳</div><p style="margin-top:8px;font-size:0.85rem">Cargando mapa…</p>';
             }
 
-            const placeholder = document.getElementById('map-placeholder');
-            if (placeholder) placeholder.style.display = 'none';
-            
-            const mapEl = document.getElementById('map');
-            if (mapEl) mapEl.style.display = 'block';
-
-            // Cargar Leaflet dinámicamente
-            this.loadLeaflet().then(() => {
-                this.initMap();
-                this.addMainMarker();
-                this.loadNearbyMarkers();
-            }).catch(err => {
-                console.error('Error cargando Leaflet:', err);
-                if (placeholder) placeholder.style.display = 'flex';
-                if (mapEl) mapEl.style.display = 'none';
-            });
+            this.loadLeaflet()
+                .then(function() {
+                    if (placeholder) placeholder.style.display = 'none';
+                    mapEl.style.display = 'block';
+                    self.initMap(mapEl);
+                    self.addMainMarker();
+                    getNearbyData()
+                        .then(function(data) { self.addNearbyMarkers(data); })
+                        .catch(function() {});
+                })
+                .catch(function() {
+                    self.loaded = false;
+                    if (placeholder) {
+                        placeholder.style.display = 'flex';
+                        placeholder.innerHTML = '<div class="map-placeholder-icon">🗺️</div>'
+                            + '<h3>Error al cargar el mapa</h3>'
+                            + '<span class="map-hint">Haz clic para reintentar</span>';
+                    }
+                });
         },
 
-        loadLeaflet() {
-            return new Promise((resolve, reject) => {
-                // Verificar si ya está cargado
-                if (window.L) {
-                    resolve();
-                    return;
-                }
+        loadLeaflet: function() {
+            return new Promise(function(resolve, reject) {
+                if (window.L) { resolve(); return; }
 
-                const css = utils.createElement('link', {
-                    rel: 'stylesheet',
-                    href: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
-                    integrity: 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=',
-                    crossorigin: ''
-                });
-
-                const js = utils.createElement('script', {
-                    src: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-                    integrity: 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=',
-                    crossorigin: ''
-                });
-
-                js.onload = resolve;
-                js.onerror = reject;
-
+                var css = document.createElement('link');
+                css.rel = 'stylesheet';
+                css.href = L_CSS;
+                css.integrity = L_CSS_INT;
+                css.crossOrigin = '';
                 document.head.appendChild(css);
+
+                var js = document.createElement('script');
+                js.src = L_JS;
+                js.integrity = L_JS_INT;
+                js.crossOrigin = '';
+                js.onload  = resolve;
+                js.onerror = reject;
                 document.head.appendChild(js);
             });
         },
 
-        initMap() {
-            const mapEl = document.getElementById('map');
-            if (!mapEl) return;
-
-            state.map = L.map('map').setView([
-                state.alojamiento.latitude,
-                state.alojamiento.longitude
-            ], CONFIG.MAP_ZOOM);
+        initMap: function(mapEl) {
+            this.map = L.map(mapEl, {zoomControl: true, scrollWheelZoom: false})
+                .setView([alo.latitude, alo.longitude], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 maxZoom: 18
-            }).addTo(state.map);
+            }).addTo(this.map);
         },
 
-        addMainMarker() {
-            if (!state.map) return;
-
-            const marker = L.marker([
-                state.alojamiento.latitude,
-                state.alojamiento.longitude
-            ]).addTo(state.map);
-
-            const popupContent = `
-                <div style="padding: 8px; max-width: 200px;">
-                    <b>${state.alojamiento.name}</b><br>
-                    ${state.alojamiento.address || ''}
-                </div>
-            `;
-
-            marker.bindPopup(popupContent).openPopup();
-            state.markers.push(marker);
-        },
-
-        loadNearbyMarkers() {
-            if (!state.map || state.nearbyLoaded) return;
-
-            fetch(`${CONFIG.API_BASE}?slug=${state.alojamiento.slug}&lat=${state.alojamiento.latitude}&lng=${state.alojamiento.longitude}&radius=${CONFIG.RADIUS_KM}&mode=nearby`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.data) {
-                        this.addNearbyMarkers(data.data);
-                        state.nearbyLoaded = true;
-                    }
-                })
-                .catch(err => console.error('Error cargando marcadores cercanos:', err));
-        },
-
-        addNearbyMarkers(data) {
-            // Alojamientos cercanos (verdes)
-            (data.alojamientos || []).forEach(item => {
-                if (item.latitude && item.longitude) {
-                    const marker = L.marker([item.latitude, item.longitude], {
-                        icon: L.divIcon({
-                            className: 'custom-marker',
-                            html: '<div style="background: #2F5233; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px;">🏠</div>'
-                        })
-                    }).addTo(state.map);
-                    
-                    marker.bindPopup(`<b>${item.name}</b><br>${item.distance} km`);
-                    state.markers.push(marker);
-                }
+        addMainMarker: function() {
+            if (!this.map) return;
+            var icon = L.divIcon({
+                className: '',
+                html: '<div style="background:#2F5233;color:#fff;border-radius:50% 50% 50% 0;'
+                    + 'width:36px;height:36px;display:flex;align-items:center;justify-content:center;'
+                    + 'font-size:18px;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,0.3);'
+                    + 'border:2px solid #fff;"><span style="transform:rotate(45deg)">🏠</span></div>',
+                iconSize: [36, 36],
+                iconAnchor: [18, 36],
+                popupAnchor: [0, -36]
             });
 
-            // Lugares de interés (azules)
-            (data.lugares || []).slice(0, 5).forEach(item => {
-                if (item.latitude && item.longitude) {
-                    const marker = L.marker([item.latitude, item.longitude], {
-                        icon: L.divIcon({
-                            className: 'custom-marker',
-                            html: '<div style="background: #2196F3; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px;">🏛️</div>'
-                        })
-                    }).addTo(state.map);
-                    
-                    marker.bindPopup(`<b>${item.name}</b><br>${item.distance} km`);
-                    state.markers.push(marker);
-                }
+            var popup = '<div style="padding:6px 2px;min-width:160px;">'
+                + '<strong style="color:#2F5233;font-size:0.95rem;">' + this.esc(alo.name) + '</strong>'
+                + (alo.address ? '<br><small style="color:#666">' + this.esc(alo.address) + '</small>' : '')
+                + (alo.precio_noche > 0 ? '<br><span style="color:#2F5233;font-weight:700">' + alo.precio_noche + '€ / noche</span>' : '')
+                + '</div>';
+
+            L.marker([alo.latitude, alo.longitude], {icon: icon})
+                .addTo(this.map)
+                .bindPopup(popup)
+                .openPopup();
+        },
+
+        addNearbyMarkers: function(data) {
+            if (!this.map) return;
+            var self = this;
+            var configs = [
+                {items: data.alojamientos || [],                    emoji: '🏠', color: '#2F5233'},
+                {items: (data.lugares || []).slice(0, 5),           emoji: '🏛️', color: '#1565C0'},
+                {items: (data.actividades || []).slice(0, 4),       emoji: '🎯', color: '#E65100'},
+                {items: (data.eventos_similares || []).slice(0, 4), emoji: '🎭', color: '#6A1B9A'}
+            ];
+
+            configs.forEach(function(cfg) {
+                cfg.items.forEach(function(item) {
+                    if (!item.latitude || !item.longitude) return;
+                    var icon = L.divIcon({
+                        className: '',
+                        html: '<div style="background:' + cfg.color + ';color:#fff;border-radius:50%;'
+                            + 'width:28px;height:28px;display:flex;align-items:center;justify-content:center;'
+                            + 'font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.25);border:2px solid #fff;">'
+                            + cfg.emoji + '</div>',
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 14],
+                        popupAnchor: [0, -14]
+                    });
+                    var dist = item.distance > 0 ? ' · ' + item.distance + ' km' : '';
+                    L.marker([item.latitude, item.longitude], {icon: icon})
+                        .addTo(self.map)
+                        .bindPopup('<b>' + self.esc(item.name) + '</b><br><small>'
+                            + self.esc(item.municipality || '') + dist + '</small>');
+                });
             });
+        },
+
+        esc: function(str) {
+            return String(str || '')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
     };
 
-    // ─── CONTENIDO CERCANO ────────────────────────────────────────────────────────
-    const nearbyModule = {
-        init() {
-            if (!state.alojamiento || !state.alojamiento.latitude || !state.alojamiento.longitude) {
-                return;
-            }
+    /* ══════════════════════════════════════════════════════
+       CONTENIDO CERCANO (tabs)
+       ══════════════════════════════════════════════════════ */
+    var NearbyModule = {
+        rendered: {},
 
-            // Cargar después de un delay
-            setTimeout(() => this.loadNearbyContent(), CONFIG.LAZY_LOAD_DELAY);
-        },
+        init: function() {
+            var self = this;
 
-        loadNearbyContent() {
-            const url = `${CONFIG.API_BASE}?slug=${state.alojamiento.slug}&lat=${state.alojamiento.latitude}&lng=${state.alojamiento.longitude}&radius=${CONFIG.RADIUS_KM}&mode=nearby`;
+            document.querySelectorAll('.nearby-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    self.activateTab(tab.dataset.tab);
+                });
+            });
 
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.data) {
-                        this.renderNearbyContent(data.data);
-                    }
-                })
-                .catch(err => console.error('Error cargando contenido cercano:', err));
-        },
-
-        renderNearbyContent(data) {
-            this.renderSection('nearby-accommodations', data.alojamientos || [], '🏠');
-            this.renderSection('nearby-places', data.lugares || [], '🏛️');
-            this.renderSection('nearby-events', data.eventos_similares || [], '🎭');
-            this.renderSection('nearby-activities', data.actividades || [], '🎯');
-        },
-
-        renderSection(sectionId, items, icon = '') {
-            const section = document.getElementById(sectionId);
+            var section = document.getElementById('secCercanos');
             if (!section) return;
 
-            section.innerHTML = '';
-
-            if (!items.length) {
-                section.appendChild(utils.createElement('div', {
-                    className: 'no-items'
-                }, ['No hay elementos cercanos']));
-                return;
-            }
-
-            items.slice(0, CONFIG.NEARBY_LIMIT).forEach(item => {
-                const card = this.createCard(item, icon);
-                section.appendChild(card);
-            });
-
-            if (items.length > CONFIG.NEARBY_LIMIT) {
-                const showMore = utils.createElement('button', {
-                    className: 'show-more-btn',
-                    textContent: 'Ver más'
-                });
-                showMore.addEventListener('click', () => {
-                    // Redirigir a página de búsqueda con filtros
-                    window.location.href = `/rutas.php?lat=${state.alojamiento.latitude}&lng=${state.alojamiento.longitude}&radius=${CONFIG.RADIUS_KM}`;
-                });
-                section.appendChild(showMore);
-            }
-        },
-
-        createCard(item, icon) {
-            const card = utils.createElement('div', {
-                className: 'nearby-card'
-            });
-
-            // Imagen
-            const imgContainer = utils.createElement('div', {
-                className: 'nearby-card-img'
-            });
-            const img = utils.createElement('img', {
-                src: item.main_image || '/img/placeholder.jpg',
-                alt: item.name,
-                loading: 'lazy'
-            });
-            imgContainer.appendChild(img);
-
-            // Cuerpo
-            const body = utils.createElement('div', {
-                className: 'nearby-card-body'
-            });
-
-            const name = utils.createElement('div', {
-                className: 'nearby-card-name',
-                textContent: item.name
-            });
-
-            const meta = utils.createElement('div', {
-                className: 'nearby-card-meta'
-            });
-            const metaText = [];
-            if (item.municipality) metaText.push(item.municipality);
-            if (item.distance) metaText.push(`${item.distance} km`);
-            meta.textContent = metaText.join(' · ');
-
-            body.appendChild(name);
-            body.appendChild(meta);
-
-            // Precio si existe
-            if (item.price_per_night || item.price) {
-                const price = utils.createElement('div', {
-                    className: 'nearby-card-price',
-                    textContent: utils.formatPrice(item.price_per_night || item.price)
-                });
-                body.appendChild(price);
-            }
-
-            card.appendChild(imgContainer);
-            card.appendChild(body);
-
-            // Click para redirigir
-            card.addEventListener('click', () => {
-                if (item.url) {
-                    window.location.href = item.url;
-                }
-            });
-
-            return card;
-        }
-    };
-
-    // ─── INICIALIZACIÓN ───────────────────────────────────────────────────────────
-    const init = {
-        start() {
-            if (!state.alojamiento) {
-                console.warn('No hay datos de alojamiento');
-                return;
-            }
-
-            // Inicializar módulos
-            gallery.init();
-            mapModule.init();
-            nearbyModule.init();
-
-            // Cargar CSS diferido
-            this.loadDeferredCSS();
-
-            // Eventos adicionales
-            this.bindEvents();
-        },
-
-        loadDeferredCSS() {
-            const link = utils.createElement('link', {
-                rel: 'stylesheet',
-                href: '/alojamiento-modular/css/alojamiento.css'
-            });
-            document.head.appendChild(link);
-        },
-
-        bindEvents() {
-            // Smooth scroll para anclas internas
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const target = document.querySelector(targetId);
-                    if (target) {
-                        e.preventDefault();
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-
-            // Lazy load de imágenes fuera del viewport
             if ('IntersectionObserver' in window) {
-                const lazyImages = document.querySelectorAll('img[loading="lazy"]');
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
-                            const img = entry.target;
-                            img.src = img.dataset.src || img.src;
-                            observer.unobserve(img);
+                            observer.disconnect();
+                            self.loadAndRender('alojamientos');
                         }
                     });
-                });
-
-                lazyImages.forEach(img => {
-                    if (img.dataset.src) {
-                        observer.observe(img);
-                    }
-                });
+                }, {rootMargin: '300px'});
+                observer.observe(section);
+            } else {
+                setTimeout(function() { self.loadAndRender('alojamientos'); }, 1500);
             }
+        },
+
+        activateTab: function(tabName) {
+            var self = this;
+            document.querySelectorAll('.nearby-tab').forEach(function(t) {
+                var active = t.dataset.tab === tabName;
+                t.classList.toggle('active', active);
+                t.setAttribute('aria-selected', active);
+            });
+            document.querySelectorAll('.nearby-panel').forEach(function(p) {
+                p.classList.toggle('active', p.id === 'nearby-' + tabName);
+            });
+            if (!this.rendered[tabName]) {
+                this.loadAndRender(tabName);
+            }
+        },
+
+        loadAndRender: function(tabName) {
+            var self = this;
+            if (!alo.latitude || !alo.longitude) {
+                this.renderEmpty(tabName);
+                return;
+            }
+            getNearbyData()
+                .then(function(data) {
+                    var map = {
+                        alojamientos: data.alojamientos      || [],
+                        lugares:      data.lugares            || [],
+                        eventos:      data.eventos_similares  || [],
+                        actividades:  data.actividades        || []
+                    };
+                    Object.keys(map).forEach(function(key) {
+                        if (!self.rendered[key]) self.renderTab(key, map[key]);
+                    });
+                })
+                .catch(function() { self.renderError(tabName); });
+        },
+
+        renderTab: function(tabName, items) {
+            this.rendered[tabName] = true;
+            var self  = this;
+            var panel = document.getElementById('nearby-' + tabName);
+            if (!panel) return;
+
+            var grid = document.createElement('div');
+            grid.className = 'nearby-grid';
+
+            if (!items || items.length === 0) {
+                grid.innerHTML = '<div class="nearby-empty"><i class="fas fa-search"></i>'
+                    + (lang.sin_resultados || 'Sin resultados') + '</div>';
+                panel.innerHTML = '';
+                panel.appendChild(grid);
+                return;
+            }
+
+            items.slice(0, 6).forEach(function(item) {
+                grid.appendChild(self.createCard(item, tabName));
+            });
+
+            panel.innerHTML = '';
+            panel.appendChild(grid);
+
+            if (items.length > 6) {
+                var btn = document.createElement('button');
+                btn.className   = 'nearby-show-more';
+                btn.textContent = lang.ver_mas || 'Ver más';
+                btn.addEventListener('click', function() {
+                    items.slice(6).forEach(function(item) {
+                        grid.appendChild(self.createCard(item, tabName));
+                    });
+                    btn.remove();
+                });
+                panel.appendChild(btn);
+            }
+        },
+
+        createCard: function(item, type) {
+            var self = this;
+            var card = document.createElement('a');
+            card.className = 'nearby-card';
+            card.href = item.url || '#';
+
+            /* Imagen */
+            var imgWrap = document.createElement('div');
+            imgWrap.className = 'nearby-card-img';
+
+            if (item.main_image) {
+                var img = document.createElement('img');
+                img.src     = self.fixUrl(item.main_image);
+                img.alt     = item.name || '';
+                img.loading = 'lazy';
+                img.onerror = function() {
+                    imgWrap.innerHTML = '<div class="nearby-card-img-placeholder">'
+                        + self.typeEmoji(type) + '</div>';
+                };
+                imgWrap.appendChild(img);
+            } else {
+                imgWrap.innerHTML = '<div class="nearby-card-img-placeholder">'
+                    + self.typeEmoji(type) + '</div>';
+            }
+
+            if (item.distance > 0) {
+                var dist = document.createElement('span');
+                dist.className   = 'nearby-card-dist';
+                dist.textContent = item.distance + ' ' + (lang.km || 'km');
+                imgWrap.appendChild(dist);
+            }
+
+            /* Cuerpo */
+            var body = document.createElement('div');
+            body.className = 'nearby-card-body';
+
+            var name = document.createElement('div');
+            name.className   = 'nearby-card-name';
+            name.textContent = item.name || '';
+            body.appendChild(name);
+
+            if (item.municipality) {
+                var meta = document.createElement('div');
+                meta.className = 'nearby-card-meta';
+                meta.innerHTML = '<i class="fas fa-map-marker-alt"></i> ' + self.esc(item.municipality);
+                body.appendChild(meta);
+            }
+
+            /* Precio / fecha */
+            if (type === 'alojamientos' && item.price_per_night > 0) {
+                var p = document.createElement('div');
+                p.className   = 'nearby-card-price';
+                p.textContent = item.price_per_night + '€ / ' + (lang.noche || 'noche');
+                body.appendChild(p);
+            } else if (type === 'actividades' && item.price > 0) {
+                var p2 = document.createElement('div');
+                p2.className   = 'nearby-card-price';
+                p2.textContent = (lang.desde || 'desde') + ' ' + item.price + '€';
+                body.appendChild(p2);
+            } else if (type === 'eventos') {
+                if (item.is_free == 1) {
+                    var fr = document.createElement('span');
+                    fr.className   = 'nearby-card-free';
+                    fr.textContent = lang.gratis || 'Gratis';
+                    body.appendChild(fr);
+                } else if (item.ticket_price > 0) {
+                    var tp = document.createElement('div');
+                    tp.className   = 'nearby-card-price';
+                    tp.textContent = item.ticket_price + '€';
+                    body.appendChild(tp);
+                }
+                if (item.start_date) {
+                    var dt = document.createElement('div');
+                    dt.className   = 'nearby-card-date';
+                    dt.textContent = self.fmtDate(item.start_date);
+                    body.appendChild(dt);
+                }
+            }
+
+            card.appendChild(imgWrap);
+            card.appendChild(body);
+            return card;
+        },
+
+        renderEmpty: function(tabName) {
+            this.rendered[tabName] = true;
+            var panel = document.getElementById('nearby-' + tabName);
+            if (!panel) return;
+            panel.innerHTML = '<div class="nearby-grid"><div class="nearby-empty">'
+                + '<i class="fas fa-search"></i>'
+                + (lang.sin_resultados || 'Sin resultados') + '</div></div>';
+        },
+
+        renderError: function(tabName) {
+            this.rendered[tabName] = true;
+            var panel = document.getElementById('nearby-' + tabName);
+            if (!panel) return;
+            panel.innerHTML = '<div class="nearby-grid"><div class="nearby-empty">'
+                + '<i class="fas fa-exclamation-circle"></i>Error al cargar.</div></div>';
+        },
+
+        fixUrl: function(url) {
+            if (!url) return '';
+            if (/^https?:\/\//.test(url)) return url;
+            return '/' + url.replace(/^\/+/, '');
+        },
+
+        typeEmoji: function(type) {
+            var m = {alojamientos:'🏠', lugares:'🏛️', eventos:'🎭', actividades:'🎯'};
+            return m[type] || '📍';
+        },
+
+        fmtDate: function(s) {
+            try {
+                return new Date(s).toLocaleDateString('es-ES', {day:'numeric', month:'short', year:'numeric'});
+            } catch(e) { return s; }
+        },
+
+        esc: function(str) {
+            return String(str || '')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         }
     };
 
-    // ─── EXPORTACIÓN (para pruebas) ───────────────────────────────────────────────
-    window.AlojamientoApp = {
-        state,
-        utils,
-        gallery,
-        mapModule,
-        nearbyModule,
-        init
-    };
+    /* ══════════════════════════════════════════════════════
+       DESCRIPCIÓN EXPANDIBLE
+       ══════════════════════════════════════════════════════ */
+    function initDescExpand() {
+        var btn  = document.getElementById('descExpandBtn');
+        var text = document.getElementById('descText');
+        if (!btn || !text) return;
+        btn.addEventListener('click', function() {
+            text.classList.remove('collapsed');
+            btn.remove();
+        });
+    }
 
-    // ─── EJECUCIÓN AL CARGAR EL DOM ───────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-        init.start();
+    /* ══════════════════════════════════════════════════════
+       COMPARTIR
+       ══════════════════════════════════════════════════════ */
+    function initShare() {
+        var btn = document.getElementById('btnShare');
+        if (!btn) return;
+        btn.addEventListener('click', function() {
+            var shareData = {title: alo.name, text: alo.name + ' — ' + (alo.municipality || ''), url: window.location.href};
+            if (navigator.share) {
+                navigator.share(shareData).catch(function(){});
+            } else if (navigator.clipboard) {
+                navigator.clipboard.writeText(window.location.href).then(function() {
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(function() { btn.innerHTML = '<i class="fas fa-share-alt"></i>'; }, 2000);
+                }).catch(function(){});
+            }
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════
+       FAVORITO
+       ══════════════════════════════════════════════════════ */
+    function initFav() {
+        var btn = document.getElementById('btnFav');
+        if (!btn) return;
+        var key = 'fav_alo_' + alo.id;
+        if (localStorage.getItem(key) === '1') {
+            btn.innerHTML = '<i class="fas fa-heart" style="color:#ff6b6b"></i>';
+        }
+        btn.addEventListener('click', function() {
+            if (localStorage.getItem(key) === '1') {
+                localStorage.removeItem(key);
+                btn.innerHTML = '<i class="far fa-heart"></i>';
+            } else {
+                localStorage.setItem(key, '1');
+                btn.innerHTML = '<i class="fas fa-heart" style="color:#ff6b6b"></i>';
+                btn.style.transform = 'scale(1.3)';
+                setTimeout(function() { btn.style.transform = ''; }, 300);
+            }
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════
+       HERO PARALLAX
+       ══════════════════════════════════════════════════════ */
+    function initHeroParallax() {
+        var bg = document.getElementById('heroBg');
+        if (!bg) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var ticking = false;
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                requestAnimationFrame(function() {
+                    var hero = document.getElementById('alo-hero');
+                    if (hero && window.scrollY < hero.offsetHeight) {
+                        bg.style.transform = 'scale(1.04) translateY(' + (window.scrollY * 0.25) + 'px)';
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, {passive: true});
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SMOOTH SCROLL
+       ══════════════════════════════════════════════════════ */
+    function initSmoothScroll() {
+        document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+            a.addEventListener('click', function(e) {
+                var id = a.getAttribute('href').slice(1);
+                if (!id) return;
+                var target = document.getElementById(id);
+                if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
+            });
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════
+       INIT
+       ══════════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', function() {
+        Gallery.init();
+        Lightbox.init();
+        MapModule.init();
+        NearbyModule.init();
+        initDescExpand();
+        initShare();
+        initFav();
+        initHeroParallax();
+        initSmoothScroll();
     });
 
 })();
-
-           
