@@ -242,11 +242,15 @@
         load: function() {
             if (this.loaded) return;
             this.loaded = true;
-            console.log("Iniciando carga de mapa y Leaflet...");
+            
             var self        = this;
             var placeholder = document.getElementById('mapPlaceholder');
             var mapEl       = document.getElementById('alo-map');
-            if (!mapEl) return;
+            
+            if (!mapEl) {
+                console.error("ERROR: No se encontró el elemento HTML con id 'alo-map'.");
+                return;
+            }
 
             if (placeholder) {
                 placeholder.innerHTML = '<div style="font-size:2rem">⏳</div><p style="margin-top:8px;font-size:0.85rem">Cargando mapa…</p>';
@@ -257,6 +261,7 @@
                     if (placeholder) placeholder.style.display = 'none';
                     mapEl.style.display = 'block';
                     self.initMap(mapEl);
+                    console.log("Leaflet cargado y mapa inicializado.");
                     self.addMainMarker();
                     getNearbyData()
                         .then(function(data) { self.addNearbyMarkers(data); })
