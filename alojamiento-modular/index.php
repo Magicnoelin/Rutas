@@ -459,14 +459,24 @@ $alo_js = $alojamiento ? json_encode([
             font-style: normal;
             font-weight: 400;
             font-display: swap;
-            src: url('/fonts/Montserrat-Regular.woff2') format('woff2');
+            src: local('Montserrat Regular'), local('Montserrat-Regular'),
+                 url('/fonts/montserrat-v31-latin-regular.woff2') format('woff2');
         }
         @font-face {
             font-family: 'Montserrat';
             font-style: normal;
-            font-weight: 700;
+            font-weight: 500;
             font-display: swap;
-            src: url('/fonts/Montserrat-Bold.woff2') format('woff2');
+            src: local('Montserrat Medium'), local('Montserrat-Medium'),
+                 url('/fonts/montserrat-v31-latin-500.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: local('Montserrat SemiBold'), local('Montserrat-SemiBold'),
+                 url('/fonts/montserrat-v31-latin-600.woff2') format('woff2');
         }
     </style>
 
