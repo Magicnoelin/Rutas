@@ -1018,25 +1018,73 @@ $alo_js = $alojamiento ? json_encode([
         .price-label {
             font-size: 0.8rem;
             color: var(--text-light);
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
         .price-features {
             list-style: none;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+            padding: 0;
         }
         .price-features li {
             display: flex !important;
             align-items: center !important;
             gap: 8px !important;
-            font-size: 0.88rem !important;
+            font-size: 0.85rem !important;
             font-weight: 500 !important;
             color: #333333 !important;
-            padding: 6px 0 !important;
+            padding: 7px 0 !important;
             border-bottom: 1px solid #f0f0f0 !important;
+            line-height: 1.4 !important;
             visibility: visible !important;
             opacity: 1 !important;
         }
         .price-features li:last-child { border-bottom: none !important; }
+        /* Amenities chips */
+        .amenity-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .amenity-chip {
+            background: #e8f5e9;
+            color: #2F5233;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #c8e6c9;
+        }
+        /* Botones sidebar compactos */
+        .sidebar-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .btn-sidebar {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            padding: 10px 16px !important;
+            border-radius: 8px !important;
+            font-weight: 700 !important;
+            font-size: 0.88rem !important;
+            cursor: pointer !important;
+            border: none !important;
+            transition: all 0.2s ease !important;
+            text-decoration: none !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .btn-sidebar-primary { background: #2F5233 !important; color: #fff !important; }
+        .btn-sidebar-primary:hover { background: #3d6b42 !important; color: #fff !important; }
+        .btn-sidebar-wa { background: #25D366 !important; color: #fff !important; }
+        .btn-sidebar-wa:hover { background: #1da851 !important; color: #fff !important; }
+        .btn-sidebar-email { background: #F9A825 !important; color: #1a1a1a !important; }
+        .btn-sidebar-email:hover { background: #f57f17 !important; color: #fff !important; }
+        .btn-sidebar-web { background: #e8f5e9 !important; color: #2F5233 !important; border: 1px solid #c8e6c9 !important; }
+        .btn-sidebar-web:hover { background: #c8e6c9 !important; color: #2F5233 !important; }
         .btn {
             display: inline-flex;
             align-items: center;
@@ -1066,24 +1114,57 @@ $alo_js = $alojamiento ? json_encode([
 
         /* ── CTA card ── */
         .cta-card {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--white);
+            background: linear-gradient(135deg, #2F5233, #1a3d1e);
+            color: #ffffff;
             border-radius: var(--radius);
-            padding: 24px;
+            padding: 22px;
             margin-bottom: 16px;
             text-align: center;
         }
-        .cta-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
-        .cta-card p { font-size: 0.85rem; opacity: 0.85; margin-bottom: 16px; }
-        .btn-white { background: var(--white); color: var(--primary); }
-        .btn-white:hover { background: #f0f0f0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .btn-outline-white {
-            background: transparent;
-            color: var(--white);
-            border: 2px solid rgba(255,255,255,0.6);
-            margin-top: 8px;
+        .cta-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff !important;
         }
-        .btn-outline-white:hover { background: rgba(255,255,255,0.1); border-color: var(--white); }
+        .cta-card p {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.88) !important;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+        .btn-white {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #ffffff !important;
+            color: #2F5233 !important;
+            padding: 10px 16px !important;
+            border-radius: 8px !important;
+            font-weight: 700 !important;
+            font-size: 0.85rem !important;
+            text-decoration: none !important;
+            margin-bottom: 8px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .btn-white:hover { background: #f0f0f0 !important; color: #2F5233 !important; }
+        .btn-outline-white {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: transparent !important;
+            color: #ffffff !important;
+            border: 2px solid rgba(255,255,255,0.6) !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            font-size: 0.82rem !important;
+            text-decoration: none !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .btn-outline-white:hover { background: rgba(255,255,255,0.1) !important; border-color: #fff !important; color: #fff !important; }
 
         /* ── Lightbox ── */
         .lightbox-overlay {
@@ -1507,87 +1588,141 @@ if (file_exists($header_path)) {
             <div class="price-amount"><?php echo htmlspecialchars($precio_display); ?></div>
             <div class="price-label"><?php echo $t['precio_noche']; ?></div>
             <?php else: ?>
-            <div class="price-amount" style="font-size:1.2rem;"><?php echo $t['consultar']; ?></div>
-            <div class="price-label" style="margin-bottom:18px;"></div>
+            <div class="price-amount" style="font-size:1.3rem;color:#2F5233;"><?php echo $t['consultar']; ?></div>
+            <div class="price-label" style="margin-bottom:14px;"></div>
             <?php endif; ?>
 
+            <!-- Datos del alojamiento -->
             <ul class="price-features">
-                <?php
-                // Siempre mostrar tipo
-                if ($tipo_display):
-                ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🏠 <?php echo htmlspecialchars($tipo_display); ?></li>
+                <?php if ($tipo_display): ?>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>🏠</span><span><?php echo htmlspecialchars($tipo_display); ?></span>
+                </li>
                 <?php endif; ?>
-                <?php if ($capacidad_display): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">👥 <?php echo htmlspecialchars($capacidad_display); ?></li>
-                <?php elseif (!empty($alojamiento['max_guests'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">👥 <?php echo htmlspecialchars($alojamiento['max_guests']); ?> <?php echo $t['personas']; ?></li>
-                <?php elseif (!empty($alojamiento['guests'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">👥 <?php echo htmlspecialchars($alojamiento['guests']); ?> <?php echo $t['personas']; ?></li>
+                <?php if (!empty($alojamiento['capacity']) && $alojamiento['capacity'] > 0): ?>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>👥</span><span><?php echo (int)$alojamiento['capacity']; ?> <?php echo $t['personas']; ?></span>
+                </li>
                 <?php endif; ?>
-                <?php if (!empty($alojamiento['check_in_time'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🔑 <?php echo $t['checkin']; ?>: <?php echo htmlspecialchars($alojamiento['check_in_time']); ?></li>
-                <?php elseif (!empty($alojamiento['checkin_time'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🔑 <?php echo $t['checkin']; ?>: <?php echo htmlspecialchars($alojamiento['checkin_time']); ?></li>
+                <?php if (!empty($alojamiento['bedrooms']) && $alojamiento['bedrooms'] > 0): ?>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>🛏️</span><span><?php echo (int)$alojamiento['bedrooms']; ?> habitaciones</span>
+                </li>
                 <?php endif; ?>
-                <?php if (!empty($alojamiento['check_out_time'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🚪 <?php echo $t['checkout']; ?>: <?php echo htmlspecialchars($alojamiento['check_out_time']); ?></li>
-                <?php elseif (!empty($alojamiento['checkout_time'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🚪 <?php echo $t['checkout']; ?>: <?php echo htmlspecialchars($alojamiento['checkout_time']); ?></li>
+                <?php if (!empty($alojamiento['bathrooms']) && $alojamiento['bathrooms'] > 0): ?>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>🚿</span><span><?php echo (int)$alojamiento['bathrooms']; ?> baños</span>
+                </li>
+                <?php endif; ?>
+                <?php if (!empty($alojamiento['min_nights']) && $alojamiento['min_nights'] > 1): ?>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>📅</span><span>Mín. <?php echo (int)$alojamiento['min_nights']; ?> noches</span>
+                </li>
                 <?php endif; ?>
                 <?php if (!empty($alojamiento['municipality'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">📍 <?php echo htmlspecialchars($alojamiento['municipality']); ?></li>
-                <?php elseif (!empty($alojamiento['city'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">📍 <?php echo htmlspecialchars($alojamiento['city']); ?></li>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>📍</span><span><?php echo htmlspecialchars($alojamiento['municipality']); ?><?php if (!empty($alojamiento['province'])): ?>, <?php echo htmlspecialchars($alojamiento['province']); ?><?php endif; ?></span>
+                </li>
                 <?php endif; ?>
-                <?php if (!empty($alojamiento['province'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🗺️ <?php echo htmlspecialchars($alojamiento['province']); ?></li>
+                <?php if (!empty($alojamiento['pet_friendly']) && $alojamiento['pet_friendly'] == 1): ?>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>🐾</span><span>Admite mascotas</span>
+                </li>
                 <?php endif; ?>
-                <?php if (!empty($alojamiento['phone'])): ?>
-                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">📞 <?php echo htmlspecialchars($alojamiento['phone']); ?></li>
+                <?php if (!empty($alojamiento['suitable_for_children']) && $alojamiento['suitable_for_children'] == 1): ?>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>👶</span><span>Apto para niños</span>
+                </li>
+                <?php endif; ?>
+                <?php if (!empty($alojamiento['kitchen_available']) && $alojamiento['kitchen_available'] == 1): ?>
+                <li style="display:flex!important;align-items:center!important;gap:8px!important;color:#333!important;font-size:0.85rem!important;padding:7px 0!important;border-bottom:1px solid #f0f0f0!important;">
+                    <span>🍳</span><span>Cocina disponible</span>
+                </li>
                 <?php endif; ?>
             </ul>
 
-            <?php if (!empty($alojamiento['phone'])): ?>
-            <a href="tel:<?php echo htmlspecialchars($alojamiento['phone']); ?>" class="btn btn-primary">
-                📞 <?php echo $t['reservar']; ?>
-            </a>
-            <a href="https://wa.me/34<?php echo preg_replace('/[^0-9]/', '', $alojamiento['phone']); ?>"
-               target="_blank" rel="noopener" class="btn btn-whatsapp-full">
-                💬 WhatsApp
-            </a>
-            <?php elseif (!empty($alojamiento['email'])): ?>
-            <a href="mailto:<?php echo htmlspecialchars($alojamiento['email']); ?>" class="btn btn-primary">
-                ✉️ <?php echo $t['reservar']; ?>
-            </a>
-            <?php else: ?>
-            <a href="#" class="btn btn-primary">
-                📅 <?php echo $t['reservar']; ?>
-            </a>
+            <?php
+            // Amenities como chips
+            $amenities = [];
+            if (!empty($alojamiento['amenities'])) {
+                $decoded = json_decode($alojamiento['amenities'], true);
+                if (is_array($decoded)) $amenities = $decoded;
+            }
+            if (!empty($amenities)):
+            ?>
+            <div class="amenity-chips">
+                <?php foreach (array_slice($amenities, 0, 6) as $am): ?>
+                <span class="amenity-chip">✓ <?php echo htmlspecialchars($am); ?></span>
+                <?php endforeach; ?>
+            </div>
             <?php endif; ?>
+
+            <!-- Botones compactos -->
+            <div class="sidebar-btns">
+                <?php if (!empty($alojamiento['phone'])): ?>
+                <a href="tel:<?php echo htmlspecialchars($alojamiento['phone']); ?>"
+                   class="btn-sidebar btn-sidebar-primary">
+                    📞 Llamar · <?php echo htmlspecialchars($alojamiento['phone']); ?>
+                </a>
+                <a href="https://wa.me/34<?php echo preg_replace('/[^0-9]/', '', $alojamiento['phone']); ?>?text=Hola%2C+me+interesa+<?php echo urlencode($alojamiento['name']); ?>"
+                   target="_blank" rel="noopener"
+                   class="btn-sidebar btn-sidebar-wa">
+                    💬 WhatsApp
+                </a>
+                <?php endif; ?>
+                <?php if (!empty($alojamiento['email'])): ?>
+                <a href="mailto:<?php echo htmlspecialchars($alojamiento['email']); ?>"
+                   class="btn-sidebar btn-sidebar-email">
+                    ✉️ Email
+                </a>
+                <?php endif; ?>
+                <?php if (!empty($alojamiento['website'])): ?>
+                <a href="<?php echo htmlspecialchars($alojamiento['website']); ?>"
+                   target="_blank" rel="noopener"
+                   class="btn-sidebar btn-sidebar-web">
+                    🌐 Web oficial
+                </a>
+                <?php endif; ?>
+                <?php if (!empty($alojamiento['airbnb_url'])): ?>
+                <a href="<?php echo htmlspecialchars($alojamiento['airbnb_url']); ?>"
+                   target="_blank" rel="noopener"
+                   class="btn-sidebar btn-sidebar-web">
+                    🏡 Ver en Airbnb
+                </a>
+                <?php endif; ?>
+                <?php if (!empty($alojamiento['booking_url'])): ?>
+                <a href="<?php echo htmlspecialchars($alojamiento['booking_url']); ?>"
+                   target="_blank" rel="noopener"
+                   class="btn-sidebar btn-sidebar-web">
+                    🏨 Ver en Booking
+                </a>
+                <?php endif; ?>
+            </div>
         </div>
 
         <!-- CTA Registro -->
         <div class="cta-card">
-            <div style="font-size:2rem;margin-bottom:8px;">🌿</div>
-            <h3><?php echo $t['cta_titulo']; ?></h3>
-            <p><?php echo $t['cta_desc']; ?></p>
-            <a href="/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>" class="btn btn-white">
-                <?php echo $t['cta_register']; ?>
+            <div style="font-size:1.8rem;margin-bottom:8px;line-height:1;">🌿</div>
+            <h3 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px;"><?php echo htmlspecialchars($t['cta_titulo']); ?></h3>
+            <p style="font-size:0.8rem;color:rgba(255,255,255,0.85);margin-bottom:14px;line-height:1.5;"><?php echo htmlspecialchars($t['cta_desc']); ?></p>
+            <a href="/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
+               style="display:flex;align-items:center;justify-content:center;background:#fff;color:#2F5233;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none;margin-bottom:8px;width:100%;box-sizing:border-box;">
+                <?php echo htmlspecialchars($t['cta_register']); ?>
             </a>
-            <a href="/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>" class="btn btn-outline-white">
-                <?php echo $t['cta_login']; ?>
+            <a href="/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
+               style="display:flex;align-items:center;justify-content:center;background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.6);padding:9px 16px;border-radius:8px;font-weight:600;font-size:0.82rem;text-decoration:none;width:100%;box-sizing:border-box;">
+                <?php echo htmlspecialchars($t['cta_login']); ?>
             </a>
         </div>
 
         <!-- Compartir -->
-        <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;text-align:center;">
-            <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:12px;font-weight:600;">Compartir</p>
-            <div style="display:flex;justify-content:center;gap:12px;">
-                <button onclick="shareAlo('whatsapp')" style="background:none;border:none;cursor:pointer;font-size:1.5rem;" title="WhatsApp">💬</button>
-                <button onclick="shareAlo('facebook')" style="background:none;border:none;cursor:pointer;font-size:1.5rem;" title="Facebook">📘</button>
-                <button onclick="shareAlo('twitter')" style="background:none;border:none;cursor:pointer;font-size:1.5rem;" title="Twitter">🐦</button>
-                <button onclick="shareAlo('copy')" style="background:none;border:none;cursor:pointer;font-size:1.5rem;" title="Copiar enlace">🔗</button>
+        <div style="background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);padding:18px;text-align:center;">
+            <p style="font-size:0.82rem;color:#666;margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Compartir</p>
+            <div style="display:flex;justify-content:center;gap:14px;">
+                <button onclick="shareAlo('whatsapp')" style="background:none;border:none;cursor:pointer;font-size:1.6rem;line-height:1;" title="WhatsApp">💬</button>
+                <button onclick="shareAlo('facebook')" style="background:none;border:none;cursor:pointer;font-size:1.6rem;line-height:1;" title="Facebook">📘</button>
+                <button onclick="shareAlo('twitter')" style="background:none;border:none;cursor:pointer;font-size:1.6rem;line-height:1;" title="Twitter">🐦</button>
+                <button onclick="shareAlo('copy')" style="background:none;border:none;cursor:pointer;font-size:1.6rem;line-height:1;" title="Copiar enlace">🔗</button>
             </div>
         </div>
 
