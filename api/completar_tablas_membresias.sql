@@ -3,11 +3,135 @@
 -- Rutas Rurales - Sistema de Facturación
 -- ============================================
 
+-- 0. CREAR TABLAS DE REFERENCIA SI NO EXISTEN (para evitar errores de FK)
+-- Tabla users (si no existe)
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_type ENUM('turista', 'alojamiento', 'promotor_eventos', 'actividad_cultural') NOT NULL DEFAULT 'turista',
+    business_name VARCHAR(255) NULL,
+    business_description TEXT NULL,
+    verification_status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
+    subscription_level ENUM('basic', 'premium') DEFAULT 'basic',
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(50),
+    password_hash VARCHAR(255) NOT NULL,
+    email_verified TINYINT(1) DEFAULT 0,
+    verification_token VARCHAR(255),
+    terms_accepted TINYINT(1) DEFAULT 1,
+    status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
+    -- Campos de membresía (necesarios para la vista membership_summary)
+    membership_type VARCHAR(50) NULL COMMENT 'Tipo de membresía (free, basic, premium, etc.)',
+    membership_status ENUM('active', 'expired', 'canceled', 'pending') DEFAULT 'pending' COMMENT 'Estado de la membresía',
+    membership_start_date DATE NULL COMMENT 'Fecha de inicio de la membresía',
+    membership_end_date DATE NULL COMMENT 'Fecha de fin de la membresía',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    last_login TIMESTAMP NULL,
+    INDEX idx_email (email),
+    INDEX idx_status (status),
+    INDEX idx_user_type (user_type),
+    INDEX idx_verification_status (verification_status),
+    INDEX idx_membership_type (membership_type),
+    INDEX idx_membership_status (membership_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla membership_plans (si no existe)
+CREATE TABLE IF NOT EXISTS membership_plans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    plan_type ENUM('alojamiento', 'restaurante', 'apoyo_plataforma') NOT NULL COMMENT 'Tipo de membresía',
+    name VARCHAR(100) NOT NULL COMMENT 'Nombre del plan',
+    slug VARCHAR(100) NOT NULL UNIQUE COMMENT 'Slug único del plan',
+    description TEXT COMMENT 'Descripción del plan',
+    
+    -- Precios mensuales (sin IVA)
+    price_monthly DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Precio mensual sin IVA',
+    price_yearly DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Precio anual sin IVA',
+    
+    -- Precios con IVA (21%)
+    price_monthly_with_vat DECIMAL(10,2) GENERATED ALWAYS AS (price_monthly * 1.21) STORED,
+    price_yearly_with_vat DECIMAL(10,2) GENERATED ALWAYS AS (price_yearly * 1.21) STORED,
+    
+    -- IDs de Stripe
+    stripe_product_id VARCHAR(255) NULL COMMENT 'ID del producto en Stripe',
+    stripe_monthly_price_id VARCHAR(255) NULL COMMENT 'ID del precio mensual en Stripe',
+    stripe_yearly_price_id VARCHAR(255) NULL COMMENT 'ID del precio anual en Stripe',
+    
+    -- Límites del plan
+    max_accommodations INT DEFAULT 0 COMMENT 'Máximo de alojamientos (para tipo alojamiento)',
+    max_places INT DEFAULT 0 COMMENT 'Máximo de plazas totales',
+    max_restaurants INT DEFAULT 0 COMMENT 'Máximo de restaurantes (para tipo restaurante)',
+    
+    -- Características
+    features JSON COMMENT 'Características del plan en formato JSON',
+    is_popular BOOLEAN DEFAULT FALSE COMMENT 'Indica si es el plan más popular',
+    display_order INT DEFAULT 0 COMMENT 'Orden de visualización',
+    
+    -- Estado
+    status ENUM('active', 'inactive', 'archived') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_plan_type (plan_type),
+    INDEX idx_status (status),
+    INDEX idx_display_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla user_subscriptions (si no existe)
+CREATE TABLE IF NOT EXISTS user_subscriptions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL COMMENT 'ID del usuario',
+    plan_id INT NULL COMMENT 'ID del plan de membresía (puede ser NULL si el plan se elimina)',
+    plan_name VARCHAR(100) NOT NULL COMMENT 'Nombre del plan al momento de la suscripción',
+    
+    -- Información de facturación
+    billing_cycle ENUM('monthly', 'yearly') NOT NULL COMMENT 'Ciclo de facturación',
+    price DECIMAL(10,2) NOT NULL COMMENT 'Precio sin IVA',
+    vat_amount DECIMAL(10,2) NOT NULL COMMENT 'Monto del IVA (21%)',
+    total_amount DECIMAL(10,2) NOT NULL COMMENT 'Precio total con IVA',
+    currency VARCHAR(3) DEFAULT 'EUR' COMMENT 'Moneda (EUR)',
+    
+    -- Información de Stripe
+    stripe_subscription_id VARCHAR(255) NULL COMMENT 'ID de suscripción en Stripe',
+    stripe_customer_id VARCHAR(255) NULL COMMENT 'ID del cliente en Stripe',
+    stripe_invoice_id VARCHAR(255) NULL COMMENT 'ID de la factura en Stripe',
+    
+    -- Fechas
+    start_date DATE NOT NULL COMMENT 'Fecha de inicio',
+    end_date DATE NULL COMMENT 'Fecha de finalización',
+    next_billing_date DATE NULL COMMENT 'Próxima fecha de facturación',
+    canceled_at DATE NULL COMMENT 'Fecha de cancelación',
+    
+    -- Estado
+    status ENUM('active', 'pending', 'canceled', 'expired', 'past_due') DEFAULT 'pending',
+    
+    -- Datos de facturación
+    billing_name VARCHAR(255) NULL COMMENT 'Nombre para facturación',
+    billing_nif VARCHAR(50) NULL COMMENT 'NIF/CIF para facturación',
+    billing_address TEXT NULL COMMENT 'Dirección para facturación',
+    billing_email VARCHAR(255) NULL COMMENT 'Email para facturación',
+    
+    -- Metadatos
+    metadata JSON COMMENT 'Metadatos adicionales',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (plan_id) REFERENCES membership_plans(id) ON DELETE SET NULL,
+    
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status),
+    INDEX idx_end_date (end_date),
+    INDEX idx_stripe_subscription (stripe_subscription_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- 1. CREAR TABLA DE INTENCIONES DE PAGO
+-- Nota: plan_id debe permitir NULL si usamos ON DELETE SET NULL
 CREATE TABLE IF NOT EXISTS payment_intents (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL COMMENT 'ID del usuario',
-    plan_id INT NOT NULL COMMENT 'ID del plan de membresía',
+    plan_id INT NULL COMMENT 'ID del plan de membresía (puede ser NULL si el plan se elimina)',
     
     -- Información de Stripe
     stripe_session_id VARCHAR(255) NOT NULL UNIQUE COMMENT 'ID de la sesión de Stripe',
@@ -79,10 +203,9 @@ CREATE TABLE IF NOT EXISTS payment_failures (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 3. ACTUALIZAR TABLA DE FACTURAS CON CAMPOS FALTANTES
-ALTER TABLE invoices 
-ADD COLUMN IF NOT EXISTS subscription_id INT NULL COMMENT 'ID de la suscripción',
-ADD FOREIGN KEY IF NOT EXISTS fk_invoices_subscription_id 
-    FOREIGN KEY (subscription_id) REFERENCES user_subscriptions(id) ON DELETE SET NULL;
+-- Nota: La tabla invoices ya debería existir con foreign keys desde configurar_membresias_produccion.sql
+-- Si no existe, se creará automáticamente cuando se necesite.
+-- No intentamos modificar la tabla aquí para evitar conflictos.
 
 -- 4. CREAR VISTA PARA RESUMEN DE MEMBRESÍAS
 CREATE OR REPLACE VIEW membership_summary AS
