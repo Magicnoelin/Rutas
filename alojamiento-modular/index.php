@@ -668,24 +668,26 @@ $alo_js = $alojamiento ? json_encode([
         }
 
         /* ── Card base ── */
-        .card {
+        .alo-card {
             background: var(--white);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             overflow: hidden;
             margin-bottom: 24px;
         }
-        .card-body { padding: 28px; }
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 18px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .alo-card-body { padding: 28px; }
+        .alo-card-title {
+            font-size: 1.1rem !important;
+            font-weight: 700 !important;
+            color: #2F5233 !important;
+            margin-bottom: 18px !important;
+            padding-bottom: 12px !important;
+            border-bottom: 2px solid #81C784 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         /* ── Galería ── */
@@ -1264,7 +1266,7 @@ $alo_js = $alojamiento ? json_encode([
         @media (max-width: 600px) {
             .alo-hero { min-height: 320px; }
             .alo-hero h1 { font-size: 1.5rem; }
-            .card-body { padding: 20px; }
+            .alo-card-body { padding: 20px; }
             .gallery-main-img { height: 240px; }
             .meta-grid { grid-template-columns: 1fr 1fr; }
             .nearby-grid { grid-template-columns: 1fr 1fr; }
@@ -1365,9 +1367,9 @@ if (file_exists($header_path)) {
 
         <!-- Galería de fotos -->
         <?php if (!empty($fotos)): ?>
-        <div class="card">
-            <div class="card-body">
-                <h2 class="card-title">📸 <?php echo $t['fotos']; ?></h2>
+        <div class="alo-card">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title">📸 <?php echo $t['fotos']; ?></h2>
                 <div class="gallery-main" id="gallery-main" onclick="openLightbox(currentGalleryIdx)">
                     <img id="gallery-main-img"
                          src="<?php echo htmlspecialchars($fotos[0]); ?>"
@@ -1401,9 +1403,9 @@ if (file_exists($header_path)) {
         <?php endif; ?>
 
         <!-- Descripción -->
-        <div class="card">
-            <div class="card-body">
-                <h2 class="card-title">📋 <?php echo $t['descripcion']; ?></h2>
+        <div class="alo-card">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title">📋 <?php echo $t['descripcion']; ?></h2>
                 <?php if (!empty($alojamiento['description'])): ?>
                 <?php
                 // Permitir solo etiquetas seguras de formato (negritas, cursivas, párrafos, listas)
@@ -1473,9 +1475,9 @@ if (file_exists($header_path)) {
 
         <!-- Contacto -->
         <?php if (!empty($alojamiento['phone']) || !empty($alojamiento['email']) || !empty($alojamiento['website'])): ?>
-        <div class="card">
-            <div class="card-body">
-                <h2 class="card-title">📞 <?php echo $t['contacto']; ?></h2>
+        <div class="alo-card">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title">📞 <?php echo $t['contacto']; ?></h2>
                 <div class="contact-btns">
                     <?php if (!empty($alojamiento['phone'])): ?>
                     <a href="tel:<?php echo htmlspecialchars($alojamiento['phone']); ?>" class="btn-contact btn-phone">
@@ -1514,7 +1516,7 @@ if (file_exists($header_path)) {
 
         <!-- MAPA (carga diferida con Leaflet) -->
         <?php if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])): ?>
-        <div id="alo-map-container" class="card">
+        <div id="alo-map-container" class="alo-card">
             <div id="map-placeholder" class="map-placeholder" onclick="initMap()">
                 <div class="map-icon">🗺️</div>
                 <strong><?php echo $t['ver_mapa']; ?></strong>
@@ -1526,9 +1528,9 @@ if (file_exists($header_path)) {
         <?php endif; ?>
 
         <!-- CONTENIDO CERCANO -->
-        <div id="nearby-alojamientos-section" class="card" style="display:none;">
-            <div class="card-body">
-                <h2 class="card-title"><?php echo $t['aloj_cercanos']; ?></h2>
+        <div id="nearby-alojamientos-section" class="alo-card" style="display:none;">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title"><?php echo $t['aloj_cercanos']; ?></h2>
                 <div id="nearby-alojamientos" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
@@ -1540,9 +1542,9 @@ if (file_exists($header_path)) {
             </div>
         </div>
 
-        <div id="nearby-lugares-section" class="card" style="display:none;">
-            <div class="card-body">
-                <h2 class="card-title"><?php echo $t['lugares_cercanos']; ?></h2>
+        <div id="nearby-lugares-section" class="alo-card" style="display:none;">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title"><?php echo $t['lugares_cercanos']; ?></h2>
                 <div id="nearby-lugares" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
@@ -1554,9 +1556,9 @@ if (file_exists($header_path)) {
             </div>
         </div>
 
-        <div id="nearby-actividades-section" class="card" style="display:none;">
-            <div class="card-body">
-                <h2 class="card-title"><?php echo $t['activ_cercanas']; ?></h2>
+        <div id="nearby-actividades-section" class="alo-card" style="display:none;">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title"><?php echo $t['activ_cercanas']; ?></h2>
                 <div id="nearby-actividades" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
@@ -1568,9 +1570,9 @@ if (file_exists($header_path)) {
             </div>
         </div>
 
-        <div id="nearby-eventos-section" class="card" style="display:none;">
-            <div class="card-body">
-                <h2 class="card-title"><?php echo $t['eventos_cercanos']; ?></h2>
+        <div id="nearby-eventos-section" class="alo-card" style="display:none;">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title"><?php echo $t['eventos_cercanos']; ?></h2>
                 <div id="nearby-eventos" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
