@@ -1402,7 +1402,7 @@ if (file_exists($header_path)) {
         <?php if (!empty($fotos)): ?>
         <div class="alo-card">
             <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">📸 <?php echo $t['fotos']; ?></h2>
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">📸 Galería de fotos</h2>
                 <div class="gallery-main" id="gallery-main" onclick="openLightbox(currentGalleryIdx)">
                     <img id="gallery-main-img"
                          src="<?php echo htmlspecialchars($fotos[0]); ?>"
@@ -1438,7 +1438,7 @@ if (file_exists($header_path)) {
         <!-- Descripción -->
         <div class="alo-card">
             <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">📋 <?php echo $t['descripcion']; ?></h2>
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">📋 Descripción</h2>
                 <?php if (!empty($alojamiento['description'])): ?>
                 <?php
                 // Permitir solo etiquetas seguras de formato (negritas, cursivas, párrafos, listas)
@@ -1510,7 +1510,7 @@ if (file_exists($header_path)) {
         <?php if (!empty($alojamiento['phone']) || !empty($alojamiento['email']) || !empty($alojamiento['website'])): ?>
         <div class="alo-card">
             <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">📞 <?php echo $t['contacto']; ?></h2>
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">📞 Contacto</h2>
                 <div class="contact-btns">
                     <?php if (!empty($alojamiento['phone'])): ?>
                     <a href="tel:<?php echo htmlspecialchars($alojamiento['phone']); ?>" class="btn-contact btn-phone">
@@ -1563,7 +1563,7 @@ if (file_exists($header_path)) {
         <!-- CONTENIDO CERCANO -->
         <div id="nearby-alojamientos-section" class="alo-card" style="display:none;">
             <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;"><?php echo $t['aloj_cercanos']; ?></h2>
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🏠 Alojamientos cercanos</h2>
                 <div id="nearby-alojamientos" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
@@ -1577,7 +1577,7 @@ if (file_exists($header_path)) {
 
         <div id="nearby-lugares-section" class="alo-card" style="display:none;">
             <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;"><?php echo $t['lugares_cercanos']; ?></h2>
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🏛️ Lugares de interés cercanos</h2>
                 <div id="nearby-lugares" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
@@ -1591,7 +1591,7 @@ if (file_exists($header_path)) {
 
         <div id="nearby-actividades-section" class="alo-card" style="display:none;">
             <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;"><?php echo $t['activ_cercanas']; ?></h2>
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🎯 Actividades turísticas cercanas</h2>
                 <div id="nearby-actividades" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
@@ -1605,7 +1605,7 @@ if (file_exists($header_path)) {
 
         <div id="nearby-eventos-section" class="alo-card" style="display:none;">
             <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;"><?php echo $t['eventos_cercanos']; ?></h2>
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🎭 Eventos culturales cercanos</h2>
                 <div id="nearby-eventos" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
