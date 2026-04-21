@@ -75,6 +75,57 @@ try {
 
     $pdo = getDBConnection();
 
+    // Verificar límites de membresía si el usuario está autenticado
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    $userId = $_SESSION['user_id'] ?? null;
+    $membershipType = 'free'; // Por defecto
+    
+    if ($userId) {
+        // Obtener información de membresía del usuario
+        $stmtUser = $pdo->prepare("
+            SELECT membership_type, membership_status 
+            FROM users 
+            WHERE id = ?
+        ");
+        $stmtUser->execute([$userId]);
+        $user = $stmtUser->fetch();
+        
+        if ($user) {
+            $membershipType = strtolower($user['membership_type'] ?? 'free');
+            $membershipStatus = $user['membership_status'] ?? 'active';
+            
+            // Verificar límites según membresía
+            if ($membershipType === 'free' || $membershipType === 'basic') {
+                // Contar alojamientos existentes del usuario
+                $stmtCount = $pdo->prepare("
+                    SELECT COUNT(*) as total_alojamientos, 
+                           SUM(capacity) as total_plazas
+                    FROM accommodations a
+                    LEFT JOIN user_resources ur ON ur.resource_id = a.id AND ur.resource_type = 'accommodation'
+                    WHERE ur.user_id = ? AND ur.role = 'owner'
+                ");
+                $stmtCount->execute([$userId]);
+                $counts = $stmtCount->fetch();
+                
+                $totalAlojamientos = $counts['total_alojamientos'] ?? 0;
+                $totalPlazas = $counts['total_plazas'] ?? 0;
+                $nuevasPlazas = intval($datosLimpios['Plazas'] ?? 0);
+                
+                // Límites para membresía básica: 2 alojamientos o 15 plazas
+                if ($totalAlojamientos >= 2) {
+                    jsonError('Límite alcanzado: La membresía básica permite máximo 2 alojamientos. Actualiza a Premium para añadir más.', 403);
+                }
+                
+                if (($totalPlazas + $nuevasPlazas) > 15) {
+                    jsonError('Límite alcanzado: La membresía básica permite máximo 15 plazas totales. Actualiza a Premium para añadir más plazas.', 403);
+                }
+            }
+        }
+    }
+
     // Obtener category_id
     $categoryId = 1;
     try {

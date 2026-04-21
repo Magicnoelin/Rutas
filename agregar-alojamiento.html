@@ -551,6 +551,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <p style="font-size: 1.1rem; color: var(--secondary-color);">
                     Completa el formulario para añadir un nuevo alojamiento rural a la plataforma
                 </p>
+                
+                <!-- Información de límites de membresía -->
+                <div id="membershipLimitsInfo" style="display: none; background: #e8f5e9; border: 2px solid var(--primary-color); border-radius: 10px; padding: 1rem; margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-info-circle"></i> Límites de tu membresía
+                    </h4>
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                        <div style="text-align: center; flex: 1; min-width: 150px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);" id="currentAccommodations">0</div>
+                            <div style="font-size: 0.9rem; color: #666;">Alojamientos actuales</div>
+                            <div style="font-size: 0.8rem; color: #888;" id="accommodationsLimit">Límite: 2</div>
+                        </div>
+                        <div style="text-align: center; flex: 1; min-width: 150px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);" id="currentPlaces">0</div>
+                            <div style="font-size: 0.9rem; color: #666;">Plazas totales</div>
+                            <div style="font-size: 0.8rem; color: #888;" id="placesLimit">Límite: 15</div>
+                        </div>
+                    </div>
+                    <div id="membershipUpgradePrompt" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ccc; display: none;">
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            <i class="fas fa-crown"></i> <strong>¿Necesitas más?</strong> Actualiza a Premium para:
+                        </p>
+                        <ul style="color: #666; font-size: 0.85rem; margin: 0; padding-left: 1.2rem;">
+                            <li>Publicar hasta 10 alojamientos</li>
+                            <li>Gestionar hasta 100 plazas totales</li>
+                            <li>Enviar ofertas a turistas</li>
+                            <li>Estadísticas avanzadas</li>
+                        </ul>
+                        <a href="#membresia" onclick="showMembershipSection()" style="display: inline-block; background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 20px; text-decoration: none; font-weight: bold; margin-top: 0.5rem; font-size: 0.9rem;">
+                            <i class="fas fa-arrow-up"></i> Ver planes Premium
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <!-- Formulario -->
@@ -871,6 +904,103 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             uploadedPhotos: []
         };
 
+        // Variables para límites de membresía
+        let membershipLimits = {
+            currentAccommodations: 0,
+            currentPlaces: 0,
+            maxAccommodations: 2,
+            maxPlaces: 15,
+            membershipType: 'basic'
+        };
+
+        // ========== FUNCIONES DE MEMBRESÍA ==========
+        async function cargarLimitesMembresia() {
+            try {
+                const response = await fetch('api/get_membership_limits.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    membershipLimits = data.data;
+                    
+                    // Actualizar la interfaz
+                    document.getElementById('currentAccommodations').textContent = membershipLimits.currentAccommodations;
+                    document.getElementById('currentPlaces').textContent = membershipLimits.currentPlaces;
+                    document.getElementById('accommodationsLimit').textContent = `Límite: ${membershipLimits.maxAccommodations}`;
+                    document.getElementById('placesLimit').textContent = `Límite: ${membershipLimits.maxPlaces}`;
+                    
+                    // Mostrar la sección de límites
+                    document.getElementById('membershipLimitsInfo').style.display = 'block';
+                    
+                    // Mostrar prompt de upgrade si está cerca del límite
+                    if (membershipLimits.currentAccommodations >= membershipLimits.maxAccommodations - 1 || 
+                        membershipLimits.currentPlaces >= membershipLimits.maxPlaces - 5) {
+                        document.getElementById('membershipUpgradePrompt').style.display = 'block';
+                    }
+                    
+                    // Actualizar límites en el formulario
+                    actualizarLimitesFormulario();
+                }
+            } catch (error) {
+                console.error('Error al cargar límites de membresía:', error);
+            }
+        }
+
+        function actualizarLimitesFormulario() {
+            const plazasInput = document.getElementById('plazas');
+            const submitBtn = document.querySelector('.btn-submit');
+            
+            // Verificar si el usuario está cerca de alcanzar el límite de plazas
+            const plazasIngresadas = parseInt(plazasInput.value) || 0;
+            const plazasTotales = membershipLimits.currentPlaces + plazasIngresadas;
+            
+            if (plazasTotales > membershipLimits.maxPlaces) {
+                plazasInput.style.borderColor = '#e74c3c';
+                plazasInput.style.backgroundColor = '#ffeaea';
+                mostrarMensajeLimite(`⚠️ Límite de plazas: ${membershipLimits.maxPlaces} (actual: ${membershipLimits.currentPlaces})`);
+            } else {
+                plazasInput.style.borderColor = '';
+                plazasInput.style.backgroundColor = '';
+            }
+            
+            // Verificar límite de alojamientos
+            if (membershipLimits.currentAccommodations >= membershipLimits.maxAccommodations) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-ban"></i> Límite alcanzado';
+                mostrarMensajeLimite(`❌ Límite de alojamientos alcanzado: ${membershipLimits.maxAccommodations}`);
+            }
+        }
+
+        function mostrarMensajeLimite(mensaje) {
+            // Crear o actualizar mensaje de límite
+            let mensajeLimite = document.getElementById('membershipLimitMessage');
+            if (!mensajeLimite) {
+                mensajeLimite = document.createElement('div');
+                mensajeLimite.id = 'membershipLimitMessage';
+                mensajeLimite.style.background = '#fff3cd';
+                mensajeLimite.style.border = '2px solid #ffc107';
+                mensajeLimite.style.borderRadius = '8px';
+                mensajeLimite.style.padding = '1rem';
+                mensajeLimite.style.marginTop = '1rem';
+                mensajeLimite.style.color = '#856404';
+                mensajeLimite.style.fontSize = '0.9rem';
+                mensajeLimite.style.textAlign = 'center';
+                
+                const formSection = document.querySelector('.form-section');
+                formSection.parentNode.insertBefore(mensajeLimite, formSection);
+            }
+            
+            mensajeLimite.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i> ${mensaje}
+                <br>
+                <small>Actualiza a Premium para aumentar tus límites</small>
+            `;
+        }
+
+        function showMembershipSection() {
+            // Redirigir a la sección de membresía
+            window.location.href = 'mi-cuenta.html#membresia';
+        }
+
         // ========== FUNCIONES DEL SLUG ==========
         function generarSlug(texto) {
             if (!texto) return '';
@@ -931,6 +1061,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     uploadState.selectedCategory = this.dataset.category;
                     actualizarBotonSubida();
                 });
+            });
+
+            // Cargar límites de membresía al iniciar
+            cargarLimitesMembresia();
+            
+            // Escuchar cambios en el campo de plazas
+            document.getElementById('plazas').addEventListener('input', function() {
+                actualizarLimitesFormulario();
             });
         });
 
