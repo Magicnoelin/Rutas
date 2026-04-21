@@ -1405,9 +1405,14 @@ if (file_exists($header_path)) {
             <div class="card-body">
                 <h2 class="card-title">📋 <?php echo $t['descripcion']; ?></h2>
                 <?php if (!empty($alojamiento['description'])): ?>
-                <?php $longDesc = strlen($alojamiento['description']) > 350; ?>
+                <?php
+                // Permitir solo etiquetas seguras de formato (negritas, cursivas, párrafos, listas)
+                $allowed_tags = '<strong><b><em><i><u><p><br><ul><ol><li><h2><h3><h4><span>';
+                $desc_safe = strip_tags($alojamiento['description'], $allowed_tags);
+                $longDesc = strlen(strip_tags($desc_safe)) > 350;
+                ?>
                 <div class="desc-text <?php echo $longDesc ? 'collapsed' : ''; ?>" id="desc-text">
-                    <?php echo nl2br(htmlspecialchars($alojamiento['description'])); ?>
+                    <?php echo nl2br($desc_safe); ?>
                 </div>
                 <?php if ($longDesc): ?>
                 <button class="desc-expand-btn" id="desc-expand-btn" onclick="expandDesc()">
