@@ -2,6 +2,13 @@
 /**
  * API: Crear Sesión de Checkout de Stripe
  * POST /api/create_checkout_session.php
+ * 
+ * Body: {
+ *   plan_id: int,
+ *   billing_cycle: 'monthly'|'yearly',
+ *   success_url: string,
+ *   cancel_url: string
+ * }
  */
 
 session_start();
@@ -10,7 +17,7 @@ require_once 'stripe_config.php';
 
 // Verificar autenticación
 if (!isset($_SESSION['user_id'])) {
-    jsonError('Debes iniciar sesión para continuar', 401);
+    jsonError('Debes iniciar sesión para realizar un pago', 401);
 }
 
 // Solo permitir POST
@@ -29,6 +36,8 @@ try {
     $userId = $_SESSION['user_id'];
     $planId = (int)$data['plan_id'];
     $billingCycle = sanitizeInput($data['billing_cycle']);
+    $successUrl = isset($data['success_url']) ? sanitizeInput($data['success_url']) : 'https://rutasrurales.io/mi-cuenta.html?payment=success';
+    $cancelUrl = isset($data['cancel_url']) ? sanitizeInput($data['cancel_url']) : 'https://rutasrurales.io/mi-cuenta.html?payment=canceled';
 
     // Validar billing_cycle
     if (!in_array($billingCycle, ['monthly', 'yearly'])) {
@@ -39,8 +48,8 @@ try {
 
     // Obtener información del usuario
     $stmtUser = $pdo->prepare("
-        SELECT id, email, first_name, last_name, membership_type
-        FROM users
+        SELECT id, email, first_name, last_name 
+        FROM users 
         WHERE id = ?
     ");
     $stmtUser->execute([$userId]);
@@ -52,115 +61,115 @@ try {
 
     // Obtener información del plan
     $stmtPlan = $pdo->prepare("
-        SELECT id, name, price_monthly, price_yearly, description,
-                stripe_product_id, stripe_monthly_price_id, stripe_yearly_price_id
+        SELECT id, name, slug, plan_type,
+               price_monthly, price_yearly,
+               stripe_product_id, stripe_monthly_price_id, stripe_yearly_price_id
         FROM membership_plans
-        WHERE id = ? AND is_active = TRUE
+        WHERE id = ? AND status = 'active'
     ");
     $stmtPlan->execute([$planId]);
     $plan = $stmtPlan->fetch();
 
     if (!$plan) {
-        jsonError('Plan de membresía no encontrado', 404);
+        jsonError('Plan de membresía no encontrado o inactivo', 404);
     }
 
-    // Calcular precio y obtener ID de Stripe
+    // Determinar precio según ciclo de facturación
     $price = ($billingCycle === 'monthly') ? $plan['price_monthly'] : $plan['price_yearly'];
-    $stripePriceId = ($billingCycle === 'monthly') ? $plan['stripe_monthly_price_id'] : $plan['stripe_yearly_price_id'];
-
-    // Verificar si el plan es gratuito
+    
     if ($price <= 0) {
-        jsonError('Este plan no requiere pago', 400);
+        jsonError('Este plan es gratuito, no requiere pago', 400);
     }
 
-    // Crear intención de upgrade en base de datos
-    $stmtIntent = $pdo->prepare("
-        INSERT INTO membership_upgrade_intents
-        (user_id, plan_id, plan_name, billing_cycle, price, currency, status, created_at)
-        VALUES (?, ?, ?, ?, ?, 'EUR', 'pending', CURRENT_TIMESTAMP)
-    ");
-    $stmtIntent->execute([$userId, $planId, $plan['name'], $billingCycle, $price]);
-    $intentId = $pdo->lastInsertId();
+    // Calcular precios con IVA
+    $vatCalculation = calculateVAT($price);
+    $priceWithVAT = $vatCalculation['total'];
 
-    // --- INTEGRACIÓN CON STRIPE ---
+    // Determinar ID de precio de Stripe
+    $stripePriceId = null;
+    $priceKey = $plan['slug'] . '-' . ($billingCycle === 'monthly' ? 'mensual' : 'anual');
     
-    // Ajustamos la ruta al archivo init.php que subiste manualmente
-    // Si el archivo está en /public_html/api/ y la librería en /public_html/stripe-php/, usa '../stripe-php/init.php'
-    require_once '../stripe-php/init.php';
+    global $stripe_price_ids;
     
-    \Stripe\Stripe::setApiKey(getStripeSecretKey());
+    if (isset($stripe_price_ids[$priceKey])) {
+        $stripePriceId = $stripe_price_ids[$priceKey];
+    } else {
+        // Si no existe el precio en la configuración, usar los IDs de la base de datos
+        $stripePriceId = ($billingCycle === 'monthly') ? $plan['stripe_monthly_price_id'] : $plan['stripe_yearly_price_id'];
+    }
 
-    // Crear sesión de Stripe Checkout
-    $sessionData = [
-        'payment_method_types' => ['card'],
-        'mode' => 'subscription',
-        'success_url' => STRIPE_SUCCESS_URL . '?session_id={CHECKOUT_SESSION_ID}',
-        'cancel_url' => STRIPE_CANCEL_URL,
-        'customer_email' => $user['email'],
-        'client_reference_id' => $intentId,
-        'metadata' => [
-            'user_id' => $userId,
-            'plan_id' => $planId,
-            'intent_id' => $intentId,
-            'billing_cycle' => $billingCycle
-        ]
+    if (empty($stripePriceId)) {
+        jsonError('Configuración de pago no disponible para este plan. Contacta con soporte.', 500);
+    }
+
+    // Crear sesión de checkout
+    $metadata = [
+        'user_id' => $userId,
+        'plan_id' => $planId,
+        'plan_name' => $plan['name'],
+        'plan_type' => $plan['plan_type'],
+        'billing_cycle' => $billingCycle,
+        'price_without_vat' => $price,
+        'vat_rate' => $vatCalculation['vat_rate'],
+        'price_with_vat' => $priceWithVAT
     ];
 
-    // Si tenemos un Price ID de Stripe configurado, usarlo
-    if (!empty($stripePriceId)) {
-        $sessionData['line_items'] = [[
-            'price' => $stripePriceId,
-            'quantity' => 1,
-        ]];
-    } else {
-        // Si no hay Price ID, crear el precio dinámicamente
-        $sessionData['line_items'] = [[
-            'price_data' => [
-                'currency' => 'eur',
-                'product_data' => [
-                    'name' => $plan['name'],
-                    'description' => $plan['description'],
-                ],
-                'unit_amount' => $price * 100, // Stripe usa centavos
-                'recurring' => [
-                    'interval' => $billingCycle === 'monthly' ? 'month' : 'year',
-                ],
-            ],
-            'quantity' => 1,
-        ]];
+    // Para planes de apoyo (pagos únicos)
+    if ($plan['plan_type'] === 'apoyo_plataforma') {
+        $metadata['payment_type'] = 'one_time';
     }
 
-    $session = \Stripe\Checkout\Session::create($sessionData);
+    $checkoutSession = createCheckoutSession(
+        $user['email'],
+        $stripePriceId,
+        $successUrl,
+        $cancelUrl,
+        $metadata
+    );
 
-    // Actualizar la intención con el session_id de Stripe para seguimiento
-    $stmtUpdate = $pdo->prepare("
-        UPDATE membership_upgrade_intents
-        SET stripe_session_id = ?
-        WHERE id = ?
+    if (!$checkoutSession) {
+        jsonError('Error al crear la sesión de pago', 500);
+    }
+
+    // Registrar la intención de pago en la base de datos
+    $stmtIntent = $pdo->prepare("
+        INSERT INTO payment_intents 
+        (user_id, plan_id, stripe_session_id, stripe_price_id, 
+         amount, vat_amount, total_amount, billing_cycle, status, metadata)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
     ");
-    $stmtUpdate->execute([$session->id, $intentId]);
+    
+    $stmtIntent->execute([
+        $userId,
+        $planId,
+        $checkoutSession->id,
+        $stripePriceId,
+        $price,
+        $vatCalculation['vat_amount'],
+        $priceWithVAT,
+        $billingCycle,
+        json_encode($metadata)
+    ]);
 
-    // Preparamos la respuesta para el frontend
-    $checkoutData = [
-        'intent_id' => $intentId,
-        'stripe_session_id' => $session->id,
-        'stripe_checkout_url' => $session->url, // Esta es la URL a la que debes redirigir al usuario
-        'stripe_public_key' => getStripePublicKey(),
+    // Respuesta exitosa
+    jsonSuccess([
+        'session_id' => $checkoutSession->id,
+        'checkout_url' => $checkoutSession->url,
         'plan_name' => $plan['name'],
         'billing_cycle' => $billingCycle,
-        'price' => $price,
-        'currency' => 'EUR'
-    ];
-
-    jsonSuccess($checkoutData, 'Sesión de checkout creada correctamente');
+        'amount' => $price,
+        'vat_amount' => $vatCalculation['vat_amount'],
+        'total_amount' => $priceWithVAT,
+        'currency' => 'EUR',
+        'expires_at' => date('c', $checkoutSession->expires_at),
+        'metadata' => $metadata
+    ], 'Sesión de pago creada correctamente');
 
 } catch (PDOException $e) {
-    error_log('create_checkout_session.php Error PDO: ' . $e->getMessage());
-    jsonError('Error de base de datos: ' . $e->getMessage(), 500);
-} catch (\Stripe\Exception\ApiErrorException $e) {
-    error_log('Stripe Error: ' . $e->getMessage());
-    jsonError('Error de Stripe: ' . $e->getMessage(), 500);
+    error_log('create_checkout_session.php Error: ' . $e->getMessage());
+    jsonError('Error al crear sesión de pago: ' . $e->getMessage(), 500);
 } catch (Exception $e) {
-    error_log('create_checkout_session.php Error General: ' . $e->getMessage());
-    jsonError('Error inesperado: ' . $e->getMessage(), 500);
+    error_log('create_checkout_session.php General Error: ' . $e->getMessage());
+    jsonError('Error: ' . $e->getMessage(), 500);
 }
+?>
