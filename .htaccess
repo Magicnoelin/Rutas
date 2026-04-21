@@ -120,7 +120,7 @@ RewriteRule ^rutas/([a-z0-9\-]+)/?$ rutas-tematicas/index.php?slug=$1 [L,QSA]
 # ============================================================
 # 6. MOTOR INTERNO (No cambian la URL del navegador)
 # ============================================================
-RewriteRule ^alojamiento/([^/]+)/?$ redirect_manager.php?type=alojamiento&slug=$1 [L,QSA]
+RewriteRule ^alojamiento/([^/]+)/?$ alojamiento-modular/index.php?slug=$1 [L,QSA]
 RewriteRule ^lugar/([^/]+)/?$ redirect_manager.php?type=lugar&slug=$1 [L,QSA]
 RewriteRule ^actividad/([^/]+)/?$ redirect_manager.php?type=actividad&slug=$1 [L,QSA]
 
