@@ -1025,16 +1025,18 @@ $alo_js = $alojamiento ? json_encode([
             margin-bottom: 20px;
         }
         .price-features li {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: #333;
-            padding: 6px 0;
-            border-bottom: 1px solid #f0f0f0;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            font-size: 0.88rem !important;
+            font-weight: 500 !important;
+            color: #333333 !important;
+            padding: 6px 0 !important;
+            border-bottom: 1px solid #f0f0f0 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
-        .price-features li:last-child { border-bottom: none; }
+        .price-features li:last-child { border-bottom: none !important; }
         .btn {
             display: inline-flex;
             align-items: center;
@@ -1510,17 +1512,39 @@ if (file_exists($header_path)) {
             <?php endif; ?>
 
             <ul class="price-features">
+                <?php
+                // Siempre mostrar tipo
+                if ($tipo_display):
+                ?>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🏠 <?php echo htmlspecialchars($tipo_display); ?></li>
+                <?php endif; ?>
                 <?php if ($capacidad_display): ?>
-                <li>👥 <?php echo htmlspecialchars($capacidad_display); ?></li>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">👥 <?php echo htmlspecialchars($capacidad_display); ?></li>
+                <?php elseif (!empty($alojamiento['max_guests'])): ?>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">👥 <?php echo htmlspecialchars($alojamiento['max_guests']); ?> <?php echo $t['personas']; ?></li>
+                <?php elseif (!empty($alojamiento['guests'])): ?>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">👥 <?php echo htmlspecialchars($alojamiento['guests']); ?> <?php echo $t['personas']; ?></li>
                 <?php endif; ?>
                 <?php if (!empty($alojamiento['check_in_time'])): ?>
-                <li>🔑 <?php echo $t['checkin']; ?>: <?php echo htmlspecialchars($alojamiento['check_in_time']); ?></li>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🔑 <?php echo $t['checkin']; ?>: <?php echo htmlspecialchars($alojamiento['check_in_time']); ?></li>
+                <?php elseif (!empty($alojamiento['checkin_time'])): ?>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🔑 <?php echo $t['checkin']; ?>: <?php echo htmlspecialchars($alojamiento['checkin_time']); ?></li>
                 <?php endif; ?>
                 <?php if (!empty($alojamiento['check_out_time'])): ?>
-                <li>🚪 <?php echo $t['checkout']; ?>: <?php echo htmlspecialchars($alojamiento['check_out_time']); ?></li>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🚪 <?php echo $t['checkout']; ?>: <?php echo htmlspecialchars($alojamiento['check_out_time']); ?></li>
+                <?php elseif (!empty($alojamiento['checkout_time'])): ?>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🚪 <?php echo $t['checkout']; ?>: <?php echo htmlspecialchars($alojamiento['checkout_time']); ?></li>
                 <?php endif; ?>
                 <?php if (!empty($alojamiento['municipality'])): ?>
-                <li>📍 <?php echo htmlspecialchars($alojamiento['municipality']); ?></li>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">📍 <?php echo htmlspecialchars($alojamiento['municipality']); ?></li>
+                <?php elseif (!empty($alojamiento['city'])): ?>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">📍 <?php echo htmlspecialchars($alojamiento['city']); ?></li>
+                <?php endif; ?>
+                <?php if (!empty($alojamiento['province'])): ?>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">🗺️ <?php echo htmlspecialchars($alojamiento['province']); ?></li>
+                <?php endif; ?>
+                <?php if (!empty($alojamiento['phone'])): ?>
+                <li style="display:flex!important;color:#333!important;font-size:0.88rem!important;">📞 <?php echo htmlspecialchars($alojamiento['phone']); ?></li>
                 <?php endif; ?>
             </ul>
 
