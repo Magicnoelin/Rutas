@@ -1029,6 +1029,8 @@ $alo_js = $alojamiento ? json_encode([
             align-items: center;
             gap: 8px;
             font-size: 0.88rem;
+            font-weight: 500;
+            color: #333;
             padding: 6px 0;
             border-bottom: 1px solid #f0f0f0;
         }
