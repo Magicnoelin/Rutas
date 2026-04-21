@@ -1318,6 +1318,29 @@ if (file_exists($header_path)) {
 }
 ?>
 
+<!-- ── OVERRIDE CSS (después del header.php para ganar a styles.css) ── -->
+<style>
+/* Anular colisiones con styles.css global */
+.alo-card { background:#fff !important; border-radius:12px !important; box-shadow:0 4px 20px rgba(0,0,0,0.08) !important; overflow:hidden !important; margin-bottom:24px !important; transform:none !important; }
+.alo-card:hover { transform:none !important; box-shadow:0 8px 30px rgba(0,0,0,0.12) !important; }
+.alo-card-body { padding:28px !important; }
+.alo-card-title { font-size:1.1rem !important; font-weight:700 !important; color:#2F5233 !important; margin-bottom:18px !important; padding-bottom:12px !important; border-bottom:2px solid #81C784 !important; display:flex !important; align-items:center !important; gap:8px !important; visibility:visible !important; opacity:1 !important; }
+.cta-card { background:linear-gradient(135deg,#2F5233,#1a3d1e) !important; color:#fff !important; border-radius:12px !important; padding:22px !important; margin-bottom:16px !important; text-align:center !important; }
+.cta-card h3 { font-size:1rem !important; font-weight:700 !important; color:#ffffff !important; margin-bottom:8px !important; opacity:1 !important; visibility:visible !important; }
+.cta-card p { font-size:0.82rem !important; color:rgba(255,255,255,0.88) !important; margin-bottom:14px !important; line-height:1.5 !important; opacity:1 !important; visibility:visible !important; }
+.price-features li { display:flex !important; align-items:center !important; gap:8px !important; font-size:0.85rem !important; font-weight:500 !important; color:#333 !important; padding:7px 0 !important; border-bottom:1px solid #f0f0f0 !important; visibility:visible !important; opacity:1 !important; }
+.price-features li:last-child { border-bottom:none !important; }
+.amenity-chip { background:#e8f5e9 !important; color:#2F5233 !important; font-size:0.75rem !important; font-weight:600 !important; padding:4px 10px !important; border-radius:20px !important; border:1px solid #c8e6c9 !important; display:inline-block !important; }
+.btn-sidebar { display:flex !important; align-items:center !important; justify-content:center !important; gap:8px !important; padding:10px 16px !important; border-radius:8px !important; font-weight:700 !important; font-size:0.88rem !important; text-decoration:none !important; width:100% !important; box-sizing:border-box !important; }
+.btn-sidebar-primary { background:#2F5233 !important; color:#fff !important; }
+.btn-sidebar-wa { background:#25D366 !important; color:#fff !important; }
+.btn-sidebar-email { background:#F9A825 !important; color:#1a1a1a !important; }
+.btn-sidebar-web { background:#e8f5e9 !important; color:#2F5233 !important; border:1px solid #c8e6c9 !important; }
+.nearby-card-name { font-size:0.85rem !important; font-weight:700 !important; color:#333 !important; }
+.nearby-card-meta { font-size:0.75rem !important; color:#666 !important; }
+.nearby-card-price { font-size:0.8rem !important; font-weight:700 !important; color:#2F5233 !important; }
+</style>
+
 <?php if ($alojamiento): ?>
 
 <!-- ── HERO ── -->
