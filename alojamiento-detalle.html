@@ -623,13 +623,13 @@
             const foto = fotos && fotos[index];
             if (!foto) return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
             
-            // Limpiar posibles slashes o espacios extra al inicio que rompan la URL absoluta
-            const cleanedFoto = foto.trim().replace(/^\/+/, '');
+            const trimmedFoto = foto.trim(); // Siempre eliminar espacios iniciales/finales
 
             // Si ya es URL completa, retornarla
-            if (cleanedFoto.startsWith('http')) return cleanedFoto;
+            if (trimmedFoto.startsWith('http')) return trimmedFoto;
             
-            return foto;
+            // Si no es URL completa, asegurar que no tenga slashes iniciales
+            return trimmedFoto.replace(/^\/+/, '');
         }
 
         function getImageFallbackScript(fotos, alternativos, index = 0) {
