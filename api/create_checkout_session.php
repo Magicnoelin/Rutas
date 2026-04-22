@@ -65,7 +65,7 @@ try {
                price_monthly, price_yearly,
                stripe_product_id, stripe_monthly_price_id, stripe_yearly_price_id
         FROM membership_plans
-        WHERE id = ? AND status = 'active'
+        WHERE id = ?
     ");
     $stmtPlan->execute([$planId]);
     $plan = $stmtPlan->fetch();
