@@ -185,7 +185,7 @@ try {
             // Formatear imagen
             $imagen = $evento['poster_image'] ?: $evento['photo1'];
             if (empty($imagen)) {
-                $imagen = "/cultural_events_images/" . $evento['slug'] . ".webp";
+                $imagen = "https://rutasrurales.io/cultural_events_images/" . $evento['slug'] . ".webp";
             }
             $evento['imagen'] = $imagen;
             
