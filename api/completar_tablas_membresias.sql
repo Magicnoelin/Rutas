@@ -210,11 +210,17 @@ ADD COLUMN IF NOT EXISTS membership_start_date DATE NULL COMMENT 'Fecha de inici
 ADD COLUMN IF NOT EXISTS membership_end_date DATE NULL COMMENT 'Fecha de fin de la membresía';
 
 -- 4. AGREGAR CAMPOS FALTANTES A TABLA USER_SUBSCRIPTIONS (si es necesario)
+-- Agregar todas las columnas que la vista membership_summary necesita
 ALTER TABLE user_subscriptions 
-ADD COLUMN IF NOT EXISTS total_amount DECIMAL(10,2) NULL COMMENT 'Precio total con IVA';
+ADD COLUMN IF NOT EXISTS plan_name VARCHAR(100) NULL COMMENT 'Nombre del plan al momento de la suscripción',
+ADD COLUMN IF NOT EXISTS billing_cycle ENUM('monthly', 'yearly') NULL COMMENT 'Ciclo de facturación',
+ADD COLUMN IF NOT EXISTS price DECIMAL(10,2) NULL COMMENT 'Precio sin IVA',
+ADD COLUMN IF NOT EXISTS total_amount DECIMAL(10,2) NULL COMMENT 'Precio total con IVA',
+ADD COLUMN IF NOT EXISTS status ENUM('active', 'pending', 'canceled', 'expired', 'past_due') DEFAULT 'pending' COMMENT 'Estado de la suscripción',
+ADD COLUMN IF NOT EXISTS end_date DATE NULL COMMENT 'Fecha de finalización';
 
--- Si total_amount se agregó como NULL, actualizar los valores existentes si es necesario
--- (esto es solo para compatibilidad, en una instalación nueva será NOT NULL desde el principio)
+-- Si las columnas se agregaron como NULL, actualizar los valores existentes si es necesario
+-- (esto es solo para compatibilidad, en una instalación nueva serán NOT NULL desde el principio)
 
 -- 5. ACTUALIZAR TABLA DE FACTURAS CON CAMPOS FALTANTES
 -- Nota: La tabla invoices ya debería existir con foreign keys desde configurar_membresias_produccion.sql
