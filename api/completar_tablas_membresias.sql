@@ -222,10 +222,62 @@ ADD COLUMN IF NOT EXISTS end_date DATE NULL COMMENT 'Fecha de finalización';
 -- Si las columnas se agregaron como NULL, actualizar los valores existentes si es necesario
 -- (esto es solo para compatibilidad, en una instalación nueva serán NOT NULL desde el principio)
 
--- 5. ACTUALIZAR TABLA DE FACTURAS CON CAMPOS FALTANTES
--- Nota: La tabla invoices ya debería existir con foreign keys desde configurar_membresias_produccion.sql
--- Si no existe, se creará automáticamente cuando se necesite.
--- No intentamos modificar la tabla aquí para evitar conflictos.
+-- 5. CREAR TABLA DE FACTURAS SI NO EXISTE (para compatibilidad)
+CREATE TABLE IF NOT EXISTS invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    subscription_id INT NOT NULL COMMENT 'ID de la suscripción',
+    user_id INT NOT NULL COMMENT 'ID del usuario',
+    
+    -- Información de la factura
+    invoice_number VARCHAR(50) NOT NULL UNIQUE COMMENT 'Número de factura único',
+    invoice_date DATE NOT NULL COMMENT 'Fecha de la factura',
+    due_date DATE NOT NULL COMMENT 'Fecha de vencimiento',
+    
+    -- Montos
+    subtotal DECIMAL(10,2) NOT NULL COMMENT 'Subtotal sin IVA',
+    vat_rate DECIMAL(5,2) DEFAULT 21.00 COMMENT 'Tasa de IVA (%)',
+    vat_amount DECIMAL(10,2) NOT NULL COMMENT 'Monto del IVA',
+    total_amount DECIMAL(10,2) NOT NULL COMMENT 'Total con IVA',
+    
+    -- Información de Stripe
+    stripe_invoice_id VARCHAR(255) NULL COMMENT 'ID de factura en Stripe',
+    stripe_payment_intent_id VARCHAR(255) NULL COMMENT 'ID del intento de pago',
+    stripe_receipt_url VARCHAR(500) NULL COMMENT 'URL del recibo de Stripe',
+    
+    -- Estado de pago
+    payment_status ENUM('pending', 'paid', 'failed', 'refunded') DEFAULT 'pending',
+    paid_at TIMESTAMP NULL COMMENT 'Fecha de pago',
+    
+    -- Datos de facturación (snapshot al momento de la factura)
+    billing_name VARCHAR(255) NOT NULL,
+    billing_nif VARCHAR(50) NULL,
+    billing_address TEXT NOT NULL,
+    billing_email VARCHAR(255) NOT NULL,
+    
+    -- Detalles del producto
+    description TEXT NOT NULL COMMENT 'Descripción del producto/servicio',
+    
+    -- Metadatos
+    metadata JSON COMMENT 'Metadatos adicionales',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (subscription_id) REFERENCES user_subscriptions(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    
+    INDEX idx_user_id (user_id),
+    INDEX idx_invoice_number (invoice_number),
+    INDEX idx_invoice_date (invoice_date),
+    INDEX idx_payment_status (payment_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Agregar columnas faltantes si la tabla ya existe pero no las tiene
+ALTER TABLE invoices 
+ADD COLUMN IF NOT EXISTS user_id INT NULL COMMENT 'ID del usuario',
+ADD COLUMN IF NOT EXISTS payment_status ENUM('pending', 'paid', 'failed', 'refunded') DEFAULT 'pending' COMMENT 'Estado de pago',
+ADD COLUMN IF NOT EXISTS total_amount DECIMAL(10,2) NULL COMMENT 'Total con IVA';
+
+-- Si user_id se agregó como NULL, agregar foreign key después
+-- (esto se manejará manualmente si es necesario)
 
 -- 6. CREAR VISTA PARA RESUMEN DE MEMBRESÍAS
 CREATE OR REPLACE VIEW membership_summary AS
