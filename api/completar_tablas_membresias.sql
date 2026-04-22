@@ -202,12 +202,26 @@ CREATE TABLE IF NOT EXISTS payment_failures (
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 3. ACTUALIZAR TABLA DE FACTURAS CON CAMPOS FALTANTES
+-- 3. AGREGAR CAMPOS FALTANTES A TABLA USERS (para la vista membership_summary)
+ALTER TABLE users 
+ADD COLUMN IF NOT EXISTS membership_type VARCHAR(50) NULL COMMENT 'Tipo de membresía (free, basic, premium, etc.)',
+ADD COLUMN IF NOT EXISTS membership_status ENUM('active', 'expired', 'canceled', 'pending') DEFAULT 'pending' COMMENT 'Estado de la membresía',
+ADD COLUMN IF NOT EXISTS membership_start_date DATE NULL COMMENT 'Fecha de inicio de la membresía',
+ADD COLUMN IF NOT EXISTS membership_end_date DATE NULL COMMENT 'Fecha de fin de la membresía';
+
+-- 4. AGREGAR CAMPOS FALTANTES A TABLA USER_SUBSCRIPTIONS (si es necesario)
+ALTER TABLE user_subscriptions 
+ADD COLUMN IF NOT EXISTS total_amount DECIMAL(10,2) NULL COMMENT 'Precio total con IVA';
+
+-- Si total_amount se agregó como NULL, actualizar los valores existentes si es necesario
+-- (esto es solo para compatibilidad, en una instalación nueva será NOT NULL desde el principio)
+
+-- 5. ACTUALIZAR TABLA DE FACTURAS CON CAMPOS FALTANTES
 -- Nota: La tabla invoices ya debería existir con foreign keys desde configurar_membresias_produccion.sql
 -- Si no existe, se creará automáticamente cuando se necesite.
 -- No intentamos modificar la tabla aquí para evitar conflictos.
 
--- 4. CREAR VISTA PARA RESUMEN DE MEMBRESÍAS
+-- 6. CREAR VISTA PARA RESUMEN DE MEMBRESÍAS
 CREATE OR REPLACE VIEW membership_summary AS
 SELECT 
     u.id as user_id,
@@ -248,7 +262,7 @@ FROM users u
 LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.status = 'active'
 WHERE u.membership_type IS NOT NULL AND u.membership_type != 'free';
 
--- 5. CREAR VISTA PARA REPORTES DE FACTURACIÓN
+-- 7. CREAR VISTA PARA REPORTES DE FACTURACIÓN
 CREATE OR REPLACE VIEW billing_reports AS
 SELECT 
     DATE_FORMAT(i.invoice_date, '%Y-%m') as month,
@@ -274,7 +288,7 @@ WHERE i.invoice_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
 GROUP BY DATE_FORMAT(i.invoice_date, '%Y-%m')
 ORDER BY month DESC;
 
--- 6. CREAR PROCEDIMIENTO PARA ACTUALIZAR ESTADOS DE SUSCRIPCIÓN
+-- 8. CREAR PROCEDIMIENTO PARA ACTUALIZAR ESTADOS DE SUSCRIPCIÓN
 DELIMITER //
 CREATE PROCEDURE update_subscription_statuses()
 BEGIN
@@ -299,14 +313,14 @@ BEGIN
 END//
 DELIMITER ;
 
--- 7. CREAR EVENTO PARA EJECUTAR PROCEDIMIENTO DIARIAMENTE
+-- 9. CREAR EVENTO PARA EJECUTAR PROCEDIMIENTO DIARIAMENTE
 CREATE EVENT IF NOT EXISTS daily_subscription_maintenance
 ON SCHEDULE EVERY 1 DAY
 STARTS CURRENT_TIMESTAMP
 DO
     CALL update_subscription_statuses();
 
--- 8. INSERTAR DATOS DE CONFIGURACIÓN INICIAL
+-- 10. INSERTAR DATOS DE CONFIGURACIÓN INICIAL
 
 -- Configuración de la empresa para facturación
 INSERT INTO system_settings (setting_key, setting_value, description)
@@ -330,7 +344,7 @@ ON DUPLICATE KEY UPDATE
     setting_value = VALUES(setting_value),
     updated_at = CURRENT_TIMESTAMP;
 
--- 9. CREAR TABLA DE CONFIGURACIÓN DEL SISTEMA (si no existe)
+-- 11. CREAR TABLA DE CONFIGURACIÓN DEL SISTEMA (si no existe)
 CREATE TABLE IF NOT EXISTS system_settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     setting_key VARCHAR(100) NOT NULL UNIQUE,
@@ -342,7 +356,7 @@ CREATE TABLE IF NOT EXISTS system_settings (
     INDEX idx_setting_key (setting_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 10. FUNCIÓN PARA OBTENER CONFIGURACIÓN
+-- 12. FUNCIÓN PARA OBTENER CONFIGURACIÓN
 DELIMITER //
 CREATE FUNCTION get_setting(setting_key_param VARCHAR(100)) RETURNS TEXT
 DETERMINISTIC
