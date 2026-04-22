@@ -27,8 +27,8 @@ try {
                 stripe_monthly_price_id,
                 stripe_yearly_price_id
             FROM membership_plans
-            WHERE is_active = TRUE
-            ORDER BY price_monthly ASC
+            WHERE status = 'active'
+            ORDER BY display_order ASC
         ");
 
         $plans = $stmt->fetchAll();

@@ -966,6 +966,224 @@ DOCTYPE html>
         }
     }
 
+    // --- CARGAR MEMBRESÍA Y PLANES ---
+    async function loadMembershipData() {
+        try {
+            // Cargar planes disponibles
+            const respPlans = await fetch('api/get_membership_options.php');
+            const dataPlans = await respPlans.json();
+            
+            if (dataPlans.success && dataPlans.data && dataPlans.data.length > 0) {
+                renderMembershipPlans(dataPlans.data);
+            }
+            
+            // Cargar estado de membresía del usuario
+            const respStatus = await fetch('api/get_profile.php');
+            const dataStatus = await respStatus.json();
+            
+            if (dataStatus.success && dataStatus.data) {
+                const user = dataStatus.data;
+                const badge = document.getElementById('currentMembershipBadge');
+                const statusDiv = document.getElementById('membershipStatus');
+                const featuresDiv = document.getElementById('membershipFeatures');
+                const inicioBadge = document.getElementById('inicio-plan-badge');
+                const inicioUpgrade = document.getElementById('inicio-plan-upgrade');
+                
+                const membershipType = user.membership_type || 'free';
+                // Calcular estado basado en fechas
+                let membershipStatus = 'active';
+                if (membershipType === 'free' || !membershipType) {
+                    membershipStatus = 'free';
+                } else if (user.membership_end_date) {
+                    const endDate = new Date(user.membership_end_date);
+                    if (endDate < new Date()) {
+                        membershipStatus = 'expired';
+                    }
+                }
+                
+                // Badge en sección membresía
+                if (badge) {
+                    let color = '#e8f5e9';
+                    let textColor = 'var(--primary-color)';
+                    let text = 'Gratuito';
+                    
+                    if (membershipType === 'premium' || membershipType.includes('premium')) {
+                        color = '#fff3e0';
+                        textColor = '#e65100';
+                        text = 'Premium';
+                    } else if (membershipType === 'basic' || membershipType.includes('basic')) {
+                        color = '#e3f2fd';
+                        textColor = '#1565c0';
+                        text = 'Básico';
+                    }
+                    
+                    if (membershipStatus === 'expired') {
+                        color = '#ffebee';
+                        textColor = '#c62828';
+                        text = 'Vencido';
+                    }
+                    
+                    badge.textContent = text;
+                    badge.style.background = color;
+                    badge.style.color = textColor;
+                }
+                
+                // Estado detallado
+                if (statusDiv) {
+                    let html = '';
+                    if (membershipType && membershipType !== 'free') {
+                        html = `
+                            <div style="background: #f9f9f9; border-radius: 10px; padding: 1.5rem;">
+                                <p><strong>Tipo:</strong> ${membershipType}</p>
+                                <p><strong>Estado:</strong> <span style="color: ${membershipStatus === 'active' ? 'green' : '#c62828'}">${membershipStatus}</span></p>
+                                ${user.membership_start_date ? `<p><strong>Inicio:</strong> ${user.membership_start_date}</p>` : ''}
+                                ${user.membership_end_date ? `<p><strong>Fin:</strong> ${user.membership_end_date}</p>` : ''}
+                            </div>
+                        `;
+                    } else {
+                        html = `
+                            <div style="text-align: center; padding: 2rem; background: #f9f9f9; border-radius: 10px;">
+                                <i class="fas fa-crown" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem; display: block;"></i>
+                                <p style="color: #666; font-size: 1.1rem;">Actualmente estás en el plan <strong>Gratuito</strong></p>
+                                <p style="color: #888;">Actualiza a un plan Premium para desbloquear todas las funcionalidades.</p>
+                            </div>
+                        `;
+                    }
+                    statusDiv.innerHTML = html;
+                }
+                
+                // Badge en inicio
+                if (inicioBadge) {
+                    if (membershipType && membershipType !== 'free') {
+                        inicioBadge.innerHTML = `<i class="fas fa-crown"></i> ${membershipType}`;
+                    } else {
+                        inicioBadge.innerHTML = `<i class="fas fa-star"></i> Gratuito`;
+                    }
+                }
+                
+                // Enlace de upgrade en inicio
+                if (inicioUpgrade) {
+                    if (membershipType === 'free' || !membershipType) {
+                        inicioUpgrade.style.display = 'block';
+                    } else {
+                        inicioUpgrade.style.display = 'none';
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error cargando membresía:', error);
+        }
+    }
+    
+    function renderMembershipPlans(plans) {
+        const container = document.getElementById('membershipPlans');
+        if (!container) return;
+        
+        if (!plans || plans.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:2rem;color:#aaa;grid-column:1/-1;">No hay planes disponibles</div>';
+            return;
+        }
+        
+        container.innerHTML = plans.map(plan => {
+            const features = Array.isArray(plan.features) ? plan.features : [];
+            const isPopular = plan.is_popular == 1 || plan.is_popular === true;
+            const hasMonthly = plan.price_monthly > 0;
+            const hasYearly = plan.price_yearly > 0;
+            
+            let priceHtml = '';
+            if (hasMonthly && hasYearly) {
+                priceHtml = `
+                    <div style="margin-bottom: 0.5rem;">
+                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_monthly}€</span>
+                        <span style="color: #888; font-size: 0.9rem;">/mes</span>
+                    </div>
+                    <div style="color: #888; font-size: 0.85rem;">
+                        o <strong>${plan.price_yearly}€/año</strong> (ahorra ${Math.round((1 - plan.price_yearly / (plan.price_monthly * 12)) * 100)}%)
+                    </div>
+                `;
+            } else if (hasMonthly) {
+                priceHtml = `
+                    <div style="margin-bottom: 0.5rem;">
+                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_monthly}€</span>
+                        <span style="color: #888; font-size: 0.9rem;">/mes</span>
+                    </div>
+                `;
+            } else if (hasYearly) {
+                priceHtml = `
+                    <div style="margin-bottom: 0.5rem;">
+                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_yearly}€</span>
+                        <span style="color: #888; font-size: 0.9rem;">/año</span>
+                    </div>
+                `;
+            } else {
+                priceHtml = `<div style="margin-bottom: 0.5rem;"><span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">Gratis</span></div>`;
+            }
+            
+            return `
+                <div style="background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; ${isPopular ? 'border: 2px solid var(--primary-color);' : ''}">
+                    ${isPopular ? '<div style="position: absolute; top: -10px; right: 15px; background: var(--primary-color); color: white; padding: 0.3rem 1rem; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">Más popular</div>' : ''}
+                    <h3 style="margin: 0 0 0.5rem 0; color: var(--primary-color);">${plan.name}</h3>
+                    <p style="color: #888; font-size: 0.9rem; margin-bottom: 1rem;">${plan.description || ''}</p>
+                    ${priceHtml}
+                    <ul style="list-style: none; padding: 0; margin: 1rem 0;">
+                        ${features.map(f => `<li style="padding: 0.3rem 0; color: #555; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--primary-color); margin-right: 0.5rem;"></i>${f}</li>`).join('')}
+                    </ul>
+                    <button onclick="selectPlan(${plan.id}, '${plan.name}', ${plan.price_monthly}, ${plan.price_yearly})" style="width: 100%; padding: 0.8rem; border: none; border-radius: 10px; background: var(--primary-color); color: white; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                        ${plan.price_monthly > 0 || plan.price_yearly > 0 ? 'Seleccionar Plan' : 'Plan Actual'}
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Función global para seleccionar plan
+    window.selectPlan = function(planId, planName, priceMonthly, priceYearly) {
+        // Mostrar modal de selección de ciclo de facturación
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
+        
+        const hasMonthly = priceMonthly > 0;
+        const hasYearly = priceYearly > 0;
+        
+        let optionsHtml = '';
+        if (hasMonthly) {
+            optionsHtml += `
+                <button onclick="redirectToCheckout(${planId}, 'monthly')" style="display:block;width:100%;padding:1rem;margin:0.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:white;color:var(--primary-color);font-weight:600;cursor:pointer;font-size:1rem;">
+                    Mensual - ${priceMonthly}€/mes
+                </button>
+            `;
+        }
+        if (hasYearly) {
+            optionsHtml += `
+                <button onclick="redirectToCheckout(${planId}, 'yearly')" style="display:block;width:100%;padding:1rem;margin:0.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:var(--primary-color);color:white;font-weight:600;cursor:pointer;font-size:1rem;">
+                    Anual - ${priceYearly}€/año
+                </button>
+            `;
+        }
+        
+        modal.innerHTML = `
+            <div style="background:white;border-radius:15px;padding:2rem;max-width:400px;width:90%;">
+                <h3 style="margin:0 0 1rem 0;color:var(--primary-color);">${planName}</h3>
+                <p style="color:#888;margin-bottom:1rem;">Selecciona tu ciclo de facturación:</p>
+                ${optionsHtml}
+                <button onclick="this.closest('div[style]').parentElement.remove()" style="display:block;width:100%;padding:0.8rem;margin-top:1rem;border:none;border-radius:10px;background:#f5f5f5;color:#888;cursor:pointer;font-size:0.9rem;">
+                    Cancelar
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    };
+    
+    window.redirectToCheckout = function(planId, billingCycle) {
+        // Cerrar modal
+        const modal = document.querySelector('div[style*="position:fixed"]');
+        if (modal) modal.remove();
+        
+        // Redirigir a la página de checkout
+        window.location.href = `/checkout.html?plan_id=${planId}&billing_cycle=${billingCycle}`;
+    };
+
     // --- MODAL DE ROLES ---
     async function abrirModalRoles() {
         const modal = document.getElementById('modalRolesUsuario');
@@ -1378,6 +1596,9 @@ DOCTYPE html>
         
         // Cargar datos del usuario
         await loadUserProfile();
+        
+        // Cargar datos de membresía
+        await loadMembershipData();
         
         // Obtener roles y actualizar menú
         try {
