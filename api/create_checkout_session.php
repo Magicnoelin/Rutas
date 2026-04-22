@@ -11,9 +11,39 @@
  * }
  */
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once 'config.php';
-require_once 'stripe_config.php';
+
+// Intentar cargar configuración de Stripe, si falla entrar en modo simulado
+$stripeAvailable = false;
+try {
+    if (file_exists(__DIR__ . '/stripe_config.php')) {
+        require_once 'stripe_config.php';
+        // Verificar si Stripe está realmente configurado (no placeholders)
+        if (defined('STRIPE_SECRET_KEY') && STRIPE_SECRET_KEY !== 'sk_live_...') {
+            $stripeAvailable = true;
+        }
+    }
+} catch (Exception $e) {
+    error_log('Stripe config not available, using simulated mode: ' . $e->getMessage());
+    $stripeAvailable = false;
+}
+
+// Definir calculateVAT como fallback si no está definida en stripe_config.php
+if (!function_exists('calculateVAT')) {
+    function calculateVAT($amount, $countryCode = 'ES') {
+        $vat_rate = 21.00;
+        $vat_amount = ($amount * $vat_rate) / 100;
+        return [
+            'amount' => $amount,
+            'vat_rate' => $vat_rate,
+            'vat_amount' => $vat_amount,
+            'total' => $amount + $vat_amount
+        ];
+    }
+}
 
 // Verificar autenticación
 if (!isset($_SESSION['user_id'])) {
