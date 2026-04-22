@@ -164,25 +164,30 @@ try {
         $checkoutUrl = $successUrl . '&session_id=' . $sessionId . '&plan_id=' . $planId . '&billing_cycle=' . $billingCycle;
     }
 
-    // Registrar la intención de pago en la base de datos
-    $stmtIntent = $pdo->prepare("
-        INSERT INTO payment_intents 
-        (user_id, plan_id, stripe_session_id, stripe_price_id, 
-         amount, vat_amount, total_amount, billing_cycle, status, metadata)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
-    ");
-    
-    $stmtIntent->execute([
-        $userId,
-        $planId,
-        $sessionId,
-        $stripePriceId ?: 'price_simulated',
-        $price,
-        $vatCalculation['vat_amount'],
-        $priceWithVAT,
-        $billingCycle,
-        json_encode($metadata)
-    ]);
+    // Registrar la intención de pago en la base de datos (si la tabla existe)
+    try {
+        $stmtIntent = $pdo->prepare("
+            INSERT INTO payment_intents 
+            (user_id, plan_id, stripe_session_id, stripe_price_id, 
+             amount, vat_amount, total_amount, billing_cycle, status, metadata)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+        ");
+        
+        $stmtIntent->execute([
+            $userId,
+            $planId,
+            $sessionId,
+            $stripePriceId ?: 'price_simulated',
+            $price,
+            $vatCalculation['vat_amount'],
+            $priceWithVAT,
+            $billingCycle,
+            json_encode($metadata)
+        ]);
+    } catch (PDOException $e) {
+        // Si la tabla no existe, continuar sin registrar
+        error_log('create_checkout_session.php: No se pudo registrar payment_intent: ' . $e->getMessage());
+    }
 
     // Respuesta exitosa
     jsonSuccess([

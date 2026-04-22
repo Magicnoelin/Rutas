@@ -1148,14 +1148,14 @@ DOCTYPE html>
         let optionsHtml = '';
         if (hasMonthly) {
             optionsHtml += `
-                <button onclick="redirectToCheckout(${planId}, 'monthly')" style="display:block;width:100%;padding:1rem;margin:0.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:white;color:var(--primary-color);font-weight:600;cursor:pointer;font-size:1rem;">
+                <button id="btn-monthly-${planId}" style="display:block;width:100%;padding:1rem;margin:0.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:white;color:var(--primary-color);font-weight:600;cursor:pointer;font-size:1rem;">
                     Mensual - ${priceMonthly}€/mes
                 </button>
             `;
         }
         if (hasYearly) {
             optionsHtml += `
-                <button onclick="redirectToCheckout(${planId}, 'yearly')" style="display:block;width:100%;padding:1rem;margin:0.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:var(--primary-color);color:white;font-weight:600;cursor:pointer;font-size:1rem;">
+                <button id="btn-yearly-${planId}" style="display:block;width:100%;padding:1rem;margin:0.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:var(--primary-color);color:white;font-weight:600;cursor:pointer;font-size:1rem;">
                     Anual - ${priceYearly}€/año
                 </button>
             `;
@@ -1166,13 +1166,28 @@ DOCTYPE html>
                 <h3 style="margin:0 0 1rem 0;color:var(--primary-color);">${planName}</h3>
                 <p style="color:#888;margin-bottom:1rem;">Selecciona tu ciclo de facturación:</p>
                 ${optionsHtml}
-                <button onclick="this.closest('div[style]').parentElement.remove()" style="display:block;width:100%;padding:0.8rem;margin-top:1rem;border:none;border-radius:10px;background:#f5f5f5;color:#888;cursor:pointer;font-size:0.9rem;">
+                <button id="btn-cancel-plan" style="display:block;width:100%;padding:0.8rem;margin-top:1rem;border:none;border-radius:10px;background:#f5f5f5;color:#888;cursor:pointer;font-size:0.9rem;">
                     Cancelar
                 </button>
             </div>
         `;
         
         document.body.appendChild(modal);
+        
+        // Asignar event listeners después de agregar al DOM
+        if (hasMonthly) {
+            document.getElementById(`btn-monthly-${planId}`).addEventListener('click', function() {
+                redirectToCheckout(planId, 'monthly');
+            });
+        }
+        if (hasYearly) {
+            document.getElementById(`btn-yearly-${planId}`).addEventListener('click', function() {
+                redirectToCheckout(planId, 'yearly');
+            });
+        }
+        document.getElementById('btn-cancel-plan').addEventListener('click', function() {
+            modal.remove();
+        });
     };
     
     window.redirectToCheckout = async function(planId, billingCycle) {
@@ -1198,6 +1213,14 @@ DOCTYPE html>
                 })
             });
             
+            if (!response.ok) {
+                loadingDiv.remove();
+                const errorText = await response.text();
+                console.error('Error HTTP:', response.status, errorText);
+                alert('Error del servidor (' + response.status + '). Contacta con soporte.');
+                return;
+            }
+            
             const data = await response.json();
             
             if (data.success && data.data && data.data.checkout_url) {
@@ -1209,7 +1232,7 @@ DOCTYPE html>
             }
         } catch (error) {
             loadingDiv.remove();
-            alert('Error de conexión al crear la sesión de pago');
+            alert('Error de conexión al crear la sesión de pago. Verifica que el servidor esté accesible.');
             console.error('Error en checkout:', error);
         }
     };

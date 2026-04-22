@@ -39,18 +39,21 @@ try {
 
     if (empty($plans)) {
         // Si no hay planes en la base de datos, devolver planes por defecto
+        // basados en los que deberían estar insertados por configurar_membresias_produccion.sql
         $defaultPlans = [
             [
                 'id' => 1,
-                'name' => 'Free',
-                'description' => 'Plan básico gratuito para empezar',
+                'name' => 'Gratuito Alojamiento',
+                'description' => 'Plan gratuito para empezar. Publica hasta 2 alojamientos con máximo 15 plazas totales.',
                 'price_monthly' => 0,
                 'price_yearly' => 0,
                 'features' => [
-                    'Acceso básico a la plataforma',
-                    'Publicar hasta 1 alojamiento',
-                    'Responder a mensajes de turistas',
-                    'Acceso a estadísticas básicas'
+                    'Publicar hasta 2 alojamientos',
+                    'Máximo 15 plazas totales',
+                    'Gestión básica de reservas',
+                    'Soporte por email',
+                    'Panel de control básico',
+                    'Sin coste inicial'
                 ],
                 'is_popular' => false,
                 'stripe_product_id' => null,
@@ -59,42 +62,43 @@ try {
             ],
             [
                 'id' => 2,
-                'name' => 'Premium',
-                'description' => 'Plan profesional para maximizar tu visibilidad',
-                'price_monthly' => 9.99,
-                'price_yearly' => 99.99,
+                'name' => 'Básico Alojamiento',
+                'description' => 'Plan básico para alojamientos rurales. Publica hasta 4 alojamientos con máximo 30 plazas totales.',
+                'price_monthly' => 10.00,
+                'price_yearly' => 50.00,
                 'features' => [
-                    'Publicar hasta 2alojamientos',
-                    'Enviar ofertas a turistas',
-                    'Mensajes ilimitados',
-                    'Estadísticas avanzadas',
-                    'Posicionamiento destacado',
-                    'Soporte prioritario',
-                    'Acceso a promociones especiales'
+                    'Publicar hasta 4 alojamientos',
+                    'Máximo 30 plazas totales',
+                    'Gestión básica de reservas',
+                    'Soporte por email',
+                    'Panel de control básico',
+                    'Ahorra 20€ con pago anual'
                 ],
                 'is_popular' => true,
-                'stripe_product_id' => 'prod_premium_accommodation',
-                'stripe_monthly_price_id' => 'price_123_monthly',
-                'stripe_yearly_price_id' => 'price_123_yearly'
+                'stripe_product_id' => null,
+                'stripe_monthly_price_id' => null,
+                'stripe_yearly_price_id' => null
             ],
             [
                 'id' => 3,
-                'name' => 'Business',
-                'description' => 'Plan empresarial para gestión avanzada',
-                'price_monthly' => 49.99,
-                'price_yearly' => 499.99,
+                'name' => 'Premium Alojamiento',
+                'description' => 'Plan premium para alojamientos con crecimiento. Precio dinámico según número de alojamientos y plazas.',
+                'price_monthly' => 10.00,
+                'price_yearly' => 100.00,
                 'features' => [
-                    'Todas las funciones Premium',
-                    'Gestión de múltiples propiedades',
-                    'API para integración con tu web',
-                    'Informes personalizados',
-                    'Asesoramiento personalizado',
-                    'Acceso a eventos exclusivos'
+                    'Alojamientos ilimitados',
+                    'Plazas ilimitadas',
+                    'Gestión avanzada de reservas',
+                    'Soporte prioritario 24/7',
+                    'Panel de control avanzado',
+                    'Estadísticas detalladas',
+                    'Posicionamiento destacado',
+                    'API de integración'
                 ],
                 'is_popular' => false,
-                'stripe_product_id' => 'prod_business_accommodation',
-                'stripe_monthly_price_id' => 'price_456_monthly',
-                'stripe_yearly_price_id' => 'price_456_yearly'
+                'stripe_product_id' => null,
+                'stripe_monthly_price_id' => null,
+                'stripe_yearly_price_id' => null
             ]
         ];
 
