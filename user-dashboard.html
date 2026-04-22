@@ -1175,13 +1175,43 @@ DOCTYPE html>
         document.body.appendChild(modal);
     };
     
-    window.redirectToCheckout = function(planId, billingCycle) {
+    window.redirectToCheckout = async function(planId, billingCycle) {
         // Cerrar modal
         const modal = document.querySelector('div[style*="position:fixed"]');
         if (modal) modal.remove();
         
-        // Redirigir a la página de checkout
-        window.location.href = `/checkout.html?plan_id=${planId}&billing_cycle=${billingCycle}`;
+        // Mostrar indicador de carga
+        const loadingDiv = document.createElement('div');
+        loadingDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
+        loadingDiv.innerHTML = '<div style="background:white;border-radius:15px;padding:2rem;text-align:center;"><i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--primary-color);margin-bottom:1rem;display:block;"></i><p style="color:#666;">Redirigiendo al pago seguro...</p></div>';
+        document.body.appendChild(loadingDiv);
+        
+        try {
+            const response = await fetch('api/create_checkout_session.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plan_id: planId,
+                    billing_cycle: billingCycle,
+                    success_url: window.location.origin + '/user-dashboard.html?payment=success',
+                    cancel_url: window.location.origin + '/user-dashboard.html?payment=canceled'
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success && data.data && data.data.checkout_url) {
+                // Redirigir a Stripe
+                window.location.href = data.data.checkout_url;
+            } else {
+                loadingDiv.remove();
+                alert('Error al crear la sesión de pago: ' + (data.error || 'Error desconocido'));
+            }
+        } catch (error) {
+            loadingDiv.remove();
+            alert('Error de conexión al crear la sesión de pago');
+            console.error('Error en checkout:', error);
+        }
     };
 
     // --- MODAL DE ROLES ---
