@@ -280,6 +280,11 @@ ADD COLUMN IF NOT EXISTS total_amount DECIMAL(10,2) NULL COMMENT 'Total con IVA'
 -- (esto se manejará manualmente si es necesario)
 
 -- 6. CREAR VISTA PARA RESUMEN DE MEMBRESÍAS
+-- Nota: La tabla invoices tiene estructura diferente a la esperada:
+-- - tax_amount en lugar de vat_amount
+-- - total en lugar de total_amount (pero también hay total_amount agregada después)
+-- - status en lugar de payment_status (pero también hay payment_status agregada después)
+-- - notes en lugar de description
 CREATE OR REPLACE VIEW membership_summary AS
 SELECT 
     u.id as user_id,
@@ -300,8 +305,8 @@ SELECT
     
     -- Estadísticas
     (SELECT COUNT(*) FROM user_subscriptions us WHERE us.user_id = u.id) as total_subscriptions,
-    (SELECT COUNT(*) FROM invoices i WHERE i.user_id = u.id AND i.payment_status = 'paid') as paid_invoices_count,
-    (SELECT SUM(i.total_amount) FROM invoices i WHERE i.user_id = u.id AND i.payment_status = 'paid') as total_spent,
+    (SELECT COUNT(*) FROM invoices i WHERE i.user_id = u.id AND (i.status = 'paid' OR i.payment_status = 'paid')) as paid_invoices_count,
+    (SELECT SUM(COALESCE(i.total_amount, i.total)) FROM invoices i WHERE i.user_id = u.id AND (i.status = 'paid' OR i.payment_status = 'paid')) as total_spent,
     
     -- Límites actuales
     CASE 
@@ -321,25 +326,30 @@ LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.status = 'active'
 WHERE u.membership_type IS NOT NULL AND u.membership_type != 'free';
 
 -- 7. CREAR VISTA PARA REPORTES DE FACTURACIÓN
+-- Nota: Adaptada a la estructura real de la tabla invoices
 CREATE OR REPLACE VIEW billing_reports AS
 SELECT 
     DATE_FORMAT(i.invoice_date, '%Y-%m') as month,
     COUNT(*) as total_invoices,
     SUM(i.subtotal) as total_subtotal,
-    SUM(i.vat_amount) as total_vat,
-    SUM(i.total_amount) as total_revenue,
+    SUM(i.tax_amount) as total_vat,
+    SUM(COALESCE(i.total_amount, i.total)) as total_revenue,
     
-    -- Por tipo de plan
-    SUM(CASE WHEN i.description LIKE '%Básico Alojamiento%' THEN i.total_amount ELSE 0 END) as basic_accommodation_revenue,
-    SUM(CASE WHEN i.description LIKE '%Premium Alojamiento%' THEN i.total_amount ELSE 0 END) as premium_accommodation_revenue,
-    SUM(CASE WHEN i.description LIKE '%Básico Restaurante%' THEN i.total_amount ELSE 0 END) as basic_restaurant_revenue,
-    SUM(CASE WHEN i.description LIKE '%Premium Restaurante%' THEN i.total_amount ELSE 0 END) as premium_restaurant_revenue,
-    SUM(CASE WHEN i.description LIKE '%Apoyo%' THEN i.total_amount ELSE 0 END) as support_revenue,
+    -- Por tipo de plan (usando notes ya que no hay description)
+    -- Nota: Esto puede no funcionar bien si notes no contiene los nombres de plan
+    SUM(CASE WHEN i.notes LIKE '%Básico Alojamiento%' OR i.notes LIKE '%basic%' OR i.notes LIKE '%alojamiento%' THEN COALESCE(i.total_amount, i.total) ELSE 0 END) as basic_accommodation_revenue,
+    SUM(CASE WHEN i.notes LIKE '%Premium Alojamiento%' OR i.notes LIKE '%premium%' THEN COALESCE(i.total_amount, i.total) ELSE 0 END) as premium_accommodation_revenue,
+    SUM(CASE WHEN i.notes LIKE '%Básico Restaurante%' OR i.notes LIKE '%restaurante%' THEN COALESCE(i.total_amount, i.total) ELSE 0 END) as basic_restaurant_revenue,
+    SUM(CASE WHEN i.notes LIKE '%Premium Restaurante%' THEN COALESCE(i.total_amount, i.total) ELSE 0 END) as premium_restaurant_revenue,
+    SUM(CASE WHEN i.notes LIKE '%Apoyo%' OR i.notes LIKE '%support%' OR i.notes LIKE '%ayuda%' THEN COALESCE(i.total_amount, i.total) ELSE 0 END) as support_revenue,
     
     -- Métricas de pago
-    SUM(CASE WHEN i.payment_status = 'paid' THEN 1 ELSE 0 END) as paid_invoices,
-    SUM(CASE WHEN i.payment_status = 'pending' THEN 1 ELSE 0 END) as pending_invoices,
-    SUM(CASE WHEN i.payment_status = 'failed' THEN 1 ELSE 0 END) as failed_invoices
+    -- Mapeo: status='paid' o payment_status='paid' -> paid
+    -- status='issued' o payment_status='pending' -> pending
+    -- status='cancelled' o payment_status='failed' -> failed
+    SUM(CASE WHEN i.status = 'paid' OR i.payment_status = 'paid' THEN 1 ELSE 0 END) as paid_invoices,
+    SUM(CASE WHEN i.status = 'issued' OR i.payment_status = 'pending' THEN 1 ELSE 0 END) as pending_invoices,
+    SUM(CASE WHEN i.status = 'cancelled' OR i.payment_status = 'failed' OR i.payment_status = 'refunded' THEN 1 ELSE 0 END) as failed_invoices
     
 FROM invoices i
 WHERE i.invoice_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
