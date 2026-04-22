@@ -90,18 +90,35 @@ try {
     }
 
     // Obtener información del plan
-    $stmtPlan = $pdo->prepare("
-        SELECT id, name,
-               price_monthly, price_yearly,
-               stripe_product_id, stripe_monthly_price_id, stripe_yearly_price_id
-        FROM membership_plans
-        WHERE id = ?
-    ");
-    $stmtPlan->execute([$planId]);
-    $plan = $stmtPlan->fetch();
+    $plan = null;
+    try {
+        $stmtPlan = $pdo->prepare("
+            SELECT id, name,
+                   price_monthly, price_yearly,
+                   stripe_product_id, stripe_monthly_price_id, stripe_yearly_price_id
+            FROM membership_plans
+            WHERE id = ?
+        ");
+        $stmtPlan->execute([$planId]);
+        $plan = $stmtPlan->fetch();
+    } catch (PDOException $e) {
+        // Si la tabla no existe, usar plan por defecto
+        error_log('create_checkout_session.php: Tabla membership_plans no disponible: ' . $e->getMessage());
+    }
 
     if (!$plan) {
-        jsonError('Plan de membresía no encontrado o inactivo', 404);
+        // Planes por defecto si la tabla no existe
+        $defaultPlans = [
+            1 => ['id' => 1, 'name' => 'Gratuito Alojamiento', 'price_monthly' => 0, 'price_yearly' => 0, 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null],
+            2 => ['id' => 2, 'name' => 'Básico Alojamiento', 'price_monthly' => 10.00, 'price_yearly' => 50.00, 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null],
+            3 => ['id' => 3, 'name' => 'Premium Alojamiento', 'price_monthly' => 10.00, 'price_yearly' => 100.00, 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null]
+        ];
+        
+        if (isset($defaultPlans[$planId])) {
+            $plan = $defaultPlans[$planId];
+        } else {
+            jsonError('Plan de membresía no encontrado', 404);
+        }
     }
 
     // Determinar precio según ciclo de facturación
