@@ -21,6 +21,7 @@ $redirects = [
         'la-perdiz'                    => 'la-perdiz-brugo-de-osma',
         'asador-el-burgo'              => 'asador-el-burgo-de-osma',
         'asador-el-burgo-de osma'      => 'asador-el-burgo-de-osma',
+        'pico-urbion'                  => 'pico-urbion-duruelo-de-la-sierra',
     ],
     'actividad' => [
         // Ejemplo: 'ruta-caballo-vieja' => 'ruta-caballo-soria',

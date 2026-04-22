@@ -89,6 +89,7 @@ RewriteRule ^lugar/bodegas-la-loba-matanza-de-soria/?$ /lugar/bodegas-la-loba [R
 RewriteRule ^lugar/puente-real/?$ /lugar/puente-real-el-burgo-de-osma [R=301,L]
 RewriteRule ^lugar/taberna-mercedes/?$ /lugar/taberna-mercedes-soria [R=301,L]
 RewriteRule ^lugar/berlanga-duero-pueblo/?$ /lugar/berlanga-de-duero [R=301,L]
+RewriteRule ^lugar/pico-urbion/?$ /lugar/pico-urbion-duruelo-de-la-sierra [R=301,L]
 
 # ============================================================
 # 4. PARÁMETROS ANTIGUOS (?slug= o ?id=)
