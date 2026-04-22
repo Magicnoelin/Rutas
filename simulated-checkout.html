@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación de Pago - Rutas Rurales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .checkout-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        
+        .checkout-header {
+            background: linear-gradient(135deg, #2f5233 0%, #4a7c4e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .checkout-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .checkout-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        
+        .checkout-content {
+            padding: 30px;
+        }
+        
+        .payment-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #2f5233;
+        }
+        
+        .amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2f5233;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .payment-methods {
+            margin-bottom: 25px;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method:hover {
+            border-color: #2f5233;
+            background: #f0f7f0;
+        }
+        
+        .payment-method.selected {
+            border-color: #2f5233;
+            background: #f0f7f0;
+        }
+        
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            background: #2f5233;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .payment-details {
+            flex: 1;
+        }
+        
+        .payment-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .payment-desc {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: #2f5233;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #4a7c4e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(47, 82, 51, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #eee;
+        }
+        
+        .btn-secondary:hover {
+            background: #eee;
+        }
+        
+        .simulation-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 25px;
+            text-align: center;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+        
+        .simulation-notice i {
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 480px) {
+            .checkout-content {
+                padding: 20px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .amount {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1><i class="fas fa-lock"></i> Pago Seguro</h1>
+            <p>Simulación de pasarela de pago - Modo de prueba</p>
+        </div>
+        
+        <div class="checkout-content">
+            <div class="payment-info">
+                <div class="info-row">
+                    <span class="info-label">Plan:</span>
+                    <span class="info-value" id="planName">Cargando...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Ciclo de facturación:</span>
+                    <span class="info-value" id="billingCycle">Cargando...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Precio sin IVA:</span>
+                    <span class="info-value" id="amount">Cargando...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">IVA (21%):</span>
+                    <span class="info-value" id="vatAmount">Cargando...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Total:</span>
+                    <span class="info-value" id="totalAmount">Cargando...</span>
+                </div>
+            </div>
+            
+            <div class="amount" id="totalDisplay">Cargando...</div>
+            
+            <div class="payment-methods">
+                <div class="payment-method selected" id="cardMethod">
+                    <div class="payment-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="payment-details">
+                        <div class="payment-title">Tarjeta de crédito/débito</div>
+                        <div class="payment-desc">Visa, Mastercard, American Express</div>
+                    </div>
+                </div>
+                
+                <div class="payment-method" id="paypalMethod">
+                    <div class="payment-icon">
+                        <i class="fab fa-paypal"></i>
+                    </div>
+                    <div class="payment-details">
+                        <div class="payment-title">PayPal</div>
+                        <div class="payment-desc">Pago rápido y seguro</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="simulation-notice">
+                <i class="fas fa-info-circle"></i>
+                Esta es una simulación de la pasarela de pago. En producción, se redirigiría a Stripe.
+            </div>
+            
+            <div class="buttons">
+                <button class="btn btn-secondary" id="cancelBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-primary" id="payBtn">
+                    <i class="fas fa-lock"></i> Pagar ahora
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const planId = urlParams.get('plan_id');
+        const billingCycle = urlParams.get('billing_cycle');
+        const planName = decodeURIComponent(urlParams.get('plan_name') || '');
+        const amount = parseFloat(urlParams.get('amount') || 0);
+        const totalAmount = parseFloat(urlParams.get('total_amount') || 0);
+        const successUrl = decodeURIComponent(urlParams.get('success_url') || '');
+        const cancelUrl = decodeURIComponent(urlParams.get('cancel_url') || '');
+        
+        // Calcular IVA
+        const vatAmount = totalAmount - amount;
+        
+        // Actualizar la interfaz
+        document.getElementById('planName').textContent = planName || 'Plan de membresía';
+        document.getElementById('billingCycle').textContent = billingCycle === 'monthly' ? 'Mensual' : 'Anual';
+        document.getElementById('amount').textContent = amount.toFixed(2) + '€';
+        document.getElementById('vatAmount').textContent = vatAmount.toFixed(2) + '€';
+        document.getElementById('totalAmount').textContent = totalAmount.toFixed(2) + '€';
+        document.getElementById('totalDisplay').textContent = totalAmount.toFixed(2) + '€';
+        
+        // Manejar selección de método de pago
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                document.querySelectorAll('.payment-method').forEach(m => {
+                    m.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+        
+        // Botón de pago
+        document.getElementById('payBtn').addEventListener('click', function() {
+            const btn = this;
+            const originalText = btn.innerHTML;
+            
+            // Simular procesamiento
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            btn.disabled = true;
+            
+            // Simular delay de pago
+            setTimeout(() => {
+                // Redirigir a página de éxito
+                if (successUrl) {
+                    window.location.href = successUrl + '&session_id=' + sessionId + '&simulated=true';
+                } else {
+                    alert('✅ Pago simulado exitoso!\n\nEn producción, esto redirigiría a Stripe para procesar el pago real.');
+                    window.location.href = '/user-dashboard.html?payment=success&session_id=' + sessionId;
+                }
+            }, 2000);
+        });
+        
+        // Botón de cancelar
+        document.getElementById('cancelBtn').addEventListener('click', function() {
+            if (cancelUrl) {
+                window.location.href = cancelUrl;
+            } else {
+                window.location.href = '/user-dashboard.html?payment=canceled';
+            }
+        });
+        
+        // Tecla Escape para cancelar
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('cancelBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -969,12 +969,20 @@ DOCTYPE html>
     // --- CARGAR MEMBRESÍA Y PLANES ---
     async function loadMembershipData() {
         try {
-            // Cargar planes disponibles
-            const respPlans = await fetch('api/get_membership_options.php');
+            // Cargar planes disponibles - forzar recarga sin caché
+            const respPlans = await fetch('api/get_membership_options.php?t=' + Date.now(), {
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            });
             const dataPlans = await respPlans.json();
             
             if (dataPlans.success && dataPlans.data && dataPlans.data.length > 0) {
                 renderMembershipPlans(dataPlans.data);
+            } else {
+                console.warn('No se pudieron cargar planes de membresía:', dataPlans);
             }
             
             // Cargar estado de membresía del usuario

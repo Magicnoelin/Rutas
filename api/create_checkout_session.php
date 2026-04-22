@@ -159,7 +159,13 @@ try {
         }
     }
 
-    if (!empty($stripePriceId)) {
+    // Verificar si Stripe está realmente configurado
+    $stripeAvailable = false;
+    if (defined('STRIPE_SECRET_KEY') && STRIPE_SECRET_KEY !== 'sk_live_...' && !empty(STRIPE_SECRET_KEY)) {
+        $stripeAvailable = true;
+    }
+
+    if (!empty($stripePriceId) && $stripeAvailable && function_exists('createCheckoutSession')) {
         // Crear sesión real de Stripe
         $checkoutSession = createCheckoutSession(
             $user['email'],
@@ -178,7 +184,17 @@ try {
     } else {
         // Modo simulado: generar URLs de prueba
         $sessionId = 'cs_test_' . bin2hex(random_bytes(16));
-        $checkoutUrl = $successUrl . '&session_id=' . $sessionId . '&plan_id=' . $planId . '&billing_cycle=' . $billingCycle;
+        // En modo simulado, redirigir a una página de prueba que simula Stripe
+        // Usar URL base del sitio actual
+        $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
+        $checkoutUrl = $baseUrl . '/simulated-checkout.html?session_id=' . $sessionId . 
+                       '&plan_id=' . $planId . 
+                       '&billing_cycle=' . $billingCycle . 
+                       '&plan_name=' . urlencode($plan['name']) . 
+                       '&amount=' . $price . 
+                       '&total_amount=' . $priceWithVAT . 
+                       '&success_url=' . urlencode($successUrl) . 
+                       '&cancel_url=' . urlencode($cancelUrl);
     }
 
     // Registrar la intención de pago en la base de datos (si la tabla existe)
