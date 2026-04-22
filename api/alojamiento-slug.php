@@ -107,11 +107,11 @@ try {
                 $fotoFilename = basename($fotoValue); // Quitar cualquier ruta previa
                 
                 // Rutas posibles (en orden de prioridad):
-                // 1. /img/alojamientos/{slug}/ (carpeta correcta)
+                // 1. /accommodations_images/{slug}/ (carpeta correcta según SISTEMA_FOTOS_ALOJAMIENTOS.md)
                 
-                $ruta1 = 'https://rutasrurales.io/img/alojamientos/' . $slug . '/' . $fotoFilename;
+                $ruta1 = 'https://rutasrurales.io/accommodations_images/' . $slug . '/' . $fotoFilename;
                 
-                // Usar la ruta correcta (img/alojamientos/) como principal
+                // Usar la ruta correcta (accommodations_images/) como principal
                 $fotos[] = $ruta1;
                 
                 // Guardar alternativas para fallback
