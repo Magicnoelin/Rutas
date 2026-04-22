@@ -61,7 +61,7 @@ try {
 
     // Obtener información del plan
     $stmtPlan = $pdo->prepare("
-        SELECT id, name, slug, plan_type,
+        SELECT id, name,
                price_monthly, price_yearly,
                stripe_product_id, stripe_monthly_price_id, stripe_yearly_price_id
         FROM membership_plans
@@ -87,7 +87,7 @@ try {
 
     // Determinar ID de precio de Stripe
     $stripePriceId = null;
-    $priceKey = $plan['slug'] . '-' . ($billingCycle === 'monthly' ? 'mensual' : 'anual');
+    $priceKey = $plan['name'] . '-' . ($billingCycle === 'monthly' ? 'mensual' : 'anual');
     
     global $stripe_price_ids;
     
@@ -107,17 +107,12 @@ try {
         'user_id' => $userId,
         'plan_id' => $planId,
         'plan_name' => $plan['name'],
-        'plan_type' => $plan['plan_type'],
+        'plan_type' => 'alojamiento',
         'billing_cycle' => $billingCycle,
         'price_without_vat' => $price,
         'vat_rate' => $vatCalculation['vat_rate'],
         'price_with_vat' => $priceWithVAT
     ];
-
-    // Para planes de apoyo (pagos únicos)
-    if ($plan['plan_type'] === 'apoyo_plataforma') {
-        $metadata['payment_type'] = 'one_time';
-    }
 
     $checkoutSession = createCheckoutSession(
         $user['email'],
