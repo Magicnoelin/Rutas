@@ -1,7 +1,7 @@
 /**
  * EVENTO MODULAR - JavaScript Principal
  * Módulos: Lightbox, Mapa, Contenido Cercano, Engagement, Suscripción
- * 
+ *
  * Estrategia de carga:
  * 1. Lightbox → inmediato (pequeño, necesario)
  * 2. Mapa → al hacer clic o scroll al 70%
@@ -16,6 +16,7 @@ const STATE = {
     evento: window.EVENTO_DATA || null,
     slug: window.EVENTO_SLUG || '',
     lang: window.EVENTO_LANG || 'es',
+    ui: window.EVENTO_UI || {},
     mapLoaded: false,
     mapLeaflet: null,
     mapLayers: { evento: null, alojamientos: null, lugares: null, actividades: null },
@@ -34,6 +35,11 @@ const STATE = {
     views: 0,
 };
 
+// Acceso rápido a traducciones UI (con fallback en español)
+const UI = {
+    get: (key, fallback) => STATE.ui[key] || fallback || key,
+};
+
 // ─── UTILIDADES ───────────────────────────────────────────────────────────────
 function showToast(msg, duration = 3000) {
     const toast = document.getElementById('toast');
@@ -46,11 +52,12 @@ function showToast(msg, duration = 3000) {
 function formatDate(dateStr) {
     if (!dateStr) return '';
     const d = new Date(dateStr + 'T00:00:00');
-    return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+    const locale = STATE.ui.locale || 'es-ES';
+    return d.toLocaleDateString(locale, { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
 function formatPrice(price) {
-    if (!price || price <= 0) return 'Consultar';
+    if (!price || price <= 0) return UI.get('consultar', 'Consultar');
     return parseFloat(price).toFixed(2).replace('.', ',') + '€';
 }
 
@@ -62,7 +69,7 @@ function openLightbox(index) {
     const img = document.getElementById('lightbox-img');
     if (!lb || !img) return;
     img.src = STATE.fotos[index];
-    img.alt = `Foto ${index + 1} del evento`;
+    img.alt = `Foto ${index + 1}`;
     lb.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -113,7 +120,7 @@ function initMap() {
 
     // Mostrar loading
     if (placeholder) {
-        placeholder.innerHTML = '<div style="font-size:2rem;">⏳</div><p>Cargando mapa...</p>';
+        placeholder.innerHTML = `<div style="font-size:2rem;">⏳</div><p>${UI.get('cargando_mapa', 'Cargando mapa...')}</p>`;
     }
 
     // Cargar Leaflet JS si no está cargado
@@ -262,260 +269,245 @@ function _ensureNearbyAndAddLayer(type) {
 function _addMapLayer(type) {
     if (!STATE.mapLeaflet || !STATE.nearbyData) return;
 
-    let items, icon;
-    if (type === 'alojamientos') {
-        items = STATE.nearbyData.alojamientos || [];
-        icon = _createMapIcon('🏠', '#1565C0');
-    } else if (type === 'lugares') {
-        items = STATE.nearbyData.lugares || [];
-        icon = _createMapIcon('🏛️', '#6A1B9A');
-    } else if (type === 'actividades') {
-        items = STATE.nearbyData.actividades || [];
-        icon = _createMapIcon('🎯', '#E65100');
-    } else {
-        return;
-    }
+    const items = type === 'alojamientos' ? STATE.nearbyAlojamientos
+                : type === 'lugares'      ? STATE.nearbyLugares
+                : type === 'actividades'  ? STATE.nearbyActividades
+                : [];
 
-    if (!items.length) {
-        showToast(`No hay ${type} cercanos disponibles`);
-        document.getElementById(`btn-${type}`)?.classList.remove('active');
-        return;
-    }
+    if (!items.length) return;
+
+    const config = {
+        alojamientos: { emoji: '🏠', color: '#1565C0' },
+        lugares:      { emoji: '🏛️', color: '#6A1B9A' },
+        actividades:  { emoji: '🎯', color: '#E65100' },
+    };
+    const { emoji, color } = config[type] || { emoji: '📍', color: '#333' };
+    const icon = _createMapIcon(emoji, color);
 
     const markers = items.map(item => {
-        const lat = parseFloat(item.latitude);
-        const lng = parseFloat(item.longitude);
-        if (!lat || !lng || isNaN(lat) || isNaN(lng)) return null;
-
+        if (!item.latitude || !item.longitude) return null;
         let extraInfo = '';
         if (type === 'alojamientos' && item.price_per_night) {
-            extraInfo = `<br><small>💶 ${formatPrice(item.price_per_night)}/noche</small>`;
+            extraInfo = `<br><small>💶 ${formatPrice(item.price_per_night)}${UI.get('noche', '/noche')}</small>`;
         } else if (type === 'actividades' && item.price) {
-            extraInfo = `<br><small>💶 ${formatPrice(item.price)}/persona</small>`;
+            extraInfo = `<br><small>💶 ${formatPrice(item.price)}${UI.get('persona', '/persona')}</small>`;
         }
         const dist = item.distance > 0 ? `<br><small>📏 ${item.distance} km</small>` : '';
-
-        return L.marker([lat, lng], { icon })
+        return L.marker([parseFloat(item.latitude), parseFloat(item.longitude)], { icon })
             .bindPopup(`
                 <div style="min-width:160px;">
-                    <strong style="color:#2F5233;">${item.name}</strong>
-                    <br><small>📍 ${item.municipality || ''}</small>
+                    <strong>${item.name}</strong><br>
+                    <small>📍 ${item.municipality || ''}</small>
                     ${extraInfo}${dist}
-                    <br><a href="${item.url}" style="color:#2F5233;font-size:0.8rem;">Ver más →</a>
+                    <br><a href="${item.url}" style="color:#2F5233;font-size:0.8rem;">${UI.get('ver_mas', 'Ver más →')}</a>
                 </div>
             `, { maxWidth: 220 });
     }).filter(Boolean);
-
-    if (!markers.length) {
-        showToast(`No hay ${type} con coordenadas disponibles`);
-        document.getElementById(`btn-${type}`)?.classList.remove('active');
-        return;
-    }
 
     STATE.mapLayers[type] = L.layerGroup(markers).addTo(STATE.mapLeaflet);
 }
 
 // ─── MÓDULO: CONTENIDO CERCANO ────────────────────────────────────────────────
 async function loadNearbyData() {
-    if (STATE.nearbyLoaded || !STATE.evento) return;
-    STATE.nearbyLoaded = true;
+    if (STATE.nearbyLoaded) return STATE.nearbyData;
 
-    const lat = STATE.evento.latitude;
-    const lng = STATE.evento.longitude;
-    const prov = STATE.evento.province || '';
+    const ev = STATE.evento;
+    if (!ev) return null;
 
-    let url = `/api/evento-data.php?slug=${encodeURIComponent(STATE.slug)}&mode=nearby&prov=${encodeURIComponent(prov)}`;
-    if (lat && lng) url += `&lat=${lat}&lng=${lng}`;
+    const params = new URLSearchParams({
+        slug: STATE.slug,
+        lang: STATE.lang,
+        mode: 'nearby',
+        prov: ev.province || '',
+    });
+    if (ev.latitude && ev.longitude) {
+        params.set('lat', ev.latitude);
+        params.set('lng', ev.longitude);
+    }
 
     try {
-        const res = await fetch(url);
+        const res = await fetch(`/evento-modular/api/evento-data.php?${params}`);
         const json = await res.json();
 
-        if (!json.success) return;
+        if (json.success) {
+            STATE.nearbyData = json.data;
+            STATE.nearbyAlojamientos = json.data.alojamientos || [];
+            STATE.nearbyLugares = json.data.lugares || [];
+            STATE.nearbyActividades = json.data.actividades || [];
+            STATE.nearbyLoaded = true;
 
-        STATE.nearbyData = json.data;
-        STATE.nearbyAlojamientos = json.data.alojamientos || [];
-        STATE.nearbyLugares = json.data.lugares || [];
-        STATE.nearbyActividades = json.data.actividades || [];
-
-        // Renderizar secciones
-        _renderNearbyAlojamientos();
-        _renderNearbyLugares();
-        _renderNearbyActividades();
-        _renderSimilarEvents();
-        _renderStats();
-
+            _renderNearbyAlojamientos();
+            _renderNearbyLugares();
+            _renderNearbyActividades();
+            _renderSimilarEvents(json.data.eventos_similares || []);
+        }
     } catch (e) {
         console.warn('Error cargando contenido cercano:', e);
     }
+
+    return STATE.nearbyData;
 }
 
 function _renderNearbyAlojamientos() {
     const container = document.getElementById('nearby-alojamientos');
     const section = document.getElementById('nearby-section');
     const moreBtn = document.getElementById('more-alojamientos');
-
     if (!container || !STATE.nearbyAlojamientos.length) return;
 
     section.style.display = 'block';
     const shown = STATE.nearbyAlojamientos.slice(0, STATE.nearbyShownAloj);
-    const hasMore = STATE.nearbyAlojamientos.length > STATE.nearbyShownAloj;
 
     container.innerHTML = shown.map(a => `
-        <a href="${a.url}" class="nearby-card" style="text-decoration:none;">
+        <a href="${a.url}" class="nearby-card" style="text-decoration:none;color:inherit;">
             <div class="nearby-card-img">
-                ${a.main_image
-                    ? `<img src="${a.main_image}" alt="${a.name}" loading="lazy">`
-                    : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;">🏠</div>`
-                }
+                ${a.main_image ? `<img src="${a.main_image}" alt="${a.name}" loading="lazy">` : '<div style="height:100%;background:#e8f0e8;display:flex;align-items:center;justify-content:center;font-size:2rem;">🏠</div>'}
             </div>
             <div class="nearby-card-body">
                 <div class="nearby-card-name">${a.name}</div>
                 <div class="nearby-card-meta">📍 ${a.municipality || a.province || ''}</div>
                 ${a.distance > 0 ? `<div class="nearby-card-meta">📏 ${a.distance} km</div>` : ''}
-                ${a.price_per_night ? `<div class="nearby-card-price">💶 ${formatPrice(a.price_per_night)}/noche</div>` : ''}
+                ${a.price_per_night ? `<div class="nearby-card-price">💶 ${formatPrice(a.price_per_night)}${UI.get('noche', '/noche')}</div>` : ''}
             </div>
         </a>
     `).join('');
 
-    if (moreBtn) moreBtn.style.display = hasMore ? 'block' : 'none';
+    if (STATE.nearbyAlojamientos.length > STATE.nearbyShownAloj && moreBtn) {
+        moreBtn.style.display = 'block';
+    }
 }
 
 function _renderNearbyLugares() {
     const container = document.getElementById('nearby-lugares');
     const section = document.getElementById('nearby-lugares-section');
     const moreBtn = document.getElementById('more-lugares');
-
     if (!container || !STATE.nearbyLugares.length) return;
 
     section.style.display = 'block';
     const shown = STATE.nearbyLugares.slice(0, STATE.nearbyShownLug);
-    const hasMore = STATE.nearbyLugares.length > STATE.nearbyShownLug;
 
     container.innerHTML = shown.map(l => `
-        <a href="${l.url}" class="nearby-card" style="text-decoration:none;">
+        <a href="${l.url}" class="nearby-card" style="text-decoration:none;color:inherit;">
             <div class="nearby-card-img">
-                ${l.main_image
-                    ? `<img src="${l.main_image}" alt="${l.name}" loading="lazy">`
-                    : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;">🏛️</div>`
-                }
+                ${l.main_image ? `<img src="${l.main_image}" alt="${l.name}" loading="lazy">` : '<div style="height:100%;background:#e8f0e8;display:flex;align-items:center;justify-content:center;font-size:2rem;">🏛️</div>'}
             </div>
             <div class="nearby-card-body">
                 <div class="nearby-card-name">${l.name}</div>
                 <div class="nearby-card-meta">📍 ${l.municipality || l.province || ''}</div>
                 ${l.distance > 0 ? `<div class="nearby-card-meta">📏 ${l.distance} km</div>` : ''}
-                ${l.category ? `<div class="nearby-card-meta">🏷️ ${l.category}</div>` : ''}
             </div>
         </a>
     `).join('');
 
-    if (moreBtn) moreBtn.style.display = hasMore ? 'block' : 'none';
-}
-
-function _renderSimilarEvents() {
-    const container = document.getElementById('similar-events');
-    const section = document.getElementById('similar-section');
-
-    if (!container || !STATE.nearbyData?.eventos_similares?.length) return;
-
-    section.style.display = 'block';
-    const eventos = STATE.nearbyData.eventos_similares;
-
-    container.innerHTML = eventos.map(e => {
-        const precio = e.is_free == 1 ? '🆓 Gratis' : (e.ticket_price > 0 ? `💶 ${formatPrice(e.ticket_price)}` : '');
-        const fecha = formatDate(e.start_date);
-        return `
-        <a href="${e.url}" class="similar-event-card" style="text-decoration:none;">
-            <div class="similar-event-img">
-                ${e.imagen
-                    ? `<img src="${e.imagen}" alt="${e.name}" loading="lazy">`
-                    : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🎭</div>`
-                }
-                ${precio ? `<div class="similar-event-badge">${precio}</div>` : ''}
-            </div>
-            <div class="similar-event-body">
-                <div class="similar-event-name">${e.name}</div>
-                <div class="similar-event-meta">
-                    ${fecha ? `<span>📅 ${fecha}</span>` : ''}
-                    <span>📍 ${e.municipality || e.province || ''}</span>
-                </div>
-            </div>
-        </a>
-        `;
-    }).join('');
+    if (STATE.nearbyLugares.length > STATE.nearbyShownLug && moreBtn) {
+        moreBtn.style.display = 'block';
+    }
 }
 
 function _renderNearbyActividades() {
     const container = document.getElementById('nearby-actividades');
     const section = document.getElementById('nearby-actividades-section');
     const moreBtn = document.getElementById('more-actividades');
-
     if (!container || !STATE.nearbyActividades.length) return;
 
     section.style.display = 'block';
     const shown = STATE.nearbyActividades.slice(0, STATE.nearbyShownAct);
-    const hasMore = STATE.nearbyActividades.length > STATE.nearbyShownAct;
 
     container.innerHTML = shown.map(a => `
-        <a href="${a.url}" class="nearby-card" style="text-decoration:none;">
+        <a href="${a.url}" class="nearby-card" style="text-decoration:none;color:inherit;">
             <div class="nearby-card-img">
-                ${a.main_image
-                    ? `<img src="${a.main_image}" alt="${a.name}" loading="lazy">`
-                    : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;">🎯</div>`
-                }
+                ${a.main_image ? `<img src="${a.main_image}" alt="${a.name}" loading="lazy">` : '<div style="height:100%;background:#e8f0e8;display:flex;align-items:center;justify-content:center;font-size:2rem;">🎯</div>'}
             </div>
             <div class="nearby-card-body">
                 <div class="nearby-card-name">${a.name}</div>
                 <div class="nearby-card-meta">📍 ${a.municipality || a.province || ''}</div>
                 ${a.distance > 0 ? `<div class="nearby-card-meta">📏 ${a.distance} km</div>` : ''}
-                ${a.price ? `<div class="nearby-card-price">💶 ${formatPrice(a.price)}/persona</div>` : ''}
+                ${a.price ? `<div class="nearby-card-price">💶 ${formatPrice(a.price)}${UI.get('persona', '/persona')}</div>` : ''}
             </div>
         </a>
     `).join('');
 
-    if (moreBtn) moreBtn.style.display = hasMore ? 'block' : 'none';
-}
-
-// Mostrar más elementos cercanos
-function showMoreNearby(type) {
-    if (type === 'alojamientos') {
-        STATE.nearbyShownAloj = STATE.nearbyAlojamientos.length;
-        _renderNearbyAlojamientos();
-    } else if (type === 'lugares') {
-        STATE.nearbyShownLug = STATE.nearbyLugares.length;
-        _renderNearbyLugares();
-    } else if (type === 'actividades') {
-        STATE.nearbyShownAct = STATE.nearbyActividades.length;
-        _renderNearbyActividades();
+    if (STATE.nearbyActividades.length > STATE.nearbyShownAct && moreBtn) {
+        moreBtn.style.display = 'block';
     }
 }
 
-// ─── MÓDULO: VISITAS Y LIKES ──────────────────────────────────────────────────
+function _renderSimilarEvents(eventos) {
+    const container = document.getElementById('similar-events');
+    const section = document.getElementById('similar-section');
+    if (!container || !eventos.length) return;
+
+    section.style.display = 'block';
+
+    container.innerHTML = eventos.map(e => {
+        const precio = e.is_free == 1 ? `🆓 ${UI.get('gratis', 'Gratis')}` : (e.ticket_price > 0 ? `💶 ${formatPrice(e.ticket_price)}` : '');
+        const fecha = formatDate(e.start_date);
+        const img = e.imagen
+            ? `<img src="${e.imagen}" alt="${e.name}" loading="lazy">`
+            : '<div style="height:100%;background:linear-gradient(135deg,#e8f0e8,#c8dcc8);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🎭</div>';
+
+        return `
+            <a href="${e.url}" class="similar-event-card" style="text-decoration:none;color:inherit;">
+                <div class="similar-event-img">
+                    ${img}
+                    ${precio ? `<div class="similar-event-badge">${precio}</div>` : ''}
+                </div>
+                <div class="similar-event-body">
+                    <div class="similar-event-name">${e.name}</div>
+                    <div class="similar-event-meta">
+                        ${fecha ? `<span>📅 ${fecha}</span>` : ''}
+                        <span>📍 ${e.municipality || e.province || ''}</span>
+                    </div>
+                </div>
+            </a>
+        `;
+    }).join('');
+}
+
+function showMoreNearby(type) {
+    if (type === 'alojamientos') {
+        STATE.nearbyShownAloj += 5;
+        _renderNearbyAlojamientos();
+        if (STATE.nearbyShownAloj >= STATE.nearbyAlojamientos.length) {
+            const btn = document.getElementById('more-alojamientos');
+            if (btn) btn.style.display = 'none';
+        }
+    } else if (type === 'lugares') {
+        STATE.nearbyShownLug += 5;
+        _renderNearbyLugares();
+        if (STATE.nearbyShownLug >= STATE.nearbyLugares.length) {
+            const btn = document.getElementById('more-lugares');
+            if (btn) btn.style.display = 'none';
+        }
+    } else if (type === 'actividades') {
+        STATE.nearbyShownAct += 3;
+        _renderNearbyActividades();
+        if (STATE.nearbyShownAct >= STATE.nearbyActividades.length) {
+            const btn = document.getElementById('more-actividades');
+            if (btn) btn.style.display = 'none';
+        }
+    }
+}
+
+// ─── MÓDULO: ESTADÍSTICAS (Likes / Visitas) ───────────────────────────────────
 function _renderStats() {
-    // Likes desde localStorage (sin BD para no afectar velocidad)
     const likeKey = `like_event_${STATE.slug}`;
+    const likesKey = `likes_total_${STATE.slug}`;
+    const viewsKey = `views_event_${STATE.slug}`;
+
+    // Likes desde localStorage (sin BD para no afectar velocidad)
     STATE.liked = !!localStorage.getItem(likeKey);
+    STATE.likes = parseInt(localStorage.getItem(likesKey) || '0');
+
+    // Visitas simuladas (incrementar en localStorage)
+    let views = parseInt(localStorage.getItem(viewsKey) || '0') + 1;
+    localStorage.setItem(viewsKey, views);
+    STATE.views = views;
 
     const likeBtn = document.getElementById('btn-like');
     const likeCount = document.getElementById('like-count');
     const viewCount = document.getElementById('view-count');
 
-    // Simular contador de visitas (localStorage + número base)
-    const viewKey = `views_event_${STATE.slug}`;
-    let views = parseInt(localStorage.getItem(viewKey) || '0');
-    views++;
-    localStorage.setItem(viewKey, views);
-    STATE.views = views;
-
-    // Likes guardados en localStorage
-    const likesKey = `likes_total_${STATE.slug}`;
-    STATE.likes = parseInt(localStorage.getItem(likesKey) || Math.floor(Math.random() * 40 + 5));
-    localStorage.setItem(likesKey, STATE.likes);
-
-    if (likeBtn) {
-        likeBtn.textContent = STATE.liked ? '❤️' : '🤍';
-        likeBtn.title = STATE.liked ? 'Quitar me gusta' : 'Me gusta';
-    }
+    if (likeBtn) likeBtn.textContent = STATE.liked ? '❤️' : '🤍';
     if (likeCount) likeCount.textContent = STATE.likes;
     if (viewCount) viewCount.textContent = views > 999 ? (views/1000).toFixed(1) + 'k' : views;
 }
@@ -531,11 +523,11 @@ function toggleLike() {
     if (STATE.liked) {
         STATE.likes++;
         localStorage.setItem(likeKey, '1');
-        showToast('❤️ ¡Te gusta este evento!');
+        showToast(UI.get('te_gusta', '❤️ ¡Te gusta este evento!'));
     } else {
         STATE.likes = Math.max(0, STATE.likes - 1);
         localStorage.removeItem(likeKey);
-        showToast('🤍 Me gusta eliminado');
+        showToast(UI.get('me_gusta_eliminado', '🤍 Me gusta eliminado'));
     }
 
     localStorage.setItem(likesKey, STATE.likes);
@@ -556,8 +548,8 @@ function saveEvent() {
 
     if (saved) {
         localStorage.removeItem(`saved_event_${STATE.slug}`);
-        if (btn) btn.textContent = '🔖 Guardar evento';
-        showToast('Evento eliminado de guardados');
+        if (btn) btn.textContent = UI.get('guardar_evento', '🔖 Guardar evento');
+        showToast(UI.get('evento_eliminado', 'Evento eliminado de guardados'));
     } else {
         localStorage.setItem(`saved_event_${STATE.slug}`, JSON.stringify({
             slug: STATE.slug,
@@ -565,8 +557,8 @@ function saveEvent() {
             fecha: STATE.evento?.start_date,
             savedAt: new Date().toISOString(),
         }));
-        if (btn) btn.textContent = '✅ Guardado';
-        showToast('✅ Evento guardado correctamente');
+        if (btn) btn.textContent = UI.get('guardado', '✅ Guardado');
+        showToast(UI.get('evento_guardado', '✅ Evento guardado correctamente'));
     }
 }
 
@@ -575,7 +567,7 @@ function addToRoute() {
     const isLoggedIn = document.cookie.includes('user_session') || localStorage.getItem('user_id');
 
     if (!isLoggedIn) {
-        showToast('Inicia sesión para añadir a tu ruta');
+        showToast(UI.get('inicia_sesion', 'Inicia sesión para añadir a tu ruta'));
         setTimeout(() => {
             window.location.href = `/login.html?action=register&ref=evento&slug=${encodeURIComponent(STATE.slug)}`;
         }, 1500);
@@ -587,7 +579,7 @@ function addToRoute() {
     const exists = routes.find(r => r.slug === STATE.slug);
 
     if (exists) {
-        showToast('Este evento ya está en tu ruta');
+        showToast(UI.get('ya_en_ruta', 'Este evento ya está en tu ruta'));
         return;
     }
 
@@ -601,13 +593,13 @@ function addToRoute() {
         addedAt: new Date().toISOString(),
     });
     localStorage.setItem('my_route', JSON.stringify(routes));
-    showToast('🗺️ Añadido a tu ruta');
+    showToast(UI.get('anadido_ruta', '🗺️ Añadido a tu ruta'));
 }
 
 function shareEvent(platform) {
     const url = encodeURIComponent(window.location.href);
     const title = encodeURIComponent(STATE.evento?.titulo || 'Evento en Rutas Rurales');
-    const text = encodeURIComponent(`¡Mira este evento! ${STATE.evento?.titulo}`);
+    const text = encodeURIComponent(`${STATE.evento?.titulo || 'Evento'}`);
 
     const urls = {
         whatsapp: `https://wa.me/?text=${text}%20${url}`,
@@ -618,8 +610,8 @@ function shareEvent(platform) {
 
     if (platform === 'copy') {
         navigator.clipboard?.writeText(window.location.href)
-            .then(() => showToast('🔗 Enlace copiado'))
-            .catch(() => showToast('No se pudo copiar el enlace'));
+            .then(() => showToast(UI.get('enlace_copiado', '🔗 Enlace copiado')))
+            .catch(() => showToast(UI.get('error_copiar', 'No se pudo copiar el enlace')));
         return;
     }
 
@@ -637,7 +629,7 @@ async function subscribeEvents(e) {
     if (!email) return;
 
     const btn = e.target.querySelector('button[type="submit"]');
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ Enviando...'; }
+    if (btn) { btn.disabled = true; btn.textContent = UI.get('enviando', '⏳ Enviando...'); }
 
     try {
         // Guardar suscripción en localStorage (fallback si no hay API)
@@ -667,18 +659,20 @@ async function subscribeEvents(e) {
 
         // Mostrar confirmación
         const card = document.getElementById('subscribe-card');
+        const catName = STATE.evento?.categoria || UI.get('esta_categoria', 'esta categoría');
+        const provName = STATE.evento?.province || UI.get('tu_zona', 'tu zona');
         if (card) {
             card.innerHTML = `
                 <div style="font-size:2rem;margin-bottom:8px;">✅</div>
-                <h3 style="color:#2F5233;">¡Suscripción confirmada!</h3>
-                <p>Te avisaremos de eventos de <strong>${STATE.evento?.categoria || 'esta categoría'}</strong> en <strong>${STATE.evento?.province || 'tu zona'}</strong>.</p>
+                <h3 style="color:#2F5233;">${UI.get('suscripcion_ok_h3', '¡Suscripción confirmada!')}</h3>
+                <p>${UI.get('suscripcion_ok_p1', 'Te avisaremos de eventos de')} <strong>${catName}</strong> ${UI.get('suscripcion_ok_p2', 'en')} <strong>${provName}</strong>.</p>
             `;
         }
-        showToast('🔔 ¡Suscripción confirmada!');
+        showToast(UI.get('suscripcion_ok', '🔔 ¡Suscripción confirmada!'));
 
     } catch (err) {
-        showToast('Error al suscribirse. Inténtalo de nuevo.');
-        if (btn) { btn.disabled = false; btn.textContent = '🔔 Suscribirme'; }
+        showToast(UI.get('error_suscripcion', 'Error al suscribirse. Inténtalo de nuevo.'));
+        if (btn) { btn.disabled = false; btn.textContent = UI.get('suscripcion_btn', '🔔 Suscribirme'); }
     }
 }
 
@@ -687,7 +681,7 @@ function init() {
     // Restaurar estado de guardado
     if (STATE.slug && localStorage.getItem(`saved_event_${STATE.slug}`)) {
         const btn = document.getElementById('btn-save-event');
-        if (btn) btn.textContent = '✅ Guardado';
+        if (btn) btn.textContent = UI.get('guardado', '✅ Guardado');
     }
 
     // Ocultar CTA de registro si ya está logueado

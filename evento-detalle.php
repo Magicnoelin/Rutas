@@ -1147,6 +1147,34 @@ $evento_js = $evento ? json_encode([
         window.EVENTO_DATA = <?php echo $evento_js; ?>;
         window.EVENTO_SLUG = <?php echo json_encode($slug); ?>;
         window.EVENTO_LANG = <?php echo json_encode($lang); ?>;
+        window.EVENTO_UI = <?php echo json_encode([
+            'gratis'               => $t['gratis'],
+            'consultar'            => $t['consultar'],
+            'noche'                => $lang === 'es' ? '/noche' : ($lang === 'en' ? '/night' : ($lang === 'fr' ? '/nuit' : ($lang === 'de' ? '/Nacht' : '/晚'))),
+            'persona'              => $lang === 'es' ? '/persona' : ($lang === 'en' ? '/person' : ($lang === 'fr' ? '/personne' : ($lang === 'de' ? '/Person' : '/人'))),
+            'ver_mas'              => $lang === 'es' ? 'Ver más →' : ($lang === 'en' ? 'View more →' : ($lang === 'fr' ? 'Voir plus →' : ($lang === 'de' ? 'Mehr →' : '查看更多 →'))),
+            'cargando_mapa'        => $lang === 'es' ? 'Cargando mapa...' : ($lang === 'en' ? 'Loading map...' : ($lang === 'fr' ? 'Chargement de la carte...' : ($lang === 'de' ? 'Karte wird geladen...' : '地图加载中...'))),
+            'guardar_evento'       => $t['guardar'],
+            'guardado'             => $lang === 'es' ? '✅ Guardado' : ($lang === 'en' ? '✅ Saved' : ($lang === 'fr' ? '✅ Sauvegardé' : ($lang === 'de' ? '✅ Gespeichert' : '✅ 已保存'))),
+            'evento_guardado'      => $lang === 'es' ? '✅ Evento guardado correctamente' : ($lang === 'en' ? '✅ Event saved successfully' : ($lang === 'fr' ? '✅ Événement sauvegardé' : ($lang === 'de' ? '✅ Veranstaltung gespeichert' : '✅ 活动已保存'))),
+            'evento_eliminado'     => $lang === 'es' ? 'Evento eliminado de guardados' : ($lang === 'en' ? 'Event removed from saved' : ($lang === 'fr' ? 'Événement supprimé des favoris' : ($lang === 'de' ? 'Veranstaltung aus Gespeicherten entfernt' : '活动已从收藏中删除'))),
+            'ya_en_ruta'           => $lang === 'es' ? 'Este evento ya está en tu ruta' : ($lang === 'en' ? 'This event is already in your route' : ($lang === 'fr' ? 'Cet événement est déjà dans votre itinéraire' : ($lang === 'de' ? 'Diese Veranstaltung ist bereits in Ihrer Route' : '此活动已在您的路线中'))),
+            'inicia_sesion'        => $lang === 'es' ? 'Inicia sesión para añadir a tu ruta' : ($lang === 'en' ? 'Log in to add to your route' : ($lang === 'fr' ? 'Connectez-vous pour ajouter à votre itinéraire' : ($lang === 'de' ? 'Melden Sie sich an, um zur Route hinzuzufügen' : '请登录以添加到您的路线'))),
+            'anadido_ruta'         => $t['anadir_ruta'],
+            'suscripcion_ok'       => $lang === 'es' ? '🔔 ¡Suscripción confirmada!' : ($lang === 'en' ? '🔔 Subscription confirmed!' : ($lang === 'fr' ? '🔔 Abonnement confirmé !' : ($lang === 'de' ? '🔔 Abonnement bestätigt!' : '🔔 订阅已确认！'))),
+            'suscripcion_ok_h3'    => $lang === 'es' ? '¡Suscripción confirmada!' : ($lang === 'en' ? 'Subscription confirmed!' : ($lang === 'fr' ? 'Abonnement confirmé !' : ($lang === 'de' ? 'Abonnement bestätigt!' : '订阅已确认！'))),
+            'suscripcion_ok_p1'    => $lang === 'es' ? 'Te avisaremos de eventos de' : ($lang === 'en' ? 'We will notify you of events of' : ($lang === 'fr' ? 'Nous vous informerons des événements de' : ($lang === 'de' ? 'Wir benachrichtigen Sie über Veranstaltungen von' : '我们将通知您以下类型的活动：'))),
+            'suscripcion_ok_p2'    => $lang === 'es' ? 'en' : ($lang === 'en' ? 'in' : ($lang === 'fr' ? 'à' : ($lang === 'de' ? 'in' : '地区：'))),
+            'esta_categoria'       => $lang === 'es' ? 'esta categoría' : ($lang === 'en' ? 'this category' : ($lang === 'fr' ? 'cette catégorie' : ($lang === 'de' ? 'dieser Kategorie' : '此类别'))),
+            'tu_zona'              => $lang === 'es' ? 'tu zona' : ($lang === 'en' ? 'your area' : ($lang === 'fr' ? 'votre région' : ($lang === 'de' ? 'Ihrer Region' : '您的地区'))),
+            'error_suscripcion'    => $lang === 'es' ? 'Error al suscribirse. Inténtalo de nuevo.' : ($lang === 'en' ? 'Error subscribing. Please try again.' : ($lang === 'fr' ? 'Erreur lors de l\'abonnement. Réessayez.' : ($lang === 'de' ? 'Fehler beim Abonnieren. Bitte erneut versuchen.' : '订阅出错，请重试。'))),
+            'enviando'             => $lang === 'es' ? '⏳ Enviando...' : ($lang === 'en' ? '⏳ Sending...' : ($lang === 'fr' ? '⏳ Envoi...' : ($lang === 'de' ? '⏳ Senden...' : '⏳ 发送中...'))),
+            'enlace_copiado'       => $lang === 'es' ? '🔗 Enlace copiado' : ($lang === 'en' ? '🔗 Link copied' : ($lang === 'fr' ? '🔗 Lien copié' : ($lang === 'de' ? '🔗 Link kopiert' : '🔗 链接已复制'))),
+            'error_copiar'         => $lang === 'es' ? 'No se pudo copiar el enlace' : ($lang === 'en' ? 'Could not copy the link' : ($lang === 'fr' ? 'Impossible de copier le lien' : ($lang === 'de' ? 'Link konnte nicht kopiert werden' : '无法复制链接'))),
+            'te_gusta'             => $lang === 'es' ? '❤️ ¡Te gusta este evento!' : ($lang === 'en' ? '❤️ You like this event!' : ($lang === 'fr' ? '❤️ Vous aimez cet événement !' : ($lang === 'de' ? '❤️ Ihnen gefällt diese Veranstaltung!' : '❤️ 您喜欢此活动！'))),
+            'me_gusta_eliminado'   => $lang === 'es' ? '🤍 Me gusta eliminado' : ($lang === 'en' ? '🤍 Like removed' : ($lang === 'fr' ? '🤍 J\'aime supprimé' : ($lang === 'de' ? '🤍 Gefällt mir entfernt' : '🤍 已取消点赞'))),
+            'locale'               => $lang === 'zh' ? 'zh-CN' : ($lang === 'de' ? 'de-DE' : ($lang === 'fr' ? 'fr-FR' : ($lang === 'en' ? 'en-GB' : 'es-ES'))),
+        ], JSON_UNESCAPED_UNICODE); ?>
     </script>
 </head>
 <body>
@@ -1488,7 +1516,7 @@ if (file_exists($header_path)) {
 <?php endif; ?>
 
 <!-- Script principal (diferido) -->
-<script defer src="/js/evento-modular.js?v=1.0"></script>
+<script defer src="/js/evento-modular.js?v=2.0"></script>
 
 <!-- GTM diferido (después de interacción) -->
 <script>
