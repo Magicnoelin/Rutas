@@ -1244,7 +1244,7 @@ if (file_exists($header_path)) {
         <!-- Descripción del evento -->
         <div class="card" style="margin-bottom:24px;">
             <div class="card-body">
-                <h2 class="card-title"><?php echo $t['sobre_evento']; ?></h2>
+                <h2 class="card-title"><?php echo ($t['sobre_evento'] ?? ''); ?></h2>
                 <div class="event-description">
                     <?php echo $evento['description']; ?>
                 </div>
@@ -1259,19 +1259,19 @@ if (file_exists($header_path)) {
                 <div style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
                      <?php if ($programa): ?>
                      <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo $t['programa']; ?></h4>
+                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo ($t['programa'] ?? ''); ?></h4>
                         <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($programa)); ?></div>
                     </div>
                     <?php endif; ?>
                      <?php if ($audiencia): ?>
                      <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo $t['publico']; ?></h4>
+                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo ($t['publico'] ?? ''); ?></h4>
                         <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($audiencia)); ?></div>
                     </div>
                     <?php endif; ?>
                      <?php if ($accesibilidad): ?>
                      <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo $t['accesibilidad']; ?></h4>
+                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo ($t['accesibilidad'] ?? ''); ?></h4>
                         <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($accesibilidad)); ?></div>
                     </div>
                     <?php endif; ?>
@@ -1283,48 +1283,48 @@ if (file_exists($header_path)) {
         <!-- Meta información -->
         <div class="card" style="margin-bottom:24px;">
             <div class="card-body">
-                <h2 class="card-title"><?php echo $t['info_evento']; ?></h2>
+                <h2 class="card-title"><?php echo ($t['info_evento'] ?? ''); ?></h2>
                 <div class="meta-grid">
                     <div class="meta-item">
                         <div class="meta-icon">📅</div>
-                        <div class="meta-label"><?php echo $t['fecha_inicio']; ?></div>
+                        <div class="meta-label"><?php echo ($t['fecha_inicio'] ?? ''); ?></div>
                         <div class="meta-value"><?php echo date('d/m/Y', strtotime($evento['start_date'])); ?></div>
                     </div>
                     <?php if (!empty($evento['end_date']) && $evento['end_date'] !== $evento['start_date']): ?>
                     <div class="meta-item">
                         <div class="meta-icon">🏁</div>
-                        <div class="meta-label"><?php echo $t['fecha_fin']; ?></div>
+                        <div class="meta-label"><?php echo ($t['fecha_fin'] ?? ''); ?></div>
                         <div class="meta-value"><?php echo date('d/m/Y', strtotime($evento['end_date'])); ?></div>
                     </div>
                     <?php endif; ?>
                     <?php if ($ubicacion_display): ?>
                     <div class="meta-item">
                         <div class="meta-icon">📍</div>
-                        <div class="meta-label"><?php echo $t['ubicacion']; ?></div>
+                        <div class="meta-label"><?php echo ($t['ubicacion'] ?? ''); ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($ubicacion_display); ?></div>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($evento['venue_address'])): ?>
                     <div class="meta-item">
                         <div class="meta-icon">🗺️</div>
-                        <div class="meta-label"><?php echo $t['direccion']; ?></div>
+                        <div class="meta-label"><?php echo ($t['direccion'] ?? ''); ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($evento['venue_address']); ?></div>
                     </div>
                     <?php endif; ?>
                     <div class="meta-item">
                         <div class="meta-icon">🏷️</div>
-                        <div class="meta-label"><?php echo $t['categoria']; ?></div>
+                        <div class="meta-label"><?php echo ($t['categoria'] ?? ''); ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($categoria_nombre); ?></div>
                     </div>
                     <div class="meta-item">
                         <div class="meta-icon">🎟️</div>
-                        <div class="meta-label"><?php echo $t['precio']; ?></div>
+                        <div class="meta-label"><?php echo ($t['precio'] ?? ''); ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($precio_display); ?></div>
                     </div>
                     <?php if (!empty($evento['organizer'])): ?>
                     <div class="meta-item">
                         <div class="meta-icon">🏛️</div>
-                        <div class="meta-label"><?php echo $t['organiza']; ?></div>
+                        <div class="meta-label"><?php echo ($t['organiza'] ?? ''); ?></div>
                         <div class="meta-value"><?php echo htmlspecialchars($evento['organizer']); ?></div>
                     </div>
                     <?php endif; ?>
@@ -1337,15 +1337,15 @@ if (file_exists($header_path)) {
         <div id="event-map-container" class="card" style="margin-bottom:24px;">
             <div id="map-placeholder" class="map-placeholder" onclick="initMap()">
                 <div class="map-icon">🗺️</div>
-                <strong style="font-size:1rem;"><?php echo $t['ver_mapa']; ?></strong>
-                <p><?php echo $t['click_mapa']; ?></p>
+                <strong style="font-size:1rem;"><?php echo ($t['ver_mapa'] ?? ''); ?></strong>
+                <p><?php echo ($t['click_mapa'] ?? ''); ?></p>
             </div>
             <div id="event-map" style="display:none;"></div>
             <div class="map-controls" id="map-controls" style="display:none;">
-                <button class="map-toggle-btn active" id="btn-evento" onclick="toggleMapLayer('evento')"><?php echo $t['btn_evento']; ?></button>
-                <button class="map-toggle-btn" id="btn-alojamientos" onclick="toggleMapLayer('alojamientos')"><?php echo $t['btn_alojamientos']; ?></button>
-                <button class="map-toggle-btn" id="btn-lugares" onclick="toggleMapLayer('lugares')"><?php echo $t['btn_lugares']; ?></button>
-                <button class="map-toggle-btn" id="btn-actividades" onclick="toggleMapLayer('actividades')"><?php echo $t['btn_actividades']; ?></button>
+                <button class="map-toggle-btn active" id="btn-evento" onclick="toggleMapLayer('evento')"><?php echo ($t['btn_evento'] ?? ''); ?></button>
+                <button class="map-toggle-btn" id="btn-alojamientos" onclick="toggleMapLayer('alojamientos')"><?php echo ($t['btn_alojamientos'] ?? ''); ?></button>
+                <button class="map-toggle-btn" id="btn-lugares" onclick="toggleMapLayer('lugares')"><?php echo ($t['btn_lugares'] ?? ''); ?></button>
+                <button class="map-toggle-btn" id="btn-actividades" onclick="toggleMapLayer('actividades')"><?php echo ($t['btn_actividades'] ?? ''); ?></button>
             </div>
         </div>
         <?php endif; ?>
@@ -1353,7 +1353,7 @@ if (file_exists($header_path)) {
         <!-- Contenido cercano (carga diferida) -->
         <div id="nearby-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
-                <h2 class="card-title"><?php echo $t['aloj_cercanos']; ?></h2>
+                <h2 class="card-title"><?php echo ($t['aloj_cercanos'] ?? ''); ?></h2>
                 <div id="nearby-alojamientos" class="nearby-grid">
                     <!-- Skeleton loading -->
                     <div class="skeleton skeleton-card"></div>
@@ -1361,21 +1361,21 @@ if (file_exists($header_path)) {
                     <div class="skeleton skeleton-card"></div>
                 </div>
                 <div class="nearby-show-more" id="more-alojamientos" style="display:none;">
-                    <button onclick="showMoreNearby('alojamientos')"><?php echo $t['ver_mas_aloj']; ?></button>
+                    <button onclick="showMoreNearby('alojamientos')"><?php echo ($t['ver_mas_aloj'] ?? ''); ?></button>
                 </div>
             </div>
         </div>
 
         <div id="nearby-lugares-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
-                <h2 class="card-title"><?php echo $t['lugares_cercanos']; ?></h2>
+                <h2 class="card-title"><?php echo ($t['lugares_cercanos'] ?? ''); ?></h2>
                 <div id="nearby-lugares" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                 </div>
                 <div class="nearby-show-more" id="more-lugares" style="display:none;">
-                    <button onclick="showMoreNearby('lugares')"><?php echo $t['ver_mas_lugares']; ?></button>
+                    <button onclick="showMoreNearby('lugares')"><?php echo ($t['ver_mas_lugares'] ?? ''); ?></button>
                 </div>
             </div>
         </div>
@@ -1383,14 +1383,14 @@ if (file_exists($header_path)) {
         <!-- Actividades turísticas cercanas (carga diferida) -->
         <div id="nearby-actividades-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
-                <h2 class="card-title"><?php echo $t['activ_cercanas']; ?></h2>
+                <h2 class="card-title"><?php echo ($t['activ_cercanas'] ?? ''); ?></h2>
                 <div id="nearby-actividades" class="nearby-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                 </div>
                 <div class="nearby-show-more" id="more-actividades" style="display:none;">
-                    <button onclick="showMoreNearby('actividades')"><?php echo $t['ver_mas_activ']; ?></button>
+                    <button onclick="showMoreNearby('actividades')"><?php echo ($t['ver_mas_activ'] ?? ''); ?></button>
                 </div>
             </div>
         </div>
@@ -1398,7 +1398,7 @@ if (file_exists($header_path)) {
         <!-- Eventos similares (carga diferida) -->
         <div id="similar-section" class="card" style="margin-bottom:24px;display:none;">
             <div class="card-body">
-                <h2 class="card-title"><?php echo $t['eventos_similares']; ?></h2>
+                <h2 class="card-title"><?php echo ($t['eventos_similares'] ?? ''); ?></h2>
                 <div id="similar-events" class="similar-events-grid">
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
@@ -1415,13 +1415,13 @@ if (file_exists($header_path)) {
         <!-- CTA Principal: Registro -->
         <div class="cta-card" id="cta-register">
             <div style="font-size:2rem;margin-bottom:8px;">🌿</div>
-            <h3><?php echo $t['cta_titulo']; ?></h3>
-            <p><?php echo $t['cta_desc']; ?> <?php echo htmlspecialchars($evento['province'] ?? ''); ?></p>
+            <h3><?php echo ($t['cta_titulo'] ?? ''); ?></h3>
+            <p><?php echo ($t['cta_desc'] ?? ''); ?> <?php echo htmlspecialchars($evento['province'] ?? ''); ?></p>
             <a href="/login.html?action=register&ref=evento&slug=<?php echo urlencode($slug); ?>" class="btn btn-white">
-                <?php echo $t['cta_register']; ?>
+                <?php echo ($t['cta_register'] ?? ''); ?>
             </a>
             <a href="/login.html?ref=evento&slug=<?php echo urlencode($slug); ?>" class="btn btn-outline-white">
-                <?php echo $t['cta_login']; ?>
+                <?php echo ($t['cta_login'] ?? ''); ?>
             </a>
         </div>
 
@@ -1431,19 +1431,19 @@ if (file_exists($header_path)) {
                 <div style="display:flex;justify-content:center;gap:24px;margin-bottom:16px;">
                     <div style="text-align:center;">
                         <div style="font-size:1.5rem;font-weight:700;color:var(--primary);" id="view-count">—</div>
-                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><?php echo $t['visitas']; ?></div>
+                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><?php echo ($t['visitas'] ?? ''); ?></div>
                     </div>
                     <div style="width:1px;background:#eee;"></div>
                     <div style="text-align:center;">
                         <button id="btn-like" onclick="toggleLike()" style="background:none;border:none;cursor:pointer;font-size:1.8rem;line-height:1;transition:transform 0.2s;">🤍</button>
-                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><span id="like-count">—</span> <?php echo $t['likes']; ?></div>
+                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><span id="like-count">—</span> <?php echo ($t['likes'] ?? ''); ?></div>
                     </div>
                 </div>
                 <button class="btn btn-primary" onclick="saveEvent()" id="btn-save-event" style="margin-bottom:8px;">
-                    <?php echo $t['guardar']; ?>
+                    <?php echo ($t['guardar'] ?? ''); ?>
                 </button>
                 <button class="btn btn-accent" onclick="addToRoute()">
-                    <?php echo $t['anadir_ruta']; ?>
+                    <?php echo ($t['anadir_ruta'] ?? ''); ?>
                 </button>
                 <div style="margin-top:12px;display:flex;justify-content:center;gap:12px;">
                     <button onclick="shareEvent('whatsapp')" style="background:none;border:none;cursor:pointer;font-size:1.4rem;" title="Compartir en WhatsApp">💬</button>
@@ -1457,11 +1457,11 @@ if (file_exists($header_path)) {
         <!-- Suscripción a eventos similares -->
         <div class="subscribe-card" id="subscribe-card">
             <div style="font-size:1.8rem;margin-bottom:8px;">🔔</div>
-            <h3><?php echo $t['suscripcion_titulo']; ?></h3>
-            <p><?php echo $t['suscripcion_desc']; ?> <strong><?php echo htmlspecialchars($categoria_nombre); ?></strong> <?php echo $t['suscripcion_en']; ?> <?php echo htmlspecialchars($evento['province'] ?? ''); ?></p>
+            <h3><?php echo ($t['suscripcion_titulo'] ?? ''); ?></h3>
+            <p><?php echo ($t['suscripcion_desc'] ?? ''); ?> <strong><?php echo htmlspecialchars($categoria_nombre); ?></strong> <?php echo ($t['suscripcion_en'] ?? ''); ?> <?php echo htmlspecialchars($evento['province'] ?? ''); ?></p>
             <form class="subscribe-form" onsubmit="subscribeEvents(event)">
                 <input type="email" placeholder="tu@email.com" required id="subscribe-email">
-                <button type="submit" class="btn btn-accent"><?php echo $t['suscripcion_btn']; ?></button>
+                <button type="submit" class="btn btn-accent"><?php echo ($t['suscripcion_btn'] ?? ''); ?></button>
             </form>
         </div>
 
@@ -1473,9 +1473,9 @@ if (file_exists($header_path)) {
 <!-- Evento no encontrado -->
 <div style="max-width:600px;margin:120px auto 60px;text-align:center;padding:40px;">
     <div style="font-size:4rem;margin-bottom:16px;">😕</div>
-    <h1 style="color:var(--primary);margin-bottom:12px;"><?php echo $t['no_encontrado_h1']; ?></h1>
-    <p style="color:var(--text-light);margin-bottom:24px;"><?php echo $t['no_encontrado_p']; ?></p>
-    <a href="/eventos-culturales.html" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo $t['ver_todos']; ?></a>
+    <h1 style="color:var(--primary);margin-bottom:12px;"><?php echo ($t['no_encontrado_h1'] ?? ''); ?></h1>
+    <p style="color:var(--text-light);margin-bottom:24px;"><?php echo ($t['no_encontrado_p'] ?? ''); ?></p>
+    <a href="/eventos-culturales.html" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo ($t['ver_todos'] ?? ''); ?></a>
 </div>
 <?php endif; ?>
 
@@ -1498,9 +1498,9 @@ if (file_exists($header_path)) {
         <a href="#" aria-label="Twitter">🐦</a>
     </div>
     <div class="footer-links">
-        <a href="/aviso-legal.html"><?php echo $t['aviso_legal']; ?></a>
-        <a href="/politica-cookies.html"><?php echo $t['cookies']; ?></a>
-        <a href="/agradecimientos.html"><?php echo $t['agradecimientos']; ?></a>
+        <a href="/aviso-legal.html"><?php echo ($t['aviso_legal'] ?? ''); ?></a>
+        <a href="/politica-cookies.html"><?php echo ($t['cookies'] ?? ''); ?></a>
+        <a href="/agradecimientos.html"><?php echo ($t['agradecimientos'] ?? ''); ?></a>
     </div>
     <p style="color:rgba(255,255,255,0.5);font-size:0.8rem;">© 2026 rutasrurales.io · Todos los derechos reservados</p>
 </footer>
