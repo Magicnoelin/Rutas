@@ -676,8 +676,84 @@ async function subscribeEvents(e) {
     }
 }
 
+// ─── FALLBACK: Rellenar etiquetas vacías desde EVENTO_UI ─────────────────────
+// Cubre el caso en que el PHP del servidor tiene un $ui incompleto
+function _fillEmptyLabels() {
+    const ui = STATE.ui;
+    if (!ui || !Object.keys(ui).length) return;
+
+    // Rellenar card-titles vacíos por orden de aparición
+    const cardTitles = document.querySelectorAll('.card-title');
+    const titleKeys = ['sobre_evento','info_evento','aloj_cercanos','lugares_cercanos','activ_cercanas','eventos_similares'];
+    let keyIdx = 0;
+    cardTitles.forEach(el => {
+        if (!el.textContent.trim() && keyIdx < titleKeys.length) {
+            const val = ui[titleKeys[keyIdx]];
+            if (val) el.textContent = val;
+            keyIdx++;
+        }
+    });
+
+    // Rellenar meta-labels vacíos por orden de aparición
+    const metaLabels = document.querySelectorAll('.meta-label');
+    const metaKeys = ['fecha_inicio','fecha_fin','ubicacion','direccion','categoria','precio','organiza'];
+    let mIdx = 0;
+    metaLabels.forEach(el => {
+        if (!el.textContent.trim() && mIdx < metaKeys.length) {
+            const val = ui[metaKeys[mIdx]];
+            if (val) el.textContent = val;
+            mIdx++;
+        }
+    });
+
+    // Rellenar botones del mapa vacíos
+    [['btn-evento','btn_evento'],['btn-alojamientos','btn_alojamientos'],
+     ['btn-lugares','btn_lugares'],['btn-actividades','btn_actividades']].forEach(([id,key]) => {
+        const btn = document.getElementById(id);
+        if (btn && !btn.textContent.trim() && ui[key]) btn.textContent = ui[key];
+    });
+
+    // Rellenar mapa placeholder
+    const mapStrong = document.querySelector('.map-placeholder strong');
+    if (mapStrong && !mapStrong.textContent.trim() && ui.ver_mapa) mapStrong.textContent = ui.ver_mapa;
+    const mapP = document.querySelector('.map-placeholder p');
+    if (mapP && !mapP.textContent.trim() && ui.click_mapa) mapP.textContent = ui.click_mapa;
+
+    // Rellenar botones "ver más"
+    const moreAloj = document.querySelector('#more-alojamientos button');
+    if (moreAloj && !moreAloj.textContent.trim() && ui.ver_mas_aloj) moreAloj.textContent = ui.ver_mas_aloj;
+    const moreLug = document.querySelector('#more-lugares button');
+    if (moreLug && !moreLug.textContent.trim() && ui.ver_mas_lugares) moreLug.textContent = ui.ver_mas_lugares;
+    const moreAct = document.querySelector('#more-actividades button');
+    if (moreAct && !moreAct.textContent.trim() && ui.ver_mas_activ) moreAct.textContent = ui.ver_mas_activ;
+
+    // Rellenar CTA sidebar
+    const ctaH3 = document.querySelector('#cta-register h3');
+    if (ctaH3 && !ctaH3.textContent.trim() && ui.cta_titulo) ctaH3.textContent = ui.cta_titulo;
+    const ctaBtns = document.querySelectorAll('#cta-register .btn');
+    if (ctaBtns[0] && !ctaBtns[0].textContent.trim() && ui.cta_register) ctaBtns[0].textContent = ui.cta_register;
+    if (ctaBtns[1] && !ctaBtns[1].textContent.trim() && ui.cta_login) ctaBtns[1].textContent = ui.cta_login;
+
+    // Rellenar botones guardar/añadir
+    const btnSave = document.getElementById('btn-save-event');
+    if (btnSave && !btnSave.textContent.trim() && ui.guardar) btnSave.textContent = ui.guardar;
+
+    // Rellenar suscripción
+    const subH3 = document.querySelector('.subscribe-card h3');
+    if (subH3 && !subH3.textContent.trim() && ui.suscripcion_titulo) subH3.textContent = ui.suscripcion_titulo;
+    const subBtn = document.querySelector('.subscribe-form button[type="submit"]');
+    if (subBtn && !subBtn.textContent.trim() && ui.suscripcion_btn) subBtn.textContent = ui.suscripcion_btn;
+
+    // Rellenar visitas/likes labels
+    const visitasEl = document.querySelector('#view-count + div');
+    if (visitasEl && !visitasEl.textContent.trim() && ui.visitas) visitasEl.textContent = ui.visitas;
+}
+
 // ─── INICIALIZACIÓN Y SCROLL OBSERVER ────────────────────────────────────────
 function init() {
+    // Rellenar etiquetas vacías (fallback para versiones antiguas del servidor)
+    _fillEmptyLabels();
+
     // Restaurar estado de guardado
     if (STATE.slug && localStorage.getItem(`saved_event_${STATE.slug}`)) {
         const btn = document.getElementById('btn-save-event');
