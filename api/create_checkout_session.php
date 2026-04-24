@@ -1,6 +1,6 @@
 <?php
 /**
- * API: Crear Sesión de Checkout de Stripe
+ * API: Crear Sesión de Checkout de Stripe (PRODUCCIÓN)
  * POST /api/create_checkout_session.php
  * 
  * Body: {
@@ -15,35 +15,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'config.php';
-
-// Intentar cargar configuración de Stripe, si falla entrar en modo simulado
-$stripeAvailable = false;
-try {
-    if (file_exists(__DIR__ . '/stripe_config.php')) {
-        require_once 'stripe_config.php';
-        // Verificar si Stripe está realmente configurado (no placeholders)
-        if (defined('STRIPE_SECRET_KEY') && STRIPE_SECRET_KEY !== 'sk_live_...') {
-            $stripeAvailable = true;
-        }
-    }
-} catch (Exception $e) {
-    error_log('Stripe config not available, using simulated mode: ' . $e->getMessage());
-    $stripeAvailable = false;
-}
-
-// Definir calculateVAT como fallback si no está definida en stripe_config.php
-if (!function_exists('calculateVAT')) {
-    function calculateVAT($amount, $countryCode = 'ES') {
-        $vat_rate = 21.00;
-        $vat_amount = ($amount * $vat_rate) / 100;
-        return [
-            'amount' => $amount,
-            'vat_rate' => $vat_rate,
-            'vat_amount' => $vat_amount,
-            'total' => $amount + $vat_amount
-        ];
-    }
-}
+require_once 'stripe_config.php';
 
 // Verificar autenticación
 if (!isset($_SESSION['user_id'])) {
@@ -63,11 +35,11 @@ try {
         jsonError('Datos incompletos. Se requieren plan_id y billing_cycle', 400);
     }
 
-    $userId = $_SESSION['user_id'];
-    $planId = (int)$data['plan_id'];
+    $userId    = $_SESSION['user_id'];
+    $planId    = (int)$data['plan_id'];
     $billingCycle = sanitizeInput($data['billing_cycle']);
-    $successUrl = isset($data['success_url']) ? sanitizeInput($data['success_url']) : 'https://rutasrurales.io/mi-cuenta.html?payment=success';
-    $cancelUrl = isset($data['cancel_url']) ? sanitizeInput($data['cancel_url']) : 'https://rutasrurales.io/mi-cuenta.html?payment=canceled';
+    $successUrl   = isset($data['success_url']) ? $data['success_url'] : 'https://rutasrurales.io/user-dashboard.html?payment=success';
+    $cancelUrl    = isset($data['cancel_url'])  ? $data['cancel_url']  : 'https://rutasrurales.io/user-dashboard.html?payment=canceled';
 
     // Validar billing_cycle
     if (!in_array($billingCycle, ['monthly', 'yearly'])) {
@@ -77,11 +49,7 @@ try {
     $pdo = getDBConnection();
 
     // Obtener información del usuario
-    $stmtUser = $pdo->prepare("
-        SELECT id, email, first_name, last_name 
-        FROM users 
-        WHERE id = ?
-    ");
+    $stmtUser = $pdo->prepare("SELECT id, email, first_name, last_name FROM users WHERE id = ?");
     $stmtUser->execute([$userId]);
     $user = $stmtUser->fetch();
 
@@ -93,27 +61,24 @@ try {
     $plan = null;
     try {
         $stmtPlan = $pdo->prepare("
-            SELECT id, name,
-                   price_monthly, price_yearly,
+            SELECT id, name, price_monthly, price_yearly, plan_type,
                    stripe_product_id, stripe_monthly_price_id, stripe_yearly_price_id
             FROM membership_plans
-            WHERE id = ?
+            WHERE id = ? AND status = 'active'
         ");
         $stmtPlan->execute([$planId]);
         $plan = $stmtPlan->fetch();
     } catch (PDOException $e) {
-        // Si la tabla no existe, usar plan por defecto
         error_log('create_checkout_session.php: Tabla membership_plans no disponible: ' . $e->getMessage());
     }
 
+    // Planes por defecto si la tabla no existe o no se encontró el plan
     if (!$plan) {
-        // Planes por defecto si la tabla no existe
         $defaultPlans = [
-            1 => ['id' => 1, 'name' => 'Gratuito Alojamiento', 'price_monthly' => 0, 'price_yearly' => 0, 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null],
-            2 => ['id' => 2, 'name' => 'Básico Alojamiento', 'price_monthly' => 10.00, 'price_yearly' => 50.00, 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null],
-            3 => ['id' => 3, 'name' => 'Premium Alojamiento', 'price_monthly' => 10.00, 'price_yearly' => 100.00, 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null]
+            1 => ['id' => 1, 'name' => 'Gratuito',           'price_monthly' => 0,     'price_yearly' => 0,     'plan_type' => 'alojamiento', 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null],
+            2 => ['id' => 2, 'name' => 'Básico Alojamiento',  'price_monthly' => 10.00, 'price_yearly' => 50.00, 'plan_type' => 'alojamiento', 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null],
+            3 => ['id' => 3, 'name' => 'Premium Alojamiento', 'price_monthly' => 10.00, 'price_yearly' => 100.00,'plan_type' => 'alojamiento', 'stripe_product_id' => null, 'stripe_monthly_price_id' => null, 'stripe_yearly_price_id' => null],
         ];
-        
         if (isset($defaultPlans[$planId])) {
             $plan = $defaultPlans[$planId];
         } else {
@@ -122,123 +87,130 @@ try {
     }
 
     // Determinar precio según ciclo de facturación
-    $price = ($billingCycle === 'monthly') ? $plan['price_monthly'] : $plan['price_yearly'];
-    
+    $price = ($billingCycle === 'monthly') ? (float)$plan['price_monthly'] : (float)$plan['price_yearly'];
+
     if ($price <= 0) {
         jsonError('Este plan es gratuito, no requiere pago', 400);
     }
 
     // Calcular precios con IVA
     $vatCalculation = calculateVAT($price);
-    $priceWithVAT = $vatCalculation['total'];
+    $priceWithVAT   = $vatCalculation['total'];
 
-    // Crear sesión de checkout
+    // Metadata para Stripe y para nuestra BD
     $metadata = [
-        'user_id' => $userId,
-        'plan_id' => $planId,
-        'plan_name' => $plan['name'],
-        'plan_type' => 'alojamiento',
-        'billing_cycle' => $billingCycle,
-        'price_without_vat' => $price,
-        'vat_rate' => $vatCalculation['vat_rate'],
-        'price_with_vat' => $priceWithVAT
+        'user_id'          => (string)$userId,
+        'plan_id'          => (string)$planId,
+        'plan_name'        => $plan['name'],
+        'plan_type'        => $plan['plan_type'] ?? 'alojamiento',
+        'billing_cycle'    => $billingCycle,
+        'price_without_vat'=> (string)$price,
+        'vat_rate'         => (string)$vatCalculation['vat_rate'],
+        'price_with_vat'   => (string)$priceWithVAT,
     ];
 
-    // Intentar crear sesión de Stripe
-    $stripePriceId = null;
-    
-    // Primero intentar con los IDs de la base de datos
-    $stripePriceId = ($billingCycle === 'monthly') ? $plan['stripe_monthly_price_id'] : $plan['stripe_yearly_price_id'];
-    
-    // Si no hay IDs en BD, intentar con configuración global
-    if (empty($stripePriceId)) {
-        global $stripe_price_ids;
-        $priceKey = strtolower($plan['name']) . '-alojamiento-' . ($billingCycle === 'monthly' ? 'mensual' : 'anual');
-        if (isset($stripe_price_ids[$priceKey])) {
-            $stripePriceId = $stripe_price_ids[$priceKey];
-        }
-    }
+    // ============================================================
+    // CREAR SESIÓN REAL DE STRIPE
+    // ============================================================
 
-    // Verificar si Stripe está realmente configurado
-    $stripeAvailable = false;
-    if (defined('STRIPE_SECRET_KEY') && STRIPE_SECRET_KEY !== 'sk_live_...' && !empty(STRIPE_SECRET_KEY)) {
-        $stripeAvailable = true;
-    }
+    // Determinar modo: suscripción o pago único
+    $planType = $plan['plan_type'] ?? 'alojamiento';
+    $isOneTime = ($planType === 'apoyo_plataforma');
+    $stripeMode = $isOneTime ? 'payment' : 'subscription';
 
-    if (!empty($stripePriceId) && $stripeAvailable && function_exists('createCheckoutSession')) {
-        // Crear sesión real de Stripe
-        $checkoutSession = createCheckoutSession(
-            $user['email'],
-            $stripePriceId,
-            $successUrl,
-            $cancelUrl,
-            $metadata
-        );
+    // Construir line_items
+    // Si el plan tiene un price_id de Stripe en BD, usarlo directamente
+    $stripePriceId = ($billingCycle === 'monthly')
+        ? ($plan['stripe_monthly_price_id'] ?? null)
+        : ($plan['stripe_yearly_price_id'] ?? null);
 
-        if (!$checkoutSession) {
-            jsonError('Error al crear la sesión de pago', 500);
-        }
-        
-        $sessionId = $checkoutSession->id;
-        $checkoutUrl = $checkoutSession->url;
+    if (!empty($stripePriceId) && strpos($stripePriceId, 'price_') === 0 && strlen($stripePriceId) > 10) {
+        // Usar price_id existente de Stripe
+        $lineItems = [[
+            'price'    => $stripePriceId,
+            'quantity' => 1,
+        ]];
     } else {
-        // Modo simulado: generar URLs de prueba
-        $sessionId = 'cs_test_' . bin2hex(random_bytes(16));
-        // En modo simulado, redirigir a una página de prueba que simula Stripe
-        // Usar URL base del sitio actual
-        $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
-        $checkoutUrl = $baseUrl . '/simulated-checkout.html?session_id=' . $sessionId . 
-                       '&plan_id=' . $planId . 
-                       '&billing_cycle=' . $billingCycle . 
-                       '&plan_name=' . urlencode($plan['name']) . 
-                       '&amount=' . $price . 
-                       '&total_amount=' . $priceWithVAT . 
-                       '&success_url=' . urlencode($successUrl) . 
-                       '&cancel_url=' . urlencode($cancelUrl);
+        // Crear precio inline (price_data) — no requiere crear productos en Stripe previamente
+        $billingLabel = ($billingCycle === 'monthly') ? 'mensual' : 'anual';
+        $lineItems = [[
+            'name'        => $plan['name'] . ' (' . $billingLabel . ')',
+            'description' => 'Membresía Rutas Rurales - ' . $plan['name'] . ' - Facturación ' . $billingLabel . ' (IVA incluido)',
+            'unit_amount' => (int)round($priceWithVAT * 100), // en céntimos
+            'currency'    => 'eur',
+            'interval'    => ($billingCycle === 'monthly') ? 'month' : 'year',
+            'quantity'    => 1,
+        ]];
     }
 
-    // Registrar la intención de pago en la base de datos (si la tabla existe)
+    // Añadir session_id a las URLs de retorno para poder verificar el pago
+    $successUrlWithSession = $successUrl . (strpos($successUrl, '?') !== false ? '&' : '?') . 'session_id={CHECKOUT_SESSION_ID}';
+
+    // Llamar a Stripe
+    $stripeSession = createStripeCheckoutSession(
+        $user['email'],
+        $lineItems,
+        $stripeMode,
+        $successUrlWithSession,
+        $cancelUrl,
+        $metadata
+    );
+
+    if (!$stripeSession || isset($stripeSession['error'])) {
+        $errorMsg = isset($stripeSession['error']['message']) ? $stripeSession['error']['message'] : 'Error al conectar con Stripe';
+        error_log('create_checkout_session.php: Stripe error: ' . $errorMsg);
+        jsonError('Error al crear la sesión de pago con Stripe: ' . $errorMsg, 500);
+    }
+
+    $sessionId   = $stripeSession['id'];
+    $checkoutUrl = $stripeSession['url'];
+
+    // ============================================================
+    // REGISTRAR INTENCIÓN DE PAGO EN BD
+    // ============================================================
     try {
         $stmtIntent = $pdo->prepare("
-            INSERT INTO payment_intents 
-            (user_id, plan_id, stripe_session_id, stripe_price_id, 
+            INSERT INTO payment_intents
+            (user_id, plan_id, stripe_session_id, stripe_price_id,
              amount, vat_amount, total_amount, billing_cycle, status, metadata)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
         ");
-        
         $stmtIntent->execute([
             $userId,
             $planId,
             $sessionId,
-            $stripePriceId ?: 'price_simulated',
+            $stripePriceId ?: 'price_inline',
             $price,
             $vatCalculation['vat_amount'],
             $priceWithVAT,
             $billingCycle,
-            json_encode($metadata)
+            json_encode($metadata),
         ]);
     } catch (PDOException $e) {
-        // Si la tabla no existe, continuar sin registrar
+        // No bloquear el flujo si la tabla no existe
         error_log('create_checkout_session.php: No se pudo registrar payment_intent: ' . $e->getMessage());
     }
 
-    // Respuesta exitosa
+    // ============================================================
+    // RESPUESTA EXITOSA
+    // ============================================================
     jsonSuccess([
-        'session_id' => $sessionId,
+        'session_id'   => $sessionId,
         'checkout_url' => $checkoutUrl,
-        'plan_name' => $plan['name'],
-        'billing_cycle' => $billingCycle,
-        'amount' => $price,
-        'vat_amount' => $vatCalculation['vat_amount'],
+        'plan_name'    => $plan['name'],
+        'billing_cycle'=> $billingCycle,
+        'amount'       => $price,
+        'vat_amount'   => $vatCalculation['vat_amount'],
         'total_amount' => $priceWithVAT,
-        'currency' => 'EUR',
-        'expires_at' => date('c', strtotime('+1 hour')),
-        'metadata' => $metadata
+        'currency'     => 'EUR',
+        'expires_at'   => date('c', strtotime('+24 hours')),
+        'metadata'     => $metadata,
+        'mode'         => 'live', // ya no es simulado
     ], 'Sesión de pago creada correctamente');
 
 } catch (PDOException $e) {
-    error_log('create_checkout_session.php Error: ' . $e->getMessage());
-    jsonError('Error al crear sesión de pago: ' . $e->getMessage(), 500);
+    error_log('create_checkout_session.php PDO Error: ' . $e->getMessage());
+    jsonError('Error de base de datos: ' . $e->getMessage(), 500);
 } catch (Exception $e) {
     error_log('create_checkout_session.php General Error: ' . $e->getMessage());
     jsonError('Error: ' . $e->getMessage(), 500);

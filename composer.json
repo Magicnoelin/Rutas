@@ -1,0 +1,10 @@
+{
+    "name": "rutasrurales/web",
+    "description": "Rutas Rurales - Sistema de membresías con Stripe",
+    "require": {
+        "stripe/stripe-php": "^13.0"
+    },
+    "config": {
+        "vendor-dir": "vendor"
+    }
+}
