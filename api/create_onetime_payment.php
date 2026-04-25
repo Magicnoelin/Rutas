@@ -143,6 +143,11 @@ try {
         // No bloquear el flujo
     }
 
+    // Nota: el email de agradecimiento se envía desde stripe_webhook.php
+    // cuando Stripe confirma el pago via checkout.session.completed
+    // El webhook llama a sendThankYouEmail() con el email del cliente
+    // que Stripe proporciona en $session['customer_email']
+
     jsonSuccess([
         'session_id'    => $sessionId,
         'checkout_url'  => $checkoutUrl,

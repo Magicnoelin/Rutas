@@ -91,7 +91,45 @@ function handleCheckoutCompleted($session) {
         $pi = $stmt->fetch();
 
         if (!$pi) {
-            error_log('Webhook: payment_intent no encontrado para session: ' . $sessionId);
+            // Puede ser un pago único (plan_id = NULL) — buscar sin JOIN a membership_plans
+            $stmtOt = $pdo->prepare("
+                SELECT pi.*, u.email, u.first_name, u.last_name
+                FROM payment_intents pi
+                JOIN users u ON u.id = pi.user_id
+                WHERE pi.stripe_session_id = ? AND pi.status = 'pending' AND pi.plan_id IS NULL
+            ");
+            $stmtOt->execute([$sessionId]);
+            $piOt = $stmtOt->fetch();
+
+            if ($piOt) {
+                // Pago único: solo marcar completado, registrar en payments y enviar email
+                $meta = json_decode($piOt['metadata'], true);
+                $conceptName = $meta['concept_name'] ?? 'Contribución';
+                $customerEmail = $session['customer_email'] ?? $piOt['email'];
+
+                $pdo->prepare("UPDATE payment_intents SET status='completed', completed_at=CURRENT_TIMESTAMP WHERE stripe_session_id=?")->execute([$sessionId]);
+
+                $pdo->prepare("
+                    INSERT INTO payments (user_id, transaction_id, gateway_transaction_id, gateway_name,
+                        amount, currency, tax_amount, total_amount, status, payment_type,
+                        description, metadata, completed_at)
+                    VALUES (?, ?, ?, 'stripe', ?, 'EUR', ?, ?, 'completed', 'subscription', ?, ?, CURRENT_TIMESTAMP)
+                ")->execute([
+                    $piOt['user_id'],
+                    'stripe_' . $sessionId,
+                    $session['payment_intent'] ?? null,
+                    (float)$piOt['amount'],
+                    (float)$piOt['vat_amount'],
+                    (float)$piOt['total_amount'],
+                    $conceptName,
+                    json_encode(['stripe_session_id' => $sessionId, 'concept' => $meta]),
+                ]);
+
+                sendThankYouEmail($customerEmail, $piOt['first_name'] ?? '', $conceptName, (float)$piOt['total_amount'], 'one_time');
+                error_log("Webhook: pago único completado. concept=$conceptName total=" . $piOt['total_amount'] . "€");
+            } else {
+                error_log('Webhook: payment_intent no encontrado para session: ' . $sessionId);
+            }
             return;
         }
 
@@ -202,6 +240,9 @@ function handleCheckoutCompleted($session) {
             $stripeInvoiceId, $stripePaymentIntent, $customerEmail,
             $pi
         );
+
+        // 10. Email de agradecimiento automático
+        sendThankYouEmail($customerEmail, $pi['first_name'] ?? '', $planName, $totalAmount, 'subscription', $billingCycle);
 
         error_log("Webhook: pago completado. user=$userId plan=$planName total={$totalAmount}€");
 
@@ -539,5 +580,99 @@ function createInvoiceComplete(
         error_log('createInvoiceComplete error: ' . $e->getMessage());
         return null;
     }
+}
+
+// ============================================================
+// HELPER: Email de agradecimiento automático
+// Se envía al cliente tras cualquier pago completado.
+// Stripe proporciona el email del cliente en checkout.session.completed
+// ============================================================
+function sendThankYouEmail($toEmail, $firstName, $conceptName, $totalAmount, $paymentType = 'one_time', $billingCycle = '') {
+    if (empty($toEmail) || !filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+        error_log('sendThankYouEmail: email inválido o vacío: ' . $toEmail);
+        return false;
+    }
+
+    $name = !empty($firstName) ? $firstName : 'amigo/a';
+
+    // Mensaje según tipo de pago
+    if ($paymentType === 'subscription') {
+        $cycleLabel = ($billingCycle === 'monthly') ? 'mensual' : 'anual';
+        $bodyText = "Tu membresía <strong>{$conceptName}</strong> (facturación {$cycleLabel}) está activa.\n"
+                  . "Ahora puedes publicar y gestionar tus alojamientos en Rutas Rurales.";
+        $subject  = "✅ Tu membresía en Rutas Rurales está activa";
+        $ctaText  = "Ir a mi panel";
+        $ctaUrl   = "https://rutasrurales.io/user-dashboard.html";
+    } else {
+        // Pago único (café, apoyo, negocio...)
+        $bodyText = "Hemos recibido tu contribución de <strong>" . number_format($totalAmount, 2) . "€</strong>.\n"
+                  . "Cada aportación, por pequeña que sea, nos ayuda a mantener y mejorar la plataforma.";
+        $subject  = "☕ ¡Gracias por apoyar Rutas Rurales!";
+        $ctaText  = "Visitar Rutas Rurales";
+        $ctaUrl   = "https://rutasrurales.io/apoyar.html";
+    }
+
+    $html = '<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f8faf8;font-family:Segoe UI,system-ui,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f8faf8;padding:40px 20px;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(47,82,51,.10);max-width:600px;width:100%;">
+      <!-- HEADER -->
+      <tr><td style="background:linear-gradient(135deg,#2f5233,#4a7c59);padding:40px 40px 30px;text-align:center;">
+        <div style="font-size:3rem;margin-bottom:12px;">🌿</div>
+        <h1 style="color:#fff;margin:0;font-size:1.6rem;font-weight:800;">Rutas Rurales</h1>
+        <p style="color:rgba(255,255,255,.85);margin:8px 0 0;font-size:.95rem;">Turismo rural sostenible</p>
+      </td></tr>
+      <!-- BODY -->
+      <tr><td style="padding:40px;">
+        <h2 style="color:#2f5233;margin:0 0 16px;font-size:1.3rem;">¡Hola, ' . htmlspecialchars($name) . '! 🎉</h2>
+        <p style="color:#555;line-height:1.7;margin:0 0 20px;">' . $bodyText . '</p>
+        <!-- IMPORTE -->
+        <div style="background:#f8faf8;border-radius:12px;padding:20px;text-align:center;margin:24px 0;">
+          <p style="margin:0;color:#888;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;">Importe pagado</p>
+          <p style="margin:8px 0 0;color:#2f5233;font-size:2rem;font-weight:800;">' . number_format($totalAmount, 2) . '€</p>
+          <p style="margin:4px 0 0;color:#aaa;font-size:.8rem;">IVA incluido · Pago seguro via Stripe</p>
+        </div>
+        <!-- CTA -->
+        <div style="text-align:center;margin:28px 0;">
+          <a href="' . $ctaUrl . '" style="display:inline-block;background:#2f5233;color:#fff;text-decoration:none;padding:14px 36px;border-radius:30px;font-weight:700;font-size:1rem;">' . $ctaText . '</a>
+        </div>
+        <p style="color:#888;font-size:.85rem;line-height:1.6;margin:0;">
+          Si tienes alguna pregunta, escríbenos a 
+          <a href="mailto:olgamarin@rutasrurales.io" style="color:#2f5233;">olgamarin@rutasrurales.io</a>
+        </p>
+      </td></tr>
+      <!-- FOOTER -->
+      <tr><td style="background:#f8faf8;padding:24px 40px;text-align:center;border-top:1px solid #e0e8e0;">
+        <p style="margin:0;color:#aaa;font-size:.8rem;">
+          © ' . date('Y') . ' rutasrurales.io · 
+          <a href="https://rutasrurales.io/aviso-legal.html" style="color:#aaa;">Aviso Legal</a>
+        </p>
+        <p style="margin:6px 0 0;color:#ccc;font-size:.75rem;">
+          Este email se envió porque realizaste un pago en rutasrurales.io
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>';
+
+    $headers  = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $headers .= "From: Rutas Rurales <noreply@rutasrurales.io>\r\n";
+    $headers .= "Reply-To: olgamarin@rutasrurales.io\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+
+    $sent = mail($toEmail, $subject, $html, $headers);
+
+    if ($sent) {
+        error_log("Email de agradecimiento enviado a: $toEmail");
+    } else {
+        error_log("Error al enviar email de agradecimiento a: $toEmail");
+    }
+
+    return $sent;
 }
 ?>
