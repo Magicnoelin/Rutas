@@ -1,8 +1,17 @@
 <?php
 /**
- * Webhook de Stripe para procesar pagos y actualizar membresías
+ * Webhook de Stripe — Rutas Rurales
  * POST /api/stripe_webhook.php
- * 
+ *
+ * Usa las tablas reales del sistema de facturación:
+ *   payment_intents  → intención de pago (ya existe con id=21)
+ *   billing_profiles → datos fiscales del cliente
+ *   subscriptions    → suscripción activa
+ *   billing_concepts → catálogo de productos
+ *   invoices         → documento legal
+ *   invoice_items    → líneas de la factura
+ *   payments         → cobro real registrado
+ *
  * Configurar en: https://dashboard.stripe.com/webhooks
  * URL: https://rutasrurales.io/api/stripe_webhook.php
  * Eventos: checkout.session.completed, invoice.paid,
@@ -18,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit('Method not allowed');
 }
 
-// Leer payload raw (antes de cualquier procesamiento)
+// Leer payload raw
 $payload   = file_get_contents('php://input');
 $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
 
@@ -31,7 +40,7 @@ if (STRIPE_WEBHOOK_SECRET !== 'whsec_PENDIENTE_CONFIGURAR_EN_STRIPE_DASHBOARD') 
     }
 }
 
-// Decodificar evento (array asociativo)
+// Decodificar evento
 $event = json_decode($payload, true);
 if (!$event || !isset($event['type'])) {
     http_response_code(400);
@@ -40,10 +49,9 @@ if (!$event || !isset($event['type'])) {
 
 error_log('Stripe webhook recibido: ' . $event['type']);
 
-// Procesar según tipo de evento
 switch ($event['type']) {
     case 'checkout.session.completed':
-        handleSuccessfulPayment($event['data']['object']);
+        handleCheckoutCompleted($event['data']['object']);
         break;
     case 'invoice.paid':
         handleInvoicePaid($event['data']['object']);
@@ -61,442 +69,475 @@ switch ($event['type']) {
 http_response_code(200);
 exit('OK');
 
-// ============================================
-// FUNCIONES DE MANEJO DE WEBHOOK
-// Nota: $session, $invoice, $subscription son arrays asociativos
-// ============================================
-
-/**
- * Manejar pago exitoso (checkout.session.completed)
- */
-function handleSuccessfulPayment($session) {
+// ============================================================
+// HANDLER: checkout.session.completed
+// ============================================================
+function handleCheckoutCompleted($session) {
     $pdo = getDBConnection();
 
     try {
         $sessionId = $session['id'] ?? '';
 
-        // Buscar la intención de pago por session_id
+        // 1. Buscar el payment_intent pendiente
         $stmt = $pdo->prepare("
-            SELECT * FROM payment_intents
-            WHERE stripe_session_id = ? AND status = 'pending'
+            SELECT pi.*, mp.name AS plan_name, mp.plan_type,
+                   u.email, u.first_name, u.last_name
+            FROM payment_intents pi
+            JOIN membership_plans mp ON mp.id = pi.plan_id
+            JOIN users u ON u.id = pi.user_id
+            WHERE pi.stripe_session_id = ? AND pi.status = 'pending'
         ");
         $stmt->execute([$sessionId]);
-        $paymentIntent = $stmt->fetch();
+        $pi = $stmt->fetch();
 
-        if (!$paymentIntent) {
-            error_log('Payment intent not found for session: ' . $sessionId);
+        if (!$pi) {
+            error_log('Webhook: payment_intent no encontrado para session: ' . $sessionId);
             return;
         }
 
-        $userId = $paymentIntent['user_id'];
-        $planId = $paymentIntent['plan_id'];
+        $userId       = $pi['user_id'];
+        $planId       = $pi['plan_id'];
+        $billingCycle = $pi['billing_cycle'];
+        $amount       = (float)$pi['amount'];       // sin IVA
+        $vatAmount    = (float)$pi['vat_amount'];   // IVA
+        $totalAmount  = (float)$pi['total_amount']; // total con IVA
+        $planName     = $pi['plan_name'];
+        $planType     = $pi['plan_type'];
 
-        // Obtener información del plan
-        $stmtPlan = $pdo->prepare("SELECT * FROM membership_plans WHERE id = ?");
-        $stmtPlan->execute([$planId]);
-        $plan = $stmtPlan->fetch();
+        $stripeCustomerId    = $session['customer']     ?? null;
+        $stripeSubId         = $session['subscription'] ?? null;
+        $stripeInvoiceId     = $session['invoice']      ?? null;
+        $stripePaymentIntent = $session['payment_intent'] ?? null;
+        $customerEmail       = $session['customer_email'] ?? $pi['email'];
 
-        if (!$plan) {
-            error_log('Plan not found for payment: ' . $planId);
-            return;
-        }
+        // 2. Obtener o crear billing_profile del usuario
+        $billingProfileId = getOrCreateBillingProfile($pdo, $userId, $pi);
 
-        // Determinar fechas de la suscripción
-        $startDate = date('Y-m-d');
-        if ($plan['plan_type'] === 'apoyo_plataforma') {
-            $endDate = date('Y-m-d', strtotime('+1 year'));
-        } elseif ($paymentIntent['billing_cycle'] === 'monthly') {
-            $endDate = date('Y-m-d', strtotime('+1 month'));
-        } else {
-            $endDate = date('Y-m-d', strtotime('+1 year'));
-        }
+        // 3. Obtener o crear billing_concept para este plan
+        $billingConceptId = getOrCreateBillingConcept($pdo, $planId, $planName, $amount, $billingCycle);
 
-        $stripeSubscriptionId = $session['subscription'] ?? null;
-        $stripeCustomerId     = $session['customer'] ?? null;
-        $stripeInvoiceId      = $session['invoice'] ?? null;
-        $paymentStatus        = $session['payment_status'] ?? 'paid';
-        $customerEmail        = $session['customer_email'] ?? null;
-        $paymentIntentId      = $session['payment_intent'] ?? null;
+        // 4. Calcular fechas de suscripción
+        $startDate       = date('Y-m-d');
+        $nextBillingDate = ($billingCycle === 'monthly')
+            ? date('Y-m-d', strtotime('+1 month'))
+            : date('Y-m-d', strtotime('+1 year'));
+        $endDate = $nextBillingDate;
 
-        // Crear o actualizar suscripción
+        // 5. Crear suscripción en tabla `subscriptions`
         $stmtSub = $pdo->prepare("
-            INSERT INTO user_subscriptions
-            (user_id, plan_id, plan_name, billing_cycle, price, vat_amount, total_amount,
-             currency, stripe_subscription_id, stripe_customer_id, stripe_invoice_id,
-             start_date, end_date, next_billing_date, status, metadata)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)
-            ON DUPLICATE KEY UPDATE
-            plan_id = VALUES(plan_id),
-            plan_name = VALUES(plan_name),
-            billing_cycle = VALUES(billing_cycle),
-            price = VALUES(price),
-            vat_amount = VALUES(vat_amount),
-            total_amount = VALUES(total_amount),
-            stripe_subscription_id = VALUES(stripe_subscription_id),
-            stripe_customer_id = VALUES(stripe_customer_id),
-            stripe_invoice_id = VALUES(stripe_invoice_id),
-            end_date = VALUES(end_date),
-            next_billing_date = VALUES(next_billing_date),
-            status = 'active',
-            updated_at = CURRENT_TIMESTAMP
+            INSERT INTO subscriptions
+                (billing_profile_id, billing_concept_id, billing_cycle,
+                 start_date, next_billing_date, end_date, active)
+            VALUES (?, ?, ?, ?, ?, ?, 1)
         ");
-
         $stmtSub->execute([
-            $userId,
-            $planId,
-            $plan['name'],
-            $paymentIntent['billing_cycle'],
-            $paymentIntent['amount'],
-            $paymentIntent['vat_amount'],
-            $paymentIntent['total_amount'],
-            'EUR',
-            $stripeSubscriptionId,
-            $stripeCustomerId,
-            $stripeInvoiceId,
+            $billingProfileId,
+            $billingConceptId,
+            $billingCycle,
             $startDate,
+            $nextBillingDate,
             $endDate,
-            $endDate,
-            json_encode([
-                'stripe_session_id'  => $sessionId,
-                'payment_intent_id'  => $paymentIntentId,
-                'customer_email'     => $customerEmail,
-                'payment_status'     => $paymentStatus,
-            ]),
         ]);
+        $subscriptionId = $pdo->lastInsertId();
 
-        // Actualizar usuario con información de membresía
-        $membershipType = $plan['plan_type'] . '_' . strtolower(str_replace(' ', '-', $plan['name']));
-
-        $stmtUser = $pdo->prepare("
+        // 6. Actualizar users con datos de membresía y Stripe
+        $membershipType = strtolower(str_replace(' ', '_', $planName));
+        $pdo->prepare("
             UPDATE users
-            SET membership_type = ?,
-                membership_status = 'active',
-                membership_start_date = ?,
-                membership_end_date = ?,
-                stripe_customer_id = ?,
-                stripe_subscription_id = ?
+            SET membership_type         = ?,
+                membership_status       = 'active',
+                membership_start_date   = ?,
+                membership_end_date     = ?,
+                stripe_customer_id      = ?,
+                stripe_subscription_id  = ?,
+                updated_at              = CURRENT_TIMESTAMP
             WHERE id = ?
-        ");
-        $stmtUser->execute([
-            $membershipType,
-            $startDate,
-            $endDate,
-            $stripeCustomerId,
-            $stripeSubscriptionId,
-            $userId,
-        ]);
+        ")->execute([$membershipType, $startDate, $endDate, $stripeCustomerId, $stripeSubId, $userId]);
 
-        // Actualizar estado del payment intent
-        $stmtUpdate = $pdo->prepare("
+        // 7. Marcar payment_intent como completado
+        $pdo->prepare("
             UPDATE payment_intents
-            SET status = 'completed',
-                completed_at = CURRENT_TIMESTAMP,
-                metadata = ?
-            WHERE id = ?
-        ");
-        $stmtUpdate->execute([
-            json_encode([
-                'stripe_customer_id'      => $stripeCustomerId,
-                'stripe_subscription_id'  => $stripeSubscriptionId,
-                'stripe_invoice_id'       => $stripeInvoiceId,
-                'payment_status'          => $paymentStatus,
-            ]),
-            $paymentIntent['id'],
-        ]);
+            SET status = 'completed', completed_at = CURRENT_TIMESTAMP
+            WHERE stripe_session_id = ?
+        ")->execute([$sessionId]);
 
-        // Crear factura
-        createInvoice($userId, $paymentIntent['id'], $session);
-
-        error_log('Payment processed successfully for user: ' . $userId . ', plan: ' . $plan['name']);
-
-    } catch (PDOException $e) {
-        error_log('Database error in handleSuccessfulPayment: ' . $e->getMessage());
-    }
-}
-
-/**
- * Manejar factura pagada (invoice.paid) — renovaciones automáticas
- */
-function handleInvoicePaid($invoice) {
-    $pdo = getDBConnection();
-
-    try {
-        $subscriptionId = $invoice['subscription'] ?? null;
-        if (!$subscriptionId) return;
-
-        $stmt = $pdo->prepare("
-            SELECT * FROM user_subscriptions
-            WHERE stripe_subscription_id = ? AND status = 'active'
-        ");
-        $stmt->execute([$subscriptionId]);
-        $subscription = $stmt->fetch();
-
-        if (!$subscription) {
-            error_log('Subscription not found for invoice: ' . ($invoice['id'] ?? ''));
-            return;
-        }
-
-        $newEndDate = date('Y-m-d', strtotime('+' . ($subscription['billing_cycle'] === 'monthly' ? '1 month' : '1 year')));
-
-        $stmtUpdate = $pdo->prepare("
-            UPDATE user_subscriptions
-            SET end_date = ?,
-                next_billing_date = ?,
-                stripe_invoice_id = ?,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        ");
-        $stmtUpdate->execute([$newEndDate, $newEndDate, $invoice['id'] ?? null, $subscription['id']]);
-
-        $stmtUser = $pdo->prepare("
-            UPDATE users
-            SET membership_end_date = ?, updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        ");
-        $stmtUser->execute([$newEndDate, $subscription['user_id']]);
-
-        createInvoiceFromStripeInvoice($subscription['user_id'], $subscription['id'], $invoice);
-
-        error_log('Invoice paid and subscription renewed: ' . ($invoice['id'] ?? ''));
-
-    } catch (PDOException $e) {
-        error_log('Database error in handleInvoicePaid: ' . $e->getMessage());
-    }
-}
-
-/**
- * Manejar pago fallido (invoice.payment_failed)
- */
-function handlePaymentFailed($invoice) {
-    $pdo = getDBConnection();
-
-    try {
-        $subscriptionId = $invoice['subscription'] ?? null;
-        if (!$subscriptionId) return;
-
-        $stmt = $pdo->prepare("
-            SELECT * FROM user_subscriptions
-            WHERE stripe_subscription_id = ? AND status = 'active'
-        ");
-        $stmt->execute([$subscriptionId]);
-        $subscription = $stmt->fetch();
-
-        if (!$subscription) return;
-
-        $pdo->prepare("UPDATE user_subscriptions SET status = 'past_due', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
-            ->execute([$subscription['id']]);
-
-        $pdo->prepare("UPDATE users SET membership_status = 'past_due', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
-            ->execute([$subscription['user_id']]);
-
-        $lastError = $invoice['last_payment_error']['message'] ?? 'Unknown';
-
-        $stmtLog = $pdo->prepare("
-            INSERT INTO payment_failures
-            (user_id, subscription_id, stripe_invoice_id, amount, failure_reason, metadata)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-        $stmtLog->execute([
-            $subscription['user_id'],
-            $subscription['id'],
-            $invoice['id'] ?? null,
-            ($invoice['amount_due'] ?? 0) / 100,
-            $lastError,
-            json_encode($invoice),
-        ]);
-
-        error_log('Payment failed for subscription: ' . $subscription['id']);
-
-    } catch (PDOException $e) {
-        error_log('Database error in handlePaymentFailed: ' . $e->getMessage());
-    }
-}
-
-/**
- * Manejar suscripción cancelada (customer.subscription.deleted)
- */
-function handleSubscriptionCancelled($subscription) {
-    $pdo = getDBConnection();
-
-    try {
-        $stripeSubId = $subscription['id'] ?? null;
-        if (!$stripeSubId) return;
-
-        $stmt = $pdo->prepare("
-            SELECT * FROM user_subscriptions
-            WHERE stripe_subscription_id = ? AND status IN ('active', 'past_due')
-        ");
-        $stmt->execute([$stripeSubId]);
-        $userSubscription = $stmt->fetch();
-
-        if (!$userSubscription) return;
-
+        // 8. Registrar cobro en tabla `payments`
+        $transactionId = 'stripe_' . $sessionId;
         $pdo->prepare("
-            UPDATE user_subscriptions
-            SET status = 'canceled', canceled_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        ")->execute([$userSubscription['id']]);
-
-        $pdo->prepare("
-            UPDATE users
-            SET membership_type = 'free', membership_status = 'expired',
-                membership_end_date = CURRENT_TIMESTAMP, stripe_subscription_id = NULL,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        ")->execute([$userSubscription['user_id']]);
-
-        error_log('Subscription cancelled: ' . $stripeSubId . ' for user: ' . $userSubscription['user_id']);
-
-    } catch (PDOException $e) {
-        error_log('Database error in handleSubscriptionCancelled: ' . $e->getMessage());
-    }
-}
-
-/**
- * Crear factura en la base de datos tras checkout.session.completed
- */
-function createInvoice($userId, $paymentIntentDbId, $session) {
-    $pdo = getDBConnection();
-
-    try {
-        // Datos de facturación del usuario
-        $stmtUser = $pdo->prepare("
-            SELECT billing_name, billing_nif, billing_address, billing_email,
-                   billing_city, billing_postal_code, billing_country,
-                   first_name, last_name, email
-            FROM users WHERE id = ?
-        ");
-        $stmtUser->execute([$userId]);
-        $user = $stmtUser->fetch();
-
-        $billingName    = !empty($user['billing_name'])    ? $user['billing_name']    : trim(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''));
-        $billingEmail   = !empty($user['billing_email'])   ? $user['billing_email']   : ($user['email'] ?? '');
-        $billingAddress = !empty($user['billing_address']) ? $user['billing_address'] : 'Dirección no especificada';
-        $billingNif     = $user['billing_nif'] ?? null;
-
-        // Datos del payment intent
-        $stmtPayment = $pdo->prepare("SELECT * FROM payment_intents WHERE id = ?");
-        $stmtPayment->execute([$paymentIntentDbId]);
-        $payment = $stmtPayment->fetch();
-        if (!$payment) return;
-
-        $invoiceNumber = generateInvoiceNumber($userId);
-        $metaDecoded   = json_decode($payment['metadata'], true);
-        $description   = 'Membresía: ' . ($metaDecoded['plan_name'] ?? 'Plan') . ' (' . $payment['billing_cycle'] . ')';
-
-        $stmtInvoice = $pdo->prepare("
-            INSERT INTO invoices
-            (subscription_id, user_id, invoice_number, invoice_date, due_date,
-             subtotal, vat_rate, vat_amount, total_amount,
-             stripe_invoice_id, stripe_payment_intent_id, stripe_receipt_url,
-             payment_status, paid_at,
-             billing_name, billing_nif, billing_address, billing_email,
-             description, metadata)
-            VALUES (NULL, ?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 30 DAY),
-                    ?, 21.00, ?, ?,
-                    ?, ?, ?,
-                    'paid', CURRENT_TIMESTAMP,
-                    ?, ?, ?, ?,
-                    ?, ?)
-        ");
-        $stmtInvoice->execute([
+            INSERT INTO payments
+                (user_id, transaction_id, gateway_transaction_id, gateway_name,
+                 amount, currency, tax_amount, total_amount,
+                 status, payment_type, reference_type, reference_id,
+                 description, metadata, completed_at)
+            VALUES (?, ?, ?, 'stripe',
+                    ?, 'EUR', ?, ?,
+                    'completed', 'subscription', 'subscriptions', ?,
+                    ?, ?, CURRENT_TIMESTAMP)
+        ")->execute([
             $userId,
-            $invoiceNumber,
-            $payment['amount'],
-            $payment['vat_amount'],
-            $payment['total_amount'],
-            $session['invoice'] ?? null,
-            $session['payment_intent'] ?? null,
-            null, // receipt_url no disponible en checkout session
-            $billingName,
-            $billingNif,
-            $billingAddress,
-            $billingEmail,
-            $description,
-            json_encode([
-                'stripe_session_id' => $session['id'] ?? null,
-                'customer_email'    => $session['customer_email'] ?? null,
-                'plan_details'      => $metaDecoded,
-            ]),
-        ]);
-
-        error_log('Invoice created: ' . $invoiceNumber . ' for user: ' . $userId);
-
-    } catch (PDOException $e) {
-        error_log('Database error in createInvoice: ' . $e->getMessage());
-    }
-}
-
-/**
- * Crear factura desde invoice de Stripe (para pagos recurrentes)
- */
-function createInvoiceFromStripeInvoice($userId, $subscriptionId, $stripeInvoice) {
-    $pdo = getDBConnection();
-
-    try {
-        $stmtUser = $pdo->prepare("
-            SELECT billing_name, billing_nif, billing_address, billing_email, email
-            FROM users WHERE id = ?
-        ");
-        $stmtUser->execute([$userId]);
-        $user = $stmtUser->fetch();
-
-        $invoiceNumber = generateInvoiceNumber($userId);
-
-        $subtotal    = ($stripeInvoice['subtotal'] ?? 0) / 100;
-        $vatAmount   = ($stripeInvoice['tax'] ?? 0) / 100;
-        $totalAmount = ($stripeInvoice['total'] ?? 0) / 100;
-        $createdAt   = isset($stripeInvoice['created']) ? date('Y-m-d', $stripeInvoice['created']) : date('Y-m-d');
-        $dueDate     = isset($stripeInvoice['due_date']) ? date('Y-m-d', $stripeInvoice['due_date']) : date('Y-m-d', strtotime('+30 days'));
-        $paidAt      = isset($stripeInvoice['status_transitions']['paid_at'])
-                        ? date('Y-m-d H:i:s', $stripeInvoice['status_transitions']['paid_at'])
-                        : date('Y-m-d H:i:s');
-
-        $stmtInvoice = $pdo->prepare("
-            INSERT INTO invoices
-            (subscription_id, user_id, invoice_number, invoice_date, due_date,
-             subtotal, vat_rate, vat_amount, total_amount,
-             stripe_invoice_id, stripe_payment_intent_id, stripe_receipt_url,
-             payment_status, paid_at,
-             billing_name, billing_nif, billing_address, billing_email,
-             description, metadata)
-            VALUES (?, ?, ?, ?, ?,
-                    ?, 21.00, ?, ?,
-                    ?, ?, ?,
-                    'paid', ?,
-                    ?, ?, ?, ?,
-                    ?, ?)
-        ");
-        $stmtInvoice->execute([
-            $subscriptionId,
-            $userId,
-            $invoiceNumber,
-            $createdAt,
-            $dueDate,
-            $subtotal,
+            $transactionId,
+            $stripePaymentIntent,
+            $amount,
             $vatAmount,
             $totalAmount,
-            $stripeInvoice['id'] ?? null,
+            $subscriptionId,
+            'Membresía ' . $planName . ' (' . $billingCycle . ')',
+            json_encode([
+                'stripe_session_id'    => $sessionId,
+                'stripe_customer_id'   => $stripeCustomerId,
+                'stripe_subscription_id' => $stripeSubId,
+                'stripe_invoice_id'    => $stripeInvoiceId,
+                'customer_email'       => $customerEmail,
+                'plan_id'              => $planId,
+                'billing_cycle'        => $billingCycle,
+            ]),
+        ]);
+        $paymentDbId = $pdo->lastInsertId();
+
+        // 9. Crear factura completa (invoices + invoice_items)
+        createInvoiceComplete(
+            $pdo, $userId, $subscriptionId, $billingProfileId,
+            $billingConceptId, $planName, $billingCycle,
+            $amount, $vatAmount, $totalAmount,
+            $stripeInvoiceId, $stripePaymentIntent, $customerEmail,
+            $pi
+        );
+
+        error_log("Webhook: pago completado. user=$userId plan=$planName total={$totalAmount}€");
+
+    } catch (Exception $e) {
+        error_log('Webhook handleCheckoutCompleted error: ' . $e->getMessage());
+    }
+}
+
+// ============================================================
+// HANDLER: invoice.paid (renovaciones automáticas)
+// ============================================================
+function handleInvoicePaid($stripeInvoice) {
+    $pdo = getDBConnection();
+
+    try {
+        $stripeSubId = $stripeInvoice['subscription'] ?? null;
+        if (!$stripeSubId) return;
+
+        // Buscar suscripción activa por stripe_subscription_id en users
+        $stmt = $pdo->prepare("
+            SELECT u.id AS user_id, u.stripe_subscription_id,
+                   s.id AS sub_id, s.billing_cycle, s.billing_profile_id, s.billing_concept_id
+            FROM users u
+            JOIN subscriptions s ON s.billing_profile_id = (
+                SELECT id FROM billing_profiles WHERE user_id = u.id LIMIT 1
+            )
+            WHERE u.stripe_subscription_id = ? AND s.active = 1
+            LIMIT 1
+        ");
+        $stmt->execute([$stripeSubId]);
+        $row = $stmt->fetch();
+
+        if (!$row) {
+            error_log('Webhook invoice.paid: suscripción no encontrada para ' . $stripeSubId);
+            return;
+        }
+
+        $newEndDate = ($row['billing_cycle'] === 'monthly')
+            ? date('Y-m-d', strtotime('+1 month'))
+            : date('Y-m-d', strtotime('+1 year'));
+
+        // Renovar suscripción
+        $pdo->prepare("
+            UPDATE subscriptions
+            SET next_billing_date = ?, end_date = ?
+            WHERE id = ?
+        ")->execute([$newEndDate, $newEndDate, $row['sub_id']]);
+
+        // Actualizar fecha en users
+        $pdo->prepare("
+            UPDATE users SET membership_end_date = ? WHERE id = ?
+        ")->execute([$newEndDate, $row['user_id']]);
+
+        // Registrar cobro en payments
+        $subtotal    = ($stripeInvoice['subtotal'] ?? 0) / 100;
+        $taxAmount   = ($stripeInvoice['tax'] ?? 0) / 100;
+        $totalAmount = ($stripeInvoice['total'] ?? 0) / 100;
+
+        $pdo->prepare("
+            INSERT INTO payments
+                (user_id, transaction_id, gateway_transaction_id, gateway_name,
+                 amount, currency, tax_amount, total_amount,
+                 status, payment_type, reference_type, reference_id,
+                 description, metadata, completed_at)
+            VALUES (?, ?, ?, 'stripe',
+                    ?, 'EUR', ?, ?,
+                    'completed', 'subscription', 'subscriptions', ?,
+                    ?, ?, CURRENT_TIMESTAMP)
+        ")->execute([
+            $row['user_id'],
+            'stripe_inv_' . ($stripeInvoice['id'] ?? uniqid()),
             $stripeInvoice['payment_intent'] ?? null,
-            $stripeInvoice['receipt_url'] ?? null,
-            $paidAt,
-            $user['billing_name'] ?? 'Cliente',
-            $user['billing_nif'] ?? null,
-            $user['billing_address'] ?? 'Dirección no especificada',
-            $user['billing_email'] ?? $user['email'] ?? ($stripeInvoice['customer_email'] ?? ''),
-            'Renovación de membresía - ' . ($stripeInvoice['description'] ?? ''),
+            $subtotal,
+            $taxAmount,
+            $totalAmount,
+            $row['sub_id'],
+            'Renovación membresía',
             json_encode($stripeInvoice),
         ]);
 
-    } catch (PDOException $e) {
-        error_log('Database error in createInvoiceFromStripeInvoice: ' . $e->getMessage());
+        // Crear factura de renovación
+        $stmtBp = $pdo->prepare("SELECT * FROM billing_profiles WHERE id = ?");
+        $stmtBp->execute([$row['billing_profile_id']]);
+        $bp = $stmtBp->fetch();
+
+        $stmtBc = $pdo->prepare("SELECT * FROM billing_concepts WHERE id = ?");
+        $stmtBc->execute([$row['billing_concept_id']]);
+        $bc = $stmtBc->fetch();
+
+        if ($bp && $bc) {
+            createInvoiceComplete(
+                $pdo, $row['user_id'], $row['sub_id'], $row['billing_profile_id'],
+                $row['billing_concept_id'], $bc['concept_name'], $row['billing_cycle'],
+                $subtotal, $taxAmount, $totalAmount,
+                $stripeInvoice['id'] ?? null, $stripeInvoice['payment_intent'] ?? null,
+                $bp['address'] ?? '',
+                ['first_name' => '', 'last_name' => '', 'email' => '']
+            );
+        }
+
+        error_log('Webhook: renovación procesada para user=' . $row['user_id']);
+
+    } catch (Exception $e) {
+        error_log('Webhook handleInvoicePaid error: ' . $e->getMessage());
     }
 }
 
-/**
- * Generar número de factura único
- */
-function generateInvoiceNumber($userId) {
-    return 'RR-' . date('Y') . '-' . str_pad($userId, 4, '0', STR_PAD_LEFT) . '-' . strtoupper(substr(uniqid(), -6));
+// ============================================================
+// HANDLER: invoice.payment_failed
+// ============================================================
+function handlePaymentFailed($stripeInvoice) {
+    $pdo = getDBConnection();
+
+    try {
+        $stripeSubId = $stripeInvoice['subscription'] ?? null;
+        if (!$stripeSubId) return;
+
+        // Marcar suscripción como past_due en users
+        $pdo->prepare("
+            UPDATE users
+            SET membership_status = 'past_due', updated_at = CURRENT_TIMESTAMP
+            WHERE stripe_subscription_id = ?
+        ")->execute([$stripeSubId]);
+
+        // Desactivar suscripción
+        $pdo->prepare("
+            UPDATE subscriptions s
+            JOIN billing_profiles bp ON bp.id = s.billing_profile_id
+            JOIN users u ON u.id = bp.user_id
+            SET s.active = 0
+            WHERE u.stripe_subscription_id = ?
+        ")->execute([$stripeSubId]);
+
+        // Registrar pago fallido en payments
+        $totalAmount = ($stripeInvoice['amount_due'] ?? 0) / 100;
+        $pdo->prepare("
+            INSERT INTO payments
+                (user_id, transaction_id, gateway_name,
+                 amount, currency, total_amount,
+                 status, payment_type, description, metadata)
+            SELECT u.id, ?, 'stripe',
+                   ?, 'EUR', ?,
+                   'failed', 'subscription', 'Pago fallido - membresía', ?
+            FROM users u WHERE u.stripe_subscription_id = ? LIMIT 1
+        ")->execute([
+            'stripe_fail_' . ($stripeInvoice['id'] ?? uniqid()),
+            $totalAmount,
+            $totalAmount,
+            json_encode(['reason' => $stripeInvoice['last_payment_error']['message'] ?? 'Unknown']),
+            $stripeSubId,
+        ]);
+
+        error_log('Webhook: pago fallido para subscription=' . $stripeSubId);
+
+    } catch (Exception $e) {
+        error_log('Webhook handlePaymentFailed error: ' . $e->getMessage());
+    }
+}
+
+// ============================================================
+// HANDLER: customer.subscription.deleted
+// ============================================================
+function handleSubscriptionCancelled($stripeSub) {
+    $pdo = getDBConnection();
+
+    try {
+        $stripeSubId = $stripeSub['id'] ?? null;
+        if (!$stripeSubId) return;
+
+        // Desactivar suscripción
+        $pdo->prepare("
+            UPDATE subscriptions s
+            JOIN billing_profiles bp ON bp.id = s.billing_profile_id
+            JOIN users u ON u.id = bp.user_id
+            SET s.active = 0, s.end_date = CURDATE()
+            WHERE u.stripe_subscription_id = ?
+        ")->execute([$stripeSubId]);
+
+        // Actualizar users
+        $pdo->prepare("
+            UPDATE users
+            SET membership_type = 'free',
+                membership_status = 'expired',
+                membership_end_date = CURDATE(),
+                stripe_subscription_id = NULL,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE stripe_subscription_id = ?
+        ")->execute([$stripeSubId]);
+
+        error_log('Webhook: suscripción cancelada: ' . $stripeSubId);
+
+    } catch (Exception $e) {
+        error_log('Webhook handleSubscriptionCancelled error: ' . $e->getMessage());
+    }
+}
+
+// ============================================================
+// HELPER: Obtener o crear billing_profile del usuario
+// ============================================================
+function getOrCreateBillingProfile($pdo, $userId, $pi) {
+    // Buscar perfil existente
+    $stmt = $pdo->prepare("SELECT id FROM billing_profiles WHERE user_id = ? LIMIT 1");
+    $stmt->execute([$userId]);
+    $bp = $stmt->fetch();
+
+    if ($bp) return $bp['id'];
+
+    // Crear perfil básico con los datos disponibles
+    $fullName = trim(($pi['first_name'] ?? '') . ' ' . ($pi['last_name'] ?? ''));
+    if (empty($fullName)) $fullName = $pi['email'] ?? 'Cliente';
+
+    $pdo->prepare("
+        INSERT INTO billing_profiles (user_id, legal_name, tax_id, address, city, country)
+        VALUES (?, ?, '', 'Dirección pendiente de completar', '', 'Spain')
+    ")->execute([$userId, $fullName]);
+
+    return $pdo->lastInsertId();
+}
+
+// ============================================================
+// HELPER: Obtener o crear billing_concept para el plan
+// ============================================================
+function getOrCreateBillingConcept($pdo, $planId, $planName, $amount, $billingCycle) {
+    $code = 'MEMB_' . $planId . '_' . strtoupper(substr($billingCycle, 0, 1));
+
+    $stmt = $pdo->prepare("SELECT id FROM billing_concepts WHERE code = ?");
+    $stmt->execute([$code]);
+    $bc = $stmt->fetch();
+
+    if ($bc) return $bc['id'];
+
+    $billingType = ($billingCycle === 'monthly') ? 'monthly' : 'yearly';
+
+    $pdo->prepare("
+        INSERT INTO billing_concepts (code, concept_name, description, amount, billing_type, active)
+        VALUES (?, ?, ?, ?, ?, 1)
+    ")->execute([
+        $code,
+        'Membresía ' . $planName,
+        'Plan de membresía Rutas Rurales - ' . $planName . ' - Facturación ' . $billingCycle,
+        $amount,
+        $billingType,
+    ]);
+
+    return $pdo->lastInsertId();
+}
+
+// ============================================================
+// HELPER: Crear factura completa (invoices + invoice_items)
+// ============================================================
+function createInvoiceComplete(
+    $pdo, $userId, $subscriptionId, $billingProfileId,
+    $billingConceptId, $planName, $billingCycle,
+    $subtotal, $vatAmount, $totalAmount,
+    $stripeInvoiceId, $stripePaymentIntentId, $customerEmail,
+    $pi
+) {
+    try {
+        // Datos del billing_profile
+        $stmtBp = $pdo->prepare("SELECT * FROM billing_profiles WHERE id = ?");
+        $stmtBp->execute([$billingProfileId]);
+        $bp = $stmtBp->fetch();
+
+        $customerName  = $bp['legal_name'] ?? trim(($pi['first_name'] ?? '') . ' ' . ($pi['last_name'] ?? ''));
+        $customerTaxId = $bp['tax_id'] ?? null;
+        $email         = $customerEmail ?: ($pi['email'] ?? '');
+
+        // Número de factura único: RR-AÑO-XXXXXX
+        $invoiceNumber = 'RR-' . date('Y') . '-' . strtoupper(substr(uniqid(), -6));
+
+        // Descripción de la línea
+        $billingLabel = ($billingCycle === 'monthly') ? 'mensual' : 'anual';
+        $description  = 'Membresía Rutas Rurales - ' . $planName . ' - Facturación ' . $billingLabel;
+
+        // Insertar en invoices
+        $stmtInv = $pdo->prepare("
+            INSERT INTO invoices
+                (invoice_number, customer_name, customer_tax_id, customer_email,
+                 invoice_date, due_date,
+                 subtotal, tax_rate, tax_amount, total,
+                 status, notes, user_id, payment_status, total_amount)
+            VALUES
+                (?, ?, ?, ?,
+                 CURDATE(), DATE_ADD(CURDATE(), INTERVAL 30 DAY),
+                 ?, 21.00, ?, ?,
+                 'paid', ?, ?, 'paid', ?)
+        ");
+        $stmtInv->execute([
+            $invoiceNumber,
+            $customerName,
+            $customerTaxId,
+            $email,
+            $subtotal,
+            $vatAmount,
+            $totalAmount,
+            $description . ($stripeInvoiceId ? ' | Stripe: ' . $stripeInvoiceId : ''),
+            $userId,
+            $totalAmount,
+        ]);
+        $invoiceId = $pdo->lastInsertId();
+
+        // Insertar línea en invoice_items
+        $stmtItem = $pdo->prepare("
+            INSERT INTO invoice_items
+                (invoice_id, concept_code, concept_name, description,
+                 quantity, unit_price, line_total, billing_type, subscription_id)
+            VALUES
+                (?, ?, ?, ?,
+                 1, ?, ?, ?, ?)
+        ");
+
+        // Obtener code del billing_concept
+        $stmtBc = $pdo->prepare("SELECT code FROM billing_concepts WHERE id = ?");
+        $stmtBc->execute([$billingConceptId]);
+        $bc = $stmtBc->fetch();
+        $conceptCode = $bc['code'] ?? ('MEMB_' . $subscriptionId);
+
+        $billingType = ($billingCycle === 'monthly') ? 'monthly' : 'one_time';
+
+        $stmtItem->execute([
+            $invoiceId,
+            $conceptCode,
+            'Membresía ' . $planName,
+            $description,
+            $subtotal,  // unit_price sin IVA
+            $subtotal,  // line_total sin IVA (el IVA va en la cabecera)
+            $billingType,
+            $subscriptionId,
+        ]);
+
+        error_log("Factura creada: $invoiceNumber para user=$userId total={$totalAmount}€");
+        return $invoiceId;
+
+    } catch (Exception $e) {
+        error_log('createInvoiceComplete error: ' . $e->getMessage());
+        return null;
+    }
 }
 ?>
