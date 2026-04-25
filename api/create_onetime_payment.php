@@ -56,18 +56,18 @@ try {
         jsonError('Concepto de pago no encontrado: ' . $conceptCode, 404);
     }
 
-    // Determinar importe
-    $amount = $customAmount ?? (float)$concept['amount'];
+    // Determinar importe — el precio mostrado al usuario YA INCLUYE IVA
+    $totalAmount = $customAmount ?? (float)$concept['amount'];
 
     // Validar mínimo de Stripe (0.50€)
-    if ($amount < 0.50) {
+    if ($totalAmount < 0.50) {
         jsonError('El importe mínimo es 0.50€', 400);
     }
 
-    // Calcular IVA
-    $vatCalc     = calculateVAT($amount);
-    $totalAmount = $vatCalc['total'];
-    $vatAmount   = $vatCalc['vat_amount'];
+    // Descomponer IVA incluido: base = total / 1.21, iva = total - base
+    $vatRate   = 21.0;
+    $amount    = round($totalAmount / (1 + $vatRate / 100), 4); // base sin IVA
+    $vatAmount = round($totalAmount - $amount, 4);              // IVA incluido
 
     // Datos del usuario (si está logueado)
     $userEmail = null;
@@ -84,7 +84,7 @@ try {
         'concept_name'  => $concept['concept_name'],
         'user_id'       => $userId ? (string)$userId : 'guest',
         'amount_base'   => (string)$amount,
-        'vat_rate'      => (string)$vatCalc['vat_rate'],
+        'vat_rate'      => (string)$vatRate,
         'total'         => (string)$totalAmount,
         'payment_type'  => 'one_time',
     ];
