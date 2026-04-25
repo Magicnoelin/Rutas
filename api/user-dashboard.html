@@ -2063,8 +2063,8 @@
 
                 if (checkoutResult.success) {
                     // Si hay URL de Stripe, redirigir
-                    if (checkoutResult.data.stripe_checkout_url) {
-                        window.location.href = checkoutResult.data.stripe_checkout_url;
+                    if (checkoutResult.data.checkout_url) {
+                        window.location.href = checkoutResult.data.checkout_url;
                     } else {
                         // Si no hay Stripe instalado, mostrar información
                         alert(`✅ Intención de pago creada correctamente!\n\n` +
