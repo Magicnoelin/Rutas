@@ -1,4 +1,4 @@
-# ✅ Stripe en Producción — Último Paso: Configurar Webhook
+e# ✅ Stripe en Producción — Último Paso: Configurar Webhook
 
 ## Estado actual
 
@@ -89,4 +89,3 @@ define('STRIPE_WEBHOOK_SECRET', 'whsec_TU_SECRETO_REAL_AQUI');
 - El `composer.json` creado puede ignorarse si el servidor no tiene Composer.
 - Los precios se crean **inline** en Stripe (no hace falta crear productos/precios en el Dashboard de Stripe previamente).
 - El IVA (21%) se incluye en el precio que ve el usuario. Stripe no calcula IVA adicional.
-- La clave `rk_live_...` (restricted key) que proporcionaste **no se usa** — se usa la `sk_live_...` (secret key completa).

@@ -488,38 +488,57 @@ function showMoreNearby(type) {
     }
 }
 
-// ─── MÓDULO: ESTADÍSTICAS (Likes / Visitas) ───────────────────────────────────
-function _renderStats() {
+// ─── MÓDULO: ESTADÍSTICAS (Likes / Visitas reales de BD) ──────────────────────
+async function loadStats() {
+    if (!STATE.slug) return;
+    
     const likeKey = `like_event_${STATE.slug}`;
-    const likesKey = `likes_total_${STATE.slug}`;
-    const viewsKey = `views_event_${STATE.slug}`;
-
-    // Likes desde localStorage (sin BD para no afectar velocidad)
     STATE.liked = !!localStorage.getItem(likeKey);
-    STATE.likes = parseInt(localStorage.getItem(likesKey) || '0');
+    
+    try {
+        // Obtener estadísticas reales de la API
+        const res = await fetch(`/api/evento-stats.php?slug=${encodeURIComponent(STATE.slug)}`);
+        const json = await res.json();
+        
+        if (json.success && json.data) {
+            STATE.views = json.data.views || 0;
+            STATE.likes = json.data.likes || 0;
+        } else {
+            // Fallback si la API falla
+            STATE.views = 0;
+            STATE.likes = 0;
+        }
+    } catch (e) {
+        console.warn('Error cargando estadísticas:', e);
+        STATE.views = 0;
+        STATE.likes = 0;
+    }
+    
+    _renderStats();
+}
 
-    // Visitas simuladas (incrementar en localStorage)
-    let views = parseInt(localStorage.getItem(viewsKey) || '0') + 1;
-    localStorage.setItem(viewsKey, views);
-    STATE.views = views;
-
+function _renderStats() {
     const likeBtn = document.getElementById('btn-like');
     const likeCount = document.getElementById('like-count');
     const viewCount = document.getElementById('view-count');
 
     if (likeBtn) likeBtn.textContent = STATE.liked ? '❤️' : '🤍';
     if (likeCount) likeCount.textContent = STATE.likes;
-    if (viewCount) viewCount.textContent = views > 999 ? (views/1000).toFixed(1) + 'k' : views;
+    if (viewCount) viewCount.textContent = STATE.views > 999 ? (STATE.views/1000).toFixed(1) + 'k' : STATE.views;
 }
 
-function toggleLike() {
+async function toggleLike() {
+    if (!STATE.slug) return;
+    
     const likeKey = `like_event_${STATE.slug}`;
-    const likesKey = `likes_total_${STATE.slug}`;
     const likeBtn = document.getElementById('btn-like');
     const likeCount = document.getElementById('like-count');
-
+    
+    const action = STATE.liked ? 'unlike' : 'like';
+    
+    // Actualizar UI inmediatamente (optimista)
     STATE.liked = !STATE.liked;
-
+    
     if (STATE.liked) {
         STATE.likes++;
         localStorage.setItem(likeKey, '1');
@@ -529,15 +548,45 @@ function toggleLike() {
         localStorage.removeItem(likeKey);
         showToast(UI.get('me_gusta_eliminado', '🤍 Me gusta eliminado'));
     }
-
-    localStorage.setItem(likesKey, STATE.likes);
+    
     if (likeBtn) likeBtn.textContent = STATE.liked ? '❤️' : '🤍';
     if (likeCount) likeCount.textContent = STATE.likes;
-
+    
     // Animación
     if (likeBtn) {
         likeBtn.style.transform = 'scale(1.4)';
         setTimeout(() => likeBtn.style.transform = 'scale(1)', 200);
+    }
+    
+    // Enviar a la API en segundo plano
+    try {
+        await fetch('/api/evento-stats.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                slug: STATE.slug,
+                action: action
+            })
+        });
+    } catch (e) {
+        console.warn('Error guardando like:', e);
+    }
+}
+
+async function trackView() {
+    if (!STATE.slug) return;
+    
+    try {
+        await fetch('/api/evento-stats.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                slug: STATE.slug,
+                action: 'view'
+            })
+        });
+    } catch (e) {
+        console.warn('Error trackeando vista:', e);
     }
 }
 
@@ -815,8 +864,9 @@ function init() {
         if (!STATE.nearbyLoaded) loadNearbyData();
     }, 3000);
 
-    // Inicializar contadores inmediatamente (no dependen de API)
-    _renderStats();
+    // Cargar estadísticas reales desde la BD y registrar vista
+    loadStats();
+    trackView();
 }
 
 // Ejecutar cuando el DOM esté listo
