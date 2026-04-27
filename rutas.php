@@ -253,7 +253,9 @@
 <main class="rutas-main">
     <aside class="sidebar">
         <h2 style="font-size: 1.2rem; color: var(--primary-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fas fa-route"></i> Rutas Cercanas
+            <a href="/rutas-listas-para-disfrutar.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-check-circle"></i> Rutas listas para disfrutar
+            </a>
         </h2>
         <div class="controls-wrapper">
             <div class="controls">
