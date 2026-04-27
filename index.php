@@ -21,7 +21,7 @@
   <link rel="canonical" href="https://rutasrurales.io/">
 
   <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.css?v=20260114">
+  <link rel="stylesheet" href="styles.css?v=1.1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* Ajuste para que el logo no rompa el diseño en móviles */
@@ -571,7 +571,7 @@
                 <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
             </div>
         </div> </footer> 
-    <script src="script.js?v=20260114"></script>
+    <script src="script.js?v=1.1"></script>
     <script src="antonio_improved.js"></script>
 </body>
 </html>
