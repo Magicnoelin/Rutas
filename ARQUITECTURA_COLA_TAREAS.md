@@ -91,31 +91,35 @@ Log inmutable de todo lo ejecutado. Solo lectura. Útil para auditoría.
 
 ## 🚀 Instalación (una sola vez)
 
-> ⚠️ **phpMyAdmin de Hostinger (MariaDB) no acepta `DELIMITER` en la pestaña SQL.**  
-> Por eso los triggers están en archivos separados. Ejecuta cada PASO por separado.
+> ⚠️ **phpMyAdmin de Hostinger (MariaDB) requiere ejecutar cada trigger por separado.**  
+> Cada archivo tiene UN SOLO statement. Pégalo y ejecuta. Luego el siguiente.
 
 ### PASO 1 — Crear las 4 tablas
 
 1. Abre **Hostinger → Bases de datos → phpMyAdmin**
 2. Selecciona `u412199647_Rutas`
-3. Pestaña **SQL** → pega el contenido de `api/cola_tareas_PASO1_tablas.sql` → **Ejecutar**
+3. Pestaña **SQL** → pega `api/cola_tareas_PASO1_tablas.sql` → **Ejecutar**
+
+### PASO 2a — Eliminar triggers anteriores (si los hay)
+
+1. Pestaña **SQL** → pega `api/cola_tareas_PASO2a_drop_triggers.sql` → **Ejecutar**
 
 ### PASO 2 — Trigger de visitas y likes
 
-1. Pestaña **SQL** → pega el contenido de `api/cola_tareas_PASO2_trigger_resource_stats.sql` → **Ejecutar**
+1. Pestaña **SQL** → pega `api/cola_tareas_PASO2_trigger_resource_stats.sql` → **Ejecutar**
 
 ### PASO 3 — Trigger de nuevos usuarios
 
-1. Pestaña **SQL** → pega el contenido de `api/cola_tareas_PASO3_trigger_users.sql` → **Ejecutar**
+1. Pestaña **SQL** → pega `api/cola_tareas_PASO3_trigger_users.sql` → **Ejecutar**
 
 ### PASO 4 — Trigger de nuevos alojamientos
 
-1. Pestaña **SQL** → pega el contenido de `api/cola_tareas_PASO4_trigger_accommodations.sql` → **Ejecutar**
+1. Pestaña **SQL** → pega `api/cola_tareas_PASO4_trigger_accommodations.sql` → **Ejecutar**
 
 ### PASO 5 — Datos iniciales (plantillas y reglas)
 
-1. Pestaña **SQL** → pega el contenido de `api/cola_tareas_PASO5_datos_iniciales.sql` → **Ejecutar**
-2. Verás una tabla de verificación con el conteo de registros en cada tabla
+1. Pestaña **SQL** → pega `api/cola_tareas_PASO5_datos_iniciales.sql` → **Ejecutar**
+2. Al final verás una tabla de verificación con el conteo de registros
 
 ### Verificar que los triggers se crearon
 
