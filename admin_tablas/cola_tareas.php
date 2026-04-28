@@ -111,11 +111,39 @@ try {
     $columnasDisponibles = $cols;
 } catch (Exception $e) {}
 
-$tieneReglaId     = in_array('regla_id', $columnasDisponibles);
-$tienePlantillaId = in_array('plantilla_id', $columnasDisponibles);
-$tienePrioridad   = in_array('prioridad', $columnasDisponibles);
-$tieneTipoTarea   = in_array('tipo_tarea', $columnasDisponibles);
-$tieneEntidadTipo = in_array('entidad_tipo', $columnasDisponibles);
+$tieneReglaId      = in_array('regla_id', $columnasDisponibles);
+$tienePlantillaId  = in_array('plantilla_id', $columnasDisponibles);
+$tienePrioridad    = in_array('prioridad', $columnasDisponibles);
+$tieneTipoTarea    = in_array('tipo_tarea', $columnasDisponibles);
+$tieneEntidadTipo  = in_array('entidad_tipo', $columnasDisponibles);
+
+// Detectar columna de fecha (puede llamarse creada_en, created_at, fecha_creacion...)
+$colFecha = 'id'; // fallback: ordenar por id si no hay fecha
+foreach (['creada_en', 'created_at', 'fecha_creacion', 'fecha', 'timestamp'] as $posible) {
+    if (in_array($posible, $columnasDisponibles)) {
+        $colFecha = $posible;
+        break;
+    }
+}
+// Detectar columna de procesado (puede llamarse procesada_en, processed_at...)
+$colProcesada = null;
+foreach (['procesada_en', 'processed_at', 'fecha_procesado'] as $posible) {
+    if (in_array($posible, $columnasDisponibles)) {
+        $colProcesada = $posible;
+        break;
+    }
+}
+// Detectar columna de error
+$colError = null;
+foreach (['error_msg', 'error', 'mensaje_error'] as $posible) {
+    if (in_array($posible, $columnasDisponibles)) {
+        $colError = $posible;
+        break;
+    }
+}
+// Detectar columna de intentos
+$colIntentos    = in_array('intentos', $columnasDisponibles) ? 'intentos' : null;
+$colMaxIntentos = in_array('max_intentos', $columnasDisponibles) ? 'max_intentos' : null;
 
 // ─── Consulta principal ───────────────────────────────────────
 $tareas = [];
@@ -140,7 +168,9 @@ if (!isset($errorTabla)) {
             $joinExtra   .= " LEFT JOIN plantillas_mensaje pm ON pm.id = ct.plantilla_id";
         }
 
-        $orderBy = $tienePrioridad ? "ct.prioridad ASC, ct.creada_en DESC" : "ct.creada_en DESC";
+        $orderBy = $tienePrioridad
+            ? "ct.prioridad ASC, ct.{$colFecha} DESC"
+            : "ct.{$colFecha} DESC";
 
         $stmt = $pdo->query("
             SELECT ct.* $selectExtra
@@ -351,8 +381,8 @@ function iconoCanal(?string $canal): string {
                 <?php foreach ($tareas as $t):
                     $payload = json_decode($t['payload'] ?? '{}', true) ?: [];
                     $payloadStr = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-                    $errorMsg = !empty($t['error_msg']) ? htmlspecialchars(substr($t['error_msg'], 0, 100)) : '';
                     // Compatibilidad con tabla antigua (columnas opcionales)
+                    $errorMsg         = $colError ? (!empty($t[$colError]) ? htmlspecialchars(substr($t[$colError], 0, 100)) : '') : '';
                     $tipoTarea        = $t['tipo_tarea'] ?? ($t['tipo'] ?? '—');
                     $entidadTipo      = $t['entidad_tipo'] ?? ($t['resource_type'] ?? '');
                     $entidadId        = $t['entidad_id'] ?? ($t['resource_id'] ?? '');
@@ -360,9 +390,10 @@ function iconoCanal(?string $canal): string {
                     $canal            = $t['canal'] ?? null;
                     $regla_nombre     = $t['regla_nombre'] ?? null;
                     $destinatarioEmail = $t['destinatario_email'] ?? '';
-                    $intentos         = $t['intentos'] ?? 0;
-                    $maxIntentos      = $t['max_intentos'] ?? 3;
-                    $procesadaEn      = $t['procesada_en'] ?? null;
+                    $intentos         = $colIntentos ? ($t[$colIntentos] ?? 0) : 0;
+                    $maxIntentos      = $colMaxIntentos ? ($t[$colMaxIntentos] ?? 3) : 3;
+                    $fechaCreada      = $colFecha !== 'id' ? ($t[$colFecha] ?? null) : null;
+                    $procesadaEn      = $colProcesada ? ($t[$colProcesada] ?? null) : null;
                 ?>
                 <tr class="<?= $t['estado'] === 'error' ? 'table-danger' : ($t['estado'] === 'moderacion' ? 'table-warning' : '') ?>">
                     <td><input type="checkbox" name="ids[]" value="<?= $t['id'] ?>" class="check-item"></td>
@@ -403,9 +434,13 @@ function iconoCanal(?string $canal): string {
                         </span>
                     </td>
                     <td>
-                        <small><?= date('d/m H:i', strtotime($t['creada_en'])) ?></small>
-                        <?php if ($t['procesada_en']): ?>
-                        <br><small class="text-muted">✓ <?= date('d/m H:i', strtotime($t['procesada_en'])) ?></small>
+                        <?php if ($fechaCreada): ?>
+                        <small><?= date('d/m H:i', strtotime($fechaCreada)) ?></small>
+                        <?php else: ?>
+                        <small class="text-muted">#<?= $t['id'] ?></small>
+                        <?php endif; ?>
+                        <?php if ($procesadaEn): ?>
+                        <br><small class="text-muted">✓ <?= date('d/m H:i', strtotime($procesadaEn)) ?></small>
                         <?php endif; ?>
                     </td>
                     <td class="acciones-btn">
@@ -438,7 +473,7 @@ function iconoCanal(?string $canal): string {
                             data-bs-toggle="modal" data-bs-target="#modalPayload"
                             data-id="<?= $t['id'] ?>"
                             data-payload="<?= htmlspecialchars($payloadStr) ?>"
-                            data-error="<?= htmlspecialchars($t['error_msg'] ?? '') ?>"
+                            data-error="<?= $colError ? htmlspecialchars($t[$colError] ?? '') : '' ?>"
                             title="Ver detalle">🔍</button>
                     </td>
                 </tr>
