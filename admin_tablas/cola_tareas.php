@@ -104,6 +104,19 @@ try {
 
 $totalGeneral = array_sum($contadores);
 
+// ─── Detectar columnas disponibles en cola_tareas ────────────
+$columnasDisponibles = [];
+try {
+    $cols = $pdo->query("SHOW COLUMNS FROM cola_tareas")->fetchAll(PDO::FETCH_COLUMN);
+    $columnasDisponibles = $cols;
+} catch (Exception $e) {}
+
+$tieneReglaId     = in_array('regla_id', $columnasDisponibles);
+$tienePlantillaId = in_array('plantilla_id', $columnasDisponibles);
+$tienePrioridad   = in_array('prioridad', $columnasDisponibles);
+$tieneTipoTarea   = in_array('tipo_tarea', $columnasDisponibles);
+$tieneEntidadTipo = in_array('entidad_tipo', $columnasDisponibles);
+
 // ─── Consulta principal ───────────────────────────────────────
 $tareas = [];
 $totalFiltrado = 0;
@@ -111,20 +124,30 @@ $totalFiltrado = 0;
 if (!isset($errorTabla)) {
     try {
         $where = $filtroEstado !== 'todos' ? "WHERE ct.estado = " . $pdo->quote($filtroEstado) : "WHERE 1=1";
-        if ($filtroTipo) $where .= " AND ct.tipo_tarea = " . $pdo->quote($filtroTipo);
+        if ($filtroTipo && $tieneTipoTarea) $where .= " AND ct.tipo_tarea = " . $pdo->quote($filtroTipo);
 
         $totalFiltrado = $pdo->query("SELECT COUNT(*) FROM cola_tareas ct $where")->fetchColumn();
 
+        // Construir SELECT según columnas disponibles
+        $selectExtra = '';
+        $joinExtra   = '';
+        if ($tieneReglaId) {
+            $selectExtra .= ", rn.nombre AS regla_nombre";
+            $joinExtra   .= " LEFT JOIN reglas_notificacion rn ON rn.id = ct.regla_id";
+        }
+        if ($tienePlantillaId) {
+            $selectExtra .= ", pm.nombre AS plantilla_nombre, pm.canal";
+            $joinExtra   .= " LEFT JOIN plantillas_mensaje pm ON pm.id = ct.plantilla_id";
+        }
+
+        $orderBy = $tienePrioridad ? "ct.prioridad ASC, ct.creada_en DESC" : "ct.creada_en DESC";
+
         $stmt = $pdo->query("
-            SELECT ct.*,
-                   rn.nombre AS regla_nombre,
-                   pm.nombre AS plantilla_nombre,
-                   pm.canal
+            SELECT ct.* $selectExtra
             FROM cola_tareas ct
-            LEFT JOIN reglas_notificacion rn ON rn.id = ct.regla_id
-            LEFT JOIN plantillas_mensaje pm ON pm.id = ct.plantilla_id
+            $joinExtra
             $where
-            ORDER BY ct.prioridad ASC, ct.creada_en DESC
+            ORDER BY $orderBy
             LIMIT $porPagina OFFSET $offset
         ");
         $tareas = $stmt->fetchAll();
@@ -226,6 +249,15 @@ function iconoCanal(?string $canal): string {
     </div>
     <?php else: ?>
 
+    <?php if (!$tieneReglaId): ?>
+    <div class="alert alert-warning alert-dismissible fade show py-2">
+        <strong>⚠️ Tabla <code>cola_tareas</code> en versión antigua.</strong>
+        Funciona en modo básico. Para activar todas las funciones (reglas, plantillas, moderación avanzada),
+        ejecuta <strong>PASO1_tablas.sql</strong> en phpMyAdmin para recrear las tablas con la nueva estructura.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php endif; ?>
+
     <!-- Contadores por estado -->
     <div class="row g-2 mb-3">
         <?php
@@ -319,31 +351,42 @@ function iconoCanal(?string $canal): string {
                 <?php foreach ($tareas as $t):
                     $payload = json_decode($t['payload'] ?? '{}', true) ?: [];
                     $payloadStr = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-                    $errorMsg = $t['error_msg'] ? htmlspecialchars(substr($t['error_msg'], 0, 100)) : '';
+                    $errorMsg = !empty($t['error_msg']) ? htmlspecialchars(substr($t['error_msg'], 0, 100)) : '';
+                    // Compatibilidad con tabla antigua (columnas opcionales)
+                    $tipoTarea        = $t['tipo_tarea'] ?? ($t['tipo'] ?? '—');
+                    $entidadTipo      = $t['entidad_tipo'] ?? ($t['resource_type'] ?? '');
+                    $entidadId        = $t['entidad_id'] ?? ($t['resource_id'] ?? '');
+                    $reqMod           = $t['requiere_moderacion'] ?? 0;
+                    $canal            = $t['canal'] ?? null;
+                    $regla_nombre     = $t['regla_nombre'] ?? null;
+                    $destinatarioEmail = $t['destinatario_email'] ?? '';
+                    $intentos         = $t['intentos'] ?? 0;
+                    $maxIntentos      = $t['max_intentos'] ?? 3;
+                    $procesadaEn      = $t['procesada_en'] ?? null;
                 ?>
                 <tr class="<?= $t['estado'] === 'error' ? 'table-danger' : ($t['estado'] === 'moderacion' ? 'table-warning' : '') ?>">
                     <td><input type="checkbox" name="ids[]" value="<?= $t['id'] ?>" class="check-item"></td>
                     <td><strong><?= $t['id'] ?></strong></td>
                     <td><?= badgeEstado($t['estado']) ?></td>
                     <td>
-                        <code class="small"><?= htmlspecialchars($t['tipo_tarea']) ?></code>
-                        <?php if ($t['requiere_moderacion']): ?>
+                        <code class="small"><?= htmlspecialchars($tipoTarea) ?></code>
+                        <?php if ($reqMod): ?>
                         <span class="badge bg-warning text-dark regla-badge ms-1">mod</span>
                         <?php endif; ?>
                     </td>
-                    <td class="text-center"><?= iconoCanal($t['canal']) ?> <small><?= htmlspecialchars($t['canal'] ?? '?') ?></small></td>
+                    <td class="text-center"><?= iconoCanal($canal) ?> <small><?= htmlspecialchars($canal ?? '—') ?></small></td>
                     <td>
-                        <?php if ($t['entidad_tipo']): ?>
-                        <span class="badge bg-light text-dark border"><?= htmlspecialchars($t['entidad_tipo']) ?></span>
-                        <small>#<?= $t['entidad_id'] ?></small>
+                        <?php if ($entidadTipo): ?>
+                        <span class="badge bg-light text-dark border"><?= htmlspecialchars($entidadTipo) ?></span>
+                        <small>#<?= $entidadId ?></small>
                         <?php endif; ?>
-                        <?php if ($t['destinatario_email']): ?>
-                        <br><small class="text-muted">📧 <?= htmlspecialchars($t['destinatario_email']) ?></small>
+                        <?php if ($destinatarioEmail): ?>
+                        <br><small class="text-muted">📧 <?= htmlspecialchars($destinatarioEmail) ?></small>
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if ($t['regla_nombre']): ?>
-                        <small class="text-muted"><?= htmlspecialchars($t['regla_nombre']) ?></small>
+                        <?php if ($regla_nombre): ?>
+                        <small class="text-muted"><?= htmlspecialchars($regla_nombre) ?></small>
                         <?php else: ?>
                         <small class="text-muted">—</small>
                         <?php endif; ?>
@@ -355,8 +398,8 @@ function iconoCanal(?string $canal): string {
                         <?php endif; ?>
                     </td>
                     <td class="text-center">
-                        <span class="badge <?= $t['intentos'] >= $t['max_intentos'] ? 'bg-danger' : 'bg-secondary' ?>">
-                            <?= $t['intentos'] ?>/<?= $t['max_intentos'] ?>
+                        <span class="badge <?= $intentos >= $maxIntentos ? 'bg-danger' : 'bg-secondary' ?>">
+                            <?= $intentos ?>/<?= $maxIntentos ?>
                         </span>
                     </td>
                     <td>
