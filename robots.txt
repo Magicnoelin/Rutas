@@ -1,19 +1,27 @@
 User-agent: *
 Allow: /
 
-# Bloqueos de seguridad y páginas privadas
+# Bloqueos de seguridad, administración y páginas privadas
+Disallow: /admin_tablas/
+Disallow: /dashboard/
+Disallow: /login/
+Disallow: /login.html?action=register*
+Disallow: /registro/
 Disallow: /checkout/
 Disallow: /shop/
 Disallow: /form/
 Disallow: /tag/
 Disallow: /places/alojamientos/tag/
-Disallow: /api/get_nearby_content.php
+Disallow: /api/
 Disallow: */feed/
 Disallow: */comments/feed/
 Disallow: /?elementor_library=*
+
+# URLs específicas antiguas o basura
 Disallow: /8017-2/
 Disallow: /alojamiento/8017
 Disallow: /detalle.html?slug=8017
+Disallow: /lugar/grumer-catering
 
-# La ruta a tu nuevo mapa del sitio
+# Sitemap
 Sitemap: https://rutasrurales.io/sitemap.xml
