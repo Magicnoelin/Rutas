@@ -10,6 +10,7 @@
         <a class="nav-link" href="lugares_index.php">📍 Lugares</a>
         <a class="nav-link" href="eventos_index.php">🎉 Eventos</a>
         <a class="nav-link" href="actividades_index.php">🥾 Actividades</a>
+        <a class="nav-link" href="cola_tareas.php">⚙️ Cola de Tareas</a>
       </div>
     </div>
   </div>
