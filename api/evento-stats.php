@@ -132,6 +132,9 @@ try {
                     $pdo->prepare("UPDATE cultural_events SET views = COALESCE(views, 0) + 1 WHERE id = ?")->execute([$eventId]);
                 } catch (Exception $e) { /* columna views puede no existir */ }
                 
+                // Registrar vista en log para estadísticas por fecha
+                $pdo->prepare("INSERT IGNORE INTO page_views_log (resource_type, resource_id, viewed_at) VALUES ('event', ?, NOW())")->execute([$eventId]);
+                
                 // Crear cookie para evitar contar múltiples visitas del mismo usuario
                 setcookie($sessionKey, '1', time() + 86400, '/');
             }
