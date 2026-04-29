@@ -135,27 +135,64 @@ try {
         $result['actividades'] = $actividades;
 
         // Eventos similares (misma categoría o provincia, excluyendo el actual)
-        $stmt = $pdo->prepare("
-            SELECT id, name, slug, start_date, end_date, municipality, province,
-                   is_free, ticket_price, photo1, poster_image, category_id,
-                   latitude, longitude
-            FROM cultural_events
-            WHERE is_active = 1
-              AND slug != ?
-              AND (province = ? OR category_id = (SELECT category_id FROM cultural_events WHERE slug = ? LIMIT 1))
-              AND (
-                (end_date IS NULL AND start_date >= CURDATE()) OR
-                (end_date IS NOT NULL AND end_date >= CURDATE())
-              )
-            ORDER BY start_date ASC
-            LIMIT 6
-        ");
-        $stmt->execute([$slug, $prov, $slug]);
-        $similares = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($similares as &$s) {
-            $s['url'] = '/evento/' . $s['slug'];
-            $s['imagen'] = $s['poster_image'] ?: $s['photo1'] ?: null;
-            unset($s['photo1'], $s['poster_image']);
+        if ($lang !== 'es') {
+            // Para idiomas distintos al español, hacer JOIN con traducciones
+            $stmt = $pdo->prepare("
+                SELECT e.id, e.name, e.slug AS slug_es, e.start_date, e.end_date,
+                       e.municipality, e.province, e.is_free, e.ticket_price,
+                       e.photo1, e.poster_image, e.category_id, e.latitude, e.longitude,
+                       t.slug AS slug_trad, t.name AS name_trad
+                FROM cultural_events e
+                LEFT JOIN cultural_events_trads t ON t.event_id = e.id AND t.language_code = ?
+                WHERE e.is_active = 1
+                  AND e.slug != ?
+                  AND (e.province = ? OR e.category_id = (SELECT category_id FROM cultural_events WHERE slug = ? LIMIT 1))
+                  AND (
+                    (e.end_date IS NULL AND e.start_date >= CURDATE()) OR
+                    (e.end_date IS NOT NULL AND e.end_date >= CURDATE())
+                  )
+                ORDER BY e.start_date ASC
+                LIMIT 6
+            ");
+            $stmt->execute([$lang, $slug, $prov, $slug]);
+            $similares = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $lang_prefix = '/' . $lang;
+            foreach ($similares as &$s) {
+                // Usar slug traducido si existe, si no usar el español
+                $slug_final = !empty($s['slug_trad']) ? $s['slug_trad'] : $s['slug_es'];
+                $s['slug'] = $slug_final;
+                // Usar nombre traducido si existe
+                if (!empty($s['name_trad'])) {
+                    $s['name'] = $s['name_trad'];
+                }
+                // URL con prefijo de idioma
+                $s['url'] = $lang_prefix . '/evento/' . $slug_final;
+                $s['imagen'] = $s['poster_image'] ?: $s['photo1'] ?: null;
+                unset($s['photo1'], $s['poster_image'], $s['slug_trad'], $s['name_trad'], $s['slug_es']);
+            }
+        } else {
+            $stmt = $pdo->prepare("
+                SELECT id, name, slug, start_date, end_date, municipality, province,
+                       is_free, ticket_price, photo1, poster_image, category_id,
+                       latitude, longitude
+                FROM cultural_events
+                WHERE is_active = 1
+                  AND slug != ?
+                  AND (province = ? OR category_id = (SELECT category_id FROM cultural_events WHERE slug = ? LIMIT 1))
+                  AND (
+                    (end_date IS NULL AND start_date >= CURDATE()) OR
+                    (end_date IS NOT NULL AND end_date >= CURDATE())
+                  )
+                ORDER BY start_date ASC
+                LIMIT 6
+            ");
+            $stmt->execute([$slug, $prov, $slug]);
+            $similares = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($similares as &$s) {
+                $s['url'] = '/evento/' . $s['slug'];
+                $s['imagen'] = $s['poster_image'] ?: $s['photo1'] ?: null;
+                unset($s['photo1'], $s['poster_image']);
+            }
         }
         $result['eventos_similares'] = $similares;
         $result['limit_initial'] = $limit_initial;
