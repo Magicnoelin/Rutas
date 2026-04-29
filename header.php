@@ -15,7 +15,8 @@ $translations = [
         'home' => 'Inicio',
         'routes' => 'Rutas',
         'login' => 'Acceso',
-        'antonio' => 'Antonio'
+        'antonio' => 'Antonio',
+        'support' => 'Apoyar'
     ],
     'en' => [
         'title' => 'Rural Routes',
@@ -27,7 +28,8 @@ $translations = [
         'home' => 'Home',
         'routes' => 'Routes',
         'login' => 'Login',
-        'antonio' => 'Antonio'
+        'antonio' => 'Antonio',
+        'support' => 'Support'
     ],
     'fr' => [
         'title' => 'Routes Rurales',
@@ -39,7 +41,8 @@ $translations = [
         'home' => 'Accueil',
         'routes' => 'Randonnées',
         'login' => 'Connexion',
-        'antonio' => 'Antonio'
+        'antonio' => 'Antonio',
+        'support' => 'Soutenir'
     ],
     'de' => [
         'title' => 'Ländliche Wege',
@@ -51,7 +54,8 @@ $translations = [
         'home' => 'Startseite',
         'routes' => 'Routen',
         'login' => 'Anmeldung',
-        'antonio' => 'Antonio'
+        'antonio' => 'Antonio',
+        'support' => 'Unterstützen'
     ],
     'zh' => [
         'title' => '乡村路线',
@@ -63,7 +67,8 @@ $translations = [
         'home' => '首页',
         'routes' => '路线',
         'login' => '登录',
-        'antonio' => '安东尼奥'
+        'antonio' => '安东尼奥',
+        'support' => '支持我们'
     ]
 ];
 
@@ -289,6 +294,84 @@ $page_description = $page_description ?? $t['description'];
                 margin-bottom: 0px;
             }
         }
+
+        /* ── BOTÓN APOYAR ── */
+        .btn-apoyar {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255,143,0,0.18);
+            border: 1.5px solid rgba(255,143,0,0.55);
+            color: #ffd080 !important;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 5px 11px;
+            border-radius: 20px;
+            text-decoration: none !important;
+            white-space: nowrap;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+            line-height: 1;
+        }
+        .btn-apoyar:hover {
+            background: rgba(255,143,0,0.38) !important;
+            border-color: #ff8f00 !important;
+            color: #ffffff !important;
+        }
+
+        /* Desktop: junto al logo */
+        @media (min-width: 993px) {
+            .logo-apoyar-wrap {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-shrink: 0;
+            }
+            .apoyar-mobile-row { display: none !important; }
+        }
+
+        /* Móvil: ocultar el pill del logo, mostrar fila debajo */
+        @media (max-width: 992px) {
+            .logo-apoyar-wrap {
+                display: flex;
+                align-items: center;
+                gap: 0;
+                flex-shrink: 0 !important;
+            }
+            .btn-apoyar-desktop { display: none !important; }
+
+            .apoyar-mobile-row {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                list-style: none !important;
+                gap: 0 !important;
+            }
+            .apoyar-mobile-row li a {
+                background: rgba(255,143,0,0.15) !important;
+                border: 1px solid rgba(255,143,0,0.35) !important;
+                min-height: 22px !important;
+                padding: 2px 6px !important;
+                border-radius: 4px !important;
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 4px !important;
+                color: #ffd080 !important;
+                font-size: 0.55rem !important;
+                font-weight: 700 !important;
+                white-space: nowrap !important;
+                text-decoration: none !important;
+            }
+            .apoyar-mobile-row li a i {
+                font-size: 0.65rem !important;
+                color: #ffd080 !important;
+                margin-bottom: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -299,8 +382,14 @@ $page_description = $page_description ?? $t['description'];
     <header class="header">
         <nav class="navbar">
             <div class="container">
-                <div class="logo">
-                    <a href="/index.html"><img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo"></a>
+                <!-- Logo + botón Apoyar (desktop: en línea; móvil: solo logo) -->
+                <div class="logo-apoyar-wrap">
+                    <div class="logo">
+                        <a href="/index.html"><img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo"></a>
+                    </div>
+                    <a href="<?php echo $lang_prefix; ?>/apoyar.php" class="btn-apoyar btn-apoyar-desktop" title="<?php echo $t['support']; ?>">
+                        ☕ <?php echo $t['support']; ?>
+                    </a>
                 </div>
 
                 <div class="nav-menu" id="navMenu">
@@ -339,6 +428,14 @@ $page_description = $page_description ?? $t['description'];
                         <li><a href="<?php echo $lang_prefix; ?>/index.html#asistente">
                             <img src="/antonio.jpg" alt="Antonio" class="asistente-avatar">
                             <span><?php echo $t['antonio']; ?></span>
+                        </a></li>
+                    </ul>
+
+                    <!-- Fila Apoyar solo en móvil -->
+                    <ul class="apoyar-mobile-row">
+                        <li><a href="<?php echo $lang_prefix; ?>/apoyar.php">
+                            <i class="fas fa-heart"></i>
+                            <?php echo $t['support']; ?>
                         </a></li>
                     </ul>
                 </div>
