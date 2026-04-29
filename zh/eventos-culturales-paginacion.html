@@ -131,6 +131,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .evento-fecha { position: absolute; top: 10px; left: 10px; background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 10px; text-align: center; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
         .evento-fecha .dia { font-size: 1.8rem; line-height: 1; }
         .evento-fecha .mes { font-size: 0.9rem; text-transform: uppercase; }
+        
+        /* Badges de estado de evento */
+        .evento-badge { 
+            display: inline-block; 
+            padding: 0.25rem 0.6rem; 
+            border-radius: 12px; 
+            font-size: 0.75rem; 
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+        .badge-activo { background: #22c55e; color: white; }
+        .badge-proximo { background: #3b82f6; color: white; }
+        .badge-futuro { background: #9ca3af; color: white; }
         .card-content { padding: 1.5rem; }
         .card-content h3 { color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.3rem; }
         .evento-categoria { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; }
@@ -647,6 +660,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             const descripcionCorta = (evento.descripcion || 'Sin descripción').substring(0, 120) + '...';
 
+            // Calcular badge según estado del evento
+            const badge = calcularBadge(evento);
+
             card.innerHTML = `
                 <div class="evento-fecha">
                     <span class="dia">${dia}</span>
@@ -657,6 +673,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <div class="evento-categoria ${categoriaClase}">
                         <i class="fas ${obtenerIconoCategoria(categoriaId)}"></i> ${categoriaNombre}
                     </div>
+                    ${badge}
                     <h3>${evento.titulo}</h3>
                     <p class="location"><i class="fas fa-map-marker-alt"></i> ${evento.ubicacion || evento.localidad || 'Ubicación no especificada'}</p>
                     <p class="evento-descripcion">${descripcionCorta}</p>
@@ -666,6 +683,36 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
             `;
             return card;
+        }
+
+        // Función para calcular el badge según el estado del evento
+        function calcularBadge(evento) {
+            const ahora = new Date();
+            const inicio = evento.fecha_evento ? new Date(evento.fecha_evento) : null;
+            const fin = evento.fecha_fin ? new Date(evento.fecha_fin) : null;
+            
+            if (!inicio) return '';
+            
+            // Si hay fecha de fin, usarla; si no, usar fecha de inicio + 1 día
+            const fechaFinReal = fin || new Date(inicio.getTime() + 24 * 60 * 60 * 1000);
+            
+            // Calcular diferencia en días
+            const diasHastaInicio = Math.ceil((inicio - ahora) / (1000 * 60 * 60 * 24));
+            const diasHastaFin = Math.ceil((fechaFinReal - ahora) / (1000 * 60 * 60 * 24));
+            
+            // Determinar estado
+            if (diasHastaFin < 0) {
+                return '';
+            } else if (diasHastaFin >= 0 && diasHastaFin <= 30) {
+                return '<div class="evento-badge badge-activo">🟢 进行中</div>';
+            } else if (diasHastaInicio >= 0 && diasHastaInicio <= 30) {
+                return '<div class="evento-badge badge-proximo">📅 即将开始</div>';
+            } else if (diasHastaInicio > 30) {
+                const mesInicio = inicio.toLocaleString('zh', { month: 'short' });
+                return '<div class="evento-badge badge-futuro">📆 从' + mesInicio + '开始</div>';
+            }
+            
+            return '';
         }
 
         function obtenerNombreMes(num) {

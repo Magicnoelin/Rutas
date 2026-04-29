@@ -1,5 +1,3 @@
-# INSTRUCCIONES PARA SUBIR A FILEZILLA
-
 ## 📁 Estructura de archivos a subir
 
 ```
