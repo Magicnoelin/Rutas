@@ -1,0 +1,35 @@
+# ============================================
+# Ayuntamientos — Apache Configuration
+# ============================================
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Bloquear logs
+    RewriteRule ^logs/ - [F,L]
+    RewriteRule ^logs$ - [F,L]
+    RewriteRule \.log$ - [F,L]
+</IfModule>
+
+<FilesMatch "\.(log|sql|bak|backup|env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css               "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/webp             "access plus 3 months"
+    ExpiresByType image/png              "access plus 3 months"
+    ExpiresByType image/jpeg             "access plus 3 months"
+</IfModule>
