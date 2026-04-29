@@ -7,11 +7,9 @@ require_once __DIR__ . '/header.php';
 ?>
 
 <style>
-    /* ── Variables ── */
     :root {
         --primary: #2f5233;
         --primary-light: #4a7c59;
-        --secondary: #8bc34a;
         --accent: #ff8f00;
         --bg: #f8faf8;
         --white: #ffffff;
@@ -22,79 +20,44 @@ require_once __DIR__ . '/header.php';
         --radius: 16px;
     }
 
-    /* Espacio para el header fijo */
     body { padding-top: 80px; }
     @media (max-width: 992px) { body { padding-top: 70px; } }
 
-    /* ── HERO ── */
+    /* ── HERO con foto ── */
     .hero {
-        position: relative;
-        /* Combinamos el degradado (como filtro oscuro) y la imagen aquí */
-        background: linear-gradient(135deg, rgba(47, 82, 51, 0.85) 0%, rgba(74, 124, 89, 0.85) 100%),
-                    url("https://rutasrurales.io/menu_images/apoyar.webp");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        background: linear-gradient(135deg, rgba(20,40,22,0.68) 0%, rgba(47,82,51,0.55) 60%, rgba(30,60,35,0.50) 100%),
+                    url('/menu_images/laguna_negra.webp') center center / cover no-repeat;
         color: white;
         text-align: center;
-        padding: 4rem 1.5rem 3.5rem;
+        padding: 5rem 1.5rem 4rem;
+        position: relative;
         overflow: hidden;
     }
-
-    .hero-emoji { font-size: 4rem; margin-bottom: 1rem; display: block; }
-    .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 1rem; }
-    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto 2rem; }
-    
-    .hero-stats {
-        display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
-        margin-top: 2rem;
-    }
+    .hero-emoji { font-size: 4rem; margin-bottom: 1rem; display: block; position: relative; z-index: 1; }
+    .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 1rem; position: relative; z-index: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+    .hero p { font-size: 1.1rem; opacity: 0.95; max-width: 600px; margin: 0 auto 2rem; position: relative; z-index: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+    .hero-stats { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; position: relative; z-index: 1; }
     .hero-stat { text-align: center; }
-    .hero-stat strong { display: block; font-size: 1.8rem; font-weight: 800; }
-    .hero-stat span { font-size: 0.85rem; opacity: 0.8; }
-
-
-<section class="hero">
-    <span class="hero-emoji">🌿</span>
-    <h1>Apoya el turismo rural sostenible</h1>
-    <p>Rutas Rurales conecta viajeros con la España rural auténtica. Tu apoyo nos ayuda a seguir creciendo.</p>
-    
-    <div class="hero-stats">
-        <div class="hero-stat">
-            <strong>+500</strong>
-            <span>Alojamientos</span>
-        </div>
-        <div class="hero-stat">
-            <strong>+1.200</strong>
-            <span>Lugares de interés</span>
-        </div>
-    </div>
-</section>
+    .hero-stat strong { display: block; font-size: 1.8rem; font-weight: 800; text-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+    .hero-stat span { font-size: 0.85rem; opacity: 0.9; }
 
     /* ── CONTENEDOR ── */
     .apoyar-container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
 
     /* ── SECCIONES ── */
     .apoyar-section { padding: 4rem 0; }
-    .section-title {
-        text-align: center;
-        margin-bottom: 2.5rem;
-    }
-    .section-title h2 {
-        font-size: 1.8rem;
-        color: var(--primary);
-        margin-bottom: 0.5rem;
-    }
+    .section-title { text-align: center; margin-bottom: 2.5rem; }
+    .section-title h2 { font-size: 1.8rem; color: var(--primary); margin-bottom: 0.5rem; }
     .section-title p { color: var(--text-light); font-size: 1rem; }
 
-    /* ── GRID DE TARJETAS ── */
+    /* ── GRID ── */
     .cards-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 1.5rem;
     }
 
-    /* ── TARJETA DE PAGO ── */
+    /* ── TARJETA ── */
     .pay-card {
         background: var(--white);
         border-radius: var(--radius);
@@ -106,30 +69,48 @@ require_once __DIR__ . '/header.php';
         cursor: pointer;
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
-    .pay-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 12px 35px rgba(47,82,51,0.18);
-        border-color: var(--primary);
-    }
+    .pay-card:hover { transform: translateY(-6px); box-shadow: 0 12px 35px rgba(47,82,51,0.18); border-color: var(--primary); }
     .pay-card.popular { border-color: var(--accent); }
-    .pay-card .badge {
-        position: absolute;
-        top: 12px; right: 12px;
-        background: var(--accent);
-        color: white;
-        font-size: 0.7rem;
-        font-weight: 700;
-        padding: 3px 10px;
-        border-radius: 20px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
+    .pay-card .badge { position: absolute; top: 12px; right: 12px; background: var(--accent); color: white; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
     .pay-card .icon { font-size: 2.8rem; margin-bottom: 1rem; display: block; }
     .pay-card h3 { font-size: 1.1rem; color: var(--primary); margin-bottom: 0.5rem; font-weight: 700; }
     .pay-card p { font-size: 0.88rem; color: var(--text-light); margin-bottom: 1.2rem; min-height: 2.5rem; }
     .pay-card .price { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 1.2rem; }
-    .pay-card .price small { font-size: 0.85rem; font-weight: 400; color: var(--text-light); }
+
+    /* ── TARJETA IMPORTE LIBRE (en el grid) ── */
+    .pay-card.custom-card { cursor: default; }
+    .pay-card.custom-card:hover { transform: none; border-color: var(--primary); }
+    .amount-input-wrap {
+        display: flex;
+        align-items: center;
+        border: 2px solid var(--border);
+        border-radius: 30px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+    .amount-input-wrap span {
+        padding: 0.7rem 1rem;
+        background: var(--bg);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        border-right: 2px solid var(--border);
+    }
+    .amount-input-wrap input {
+        flex: 1;
+        padding: 0.7rem 0.8rem;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        outline: none;
+        background: white;
+        min-width: 0;
+    }
 
     .btn-pay {
         display: inline-block;
@@ -149,92 +130,20 @@ require_once __DIR__ . '/header.php';
     .btn-pay.accent { background: var(--accent); }
     .btn-pay.accent:hover { background: #e67e00; }
 
-    /* ── SECCIÓN CAFÉ ── */
     .cafe-section { background: linear-gradient(135deg, #fff8e1, #fff3cd); }
     .cafe-section .section-title h2 { color: #8B6914; }
-
-    /* ── SECCIÓN APOYO ── */
     .apoyo-section { background: var(--bg); }
 
-    /* ── IMPORTE LIBRE ── */
-    .custom-amount-box {
-        background: white;
-        border-radius: var(--radius);
-        padding: 2rem;
-        box-shadow: var(--shadow);
-        max-width: 500px;
-        margin: 2rem auto 0;
-        text-align: center;
-    }
-    .custom-amount-box h3 { color: var(--primary); margin-bottom: 1rem; }
-    .amount-input-wrap {
-        display: flex;
-        align-items: center;
-        border: 2px solid var(--border);
-        border-radius: 30px;
-        overflow: hidden;
-        margin-bottom: 1rem;
-    }
-    .amount-input-wrap span {
-        padding: 0.8rem 1.2rem;
-        background: var(--bg);
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--primary);
-        border-right: 2px solid var(--border);
-    }
-    .amount-input-wrap input {
-        flex: 1;
-        padding: 0.8rem 1rem;
-        border: none;
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--primary);
-        outline: none;
-        background: white;
-    }
-
-    /* ── MENSAJE DE ÉXITO/CANCELACIÓN ── */
-    .payment-result {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 9999;
-        align-items: center;
-        justify-content: center;
-    }
+    /* ── MODALES ── */
+    .payment-result { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
     .payment-result.show { display: flex; }
-    .result-box {
-        background: white;
-        border-radius: var(--radius);
-        padding: 3rem 2rem;
-        text-align: center;
-        max-width: 420px;
-        width: 90%;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    }
+    .result-box { background: white; border-radius: var(--radius); padding: 3rem 2rem; text-align: center; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
     .result-box .result-icon { font-size: 4rem; margin-bottom: 1rem; display: block; }
     .result-box h2 { color: var(--primary); margin-bottom: 0.8rem; }
     .result-box p { color: var(--text-light); margin-bottom: 1.5rem; }
-
-    /* ── LOADING ── */
-    .loading-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 9998;
-        align-items: center;
-        justify-content: center;
-    }
+    .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; align-items: center; justify-content: center; }
     .loading-overlay.show { display: flex; }
-    .loading-box {
-        background: white;
-        border-radius: var(--radius);
-        padding: 2rem;
-        text-align: center;
-    }
+    .loading-box { background: white; border-radius: var(--radius); padding: 2rem; text-align: center; }
     .loading-box i { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; display: block; }
 
     @media (max-width: 600px) {
@@ -292,7 +201,7 @@ require_once __DIR__ . '/header.php';
             <h2>🎯 Contribución voluntaria</h2>
             <p>Si Rutas Rurales te ha sido útil, cualquier contribución nos ayuda a seguir creciendo y a dar más visibilidad al turismo rural.</p>
         </div>
-        <div class="cards-grid" style="max-width:800px;margin:0 auto;">
+        <div class="cards-grid" style="max-width:1100px;margin:0 auto;">
             <div class="pay-card" onclick="pagar('APOYO_5')">
                 <span class="icon">🌱</span>
                 <h3>Semilla</h3>
@@ -322,19 +231,19 @@ require_once __DIR__ . '/header.php';
                 <div class="price">50€</div>
                 <button class="btn-pay">Contribuir 50€</button>
             </div>
-        </div>
-
-        <!-- Importe libre -->
-        <div class="custom-amount-box">
-            <h3><i class="fas fa-heart" style="color:#e74c3c;"></i> Elige tu importe</h3>
-            <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:1rem;">Cualquier cantidad es bienvenida (mínimo 1€)</p>
-            <div class="amount-input-wrap">
-                <span>€</span>
-                <input type="number" id="customAmount" min="1" step="0.50" placeholder="Ej: 7.50" value="">
+            <!-- Importe libre como 5ª tarjeta en el grid -->
+            <div class="pay-card custom-card">
+                <span class="icon">❤️</span>
+                <h3>Elige tu importe</h3>
+                <p>Cualquier cantidad es bienvenida (mínimo 1€)</p>
+                <div class="amount-input-wrap">
+                    <span>€</span>
+                    <input type="number" id="customAmount" min="1" step="0.50" placeholder="Ej: 7.50">
+                </div>
+                <button class="btn-pay" onclick="pagarImporteLibre()">
+                    <i class="fas fa-heart"></i> Contribuir
+                </button>
             </div>
-            <button class="btn-pay" onclick="pagarImporteLibre()" style="max-width:300px;">
-                <i class="fas fa-heart"></i> Contribuir con mi importe
-            </button>
         </div>
     </div>
 </section>
@@ -354,21 +263,17 @@ require_once __DIR__ . '/header.php';
         <span class="result-icon" id="resultIcon">✅</span>
         <h2 id="resultTitle">¡Gracias!</h2>
         <p id="resultMessage">Tu contribución ha sido procesada correctamente.</p>
-        <button class="btn-pay" onclick="cerrarResultado()" style="max-width:200px;margin:0 auto;">
-            Cerrar
-        </button>
+        <button class="btn-pay" onclick="cerrarResultado()" style="max-width:200px;margin:0 auto;">Cerrar</button>
     </div>
 </div>
 
 <?php require_once __DIR__ . '/footer.php'; ?>
 
 <script>
-    // ── Verificar resultado de pago al cargar ──
     document.addEventListener('DOMContentLoaded', function() {
         const params = new URLSearchParams(window.location.search);
         const payment = params.get('payment');
         const concept = params.get('concept');
-
         if (payment === 'success') {
             mostrarResultado('success', concept);
             window.history.replaceState({}, '', '/apoyar.php');
@@ -378,7 +283,6 @@ require_once __DIR__ . '/header.php';
         }
     });
 
-    // ── Pagar con concepto fijo ──
     async function pagar(conceptCode) {
         mostrarLoading(true);
         try {
@@ -401,18 +305,16 @@ require_once __DIR__ . '/header.php';
         } catch (error) {
             mostrarLoading(false);
             alert('Error de conexión. Por favor, inténtalo de nuevo.');
-            console.error(error);
         }
     }
 
-    // ── Pagar importe libre ──
     async function pagarImporteLibre() {
         const input = document.getElementById('customAmount');
         const amount = parseFloat(input.value);
         if (!amount || amount < 1) {
             input.focus();
-            input.style.borderColor = '#e74c3c';
-            setTimeout(() => input.style.borderColor = '', 2000);
+            input.style.outline = '2px solid #e74c3c';
+            setTimeout(() => input.style.outline = '', 2000);
             alert('Por favor, introduce un importe de al menos 1€');
             return;
         }
@@ -450,7 +352,6 @@ require_once __DIR__ . '/header.php';
         const icon    = document.getElementById('resultIcon');
         const title   = document.getElementById('resultTitle');
         const msg     = document.getElementById('resultMessage');
-
         const conceptMessages = {
             'CAFE_1':   '¡Gracias por el café! Nos da energía para seguir mejorando Rutas Rurales. ☕',
             'CAFE_2':   '¡Dos cafés! El equipo al completo te lo agradece. ☕☕',
@@ -459,7 +360,6 @@ require_once __DIR__ . '/header.php';
             'APOYO_20': '¡Increíble! Tu contribución de 20€ marca la diferencia. 🏔️',
             'APOYO_50': '¡Eres un héroe del turismo rural! Gracias por tu generosidad. 🦅',
         };
-
         if (type === 'success') {
             icon.textContent  = '🎉';
             title.textContent = '¡Muchas gracias!';
