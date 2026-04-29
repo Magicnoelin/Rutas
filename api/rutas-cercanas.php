@@ -154,10 +154,32 @@ try {
         $resultados = array_merge($resultados, $eventos);
     }
 
-    // Ordenar por distancia
-    usort($resultados, function($a, $b) {
+    // Separar eventos del resto para ordenar de forma diferente
+    $eventos = [];
+    $no_eventos = [];
+    
+    foreach ($resultados as $item) {
+        if ($item['tipo'] === 'evento') {
+            $eventos[] = $item;
+        } else {
+            $no_eventos[] = $item;
+        }
+    }
+    
+    // Ordenar no-eventos por distancia
+    usort($no_eventos, function($a, $b) {
         return $a['distancia'] <=> $b['distancia'];
     });
+    
+    // Ordenar eventos por fecha ASC (próximos primero)
+    usort($eventos, function($a, $b) {
+        $fechaA = $a['fecha'] ?? '9999-12-31';
+        $fechaB = $b['fecha'] ?? '9999-12-31';
+        return $fechaA <=> $fechaB;
+    });
+    
+    // Combinar: primero no-eventos (por distancia), luego eventos (por fecha)
+    $resultados = array_merge($no_eventos, $eventos);
 
     echo json_encode(['success' => true, 'data' => $resultados, 'count' => count($resultados)]);
 
