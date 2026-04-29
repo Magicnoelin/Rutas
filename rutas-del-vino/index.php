@@ -571,44 +571,24 @@ $page_canonical = "https://rutasrurales.io/rutas-del-vino/";
         }
 
         /* ============================================
-           CTA PRINCIPAL — ¡FALTA TU BODEGA!
+           CTA PRINCIPAL — FORMULARIO DIRECTO
         ============================================ */
         .cta-main {
-            padding: 6rem 2rem;
-            background:
-                linear-gradient(135deg,
-                    rgba(74,24,32,0.95) 0%,
-                    rgba(114,47,55,0.90) 60%,
-                    rgba(45,80,22,0.85) 100%),
-                url('https://images.unsplash.com/photo-1474722883778-792e7990302f?w=1600&q=80') center/cover no-repeat;
+            padding: 5rem 2rem;
+            background: linear-gradient(160deg, #3a0f14 0%, #722F37 50%, #2D5016 100%);
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-main::before {
-            content: '🍷';
-            position: absolute;
-            font-size: 25rem;
-            opacity: 0.04;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            line-height: 1;
         }
         .cta-container {
-            max-width: 900px;
+            max-width: 780px;
             margin: 0 auto;
-            position: relative;
-            z-index: 1;
         }
         .cta-eyebrow {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(201,168,76,0.2);
-            border: 1px solid rgba(201,168,76,0.4);
-            color: var(--gold-light);
+            background: rgba(201,168,76,0.25);
+            border: 1px solid rgba(201,168,76,0.5);
+            color: #E8C97A;
             padding: 0.4rem 1.2rem;
             border-radius: 30px;
             font-size: 0.72rem;
@@ -619,232 +599,86 @@ $page_canonical = "https://rutasrurales.io/rutas-del-vino/";
         }
         .cta-headline {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-size: clamp(2.2rem, 5vw, 4rem);
             font-weight: 900;
             color: #fff;
             line-height: 1.1;
             margin-bottom: 1rem;
         }
-        .cta-headline .accent { color: var(--gold-light); }
-        .cta-sub {
-            font-size: 1.1rem;
-            color: rgba(255,255,255,0.8);
-            line-height: 1.6;
-            margin-bottom: 3rem;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        .cta-headline .accent { color: #E8C97A; }
 
-        /* Pricing Cards */
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            max-width: 700px;
-            margin: 0 auto 3rem;
-        }
-        .pricing-card {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(201,168,76,0.25);
-            border-radius: 20px;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .pricing-card.featured {
-            border-color: var(--gold);
-            background: rgba(201,168,76,0.12);
-        }
-        .pricing-card.featured::before {
-            content: '⭐ Más popular';
-            position: absolute;
-            top: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--gold);
-            color: var(--wine-dark);
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 0.2rem 1rem;
-            border-radius: 0 0 10px 10px;
-            white-space: nowrap;
-        }
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--gold);
-        }
-        .pricing-option-label {
-            font-size: 0.7rem;
-            font-weight: 800;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 0.8rem;
-        }
-        .pricing-price {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--gold-light);
-            line-height: 1;
-        }
-        .pricing-price sup {
-            font-size: 1.2rem;
-            vertical-align: super;
-        }
-        .pricing-iva {
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 0.5rem;
-        }
-        .pricing-desc {
-            font-size: 0.82rem;
-            color: rgba(255,255,255,0.7);
-            line-height: 1.5;
-            margin-bottom: 1.5rem;
-        }
-        .pricing-features {
-            list-style: none;
-            text-align: left;
-            margin-bottom: 1.5rem;
-        }
-        .pricing-features li {
-            font-size: 0.78rem;
-            color: rgba(255,255,255,0.75);
-            padding: 0.3rem 0;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-        .pricing-features li i {
-            color: var(--gold);
-            margin-top: 0.1rem;
-            flex-shrink: 0;
-        }
-        .btn-pricing {
-            display: block;
-            padding: 0.8rem;
-            border-radius: 25px;
-            font-size: 0.85rem;
-            font-weight: 800;
-            text-decoration: none;
-            transition: all 0.2s;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-        }
-        .btn-pricing-primary {
-            background: var(--gold);
-            color: var(--wine-dark);
-        }
-        .btn-pricing-primary:hover {
-            background: var(--gold-light);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(201,168,76,0.4);
-        }
-        .btn-pricing-secondary {
-            background: transparent;
-            color: var(--gold-light);
-            border: 2px solid var(--gold);
-        }
-        .btn-pricing-secondary:hover {
-            background: rgba(201,168,76,0.15);
-        }
-
-        .cta-trust {
+        /* Precio enorme e inconfundible */
+        .price-display {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 2rem;
+            gap: 1.5rem;
+            margin: 1.5rem 0 2rem;
             flex-wrap: wrap;
         }
-        .trust-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: rgba(255,255,255,0.6);
-            font-size: 0.78rem;
-            font-weight: 600;
-        }
-        .trust-item i { color: var(--gold); font-size: 1rem; }
-
-        /* ============================================
-           MODAL DE INSCRIPCIÓN
-        ============================================ */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 99999;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        .modal-overlay.active { display: flex; }
-
-        .modal-box {
-            background: var(--ivory);
-            border-radius: 24px;
-            max-width: 560px;
-            width: 100%;
-            overflow: hidden;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
-            animation: modalIn 0.3s ease;
-        }
-        .modal-header {
-            background: linear-gradient(135deg, var(--wine-dark), var(--wine));
-            padding: 2rem 2rem 1.5rem;
-            text-align: center;
-            position: relative;
-        }
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255,255,255,0.15);
-            border: none;
-            color: #fff;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-        .modal-close:hover { background: rgba(255,255,255,0.3); }
-        .modal-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .modal-title {
+        .price-big {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: clamp(5rem, 14vw, 9rem);
+            font-weight: 900;
+            color: #E8C97A;
+            line-height: 1;
+            text-shadow: 0 4px 20px rgba(201,168,76,0.4);
+        }
+        .price-big .euro-sym {
+            font-size: 0.5em;
+            vertical-align: top;
+            margin-top: 0.3em;
+        }
+        .price-details {
+            text-align: left;
+        }
+        .price-iva-tag {
+            background: #27ae60;
             color: #fff;
-            margin-bottom: 0.3rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            display: inline-block;
+            margin-bottom: 0.4rem;
         }
-        .modal-subtitle {
-            font-size: 0.85rem;
+        .price-desc-line {
             color: rgba(255,255,255,0.7);
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: block;
         }
-        .modal-body {
-            padding: 2rem;
+        .price-strike {
+            color: rgba(255,255,255,0.35);
+            font-size: 0.78rem;
+            text-decoration: line-through;
         }
 
+        /* Formulario directo en la página */
+        .inscripcion-form-wrapper {
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(201,168,76,0.3);
+            border-radius: 24px;
+            padding: 2.5rem 2rem 2rem;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .inscripcion-form-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #E8C97A;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
         .form-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
         .form-group label {
             display: block;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            color: var(--wine-dark);
-            margin-bottom: 0.4rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 0.3rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
         }
@@ -852,113 +686,121 @@ $page_canonical = "https://rutasrurales.io/rutas-del-vino/";
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--cream-dark);
+            padding: 0.8rem 1rem;
+            border: 2px solid rgba(255,255,255,0.15);
             border-radius: 10px;
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.9rem;
-            color: var(--text-dark);
-            background: #fff;
-            transition: border-color 0.2s;
+            font-size: 16px;
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255,255,255,0.35);
         }
         .form-group input:focus,
-        .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--wine);
-            box-shadow: 0 0 0 3px rgba(114,47,55,0.08);
+            border-color: #C9A84C;
+            background: rgba(255,255,255,0.15);
         }
+        .form-group input[type="email"]:valid { border-color: rgba(39,174,96,0.5); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-        .modal-price-summary {
-            background: var(--cream);
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            margin: 1.2rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-price-label {
-            font-size: 0.82rem;
-            color: var(--text-mid);
-            font-weight: 600;
-        }
-        .modal-price-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--wine);
-        }
-        .modal-price-note {
-            font-size: 0.68rem;
-            color: var(--text-light);
-            text-align: right;
-        }
-
-        .btn-checkout {
+        .btn-pagar-stripe {
             width: 100%;
-            padding: 1rem;
-            background: var(--wine);
-            color: #fff;
+            padding: 1.1rem 2rem;
+            background: #C9A84C;
+            color: #4A1820;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
+            font-size: 1.1rem;
+            font-weight: 900;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.6rem;
-            margin-bottom: 0.8rem;
+            margin-top: 1.5rem;
+            letter-spacing: 0.02em;
+            box-shadow: 0 6px 25px rgba(201,168,76,0.4);
         }
-        .btn-checkout:hover {
-            background: var(--wine-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(114,47,55,0.3);
+        .btn-pagar-stripe:hover {
+            background: #E8C97A;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(201,168,76,0.55);
         }
-        .btn-checkout:disabled {
-            opacity: 0.6;
+        .btn-pagar-stripe:disabled {
+            opacity: 0.65;
             cursor: not-allowed;
             transform: none;
         }
-        .btn-checkout-stripe {
-            width: 100%;
-            padding: 1rem;
-            background: #635bff;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Montserrat', sans-serif;
+        .btn-pagar-stripe .price-in-btn {
+            background: rgba(74,24,32,0.25);
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
             font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
         }
-        .btn-checkout-stripe:hover { background: #5a52e8; }
 
-        .checkout-trust {
-            text-align: center;
-            font-size: 0.7rem;
-            color: var(--text-light);
-            margin-top: 0.8rem;
+        .cta-trust {
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .trust-item {
+            display: flex;
+            align-items: center;
             gap: 0.4rem;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.72rem;
+            font-weight: 600;
         }
-        .checkout-trust i { color: #27ae60; }
+        .trust-item i { color: #C9A84C; font-size: 0.9rem; }
 
-        /* Modal de contacto (lo hacemos nosotros) */
-        .modal-contact-form .modal-header {
-            background: linear-gradient(135deg, var(--green-vine), #3d7a22);
+        .cta-alternative {
+            margin-top: 2rem;
+            text-align: center;
         }
+        .cta-alt-text {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.82rem;
+            margin-bottom: 0.8rem;
+        }
+        .cta-alt-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-alt {
+            padding: 0.6rem 1.3rem;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-alt-whatsapp {
+            background: rgba(37,211,102,0.15);
+            color: #25d366;
+            border: 1px solid rgba(37,211,102,0.4);
+        }
+        .btn-alt-whatsapp:hover { background: rgba(37,211,102,0.25); }
+        .btn-alt-email {
+            background: rgba(201,168,76,0.15);
+            color: #E8C97A;
+            border: 1px solid rgba(201,168,76,0.3);
+        }
+        .btn-alt-email:hover { background: rgba(201,168,76,0.25); }
 
         /* ============================================
            TESTIMONIOS / SOCIAL PROOF
@@ -1257,8 +1099,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </a>
     <div class="nav-cta">
         <a href="#mapa" class="nav-link"><i class="fas fa-map-marked-alt"></i> Ver el mapa</a>
-        <a href="#inscribir" class="btn-nav-inscribir" onclick="openModal('self')">
-            <i class="fas fa-wine-bottle"></i> Inscribe tu bodega
+        <a href="#inscribir" class="btn-nav-inscribir">
+            <i class="fas fa-wine-bottle"></i> Inscribe tu bodega — 10€
         </a>
     </div>
 </nav>
@@ -1291,14 +1133,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </span>
         </div>
         <div class="hero-buttons">
-            <button class="btn-primary-wine" onclick="openModal('self')">
+            <a href="#inscribir" class="btn-primary-wine">
                 <i class="fas fa-magic"></i>
-                La inscribo yo mismo — 10€
-            </button>
-            <button class="btn-secondary-wine" onclick="openModal('contact')">
-                <i class="fas fa-hands-helping"></i>
+                Inscribir mi bodega — 10€
+            </a>
+            <a href="https://wa.me/34605249696?text=Hola%2C%20quiero%20inscribir%20mi%20bodega%20en%20Las%20Rutas%20del%20Vino" target="_blank" class="btn-secondary-wine">
+                <i class="fab fa-whatsapp"></i>
                 La inscribís vosotros por mí
-            </button>
+            </a>
         </div>
     </div>
 
@@ -1351,9 +1193,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="map-cta-banner">
                 <p>¿No ves tu bodega?<br><strong>¡Falta la tuya!</strong><br>
                 Inscríbela en menos de 5 minutos.</p>
-                <button class="btn-map-cta" onclick="openModal('self')">
+                <a href="#inscribir" class="btn-map-cta">
                     <i class="fas fa-plus-circle"></i> Añadir mi bodega — 10€
-                </button>
+                </a>
             </div>
         </aside>
     </div>
@@ -1404,76 +1246,98 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 </section>
 
-<!-- ============ CTA PRINCIPAL ============ -->
+<!-- ============ CTA PRINCIPAL — FORMULARIO DIRECTO ============ -->
 <section class="cta-main" id="inscribir">
     <div class="cta-container">
+
         <p class="cta-eyebrow">
             <i class="fas fa-exclamation-circle"></i>
-            Oferta de lanzamiento
+            Oferta de lanzamiento — plazas limitadas
             <i class="fas fa-exclamation-circle"></i>
         </p>
+
         <h2 class="cta-headline">
             <span class="accent">¡Falta tu bodega!</span><br>
-            Inscríbela hoy por solo 10€
+            Inscríbela ahora por solo
         </h2>
-        <p class="cta-sub">
-            Dos opciones: la inscribes tú mismo en 5 minutos, o nos das los datos
-            y lo hacemos nosotros. Mismo precio, mismo resultado.
-        </p>
 
-        <div class="pricing-grid">
-            <div class="pricing-card featured">
-                <p class="pricing-option-label">Yo la inscribo</p>
-                <div class="pricing-price"><sup>€</sup>10</div>
-                <p class="pricing-iva">IVA incluido · pago único</p>
-                <p class="pricing-desc">Formulario rápido. Alta inmediata en el mapa.</p>
-                <ul class="pricing-features">
-                    <li><i class="fas fa-check"></i> Ficha completa en el mapa</li>
-                    <li><i class="fas fa-check"></i> Fotos y descripción</li>
-                    <li><i class="fas fa-check"></i> Enlace a tu web</li>
-                    <li><i class="fas fa-check"></i> SEO local incluido</li>
-                    <li><i class="fas fa-check"></i> Permanente, sin cuotas</li>
-                </ul>
-                <button class="btn-pricing btn-pricing-primary" onclick="openModal('self')">
-                    <i class="fas fa-magic"></i> Inscribirme ahora
-                </button>
-            </div>
-            <div class="pricing-card">
-                <p class="pricing-option-label">Lo hacéis vosotros</p>
-                <div class="pricing-price"><sup>€</sup>10</div>
-                <p class="pricing-iva">IVA incluido · mismo precio</p>
-                <p class="pricing-desc">Nos envías los datos y nosotros lo publicamos.</p>
-                <ul class="pricing-features">
-                    <li><i class="fas fa-check"></i> Todo incluido igual</li>
-                    <li><i class="fas fa-check"></i> Tú solo envías los datos</li>
-                    <li><i class="fas fa-check"></i> Nosotros lo publicamos</li>
-                    <li><i class="fas fa-check"></i> Alta en 24-48h</li>
-                    <li><i class="fas fa-check"></i> Soporte personalizado</li>
-                </ul>
-                <button class="btn-pricing btn-pricing-secondary" onclick="openModal('contact')">
-                    <i class="fas fa-hands-helping"></i> Que lo hagáis vosotros
-                </button>
+        <!-- PRECIO ENORME E INCONFUNDIBLE -->
+        <div class="price-display">
+            <div class="price-big"><span class="euro-sym">€</span>10</div>
+            <div class="price-details">
+                <span class="price-iva-tag">✓ IVA incluido</span>
+                <span class="price-desc-line">Pago único · sin cuotas</span>
+                <span class="price-desc-line">Alta permanente en el mapa</span>
+                <span class="price-strike">Precio normal 30€</span>
             </div>
         </div>
 
-        <div class="cta-trust">
-            <div class="trust-item">
-                <i class="fas fa-lock"></i>
-                Pago seguro con Stripe
-            </div>
-            <div class="trust-item">
-                <i class="fas fa-shield-alt"></i>
-                Datos protegidos (RGPD)
-            </div>
-            <div class="trust-item">
-                <i class="fas fa-undo"></i>
-                Garantía de satisfacción
-            </div>
-            <div class="trust-item">
-                <i class="fas fa-receipt"></i>
-                Factura automática
+        <!-- FORMULARIO DIRECTO — SIN MODAL -->
+        <div class="inscripcion-form-wrapper">
+            <p class="inscripcion-form-title">🍷 Rellena y te llevamos a pagar</p>
+            <form id="formInscripcion" onsubmit="pagarConStripe(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre de la bodega *</label>
+                        <input type="text" name="nombre" required placeholder="Bodega El Pago" autocomplete="organization">
+                    </div>
+                    <div class="form-group">
+                        <label>Tu nombre *</label>
+                        <input type="text" name="contacto" required placeholder="María García" autocomplete="name">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" required placeholder="info@tubodega.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono *</label>
+                        <input type="tel" name="telefono" required placeholder="+34 XXX XXX XXX" autocomplete="tel">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Denominación de Origen</label>
+                        <input type="text" name="do" placeholder="Ribera del Duero">
+                    </div>
+                    <div class="form-group">
+                        <label>Web o Instagram</label>
+                        <input type="text" name="web" placeholder="tubodega.com o @tubodega">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-pagar-stripe" id="btnPagarStripe">
+                    <i class="fas fa-lock"></i>
+                    Pagar con tarjeta
+                    <span class="price-in-btn">10€ IVA incl.</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="cta-trust">
+                <div class="trust-item"><i class="fas fa-lock"></i> Pago seguro Stripe</div>
+                <div class="trust-item"><i class="fas fa-shield-alt"></i> RGPD</div>
+                <div class="trust-item"><i class="fas fa-undo"></i> Garantía 14 días</div>
+                <div class="trust-item"><i class="fas fa-receipt"></i> Factura automática</div>
             </div>
         </div>
+
+        <!-- ALTERNATIVA: LO HACEMOS NOSOTROS -->
+        <div class="cta-alternative">
+            <p class="cta-alt-text">¿Prefieres que lo hagamos nosotros? Mismo precio.</p>
+            <div class="cta-alt-links">
+                <a href="https://wa.me/34605249696?text=Hola%2C%20quiero%20inscribir%20mi%20bodega%20en%20Las%20Rutas%20del%20Vino%20(10%E2%82%AC)"
+                   target="_blank" class="btn-alt btn-alt-whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp · +34 605 249 696
+                </a>
+                <a href="mailto:olgamarin@rutasrurales.io?subject=Inscripci%C3%B3n%20bodega%20-%20Lo%20hac%C3%A9is%20vosotros"
+                   class="btn-alt btn-alt-email">
+                    <i class="fas fa-envelope"></i> olgamarin@rutasrurales.io
+                </a>
+            </div>
+        </div>
+
     </div>
 </section>
 
@@ -1632,139 +1496,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ============ FLOATING CTA ============ -->
 <div class="floating-cta" id="floatingCta">
     <div class="floating-cta-pulse"></div>
-    <button class="floating-cta-btn" onclick="openModal('self')">
+    <button class="floating-cta-btn" onclick="document.getElementById('inscribir').scrollIntoView({behavior:'smooth'})">
         <i class="fas fa-wine-bottle"></i>
         ¡Inscribe tu bodega! — 10€
     </button>
 </div>
 
-<!-- ============ MODAL AUTO-INSCRIPCIÓN ============ -->
-<div class="modal-overlay" id="modalSelf">
-    <div class="modal-box">
-        <div class="modal-header">
-            <button class="modal-close" onclick="closeModal('self')">&times;</button>
-            <div class="modal-icon">🍷</div>
-            <h3 class="modal-title">Inscribe tu bodega</h3>
-            <p class="modal-subtitle">Alta inmediata · Pago único 10€ IVA incluido</p>
-        </div>
-        <div class="modal-body">
-            <form id="formSelf" onsubmit="submitSelf(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nombre de la bodega *</label>
-                        <input type="text" name="nombre" required placeholder="Ej: Bodega El Pago">
-                    </div>
-                    <div class="form-group">
-                        <label>Denominación de Origen</label>
-                        <input type="text" name="do" placeholder="Ej: Ribera del Duero">
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Localidad *</label>
-                        <input type="text" name="localidad" required placeholder="Ej: Peñafiel">
-                    </div>
-                    <div class="form-group">
-                        <label>Provincia *</label>
-                        <input type="text" name="provincia" required placeholder="Ej: Valladolid">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Web o redes sociales</label>
-                    <input type="url" name="web" placeholder="https://tubodega.com">
-                </div>
-                <div class="form-group">
-                    <label>Teléfono de contacto *</label>
-                    <input type="tel" name="telefono" required placeholder="+34 XXX XXX XXX">
-                </div>
-                <div class="form-group">
-                    <label>Email de contacto *</label>
-                    <input type="email" name="email" required placeholder="info@tubodega.com">
-                </div>
-                <div class="form-group">
-                    <label>¿Qué ofreces? (visitas, catas, venta directa...)</label>
-                    <textarea name="servicios" rows="2" placeholder="Visitas guiadas, catas maridaje, venta en tienda..."></textarea>
-                </div>
-
-                <div class="modal-price-summary">
-                    <div>
-                        <div class="modal-price-label">Total a pagar</div>
-                        <div class="modal-price-note">IVA incluido · pago único · sin cuotas</div>
-                    </div>
-                    <div class="modal-price-value">10,00€</div>
-                </div>
-
-                <button type="submit" class="btn-checkout" id="btnCheckout">
-                    <i class="fas fa-lock"></i>
-                    Pagar 10€ con Stripe y publicar mi bodega
-                </button>
-                <div class="checkout-trust">
-                    <i class="fas fa-shield-alt"></i>
-                    Pago 100% seguro · Stripe · Datos protegidos RGPD · Factura automática
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- ============ MODAL CONTACTO (LO HACEMOS NOSOTROS) ============ -->
-<div class="modal-overlay" id="modalContact">
-    <div class="modal-box modal-contact-form">
-        <div class="modal-header">
-            <button class="modal-close" onclick="closeModal('contact')">&times;</button>
-            <div class="modal-icon">🤝</div>
-            <h3 class="modal-title">Lo inscribimos nosotros</h3>
-            <p class="modal-subtitle">Envíanos los datos · Alta en 24-48h · 10€ IVA incluido</p>
-        </div>
-        <div class="modal-body">
-            <form id="formContact" onsubmit="submitContact(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nombre de la bodega *</label>
-                        <input type="text" name="nombre" required placeholder="Ej: Bodega El Pago">
-                    </div>
-                    <div class="form-group">
-                        <label>Tu nombre *</label>
-                        <input type="text" name="contacto" required placeholder="Responsable de la bodega">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" name="email" required placeholder="tu@email.com">
-                </div>
-                <div class="form-group">
-                    <label>Teléfono *</label>
-                    <input type="tel" name="telefono" required placeholder="+34 XXX XXX XXX">
-                </div>
-                <div class="form-group">
-                    <label>Web / Redes / Lo que tengas</label>
-                    <input type="text" name="info" placeholder="URL, Instagram, lo que prefieras">
-                </div>
-                <div class="form-group">
-                    <label>Cuéntanos algo sobre tu bodega</label>
-                    <textarea name="descripcion" rows="3" placeholder="D.O., vinos que elaboráis, visitas disponibles, localidad..."></textarea>
-                </div>
-
-                <div class="modal-price-summary">
-                    <div>
-                        <div class="modal-price-label">Total a pagar</div>
-                        <div class="modal-price-note">Pagáis tras recibir la confirmación</div>
-                    </div>
-                    <div class="modal-price-value">10,00€</div>
-                </div>
-
-                <button type="submit" class="btn-checkout" id="btnContactSubmit" style="background: var(--green-vine);">
-                    <i class="fas fa-paper-plane"></i>
-                    Enviar datos y que lo hagáis vosotros
-                </button>
-                <div class="checkout-trust">
-                    <i class="fas fa-envelope"></i>
-                    Te responderemos en menos de 24h · olgamarin@rutasrurales.io
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<!-- sin modales — formulario inline en la sección #inscribir -->
 
 <!-- ============ SCRIPTS ============ -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1871,57 +1609,38 @@ function initVinoMap() {
 }
 
 // ============================================================
-// MODALES
+// PAGO STRIPE — FORMULARIO DIRECTO (SIN MODAL)
 // ============================================================
-function openModal(type) {
-    document.getElementById(type === 'self' ? 'modalSelf' : 'modalContact').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal(type) {
-    document.getElementById(type === 'self' ? 'modalSelf' : 'modalContact').classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-// Cerrar al hacer clic fuera
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-        e.target.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-});
-
-// ============================================================
-// PAGO STRIPE — AUTO-INSCRIPCIÓN
-// ============================================================
-async function submitSelf(e) {
+async function pagarConStripe(e) {
     e.preventDefault();
     const form = e.target;
-    const btn = document.getElementById('btnCheckout');
+    const btn = document.getElementById('btnPagarStripe');
     const formData = new FormData(form);
 
-    // Validación básica
-    const nombre = formData.get('nombre');
-    const email = formData.get('email');
-    const telefono = formData.get('telefono');
-    if (!nombre || !email || !telefono) {
-        showToast('Por favor, completa los campos obligatorios', 'error');
+    const nombre   = (formData.get('nombre')   || '').trim();
+    const contacto = (formData.get('contacto') || '').trim();
+    const email    = (formData.get('email')    || '').trim();
+    const telefono = (formData.get('telefono') || '').trim();
+
+    if (!nombre || !email || !telefono || !contacto) {
+        showToast('Por favor, completa los campos obligatorios (*)', 'error');
+        return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Por favor, introduce un email válido', 'error');
         return;
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando con Stripe...';
 
-    // Recoger datos del formulario para enviar como metadata
     const bodegaInfo = {
-        nombre: formData.get('nombre'),
-        do: formData.get('do') || '',
-        localidad: formData.get('localidad') || '',
-        provincia: formData.get('provincia') || '',
-        web: formData.get('web') || '',
-        telefono: formData.get('telefono'),
-        email: formData.get('email'),
-        servicios: formData.get('servicios') || ''
+        nombre,
+        contacto,
+        do:       (formData.get('do')  || '').trim(),
+        web:      (formData.get('web') || '').trim(),
+        telefono,
+        email
     };
 
     try {
@@ -1929,75 +1648,27 @@ async function submitSelf(e) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: bodegaInfo.email,
+                email,
                 bodega_info: bodegaInfo,
                 success_url: 'https://rutasrurales.io/rutas-del-vino/gracias.php',
-                cancel_url: 'https://rutasrurales.io/rutas-del-vino/'
+                cancel_url:  'https://rutasrurales.io/rutas-del-vino/#inscribir'
             })
         });
 
+        if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
 
         if (data.success && data.checkout_url) {
+            // Redirigir directamente al checkout de Stripe
             window.location.href = data.checkout_url;
         } else {
-            throw new Error(data.message || 'Error al crear el pago');
+            throw new Error(data.message || 'No se recibió URL de pago');
         }
     } catch (err) {
-        console.error(err);
-        showToast('Error al procesar el pago. Por favor, inténtalo de nuevo o escríbenos a olgamarin@rutasrurales.io', 'error');
+        console.error('Error checkout:', err);
+        showToast('Error al conectar con el servidor de pago. Escríbenos a olgamarin@rutasrurales.io o por WhatsApp.', 'error');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-lock"></i> Pagar 10€ con Stripe y publicar mi bodega';
-    }
-}
-
-// ============================================================
-// FORMULARIO DE CONTACTO (LO HACEMOS NOSOTROS)
-// ============================================================
-async function submitContact(e) {
-    e.preventDefault();
-    const form = e.target;
-    const btn = document.getElementById('btnContactSubmit');
-    const formData = new FormData(form);
-
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-
-    try {
-        const response = await fetch('/rutas-del-vino/api/contacto-bodega.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                nombre: formData.get('nombre'),
-                contacto: formData.get('contacto'),
-                email: formData.get('email'),
-                telefono: formData.get('telefono'),
-                info: formData.get('info') || '',
-                descripcion: formData.get('descripcion') || ''
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            closeModal('contact');
-            showToast('¡Perfecto! Te contactamos en menos de 24h. 🍷', 'success');
-            form.reset();
-        } else {
-            throw new Error(data.message || 'Error al enviar');
-        }
-    } catch (err) {
-        console.error(err);
-        // Fallback: abrir cliente de email
-        const nombre = formData.get('nombre') || '';
-        const email = formData.get('email') || '';
-        const tel = formData.get('telefono') || '';
-        const desc = formData.get('descripcion') || '';
-        window.location.href = `mailto:olgamarin@rutasrurales.io?subject=Inscripción bodega: ${encodeURIComponent(nombre)}&body=Bodega: ${encodeURIComponent(nombre)}%0AEmail: ${encodeURIComponent(email)}%0ATeléfono: ${encodeURIComponent(tel)}%0ADescripción: ${encodeURIComponent(desc)}`;
-        closeModal('contact');
-        showToast('Abriendo tu cliente de email...', 'info');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar datos';
+        btn.innerHTML = '<i class="fas fa-lock"></i> Pagar con tarjeta <span class="price-in-btn">10€ IVA incl.</span> <i class="fas fa-arrow-right"></i>';
     }
 }
 

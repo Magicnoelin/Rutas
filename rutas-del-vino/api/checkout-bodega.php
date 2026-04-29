@@ -2,35 +2,24 @@
 /**
  * API: Crear sesión de pago Stripe para inscripción de bodega
  * POST /rutas-del-vino/api/checkout-bodega.php
- *
- * Body JSON: {
- *   email: string,          // Email de la bodega
- *   bodega_info: object,    // Datos de la bodega
- *   success_url: string,    // URL de éxito
- *   cancel_url: string      // URL de cancelación
- * }
+ * Guarda la bodega en la tabla `users` con user_type='alojamiento' (pending)
  *
  * Precio fijo: 10€ IVA incluido (pago único)
  */
 
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: https://rutasrurales.io');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
+    http_response_code(200); exit;
 }
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Método no permitido']);
     exit;
 }
 
-// Cargar config de Stripe
 require_once dirname(__DIR__, 2) . '/api/stripe_config.php';
+require_once dirname(__DIR__, 2) . '/api/config.php';
 
 try {
     $json = file_get_contents('php://input');
@@ -53,45 +42,109 @@ try {
         exit;
     }
 
+    // Extraer campos de la bodega
+    $bodegaNombre  = isset($bodegaInfo['nombre'])   ? trim($bodegaInfo['nombre'])   : 'Bodega';
+    $bodegaContact = isset($bodegaInfo['contacto']) ? trim($bodegaInfo['contacto']) : '';
+    $bodegaTel     = isset($bodegaInfo['telefono']) ? trim($bodegaInfo['telefono']) : '';
+    $bodegaDO      = isset($bodegaInfo['do'])       ? trim($bodegaInfo['do'])       : '';
+    $bodegaWeb     = isset($bodegaInfo['web'])      ? trim($bodegaInfo['web'])      : '';
+
+    // Descripción compacta para el campo business_description
+    $bodegaDesc  = "Bodega: {$bodegaNombre}";
+    if ($bodegaDO)  $bodegaDesc .= " | D.O.: {$bodegaDO}";
+    if ($bodegaWeb) $bodegaDesc .= " | Web: {$bodegaWeb}";
+    if ($bodegaTel) $bodegaDesc .= " | Tel: {$bodegaTel}";
+    $bodegaDesc .= " | Pago pendiente 10€ IVA incluido";
+
     // Precio fijo: 10€ IVA incluido
-    $totalAmount    = 10.00; // € IVA incluido
-    $vatRate        = 21.0;
-    $baseAmount     = round($totalAmount / (1 + $vatRate / 100), 4);
-    $vatAmount      = round($totalAmount - $baseAmount, 4);
-    $amountCentimos = (int)round($totalAmount * 100); // 1000 céntimos = 10€
+    $totalAmount    = 10.00;
+    $amountCentimos = 1000; // céntimos
 
-    // Nombre de la bodega para el concepto
-    $bodegaNombre = isset($bodegaInfo['nombre']) ? substr(trim($bodegaInfo['nombre']), 0, 80) : 'Bodega';
-    $bodegaLocal  = isset($bodegaInfo['localidad']) ? trim($bodegaInfo['localidad']) : '';
-    $bodegaDO     = isset($bodegaInfo['do']) ? trim($bodegaInfo['do']) : '';
+    // ─── GUARDAR EN TABLA USERS ─────────────────────────────
+    $userId = null;
+    try {
+        $pdo = getDBConnection();
 
-    $productName  = "Las Rutas del Vino — Inscripción: {$bodegaNombre}";
-    $productDesc  = "Alta permanente en el mapa de bodegas de rutasrurales.io";
-    if ($bodegaLocal) $productDesc .= " · {$bodegaLocal}";
-    if ($bodegaDO)    $productDesc .= " · D.O. {$bodegaDO}";
-    $productDesc .= " · IVA 21% incluido";
+        // Separar nombre de contacto en first_name / last_name
+        $nameParts = explode(' ', $bodegaContact, 2);
+        $firstName = $nameParts[0] ?? $bodegaContact;
+        $lastName  = $nameParts[1] ?? '';
 
-    // Metadata para Stripe (máx 500 chars por campo)
+        // Comprobar si ya existe el email
+        $stmtCheck = $pdo->prepare("SELECT id, user_type FROM users WHERE email = ? LIMIT 1");
+        $stmtCheck->execute([$email]);
+        $existingUser = $stmtCheck->fetch();
+
+        if ($existingUser) {
+            // Actualizar datos si ya existe
+            $userId = $existingUser['id'];
+            $stmtUpd = $pdo->prepare("
+                UPDATE users SET
+                    business_name        = ?,
+                    business_description = ?,
+                    user_type            = 'alojamiento',
+                    verification_status  = 'pending',
+                    updated_at           = NOW()
+                WHERE id = ?
+            ");
+            $stmtUpd->execute([
+                substr($bodegaNombre, 0, 255),
+                substr($bodegaDesc,   0, 1000),
+                $userId
+            ]);
+        } else {
+            // Crear nuevo usuario bodega
+            // Password aleatorio (no podrá logarse hasta verificación)
+            $randomPass = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
+
+            $stmtIns = $pdo->prepare("
+                INSERT INTO users
+                    (email, first_name, last_name, password,
+                     user_type, business_name, business_description,
+                     verification_status, subscription_level, terms_accepted,
+                     created_at)
+                VALUES
+                    (?, ?, ?, ?,
+                     'alojamiento', ?, ?,
+                     'pending', 'basic', 1,
+                     NOW())
+            ");
+            $stmtIns->execute([
+                $email,
+                substr($firstName,     0, 100),
+                substr($lastName,      0, 100),
+                $randomPass,
+                substr($bodegaNombre,  0, 255),
+                substr($bodegaDesc,    0, 1000)
+            ]);
+            $userId = (int)$pdo->lastInsertId();
+        }
+    } catch (Exception $dbEx) {
+        // No bloqueamos el flujo de pago si falla la BD
+        error_log('checkout-bodega.php DB error: ' . $dbEx->getMessage());
+    }
+
+    // ─── CREAR SESIÓN STRIPE ────────────────────────────────
+    $productName = "Las Rutas del Vino — Inscripción: " . substr($bodegaNombre, 0, 80);
+    $productDesc = "Alta permanente en el mapa de bodegas · rutasrurales.io · IVA 21% incluido";
+    if ($bodegaDO) $productDesc .= " · D.O. {$bodegaDO}";
+
     $metadata = [
-        'type'             => 'bodega_inscription',
-        'bodega_nombre'    => substr($bodegaNombre, 0, 100),
-        'bodega_localidad' => substr($bodegaLocal, 0, 100),
-        'bodega_provincia' => substr($bodegaInfo['provincia'] ?? '', 0, 100),
-        'bodega_do'        => substr($bodegaDO, 0, 100),
-        'bodega_telefono'  => substr($bodegaInfo['telefono'] ?? '', 0, 50),
-        'bodega_web'       => substr($bodegaInfo['web'] ?? '', 0, 200),
-        'total_iva_incl'   => (string)$totalAmount,
-        'vat_rate'         => (string)$vatRate,
-        'source'           => 'rutas-del-vino',
+        'type'            => 'bodega_inscription',
+        'bodega_nombre'   => substr($bodegaNombre,  0, 100),
+        'bodega_do'       => substr($bodegaDO,       0, 100),
+        'bodega_telefono' => substr($bodegaTel,      0, 50),
+        'bodega_web'      => substr($bodegaWeb,      0, 200),
+        'user_id'         => $userId ? (string)$userId : 'nuevo',
+        'total_iva_incl'  => '10.00',
+        'source'          => 'rutas-del-vino',
     ];
 
-    // URL de éxito con session_id
     $successUrlFinal = $successUrl
         . (strpos($successUrl, '?') !== false ? '&' : '?')
         . 'session_id={CHECKOUT_SESSION_ID}'
         . '&bodega=' . urlencode($bodegaNombre);
 
-    // Crear sesión de Stripe
     $lineItems = [[
         'name'        => $productName,
         'description' => $productDesc,
@@ -103,44 +156,37 @@ try {
     $stripeSession = createStripeCheckoutSession(
         $email,
         $lineItems,
-        'payment',          // pago único, no suscripción
+        'payment',
         $successUrlFinal,
         $cancelUrl,
         $metadata
     );
 
     if (!$stripeSession || isset($stripeSession['error'])) {
-        $errorMsg = isset($stripeSession['error']['message'])
-            ? $stripeSession['error']['message']
-            : 'Error al conectar con Stripe';
+        $errorMsg = $stripeSession['error']['message'] ?? 'Error al conectar con Stripe';
         error_log('checkout-bodega.php Stripe error: ' . $errorMsg);
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Error al crear el pago: ' . $errorMsg
-        ]);
+        http_response_code(502);
+        echo json_encode(['success' => false, 'message' => 'Error al crear el pago: ' . $errorMsg]);
         exit;
     }
 
-    // Registrar la solicitud en un log interno (sin BD, archivo de texto)
-    $logEntry = date('Y-m-d H:i:s') . ' | BODEGA_PAGO_PENDIENTE'
-        . ' | ' . $email
-        . ' | ' . $bodegaNombre
-        . ' | Session: ' . $stripeSession['id']
-        . PHP_EOL;
-
+    // ─── LOG INTERNO ────────────────────────────────────────
     $logDir  = dirname(__DIR__) . '/logs';
-    $logFile = $logDir . '/inscripciones.log';
-    if (!is_dir($logDir)) {
-        mkdir($logDir, 0755, true);
-    }
-    file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+    if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+    $logLine = date('Y-m-d H:i:s')
+        . ' | PENDIENTE | ' . $email
+        . ' | ' . $bodegaNombre
+        . ' | user_id=' . ($userId ?: 'err')
+        . ' | session=' . $stripeSession['id']
+        . PHP_EOL;
+    @file_put_contents($logDir . '/inscripciones.log', $logLine, FILE_APPEND | LOCK_EX);
 
     echo json_encode([
         'success'      => true,
         'session_id'   => $stripeSession['id'],
         'checkout_url' => $stripeSession['url'],
-        'amount'       => $totalAmount,
+        'user_id'      => $userId,
+        'amount'       => 10.00,
         'currency'     => 'EUR',
         'message'      => 'Sesión de pago creada correctamente'
     ]);
@@ -148,9 +194,6 @@ try {
 } catch (Exception $e) {
     error_log('checkout-bodega.php exception: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Error interno del servidor'
-    ]);
+    echo json_encode(['success' => false, 'message' => 'Error interno del servidor']);
 }
 ?>
