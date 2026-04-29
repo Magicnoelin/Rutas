@@ -290,6 +290,19 @@ function enriquecer_payload(PDO $pdo, ?string $tipo, ?int $id, array $payload): 
                     $payload['provincia']      = $row['province'] ?? '';
                     $payload['user_id']        = $row['user_id'] ?? '';
                     $payload['url']            = 'https://rutasrurales.io/' . ($row['slug'] ?? '');
+                    // Rellenar nombre del propietario si no viene ya en el payload
+                    if (empty($payload['nombre']) && !empty($row['user_id'])) {
+                        $stmtU = $pdo->prepare("SELECT name, username FROM users WHERE id = ?");
+                        $stmtU->execute([$row['user_id']]);
+                        $usr = $stmtU->fetch();
+                        if ($usr) {
+                            $payload['nombre'] = $usr['name'] ?? $usr['username'] ?? 'Propietario';
+                        }
+                    }
+                    // Alias: nombre_usuario → nombre (si viene del payload de campaña)
+                    if (empty($payload['nombre']) && !empty($payload['nombre_usuario'])) {
+                        $payload['nombre'] = $payload['nombre_usuario'];
+                    }
                 }
                 break;
                 
