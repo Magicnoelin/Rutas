@@ -16,6 +16,7 @@ Disallow: /api/
 Disallow: */feed/
 Disallow: */comments/feed/
 Disallow: /?elementor_library=*
+Disallow: /api/
 
 # URLs específicas antiguas o basura
 Disallow: /8017-2/
