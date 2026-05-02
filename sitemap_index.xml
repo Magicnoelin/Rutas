@@ -4,7 +4,7 @@
     <loc>https://rutasrurales.io/sitemap-estatico.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://rutasrurales.io/sitemap-alojamientos.xml</loc>
+    <loc>https://rutasrurales.io/sitemap-alojamientos.php</loc>
   </sitemap>
   <sitemap>
     <loc>https://rutasrurales.io/sitemap-lugares.xml</loc>
