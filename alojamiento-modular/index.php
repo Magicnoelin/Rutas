@@ -502,7 +502,7 @@ if ($alojamiento) {
         '@id'   => $canonical . '#breadcrumb',
         'itemListElement' => [
             ['@type' => 'ListItem', 'position' => 1, 'name' => $bl[0], 'item' => 'https://rutasrurales.io/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => $bl[1], 'item' => 'https://rutasrurales.io/alojamientos-turisticos.html'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => $bl[1], 'item' => 'https://rutasrurales.io/alojamientos-turisticos'],
             ['@type' => 'ListItem', 'position' => 3, 'name' => $alojamiento['name'], 'item' => $canonical],
         ],
     ];
@@ -1519,7 +1519,7 @@ if (file_exists($header_path)) {
         <nav class="alo-breadcrumb" aria-label="breadcrumb">
             <a href="/">🏠 Inicio</a>
             <span>/</span>
-            <a href="/alojamientos-turisticos.html"><?php echo $t['alojamientos']; ?></a>
+            <a href="/alojamientos-turisticos"><?php echo $t['alojamientos']; ?></a>
             <span>/</span>
             <span><?php echo htmlspecialchars($alojamiento['name']); ?></span>
         </nav>

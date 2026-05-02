@@ -143,6 +143,21 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^evento/([^/]+)/?$ evento-detalle.php?slug=$1 [L,QSA]
 
 # ============================================================
+# 6b. URLs LIMPIAS DE LISTADOS (sin .html para SEO)
+# ============================================================
+# Listado de alojamientos: /alojamientos-turisticos → alojamientos-turisticos.html
+RewriteRule ^alojamientos-turisticos/?$ /alojamientos-turisticos.html [L]
+
+# Listado de eventos culturales: /eventos-culturales → eventos-culturales.html
+RewriteRule ^eventos-culturales/?$ /eventos-culturales.html [L]
+
+# Listado de lugares de interés: /lugares-de-interes → lugares-interes-paginacion.html
+RewriteRule ^lugares-de-interes/?$ /lugares-interes-paginacion.html [L]
+
+# Listado de actividades: /actividades-turisticas → actividades-turisticas.html
+RewriteRule ^actividades-turisticas/?$ /actividades-turisticas.html [L]
+
+# ============================================================
 # 7. REGLA CATCH-ALL (Solo para slugs limpios, no archivos)
 # ============================================================
 RewriteCond %{REQUEST_FILENAME} !-f
