@@ -35,15 +35,6 @@ RewriteRule ^(api|admin_tablas|dashboard)/ - [L]
 RewriteRule ^.*\.php$ - [L]
 
 # ============================================================
-# 0b. REDIRECCIONES apoyar.html → apoyar.php
-# ============================================================
-RewriteRule ^apoyar\.html$ /apoyar.php [R=301,L]
-RewriteRule ^en/apoyar\.html$ /en/apoyar.php [R=301,L]
-RewriteRule ^fr/apoyar\.html$ /fr/apoyar.php [R=301,L]
-RewriteRule ^de/apoyar\.html$ /de/apoyar.php [R=301,L]
-RewriteRule ^zh/apoyar\.html$ /zh/apoyar.php [R=301,L]
-
-# ============================================================
 # 1. CORRECCIONES CRÍTICAS (LA CASERÍA Y BUCLES)
 # ============================================================
 RewriteRule ^alojamiento/la-caseria-1/?$ /alojamiento/la-caseria [R=301,L]
@@ -143,7 +134,7 @@ RewriteRule ^(es|de|en|fr|zh)/evento/([^/]+)/?$ evento-detalle.php?slug=$2&lang=
 # Ejemplo: /de/slug-traditionelles-fest-spanien → /de/evento/slug-traditionelles-fest-spanien
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/(es|de|en|fr|zh)/(index\.html|login\.html|mapa-eclipse\.php|eventos-culturales-paginacion\.html|rutas-turisticas\.html|apoyar\.php|apoyar\.html)$ [NC]
+RewriteCond %{REQUEST_URI} !^/(es|de|en|fr|zh)/(index\.html|login\.html|mapa-eclipse\.php|eventos-culturales-paginacion\.html|rutas-turisticas\.html)$ [NC]
 RewriteRule ^(es|de|en|fr|zh)/([^/]+)/?$ /$1/evento/$2 [R=301,L]
 
 # Eventos sin idioma (por defecto español)
