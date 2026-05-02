@@ -1,6 +1,11 @@
 <?php
 /**
- * Script para regenerar sitemap-eventos.xml (archivo estático) con la lógica corregida
+ * Regenera sitemap-eventos.xml con hreflang para eventos con traducciones.
+ *
+ * - Eventos SIN traducciones → entrada simple (solo <loc>)
+ * - Eventos CON traducciones → entrada con xhtml:link hreflang completo
+ *   apuntando a todas las versiones de idioma (complementa sitemap-eventos-i18n.xml)
+ *
  * Acceder desde: https://rutasrurales.io/regenerar_sitemap_eventos_xml.php
  */
 
@@ -24,17 +29,17 @@ echo '<!DOCTYPE html>
 <body>
     <div class="container">
         <h1>🔄 Regenerar sitemap-eventos.xml</h1>
-        <p>Este script regenera el archivo estático <code>sitemap-eventos.xml</code> con la lógica corregida.</p>
-        
+        <p>Genera el sitemap de eventos en español con hreflang para los que tienen traducción.</p>
         <div class="log">';
 
 // Conexión a BD
-$host   = 'localhost';
-$dbname = 'u412199647_Rutas';
-$user   = 'u412199647_olgamarin';
-$pass   = 'Rutas5Rurales7$';
-$today  = date('Y-m-d');
-$now    = date('Y-m-d H:i:s');
+$host    = 'localhost';
+$dbname  = 'u412199647_Rutas';
+$user    = 'u412199647_olgamarin';
+$pass    = 'Rutas5Rurales7$';
+$baseUrl = 'https://rutasrurales.io';
+$today   = date('Y-m-d');
+$now     = date('Y-m-d H:i:s');
 
 $log = [];
 $log[] = "[$now] Iniciando regeneración de sitemap-eventos.xml";
@@ -44,87 +49,121 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $log[] = "✅ Conexión a BD establecida";
 
-    // Obtener eventos futuros/actuales con la lógica corregida
+    // ── Paso 1: Obtener eventos futuros/actuales ─────────────────────────────────
     $log[] = "🔍 Obteniendo eventos futuros/actuales...";
-    
-    $query = "SELECT 
-        slug,
-        start_date,
-        end_date,
-        COALESCE(updated_at, created_at) AS fecha_mod
-    FROM cultural_events
-    WHERE is_active = 1
-      AND slug IS NOT NULL
-      AND slug != ''
-      AND (
-        (end_date IS NULL AND start_date >= CURDATE()) OR
-        (end_date IS NOT NULL AND end_date >= CURDATE())
-      )
-    ORDER BY COALESCE(updated_at, created_at) DESC";
-    
-    $stmt = $pdo->query($query);
-    $eventos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
+    $stmtEventos = $pdo->query("
+        SELECT
+            e.id,
+            e.slug,
+            e.start_date,
+            e.end_date,
+            COALESCE(e.updated_at, e.created_at) AS fecha_mod
+        FROM cultural_events e
+        WHERE e.is_active = 1
+          AND e.slug IS NOT NULL
+          AND e.slug != ''
+          AND (
+              (e.end_date IS NULL     AND e.start_date >= CURDATE()) OR
+              (e.end_date IS NOT NULL AND e.end_date   >= CURDATE())
+          )
+        ORDER BY COALESCE(e.updated_at, e.created_at) DESC
+    ");
+    $eventos = $stmtEventos->fetchAll(PDO::FETCH_ASSOC);
     $log[] = "✅ Eventos futuros/actuales encontrados: " . count($eventos);
-    
-    // Generar XML
-    $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+
+    // ── Paso 2: Cargar traducciones disponibles por evento ───────────────────────
+    $stmtTrads = $pdo->query("
+        SELECT event_id, language_code, slug
+        FROM cultural_events_trads
+        WHERE language_code IN ('en', 'fr', 'de', 'zh')
+          AND slug IS NOT NULL
+          AND slug != ''
+    ");
+    $tradsRows = $stmtTrads->fetchAll(PDO::FETCH_ASSOC);
+
+    // Indexar por event_id → [lang => slug_trad]
+    $tradsPorEvento = [];
+    foreach ($tradsRows as $tr) {
+        $tradsPorEvento[$tr['event_id']][$tr['language_code']] = $tr['slug'];
+    }
+    $log[] = "✅ Traducciones cargadas para " . count($tradsPorEvento) . " eventos";
+
+    // ── Paso 3: Generar XML ──────────────────────────────────────────────────────
+    // Usamos namespace xhtml para poder añadir hreflang donde haga falta
+    $hasTrads = false; // si algún evento tiene traducciones, necesitamos el namespace
+    foreach ($eventos as $ev) {
+        if (!empty($tradsPorEvento[$ev['id']])) { $hasTrads = true; break; }
+    }
+
+    $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     $xml .= '<!--' . "\n";
-    $xml .= '  Sitemap estático de eventos culturales' . "\n";
-    $xml .= '  GENERADO CON LÓGICA CORREGIDA: Solo eventos futuros/actuales' . "\n";
-    $xml .= '  Fecha de generación: ' . $now . "\n";
+    $xml .= '  Sitemap de Eventos Culturales (español) — rutasrurales.io' . "\n";
+    $xml .= '  Solo eventos vigentes y futuros.' . "\n";
+    $xml .= '  Eventos con traducciones incluyen hreflang completo.' . "\n";
+    $xml .= '  Las URLs traducidas (en/fr/de/zh) están en sitemap-eventos-i18n.xml' . "\n";
+    $xml .= '  GENERADO AUTOMÁTICAMENTE — NO EDITAR MANUALMENTE' . "\n";
+    $xml .= '  Última regeneración: ' . $now . "\n";
     $xml .= '  Total eventos: ' . count($eventos) . "\n";
-    $xml .= '  Lógica: (end_date IS NULL AND start_date >= CURDATE()) OR (end_date IS NOT NULL AND end_date >= CURDATE())' . "\n";
-    $xml .= '  NOTA: Este archivo es una versión estática. Para versión dinámica usar sitemap-eventos.php' . "\n";
     $xml .= '-->' . "\n";
-    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-    
-    foreach ($eventos as $evento) {
-        $slug = htmlspecialchars($evento['slug']);
-        $fechaMod = !empty($evento['fecha_mod']) ? date('Y-m-d', strtotime($evento['fecha_mod'])) : $today;
-        
-        // Prioridad especial para eventos de eclipse
-        $priority = (strpos($slug, 'eclipse') !== false) ? '0.9' : '0.8';
-        
-        $xml .= "  <url>\n";
-        $xml .= "    <loc>https://rutasrurales.io/evento/" . $slug . "</loc>\n";
-        $xml .= "    <lastmod>" . $fechaMod . "</lastmod>\n";
+    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n";
+    $xml .= '        xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
+
+    $conHreflang = 0;
+    $sinHreflang = 0;
+
+    foreach ($eventos as $ev) {
+        $slug    = htmlspecialchars($ev['slug'], ENT_XML1, 'UTF-8');
+        $lastmod = !empty($ev['fecha_mod']) ? date('Y-m-d', strtotime($ev['fecha_mod'])) : $today;
+        $langs   = $tradsPorEvento[$ev['id']] ?? [];
+
+        $xml .= "\n  <url>\n";
+        $xml .= "    <loc>{$baseUrl}/evento/{$slug}</loc>\n";
+        $xml .= "    <lastmod>{$lastmod}</lastmod>\n";
         $xml .= "    <changefreq>weekly</changefreq>\n";
-        $xml .= "    <priority>" . $priority . "</priority>\n";
+        $xml .= "    <priority>0.8</priority>\n";
+
+        if (!empty($langs)) {
+            // Construir mapa completo de alternativas
+            $alternativas = ['es' => "{$baseUrl}/evento/{$slug}"];
+            foreach ($langs as $lang => $slugTrad) {
+                $slugTradEsc = htmlspecialchars($slugTrad, ENT_XML1, 'UTF-8');
+                $alternativas[$lang] = "{$baseUrl}/{$lang}/evento/{$slugTradEsc}";
+            }
+            // Añadir hreflang para todos los idiomas
+            foreach ($alternativas as $hLang => $hUrl) {
+                $hLangAttr = ($hLang === 'zh') ? 'zh-Hans' : $hLang;
+                $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$hLangAttr}\" href=\"{$hUrl}\"/>\n";
+            }
+            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/evento/{$slug}\"/>\n";
+            $conHreflang++;
+        } else {
+            $sinHreflang++;
+        }
+
         $xml .= "  </url>\n";
     }
-    
-    $xml .= "</urlset>\n";
-    
-    // Guardar archivo
-    $filePath = __DIR__ . '/sitemap-eventos.xml';
+
+    $xml .= "\n</urlset>\n";
+
+    // ── Paso 4: Guardar archivo ──────────────────────────────────────────────────
+    $filePath     = __DIR__ . '/sitemap-eventos.xml';
     $bytesWritten = file_put_contents($filePath, $xml);
-    
+
     if ($bytesWritten !== false) {
         $log[] = "✅ Archivo sitemap-eventos.xml regenerado: " . $bytesWritten . " bytes";
-        $log[] = "📊 Eventos incluidos: " . count($eventos);
-        
-        // Mostrar algunos eventos como ejemplo
-        if (count($eventos) > 0) {
-            $log[] = "📋 Primeros 3 eventos incluidos:";
-            for ($i = 0; $i < min(3, count($eventos)); $i++) {
-                $log[] = "   - " . $eventos[$i]['slug'] . " (start: " . $eventos[$i]['start_date'] . ")";
-            }
-        }
-        
-        // Actualizar sitemap.xml para cambiar lastmod de sitemap-eventos.xml
+        $log[] = "📊 Total eventos: " . count($eventos) . " (" . $conHreflang . " con hreflang, " . $sinHreflang . " sin traducción)";
+
+        // Actualizar lastmod en sitemap.xml (índice)
         $sitemapIndexPath = __DIR__ . '/sitemap.xml';
         if (file_exists($sitemapIndexPath)) {
             $sitemapContent = file_get_contents($sitemapIndexPath);
-            
-            // Verificar si sitemap-eventos.xml está en el índice
+
             if (strpos($sitemapContent, 'sitemap-eventos.xml') === false) {
-                // No existe, agregarlo antes del cierre de </sitemapindex>
-                $newEntry = "  <sitemap>\n    <loc>https://rutasrurales.io/sitemap-eventos.xml</loc>\n    <lastmod>{$today}</lastmod>\n  </sitemap>\n</sitemapindex>";
+                $newEntry = "  <sitemap>\n    <loc>{$baseUrl}/sitemap-eventos.xml</loc>\n    <lastmod>{$today}</lastmod>\n  </sitemap>\n</sitemapindex>";
                 $sitemapContent = str_replace('</sitemapindex>', $newEntry, $sitemapContent);
                 $log[] = "✅ Agregado sitemap-eventos.xml al índice principal";
             } else {
-                // Ya existe, actualizar solo la fecha
                 $sitemapContent = preg_replace(
                     '/(sitemap-eventos\.xml<\/loc>\s*<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/',
                     '${1}' . $today . '${2}',
@@ -132,16 +171,14 @@ try {
                 );
                 $log[] = "✅ Actualizado lastmod de sitemap-eventos.xml en sitemap.xml";
             }
-            
             file_put_contents($sitemapIndexPath, $sitemapContent);
         }
-        
+
         $log[] = "🎉 Regeneración completada con éxito!";
-        
     } else {
         $log[] = "❌ Error al escribir en sitemap-eventos.xml (posible problema de permisos)";
     }
-    
+
 } catch (PDOException $e) {
     $log[] = "❌ Error de conexión a BD: " . $e->getMessage();
 } catch (Exception $e) {
@@ -150,11 +187,11 @@ try {
 
 // Mostrar log
 foreach ($log as $line) {
-    if (strpos($line, '✅') !== false) {
+    if (strpos($line, '✅') !== false || strpos($line, '🎉') !== false) {
         echo '<span class="success">' . htmlspecialchars($line) . '</span><br>';
     } elseif (strpos($line, '❌') !== false) {
         echo '<span class="error">' . htmlspecialchars($line) . '</span><br>';
-    } elseif (strpos($line, '🔍') !== false || strpos($line, '📊') !== false || strpos($line, '📋') !== false) {
+    } elseif (strpos($line, '🔍') !== false || strpos($line, '📊') !== false) {
         echo '<span class="info">' . htmlspecialchars($line) . '</span><br>';
     } else {
         echo htmlspecialchars($line) . '<br>';
@@ -164,20 +201,19 @@ foreach ($log as $line) {
 echo '</div>
         <h2>📋 Verificación:</h2>
         <ul>
-            <li><a href="/sitemap-eventos.xml" target="_blank">Ver sitemap-eventos.xml regenerado</a></li>
+            <li><a href="/sitemap-eventos.xml" target="_blank">Ver sitemap-eventos.xml (español con hreflang)</a></li>
+            <li><a href="/sitemap-eventos-i18n.xml" target="_blank">Ver sitemap-eventos-i18n.xml (traducciones)</a></li>
             <li><a href="/sitemap.xml" target="_blank">Ver índice principal (sitemap.xml)</a></li>
-            <li><a href="/sitemap-eventos.php" target="_blank">Comparar con versión dinámica (sitemap-eventos.php)</a></li>
         </ul>
-        
-        <h2>🎯 ¿Qué hace este script?</h2>
-        <ol>
-            <li>Consulta la base de datos con la <strong>lógica corregida</strong> de fechas</li>
-            <li>Genera un nuevo archivo <code>sitemap-eventos.xml</code> estático</li>
-            <li>Actualiza la fecha en <code>sitemap.xml</code> (índice principal)</li>
-            <li><strong>SOLO incluye eventos futuros/actuales</strong> (no eventos pasados)</li>
-        </ol>
-        
-        <p class="success">✅ El archivo sitemap-eventos.xml ahora estará corregido y listo para Google.</p>
+
+        <h2>🎯 Estructura de sitemaps de eventos:</h2>
+        <ul>
+            <li><strong>sitemap-eventos.xml</strong> → URLs en español (/evento/slug) con hreflang si hay traducciones</li>
+            <li><strong>sitemap-eventos-i18n.xml</strong> → URLs traducidas (/en/evento/slug, /fr/..., /de/..., /zh/...) con hreflang completo</li>
+            <li>Cada URL aparece en UN SOLO sitemap → sin duplicados</li>
+        </ul>
+
+        <p class="success">✅ El archivo sitemap-eventos.xml está listo para Google Search Console.</p>
     </div>
 </body>
 </html>';

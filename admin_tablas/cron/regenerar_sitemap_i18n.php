@@ -127,19 +127,10 @@ try {
             $alternativas[$lang] = "{$baseUrl}/{$lang}/evento/{$slugTradEsc}";
         }
 
-        // ── Entrada para la URL en español ──────────────────────────────────────
-        $xml .= "\n  <url>\n";
-        $xml .= "    <loc>{$baseUrl}/evento/{$slugEs}</loc>\n";
-        $xml .= "    <lastmod>{$lastmod}</lastmod>\n";
-        $xml .= "    <changefreq>weekly</changefreq>\n";
-        $xml .= "    <priority>0.8</priority>\n";
-        foreach ($alternativas as $hLang => $hUrl) {
-            $hLangAttr = ($hLang === 'zh') ? 'zh-Hans' : $hLang;
-            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$hLangAttr}\" href=\"{$hUrl}\"/>\n";
-        }
-        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/evento/{$slugEs}\"/>\n";
-        $xml .= "  </url>\n";
-        $totalUrls++;
+        // ── Entradas para cada URL traducida (SIN español — está en sitemap-eventos.xml) ─
+        // Nota: La URL en español (/evento/{slug}) NO se incluye aquí porque ya está
+        // en sitemap-eventos.xml. Incluirla aquí causaría que la misma URL aparezca
+        // en dos sitemaps distintos del índice (duplicado).
 
         // ── Entrada para cada URL traducida ─────────────────────────────────────
         foreach ($ev['langs'] as $lang => $slugTrad) {
