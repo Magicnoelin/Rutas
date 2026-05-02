@@ -143,28 +143,34 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^evento/([^/]+)/?$ evento-detalle.php?slug=$1 [L,QSA]
 
 # ============================================================
-# 6b. URLs LIMPIAS DE LISTADOS (sin .html para SEO)
+# 6b. URLs LIMPIAS DE LISTADOS (canónicas sin .html)
 # ============================================================
-# Listado de alojamientos: /alojamientos-turisticos → alojamientos-turisticos.html
-RewriteRule ^alojamientos-turisticos/?$ /alojamientos-turisticos.html [L]
+# 301 desde la URL antigua .html a la URL limpia
+# Así Google consolida el PageRank en una sola URL
+RewriteCond %{THE_REQUEST} \s/+alojamientos-turisticos\.html [NC]
+RewriteRule ^alojamientos-turisticos\.html$ /alojamientos-turisticos [R=301,L]
 
-# Listado de eventos culturales: /eventos-culturales → eventos-culturales.html
-RewriteRule ^eventos-culturales/?$ /eventos-culturales.html [L]
+RewriteCond %{THE_REQUEST} \s/+eventos-culturales\.html [NC]
+RewriteRule ^eventos-culturales\.html$ /eventos-culturales [R=301,L]
 
-# Listado de lugares de interés: /lugares-de-interes → lugares-interes-paginacion.html
-RewriteRule ^lugares-de-interes/?$ /lugares-interes-paginacion.html [L]
+RewriteCond %{THE_REQUEST} \s/+lugares-interes-paginacion\.html [NC]
+RewriteRule ^lugares-interes-paginacion\.html$ /lugares-de-interes [R=301,L]
 
-# Listado de actividades: /actividades-turisticas → actividades-turisticas.html
-RewriteRule ^actividades-turisticas/?$ /actividades-turisticas.html [L]
+RewriteCond %{THE_REQUEST} \s/+actividades-turisticas\.html [NC]
+RewriteRule ^actividades-turisticas\.html$ /actividades-turisticas [R=301,L]
+
+# Servir el archivo físico cuando se accede a la URL limpia (sin redirect, interno)
+RewriteRule ^alojamientos-turisticos/?$ alojamientos-turisticos.html [L]
+RewriteRule ^eventos-culturales/?$ eventos-culturales.html [L]
+RewriteRule ^lugares-de-interes/?$ lugares-interes-paginacion.html [L]
+RewriteRule ^actividades-turisticas/?$ actividades-turisticas.html [L]
 
 # ============================================================
-# 7. REGLA CATCH-ALL (Solo para slugs limpios, no archivos)
+# 7. CATCH-ALL — ELIMINADO
+# Era: redirigir slugs sin prefijo a /lugar/slug
+# Causa: generaba 301s incorrectos (ej: /alojamientos-turisticos → /lugar/alojamientos-turisticos)
+# Solución: cada tipo tiene sus reglas explícitas arriba; URLs desconocidas → 404 natural
 # ============================================================
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/(lugar|alojamiento|actividad|evento|api|admin_tablas|dashboard|de|en|fr|zh)/ [NC]
-RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|php|html)$ [NC]
-RewriteRule ^([^/]+)/?$ /lugar/$1 [R=301,L]
 
 # ============================================================
 # 8. PÁGINAS OBSOLETAS Y 410

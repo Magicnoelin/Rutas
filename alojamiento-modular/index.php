@@ -1929,7 +1929,7 @@ if (file_exists($header_path)) {
     <div class="error-icon">😕</div>
     <h1><?php echo $t['no_encontrado_h1']; ?></h1>
     <p><?php echo $t['no_encontrado_p']; ?></p>
-    <a href="/alojamientos-turisticos.html" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo $t['volver_lista']; ?></a>
+    <a href="/alojamientos-turisticos" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo $t['volver_lista']; ?></a>
 </div>
 <?php endif; ?>
 
