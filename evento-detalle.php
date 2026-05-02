@@ -100,6 +100,30 @@ if ($evento) {
 }
 $canonical = 'https://rutasrurales.io/' . ($lang !== 'es' ? $lang . '/' : '') . 'evento/' . $slug_canonical;
 
+// ── Cargar TODAS las traducciones disponibles para hreflang completo ──────────
+// Necesario para que cada página declare todos los idiomas alternativos,
+// no solo el español y el idioma actual.
+$todas_trads = []; // [lang_code => slug_traducido]
+if ($evento && isset($pdo)) {
+    try {
+        $stmtTrads = $pdo->prepare("
+            SELECT language_code, slug
+            FROM cultural_events_trads
+            WHERE event_id = ?
+              AND language_code IN ('en', 'fr', 'de', 'zh')
+              AND slug IS NOT NULL
+              AND slug != ''
+        ");
+        $stmtTrads->execute([$evento['id']]);
+        foreach ($stmtTrads->fetchAll(PDO::FETCH_ASSOC) as $tr) {
+            $todas_trads[$tr['language_code']] = $tr['slug'];
+        }
+    } catch (Exception $e) {
+        // Si falla, continuar sin hreflang de traducciones
+        $todas_trads = [];
+    }
+}
+
 // Fotos
 $fotos = [];
 if ($evento) {
@@ -533,12 +557,12 @@ $evento_js = $evento ? json_encode([
     <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
 
-    <!-- hreflang: SEO multiidioma -->
+    <!-- hreflang: SEO multiidioma — lista COMPLETA de todos los idiomas disponibles -->
     <?php if ($evento): ?>
     <link rel="alternate" hreflang="es" href="https://rutasrurales.io/evento/<?php echo htmlspecialchars($evento['slug']); ?>">
-    <?php if ($lang !== 'es' && !empty($traduccion['slug_trad'])): ?>
-    <link rel="alternate" hreflang="<?php echo $lang; ?>" href="https://rutasrurales.io/<?php echo $lang; ?>/evento/<?php echo htmlspecialchars($traduccion['slug_trad']); ?>">
-    <?php endif; ?>
+    <?php foreach ($todas_trads as $hLang => $hSlug): ?>
+    <link rel="alternate" hreflang="<?php echo $hLang === 'zh' ? 'zh-Hans' : htmlspecialchars($hLang); ?>" href="https://rutasrurales.io/<?php echo htmlspecialchars($hLang); ?>/evento/<?php echo htmlspecialchars($hSlug); ?>">
+    <?php endforeach; ?>
     <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/evento/<?php echo htmlspecialchars($evento['slug']); ?>">
     <?php endif; ?>
 

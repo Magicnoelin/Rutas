@@ -8,17 +8,24 @@ include 'sidebar.php';
 // 3. REGENERAR SITEMAP i18n si se solicita manualmente
 $sitemapMsg = '';
 if (isset($_GET['regenerar_sitemap'])) {
-    try {
+    if (!defined('REGENERAR_SITEMAP_DESDE_ADMIN')) {
         define('REGENERAR_SITEMAP_DESDE_ADMIN', true);
-        include __DIR__ . '/cron/regenerar_sitemap_i18n.php';
+    }
+    try {
+        // Regenerar AMBOS sitemaps de eventos para mantener sincronía
+        include __DIR__ . '/cron/regenerar_sitemap_i18n.php'; // sitemap-eventos-i18n.xml (URLs traducidas)
+        include __DIR__ . '/cron/regenerar_sitemap_es.php';   // sitemap-eventos.xml (español + hreflang)
         $sitemapMsg = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill"></i> <strong>Sitemap i18n regenerado correctamente.</strong> 
-            Se han procesado las traducciones desde la base de datos.
+            <i class="bi bi-check-circle-fill"></i> <strong>Sitemaps regenerados correctamente.</strong>
+            <ul class="mb-0 mt-1" style="font-size:0.88rem;">
+                <li><code>sitemap-eventos-i18n.xml</code> → URLs traducidas (en/fr/de/zh) con hreflang completo</li>
+                <li><code>sitemap-eventos.xml</code> → URLs en español con hreflang para eventos con traducción</li>
+            </ul>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>';
     } catch (Exception $e) {
         $sitemapMsg = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill"></i> <strong>Error al regenerar sitemap:</strong> ' . htmlspecialchars($e->getMessage()) . '
+            <i class="bi bi-exclamation-triangle-fill"></i> <strong>Error al regenerar sitemaps:</strong> ' . htmlspecialchars($e->getMessage()) . '
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>';
     }
