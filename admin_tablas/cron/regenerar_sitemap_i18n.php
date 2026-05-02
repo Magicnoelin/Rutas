@@ -1,37 +1,40 @@
 <?php
 /**
  * Regenerador de sitemap-eventos-i18n.xml
- * 
- * Lee la tabla cultural_events_trads y genera el XML estático
- * con todas las traducciones de eventos (excepto español).
- * 
+ *
+ * Genera el XML estático con hreflang COMPLETO para Google Search Console.
+ * Cada URL contiene TODOS los idiomas alternativos (es, en, fr, de, zh + x-default).
+ *
+ * Google recomienda que cada <url> liste TODAS las variantes de idioma,
+ * no solo las dos implicadas. Este archivo sigue ese estándar.
+ *
  * Se puede ejecutar:
  *   1. Desde cron (ej: cada hora o diariamente)
  *   2. Automáticamente al guardar un evento desde el admin
  *   3. Manualmente desde el navegador: /admin_tablas/cron/regenerar_sitemap_i18n.php
- * 
+ *
  * El archivo generado: /sitemap-eventos-i18n.xml
  */
 
 // Permitir ejecución desde CLI o desde include
-$esCLI = (php_sapi_name() === 'cli');
+$esCLI     = (php_sapi_name() === 'cli');
 $esInclude = defined('REGENERAR_SITEMAP_DESDE_ADMIN');
 
-// Conexión a BD (reutiliza si ya existe desde el admin)
+// Conexión a BD
 $host   = 'localhost';
 $dbname = 'u412199647_Rutas';
 $user   = 'u412199647_olgamarin';
 $pass   = 'Rutas5Rurales7$';
 
-$today = date('Y-m-d');
-$now   = date('Y-m-d H:i:s');
+$baseUrl = 'https://rutasrurales.io';
+$today   = date('Y-m-d');
+$now     = date('Y-m-d H:i:s');
 
 // Guardar referencia a PDO existente para no perderla
 $_pdo_backup = isset($pdo) ? $pdo : null;
 
-// Ruta del archivo XML a generar
-// Desde cron/ subimos 2 niveles; desde admin_tablas/ subimos 1 nivel
-$baseDir = dirname(__DIR__, 2); // Sube 2 niveles: cron -> admin_tablas -> raíz
+// Ruta del archivo XML a generar (2 niveles arriba: cron -> admin_tablas -> raíz)
+$baseDir = dirname(__DIR__, 2);
 $xmlPath = $baseDir . '/sitemap-eventos-i18n.xml';
 
 $log = [];
@@ -41,154 +44,164 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Obtener todas las traducciones activas (no español)
-    // NOTA: cultural_events_trads NO tiene updated_at/created_at, usamos las de cultural_events
-    // CORRECCIÓN: Se cambió la lógica de fechas para coincidir con sitemap-eventos.php
-    $stmt = $pdo->prepare("
-        SELECT 
-            t.language_code,
-            t.slug AS slug_traducido,
-            e.slug AS slug_original,
+    // ── CONSULTA: eventos vigentes/futuros con al menos una traducción ──────────
+    // Agrupa por evento para construir el mapa completo de alternativas.
+    $stmt = $pdo->query("
+        SELECT
+            e.id,
+            e.slug          AS slug_es,
             e.start_date,
             e.end_date,
-            COALESCE(e.updated_at, e.created_at, NOW()) AS fecha_mod
-        FROM cultural_events_trads t
-        INNER JOIN cultural_events e ON e.id = t.event_id
-        WHERE t.language_code != 'es'
-          AND e.is_active = 1
+            COALESCE(e.updated_at, e.created_at, NOW()) AS fecha_mod,
+            t.language_code AS lang,
+            t.slug          AS slug_trad
+        FROM cultural_events e
+        INNER JOIN cultural_events_trads t ON t.event_id = e.id
+        WHERE e.is_active = 1
+          AND e.slug IS NOT NULL
+          AND e.slug != ''
           AND t.slug IS NOT NULL
           AND t.slug != ''
+          AND t.language_code IN ('en', 'fr', 'de', 'zh')
           AND (
-            -- Eventos que NO han terminado todavía (misma lógica que sitemap-eventos.php)
-            (e.end_date IS NULL AND e.start_date >= CURDATE()) OR  -- Eventos sin fecha fin que empiezan hoy o después
-            (e.end_date IS NOT NULL AND e.end_date >= CURDATE())   -- Eventos con fecha fin que terminan hoy o después
+              (e.end_date IS NULL     AND e.start_date >= CURDATE()) OR
+              (e.end_date IS NOT NULL AND e.end_date   >= CURDATE())
           )
-        ORDER BY t.language_code, t.slug
+        ORDER BY e.id ASC, t.language_code ASC
     ");
-    $stmt->execute();
-    $traducciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $log[] = "Traducciones encontradas: " . count($traducciones);
+    $log[] = "Filas de traducciones encontradas: " . count($rows);
 
-    // Agrupar por idioma para los comentarios del XML
-    $porIdioma = [];
-    foreach ($traducciones as $trad) {
-        $porIdioma[$trad['language_code']][] = $trad;
+    // ── AGRUPAR POR EVENTO ───────────────────────────────────────────────────────
+    // $eventos[id] = ['slug_es'=>..., 'fecha_mod'=>..., 'langs'=>[lang=>slug, ...]]
+    $eventos = [];
+    foreach ($rows as $row) {
+        $id = $row['id'];
+        if (!isset($eventos[$id])) {
+            $eventos[$id] = [
+                'slug_es'   => $row['slug_es'],
+                'fecha_mod' => $row['fecha_mod'],
+                'langs'     => [],
+            ];
+        }
+        $eventos[$id]['langs'][$row['lang']] = $row['slug_trad'];
     }
 
-    // Nombres de idiomas para los comentarios
-    $nombresIdiomas = [
-        'de' => 'ALEMÁN',
-        'en' => 'INGLÉS',
-        'fr' => 'FRANCÉS',
-        'zh' => 'CHINO',
-    ];
+    $totalEventos = count($eventos);
+    $totalUrls    = 0;
+    $log[] = "Eventos con traducciones: $totalEventos";
 
-    // Construir el XML
+    // ── CONSTRUCCIÓN DEL XML ─────────────────────────────────────────────────────
     $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     $xml .= '<!--' . "\n";
-    $xml .= '  SITEMAP: Eventos Culturales - Versiones Internacionales' . "\n";
-    $xml .= '  Contiene SOLO las URLs de idiomas distintos al español (de, en, fr, zh).' . "\n";
-    $xml .= '  Las URLs en español están en sitemap-eventos.php' . "\n";
+    $xml .= '  SITEMAP i18n: Eventos Culturales — rutasrurales.io' . "\n";
+    $xml .= '  Incluye URLs en español + todas las versiones traducidas.' . "\n";
+    $xml .= '  Cada <url> contiene hreflang COMPLETO (todos los idiomas) según' . "\n";
+    $xml .= '  las directrices de Google Search Console.' . "\n";
     $xml .= '' . "\n";
-    $xml .= '  Formato de URL: /[lang]/evento/[slug-traducido]' . "\n";
-    $xml .= '  Ejemplo: /de/evento/volksfest-san-pedro-zamora-2026' . "\n";
+    $xml .= '  Idiomas: es (español), en, fr, de, zh (zh-Hans)' . "\n";
+    $xml .= '  URL española:   /evento/{slug}' . "\n";
+    $xml .= '  URL traducida:  /{lang}/evento/{slug-traducido}' . "\n";
     $xml .= '' . "\n";
-    $xml .= '  GENERADO AUTOMÁTICAMENTE - NO EDITAR MANUALMENTE' . "\n";
+    $xml .= '  GENERADO AUTOMÁTICAMENTE — NO EDITAR MANUALMENTE' . "\n";
     $xml .= '  Última regeneración: ' . $now . "\n";
-    $xml .= '  Total traducciones: ' . count($traducciones) . "\n";
+    $xml .= '  Eventos procesados: ' . $totalEventos . "\n";
     $xml .= '-->' . "\n";
     $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n";
-    $xml .= '        xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
+    $xml .= '        xmlns:xhtml="http://www.w3.org/1999/xhtml"' . "\n";
+    $xml .= '        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n";
+    $xml .= '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9' . "\n";
+    $xml .= '          http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' . "\n";
 
-    // Generar URLs agrupadas por idioma
-    foreach ($porIdioma as $lang => $trads) {
-        $nombreIdioma = $nombresIdiomas[$lang] ?? strtoupper($lang);
-        $count = count($trads);
+    foreach ($eventos as $id => $ev) {
+        $slugEs  = htmlspecialchars($ev['slug_es'], ENT_XML1, 'UTF-8');
+        $lastmod = !empty($ev['fecha_mod'])
+            ? date('Y-m-d', strtotime($ev['fecha_mod']))
+            : $today;
 
-        $xml .= "\n";
-        $xml .= "  <!-- ============================================================\n";
-        $xml .= "       {$nombreIdioma} ({$lang}) - {$count} eventos traducidos\n";
-        $xml .= "       ============================================================ -->\n";
-
-        foreach ($trads as $trad) {
-            $slugTrad = htmlspecialchars($trad['slug_traducido']);
-            $slugEs   = htmlspecialchars($trad['slug_original']);
-            $fechaMod = !empty($trad['fecha_mod']) ? date('Y-m-d', strtotime($trad['fecha_mod'])) : $today;
-
-            // Prioridad: eclipse tiene más relevancia
-            $priority = '0.7';
-            if (strpos($slugTrad, 'eclipse') !== false || strpos($slugTrad, 'sonnenfinsternis') !== false || strpos($slugTrad, 'éclipse') !== false) {
-                $priority = '0.9';
-            }
-
-            $xml .= "\n";
-            $xml .= "  <url>\n";
-            $xml .= "    <loc>https://rutasrurales.io/{$lang}/evento/{$slugTrad}</loc>\n";
-            $xml .= "    <lastmod>{$fechaMod}</lastmod>\n";
-            $xml .= "    <changefreq>weekly</changefreq>\n";
-            $xml .= "    <priority>{$priority}</priority>\n";
-            $xml .= "    <!-- Versión original en español -->\n";
-            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"https://rutasrurales.io/evento/{$slugEs}\"/>\n";
-            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$lang}\" href=\"https://rutasrurales.io/{$lang}/evento/{$slugTrad}\"/>\n";
-            $xml .= "  </url>\n";
+        // Mapa completo de alternativas: es + todas las traducciones disponibles
+        $alternativas = ['es' => "{$baseUrl}/evento/{$slugEs}"];
+        foreach ($ev['langs'] as $lang => $slugTrad) {
+            $slugTradEsc = htmlspecialchars($slugTrad, ENT_XML1, 'UTF-8');
+            $alternativas[$lang] = "{$baseUrl}/{$lang}/evento/{$slugTradEsc}";
         }
-    }
 
-    // Si no hay traducciones para algún idioma, añadir comentario placeholder
-    $idiomasSoportados = ['de', 'en', 'fr', 'zh'];
-    foreach ($idiomasSoportados as $lang) {
-        if (!isset($porIdioma[$lang])) {
-            $nombreIdioma = $nombresIdiomas[$lang] ?? strtoupper($lang);
-            $xml .= "\n";
-            $xml .= "  <!-- ============================================================\n";
-            $xml .= "       {$nombreIdioma} ({$lang}) - Sin traducciones aún\n";
-            $xml .= "       ============================================================ -->\n";
+        // ── Entrada para la URL en español ──────────────────────────────────────
+        $xml .= "\n  <url>\n";
+        $xml .= "    <loc>{$baseUrl}/evento/{$slugEs}</loc>\n";
+        $xml .= "    <lastmod>{$lastmod}</lastmod>\n";
+        $xml .= "    <changefreq>weekly</changefreq>\n";
+        $xml .= "    <priority>0.8</priority>\n";
+        foreach ($alternativas as $hLang => $hUrl) {
+            $hLangAttr = ($hLang === 'zh') ? 'zh-Hans' : $hLang;
+            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$hLangAttr}\" href=\"{$hUrl}\"/>\n";
+        }
+        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/evento/{$slugEs}\"/>\n";
+        $xml .= "  </url>\n";
+        $totalUrls++;
+
+        // ── Entrada para cada URL traducida ─────────────────────────────────────
+        foreach ($ev['langs'] as $lang => $slugTrad) {
+            $slugTradEsc = htmlspecialchars($slugTrad, ENT_XML1, 'UTF-8');
+            $hLangAttr   = ($lang === 'zh') ? 'zh-Hans' : $lang;
+
+            $xml .= "\n  <url>\n";
+            $xml .= "    <loc>{$baseUrl}/{$lang}/evento/{$slugTradEsc}</loc>\n";
+            $xml .= "    <lastmod>{$lastmod}</lastmod>\n";
+            $xml .= "    <changefreq>weekly</changefreq>\n";
+            $xml .= "    <priority>0.8</priority>\n";
+            foreach ($alternativas as $hLang2 => $hUrl2) {
+                $hLangAttr2 = ($hLang2 === 'zh') ? 'zh-Hans' : $hLang2;
+                $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$hLangAttr2}\" href=\"{$hUrl2}\"/>\n";
+            }
+            $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/evento/{$slugEs}\"/>\n";
+            $xml .= "  </url>\n";
+            $totalUrls++;
         }
     }
 
     $xml .= "\n</urlset>\n";
 
-    // Escribir el archivo
+    // ── ESCRITURA DEL ARCHIVO ────────────────────────────────────────────────────
     $bytesWritten = file_put_contents($xmlPath, $xml);
 
     if ($bytesWritten === false) {
         $log[] = "ERROR: No se pudo escribir en {$xmlPath}";
-    } else {
-        $log[] = "OK: Archivo generado ({$bytesWritten} bytes) en {$xmlPath}";
+        throw new Exception("No se pudo escribir el XML en {$xmlPath}");
     }
 
-    // También actualizar el lastmod en sitemap.xml (índice principal)
+    $log[] = "OK: Archivo generado ({$bytesWritten} bytes) — {$totalEventos} eventos, {$totalUrls} URLs";
+
+    // ── ACTUALIZAR sitemap.xml (índice maestro) ──────────────────────────────────
     $sitemapIndexPath = $baseDir . '/sitemap.xml';
     if (file_exists($sitemapIndexPath)) {
         $sitemapContent = file_get_contents($sitemapIndexPath);
-        
-        // Verificar si sitemap-eventos-i18n.xml ya está en el índice
+
         if (strpos($sitemapContent, 'sitemap-eventos-i18n.xml') === false) {
-            // No existe, agregarlo antes del cierre de </sitemapindex>
-            $newEntry = "  <sitemap>\n    <loc>https://rutasrurales.io/sitemap-eventos-i18n.xml</loc>\n    <lastmod>{$today}</lastmod>\n  </sitemap>\n</sitemapindex>";
-            $sitemapContent = str_replace('</sitemapindex>', $newEntry, $sitemapContent);
+            // No existe la entrada: agregarla
+            $newEntry  = "  <sitemap>\n";
+            $newEntry .= "    <loc>{$baseUrl}/sitemap-eventos-i18n.xml</loc>\n";
+            $newEntry .= "    <lastmod>{$today}</lastmod>\n";
+            $newEntry .= "  </sitemap>\n";
+            $sitemapContent = str_replace('</sitemapindex>', $newEntry . '</sitemapindex>', $sitemapContent);
             $log[] = "OK: Agregado sitemap-eventos-i18n.xml al índice principal";
         } else {
-            // Ya existe, actualizar solo la fecha
+            // Ya existe: actualizar solo la fecha
             $sitemapContent = preg_replace(
                 '/(sitemap-eventos-i18n\.xml<\/loc>\s*<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/',
                 '${1}' . $today . '${2}',
                 $sitemapContent
             );
-            $log[] = "OK: Actualizado lastmod de sitemap-eventos-i18n.xml en sitemap.xml";
+            $log[] = "OK: Actualizado lastmod de sitemap-eventos-i18n.xml en el índice";
         }
-        
-        // También actualizar la fecha de sitemap-eventos.php
-        $sitemapContent = preg_replace(
-            '/(sitemap-eventos\.php<\/loc>\s*<lastmod>)\d{4}-\d{2}-\d{2}(<\/lastmod>)/',
-            '${1}' . $today . '${2}',
-            $sitemapContent
-        );
-        $log[] = "OK: Actualizado lastmod de sitemap-eventos.php en sitemap.xml";
-        
+
         file_put_contents($sitemapIndexPath, $sitemapContent);
     }
+
+    // ── PING A GOOGLE ────────────────────────────────────────────────────────────
+    @file_get_contents("https://www.google.com/ping?sitemap=" . urlencode("{$baseUrl}/sitemap-eventos-i18n.xml"));
+    $log[] = "OK: Ping enviado a Google";
 
 } catch (PDOException $e) {
     $log[] = "ERROR BD: " . $e->getMessage();
@@ -196,14 +209,14 @@ try {
     $log[] = "ERROR: " . $e->getMessage();
 }
 
-// Restaurar la conexión PDO original si existía (para no romper el flujo del admin)
+// Restaurar la conexión PDO original si existía
 if ($_pdo_backup !== null) {
     $pdo = $_pdo_backup;
 }
 unset($_pdo_backup);
 
 // Guardar log
-$logPath = __DIR__ . '/cron.log';
+$logPath  = __DIR__ . '/cron.log';
 $logEntry = implode("\n", $log) . "\n---\n";
 file_put_contents($logPath, $logEntry, FILE_APPEND);
 
@@ -214,5 +227,5 @@ if ($esCLI) {
     // Acceso directo por navegador
     header('Content-Type: text/plain; charset=UTF-8');
     echo implode("\n", $log) . "\n";
-} 
-// Si es include desde guardar_evento.php, no imprime nada
+}
+// Si es include desde el admin (REGENERAR_SITEMAP_DESDE_ADMIN), no imprime nada
