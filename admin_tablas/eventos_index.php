@@ -89,7 +89,7 @@ if (isset($_GET['msg']) && $_GET['msg'] === 'updated') {
                         <?php
                         // SQL ordenado por fecha de introducción (created_at) descendente
                         // Incluye description para contar caracteres
-                        $sql = "SELECT e.id, e.name, e.start_date, e.municipality, e.status, e.is_active, e.description, e.created_at, e.poster_image, c.name as categoria_nombre 
+                        $sql = "SELECT e.id, e.name, e.start_date, e.municipality, e.status, e.is_active, e.description, e.created_at, e.poster_image, e.photo1, c.name as categoria_nombre 
                                 FROM cultural_events e 
                                 LEFT JOIN categories_events c ON e.category_id = c.id 
                                 ORDER BY e.created_at DESC";
@@ -99,8 +99,11 @@ if (isset($_GET['msg']) && $_GET['msg'] === 'updated') {
                         while ($row = $stmt->fetch()): ?>
                         <tr class="align-middle">
                             <td class="text-center">
-                                <?php if (!empty($row['poster_image'])): ?>
-                                    <img src="<?= htmlspecialchars($row['poster_image']) ?>" 
+                                <?php 
+                                    $imgSrc = $row['poster_image'] ?: $row['photo1'];
+                                ?>
+                                <?php if (!empty($imgSrc)): ?>
+                                    <img src="<?= htmlspecialchars($imgSrc) ?>" 
                                          alt="Thumbnail" 
                                          class="rounded" 
                                          style="width:50px; height:35px; object-fit:cover;"
