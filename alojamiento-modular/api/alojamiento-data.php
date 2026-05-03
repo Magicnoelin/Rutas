@@ -230,6 +230,7 @@ try {
             'name' => $alojamiento['name'],
             'slug' => $alojamiento['slug'],
             'description' => $alojamiento['description'],
+            'description_linked' => $alojamiento['description_linked'] ?? '',
             'meta_title' => $alojamiento['meta_title'],
             'meta_description' => $alojamiento['meta_description'],
             'municipality' => $alojamiento['municipality'],

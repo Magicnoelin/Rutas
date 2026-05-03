@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'db.php';
+require_once __DIR__ . '/../api/inbound_links_helper.php';
 
 /**
  * CONTROL DE ACCESO REFORZADO
@@ -26,9 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          * SQL ACTUALIZADO: Hemos quitado 'is_active' y 'slug' 
          * para que no den error al no venir en el formulario.
          */
+        // ─── INBOUND LINKS: generar description_linked ───────────────────────
+        $description_raw    = $_POST['description'] ?? '';
+        $description_linked = procesarInboundLinks($description_raw, $pdo);
+        // ─────────────────────────────────────────────────────────────────────
+
         $sql = "UPDATE accommodations SET 
                 name = :name, 
                 description = :description, 
+                description_linked = :description_linked,
                 meta_title = :meta_title, 
                 meta_description = :meta_description,
                 address = :address,
@@ -57,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':id' => $id,
             ':name' => $_POST['name'],
             ':description' => $_POST['description'],
+            ':description_linked' => $description_linked,
             ':meta_title' => $_POST['meta_title'],
             ':meta_description' => $_POST['meta_description'],
             ':address' => $_POST['address'],

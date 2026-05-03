@@ -25,7 +25,8 @@ if (!empty($slug)) {
 
         if ($lang === 'es') {
             $stmt = $pdo->prepare("
-                SELECT e.id, e.name AS titulo, e.slug, e.description, e.short_description,
+                SELECT e.id, e.name AS titulo, e.slug, e.description, e.description_linked,
+                       e.short_description,
                        e.meta_title, e.meta_description, e.start_date, e.end_date,
                        e.venue_name AS localidad, e.venue_address, e.municipality, e.province,
                        e.latitude, e.longitude, e.is_free, e.ticket_price, e.organizer,
@@ -1309,7 +1310,13 @@ if (file_exists($header_path)) {
             <div class="card-body">
                 <h2 class="card-title"><?php echo ($t['sobre_evento'] ?? ''); ?></h2>
                 <div class="event-description">
-                    <?php echo $evento['description']; ?>
+                    <?php
+                    // Usar description_linked (inbound links ya insertados en BD, SSR puro → cero impacto en velocidad)
+                    // Fallback a description si aún no se ha regenerado (contenido previo al sistema)
+                    echo !empty($evento['description_linked'])
+                        ? $evento['description_linked']
+                        : $evento['description'];
+                    ?>
                 </div>
 
                 <!-- Info adicional de traducciones -->

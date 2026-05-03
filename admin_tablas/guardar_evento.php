@@ -1,5 +1,6 @@
 <?php
 include 'db.php';
+require_once __DIR__ . '/../api/inbound_links_helper.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
@@ -22,6 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+    // ─── INBOUND LINKS: generar description_linked ───────────────────────────
+    // Se procesa el texto de description y se almacena ya con los links
+    // Para que las páginas modulares lo sirvan directamente (SSR, sin overhead)
+    $description_raw = isset($_POST['description']) ? $_POST['description'] : '';
+    $description_linked = procesarInboundLinks($description_raw, $pdo);
+    $fields[] = '`description_linked` = ?';
+    $values[] = $description_linked;
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Añadimos el ID al final para el WHERE
     $values[] = $id;
