@@ -37,7 +37,6 @@ try {
     $res = $pdo->query("SHOW TABLES LIKE 'inbound_links'")->fetchAll();
     if ($res) {
         echo '<span class="ok">✅ La tabla inbound_links EXISTE</span><br>';
-        // Mostrar keywords
         $links = $pdo->query("SELECT * FROM inbound_links ORDER BY priority ASC")->fetchAll(PDO::FETCH_ASSOC);
         echo '<p>Keywords guardadas (' . count($links) . '):</p>';
         if ($links) {
@@ -47,10 +46,10 @@ try {
             }
             echo '</table>';
         } else {
-            echo '<span class="warn">⚠️ Tabla vacía — añade keywords en el panel Inbound Links</span>';
+            echo '<span class="warn">⚠️ Tabla vacía</span>';
         }
     } else {
-        echo '<span class="err">❌ La tabla inbound_links NO EXISTE. Ejecuta api/inbound_links_crear_tablas.sql en la BD</span>';
+        echo '<span class="err">❌ La tabla inbound_links NO EXISTE.</span>';
     }
 } catch(Exception $e) {
     echo '<span class="err">❌ Error: '.htmlspecialchars($e->getMessage()).'</span>';
@@ -60,11 +59,9 @@ try {
 echo '<h2>2. Columna description_linked en cultural_events</h2>';
 try {
     $cols = $pdo->query("SHOW COLUMNS FROM cultural_events LIKE 'description_linked'")->fetchAll();
-    if ($cols) {
-        echo '<span class="ok">✅ Columna description_linked EXISTE</span>';
-    } else {
-        echo '<span class="err">❌ La columna description_linked NO EXISTE en cultural_events. Ejecuta el ALTER TABLE del SQL</span>';
-    }
+    echo $cols
+        ? '<span class="ok">✅ Columna description_linked EXISTE</span>'
+        : '<span class="err">❌ Columna description_linked NO EXISTE — ejecuta el ALTER TABLE del SQL</span>';
 } catch(Exception $e) {
     echo '<span class="err">❌ Error: '.htmlspecialchars($e->getMessage()).'</span>';
 }
@@ -89,7 +86,7 @@ try {
         echo '<tr><th>Nombre</th><td>'.htmlspecialchars($ev['name']).'</td></tr>';
         echo '<tr><th>Activo</th><td>'.($ev['is_active']?'<span class="ok">Sí</span>':'<span class="err">No</span>').'</td></tr>';
         echo '<tr><th>description (longitud)</th><td>'.$ev['desc_len'].' caracteres</td></tr>';
-        echo '<tr><th>description_linked (longitud)</th><td>'.($ev['desc_linked_len']??'<span class="err">columna no existe o NULL</span>').' caracteres</td></tr>';
+        echo '<tr><th>description_linked (longitud)</th><td>'.($ev['desc_linked_len'] ?? '<span class="err">NULL</span>').' caracteres</td></tr>';
         echo '</table>';
 
         echo '<h2>3a. Primeros 500 chars de description</h2>';
@@ -97,10 +94,7 @@ try {
 
         echo '<h2>3b. Primeros 800 chars de description_linked</h2>';
         if (empty($ev['desc_linked_preview'])) {
-            echo '<span class="err">❌ description_linked está VACÍO o NULL. Posibles causas:<br>
-            &nbsp;→ La columna no existe en la BD (ejecuta el SQL)<br>
-            &nbsp;→ La regeneración falló (prueba a regenerar de nuevo desde el panel Inbound Links)<br>
-            &nbsp;→ La keyword no aparece en el texto de description</span>';
+            echo '<span class="err">❌ description_linked está VACÍO o NULL.</span>';
         } else {
             echo '<pre>'.htmlspecialchars($ev['desc_linked_preview']).'</pre>';
         }
@@ -113,7 +107,6 @@ try {
                 $stmtFull = $pdo->prepare("SELECT description FROM cultural_events WHERE slug=?");
                 $stmtFull->execute([$slug]);
                 $fullDesc = $stmtFull->fetchColumn() ?? '';
-
                 foreach ($allLinks as $kw) {
                     $found = (stripos($fullDesc, $kw) !== false);
                     $icon = $found ? '<span class="ok">✅ ENCONTRADA</span>' : '<span class="err">❌ NO encontrada</span>';
@@ -127,7 +120,7 @@ try {
         }
     }
 } catch(Exception $e) {
-    echo '<span class="err">❌ Error consultando evento: '.htmlspecialchars($e->getMessage()).'</span>';
+    echo '<span class="err">❌ Error: '.htmlspecialchars($e->getMessage()).'</span>';
 }
 
 // ── 5. Test en vivo del helper ─────────────────────────────────────────────────
@@ -138,23 +131,74 @@ try {
     $stmtTest->execute([$slug]);
     $rawDesc = $stmtTest->fetchColumn();
     if ($rawDesc) {
-        // Resetear cache
         global $_inbound_links_cache;
         $_inbound_links_cache = null;
         $result = procesarInboundLinks($rawDesc, $pdo);
-        if ($result === $rawDesc) {
-            echo '<span class="warn">⚠️ El resultado es IDÉNTICO al original — ninguna keyword fue encontrada en el texto</span>';
-        } else {
-            echo '<span class="ok">✅ Se insertaron links. Diferencia detectada.</span>';
-        }
-        echo '<h3>Resultado procesado (primeros 1000 chars):</h3>';
+        echo ($result === $rawDesc)
+            ? '<span class="warn">⚠️ Resultado idéntico — keyword no encontrada en el texto</span>'
+            : '<span class="ok">✅ Se insertaron links correctamente.</span>';
+        echo '<h3>Resultado (primeros 1000 chars):</h3>';
         echo '<pre>'.htmlspecialchars(substr($result, 0, 1000)).'</pre>';
     } else {
-        echo '<span class="err">No se pudo leer description del evento</span>';
+        echo '<span class="err">No se pudo leer description</span>';
     }
 } catch(Exception $e) {
     echo '<span class="err">Error: '.htmlspecialchars($e->getMessage()).'</span>';
 }
+
+// ── 6. ¿El evento-detalle.php del SERVIDOR tiene description_linked? ──────────
+echo '<h2>6. Versión de evento-detalle.php en el servidor</h2>';
+$edFile = __DIR__ . '/../evento-detalle.php';
+if (file_exists($edFile)) {
+    $edContent = file_get_contents($edFile);
+    $hasCol  = (strpos($edContent, 'description_linked') !== false);
+    $hasEcho = (strpos($edContent, "description_linked") !== false && strpos($edContent, 'echo !empty') !== false);
+    echo $hasCol
+        ? '<span class="ok">✅ evento-detalle.php contiene "description_linked" → archivo actualizado</span><br>'
+        : '<span class="err">❌ evento-detalle.php NO contiene "description_linked" → ARCHIVO DESACTUALIZADO en servidor. Súbelo desde git.</span><br>';
+    echo $hasEcho
+        ? '<span class="ok">✅ El echo con fallback está presente</span>'
+        : '<span class="err">❌ El echo con fallback NO está presente</span>';
+} else {
+    echo '<span class="err">❌ No se encontró evento-detalle.php en ' . htmlspecialchars($edFile) . '</span>';
+}
+
+// ── 7. Fetch del HTML de la página en vivo (curl) ─────────────────────────────
+echo '<h2>7. HTML de la página en vivo (curl)</h2>';
+if (function_exists('curl_init')) {
+    $urlVivo = 'https://rutasrurales.io/evento/' . rawurlencode($slug);
+    $ch = curl_init($urlVivo);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 Debug');
+    $html    = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if (!$html) {
+        echo '<span class="warn">⚠️ curl falló. Comprueba el HTML con Ctrl+U en el navegador.</span>';
+    } else {
+        echo "HTTP: <strong>{$httpCode}</strong><br>";
+        $target = 'fiestas-san-juan-soria-2026-la-saca-programa';
+        if (strpos($html, $target) !== false) {
+            echo '<span class="ok">✅ El link aparece en el HTML servido → Sistema funcionando correctamente.</span><br>';
+            echo '<span class="warn">Si no lo ves visualmente: el &lt;a&gt; puede estar dentro de un &lt;h3&gt; sin estilos visibles. Prueba Ctrl+U para ver el fuente.</span>';
+        } else {
+            echo '<span class="err">❌ El link NO aparece en el HTML servido.</span><br>';
+            echo '<span class="warn">→ Causa más probable: evento-detalle.php en el servidor NO está actualizado (ver sección 6).</span>';
+        }
+        $pos = strpos($html, 'event-description');
+        if ($pos !== false) {
+            echo '<h3>Fragmento del div.event-description en el HTML servido:</h3>';
+            echo '<pre>' . htmlspecialchars(substr($html, $pos, 700)) . '</pre>';
+        }
+    }
+} else {
+    echo '<span class="warn">⚠️ curl no disponible en este servidor. Verifica el HTML con Ctrl+U en el navegador y busca "La Saca".</span>';
+}
+
 ?>
 
 <br><br>
