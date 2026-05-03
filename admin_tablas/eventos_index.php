@@ -74,10 +74,12 @@ if (isset($_GET['msg']) && $_GET['msg'] === 'updated') {
                 <table class="table table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
+                            <th class="text-center" style="width:60px;">Foto</th>
                             <th>Fecha Inicio</th>
                             <th>Evento</th>
                             <th>Categoría</th> 
                             <th>Municipio</th>
+                            <th class="text-center">Descripción</th>
                             <th class="text-center">Publicado</th>
                             <th>Estado</th>
                             <th class="text-center">Acción</th>
@@ -85,16 +87,29 @@ if (isset($_GET['msg']) && $_GET['msg'] === 'updated') {
                     </thead>
                     <tbody>
                         <?php
-                        // SQL ordenado por fecha de inicio y usando la columna is_active
-                        $sql = "SELECT e.id, e.name, e.start_date, e.municipality, e.status, e.is_active, c.name as categoria_nombre 
+                        // SQL ordenado por fecha de introducción (created_at) descendente
+                        // Incluye description para contar caracteres
+                        $sql = "SELECT e.id, e.name, e.start_date, e.municipality, e.status, e.is_active, e.description, e.created_at, e.poster_image, c.name as categoria_nombre 
                                 FROM cultural_events e 
                                 LEFT JOIN categories_events c ON e.category_id = c.id 
-                                ORDER BY e.start_date ASC";
+                                ORDER BY e.created_at DESC";
                         
                         $stmt = $pdo->query($sql);
                         
                         while ($row = $stmt->fetch()): ?>
                         <tr class="align-middle">
+                            <td class="text-center">
+                                <?php if (!empty($row['poster_image'])): ?>
+                                    <img src="<?= htmlspecialchars($row['poster_image']) ?>" 
+                                         alt="Thumbnail" 
+                                         class="rounded" 
+                                         style="width:50px; height:35px; object-fit:cover;"
+                                         loading="lazy"
+                                         onerror="this.style.display='none'">
+                                <?php else: ?>
+                                    <span class="text-muted"><i class="bi bi-image"></i></span>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <i class="bi bi-calendar3 text-muted me-1"></i>
                                 <?= date('d/m/Y', strtotime($row['start_date'])) ?>
@@ -107,6 +122,16 @@ if (isset($_GET['msg']) && $_GET['msg'] === 'updated') {
                             </td>
                             <td><?= htmlspecialchars($row['municipality']) ?></td>
                             
+                            <td class="text-center">
+                                <?php 
+                                    $descLen = $row['description'] ? mb_strlen($row['description']) : 0;
+                                    $badgeColor = $descLen > 500 ? 'bg-success' : ($descLen > 200 ? 'bg-warning text-dark' : 'bg-secondary');
+                                ?>
+                                <span class="badge <?= $badgeColor ?>" title="Caracteres de descripción general">
+                                    <i class="bi bi-fonts"></i> <?= $descLen ?>
+                                </span>
+                            </td>
+
                             <td class="text-center">
                                 <?php if ($row['is_active'] == 1): ?>
                                     <span class="badge bg-success">
