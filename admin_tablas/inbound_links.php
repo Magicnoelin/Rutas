@@ -6,9 +6,14 @@
 session_start();
 include 'db.php';
 
-// Control de acceso
-if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
-    header("Location: login.php");
+// Control de acceso: sesión admin O acceso desde el propio dominio (igual que el resto del admin)
+$is_authenticated = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin';
+$is_internal      = isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'rutasrurales.io') !== false;
+// También permitir acceso directo en local/dev (sin referer) por comodidad
+$is_local         = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1');
+if (!$is_authenticated && !$is_internal && !$is_local) {
+    // Sin sesión, sin referer del dominio: redirigir a login
+    header("Location: https://rutasrurales.io/admin_tablas/index.php");
     exit;
 }
 
