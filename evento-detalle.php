@@ -754,6 +754,27 @@ $evento_js = $evento ? json_encode([
             color: var(--text);
         }
         .event-description p { margin-bottom: 1.2rem; }
+        /* ── Inbound links: visibles en todos los contextos (párrafos, headings) */
+        .event-description a {
+            color: #2F5233;
+            text-decoration: underline;
+            text-decoration-color: rgba(47, 82, 51, 0.4);
+            text-underline-offset: 2px;
+            font-weight: 600;
+            transition: color 0.15s, text-decoration-color 0.15s;
+        }
+        .event-description a:hover {
+            color: #1a3a1e;
+            text-decoration-color: #2F5233;
+        }
+        .event-description h2 a,
+        .event-description h3 a,
+        .event-description h4 a {
+            /* En headings: heredar tamaño y peso, pero mantener el color de link */
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
         .event-description h2, .event-description h3 {
             color: var(--primary);
             margin: 1.5rem 0 0.8rem;

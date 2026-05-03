@@ -9,10 +9,11 @@
 CREATE TABLE IF NOT EXISTS `inbound_links` (
     `id`          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `keyword`     VARCHAR(255) NOT NULL COMMENT 'Texto exacto a buscar (case-insensitive)',
-    `url`         VARCHAR(500) NOT NULL COMMENT 'URL de destino, ej: /mercados/castellano',
+    `url`         VARCHAR(500) NOT NULL COMMENT 'URL de destino con / inicial, ej: /mercados/castellano',
     `link_title`  VARCHAR(255) NOT NULL COMMENT 'Atributo title del enlace (SEO)',
     `is_active`   TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1 = activo, 0 = desactivado',
     `priority`    SMALLINT UNSIGNED NOT NULL DEFAULT 100 COMMENT 'Menor número = mayor prioridad (se aplica primero)',
+    `mercado`     VARCHAR(5) NOT NULL DEFAULT 'es' COMMENT 'Mercado: es, en, fr, de, zh',
     `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY `uq_keyword` (`keyword`),

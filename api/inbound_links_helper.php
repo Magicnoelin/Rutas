@@ -131,8 +131,13 @@ function procesarInboundLinks(?string $texto, PDO $pdo): string
                 $pattern,
                 function ($m) use ($entry, &$reemplazado) {
                     $reemplazado = true;
-                    $url        = htmlspecialchars($entry['url'], ENT_QUOTES, 'UTF-8');
-                    $title      = htmlspecialchars($entry['link_title'], ENT_QUOTES, 'UTF-8');
+                    // Normalizar URL: siempre con / inicial para evitar rutas relativas rotas
+                    $rawUrl = $entry['url'];
+                    if (!empty($rawUrl) && $rawUrl[0] !== '/' && !preg_match('#^https?://#i', $rawUrl)) {
+                        $rawUrl = '/' . $rawUrl;
+                    }
+                    $url   = htmlspecialchars($rawUrl, ENT_QUOTES, 'UTF-8');
+                    $title = htmlspecialchars($entry['link_title'], ENT_QUOTES, 'UTF-8');
                     // Preservar el texto tal como aparece en el documento original
                     return '<a href="' . $url . '" title="' . $title . '">' . $m[1] . '</a>';
                 },
