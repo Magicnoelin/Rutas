@@ -40,9 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // NUEVO: Forzar is_active = 0 siempre (pendiente de revisión)
-        // El admin debe revisar slug y activar manualmente
-        $isActive = 0;
+        // Obtener el estado actual del lugar para mantenerlo
+        $stmtCurrent = $pdo->prepare("SELECT is_active FROM places_of_interest WHERE id = ?");
+        $stmtCurrent->execute([$id]);
+        $currentPlace = $stmtCurrent->fetch();
+        $isActive = $currentPlace['is_active']; // Mantener el estado actual (público o borrador)
 
         $sql = "UPDATE places_of_interest SET 
                 name = ?, slug = ?, category_id = ?, subcategory_id = ?, 
