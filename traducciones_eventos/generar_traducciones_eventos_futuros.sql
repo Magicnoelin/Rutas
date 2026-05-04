@@ -44,9 +44,9 @@ SELECT
     name,
     -- Slug SEO optimizado para inglés
     CONCAT(
-        REPLACE(LOWER(name), ' ', '-'),
+        REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(COALESCE(name, '')), ' ', '-'), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u'), 'ñ', 'n'),
         '-traditional-festival-',
-        REPLACE(LOWER(province), ' ', '-'),
+        REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(COALESCE(province, '')), ' ', '-'), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u'), 'ñ', 'n'),
         '-spain-',
         YEAR(start_date)
     ),
@@ -301,11 +301,10 @@ WHERE is_active = 1
 -- 3. TERCERO: VERIFICACIÓN FINAL
 -- ============================================
 SELECT 
-    'RESUMEN FINAL DE TRADUCCIONES INSERTADAS' as seccion,
+    'TOTAL DE TRADUCCIONES ACTUALES' as seccion,
     language_code as idioma,
-    COUNT(*) as traducciones_insertadas
+    COUNT(*) as total
 FROM cultural_events_trads 
-WHERE created_at >= NOW() - INTERVAL 1 HOUR
 GROUP BY language_code
 ORDER BY language_code;
 
