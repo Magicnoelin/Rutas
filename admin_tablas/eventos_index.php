@@ -114,6 +114,9 @@ if (isset($_GET['msg']) && $_GET['msg'] === 'updated') {
                                 <?php endif; ?>
                             </td>
                             <td>
+                                <div class="small text-muted mb-1" style="font-size:0.75rem;">
+                                    <i class="bi bi-hash"></i> ID: <?= $row['id'] ?>
+                                </div>
                                 <i class="bi bi-calendar3 text-muted me-1"></i>
                                 <?= date('d/m/Y', strtotime($row['start_date'])) ?>
                             </td>
