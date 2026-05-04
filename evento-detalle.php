@@ -170,7 +170,7 @@ $ui = ['es' => [
         'btn_alojamientos' => '🏠 Alojamientos',
         'btn_lugares'      => '🏛️ Lugares',
         'btn_actividades'  => '🎯 Actividades',
-        'aloj_cercanos'    => '🏠 Alojamientos cercanos',
+        'aloj_cercanos'    => '🏠 Alojamientos turísticos cercanos',
         'ver_mas_aloj'     => 'Ver más alojamientos',
         'lugares_cercanos' => '🏛️ Lugares de interés cercanos',
         'ver_mas_lugares'  => 'Ver más lugares',
