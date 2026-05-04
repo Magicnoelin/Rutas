@@ -80,7 +80,7 @@ RewriteRule ^alojamiento/mansi\%C3\%B3n\%20de\%20la\%20adrada/?$ /alojamiento/ma
 # Captura tanto la ñ decodificada como su versión percent-encoded %C3%B1
 RewriteCond %{THE_REQUEST} ^[A-Z]+\s+/lugar/.*%C3%B1 [NC,OR]
 RewriteCond %{REQUEST_URI} ^/lugar/(.*)ñ(.*)$ [NC]
-RewriteRule ^lugar/(.*) /lugar/%1n%2 [R=301,L,NE]
+RewriteRule ^lugar/(.*)ñ(.*)$ /lugar/$1n$2 [R=301,L,NE]
 
 RewriteRule ^lugar/castroviejo-duruelo/?$ /lugar/castroviejo-duruelo-de-la-sierra [R=301,L]
 RewriteRule ^lugar/restaurante_baluarte/?$ /lugar/restaurante-baluarte [R=301,L]
