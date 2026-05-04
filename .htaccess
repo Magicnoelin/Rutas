@@ -173,6 +173,11 @@ RewriteRule ^actividades-turisticas/?$ actividades-turisticas.html [L]
 # ============================================================
 
 # ============================================================
+# 7b. RUTAS LISTAS PARA DISFRUTAR — PHP dinámico desde BD
+# ============================================================
+RewriteRule ^rutas-listas-para-disfrutar\.html$ rutas-listas-para-disfrutar.php [L]
+
+# ============================================================
 # 8. PÁGINAS OBSOLETAS Y 410
 # ============================================================
 RewriteRule ^evento/(asdg|test)/?$ - [G,L]
