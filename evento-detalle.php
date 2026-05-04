@@ -1607,7 +1607,7 @@ if (file_exists($header_path)) {
 <?php endif; ?>
 
 <!-- Script principal (diferido) -->
-<script defer src="/js/evento-modular.js?v=1.1"></script>
+<script defer src="/js/evento-modular.js?v=3.0"></script>
 
 <!-- GTM diferido (después de interacción) -->
 <script>
