@@ -19,7 +19,7 @@ try {
 }
 
 // Consulta ordenada por event_id ascendente
-$stmt = $pdo->query("SELECT * FROM cultural_events_trads ORDER BY event_id ASC, language_code ASC");
+$stmt = $pdo->query("SELECT * FROM cultural_events_trads ORDER BY event_id DESC, language_code ASC");
 $rows = $stmt->fetchAll();
 ?>
 
