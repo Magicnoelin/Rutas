@@ -501,6 +501,8 @@ if ($evento) {
         'description' => strip_tags($evento['short_description'] ?: $evento['description']),
         'startDate' => $evento['start_date'],
         'endDate' => $evento['end_date'] ?: $evento['start_date'],
+        'eventStatus' => 'https://schema.org/EventScheduled',
+        'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
         'location' => [
             '@type' => 'Place',
             'name' => $evento['localidad'] ?: $evento['municipality'],
@@ -515,6 +517,19 @@ if ($evento) {
         'isAccessibleForFree' => $evento['is_free'] == 1,
         'url' => $canonical,
     ];
+
+    // Offers (solo si tiene precio)
+    if ($evento['is_free'] != 1 && !empty($evento['ticket_price']) && $evento['ticket_price'] > 0) {
+        $jsonld_data['offers'] = [
+            '@type' => 'Offer',
+            'url' => $canonical,
+            'price' => number_format((float)$evento['ticket_price'], 2, '.', ''),
+            'priceCurrency' => 'EUR',
+            'availability' => 'https://schema.org/InStock',
+            'validFrom' => $evento['start_date'],
+        ];
+    }
+
     if (!empty($fotos[0])) $jsonld_data['image'] = $fotos[0];
     if ($evento['latitude'] && $evento['longitude']) {
         $jsonld_data['location']['geo'] = [
