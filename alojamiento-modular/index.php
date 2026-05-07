@@ -1896,8 +1896,8 @@ if (file_exists($header_path)) {
         <!-- CTA Registro -->
         <div class="cta-card">
             <div style="font-size:1.8rem;margin-bottom:8px;line-height:1;">🌿</div>
-            <h3 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px;"><?php echo htmlspecialchars($t['cta_titulo']); ?></h3>
-            <p style="font-size:0.8rem;color:rgba(255,255,255,0.85);margin-bottom:14px;line-height:1.5;"><?php echo htmlspecialchars($t['cta_desc']); ?></p>
+            <h3 style="font-size:1rem;font-weight:700;color:#fff!important;margin-bottom:8px;"><?php echo htmlspecialchars($t['cta_titulo']); ?></h3>
+            <p style="font-size:0.8rem;color:rgba(255,255,255,0.85)!important;margin-bottom:14px;line-height:1.5;"><?php echo htmlspecialchars($t['cta_desc']); ?></p>
             <a href="/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
                style="display:flex;align-items:center;justify-content:center;background:#fff;color:#2F5233;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none;margin-bottom:8px;width:100%;box-sizing:border-box;">
                 <?php echo htmlspecialchars($t['cta_register']); ?>
