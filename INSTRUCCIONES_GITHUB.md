@@ -11,8 +11,8 @@
 Abre PowerShell o Git Bash y ejecuta:
 
 ```bash
-git config --global user.name "Tu Nombre"
-git config --global user.email "olgamarin@rutasrurales.io"
+git config --global user.name "TU_NOMBRE"
+git config --global user.email "tu-email@ejemplo.com"
 ```
 
 ## Paso 3: Crear Repositorio en GitHub

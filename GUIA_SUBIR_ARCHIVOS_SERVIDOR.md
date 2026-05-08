@@ -30,7 +30,7 @@ Subir los archivos actualizados desde tu computadora al servidor web para que el
 3. Haz clic en **"Seleccionar archivo"**
 4. En tu computadora, navega a:
    ```
-   C:\Users\olgam\Documents\Visual Studio code proyectos\Rutas
+   [RUTA_DE_TU_PROYECTO]\Rutas
    ```
 5. Selecciona el archivo: **`agregar-alojamiento.html`**
 6. Haz clic en **"Abrir"**
@@ -49,7 +49,7 @@ Subir los archivos actualizados desde tu computadora al servidor web para que el
 1. Haz clic en **"Subir"**
 2. Selecciona archivo de tu computadora:
    ```
-   C:\Users\olgam\Documents\Visual Studio code proyectos\Rutas\api\config.php
+   [RUTA_DE_TU_PROYECTO]\Rutas\api\config.php
    ```
 3. Si pregunta si sobrescribir, di **"Sí"**
 4. Espera a que termine
@@ -59,7 +59,7 @@ Subir los archivos actualizados desde tu computadora al servidor web para que el
 1. Haz clic en **"Subir"**
 2. Selecciona archivo:
    ```
-   C:\Users\olgam\Documents\Visual Studio code proyectos\Rutas\api\crear.php
+   [RUTA_DE_TU_PROYECTO]\Rutas\api\crear.php
    ```
 3. Si pregunta si sobrescribir, di **"Sí"**
 4. Espera a que termine
@@ -69,7 +69,7 @@ Subir los archivos actualizados desde tu computadora al servidor web para que el
 1. Haz clic en **"Subir"**
 2. Selecciona archivo:
    ```
-   C:\Users\olgam\Documents\Visual Studio code proyectos\Rutas\api\.htaccess
+   [RUTA_DE_TU_PROYECTO]\Rutas\api\.htaccess
    ```
 3. **NOTA**: El archivo `.htaccess` puede estar oculto en Windows
 4. Para verlo, en el explorador de archivos:
@@ -119,7 +119,7 @@ FileZilla tiene 2 paneles:
 #### **En el panel IZQUIERDO (tu computadora):**
 1. Navega a:
    ```
-   C:\Users\olgam\Documents\Visual Studio code proyectos\Rutas
+   [RUTA_DE_TU_PROYECTO]\Rutas
    ```
 
 #### **En el panel DERECHO (el servidor):**

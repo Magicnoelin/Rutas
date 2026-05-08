@@ -15,7 +15,7 @@ Esta guía te ayudará a instalar y configurar el backend API para conectar tu w
 - Acceso FTP o File Manager
 
 ✅ Base de datos:
-- Nombre: `u412199647_Rutas`
+- Nombre: `NOMBRE_DE_TU_BASE_DE_DATOS`
 - Servidor: `localhost` (127.0.0.1:3306)
 - Tabla con 29 campos (según tu CSV)
 
@@ -56,9 +56,9 @@ Esta guía te ayudará a instalar y configurar el backend API para conectar tu w
 
 ```php
 define('DB_HOST', 'localhost');  // Dejar como está
-define('DB_NAME', 'u412199647_Rutas');  // Dejar como está
+define('DB_NAME', 'NOMBRE_DE_TU_BASE_DE_DATOS');
 define('DB_USER', 'TU_USUARIO_MYSQL');  // ← CAMBIAR
-define('DB_PASS', 'TU_PASSWORD_MYSQL'); // ← CAMBIAR
+define('DB_PASS', '[TU_PASSWORD_MYSQL]'); // ← CAMBIAR
 define('DB_TABLE', 'alojamientos');     // ← CONFIRMAR nombre de tabla
 ```
 
@@ -66,7 +66,7 @@ define('DB_TABLE', 'alojamientos');     // ← CONFIRMAR nombre de tabla
 
 **Usuario MySQL:**
 1. En phpMyAdmin, mira arriba a la izquierda
-2. Verás algo como: `Usuario: u412199647_admin`
+2. Verás algo como: `Usuario: TU_USUARIO_DB`
 3. Ese es tu usuario
 
 **Contraseña:**

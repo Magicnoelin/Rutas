@@ -39,11 +39,7 @@ sudo apt install mysql-client-core-8.0 -y
 # Navegar al directorio del proyecto
 cd /home/olga/Proyectos/Rutas
 
-# Ejecutar el script SQL CORREGIDO (pedirá la contraseña)
-mysql -u u412199647_olgamarin -p u412199647_Rutas < actualizar_traducciones_eventos.sql
-```
 
-**Contraseña:** `Rutas5Rurales7$`
 
 ### Paso 3: Verificar Resultados
 El script SQL incluye secciones de verificación que mostrarán:
