@@ -107,7 +107,7 @@ $lang_prefix = ($lang != 'es') ? '/' . $lang : '';
                 <a href="<?php echo $lang_prefix; ?>/agradecimientos.html"><?php echo $ft['acknowledgments']; ?></a>
             </div>
             <div class="footer-social">
-                <a href="https://www.facebook.com/rutasrurales.io" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61550866574226&locale=es_ES" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
                 <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 <a href="https://twitter.com/rutasrurales" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
             </div>
