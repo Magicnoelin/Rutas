@@ -107,9 +107,9 @@ $lang_prefix = ($lang != 'es') ? '/' . $lang : '';
                 <a href="<?php echo $lang_prefix; ?>/agradecimientos.html"><?php echo $ft['acknowledgments']; ?></a>
             </div>
             <div class="footer-social">
-                <a href="https://www.facebook.com/profile.php?id=61550866574226&locale=es_ES" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="https://twitter.com/rutasrurales" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61550866574226&locale=es_ES" target="_blank" aria-label="Facebook" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/rutasrurales" target="_blank" aria-label="Twitter" class="social-icon twitter"><i class="fab fa-x-twitter"></i></a>
             </div>
         </div>
         <div class="footer-copyright">
@@ -146,12 +146,43 @@ $lang_prefix = ($lang != 'es') ? '/' . $lang : '';
     text-decoration: none;
 }
 .footer-info i { color: #d4a574; }
-.footer-social a {
-    color: white;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
+.footer-social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
 }
-.footer-social a:hover { transform: translateY(-2px); color: #d4a574; }
+.footer-social a.social-icon {
+    color: white;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+.footer-social a.social-icon:hover {
+    transform: translateY(-3px);
+}
+.footer-social a.social-icon.facebook:hover {
+    background: #1877F2;
+    color: white;
+    box-shadow: 0 4px 12px rgba(24,119,242,0.4);
+}
+.footer-social a.social-icon.instagram:hover {
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(225,48,108,0.4);
+}
+.footer-social a.social-icon.twitter:hover {
+    background: #000;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
 .footer-copyright {
     border-top: 1px solid rgba(255,255,255,0.1);
     padding-top: 15px;
