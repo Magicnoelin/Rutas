@@ -1594,10 +1594,15 @@ if (file_exists($header_path)) {
                 <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">📋 Descripción</h2>
                 <?php if (!empty($alojamiento['description'])): ?>
                 <?php
-                // Permitir solo etiquetas seguras de formato (negritas, cursivas, párrafos, listas)
-                $allowed_tags = '<strong><b><em><i><u><p><br><ul><ol><li><h2><h3><h4><span>';
-                $desc_safe = strip_tags($alojamiento['description'], $allowed_tags);
-                $longDesc = strlen(strip_tags($desc_safe)) > 350;
+                // Usar description_linked (inbound links pre-generados, cero overhead en velocidad)
+                // Fallback a description si aún no está regenerado
+                // IMPORTANTE: incluir <a> en allowed_tags para que los inbound links se preserven
+                $allowed_tags = '<strong><b><em><i><u><p><br><ul><ol><li><h2><h3><h4><span><a>';
+                $desc_raw  = !empty($alojamiento['description_linked'])
+                    ? $alojamiento['description_linked']
+                    : $alojamiento['description'];
+                $desc_safe = strip_tags($desc_raw, $allowed_tags);
+                $longDesc  = strlen(strip_tags($desc_safe)) > 350;
                 ?>
                 <div class="desc-text <?php echo $longDesc ? 'collapsed' : ''; ?>" id="desc-text">
                     <?php echo nl2br($desc_safe); ?>

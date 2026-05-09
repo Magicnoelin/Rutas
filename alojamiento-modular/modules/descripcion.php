@@ -7,7 +7,17 @@ if (isset($alojamiento) && $alojamiento && isset($t) && isset($tipo_display) && 
     
     <?php if (!empty($alojamiento['description'])): ?>
     <div class="description-content">
-        <?php echo nl2br(htmlspecialchars($alojamiento['description'], ENT_QUOTES, 'UTF-8')); ?>
+        <?php
+        // Usar description_linked (pre-generado con inbound links internos) si está disponible.
+        // Si no, usar description con htmlspecialchars para seguridad.
+        // IMPORTANTE: description_linked ya es HTML seguro (generado internamente),
+        //             por eso NO aplicamos htmlspecialchars sobre él.
+        if (!empty($alojamiento['description_linked'])) {
+            echo nl2br($alojamiento['description_linked']);
+        } else {
+            echo nl2br(htmlspecialchars($alojamiento['description'], ENT_QUOTES, 'UTF-8'));
+        }
+        ?>
     </div>
     <?php else: ?>
     <p class="no-description">No hay descripción disponible.</p>
