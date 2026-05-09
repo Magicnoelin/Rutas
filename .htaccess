@@ -128,6 +128,15 @@ RewriteRule ^rutas/([a-z0-9\-]+)/?$ rutas-tematicas/index.php?slug=$1 [L,QSA]
 # 6. MOTOR INTERNO (No cambian la URL del navegador)
 # ============================================================
 RewriteRule ^alojamiento/([^/]+)/?$ alojamiento-modular/index.php?slug=$1 [L,QSA]
+
+# ── LUGAR PREVIEW (ruta de prueba del nuevo sistema modular) ──────────────────
+# Accesible en: https://rutasrurales.io/lugar-preview/{slug}
+# Cuando esté verificado, cambiar la línea de PRODUCCIÓN de abajo.
+RewriteRule ^lugar-preview/([^/]+)/?$ lugar-modular/index.php?slug=$1 [L,QSA]
+
+# ── LUGAR PRODUCCIÓN ─────────────────────────────────────────────────────────
+# PASO FINAL (cuando lugar-preview funcione): sustituir la línea de abajo por:
+#   RewriteRule ^lugar/([^/]+)/?$ lugar-modular/index.php?slug=$1 [L,QSA]
 RewriteRule ^lugar/([^/]+)/?$ redirect_manager.php?type=lugar&slug=$1 [L,QSA]
 RewriteRule ^actividad/([^/]+)/?$ redirect_manager.php?type=actividad&slug=$1 [L,QSA]
 

@@ -1,0 +1,12 @@
+# ============================================================
+# lugar-modular/.htaccess
+# Protección del directorio modular
+# ============================================================
+
+# Permitir acceso a index.php y JS/CSS
+<FilesMatch "\.(php|js|css|woff2|webp|jpg|png|svg)$">
+    Allow from all
+</FilesMatch>
+
+# No hacer rewrite dentro de esta carpeta (Apache lo heredaría del padre)
+RewriteEngine Off
