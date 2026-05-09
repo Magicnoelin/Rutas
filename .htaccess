@@ -135,9 +135,8 @@ RewriteRule ^alojamiento/([^/]+)/?$ alojamiento-modular/index.php?slug=$1 [L,QSA
 RewriteRule ^lugar-preview/([^/]+)/?$ lugar-modular/index.php?slug=$1 [L,QSA]
 
 # ── LUGAR PRODUCCIÓN ─────────────────────────────────────────────────────────
-# PASO FINAL (cuando lugar-preview funcione): sustituir la línea de abajo por:
-#   RewriteRule ^lugar/([^/]+)/?$ lugar-modular/index.php?slug=$1 [L,QSA]
-RewriteRule ^lugar/([^/]+)/?$ redirect_manager.php?type=lugar&slug=$1 [L,QSA]
+# ✅ ACTIVO EN PRODUCCIÓN desde Mayo 2026 (antes: redirect_manager.php)
+RewriteRule ^lugar/([^/]+)/?$ lugar-modular/index.php?slug=$1 [L,QSA]
 RewriteRule ^actividad/([^/]+)/?$ redirect_manager.php?type=actividad&slug=$1 [L,QSA]
 
 # Eventos con idiomas: /es/evento/slug, /de/evento/slug, etc.
