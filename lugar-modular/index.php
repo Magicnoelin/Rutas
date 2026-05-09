@@ -317,7 +317,7 @@ function fixUrl($url) {
 
         /* ── HERO ── */
         .lug-hero {
-            margin-top: 70px;
+            margin-top: 60px;
             position: relative;
             min-height: 440px;
             display: flex;
@@ -707,33 +707,57 @@ function fixUrl($url) {
 </head>
 <body>
 
-<!-- ── HEADER ── -->
-<?php
-$header_path = dirname(__DIR__) . '/header.php';
-if (file_exists($header_path)) {
-    include $header_path;
-} else {
-    echo '<header style="position:fixed;top:0;left:0;right:0;z-index:1000;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1);height:70px;display:flex;align-items:center;padding:0 20px;">
-        <a href="/" style="font-weight:800;color:#2F5233;font-size:1.1rem;text-decoration:none;">🌿 Rutas Rurales</a>
-        <nav style="margin-left:auto;display:flex;gap:20px;font-size:0.88rem;">
-            <a href="/lugares-de-interes" style="color:#333;font-weight:600;">Lugares</a>
-            <a href="/alojamientos-turisticos" style="color:#333;font-weight:600;">Alojamientos</a>
-            <a href="/login.html" style="background:#2F5233;color:#fff;padding:8px 18px;border-radius:8px;font-weight:700;text-decoration:none;">Acceder</a>
-        </nav>
-    </header>';
-}
-?>
-
-<!-- Override CSS para ganar a styles.css -->
+<!-- ══════════════════════════════════════════════════════
+     NAVBAR MINIMAL AUTOCONTENIDA (sin styles.css, sin FA, sin GTM síncrono)
+     El header.php global NO se incluye aquí: carga styles.css + FA + GTM de forma bloqueante
+     ══════════════════════════════════════════════════════ -->
 <style>
-.lug-card { background:#fff!important; border-radius:12px!important; box-shadow:0 4px 20px rgba(0,0,0,0.08)!important; overflow:hidden!important; margin-bottom:24px!important; transform:none!important; }
-.lug-card:hover { transform:none!important; }
-.lug-card-body { padding:28px!important; }
-.lug-card-title { font-size:1.1rem!important; font-weight:700!important; color:#2F5233!important; margin-bottom:18px!important; padding-bottom:12px!important; border-bottom:2px solid #81C784!important; display:flex!important; align-items:center!important; gap:8px!important; visibility:visible!important; opacity:1!important; }
-.cta-card { background:linear-gradient(135deg,#2F5233,#1a3d1e)!important; color:#fff!important; }
-.cta-card h3 { color:#fff!important; opacity:1!important; visibility:visible!important; }
-.nearby-card-name { font-size:0.85rem!important; font-weight:700!important; color:#333!important; }
+.lug-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: #2F5233; height: 60px;
+    display: flex; align-items: center; padding: 0 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.lug-nav-logo {
+    font-weight: 800; color: #fff; font-size: 1rem;
+    text-decoration: none; display: flex; align-items: center; gap: 8px;
+    flex-shrink: 0;
+}
+.lug-nav-logo img { width: 32px; height: 32px; border-radius: 50%; }
+.lug-nav-links {
+    margin-left: auto; display: flex; align-items: center; gap: 6px;
+    list-style: none;
+}
+.lug-nav-links a {
+    color: rgba(255,255,255,0.88); text-decoration: none;
+    font-size: 0.82rem; font-weight: 600; padding: 6px 10px;
+    border-radius: 6px; transition: background 0.15s;
+    white-space: nowrap;
+}
+.lug-nav-links a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.lug-nav-links .nav-cta {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; padding: 7px 14px; border-radius: 20px;
+}
+.lug-nav-links .nav-cta:hover { background: rgba(255,255,255,0.28); }
+@media (max-width: 600px) {
+    .lug-nav-links .nav-hide-sm { display: none; }
+}
 </style>
+
+<nav class="lug-nav" role="navigation" aria-label="Navegación principal">
+    <a href="/" class="lug-nav-logo">
+        <img src="/menu_images/Favicon.png" alt="Rutas Rurales" width="32" height="32" loading="eager">
+        Rutas Rurales
+    </a>
+    <ul class="lug-nav-links">
+        <li><a href="/lugares-de-interes" class="nav-hide-sm">Lugares</a></li>
+        <li><a href="/alojamientos-turisticos" class="nav-hide-sm">Alojamientos</a></li>
+        <li><a href="/eventos-culturales" class="nav-hide-sm">Eventos</a></li>
+        <li><a href="/actividades-turisticas" class="nav-hide-sm">Actividades</a></li>
+        <li><a href="/login.html" class="nav-cta">Acceder</a></li>
+    </ul>
+</nav>
 
 <?php if ($lugar): ?>
 
@@ -748,7 +772,7 @@ if (file_exists($header_path)) {
          alt="<?php echo esc($lugar['name']); ?> — vista principal"
          fetchpriority="high"
          loading="eager"
-         decoding="sync"
+         decoding="async"
          width="1200" height="440">
     <div class="lug-hero-overlay"></div>
 
