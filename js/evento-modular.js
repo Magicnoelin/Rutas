@@ -692,7 +692,7 @@ async function subscribeEvents(e) {
         });
         localStorage.setItem('event_subscriptions', JSON.stringify(subs));
 
-        // Intentar enviar a API (si existe)
+        // Intentar enviar a API
         try {
             await fetch('/api/subscribe-events.php', {
                 method: 'POST',
@@ -702,6 +702,7 @@ async function subscribeEvents(e) {
                     categoria: STATE.evento?.categoria,
                     province: STATE.evento?.province,
                     source_slug: STATE.slug,
+                    source_event_id: STATE.evento?.id,
                 }),
             });
         } catch (_) { /* API no disponible, guardado en localStorage */ }
