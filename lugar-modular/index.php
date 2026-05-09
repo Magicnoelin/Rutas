@@ -99,7 +99,7 @@ $page_description = $lugar
     ? ($lugar['meta_description'] ?: substr(strip_tags($lugar['description'] ?? ''), 0, 160) ?: 'Lugar de interés en ' . ($lugar['municipality'] ?? ''))
     : 'Descubre este lugar de interés en Rutas Rurales';
 $page_canonical   = $canonical;
-$defer_fontawesome = false; // Font Awesome lo usa el header (iconos de nav)
+$defer_fontawesome = true; // FA no se necesita: usamos emojis en esta página
 
 // ─── SCHEMA.ORG JSON-LD ───────────────────────────────────────────────────────
 $jsonld = '';
@@ -569,6 +569,17 @@ if (file_exists($header_path)) {
     echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' . htmlspecialchars($page_title, ENT_QUOTES) . '</title></head><body>';
 }
 $header_html = ob_get_clean();
+
+// ── Hacer styles.css no-bloqueante (loadCSS pattern) ────────────────────────
+// styles.css es render-blocking por defecto. Cambiamos el <link> a preload+onload
+// para que no bloquee el First Contentful Paint.
+// El CSS se aplica igualmente pero DESPUÉS de que el HTML se haya pintado.
+$header_html = str_replace(
+    '<link rel="stylesheet" href="/styles.css">',
+    '<link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">'
+    . '<noscript><link rel="stylesheet" href="/styles.css"></noscript>',
+    $header_html
+);
 
 // Inyectar nuestros extras justo antes de </head>
 echo str_replace('</head>', $extra_head . '</head>', $header_html);
