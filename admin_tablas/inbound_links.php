@@ -62,6 +62,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         require_once __DIR__ . '/../api/inbound_links_helper.php';
         $res = regenerarInboundLinksTodos($pdo, 'accommodations');
         $msg = "✅ Regeneración accommodations: {$res['procesados']} procesados, {$res['errores']} errores.";
+    } elseif ($action === 'regenerar_lugares') {
+        require_once __DIR__ . '/../api/inbound_links_helper.php';
+        // Asegurarse de que la columna description_linked existe en places_of_interest
+        try {
+            $pdo->exec("ALTER TABLE places_of_interest ADD COLUMN IF NOT EXISTS description_linked LONGTEXT NULL AFTER description");
+        } catch (Exception $e) { /* ya existe */ }
+        $res = regenerarInboundLinksTodos($pdo, 'places_of_interest');
+        $msg = "✅ Regeneración places_of_interest: {$res['procesados']} procesados, {$res['errores']} errores.";
+
+    } elseif ($action === 'importar_lugares') {
+        // ─── Importar keywords automáticamente desde places_of_interest ──────
+        // Para cada lugar activo, crea/actualiza una entrada en inbound_links
+        // usando su nombre como keyword y /lugar/{slug} como URL.
+        // Prioridad 50 para que las keywords manuales (prioridad 1-10) vayan primero.
+        $creados  = 0;
+        $saltados = 0;
+        try {
+            $lugares = $pdo->query("SELECT name, slug FROM places_of_interest WHERE is_active = 1 ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($lugares as $l) {
+                $kw  = trim($l['name']);
+                $url = '/lugar/' . $l['slug'];
+                $tit = 'Visitar ' . $kw . ' — Lugar de interés en Rutas Rurales';
+                // Comprobar si ya existe esta keyword
+                $existe = $pdo->prepare("SELECT id FROM inbound_links WHERE keyword = ? LIMIT 1");
+                $existe->execute([$kw]);
+                if (!$existe->fetch()) {
+                    $ins = $pdo->prepare("INSERT INTO inbound_links (keyword, url, link_title, is_active, priority, mercado) VALUES (?,?,?,1,50,'es')");
+                    $ins->execute([$kw, $url, $tit]);
+                    $creados++;
+                } else {
+                    $saltados++;
+                }
+            }
+            $msg = "✅ Importación completada: <strong>{$creados}</strong> keywords nuevas creadas, <strong>{$saltados}</strong> ya existían. Ahora pulsa <em>Regenerar toda la web</em> para que los links aparezcan en los contenidos.";
+        } catch (Exception $e) {
+            $error = 'Error importando lugares: ' . htmlspecialchars($e->getMessage());
+        }
+
+    } elseif ($action === 'regenerar_todo') {
+        // ─── Regenerar TODA la web: eventos + alojamientos + lugares ──────────
+        require_once __DIR__ . '/../api/inbound_links_helper.php';
+        try { $pdo->exec("ALTER TABLE places_of_interest ADD COLUMN IF NOT EXISTS description_linked LONGTEXT NULL AFTER description"); } catch (Exception $e) {}
+        $r1 = regenerarInboundLinksTodos($pdo, 'cultural_events');
+        $r2 = regenerarInboundLinksTodos($pdo, 'accommodations');
+        $r3 = regenerarInboundLinksTodos($pdo, 'places_of_interest');
+        $total = $r1['procesados'] + $r2['procesados'] + $r3['procesados'];
+        $errTot = $r1['errores']    + $r2['errores']    + $r3['errores'];
+        $msg = "✅ Regeneración completa: <strong>{$total}</strong> registros procesados en eventos + alojamientos + lugares. Errores: {$errTot}.";
     }
 }
 
@@ -156,7 +204,25 @@ if (isset($_GET['edit'])) {
     <?php endif; ?>
 
     <!-- ── Acciones masivas ─────────────────────────────────────────────────── -->
-    <div class="actions-top">
+
+    <!-- Bloque 1: Importar + Regenerar Todo (acciones principales) -->
+    <div style="background:#e3f2fd;border-left:4px solid #1565C0;border-radius:8px;padding:16px 20px;margin-bottom:16px;">
+        <div style="font-size:0.85rem;font-weight:700;color:#1565C0;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">🏛️ Lugares de Interés (nuevo)</div>
+        <div class="actions-top" style="margin-bottom:0;">
+            <form method="post" onsubmit="return confirm('Se importarán los nombres de TODOS los lugares activos como keywords. Las que ya existen no se tocarán. ¿Continuar?')">
+                <input type="hidden" name="action" value="importar_lugares">
+                <button type="submit" class="btn btn-blue">📥 Importar keywords desde Lugares de Interés</button>
+            </form>
+            <form method="post" onsubmit="return confirm('¿Regenerar description_linked para TODOS los lugares de interés?')">
+                <input type="hidden" name="action" value="regenerar_lugares">
+                <button type="submit" class="btn btn-orange">⚡ Regenerar todos los lugares</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bloque 2: Regeneración individual -->
+    <div style="font-size:0.8rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Regeneración individual</div>
+    <div class="actions-top" style="margin-bottom:16px;">
         <form method="post" onsubmit="return confirm('¿Regenerar description_linked para TODOS los eventos? Puede tardar varios segundos.')">
             <input type="hidden" name="action" value="regenerar_eventos">
             <button type="submit" class="btn btn-orange">⚡ Regenerar todos los eventos</button>
@@ -164,6 +230,16 @@ if (isset($_GET['edit'])) {
         <form method="post" onsubmit="return confirm('¿Regenerar description_linked para TODOS los alojamientos?')">
             <input type="hidden" name="action" value="regenerar_alojamientos">
             <button type="submit" class="btn btn-orange">⚡ Regenerar todos los alojamientos</button>
+        </form>
+    </div>
+
+    <!-- Bloque 3: Regenerar TODA LA WEB de golpe -->
+    <div style="background:#fff3e0;border-left:4px solid #F9A825;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+        <div style="font-size:0.85rem;font-weight:700;color:#e65100;margin-bottom:6px;">🌐 Regenerar TODA la web</div>
+        <p style="font-size:0.82rem;color:#555;margin:0 0 10px;">Reprocesa eventos + alojamientos + lugares de interés en un solo clic. Puede tardar 20-60 segundos según el volumen de datos.</p>
+        <form method="post" onsubmit="return confirm('¿Regenerar description_linked para TODA la web (eventos + alojamientos + lugares)? Puede tardar hasta 1 minuto.')">
+            <input type="hidden" name="action" value="regenerar_todo">
+            <button type="submit" class="btn btn-green">🌐 Regenerar TODA la web (eventos + alojamientos + lugares)</button>
         </form>
     </div>
 

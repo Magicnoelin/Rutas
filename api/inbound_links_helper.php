@@ -166,7 +166,7 @@ function procesarInboundLinks(?string $texto, PDO $pdo): string
  */
 function regenerarInboundLinksTodos(PDO $pdo, string $tabla): array
 {
-    $tablasPermitidas = ['cultural_events', 'accommodations'];
+    $tablasPermitidas = ['cultural_events', 'accommodations', 'places_of_interest'];
     if (!in_array($tabla, $tablasPermitidas, true)) {
         return ['procesados' => 0, 'errores' => 1, 'mensaje' => 'Tabla no permitida'];
     }

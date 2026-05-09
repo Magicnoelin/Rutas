@@ -703,7 +703,9 @@ function fixUrl($url) {
                 <h2 class="lug-card-title">📋 Descripción</h2>
                 <?php if (!empty($lugar['description'])): ?>
                 <?php
-                $desc = strip_tags($lugar['description'], '<strong><b><em><i><u><p><br><ul><ol><li>');
+                // Usar description_linked (pre-generado con inbound links) si está disponible
+                $desc_raw = !empty($lugar['description_linked']) ? $lugar['description_linked'] : $lugar['description'];
+                $desc = strip_tags($desc_raw, '<strong><b><em><i><u><p><br><ul><ol><li><a>');
                 $long = strlen(strip_tags($desc)) > 350;
                 ?>
                 <div class="desc-text <?php echo $long ? 'collapsed' : ''; ?>" id="desc-text">
