@@ -1488,17 +1488,23 @@ if (file_exists($header_path)) {
     ob_start();
     include $header_path;
     $header_html = ob_get_clean();
-    // Extraer solo el bloque <header ...>...</header> (la barra de navegación)
-    if (preg_match('/<header\b[^>]*>[\s\S]*?<\/header>/i', $header_html, $m)) {
-        echo $m[0];
-    } else {
-        // Fallback: quitar la parte <head>...</head> y las etiquetas html/body
-        $header_html = preg_replace('/<head\b[\s\S]*?<\/head>/i', '', $header_html);
-        $header_html = preg_replace('/<!DOCTYPE[^>]*>/i', '', $header_html);
-        $header_html = preg_replace('/<\/?html[^>]*>/i', '', $header_html);
-        $header_html = preg_replace('/<\/?body[^>]*>/i', '', $header_html);
-        echo $header_html;
-    }
+
+    // Eliminar SOLO los tags que duplicarían SEO en nuestro propio <head>
+    // Conservamos TODO lo demás: styles.css, Font Awesome, <style> de nav, GTM, <header>
+    $header_html = preg_replace('/<!DOCTYPE[^>]*>\s*/i', '', $header_html);
+    $header_html = preg_replace('/<html[^>]*>\s*/i', '', $header_html);
+    $header_html = preg_replace('/<\/html>\s*/i', '', $header_html);
+    // Quitar los wrappers <head> y </head> pero dejar su contenido (CSS, FA, etc.)
+    $header_html = preg_replace('/<head[^>]*>\s*/i', '', $header_html);
+    $header_html = preg_replace('/<\/head>\s*/i', '', $header_html);
+    // Quitar tags SEO duplicados
+    $header_html = preg_replace('/<title[^>]*>.*?<\/title>\s*/is', '', $header_html);
+    $header_html = preg_replace('/<meta\s[^>]*name=["\']description["\'][^>]*>\s*/i', '', $header_html);
+    $header_html = preg_replace('/<link\s[^>]*rel=["\']canonical["\'][^>]*>\s*/i', '', $header_html);
+    // Quitar la apertura <body> (header.php no la cierra, la cerramos nosotros al final)
+    $header_html = preg_replace('/<body[^>]*>\s*/i', '', $header_html);
+
+    echo $header_html;
 } else {
     echo '<header class="site-header">
         <a href="/" class="logo">🌿 Rutas Rurales</a>
