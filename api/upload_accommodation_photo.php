@@ -152,6 +152,60 @@ try {
     ");
     $stmtInsert->execute([$accommodationId, $photoCategories[$photoCategory], $publicUrl]);
 
+    // ── Registrar en entity_photos para que aparezca en moderación ──
+    try {
+        // Obtener nombre del usuario si está logueado
+        $authorName = 'Usuario';
+        $userId = 0;
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (isset($_SESSION['user_id'])) {
+            $userId = (int)$_SESSION['user_id'];
+            $stmtUser = $pdo->prepare("SELECT CONCAT(first_name, ' ', last_name) as full_name FROM users WHERE id = ? LIMIT 1");
+            $stmtUser->execute([$userId]);
+            $userData = $stmtUser->fetch();
+            $authorName = $userData['full_name'] ?? 'Usuario';
+        }
+
+        $stmtEp = $pdo->prepare("
+            INSERT INTO entity_photos 
+                (entity_type, entity_id, category, author_id, file_path, file_url, 
+                 author_name, source, permission_status, caption, uploaded_at)
+            VALUES 
+                ('accommodations', ?, ?, ?, ?, ?, ?, 'traveler', 'pending', ?, NOW())
+        ");
+        $stmtEp->execute([
+            $accommodationId,
+            $photoCategories[$photoCategory],
+            $userId,
+            $targetPath,
+            $publicUrl,
+            $authorName,
+            'Foto subida desde gestión de fotos - categoría: ' . $photoCategories[$photoCategory]
+        ]);
+    } catch (Exception $e) {
+        // No es crítico, la foto ya se guardó
+        error_log('Error al registrar en entity_photos: ' . $e->getMessage());
+    }
+
+    // ── Notificación para admin ──
+    try {
+        $notifExists = $pdo->query("SHOW TABLES LIKE 'moderation_notifications'")->rowCount() > 0;
+        if ($notifExists) {
+            $notifStmt = $pdo->prepare("
+                INSERT INTO moderation_notifications 
+                    (user_id, accommodation_id, notification_type, title, message)
+                VALUES (?, ?, 'photo_uploaded', 'Nueva foto de usuario', ?)
+            ");
+            $notifStmt->execute([
+                $accommodationId,
+                $accommodationId,
+                "El usuario {$authorName} ha subido una foto para \"{$accommodation['name']}\" (categoría: {$photoCategories[$photoCategory]})"
+            ]);
+        }
+    } catch (Exception $e) {
+        error_log('Error al crear notificación: ' . $e->getMessage());
+    }
+
     // Return success response
     jsonSuccess([
         'url' => $publicUrl,
