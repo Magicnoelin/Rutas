@@ -91,13 +91,13 @@ try {
     $accommodationId = $accommodation['id'];
     $accommodationSlug = $accommodation['slug'];
 
-    // Create accommodations_images directory if it doesn't exist
-    $baseUploadDir = '../accommodations_images/';
+    // Create img/alojamientos directory if it doesn't exist
+    $baseUploadDir = '../img/alojamientos/';
     if (!file_exists($baseUploadDir)) {
         mkdir($baseUploadDir, 0755, true);
     }
 
-    // Create accommodation-specific directory (accommodations_images/{slug}/)
+    // Create accommodation-specific directory (img/alojamientos/{slug}/)
     $accommodationDir = $baseUploadDir . $accommodationSlug . '/';
     if (!file_exists($accommodationDir)) {
         mkdir($accommodationDir, 0755, true);
@@ -115,7 +115,7 @@ try {
         $targetPath = $accommodationDir . $filename;
     }
     
-    $publicUrl = '/accommodations_images/' . $accommodationSlug . '/' . $filename;
+    $publicUrl = '/img/alojamientos/' . $accommodationSlug . '/' . $filename;
 
     // Convert image to WebP format
     $imageData = convertToWebP($file['tmp_name']);

@@ -30,7 +30,7 @@ try {
     }
 
     // Ruta de la carpeta de imágenes
-    $baseDir = '/accommodations_images/' . $slug . '/';
+    $baseDir = '/img/alojamientos/' . $slug . '/';
     $serverDir = __DIR__ . '/..' . $baseDir;
     
     $photosByCategory = [];
