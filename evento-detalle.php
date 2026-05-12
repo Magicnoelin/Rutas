@@ -570,8 +570,6 @@ $evento_js = $evento ? json_encode([
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title); ?></title>
-    <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
 
     <!-- hreflang: SEO multiidioma — lista COMPLETA de todos los idiomas disponibles -->
