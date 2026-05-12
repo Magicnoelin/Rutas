@@ -920,6 +920,19 @@ $alo_js = $alojamiento ? json_encode([
             color: var(--text);
             font-size: 0.97rem;
         }
+        /* Inbound links dentro de la descripción — visibles y diferenciados */
+        .desc-text a,
+        .desc-text a:visited {
+            color: #1a6e2e !important;
+            text-decoration: underline !important;
+            text-decoration-color: #81C784 !important;
+            font-weight: 600 !important;
+            border-bottom: none !important;
+        }
+        .desc-text a:hover {
+            color: #2F5233 !important;
+            text-decoration-color: #2F5233 !important;
+        }
         .desc-text.collapsed {
             max-height: 130px;
             overflow: hidden;

@@ -17,6 +17,8 @@ Disallow: */feed/
 Disallow: */comments/feed/
 Disallow: /?elementor_library=*
 Disallow: /api/
+User-agent: Googlebot
+Allow: /api/
 
 # URLs específicas antiguas o basura
 Disallow: /8017-2/
