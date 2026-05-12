@@ -95,6 +95,7 @@ if (!empty($slug)) {
 // ─── SEO ─────────────────────────────────────────────────────────────────────
 $page_title = $evento ? ($evento['meta_title'] ?: $evento['titulo'] . ' | Rutas Rurales') : 'Evento Cultural | Rutas Rurales';
 $page_desc  = $evento ? ($evento['meta_description'] ?: $evento['short_description'] ?: '') : 'Descubre este evento en Rutas Rurales';
+$page_description = $page_desc;
 $slug_canonical = $slug;
 if ($evento) {
     $slug_canonical = ($lang !== 'es' && !empty($traduccion['slug_trad'])) ? $traduccion['slug_trad'] : $evento['slug'];

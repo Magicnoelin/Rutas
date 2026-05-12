@@ -61,6 +61,7 @@ $page_title = $alojamiento
 $page_desc = $alojamiento
     ? ($alojamiento['meta_description'] ?: substr(strip_tags($alojamiento['description'] ?? ''), 0, 160) ?: 'Alojamiento turístico en ' . ($alojamiento['municipality'] ?? ''))
     : 'Descubre este alojamiento en Rutas Rurales';
+$page_description = $page_desc;
 $canonical = 'https://rutasrurales.io/' . ($lang !== 'es' ? $lang . '/' : '') . 'alojamiento/' . $slug;
 $foto_og   = !empty($fotos[0]) ? $fotos[0] : 'https://rutasrurales.io/menu_images/og-default.jpg';
 
