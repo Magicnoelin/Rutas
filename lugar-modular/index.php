@@ -349,6 +349,24 @@ $extra_head .= '<style>
 
 /* ── DESCRIPCIÓN ── */
 .desc-text { line-height: 1.85; color: var(--lug-text); font-size: 0.97rem; }
+/* Inbound links dentro de la descripción — visibles y diferenciados */
+.desc-text a,
+.desc-text a:visited {
+    color: #2F5233;
+    text-decoration: underline;
+    text-decoration-color: rgba(47, 82, 51, 0.4);
+    text-underline-offset: 2px;
+    font-weight: 600;
+    transition: color 0.15s, text-decoration-color 0.15s;
+}
+.desc-text a:hover {
+    color: #1a3a1e;
+    text-decoration-color: #2F5233;
+}
+.desc-text h2 a, .desc-text h3 a, .desc-text h4 a {
+    font-size: inherit;
+    font-weight: inherit;
+}
 .desc-text.collapsed { max-height: 130px; overflow: hidden; position: relative; }
 .desc-text.collapsed::after {
     content: ""; position: absolute;
