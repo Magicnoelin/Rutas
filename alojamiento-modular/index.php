@@ -1482,7 +1482,23 @@ $alo_js = $alojamiento ? json_encode([
 <?php
 $header_path = dirname(__DIR__) . '/header.php';
 if (file_exists($header_path)) {
+    // Capturar output de header.php y extraer SOLO el elemento <header>
+    // header.php genera <!DOCTYPE html><html><head>...</head><body>... que duplicaría
+    // <title>, <meta description> y <link canonical> — debemos evitarlo.
+    ob_start();
     include $header_path;
+    $header_html = ob_get_clean();
+    // Extraer solo el bloque <header ...>...</header> (la barra de navegación)
+    if (preg_match('/<header\b[^>]*>[\s\S]*?<\/header>/i', $header_html, $m)) {
+        echo $m[0];
+    } else {
+        // Fallback: quitar la parte <head>...</head> y las etiquetas html/body
+        $header_html = preg_replace('/<head\b[\s\S]*?<\/head>/i', '', $header_html);
+        $header_html = preg_replace('/<!DOCTYPE[^>]*>/i', '', $header_html);
+        $header_html = preg_replace('/<\/?html[^>]*>/i', '', $header_html);
+        $header_html = preg_replace('/<\/?body[^>]*>/i', '', $header_html);
+        echo $header_html;
+    }
 } else {
     echo '<header class="site-header">
         <a href="/" class="logo">🌿 Rutas Rurales</a>
