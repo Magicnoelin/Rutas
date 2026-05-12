@@ -1538,6 +1538,13 @@ if (file_exists($header_path)) {
 .nearby-card-name { font-size:0.85rem !important; font-weight:700 !important; color:#333 !important; }
 .nearby-card-meta { font-size:0.75rem !important; color:#666 !important; }
 .nearby-card-price { font-size:0.8rem !important; font-weight:700 !important; color:#2F5233 !important; }
+/* ── Footer links — forzar color blanco sobre fondo oscuro ── */
+.site-footer .footer-links a,
+.site-footer .footer-links a:visited { color: rgba(255,255,255,0.85) !important; text-decoration: none !important; opacity: 1 !important; }
+.site-footer .footer-links a:hover { color: #81C784 !important; }
+.site-footer .footer-social a,
+.site-footer .footer-social a:visited { color: rgba(255,255,255,0.75) !important; opacity: 1 !important; }
+.site-footer .footer-social a:hover { color: #81C784 !important; }
 </style>
 
 <?php if ($alojamiento): ?>
