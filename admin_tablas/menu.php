@@ -209,6 +209,17 @@
 
         <div class="nav-divider"></div>
 
+        <!-- Usuarios -->
+        <div class="nav-section">Usuarios</div>
+        <a class="nav-item" href="https://rutasrurales.io/admin_tablas/usuarios_index.php">
+            <i class="fas fa-users"></i> Gestión de Usuarios
+        </a>
+        <a class="nav-item" href="https://rutasrurales.io/admin_tablas/usuarios_roles.php">
+            <i class="fas fa-shield-alt"></i> Roles de Usuario
+        </a>
+
+        <div class="nav-divider"></div>
+
         <!-- Moderación -->
         <div class="nav-section">Moderación</div>
         <a class="nav-item" href="https://rutasrurales.io/admin_tablas/moderacion_alojamientos.php">
@@ -273,6 +284,9 @@
             </a>
             <a class="quick-link" href="https://rutasrurales.io/admin_tablas/actividades_index.php">
                 <i class="fas fa-hiking"></i><span>Actividades</span>
+            </a>
+            <a class="quick-link" href="https://rutasrurales.io/admin_tablas/usuarios_index.php">
+                <i class="fas fa-users"></i><span>Usuarios</span>
             </a>
             <a class="quick-link" href="https://rutasrurales.io/admin_tablas/inbound_links.php">
                 <i class="fas fa-link"></i><span>Inbound Links</span>
