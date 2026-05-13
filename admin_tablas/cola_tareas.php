@@ -641,8 +641,11 @@ VALUES
     <?php
     try {
         $historial = $pdo->query("
-            SELECT * FROM historial_tareas
-            ORDER BY ejecutada_en DESC
+            SELECT h.*, pm.nombre AS plantilla_nombre
+            FROM historial_tareas h
+            LEFT JOIN cola_tareas ct ON ct.id = h.tarea_id
+            LEFT JOIN plantillas_mensaje pm ON pm.id = ct.plantilla_id
+            ORDER BY h.ejecutada_en DESC
             LIMIT 20
         ")->fetchAll();
     } catch (Exception $e) {
@@ -655,7 +658,7 @@ VALUES
             <thead class="table-secondary">
                 <tr>
                     <th>Tarea ID</th>
-                    <th>Tipo</th>
+                    <th>Tipo / Plantilla</th>
                     <th>Entidad</th>
                     <th>Destinatario</th>
                     <th>Resultado</th>
@@ -668,7 +671,12 @@ VALUES
             <?php foreach ($historial as $h): ?>
             <tr class="<?= $h['resultado'] === 'error' ? 'table-danger' : '' ?>">
                 <td>#<?= $h['tarea_id'] ?></td>
-                <td><code class="small"><?= htmlspecialchars($h['tipo_tarea']) ?></code></td>
+                <td>
+                    <code class="small"><?= htmlspecialchars($h['tipo_tarea']) ?></code>
+                    <?php if (!empty($h['plantilla_nombre'])): ?>
+                    <br><small class="text-muted">📧 <?= htmlspecialchars($h['plantilla_nombre']) ?></small>
+                    <?php endif; ?>
+                </td>
                 <td><small><?= htmlspecialchars($h['entidad_tipo'] ?? '—') ?> <?= $h['entidad_id'] ? '#'.$h['entidad_id'] : '' ?></small></td>
                 <td><small><?= htmlspecialchars($h['destinatario_email'] ?? ($h['destinatario_id'] ? 'ID:'.$h['destinatario_id'] : '—')) ?></small></td>
                 <td><?= badgeEstado($h['resultado']) ?></td>
