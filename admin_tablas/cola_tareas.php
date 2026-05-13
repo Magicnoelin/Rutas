@@ -73,6 +73,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mensaje = "🧹 $n tareas antiguas eliminadas (completadas/canceladas > 7 días).";
                 $tipoMensaje = 'info';
                 break;
+
+            case 'guardar_plantilla':
+                $pid = intval($_POST['plantilla_id'] ?? 0);
+                $nombre = $_POST['plantilla_nombre'] ?? '';
+                $asunto = $_POST['plantilla_asunto'] ?? '';
+                $html   = $_POST['plantilla_html'] ?? '';
+                $txt    = $_POST['plantilla_txt'] ?? '';
+                $activa = intval($_POST['plantilla_activa'] ?? 1);
+                if ($pid > 0) {
+                    $stmt = $pdo->prepare("UPDATE plantillas_mensaje SET nombre=?, asunto=?, cuerpo_html=?, cuerpo_txt=?, activa=? WHERE id=?");
+                    $stmt->execute([$nombre, $asunto, $html, $txt, $activa, $pid]);
+                    $mensaje = "✅ Plantilla #$pid guardada correctamente.";
+                    $tipoMensaje = 'success';
+                }
+                break;
         }
     } catch (Exception $e) {
         $mensaje = "❌ Error: " . htmlspecialchars($e->getMessage());
@@ -625,6 +640,15 @@ VALUES
                         data-html="<?= htmlspecialchars($p['cuerpo_html'] ?? '', ENT_QUOTES) ?>"
                         data-txt="<?= htmlspecialchars($p['cuerpo_txt'] ?? '', ENT_QUOTES) ?>"
                         title="Ver plantilla completa">📧 Ver</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm py-0 px-2"
+                        data-bs-toggle="modal" data-bs-target="#modalEditarPlantilla"
+                        data-id="<?= $p['id'] ?>"
+                        data-nombre="<?= htmlspecialchars($p['nombre'], ENT_QUOTES) ?>"
+                        data-asunto="<?= htmlspecialchars($p['asunto'] ?? '', ENT_QUOTES) ?>"
+                        data-html="<?= htmlspecialchars($p['cuerpo_html'] ?? '', ENT_QUOTES) ?>"
+                        data-txt="<?= htmlspecialchars($p['cuerpo_txt'] ?? '', ENT_QUOTES) ?>"
+                        data-activa="<?= $p['activa'] ?>"
+                        title="Editar plantilla">✏️ Editar</button>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -757,6 +781,61 @@ VALUES
     </div>
 </div>
 
+<!-- Modal: Editar plantilla de email -->
+<div class="modal fade" id="modalEditarPlantilla" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <form method="post">
+                <input type="hidden" name="accion" value="guardar_plantilla">
+                <input type="hidden" name="plantilla_id" id="editPlantillaId">
+                <div class="modal-header">
+                    <h5 class="modal-title">✏️ Editar Plantilla: <span id="editPlantillaNombre"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Nombre</label>
+                            <input type="text" name="plantilla_nombre" id="editPlantillaNombreInput" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Activa</label>
+                            <select name="plantilla_activa" id="editPlantillaActiva" class="form-select form-select-sm">
+                                <option value="1">✅ Sí</option>
+                                <option value="0">❌ No</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Asunto del email</label>
+                            <input type="text" name="plantilla_asunto" id="editPlantillaAsunto" class="form-control form-control-sm" placeholder="Ej: ¡Bienvenido/a a Rutas Rurales, {{nombre}}!">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Cuerpo HTML</label>
+                            <textarea name="plantilla_html" id="editPlantillaHTML" class="form-control form-control-sm font-monospace" rows="12" style="font-size:0.8rem;"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Cuerpo texto plano</label>
+                            <textarea name="plantilla_txt" id="editPlantillaTXT" class="form-control form-control-sm font-monospace" rows="12" style="font-size:0.8rem;"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <p class="text-muted small mb-0">
+                            💡 Usa <code>{{variable}}</code> para insertar datos dinámicos. 
+                            Variables disponibles: <code>{{nombre}}</code>, <code>{{nombre_entidad}}</code>, 
+                            <code>{{slug}}</code>, <code>{{url}}</code>, <code>{{email}}</code>, 
+                            <code>{{valor_nuevo}}</code>, <code>{{fecha}}</code>
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar plantilla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Modal: Editar regla -->
 <div class="modal fade" id="modalEditarRegla" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -851,7 +930,7 @@ function copiarSQL() {
     navigator.clipboard.writeText(sql).then(() => alert('SQL copiado al portapapeles'));
 }
 
-// Modal plantilla de email
+// Modal plantilla de email (ver)
 document.getElementById('modalPlantilla')?.addEventListener('show.bs.modal', function(e) {
     const btn = e.relatedTarget;
     document.getElementById('modalPlantillaNombre').textContent = btn.dataset.nombre;
@@ -860,6 +939,18 @@ document.getElementById('modalPlantilla')?.addEventListener('show.bs.modal', fun
     document.getElementById('modalPlantillaTXT').textContent = btn.dataset.txt;
     // Vista previa: renderizar el HTML directamente
     document.getElementById('modalPlantillaPreview').innerHTML = btn.dataset.html;
+});
+
+// Modal editar plantilla
+document.getElementById('modalEditarPlantilla')?.addEventListener('show.bs.modal', function(e) {
+    const btn = e.relatedTarget;
+    document.getElementById('editPlantillaId').value = btn.dataset.id;
+    document.getElementById('editPlantillaNombre').textContent = btn.dataset.nombre;
+    document.getElementById('editPlantillaNombreInput').value = btn.dataset.nombre;
+    document.getElementById('editPlantillaAsunto').value = btn.dataset.asunto;
+    document.getElementById('editPlantillaHTML').value = btn.dataset.html;
+    document.getElementById('editPlantillaTXT').value = btn.dataset.txt;
+    document.getElementById('editPlantillaActiva').value = btn.dataset.activa ?? '1';
 });
 </script>
 </body>
