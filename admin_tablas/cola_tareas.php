@@ -582,6 +582,59 @@ VALUES
     <div class="alert alert-info">No hay reglas configuradas aún. Ejecuta el PASO 5 del SQL.</div>
     <?php endif; ?>
 
+    <!-- ── Panel de Plantillas ────────────────────────────────── -->
+    <hr class="my-4">
+    <h5 class="section-title">📧 Plantillas de Email</h5>
+    <p class="text-muted small mb-3">Estas son las plantillas que se usan para enviar los emails. Haz clic en "Ver" para previsualizar el contenido antes de enviar.</p>
+    <?php
+    try {
+        $plantillas = $pdo->query("
+            SELECT * FROM plantillas_mensaje
+            WHERE canal = 'email'
+            ORDER BY id ASC
+        ")->fetchAll();
+    } catch (Exception $e) {
+        $plantillas = [];
+    }
+    ?>
+    <?php if (!empty($plantillas)): ?>
+    <div class="table-responsive mb-4">
+        <table class="table table-sm table-bordered table-hover">
+            <thead class="table-secondary">
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Asunto</th>
+                    <th>Activa</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($plantillas as $p): ?>
+            <tr class="<?= $p['activa'] ? '' : 'table-secondary text-muted' ?>">
+                <td><?= $p['id'] ?></td>
+                <td><strong><?= htmlspecialchars($p['nombre']) ?></strong></td>
+                <td><small><?= htmlspecialchars($p['asunto'] ?? '—') ?></small></td>
+                <td class="text-center"><?= $p['activa'] ? '✅' : '❌' ?></td>
+                <td>
+                    <button type="button" class="btn btn-outline-info btn-sm py-0 px-2"
+                        data-bs-toggle="modal" data-bs-target="#modalPlantilla"
+                        data-id="<?= $p['id'] ?>"
+                        data-nombre="<?= htmlspecialchars($p['nombre'], ENT_QUOTES) ?>"
+                        data-asunto="<?= htmlspecialchars($p['asunto'] ?? '', ENT_QUOTES) ?>"
+                        data-html="<?= htmlspecialchars($p['cuerpo_html'] ?? '', ENT_QUOTES) ?>"
+                        data-txt="<?= htmlspecialchars($p['cuerpo_txt'] ?? '', ENT_QUOTES) ?>"
+                        title="Ver plantilla completa">📧 Ver</button>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php else: ?>
+    <p class="text-muted">No hay plantillas de email configuradas.</p>
+    <?php endif; ?>
+
     <!-- ── Historial reciente ───────────────────────────────── -->
     <hr class="my-4">
     <h5 class="section-title">📜 Historial reciente (últimas 20 ejecuciones)</h5>
@@ -649,6 +702,47 @@ VALUES
                 <div id="modalErrorBlock" class="d-none">
                     <h6 class="text-danger mt-3">Error:</h6>
                     <pre id="modalErrorContent" class="bg-danger text-white p-3 rounded small"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Ver plantilla de email -->
+<div class="modal fade" id="modalPlantilla" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">📧 Plantilla: <span id="modalPlantillaNombre"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <h6>Asunto:</h6>
+                    <pre id="modalPlantillaAsunto" class="bg-light p-2 rounded small"></pre>
+                </div>
+                <ul class="nav nav-tabs mb-2" id="plantillaTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab-html" data-bs-toggle="tab" href="#plantillaHTML">HTML</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-txt" data-bs-toggle="tab" href="#plantillaTXT">Texto plano</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-preview" data-bs-toggle="tab" href="#plantillaPreview">Vista previa</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="plantillaHTML">
+                        <pre id="modalPlantillaHTML" class="bg-dark text-light p-3 rounded small" style="max-height:350px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;"></pre>
+                    </div>
+                    <div class="tab-pane fade" id="plantillaTXT">
+                        <pre id="modalPlantillaTXT" class="bg-light p-3 rounded small" style="max-height:350px;overflow-y:auto;white-space:pre-wrap;"></pre>
+                    </div>
+                    <div class="tab-pane fade" id="plantillaPreview">
+                        <div id="modalPlantillaPreview" class="border rounded p-3" style="max-height:400px;overflow-y:auto;background:#fff;"></div>
+                        <p class="text-muted small mt-2">⚠️ Vista previa aproximada. Las variables <code>{{variable}}</code> se muestran tal cual.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -748,6 +842,17 @@ function copiarSQL() {
     const sql = document.getElementById('sqlEditarRegla').textContent;
     navigator.clipboard.writeText(sql).then(() => alert('SQL copiado al portapapeles'));
 }
+
+// Modal plantilla de email
+document.getElementById('modalPlantilla')?.addEventListener('show.bs.modal', function(e) {
+    const btn = e.relatedTarget;
+    document.getElementById('modalPlantillaNombre').textContent = btn.dataset.nombre;
+    document.getElementById('modalPlantillaAsunto').textContent = btn.dataset.asunto;
+    document.getElementById('modalPlantillaHTML').textContent = btn.dataset.html;
+    document.getElementById('modalPlantillaTXT').textContent = btn.dataset.txt;
+    // Vista previa: renderizar el HTML directamente
+    document.getElementById('modalPlantillaPreview').innerHTML = btn.dataset.html;
+});
 </script>
 </body>
 </html>
