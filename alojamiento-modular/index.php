@@ -498,13 +498,14 @@ if ($alojamiento) {
         'zh' => ['首页', '住宿列表'],
     ];
     $bl = $breadcrumb_labels[$lang] ?? $breadcrumb_labels['es'];
+    $breadcrumb_name = !empty($alojamiento['name']) ? $alojamiento['name'] : $slug;
     $breadcrumb = [
         '@type' => 'BreadcrumbList',
         '@id'   => $canonical . '#breadcrumb',
         'itemListElement' => [
             ['@type' => 'ListItem', 'position' => 1, 'name' => $bl[0], 'item' => 'https://rutasrurales.io/'],
             ['@type' => 'ListItem', 'position' => 2, 'name' => $bl[1], 'item' => 'https://rutasrurales.io/alojamientos-turisticos'],
-            ['@type' => 'ListItem', 'position' => 3, 'name' => $alojamiento['name'], 'item' => $canonical],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $breadcrumb_name, 'item' => $canonical],
         ],
     ];
 

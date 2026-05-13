@@ -129,10 +129,11 @@ if ($lugar) {
     if (!empty($lugar['opening_hours'])) $tourist['openingHours'] = $lugar['opening_hours'];
     if (isset($lugar['entry_fee']))      $tourist['isAccessibleForFree'] = ($lugar['entry_fee'] == 0 || empty($lugar['entry_fee']));
 
+    $breadcrumb_name = !empty($lugar['name']) ? $lugar['name'] : $slug;
     $breadcrumb = ['@type' => 'BreadcrumbList', '@id' => $canonical . '#breadcrumb', 'itemListElement' => [
         ['@type' => 'ListItem', 'position' => 1, 'name' => 'Inicio',             'item' => 'https://rutasrurales.io/'],
         ['@type' => 'ListItem', 'position' => 2, 'name' => 'Lugares de interés', 'item' => 'https://rutasrurales.io/lugares-de-interes'],
-        ['@type' => 'ListItem', 'position' => 3, 'name' => $lugar['name'],        'item' => $canonical],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $breadcrumb_name,     'item' => $canonical],
     ]];
 
     $webpage = ['@type' => 'WebPage', '@id' => $canonical . '#webpage', 'url' => $canonical, 'name' => $page_title, 'description' => $page_description, 'inLanguage' => 'es-ES', 'isPartOf' => ['@id' => 'https://rutasrurales.io/#website'], 'about' => ['@id' => $canonical . '#lugar'], 'breadcrumb' => ['@id' => $canonical . '#breadcrumb']];

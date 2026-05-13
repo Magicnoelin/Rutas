@@ -118,13 +118,14 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
     }
 
     // ── BreadcrumbList ───────────────────────────────────────────────────────
+    $breadcrumb_name = !empty($ruta['name']) ? $ruta['name'] : ($ruta['slug'] ?? 'Ruta');
     $breadcrumb = [
         '@context'        => 'https://schema.org',
         '@type'           => 'BreadcrumbList',
         'itemListElement' => [
             ['@type' => 'ListItem', 'position' => 1, 'name' => 'Inicio',         'item' => $baseUrl . '/'],
             ['@type' => 'ListItem', 'position' => 2, 'name' => 'Rutas',          'item' => $baseUrl . '/rutas/'],
-            ['@type' => 'ListItem', 'position' => 3, 'name' => $ruta['name'],    'item' => $rutaUrl],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $breadcrumb_name, 'item' => $rutaUrl],
         ],
     ];
 
