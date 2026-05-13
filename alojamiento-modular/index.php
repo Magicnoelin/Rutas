@@ -924,15 +924,20 @@ $alo_js = $alojamiento ? json_encode([
         /* Inbound links dentro de la descripción — visibles y diferenciados */
         .desc-text a,
         .desc-text a:visited {
-            color: #1a6e2e !important;
-            text-decoration: underline !important;
-            text-decoration-color: #81C784 !important;
-            font-weight: 600 !important;
-            border-bottom: none !important;
+            color: #2F5233;
+            text-decoration: underline;
+            text-decoration-color: rgba(47, 82, 51, 0.4);
+            text-underline-offset: 2px;
+            font-weight: 600;
+            transition: color 0.15s, text-decoration-color 0.15s;
         }
         .desc-text a:hover {
-            color: #2F5233 !important;
-            text-decoration-color: #2F5233 !important;
+            color: #1a3a1e;
+            text-decoration-color: #2F5233;
+        }
+        .desc-text h2 a, .desc-text h3 a, .desc-text h4 a {
+            font-size: inherit;
+            font-weight: inherit;
         }
         .desc-text.collapsed {
             max-height: 130px;
