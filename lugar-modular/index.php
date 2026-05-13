@@ -211,6 +211,10 @@ $extra_head .= '<style>
 /* ── Reset parcial (sin conflicto con styles.css) ── */
 .lug-page { overflow-x: hidden; }
 
+/* ── Links globales: evitar azul por defecto del navegador ── */
+.lug-page a { color: #2F5233; text-decoration: none; }
+.lug-page a:hover { color: #1a3d1e; }
+
 /* ── HERO ── */
 .lug-hero {
     position: relative; min-height: 440px;
