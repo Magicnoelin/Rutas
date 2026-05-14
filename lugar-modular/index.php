@@ -523,14 +523,14 @@ $extra_head .= '<style>
 }
 .btn-cta-secondary {
     display: flex; align-items: center; justify-content: center;
-    background: transparent; color: #fff;
+    background: transparent; color: #fff !important;
     border: 2px solid rgba(255,255,255,0.6);
     padding: 9px 16px; border-radius: 8px;
     font-weight: 600; font-size: 0.82rem;
     text-decoration: none; width: 100%;
 }
 .btn-cta-primary:hover   { background: #f0f0f0; color: #2F5233; }
-.btn-cta-secondary:hover { background: rgba(255,255,255,0.1); border-color: #fff; color: #fff; }
+.btn-cta-secondary:hover { background: rgba(255,255,255,0.1); border-color: #fff; color: #fff !important; }
 
 /* ── COMPARTIR ── */
 .share-card {
