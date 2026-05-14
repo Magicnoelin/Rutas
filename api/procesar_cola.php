@@ -18,6 +18,12 @@
 define('API_NO_HEADERS', true);
 require_once __DIR__ . '/config.php';
 
+// Cargar PHPMailer si existe (composer)
+$phpmailerAutoload = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($phpmailerAutoload)) {
+    require_once $phpmailerAutoload;
+}
+
 // ─── Configuración ────────────────────────────────────────────
 define('COLA_TOKEN',        'RutasRurales_Cola_2026_$ecret');  // Cambiar en producción
 define('COLA_MAX_TAREAS',   10);    // Máximo de tareas por ejecución
@@ -25,6 +31,7 @@ define('COLA_TIMEOUT',      30);    // Segundos máximos de ejecución
 define('COLA_EMAIL_FROM',   'noreply@rutasrurales.io');
 define('COLA_EMAIL_NAME',   'Rutas Rurales');
 define('COLA_ADMIN_EMAIL',  'hola@rutasrurales.io');
+define('COLA_LOG_ENVIO',    true);  // Guardar log detallado del envío
 
 // ─── Seguridad: verificar token o sesión admin ────────────────
 $esCLI = (php_sapi_name() === 'cli');
@@ -394,10 +401,95 @@ function buscar_email_propietario(PDO $pdo, ?string $tipo, ?int $id, array $payl
 }
 
 /**
- * Envía un email usando mail() nativo de PHP
- * (Compatible con Hostinger sin configuración extra)
+ * Variable global para almacenar el log del último envío SMTP
+ */
+$GLOBALS['ultimo_log_envio'] = '';
+
+/**
+ * Envía un email usando PHPMailer con SMTP (Hostinger)
+ * Si PHPMailer no está disponible, fallback a mail() nativo.
+ * Guarda log detallado del envío para trazabilidad.
  */
 function enviar_email(string $para, string $nombrePara, string $asunto, string $html, string $texto): bool {
+    global $pdo;
+    
+    // Intentar con PHPMailer si está disponible
+    if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+        try {
+            // Cargar configuración SMTP desde BD
+            $config = null;
+            try {
+                $stmt = $pdo->query("SELECT * FROM config_smtp WHERE activo = 1 LIMIT 1");
+                $config = $stmt->fetch();
+            } catch (Exception $e) {
+                // Tabla no existe aún, usar valores por defecto
+            }
+            
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->CharSet = 'UTF-8';
+            $mail->isSMTP();
+            $mail->Host       = $config['host'] ?? 'smtp.hostinger.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $config['usuario'] ?? COLA_EMAIL_FROM;
+            $mail->Password   = $config['password'] ?? '';
+            $mail->SMTPSecure = $config['seguridad'] ?? 'tls';
+            $mail->Port       = intval($config['puerto'] ?? 587);
+            $mail->SMTPDebug  = 0; // No mostrar debug en pantalla
+            
+            $mail->setFrom($config['email_from'] ?? COLA_EMAIL_FROM, $config['nombre_from'] ?? COLA_EMAIL_NAME);
+            $mail->addAddress($para, $nombrePara);
+            $mail->addReplyTo($config['email_from'] ?? COLA_EMAIL_FROM, $config['nombre_from'] ?? COLA_EMAIL_NAME);
+            
+            $mail->isHTML(true);
+            $mail->Subject = $asunto;
+            $mail->Body    = $html;
+            $mail->AltBody = $texto;
+            
+            $mail->send();
+            
+            // Guardar log de éxito
+            $GLOBALS['ultimo_log_envio'] = json_encode([
+                'exito'      => true,
+                'metodo'     => 'PHPMailer-SMTP',
+                'host'       => $config['host'] ?? 'smtp.hostinger.com',
+                'destino'    => $para,
+                'asunto'     => $asunto,
+                'timestamp'  => date('Y-m-d H:i:s'),
+                'mensaje'    => 'Email enviado correctamente vía SMTP'
+            ], JSON_UNESCAPED_UNICODE);
+            
+            return true;
+            
+        } catch (Exception $e) {
+            // Error SMTP: guardar log detallado
+            $errorMsg = $e->getMessage();
+            $GLOBALS['ultimo_log_envio'] = json_encode([
+                'exito'      => false,
+                'metodo'     => 'PHPMailer-SMTP',
+                'host'       => $config['host'] ?? 'smtp.hostinger.com',
+                'destino'    => $para,
+                'asunto'     => $asunto,
+                'timestamp'  => date('Y-m-d H:i:s'),
+                'error'      => $errorMsg,
+                'codigo'     => $e->getCode()
+            ], JSON_UNESCAPED_UNICODE);
+            
+            error_log("[procesar_cola] PHPMailer error a $para: $errorMsg");
+            
+            // Fallback a mail() nativo si SMTP falla
+            $GLOBALS['ultimo_log_envio'] .= " | Fallback a mail() nativo";
+            return enviar_email_nativo($para, $nombrePara, $asunto, $html, $texto);
+        }
+    }
+    
+    // Sin PHPMailer: usar mail() nativo
+    return enviar_email_nativo($para, $nombrePara, $asunto, $html, $texto);
+}
+
+/**
+ * Fallback: envía email con mail() nativo de PHP
+ */
+function enviar_email_nativo(string $para, string $nombrePara, string $asunto, string $html, string $texto): bool {
     $boundary = md5(uniqid());
     
     $headers  = "From: " . COLA_EMAIL_NAME . " <" . COLA_EMAIL_FROM . ">\r\n";
@@ -421,8 +513,21 @@ function enviar_email(string $para, string $nombrePara, string $asunto, string $
     $paraFormateado = "=?UTF-8?B?" . base64_encode($nombrePara) . "?= <$para>";
     $asuntoFormateado = "=?UTF-8?B?" . base64_encode($asunto) . "?=";
     
-    return mail($paraFormateado, $asuntoFormateado, $body, $headers);
+    $resultado = mail($paraFormateado, $asuntoFormateado, $body, $headers);
+    
+    // Guardar log
+    $GLOBALS['ultimo_log_envio'] = json_encode([
+        'exito'      => $resultado,
+        'metodo'     => 'mail() nativo',
+        'destino'    => $para,
+        'asunto'     => $asunto,
+        'timestamp'  => date('Y-m-d H:i:s'),
+        'mensaje'    => $resultado ? 'mail() devolvió true (entregado al servidor)' : 'mail() devolvió false'
+    ], JSON_UNESCAPED_UNICODE);
+    
+    return $resultado;
 }
+
 
 /**
  * Guarda una notificación interna en la tabla notifications (si existe)
@@ -456,29 +561,62 @@ function guardar_notificacion_interna(PDO $pdo, array $tarea, array $payload): b
  */
 function guardar_historial(PDO $pdo, array $tarea, string $resultado, ?string $errorMsg): void {
     try {
-        $pdo->prepare("
-            INSERT INTO historial_tareas 
-            (tarea_id, regla_id, tipo_tarea, entidad_tipo, entidad_id, 
-             destinatario_id, destinatario_email, payload, resultado, 
-             intentos_realizados, error_msg)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ")->execute([
-            $tarea['id'],
-            $tarea['regla_id'],
-            $tarea['tipo_tarea'],
-            $tarea['entidad_tipo'],
-            $tarea['entidad_id'],
-            $tarea['destinatario_id'],
-            $tarea['destinatario_email'],
-            $tarea['payload'],
-            $resultado,
-            $tarea['intentos'],
-            $errorMsg
-        ]);
+        // Verificar si la columna log_envio existe
+        $tieneLogEnvio = false;
+        try {
+            $cols = $pdo->query("SHOW COLUMNS FROM historial_tareas LIKE 'log_envio'")->fetchAll();
+            $tieneLogEnvio = count($cols) > 0;
+        } catch (Exception $e) {}
+        
+        $logEnvio = $GLOBALS['ultimo_log_envio'] ?? '';
+        
+        if ($tieneLogEnvio) {
+            $pdo->prepare("
+                INSERT INTO historial_tareas 
+                (tarea_id, regla_id, tipo_tarea, entidad_tipo, entidad_id, 
+                 destinatario_id, destinatario_email, payload, resultado, 
+                 intentos_realizados, error_msg, log_envio)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ")->execute([
+                $tarea['id'],
+                $tarea['regla_id'],
+                $tarea['tipo_tarea'],
+                $tarea['entidad_tipo'],
+                $tarea['entidad_id'],
+                $tarea['destinatario_id'],
+                $tarea['destinatario_email'],
+                $tarea['payload'],
+                $resultado,
+                $tarea['intentos'],
+                $errorMsg,
+                $logEnvio
+            ]);
+        } else {
+            $pdo->prepare("
+                INSERT INTO historial_tareas 
+                (tarea_id, regla_id, tipo_tarea, entidad_tipo, entidad_id, 
+                 destinatario_id, destinatario_email, payload, resultado, 
+                 intentos_realizados, error_msg)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ")->execute([
+                $tarea['id'],
+                $tarea['regla_id'],
+                $tarea['tipo_tarea'],
+                $tarea['entidad_tipo'],
+                $tarea['entidad_id'],
+                $tarea['destinatario_id'],
+                $tarea['destinatario_email'],
+                $tarea['payload'],
+                $resultado,
+                $tarea['intentos'],
+                $errorMsg
+            ]);
+        }
     } catch (Exception $e) {
         error_log("[procesar_cola] Error guardando historial: " . $e->getMessage());
     }
 }
+
 
 /**
  * Salida JSON o texto según contexto

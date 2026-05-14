@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => 'rutasrurales/web',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'f7fa9eee092072893ab17bd86e671243b0bb3909',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
+    ),
+    'versions' => array(
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v6.12.0',
+            'version' => '6.12.0.0',
+            'reference' => 'd1ac35d784bf9f5e61b424901d5a014967f15b12',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'rutasrurales/web' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'f7fa9eee092072893ab17bd86e671243b0bb3909',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'stripe/stripe-php' => array(
+            'pretty_version' => 'v13.18.0',
+            'version' => '13.18.0.0',
+            'reference' => '02abb043b103766f4ed920642ae56ffdc58c7467',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../stripe/stripe-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);

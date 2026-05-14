@@ -2,7 +2,8 @@
     "name": "rutasrurales/web",
     "description": "Rutas Rurales - Sistema de membresías con Stripe",
     "require": {
-        "stripe/stripe-php": "^13.0"
+        "stripe/stripe-php": "^13.0",
+        "phpmailer/phpmailer": "^6.9"
     },
     "config": {
         "vendor-dir": "vendor"

@@ -3,6 +3,12 @@
  * Panel de Moderación — Cola de Tareas
  * admin_tablas/cola_tareas.php
  */
+
+// Cargamos el autoloader de Composer si existe (PHPMailer, Stripe, etc.)
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+}
 require_once 'db.php';
 
 // ─── Acciones POST ────────────────────────────────────────────
@@ -86,6 +92,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->execute([$nombre, $asunto, $html, $txt, $activa, $pid]);
                     $mensaje = "✅ Plantilla #$pid guardada correctamente.";
                     $tipoMensaje = 'success';
+                }
+                break;
+
+            case 'guardar_smtp':
+                $host       = $_POST['smtp_host'] ?? 'smtp.hostinger.com';
+                $puerto     = intval($_POST['smtp_puerto'] ?? 587);
+                $seguridad  = $_POST['smtp_seguridad'] ?? 'tls';
+                $usuario    = $_POST['smtp_usuario'] ?? '';
+                $password   = $_POST['smtp_password'] ?? '';
+                $email_from = $_POST['smtp_email_from'] ?? 'noreply@rutasrurales.io';
+                $nombre_from = $_POST['smtp_nombre_from'] ?? 'Rutas Rurales';
+                
+                // Verificar si existe la tabla
+                try {
+                    $existe = $pdo->query("SHOW TABLES LIKE 'config_smtp'")->rowCount() > 0;
+                    if (!$existe) {
+                        $pdo->exec("CREATE TABLE IF NOT EXISTS config_smtp (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            host VARCHAR(255) NOT NULL DEFAULT 'smtp.hostinger.com',
+                            puerto INT NOT NULL DEFAULT 587,
+                            usuario VARCHAR(255) NOT NULL DEFAULT '',
+                            password VARCHAR(255) NOT NULL DEFAULT '',
+                            email_from VARCHAR(255) NOT NULL DEFAULT 'noreply@rutasrurales.io',
+                            nombre_from VARCHAR(100) NOT NULL DEFAULT 'Rutas Rurales',
+                            seguridad ENUM('tls','ssl','none') NOT NULL DEFAULT 'tls',
+                            activo TINYINT(1) NOT NULL DEFAULT 1,
+                            creada_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+                    }
+                    
+                    $existeConfig = $pdo->query("SELECT COUNT(*) FROM config_smtp")->fetchColumn();
+                    if ($existeConfig > 0) {
+                        $stmt = $pdo->prepare("UPDATE config_smtp SET host=?, puerto=?, seguridad=?, usuario=?, password=?, email_from=?, nombre_from=? WHERE activo=1 LIMIT 1");
+                        $stmt->execute([$host, $puerto, $seguridad, $usuario, $password, $email_from, $nombre_from]);
+                    } else {
+                        $stmt = $pdo->prepare("INSERT INTO config_smtp (host, puerto, seguridad, usuario, password, email_from, nombre_from) VALUES (?,?,?,?,?,?,?)");
+                        $stmt->execute([$host, $puerto, $seguridad, $usuario, $password, $email_from, $nombre_from]);
+                    }
+                    $mensaje = "✅ Configuración SMTP guardada correctamente.";
+                    $tipoMensaje = 'success';
+                } catch (Exception $e) {
+                    $mensaje = "❌ Error al guardar SMTP: " . htmlspecialchars($e->getMessage());
+                    $tipoMensaje = 'danger';
                 }
                 break;
         }
@@ -596,6 +645,66 @@ VALUES
     <?php else: ?>
     <div class="alert alert-info">No hay reglas configuradas aún. Ejecuta el PASO 5 del SQL.</div>
     <?php endif; ?>
+
+    <!-- ── Panel de Configuración SMTP ────────────────────────── -->
+    <hr class="my-4">
+    <h5 class="section-title">📬 Configuración SMTP (envío de emails)</h5>
+    <p class="text-muted small mb-3">Configura aquí el servidor SMTP para enviar emails con PHPMailer. Si no configuras nada, se usará <code>mail()</code> nativo de PHP.</p>
+    <?php
+    try {
+        $smtpConfig = $pdo->query("SELECT * FROM config_smtp WHERE activo = 1 LIMIT 1")->fetch();
+    } catch (Exception $e) {
+        $smtpConfig = null;
+    }
+    ?>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="post" class="row g-2">
+                <input type="hidden" name="accion" value="guardar_smtp">
+                <div class="col-md-4">
+                    <label class="form-label small">Host SMTP</label>
+                    <input type="text" name="smtp_host" class="form-control form-control-sm" value="<?= htmlspecialchars($smtpConfig['host'] ?? 'smtp.hostinger.com') ?>">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Puerto</label>
+                    <input type="number" name="smtp_puerto" class="form-control form-control-sm" value="<?= $smtpConfig['puerto'] ?? 587 ?>">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Seguridad</label>
+                    <select name="smtp_seguridad" class="form-select form-select-sm">
+                        <option value="tls" <?= ($smtpConfig['seguridad'] ?? 'tls') === 'tls' ? 'selected' : '' ?>>TLS</option>
+                        <option value="ssl" <?= ($smtpConfig['seguridad'] ?? '') === 'ssl' ? 'selected' : '' ?>>SSL</option>
+                        <option value="none" <?= ($smtpConfig['seguridad'] ?? '') === 'none' ? 'selected' : '' ?>>Sin seguridad</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small">Usuario SMTP</label>
+                    <input type="text" name="smtp_usuario" class="form-control form-control-sm" value="<?= htmlspecialchars($smtpConfig['usuario'] ?? '') ?>">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small">Contraseña SMTP</label>
+                    <input type="password" name="smtp_password" class="form-control form-control-sm" value="<?= htmlspecialchars($smtpConfig['password'] ?? '') ?>">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small">Email desde (From)</label>
+                    <input type="email" name="smtp_email_from" class="form-control form-control-sm" value="<?= htmlspecialchars($smtpConfig['email_from'] ?? 'noreply@rutasrurales.io') ?>">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small">Nombre desde (From Name)</label>
+                    <input type="text" name="smtp_nombre_from" class="form-control form-control-sm" value="<?= htmlspecialchars($smtpConfig['nombre_from'] ?? 'Rutas Rurales') ?>">
+                </div>
+                <div class="col-12 mt-2">
+                    <button type="submit" class="btn btn-primary btn-sm">💾 Guardar configuración SMTP</button>
+                    <?php if (class_exists('PHPMailer\PHPMailer\PHPMailer')): ?>
+                        <span class="badge bg-success ms-2">✅ PHPMailer disponible</span>
+                    <?php else: ?>
+                        <span class="badge bg-warning text-dark ms-2">⚠️ PHPMailer no instalado (se usará mail() nativo)</span>
+                        <small class="text-muted ms-2">Ejecuta <code>composer install</code> en el servidor para activar SMTP</small>
+                    <?php endif; ?>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- ── Panel de Plantillas ────────────────────────────────── -->
     <hr class="my-4">
