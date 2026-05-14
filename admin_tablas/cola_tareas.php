@@ -41,6 +41,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $tipoMensaje = 'info';
                 break;
 
+            case 'enviar_individual':
+                // Procesar UNA sola tarea llamando al procesador con su ID
+                $token = 'RutasRurales_Cola_2026_$ecret';
+                $url = 'https://rutasrurales.io/api/procesar_cola.php?token=' . urlencode($token) . '&tarea_id=' . $id;
+                $ctx = stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]]);
+                $resp = @file_get_contents($url, false, $ctx);
+                $data = $resp ? json_decode($resp, true) : null;
+                if ($data && isset($data['completadas'])) {
+                    if ($data['completadas'] > 0) {
+                        $mensaje = "✅ Tarea #$id enviada correctamente.";
+                        $tipoMensaje = 'success';
+                    } elseif (!empty($data['detalle'][0]['msg'])) {
+                        $mensaje = "⚠️ Tarea #$id: " . htmlspecialchars($data['detalle'][0]['msg']);
+                        $tipoMensaje = 'warning';
+                    } else {
+                        $mensaje = "⚠️ Tarea #$id procesada pero sin completar. Revisa el estado.";
+                        $tipoMensaje = 'warning';
+                    }
+                } else {
+                    $mensaje = "⚠️ Error al procesar tarea #$id. Respuesta: " . htmlspecialchars(substr($resp ?? 'sin respuesta', 0, 200));
+                    $tipoMensaje = 'danger';
+                }
+                break;
+
             case 'aprobar_todos':
                 $n = $pdo->exec("UPDATE cola_tareas SET estado='pendiente' WHERE estado='moderacion'");
                 $mensaje = "✅ $n tareas aprobadas y listas para procesar.";
@@ -301,6 +325,9 @@ function iconoCanal(?string $canal): string {
         .card-contador { cursor: pointer; transition: transform .1s; }
         .card-contador:hover { transform: translateY(-2px); }
         .section-title { border-left: 4px solid #0d6efd; padding-left: 10px; margin-bottom: 1rem; }
+        .fila-tarea { cursor: pointer; }
+        .fila-tarea:hover { background-color: rgba(13, 110, 253, 0.05) !important; }
+        .td-checkbox { text-align: center; }
     </style>
 </head>
 <body>
@@ -414,138 +441,134 @@ function iconoCanal(?string $canal): string {
     </div>
     <?php else: ?>
 
-    <form method="post" id="formMasivo">
-        <input type="hidden" name="accion" value="cancelar_seleccion">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <small class="text-muted">Mostrando <?= count($tareas) ?> de <?= $totalFiltrado ?> tareas</small>
+        <button type="button" class="btn btn-outline-danger btn-sm" id="btnCancelarSeleccion">
+            🚫 Cancelar seleccionadas
+        </button>
+    </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <small class="text-muted">Mostrando <?= count($tareas) ?> de <?= $totalFiltrado ?> tareas</small>
-            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Cancelar las tareas seleccionadas?')">
-                🚫 Cancelar seleccionadas
-            </button>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered table-sm align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th><input type="checkbox" id="selAll" title="Seleccionar todas"></th>
-                        <th>#ID</th>
-                        <th>Estado</th>
-                        <th>Tipo tarea</th>
-                        <th>Canal</th>
-                        <th>Entidad</th>
-                        <th>Regla</th>
-                        <th>Payload</th>
-                        <th>Intentos</th>
-                        <th>Creada</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($tareas as $t):
-                    $payload = json_decode($t['payload'] ?? '{}', true) ?: [];
-                    $payloadStr = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-                    // Compatibilidad con tabla antigua (columnas opcionales)
-                    $errorMsg         = $colError ? (!empty($t[$colError]) ? htmlspecialchars(substr($t[$colError], 0, 100)) : '') : '';
-                    $tipoTarea        = $t['tipo_tarea'] ?? ($t['tipo'] ?? '—');
-                    $entidadTipo      = $t['entidad_tipo'] ?? ($t['resource_type'] ?? '');
-                    $entidadId        = $t['entidad_id'] ?? ($t['resource_id'] ?? '');
-                    $reqMod           = $t['requiere_moderacion'] ?? 0;
-                    $canal            = $t['canal'] ?? null;
-                    $regla_nombre     = $t['regla_nombre'] ?? null;
-                    $destinatarioEmail = $t['destinatario_email'] ?? '';
-                    $intentos         = $colIntentos ? ($t[$colIntentos] ?? 0) : 0;
-                    $maxIntentos      = $colMaxIntentos ? ($t[$colMaxIntentos] ?? 3) : 3;
-                    $fechaCreada      = $colFecha !== 'id' ? ($t[$colFecha] ?? null) : null;
-                    $procesadaEn      = $colProcesada ? ($t[$colProcesada] ?? null) : null;
-                ?>
-                <tr class="<?= $t['estado'] === 'error' ? 'table-danger' : ($t['estado'] === 'moderacion' ? 'table-warning' : '') ?>">
-                    <td><input type="checkbox" name="ids[]" value="<?= $t['id'] ?>" class="check-item"></td>
-                    <td><strong><?= $t['id'] ?></strong></td>
-                    <td><?= badgeEstado($t['estado']) ?></td>
-                    <td>
-                        <code class="small"><?= htmlspecialchars($tipoTarea) ?></code>
-                        <?php if ($reqMod): ?>
-                        <span class="badge bg-warning text-dark regla-badge ms-1">mod</span>
-                        <?php endif; ?>
-                    </td>
-                    <td class="text-center"><?= iconoCanal($canal) ?> <small><?= htmlspecialchars($canal ?? '—') ?></small></td>
-                    <td>
-                        <?php if ($entidadTipo): ?>
-                        <span class="badge bg-light text-dark border"><?= htmlspecialchars($entidadTipo) ?></span>
-                        <small>#<?= $entidadId ?></small>
-                        <?php endif; ?>
-                        <?php if ($destinatarioEmail): ?>
-                        <br><small class="text-muted">📧 <?= htmlspecialchars($destinatarioEmail) ?></small>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?php if ($regla_nombre): ?>
-                        <small class="text-muted"><?= htmlspecialchars($regla_nombre) ?></small>
-                        <?php else: ?>
-                        <small class="text-muted">—</small>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <pre class="payload-pre mb-0"><?= htmlspecialchars($payloadStr) ?></pre>
-                        <?php if ($errorMsg): ?>
-                        <small class="text-danger">⚠️ <?= $errorMsg ?></small>
-                        <?php endif; ?>
-                    </td>
-                    <td class="text-center">
-                        <span class="badge <?= $intentos >= $maxIntentos ? 'bg-danger' : 'bg-secondary' ?>">
-                            <?= $intentos ?>/<?= $maxIntentos ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if ($fechaCreada): ?>
-                        <small><?= date('d/m H:i', strtotime($fechaCreada)) ?></small>
-                        <?php else: ?>
-                        <small class="text-muted">#<?= $t['id'] ?></small>
-                        <?php endif; ?>
-                        <?php if ($procesadaEn): ?>
-                        <br><small class="text-muted">✓ <?= date('d/m H:i', strtotime($procesadaEn)) ?></small>
-                        <?php endif; ?>
-                    </td>
-                    <td class="acciones-btn">
-                        <?php if ($t['estado'] === 'moderacion'): ?>
-                        <form method="post" class="d-inline">
-                            <input type="hidden" name="accion" value="aprobar">
-                            <input type="hidden" name="id" value="<?= $t['id'] ?>">
-                            <button type="submit" class="btn btn-success btn-sm py-0 px-1" title="Aprobar y enviar">✅</button>
-                        </form>
-                        <?php endif; ?>
-
-                        <?php if ($t['estado'] === 'error'): ?>
-                        <form method="post" class="d-inline">
-                            <input type="hidden" name="accion" value="reintentar">
-                            <input type="hidden" name="id" value="<?= $t['id'] ?>">
-                            <button type="submit" class="btn btn-info btn-sm py-0 px-1" title="Reintentar">🔄</button>
-                        </form>
-                        <?php endif; ?>
-
-                        <?php if (in_array($t['estado'], ['moderacion', 'pendiente', 'error'])): ?>
-                        <form method="post" class="d-inline">
-                            <input type="hidden" name="accion" value="cancelar">
-                            <input type="hidden" name="id" value="<?= $t['id'] ?>">
-                            <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-1" title="Cancelar" onclick="return confirm('¿Cancelar tarea #<?= $t['id'] ?>?')">🚫</button>
-                        </form>
-                        <?php endif; ?>
-
-                        <!-- Ver payload completo -->
-                        <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1"
-                            data-bs-toggle="modal" data-bs-target="#modalPayload"
-                            data-id="<?= $t['id'] ?>"
-                            data-payload="<?= htmlspecialchars($payloadStr) ?>"
-                            data-error="<?= $colError ? htmlspecialchars($t[$colError] ?? '') : '' ?>"
-                            title="Ver detalle">🔍</button>
-                    </td>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered table-sm align-middle" id="tablaTareas">
+            <thead class="table-dark">
+                <tr>
+                    <th><input type="checkbox" id="selAll" title="Seleccionar todas"></th>
+                    <th>#ID</th>
+                    <th>Estado</th>
+                    <th>Tipo tarea</th>
+                    <th>Canal</th>
+                    <th>Entidad</th>
+                    <th>Regla</th>
+                    <th>Payload</th>
+                    <th>Intentos</th>
+                    <th>Creada</th>
+                    <th>Acciones</th>
                 </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </form>
+            </thead>
+            <tbody>
+            <?php foreach ($tareas as $t):
+                $payload = json_decode($t['payload'] ?? '{}', true) ?: [];
+                $payloadStr = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                // Compatibilidad con tabla antigua (columnas opcionales)
+                $errorMsg         = $colError ? (!empty($t[$colError]) ? htmlspecialchars(substr($t[$colError], 0, 100)) : '') : '';
+                $tipoTarea        = $t['tipo_tarea'] ?? ($t['tipo'] ?? '—');
+                $entidadTipo      = $t['entidad_tipo'] ?? ($t['resource_type'] ?? '');
+                $entidadId        = $t['entidad_id'] ?? ($t['resource_id'] ?? '');
+                $reqMod           = $t['requiere_moderacion'] ?? 0;
+                $canal            = $t['canal'] ?? null;
+                $regla_nombre     = $t['regla_nombre'] ?? null;
+                $destinatarioEmail = $t['destinatario_email'] ?? '';
+                $intentos         = $colIntentos ? ($t[$colIntentos] ?? 0) : 0;
+                $maxIntentos      = $colMaxIntentos ? ($t[$colMaxIntentos] ?? 3) : 3;
+                $fechaCreada      = $colFecha !== 'id' ? ($t[$colFecha] ?? null) : null;
+                $procesadaEn      = $colProcesada ? ($t[$colProcesada] ?? null) : null;
+            ?>
+            <tr class="fila-tarea <?= $t['estado'] === 'error' ? 'table-danger' : ($t['estado'] === 'moderacion' ? 'table-warning' : '') ?>" data-id="<?= $t['id'] ?>">
+                <td class="td-checkbox"><input type="checkbox" value="<?= $t['id'] ?>" class="check-item"></td>
+                <td><strong><?= $t['id'] ?></strong></td>
+                <td><?= badgeEstado($t['estado']) ?></td>
+                <td>
+                    <code class="small"><?= htmlspecialchars($tipoTarea) ?></code>
+                    <?php if ($reqMod): ?>
+                    <span class="badge bg-warning text-dark regla-badge ms-1">mod</span>
+                    <?php endif; ?>
+                </td>
+                <td class="text-center"><?= iconoCanal($canal) ?> <small><?= htmlspecialchars($canal ?? '—') ?></small></td>
+                <td>
+                    <?php if ($entidadTipo): ?>
+                    <span class="badge bg-light text-dark border"><?= htmlspecialchars($entidadTipo) ?></span>
+                    <small>#<?= $entidadId ?></small>
+                    <?php endif; ?>
+                    <?php if ($destinatarioEmail): ?>
+                    <br><small class="text-muted">📧 <?= htmlspecialchars($destinatarioEmail) ?></small>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if ($regla_nombre): ?>
+                    <small class="text-muted"><?= htmlspecialchars($regla_nombre) ?></small>
+                    <?php else: ?>
+                    <small class="text-muted">—</small>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <pre class="payload-pre mb-0"><?= htmlspecialchars($payloadStr) ?></pre>
+                    <?php if ($errorMsg): ?>
+                    <small class="text-danger">⚠️ <?= $errorMsg ?></small>
+                    <?php endif; ?>
+                </td>
+                <td class="text-center">
+                    <span class="badge <?= $intentos >= $maxIntentos ? 'bg-danger' : 'bg-secondary' ?>">
+                        <?= $intentos ?>/<?= $maxIntentos ?>
+                    </span>
+                </td>
+                <td>
+                    <?php if ($fechaCreada): ?>
+                    <small><?= date('d/m H:i', strtotime($fechaCreada)) ?></small>
+                    <?php else: ?>
+                    <small class="text-muted">#<?= $t['id'] ?></small>
+                    <?php endif; ?>
+                    <?php if ($procesadaEn): ?>
+                    <br><small class="text-muted">✓ <?= date('d/m H:i', strtotime($procesadaEn)) ?></small>
+                    <?php endif; ?>
+                </td>
+                <td class="acciones-btn">
+                    <?php if ($t['estado'] === 'moderacion'): ?>
+                    <form method="post" class="d-inline">
+                        <input type="hidden" name="accion" value="aprobar">
+                        <input type="hidden" name="id" value="<?= $t['id'] ?>">
+                        <button type="submit" class="btn btn-success btn-sm py-0 px-1" title="Aprobar y enviar">✅</button>
+                    </form>
+                    <?php endif; ?>
+
+                    <?php if ($t['estado'] === 'error'): ?>
+                    <form method="post" class="d-inline">
+                        <input type="hidden" name="accion" value="reintentar">
+                        <input type="hidden" name="id" value="<?= $t['id'] ?>">
+                        <button type="submit" class="btn btn-info btn-sm py-0 px-1" title="Reintentar">🔄</button>
+                    </form>
+                    <?php endif; ?>
+
+                    <?php if (in_array($t['estado'], ['moderacion', 'pendiente', 'error'])): ?>
+                    <form method="post" class="d-inline">
+                        <input type="hidden" name="accion" value="cancelar">
+                        <input type="hidden" name="id" value="<?= $t['id'] ?>">
+                        <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-1" title="Cancelar" onclick="return confirm('¿Cancelar tarea #<?= $t['id'] ?>?')">🚫</button>
+                    </form>
+                    <?php endif; ?>
+
+                    <!-- Ver payload completo -->
+                    <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1"
+                        data-bs-toggle="modal" data-bs-target="#modalPayload"
+                        data-id="<?= $t['id'] ?>"
+                        data-payload="<?= htmlspecialchars($payloadStr) ?>"
+                        data-error="<?= $colError ? htmlspecialchars($t[$colError] ?? '') : '' ?>"
+                        title="Ver detalle">🔍</button>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
     <!-- Paginación -->
     <?php if ($totalPaginas > 1): ?>
@@ -972,6 +995,49 @@ VALUES
 // Seleccionar todos los checkboxes
 document.getElementById('selAll')?.addEventListener('change', function() {
     document.querySelectorAll('.check-item').forEach(c => c.checked = this.checked);
+});
+
+// Click en fila de tarea → toggle checkbox (excepto en la celda de acciones y enlaces)
+document.getElementById('tablaTareas')?.addEventListener('click', function(e) {
+    const tr = e.target.closest('tr.fila-tarea');
+    if (!tr) return;
+    // No toggle si se hizo clic en un botón, input, enlace, o dentro de un formulario
+    if (e.target.closest('form') || e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) return;
+    const checkbox = tr.querySelector('.check-item');
+    if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+    }
+});
+
+// Botón "Cancelar seleccionadas": crear un form dinámico con los IDs seleccionados
+document.getElementById('btnCancelarSeleccion')?.addEventListener('click', function() {
+    const checked = document.querySelectorAll('.check-item:checked');
+    if (checked.length === 0) {
+        alert('Selecciona al menos una tarea.');
+        return;
+    }
+    if (!confirm('¿Cancelar las ' + checked.length + ' tareas seleccionadas?')) return;
+    
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.style.display = 'none';
+    
+    const inputAccion = document.createElement('input');
+    inputAccion.type = 'hidden';
+    inputAccion.name = 'accion';
+    inputAccion.value = 'cancelar_seleccion';
+    form.appendChild(inputAccion);
+    
+    checked.forEach(cb => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'ids[]';
+        input.value = cb.value;
+        form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    form.submit();
 });
 
 // Modal payload
