@@ -532,11 +532,19 @@ function iconoCanal(?string $canal): string {
                     <?php endif; ?>
                 </td>
                 <td class="acciones-btn">
+                    <?php if (in_array($t['estado'], ['moderacion', 'pendiente'])): ?>
+                    <form method="post" class="d-inline">
+                        <input type="hidden" name="accion" value="enviar_individual">
+                        <input type="hidden" name="id" value="<?= $t['id'] ?>">
+                        <button type="submit" class="btn btn-primary btn-sm py-0 px-1" title="Enviar ahora esta tarea (sin esperar a procesar cola)" onclick="return confirm('¿Enviar tarea #<?= $t['id'] ?> ahora?')">▶️</button>
+                    </form>
+                    <?php endif; ?>
+
                     <?php if ($t['estado'] === 'moderacion'): ?>
                     <form method="post" class="d-inline">
                         <input type="hidden" name="accion" value="aprobar">
                         <input type="hidden" name="id" value="<?= $t['id'] ?>">
-                        <button type="submit" class="btn btn-success btn-sm py-0 px-1" title="Aprobar y enviar">✅</button>
+                        <button type="submit" class="btn btn-success btn-sm py-0 px-1" title="Aprobar (pasa a pendiente)">✅</button>
                     </form>
                     <?php endif; ?>
 

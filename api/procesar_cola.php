@@ -78,21 +78,38 @@ $resultado = [
     'detalle'     => []
 ];
 
+// ─── ¿Procesar una tarea específica? ─────────────────────────
+$tareaIdEspecifica = intval($_GET['tarea_id'] ?? 0);
+
 // ─── Obtener y bloquear tareas pendientes ────────────────────
 // UPDATE atómico para evitar que dos procesos cojan la misma tarea
 $pdo->beginTransaction();
 try {
-    $stmt = $pdo->prepare("
-        SELECT id FROM cola_tareas
-        WHERE estado = 'pendiente'
-          AND disponible_desde <= NOW()
-          AND intentos < max_intentos
-        ORDER BY prioridad ASC, creada_en ASC
-        LIMIT " . COLA_MAX_TAREAS . "
-        FOR UPDATE
-    ");
-    $stmt->execute();
-    $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    if ($tareaIdEspecifica > 0) {
+        // Procesar UNA sola tarea específica
+        $stmt = $pdo->prepare("
+            SELECT id FROM cola_tareas
+            WHERE id = ?
+              AND estado IN ('pendiente', 'moderacion')
+              AND disponible_desde <= NOW()
+              AND intentos < max_intentos
+            FOR UPDATE
+        ");
+        $stmt->execute([$tareaIdEspecifica]);
+        $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    } else {
+        $stmt = $pdo->prepare("
+            SELECT id FROM cola_tareas
+            WHERE estado = 'pendiente'
+              AND disponible_desde <= NOW()
+              AND intentos < max_intentos
+            ORDER BY prioridad ASC, creada_en ASC
+            LIMIT " . COLA_MAX_TAREAS . "
+            FOR UPDATE
+        ");
+        $stmt->execute();
+        $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
     
     if (!empty($ids)) {
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
