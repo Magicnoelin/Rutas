@@ -1,14 +1,21 @@
 -- ============================================================
--- CAMPAÑA: Email a propietarios de alojamientos sin precio
+-- ⚠️ CAMPAÑA DESACTIVADA ⚠️
 -- ============================================================
--- Ejecutar en phpMyAdmin en este orden:
---   1. Este archivo completo (una sola vez)
---   2. Ir a admin_tablas/cola_tareas.php → pestaña Moderación
---   3. Revisar las tareas generadas y aprobar las que quieras
+-- Esta campaña generó tareas huérfanas (como la ID 62) porque
+-- insertaba tareas sin regla_id, y si el alojamiento o su
+-- propietario desaparecían, la tarea fallaba con:
+--   "No se encontró email del destinatario"
+--
+-- Para evitar que vuelva a ocurrir, el PASO B (INSERT masivo)
+-- está comentado. Si en el futuro quieres reactivar esta campaña:
+--   1. Descomenta el PASO B
+--   2. Ejecuta SOLO el PASO A para actualizar la plantilla
+--   3. Revisa las tareas en Moderación antes de aprobar
 -- ============================================================
 
 
 -- ── PASO A: Crear la plantilla de email ─────────────────────
+-- (Solo la plantilla, sin generar tareas)
 -- (Si ya existe con ese nombre, actualiza el contenido)
 
 INSERT INTO plantillas_mensaje (nombre, canal, asunto, cuerpo_html, cuerpo_txt)
@@ -57,77 +64,80 @@ ON DUPLICATE KEY UPDATE
   cuerpo_txt  = VALUES(cuerpo_txt);
 
 
--- ── PASO B: Insertar tareas en moderación ───────────────────
--- Una tarea por cada alojamiento activo sin precio
--- Estado = 'moderacion' → tú decides cuáles aprobar y cuándo
-
-INSERT INTO cola_tareas (
-    tipo_tarea,
-    plantilla_id,
-    entidad_tipo,
-    entidad_id,
-    destinatario_id,
-    destinatario_email,
-    payload,
-    estado,
-    requiere_moderacion,
-    prioridad
-)
-SELECT
-    'email_propietario'                          AS tipo_tarea,
-    (SELECT id FROM plantillas_mensaje
-     WHERE nombre = 'Alojamiento sin precio - recordatorio'
-     LIMIT 1)                                    AS plantilla_id,
-    'accommodation'                              AS entidad_tipo,
-    a.id                                         AS entidad_id,
-    a.user_id                                    AS destinatario_id,
-    u.email                                      AS destinatario_email,
-    JSON_OBJECT(
-        'accommodation_id', a.id,
-        'nombre',           COALESCE(a.name, 'Tu alojamiento'),
-        'user_id',          a.user_id,
-        'email',            u.email,
-        'nombre_usuario',   COALESCE(u.name, u.username, 'Propietario'),
-        'slug',             COALESCE(a.slug, ''),
-        'provincia',        COALESCE(a.province, '')
-    )                                            AS payload,
-    'moderacion'                                 AS estado,
-    1                                            AS requiere_moderacion,
-    5                                            AS prioridad
-FROM accommodations a
-JOIN users u ON u.id = a.user_id
-WHERE
-    a.status = 'active'
-    AND (
-        a.price IS NULL
-        OR a.price = 0
-        OR a.price = ''
-        OR TRIM(a.price) = ''
-    )
-    -- Evitar duplicados: no insertar si ya hay una tarea pendiente/moderacion para este alojamiento
-    AND NOT EXISTS (
-        SELECT 1 FROM cola_tareas ct
-        WHERE ct.entidad_tipo = 'accommodation'
-          AND ct.entidad_id = a.id
-          AND ct.tipo_tarea = 'email_propietario'
-          AND ct.estado IN ('moderacion', 'pendiente', 'procesando')
-    );
-
-
--- ── Verificación ─────────────────────────────────────────────
-SELECT
-    'Alojamientos sin precio (activos)' AS descripcion,
-    COUNT(*) AS total
-FROM accommodations
-WHERE status = 'active'
-  AND (price IS NULL OR price = 0 OR TRIM(price) = '')
-
-UNION ALL
-
-SELECT
-    'Tareas en moderación generadas',
-    COUNT(*)
-FROM cola_tareas
-WHERE tipo_tarea = 'email_propietario'
-  AND estado = 'moderacion'
-  AND entidad_tipo = 'accommodation';
+-- ╔══════════════════════════════════════════════════════════════╗
+-- ║  PASO B: COMENTADO — No ejecutar                           ║
+-- ║  Este INSERT masivo generaba tareas sin regla_id,          ║
+-- ║  creando tareas huérfanas como la ID 62.                   ║
+-- ║  Si necesitas reactivarlo, borra los -- de cada línea.     ║
+-- ╚══════════════════════════════════════════════════════════════╝
+-- 
+-- INSERT INTO cola_tareas (
+--     tipo_tarea,
+--     plantilla_id,
+--     entidad_tipo,
+--     entidad_id,
+--     destinatario_id,
+--     destinatario_email,
+--     payload,
+--     estado,
+--     requiere_moderacion,
+--     prioridad
+-- )
+-- SELECT
+--     'email_propietario'                          AS tipo_tarea,
+--     (SELECT id FROM plantillas_mensaje
+--      WHERE nombre = 'Alojamiento sin precio - recordatorio'
+--      LIMIT 1)                                    AS plantilla_id,
+--     'accommodation'                              AS entidad_tipo,
+--     a.id                                         AS entidad_id,
+--     a.user_id                                    AS destinatario_id,
+--     u.email                                      AS destinatario_email,
+--     JSON_OBJECT(
+--         'accommodation_id', a.id,
+--         'nombre',           COALESCE(a.name, 'Tu alojamiento'),
+--         'user_id',          a.user_id,
+--         'email',            u.email,
+--         'nombre_usuario',   COALESCE(u.name, u.username, 'Propietario'),
+--         'slug',             COALESCE(a.slug, ''),
+--         'provincia',        COALESCE(a.province, '')
+--     )                                            AS payload,
+--     'moderacion'                                 AS estado,
+--     1                                            AS requiere_moderacion,
+--     5                                            AS prioridad
+-- FROM accommodations a
+-- JOIN users u ON u.id = a.user_id
+-- WHERE
+--     a.status = 'active'
+--     AND (
+--         a.price IS NULL
+--         OR a.price = 0
+--         OR a.price = ''
+--         OR TRIM(a.price) = ''
+--     )
+--     -- Evitar duplicados: no insertar si ya hay una tarea pendiente/moderacion para este alojamiento
+--     AND NOT EXISTS (
+--         SELECT 1 FROM cola_tareas ct
+--         WHERE ct.entidad_tipo = 'accommodation'
+--           AND ct.entidad_id = a.id
+--           AND ct.tipo_tarea = 'email_propietario'
+--           AND ct.estado IN ('moderacion', 'pendiente', 'procesando')
+--     );
+-- 
+-- 
+-- -- ── Verificación ─────────────────────────────────────────────
+-- SELECT
+--     'Alojamientos sin precio (activos)' AS descripcion,
+--     COUNT(*) AS total
+-- FROM accommodations
+-- WHERE status = 'active'
+--   AND (price IS NULL OR price = 0 OR TRIM(price) = '')
+-- 
+-- UNION ALL
+-- 
+-- SELECT
+--     'Tareas en moderación generadas',
+--     COUNT(*)
+-- FROM cola_tareas
+-- WHERE tipo_tarea = 'email_propietario'
+--   AND estado = 'moderacion'
+--   AND entidad_tipo = 'accommodation';
