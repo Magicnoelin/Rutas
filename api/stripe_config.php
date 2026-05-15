@@ -13,7 +13,7 @@ define('STRIPE_PUBLISHABLE_KEY', 'pk_live_51Sz9aj8WI0tE7gHHC06mOHkWFtLtDIbnJJbNy
 // WEBHOOK SECRET: Configurar en https://dashboard.stripe.com/webhooks
 // URL del webhook: https://rutasrurales.io/api/stripe_webhook.php
 // Eventos: checkout.session.completed, invoice.paid, invoice.payment_failed, customer.subscription.deleted
-define('STRIPE_WEBHOOK_SECRET', 'whsec_PENDIENTE_CONFIGURAR_EN_STRIPE_DASHBOARD');
+define('STRIPE_WEBHOOK_SECRET', 'whsec_pDd9vUZUQPocoY1Mtv6Ihp9RZ0SeDI1m');
 
 // ============================================
 // STRIPE API VIA CURL (sin necesidad de Composer)
