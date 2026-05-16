@@ -161,20 +161,27 @@ function cargarDatosReales() {
 
 function cargarDatosEjemplo() {
     antonioDatabase.accommodations = [
-        { id: 1, nombre: 'Posada Real de Soria', descripcion: 'Un remanso de paz con techos de madera.', ubicacion: 'Soria', precio: '85€/noche', icono: '🏨', url: 'alojamientos-turisticos.html', foto: '' },
-        { id: 2, nombre: 'Casa Rural El Mirador', descripcion: 'Vistas increíbles, ideal para parejas.', ubicacion: 'Ávila', precio: '70€/noche', icono: '🏠', url: 'alojamientos-turisticos.html', foto: '' }
+        { id: 1, nombre: 'Posada Real de Soria', descripcion: 'Un remanso de paz con techos de madera.', ubicacion: 'Soria', province: 'Soria', precio: '85€/noche', icono: '🏨', url: 'alojamientos-turisticos.html', foto: '' },
+        { id: 2, nombre: 'Casa Rural El Mirador', descripcion: 'Vistas increíbles, ideal para parejas.', ubicacion: 'Ávila', province: 'Ávila', precio: '70€/noche', icono: '🏠', url: 'alojamientos-turisticos.html', foto: '' },
+        { id: 3, nombre: 'Casa Enrique', descripcion: 'Casa acogedora en plena naturaleza soriana.', ubicacion: 'Santervas de la Sierra', province: 'Soria', precio: 'Desde 90€/noche', icono: '🏔️', url: 'alojamientos-turisticos.html', foto: '' },
+        { id: 4, nombre: 'La Plaza', descripcion: 'Apartamento ideal para parejas en Vinuesa.', ubicacion: 'Vinuesa', province: 'Soria', precio: 'Desde 75€/noche', icono: '💑', url: 'alojamientos-turisticos.html', foto: '' },
+        { id: 5, nombre: 'Casa Chaparrete', descripcion: 'Casa rural tradicional con chimenea en Deza.', ubicacion: 'Deza', province: 'Soria', precio: 'Desde 80€/noche', icono: '🔥', url: 'alojamientos-turisticos.html', foto: '' }
     ];
     antonioDatabase.places_of_interest = [
-        { id: 101, nombre: 'Cañón del Río Lobos', descripcion: 'Espectáculo natural de piedra y buitres.', ubicacion: 'Soria', precio: 'Gratis', icono: '🏞️', url: 'lugares-interes-paginacion.html', foto: '' }
+        { id: 101, nombre: 'Cañón del Río Lobos', descripcion: 'Espectáculo natural de piedra y buitres.', ubicacion: 'Soria', province: 'Soria', precio: 'Gratis', icono: '🏞️', url: 'lugares-interes-paginacion.html', foto: '' },
+        { id: 102, nombre: 'Monasterio de San Juan de Duero', descripcion: 'Joy del románico con claustro único.', ubicacion: 'Soria Capital', province: 'Soria', precio: 'Gratis', icono: '⛪', url: 'lugares-interes-paginacion.html', foto: '' },
+        { id: 103, nombre: 'Pico Urbión', descripcion: 'Cima de Soria con lagunas glaciares.', ubicacion: 'Sistema Ibérico', province: 'Soria', precio: 'Gratis', icono: '🏔️', url: 'lugares-interes-paginacion.html', foto: '' },
+        { id: 104, nombre: 'Castillo de Almenar', descripcion: 'Fortaleza medieval del siglo XIII.', ubicacion: 'Almenar de Soria', province: 'Soria', precio: 'Gratis', icono: '🏰', url: 'lugares-interes-paginacion.html', foto: '' }
     ];
     antonioDatabase.tourist_activities = [
-        { id: 201, nombre: 'Ruta de las Estrellas', descripcion: 'Observación astronómica Starlight.', ubicacion: 'Soria', precio: '15€', icono: '⭐', url: 'actividades-turisticas.html', foto: '' }
+        { id: 201, nombre: 'Ruta de las Estrellas', descripcion: 'Observación astronómica Starlight.', ubicacion: 'Soria', province: 'Soria', precio: '15€', icono: '⭐', url: 'actividades-turisticas.html', foto: '' },
+        { id: 202, nombre: 'Gastronomía Soriana', descripcion: 'Torreznos, migas, setas y trufa negra.', ubicacion: 'Soria', province: 'Soria', precio: 'Consultar', icono: '🍖', url: 'actividades-turisticas.html', foto: '' }
     ];
     antonioDatabase.cultural_events = [
-        { id: 301, nombre: 'Festival de las Ánimas', descripcion: 'Leyendas de Bécquer en Soria.', ubicacion: 'Soria', fecha: 'Noviembre', precio: '10€', icono: '🎭', url: 'eventos-culturales-paginacion.html', foto: '' }
+        { id: 301, nombre: 'Festival de las Ánimas', descripcion: 'Leyendas de Bécquer en Soria.', ubicacion: 'Soria', province: 'Soria', fecha: 'Noviembre', precio: '10€', icono: '🎭', url: 'eventos-culturales-paginacion.html', foto: '' }
     ];
     antonioDatabase.routes = [
-        { id: 1, nombre: 'Puente 1 de Mayo en Soria', descripcion: 'Escapada de 3 días a Soria.', ubicacion: 'Soria', duracion: '3 días', icono: '🗺️', url: 'rutas/puente-1-mayo-soria', foto: '', color: '#2F5233' }
+        { id: 1, nombre: 'Puente 1 de Mayo en Soria', descripcion: 'Escapada de 3 días a Soria.', ubicacion: 'Soria', province: 'Soria', duracion: '3 días', icono: '🗺️', url: 'rutas/puente-1-mayo-soria', foto: '', color: '#2F5233' }
     ];
 }
 
@@ -590,12 +597,22 @@ function mostrarCategoria(categoria) {
     let datosFiltrados = datos;
     if (antonioState.provincia) {
         const provLower = antonioState.provincia.toLowerCase();
+        // Normalizar: quitar tildes para comparación
+        const provNorm = provLower.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         datosFiltrados = datos.filter(item => {
             // Comparar con el campo province (que es la provincia exacta)
             const provinciaItem = (item.province || '').toLowerCase();
             // También comprobar ubicacion por si acaso
             const ubicacionItem = (item.ubicacion || '').toLowerCase();
-            return provinciaItem === provLower || ubicacionItem.includes(provLower);
+            // Normalizar ambos para comparación sin tildes
+            const provinciaNorm = provinciaItem.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const ubicacionNorm = ubicacionItem.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            // Coincidencia exacta o parcial (más flexible)
+            return provinciaNorm === provNorm ||
+                   provinciaNorm.includes(provNorm) ||
+                   provNorm.includes(provinciaNorm) ||
+                   ubicacionNorm.includes(provNorm) ||
+                   provNorm.includes(ubicacionNorm);
         });
     }
 
@@ -681,9 +698,17 @@ function buscarEnCategoria(categoria, terminos) {
         const tieneTerminos = terminos.some(termino => textoBusqueda.includes(termino));
         if (antonioState.provincia) {
             const provLower = antonioState.provincia.toLowerCase();
+            const provNorm = provLower.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
             const provinciaItem = (item.province || '').toLowerCase();
             const ubicacionItem = (item.ubicacion || '').toLowerCase();
-            return tieneTerminos && (provinciaItem === provLower || ubicacionItem.includes(provLower));
+            const provinciaNorm = provinciaItem.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const ubicacionNorm = ubicacionItem.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const coincideProvincia = provinciaNorm === provNorm ||
+                                      provinciaNorm.includes(provNorm) ||
+                                      provNorm.includes(provinciaNorm) ||
+                                      ubicacionNorm.includes(provNorm) ||
+                                      provNorm.includes(ubicacionNorm);
+            return tieneTerminos && coincideProvincia;
         }
         return tieneTerminos;
     });
