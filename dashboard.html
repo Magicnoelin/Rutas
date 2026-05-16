@@ -9,6 +9,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
 <!-- End Google Tag Manager -->
+    <!-- ===== ENRUTAMIENTO POR ROL ===== -->
+    <script>
+    (async function routeByRole() {
+        try {
+            const res = await fetch('/api/get_profile.php');
+            const data = await res.json();
+            if (!data.success) { window.location.href = '/login.html'; return; }
+            const role = (data.data.user_type || '').toLowerCase();
+            if (role === 'turista' || role === 'tourist') {
+                window.location.href = '/tourist-dashboard.html';
+            } else if (role === 'gestor' || role === 'provider' || role === 'admin') {
+                window.location.href = '/gestor-dashboard.html';
+            }
+            // Si no hay rol claro, carga el dashboard clásico
+        } catch(e) { /* si falla la API, carga el dashboard normal */ }
+    })();
+    </script>
+    <!-- ===== FIN ENRUTAMIENTO ===== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Panel de control de Rutas Rurales. Gestiona alojamientos, eventos y actividades turísticas desde tu dashboard personal." />

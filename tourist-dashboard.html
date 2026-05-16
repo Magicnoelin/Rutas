@@ -3,1347 +3,1857 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Turista - Rutas</title>
+    <title>Mi Panel - Turista | Rutas Rurales</title>
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
-    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        /* Estilos específicos del Dashboard Turista */
-        .dashboard-container {
-            display: flex;
-            min-height: calc(100vh - 160px);
-            margin-top: 90px;
+        :root {
+            --primary: #2f5233;
+            --primary-light: #4a7c59;
+            --primary-dark: #1e3a21;
+            --accent: #b8956a;
+            --accent-light: #d4a574;
+            --bg: #f4f6f4;
+            --white: #ffffff;
+            --text: #2c3e2c;
+            --text-light: #6c7a6c;
+            --border: #d5e0d5;
+            --shadow: 0 2px 12px rgba(47,82,51,0.10);
+            --shadow-hover: 0 6px 24px rgba(47,82,51,0.18);
+            --radius: 14px;
+            --radius-sm: 8px;
         }
-        .dashboard-sidebar {
-            width: 260px;
-            background: white;
-            border-right: 1px solid #eee;
-            padding: 2rem 1rem;
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
         }
-        .dashboard-content {
-            flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
-            background: #f9f9f9;
-        }
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .sidebar-menu li {
-            margin-bottom: 0.5rem;
-        }
-        .sidebar-menu a {
+
+        /* ========== TOPBAR ========== */
+        .topbar {
+            background: var(--primary);
+            color: white;
+            padding: 0 2rem;
+            height: 60px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            color: #555;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 700;
+            font-size: 1.2rem;
             text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        .sidebar-menu a:hover {
-            background-color: #f0f7f0;
-            color: var(--primary-color);
-        }
-        .sidebar-menu a.active {
-            background-color: var(--primary-color);
             color: white;
-            box-shadow: 0 4px 10px rgba(47, 82, 51, 0.2);
         }
-        
-        /* Secciones */
-        .dashboard-section {
-            display: none;
-            animation: fadeIn 0.4s ease;
+
+        .topbar-brand img { height: 36px; }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        .dashboard-section.active {
-            display: block;
+
+        .user-badge {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
-        /* Estilos del Mapa */
-        #map {
-            height: 500px;
-            width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            text-decoration: none;
         }
-        
-        .map-controls {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+
+        /* ========== LAYOUT ========== */
+        .app-layout {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            width: 240px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+            overflow-y: auto;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+        }
+
+        .sidebar-nav { list-style: none; }
+
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.85rem 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background: #f0f4f0;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-nav li a i {
+            width: 20px;
+            text-align: center;
+            color: var(--primary-light);
+        }
+
+        .sidebar-nav li a.active i { color: var(--primary); }
+
+        .sidebar-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            padding: 1rem 1.5rem 0.3rem;
+        }
+
+        .badge-count {
+            background: #e74c3c;
+            color: white;
+            border-radius: 10px;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: auto;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 2rem;
+            max-width: calc(100vw - 240px);
+        }
+
+        /* ========== SECTIONS ========== */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-header {
             margin-bottom: 1.5rem;
         }
-        
-        .filter-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+
+        .section-header h2 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
-        
-        .filter-item label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
+
+        .section-header p {
+            color: var(--text-light);
+            margin-top: 0.3rem;
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
             font-weight: 600;
-            font-size: 0.9rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
-        .filter-item select,
-        .filter-item input {
+
+        /* ========== STATS GRID ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-top: 4px solid var(--primary);
+            transition: var(--shadow-hover) 0.2s;
+        }
+
+        .stat-card.accent { border-top-color: var(--accent); }
+        .stat-card.green { border-top-color: #27ae60; }
+        .stat-card.blue { border-top-color: #2980b9; }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f0f4f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.6rem;
+        }
+
+        .stat-icon.accent { background: #fdf0e0; color: var(--accent); }
+        .stat-icon.green { background: #eafaf1; color: #27ae60; }
+        .stat-icon.blue { background: #eaf4fb; color: #2980b9; }
+
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--text); }
+        .stat-label { font-size: 0.82rem; color: var(--text-light); margin-top: 0.2rem; }
+
+        /* ========== MENSAJERÍA ========== */
+        .messaging-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1rem;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+        }
+
+        /* Panel conversaciones */
+        .conversations-panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .conv-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .conv-header h3 { font-size: 1rem; color: var(--primary); }
+
+        .btn-new-conv {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .btn-new-conv:hover { background: var(--primary-light); }
+
+        .conv-search {
+            padding: 0.7rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .conv-search input {
             width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        
-        .filter-item select:focus,
-        .filter-item input:focus {
-            border-color: var(--primary-color);
+            padding: 0.5rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.85rem;
             outline: none;
         }
-        
-        .btn-filters {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
+
+        .conv-search input:focus { border-color: var(--primary-light); }
+
+        .conv-list {
+            flex: 1;
+            overflow-y: auto;
         }
-        
-        .btn-filters:hover {
-            background-color: #2d5a30;
-            transform: translateY(-2px);
-        }
-        
-        .btn-reset {
-            background-color: #6c757d;
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-left: 0.5rem;
-        }
-        
-        .btn-reset:hover {
-            background-color: #5a6268;
-        }
-        
-        /* Leyenda del Mapa */
-        .map-legend {
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 1rem;
-        }
-        
-        .legend-item {
+
+        .conv-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 0.5rem;
-        }
-        
-        .legend-icon {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        
-        .legend-alojamiento { background: #2f5233; }
-        .legend-interes { background: #e67e22; }
-        
-        /* Lista de resultados */
-        .results-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-        
-        .result-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            gap: 0.8rem;
+            padding: 0.9rem 1rem;
             cursor: pointer;
-            border: 2px solid transparent;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.15s;
         }
-        
-        .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            border-color: var(--primary-color);
+
+        .conv-item:hover,
+        .conv-item.active {
+            background: #f0f4f0;
         }
-        
-        .result-card h3 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-        
-        .result-card .type {
-            display: inline-block;
-            background: #f0f7f0;
-            color: var(--primary-color);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .result-card .location {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .result-card .description {
-            color: #888;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
-        
-        .result-card .actions {
+
+        .conv-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary-light);
             display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        .btn-small {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: 600;
-            text-decoration: none;
-            text-align: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .conv-info { flex: 1; min-width: 0; }
+
+        .conv-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conv-preview {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 0.1rem;
+        }
+
+        .conv-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.3rem;
+            flex-shrink: 0;
+        }
+
+        .conv-time { font-size: 0.72rem; color: var(--text-light); }
+
+        .unread-badge {
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            padding: 0.1rem 0.45rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* Panel chat */
+        .chat-panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #fafcfa;
+        }
+
+        .chat-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .chat-header-info { flex: 1; }
+        .chat-header-name { font-weight: 700; color: var(--text); }
+        .chat-header-type { font-size: 0.78rem; color: var(--text-light); }
+
+        .chat-messages {
             flex: 1;
-        }
-        
-        .btn-view {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-contact {
-            background: #e67e22;
-            color: white;
-        }
-        
-        /* Preferencias destacadas */
-        .prefs-highlight {
-            background: linear-gradient(135deg, #e8f5e9, #f0f7f0);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .prefs-highlight h4 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .prefs-highlight .tags {
+            overflow-y: auto;
+            padding: 1rem;
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            flex-direction: column;
+            gap: 0.7rem;
+            background: #f8faf8;
         }
-        
-        .tag {
-            background: white;
-            color: var(--primary-color);
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.7rem 1rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .message-bubble.sent {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bubble.received {
+            background: var(--white);
+            color: var(--text);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .message-time {
+            font-size: 0.68rem;
+            margin-top: 0.3rem;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        .message-sender-name {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 0.2rem;
+        }
+
+        .chat-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            gap: 1rem;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .chat-empty i { font-size: 3rem; color: var(--border); }
+
+        /* Chat input */
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            background: #fafcfa;
+        }
+
+        /* ========== PLANTILLAS ========== */
+        .templates-bar {
+            padding: 0.5rem 1rem;
+            border-top: 1px solid var(--border);
+            background: #f5f8f5;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .templates-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .btn-template {
+            background: var(--white);
+            border: 1px solid var(--primary-light);
+            color: var(--primary);
             padding: 0.3rem 0.8rem;
             border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border: 1px solid var(--primary-color);
-        }
-        
-        /* Loading states */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-        }
-        
-        .loading i {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            display: block;
-        }
-        
-        /* Estilos para preferencias del usuario */
-        .user-prefs-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 1.5rem;
-        }
-        
-        .user-prefs-card h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-        
-        .pref-item {
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 0.5rem;
-            color: #555;
+            gap: 0.3rem;
         }
-        
-        .pref-item i {
-            color: var(--primary-color);
-            width: 20px;
+
+        .btn-template:hover {
+            background: var(--primary);
+            color: white;
         }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .dashboard-container {
-                flex-direction: column;
-            }
-            .dashboard-sidebar {
-                width: 100%;
-                padding: 1rem;
-                border-right: none;
-                border-bottom: 1px solid #eee;
-            }
-            .sidebar-menu {
-                display: flex;
-                overflow-x: auto;
-                gap: 10px;
-                padding-bottom: 5px;
-            }
-            .sidebar-menu a {
-                white-space: nowrap;
-                padding: 8px 12px;
-                font-size: 0.9rem;
-            }
-            #map {
-                height: 350px;
-            }
-            .filter-group {
-                grid-template-columns: 1fr;
-            }
-            .results-container {
-                grid-template-columns: 1fr;
-            }
+
+        .chat-input-row {
+            display: flex;
+            gap: 0.7rem;
+            align-items: flex-end;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Popup custom styles */
-        .custom-popup {
+
+        .chat-input-row textarea {
+            flex: 1;
+            padding: 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
             font-family: inherit;
+            max-height: 120px;
+            min-height: 42px;
+            transition: border-color 0.2s;
         }
-        .custom-popup h4 {
-            color: var(--primary-color);
-            margin: 0 0 8px 0;
-            font-size: 1.1rem;
+
+        .chat-input-row textarea:focus { border-color: var(--primary-light); }
+
+        .btn-send {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.7rem 1.2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+            flex-shrink: 0;
         }
-        .custom-popup p {
-            margin: 4px 0;
-            color: #555;
+
+        .btn-send:hover { background: var(--primary-light); }
+        .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .msg-limit-info {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            text-align: right;
+            margin-top: 0.3rem;
+        }
+
+        .msg-limit-info.warning { color: #e67e22; }
+
+        /* ========== MODAL NUEVA CONVERSACIÓN ========== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            width: 90%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 { color: var(--primary); font-size: 1.1rem; }
+
+        .btn-close-modal {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body { padding: 1.5rem; }
+
+        /* ========== PLANTILLA FORMULARIO ========== */
+        .template-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .template-option {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .template-option:hover,
+        .template-option.selected {
+            border-color: var(--primary);
+            background: #f0f4f0;
+        }
+
+        .template-option i { font-size: 1.8rem; color: var(--primary-light); margin-bottom: 0.5rem; display: block; }
+        .template-option span { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+
+        .form-group { margin-bottom: 1rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus { border-color: var(--primary-light); }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+        .message-preview {
+            background: #f0f4f0;
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: var(--text);
+            border-left: 3px solid var(--primary);
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            font-style: italic;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.8rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.65rem 1.4rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-secondary { background: #f0f0f0; color: var(--text); }
+        .btn-secondary:hover { background: #e0e0e0; }
+
+        /* Buscar alojamiento */
+        .search-results {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-top: 0.5rem;
+        }
+
+        .search-result-item {
+            padding: 0.65rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: background 0.15s;
+        }
+
+        .search-result-item:hover { background: #f0f4f0; }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item i { color: var(--primary-light); }
+        .search-result-name { font-weight: 600; }
+        .search-result-location { font-size: 0.78rem; color: var(--text-light); }
+
+        .selected-accommodation {
+            background: #f0f4f0;
+            border: 1px solid var(--primary-light);
+            border-radius: var(--radius-sm);
+            padding: 0.7rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin-top: 0.5rem;
+        }
+
+        .selected-accommodation i { color: var(--primary); }
+        .btn-clear-selection {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
             font-size: 0.9rem;
         }
-        .custom-popup .popup-actions {
-            margin-top: 10px;
+
+        /* ========== ALERTS ========== */
+        .alert-msg {
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
             display: flex;
-            gap: 5px;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .custom-popup .popup-btn {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            text-decoration: none;
-            color: white;
-            flex: 1;
-            text-align: center;
+
+        .alert-msg.success { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+        .alert-msg.error { background: #fdecea; color: #c0392b; border: 1px solid #f1948a; }
+        .alert-msg.warning { background: #fef9e7; color: #9a7d0a; border: 1px solid #f9e79f; }
+        .alert-msg.info { background: #eaf4fb; color: #1a6fa0; border: 1px solid #85c1e9; }
+
+        /* ========== LOADING ========== */
+        .loading-spinner {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; max-width: 100vw; }
+            .messaging-layout { grid-template-columns: 1fr; }
+            .conversations-panel { display: none; }
+            .conversations-panel.show { display: flex; height: 400px; }
+            .template-selector { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .main-content { padding: 1rem; }
+            .modal { width: 95%; }
+            .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="container">
-                <a href="/index.html" class="logo">
-                    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo">
-                </a>
-                <ul class="nav-menu">
-                    <li><a href="/index.html"><i class="fas fa-home"></i> Inicio</a></li>
-                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
-                </ul>
+    <!-- Topbar -->
+    <div class="topbar">
+        <a href="/index.php" class="topbar-brand">
+            <img src="/menu_images/Logo%20transparente.webp" alt="Rutas" onerror="this.style.display='none'">
+            <span>Rutas Rurales</span>
+        </a>
+        <div class="topbar-user">
+            <div class="user-badge">
+                <i class="fas fa-user-circle"></i>
+                <span id="topbar-name">Cargando...</span>
+                <span style="opacity:0.6">| Turista</span>
             </div>
-        </nav>
-    </header>
+            <a href="/api/logout.php" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </a>
+        </div>
+    </div>
 
-    <div class="dashboard-container">
+    <!-- Layout -->
+    <div class="app-layout">
         <!-- Sidebar -->
-        <aside class="dashboard-sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="#mapa" class="active" onclick="showSection('mapa')"><i class="fas fa-map-marked-alt"></i> Mapa</a></li>
-                <li><a href="#preferencias" onclick="showSection('preferencias')"><i class="fas fa-sliders-h"></i> Mis Preferencias</a></li>
-                <li><a href="#alojamientos" onclick="showSection('alojamientos')"><i class="fas fa-bed"></i> Alojamientos</a></li>
-                <li><a href="#lugares" onclick="showSection('lugares')"><i class="fas fa-landmark"></i> Lugares de Interés</a></li>
-                <li><a href="#mensajes" onclick="showSection('mensajes')"><i class="fas fa-comments"></i> Mensajes</a></li>
-                <li><a href="/user-dashboard.html"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+        <aside class="sidebar">
+            <div class="sidebar-section-title">Mi Panel</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="#" class="active" onclick="showSection('inicio', this)">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('mensajes', this)">
+                        <i class="fas fa-comments"></i> Mensajes
+                        <span class="badge-count" id="unread-badge" style="display:none">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title">Explorar</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="/alojamientos-turisticos.html">
+                        <i class="fas fa-bed"></i> Alojamientos
+                    </a>
+                </li>
+                <li>
+                    <a href="/eventos-culturales.html">
+                        <i class="fas fa-calendar-alt"></i> Eventos
+                    </a>
+                </li>
+                <li>
+                    <a href="/actividades-turisticas.html">
+                        <i class="fas fa-hiking"></i> Actividades
+                    </a>
+                </li>
             </ul>
         </aside>
 
-        <!-- Contenido Principal -->
-        <main class="dashboard-content">
-            
-            <!-- SECCIÓN 1: MAPA PRINCIPAL -->
-            <section id="mapa-section" class="dashboard-section active">
-                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">
-                    <i class="fas fa-map-marked-alt"></i> Explora el Mapa
-                </h2>
-                
-                <div class="prefs-highlight" id="prefsHighlight">
-                    <h4><i class="fas fa-heart"></i> Tus Preferencias</h4>
-                    <p>Cargando tus preferencias para mostrarte alojamientos relevantes...</p>
-                    <div class="tags" id="prefsTags"></div>
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- ===== SECCIÓN INICIO ===== -->
+            <div class="section active" id="section-inicio">
+                <div class="section-header">
+                    <h2><i class="fas fa-compass"></i> Bienvenido/a</h2>
+                    <p id="welcome-msg">Gestiona tus mensajes y busca alojamiento</p>
                 </div>
 
-                <div class="map-controls">
-                    <div class="filter-group">
-                        <div class="filter-item">
-                            <label><i class="fas fa-bed"></i> Tipo de Alojamiento</label>
-                            <select id="filterType">
-                                <option value="">Todos</option>
-                                <option value="Casa Rural">Casa Rural</option>
-                                <option value="Apartamento">Apartamento</option>
-                                <option value="Hotel">Hotel</option>
-                                <option value="Camping">Camping</option>
-                            </select>
-                        </div>
-                        <div class="filter-item">
-                            <label><i class="fas fa-map-marker-alt"></i> Provincia</label>
-                            <select id="filterProvince">
-                                <option value="">Todas</option>
-                                <option value="Teruel">Teruel</option>
-                                <option value="Zaragoza">Zaragoza</option>
-                                <option value="Huesca">Huesca</option>
-                            </select>
-                        </div>
-                        <div class="filter-item">
-                            <label><i class="fas fa-search"></i> Buscar</label>
-                            <input type="text" id="filterSearch" placeholder="Nombre, dirección...">
-                        </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                        <div class="stat-value" id="stat-conversations">-</div>
+                        <div class="stat-label">Conversaciones</div>
                     </div>
-                    <div style="display: flex; gap: 10px; margin-top: 1rem;">
-                        <button class="btn-filters" onclick="applyFilters()">
-                            <i class="fas fa-filter"></i> Filtrar y Actualizar Mapa
+                    <div class="stat-card accent">
+                        <div class="stat-icon accent"><i class="fas fa-envelope-open"></i></div>
+                        <div class="stat-value" id="stat-unread">-</div>
+                        <div class="stat-label">Sin leer</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-icon green"><i class="fas fa-bed"></i></div>
+                        <div class="stat-value">∞</div>
+                        <div class="stat-label">Alojamientos disponibles</div>
+                    </div>
+                </div>
+
+                <!-- Acceso rápido mensajes -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-bolt"></i> Acciones Rápidas</div>
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                        <button class="btn btn-primary" onclick="openNewConversation()">
+                            <i class="fas fa-search"></i> Buscar Alojamiento
                         </button>
-                        <button class="btn-reset" onclick="resetFilters()">
-                            <i class="fas fa-undo"></i> Limpiar
+                        <button class="btn btn-secondary" onclick="showSection('mensajes', document.querySelector('[data-section=mensajes]'))">
+                            <i class="fas fa-inbox"></i> Ver mis Mensajes
                         </button>
                     </div>
                 </div>
 
-                <div class="map-legend">
-                    <div class="legend-item">
-                        <span class="legend-icon legend-alojamiento"></span>
-                        <span><strong>Alojamientos</strong> (según tus preferencias)</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-icon legend-interes"></span>
-                        <span><strong>Lugares de Interés</strong> (cercanos a tu ubicación)</span>
+                <!-- Últimas conversaciones preview -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-history"></i> Últimas Conversaciones</div>
+                    <div id="recent-conversations-list">
+                        <div class="loading-spinner"><div class="spinner"></div> Cargando...</div>
                     </div>
                 </div>
+            </div>
 
-                <div id="map"></div>
-
-                <div id="mapResults" style="display: none;">
-                    <h3 style="color: var(--primary-color); margin: 2rem 0 1rem 0;">
-                        Resultados en el área seleccionada
-                    </h3>
-                    <div class="results-container" id="resultsContainer"></div>
-                </div>
-            </section>
-
-            <!-- SECCIÓN 2: PREFERENCIAS -->
-            <section id="preferencias-section" class="dashboard-section">
-                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">
-                    <i class="fas fa-sliders-h"></i> Mis Preferencias
-                </h2>
-                
-                <div class="user-prefs-card">
-                    <h3>Configuración Actual</h3>
-                    <div id="currentPrefsList">
-                        <div class="loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            Cargando preferencias...
-                        </div>
-                    </div>
-                    <div style="margin-top: 1.5rem;">
-                        <a href="/preferences.html" class="btn-filters" style="text-decoration: none; display: inline-block;">
-                            <i class="fas fa-edit"></i> Editar Preferencias
-                        </a>
-                    </div>
+            <!-- ===== SECCIÓN MENSAJES ===== -->
+            <div class="section" id="section-mensajes">
+                <div class="section-header">
+                    <h2><i class="fas fa-comments"></i> Mensajes</h2>
+                    <p>Conversa con propietarios de alojamientos</p>
                 </div>
 
-                <div class="user-prefs-card">
-                    <h3>Recomendaciones Personalizadas</h3>
-                    <p style="color: #666; margin-bottom: 1rem;">
-                        Basado en tus preferencias, estos son los alojamientos que mejor se adaptan a ti:
-                    </p>
-                    <div class="results-container" id="recommendationsContainer"></div>
-                </div>
-            </section>
-
-            <!-- SECCIÓN 3: ALOJAMIENTOS -->
-            <section id="alojamientos-section" class="dashboard-section">
-                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">
-                    <i class="fas fa-bed"></i> Alojamientos Recomendados
-                </h2>
-                
-                <div class="map-controls">
-                    <div class="filter-group">
-                        <div class="filter-item">
-                            <label><i class="fas fa-bed"></i> Tipo</label>
-                            <select id="alojTypeFilter">
-                                <option value="">Todos</option>
-                                <option value="Casa Rural">Casa Rural</option>
-                                <option value="Apartamento">Apartamento</option>
-                                <option value="Hotel">Hotel</option>
-                            </select>
+                <div class="messaging-layout">
+                    <!-- Lista de conversaciones -->
+                    <div class="conversations-panel">
+                        <div class="conv-header">
+                            <h3><i class="fas fa-comments"></i> Conversaciones</h3>
+                            <button class="btn-new-conv" onclick="openNewConversation()" title="Nueva conversación">
+                                <i class="fas fa-plus"></i>
+                            </button>
                         </div>
-                        <div class="filter-item">
-                            <label><i class="fas fa-users"></i> Plazas</label>
-                            <select id="alojCapacityFilter">
-                                <option value="">Cualquiera</option>
-                                <option value="2">2 personas</option>
-                                <option value="4">4 personas</option>
-                                <option value="6">6+ personas</option>
-                            </select>
+                        <div class="conv-search">
+                            <input type="text" placeholder="🔍 Buscar conversación..." id="conv-search-input" oninput="filterConversations(this.value)">
                         </div>
-                        <div class="filter-item">
-                            <label><i class="fas fa-euro-sign"></i> Precio Máximo</label>
-                            <input type="number" id="alojPriceFilter" placeholder="Ej: 150">
+                        <div class="conv-list" id="conversations-list">
+                            <div style="padding:1rem;text-align:center;">
+                                <div class="loading-spinner"><div class="spinner"></div> Cargando...</div>
+                            </div>
                         </div>
                     </div>
-                    <button class="btn-filters" onclick="filterAccommodations()">
-                        <i class="fas fa-search"></i> Buscar Alojamientos
-                    </button>
-                </div>
 
-                <div id="alojamientosList" class="results-container"></div>
-            </section>
+                    <!-- Panel de chat -->
+                    <div class="chat-panel" id="chat-panel">
+                        <!-- Estado: sin conversación seleccionada -->
+                        <div class="chat-empty" id="chat-empty">
+                            <i class="fas fa-comment-dots"></i>
+                            <div>
+                                <strong>Selecciona una conversación</strong>
+                                <p style="font-size:0.85rem;margin-top:0.4rem">o inicia una nueva para buscar alojamiento</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="openNewConversation()">
+                                <i class="fas fa-search"></i> Buscar Alojamiento
+                            </button>
+                        </div>
 
-            <!-- SECCIÓN 4: LUGARES DE INTERÉS -->
-            <section id="lugares-section" class="dashboard-section">
-                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">
-                    <i class="fas fa-landmark"></i> Lugares de Interés
-                </h2>
-                
-                <div class="map-controls">
-                    <div class="filter-group">
-                        <div class="filter-item">
-                            <label><i class="fas fa-tag"></i> Categoría</label>
-                            <select id="lugarCategoryFilter">
-                                <option value="">Todas</option>
-                                <option value="1">Naturaleza</option>
-                                <option value="2">Cultura</option>
-                                <option value="3">Gastronomía</option>
-                                <option value="4">Aventura</option>
-                            </select>
+                        <!-- Header chat (oculto hasta seleccionar conversación) -->
+                        <div class="chat-header" id="chat-header" style="display:none">
+                            <div class="chat-header-avatar" id="chat-avatar">G</div>
+                            <div class="chat-header-info">
+                                <div class="chat-header-name" id="chat-contact-name">-</div>
+                                <div class="chat-header-type" id="chat-contact-type">Propietario</div>
+                            </div>
                         </div>
-                        <div class="filter-item">
-                            <label><i class="fas fa-map-marker-alt"></i> Provincia</label>
-                            <select id="lugarProvinceFilter">
-                                <option value="">Todas</option>
-                                <option value="Teruel">Teruel</option>
-                                <option value="Zaragoza">Zaragoza</option>
-                                <option value="Huesca">Huesca</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="btn-filters" onclick="filterPlaces()">
-                        <i class="fas fa-search"></i> Buscar Lugares
-                    </button>
-                </div>
 
-                <div id="lugaresList" class="results-container"></div>
-            </section>
+                        <!-- Mensajes -->
+                        <div class="chat-messages" id="chat-messages" style="display:none"></div>
 
-            <!-- SECCIÓN 5: MENSAJES -->
-            <section id="mensajes-section" class="dashboard-section">
-                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">
-                    <i class="fas fa-comments"></i> Mis Mensajes
-                </h2>
-                <div class="chat-container">
-                    <div class="chat-list">
-                        <div class="chat-list-header">
-                            <h3>Conversaciones</h3>
+                        <!-- Área de plantillas -->
+                        <div class="templates-bar" id="templates-bar" style="display:none">
+                            <span class="templates-label"><i class="fas fa-magic"></i> Plantillas:</span>
+                            <button class="btn-template" onclick="useTemplate('busco_alojamiento')">
+                                <i class="fas fa-bed"></i> Busco alojamiento
+                            </button>
+                            <button class="btn-template" onclick="useTemplate('info_general')">
+                                <i class="fas fa-info-circle"></i> Pedir información
+                            </button>
+                            <button class="btn-template" onclick="useTemplate('disponibilidad')">
+                                <i class="fas fa-calendar-check"></i> Consultar disponibilidad
+                            </button>
                         </div>
-                        <div id="conversationsList">
-                            <div style="text-align: center; padding: 2rem; color: #999;">Cargando conversaciones...</div>
-                        </div>
-                    </div>
-                    <div class="chat-window" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #f9f9f9;">
-                        <div style="text-align: center; color: #aaa;">
-                            <i class="fas fa-comments" style="font-size: 4rem; margin-bottom: 1rem; display: block;"></i>
-                            Selecciona una conversación para empezar a chatear
+
+                        <!-- Input de mensaje -->
+                        <div class="chat-input-area" id="chat-input-area" style="display:none">
+                            <div class="chat-input-row">
+                                <textarea id="msg-input" placeholder="Escribe tu mensaje..." rows="1"
+                                    onkeydown="handleMsgKeydown(event)" oninput="autoResizeTextarea(this)"></textarea>
+                                <button class="btn-send" onclick="sendMessage()" id="btn-send">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            <div class="msg-limit-info" id="msg-limit-info"></div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </main>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content-simple">
-                <div class="footer-info">
-                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
-                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
+    <!-- ===== MODAL: NUEVA CONVERSACIÓN / BUSCAR ALOJAMIENTO ===== -->
+    <div class="modal-overlay" id="modal-new-conv">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-bed"></i> Contactar con Alojamiento</h3>
+                <button class="btn-close-modal" onclick="closeModal('modal-new-conv')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-alert"></div>
+
+                <!-- Paso 1: Elegir plantilla -->
+                <div id="step-template">
+                    <p style="font-size:0.9rem;color:var(--text-light);margin-bottom:1rem">Elige cómo quieres contactar:</p>
+                    <div class="template-selector">
+                        <div class="template-option selected" onclick="selectTemplate('busco_alojamiento', this)">
+                            <i class="fas fa-search"></i>
+                            <span>Busco Alojamiento</span>
+                        </div>
+                        <div class="template-option" onclick="selectTemplate('info_general', this)">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Pedir Información</span>
+                        </div>
+                        <div class="template-option" onclick="selectTemplate('disponibilidad', this)">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Disponibilidad</span>
+                        </div>
+                        <div class="template-option" onclick="selectTemplate('mensaje_libre', this)">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>Mensaje Libre</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="footer-links">
-                    <a href="/aviso-legal.html">Aviso Legal</a>
-                    <a href="/politica-cookies.html">Política de Cookies</a>
+
+                <!-- Buscar alojamiento -->
+                <div class="form-group">
+                    <label><i class="fas fa-search"></i> Buscar alojamiento</label>
+                    <input type="text" id="search-accommodation-input" placeholder="Nombre del alojamiento o localidad..."
+                        oninput="searchAccommodations(this.value)">
+                    <div class="search-results" id="search-results" style="display:none"></div>
+                    <div id="selected-accommodation-display" style="display:none"></div>
                 </div>
-                <div class="footer-social">
-                    <a href="https://www.instagram.com/rutas_rurales/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+
+                <!-- ===== PLANTILLA: BUSCO ALOJAMIENTO ===== -->
+                <div id="tpl-busco_alojamiento">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Localidad</label>
+                            <input type="text" id="tpl-localidad" placeholder="Ej: Vinuesa, Soria..." oninput="updateMessagePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-users"></i> Número de personas</label>
+                            <select id="tpl-personas" onchange="updateMessagePreview()">
+                                <option value="1">1 persona</option>
+                                <option value="2" selected>2 personas</option>
+                                <option value="3">3 personas</option>
+                                <option value="4">4 personas</option>
+                                <option value="5">5 personas</option>
+                                <option value="6">6 personas</option>
+                                <option value="7-10">7-10 personas</option>
+                                <option value="más de 10">Más de 10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Fecha de llegada</label>
+                            <input type="date" id="tpl-fecha-entrada" onchange="updateMessagePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-check"></i> Fecha de salida</label>
+                            <input type="date" id="tpl-fecha-salida" onchange="updateMessagePreview()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-info-circle"></i> Información adicional (opcional)</label>
+                        <input type="text" id="tpl-info-extra" placeholder="Ej: con mascotas, necesitamos cuna..." oninput="updateMessagePreview()">
+                    </div>
+                </div>
+
+                <!-- ===== PLANTILLA: DISPONIBILIDAD ===== -->
+                <div id="tpl-disponibilidad" style="display:none">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Fecha de llegada</label>
+                            <input type="date" id="tpl-disp-entrada" onchange="updateMessagePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-check"></i> Fecha de salida</label>
+                            <input type="date" id="tpl-disp-salida" onchange="updateMessagePreview()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> Número de personas</label>
+                        <select id="tpl-disp-personas" onchange="updateMessagePreview()">
+                            <option value="1">1 persona</option>
+                            <option value="2" selected>2 personas</option>
+                            <option value="3">3 personas</option>
+                            <option value="4">4 personas</option>
+                            <option value="5">5 personas</option>
+                            <option value="6+">6 o más</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ===== PLANTILLA: INFO GENERAL ===== -->
+                <div id="tpl-info_general" style="display:none">
+                    <div class="form-group">
+                        <label><i class="fas fa-question-circle"></i> ¿Qué quieres saber?</label>
+                        <textarea id="tpl-info-pregunta" rows="2" placeholder="Ej: ¿Hay piscina? ¿Admiten mascotas? ¿Hay WiFi?" oninput="updateMessagePreview()"></textarea>
+                    </div>
+                </div>
+
+                <!-- ===== PLANTILLA: MENSAJE LIBRE ===== -->
+                <div id="tpl-mensaje_libre" style="display:none">
+                    <div class="form-group">
+                        <label><i class="fas fa-pencil-alt"></i> Tu mensaje</label>
+                        <textarea id="tpl-mensaje-libre" rows="4" placeholder="Escribe aquí tu mensaje..." oninput="updateMessagePreview()"></textarea>
+                    </div>
+                </div>
+
+                <!-- Preview del mensaje -->
+                <div>
+                    <div style="font-size:0.82rem;font-weight:600;color:var(--text-light);margin-bottom:0.4rem">
+                        <i class="fas fa-eye"></i> Vista previa del mensaje:
+                    </div>
+                    <div class="message-preview" id="message-preview">Completa los campos para ver el mensaje...</div>
                 </div>
             </div>
-            <div class="footer-copyright">
-                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-new-conv')">Cancelar</button>
+                <button class="btn btn-primary" onclick="sendTemplateMessage()" id="btn-send-template">
+                    <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                </button>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/script.js"></script>
+    <!-- ===== MODAL: PLANTILLA EN CHAT ===== -->
+    <div class="modal-overlay" id="modal-template-chat">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-template-title"><i class="fas fa-magic"></i> Plantilla</h3>
+                <button class="btn-close-modal" onclick="closeModal('modal-template-chat')">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- Plantilla busco alojamiento -->
+                <div id="chat-tpl-busco_alojamiento">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Localidad</label>
+                            <input type="text" id="ct-localidad" placeholder="Ej: Vinuesa..." oninput="updateChatPreview()">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-users"></i> Personas</label>
+                            <select id="ct-personas" onchange="updateChatPreview()">
+                                <option value="2" selected>2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6+">6+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Llegada</label>
+                            <input type="date" id="ct-entrada" onchange="updateChatPreview()">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-check"></i> Salida</label>
+                            <input type="date" id="ct-salida" onchange="updateChatPreview()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Extra (opcional)</label>
+                        <input type="text" id="ct-extra" placeholder="Con mascotas, cuna..." oninput="updateChatPreview()">
+                    </div>
+                </div>
+
+                <!-- Plantilla disponibilidad -->
+                <div id="chat-tpl-disponibilidad" style="display:none">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Llegada</label>
+                            <input type="date" id="ct-disp-entrada" onchange="updateChatPreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>Salida</label>
+                            <input type="date" id="ct-disp-salida" onchange="updateChatPreview()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Personas</label>
+                        <select id="ct-disp-personas" onchange="updateChatPreview()">
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="6+">6+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Plantilla info general -->
+                <div id="chat-tpl-info_general" style="display:none">
+                    <div class="form-group">
+                        <label>¿Qué quieres saber?</label>
+                        <textarea id="ct-pregunta" rows="3" placeholder="¿Hay piscina? ¿Admiten mascotas?..." oninput="updateChatPreview()"></textarea>
+                    </div>
+                </div>
+
+                <div class="message-preview" id="chat-message-preview">Completa los campos...</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-template-chat')">Cancelar</button>
+                <button class="btn btn-primary" onclick="insertTemplateInChat()">
+                    <i class="fas fa-check"></i> Usar este mensaje
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Variables globales
-        let map;
-        let alojamientosMarkers = [];
-        let lugaresMarkers = [];
-        let userPreferences = {};
-        let alojamientosData = [];
-        let lugaresData = [];
+    // ============================================================
+    // ESTADO GLOBAL
+    // ============================================================
+    let currentUser = null;
+    let conversations = [];
+    let currentConversationId = null;
+    let selectedAccommodation = null; // { id, owner_user_id, name, location }
+    let currentTemplate = 'busco_alojamiento';
+    let chatTemplate = 'busco_alojamiento';
+    let pollInterval = null;
+    let searchTimeout = null;
 
-        // --- INICIALIZACIÓN ---
+    // ============================================================
+    // INICIALIZACIÓN
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Verificar autenticación
+        await loadUserProfile();
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Modo demo: permitir acceso sin autenticación para pruebas
-            const isDemo = window.location.search.includes('demo=true');
-            
-            if (!isDemo && !sessionStorage.getItem('user_id') && !document.cookie.includes('PHPSESSID')) {
-                // Si no hay sesión, mostrar mensaje pero permitir continuar en modo demo
-                if (!confirm('No hay sesión activa. ¿Deseas continuar en modo demostración?')) {
-                    window.location.href = 'login.html';
-                    return;
-                }
+        // Inicializar fechas por defecto (próximo fin de semana)
+        initDefaultDates();
+
+        // Cargar conversaciones
+        await loadConversations();
+
+        // Mostrar stats iniciales
+        updateInitialStats();
+
+        // Poll automático cada 30 segundos
+        pollInterval = setInterval(async () => {
+            await loadConversations();
+            if (currentConversationId) await loadMessages(currentConversationId);
+        }, 30000);
+    });
+
+    async function loadUserProfile() {
+        try {
+            const res = await fetch('/api/get_profile.php');
+            const data = await res.json();
+            if (data.success) {
+                currentUser = data.data;
+                const name = currentUser.first_name || currentUser.nickname || 'Turista';
+                document.getElementById('topbar-name').textContent = name;
+                document.getElementById('welcome-msg').textContent =
+                    `Hola ${name}, ¿qué estás buscando hoy?`;
+            } else {
+                window.location.href = '/login.html';
             }
+        } catch (e) {
+            window.location.href = '/login.html';
+        }
+    }
 
-            // Inicializar mapa
-            initMap();
+    function initDefaultDates() {
+        const today = new Date();
+        // Próximo viernes
+        const daysToFriday = (5 - today.getDay() + 7) % 7 || 7;
+        const friday = new Date(today);
+        friday.setDate(today.getDate() + daysToFriday);
+        const sunday = new Date(friday);
+        sunday.setDate(friday.getDate() + 2);
 
-            // Cargar datos iniciales
-            try {
-                await Promise.all([
-                    loadUserPreferences(),
-                    loadAlojamientos(),
-                    loadLugaresInteres()
-                ]);
-            } catch (error) {
-                console.error('Error inicial:', error);
-                // En modo demo, continuar aunque falle la carga de preferencias
-                if (isDemo) {
-                    await Promise.all([
-                        loadAlojamientos(),
-                        loadLugaresInteres()
-                    ]);
-                }
+        const fmt = d => d.toISOString().split('T')[0];
+        ['tpl-fecha-entrada', 'ct-entrada', 'tpl-disp-entrada', 'ct-disp-entrada'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = fmt(friday);
+        });
+        ['tpl-fecha-salida', 'ct-salida', 'tpl-disp-salida', 'ct-disp-salida'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = fmt(sunday);
+        });
+        updateMessagePreview();
+    }
+
+    // ============================================================
+    // NAVEGACIÓN
+    // ============================================================
+    function showSection(name, el) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+        document.getElementById('section-' + name).classList.add('active');
+        if (el) el.classList.add('active');
+        if (name === 'mensajes') loadConversations();
+    }
+
+    // Hacer que los links del sidebar usen data-section si es necesario
+    document.querySelectorAll('[data-section]').forEach(el => {
+        el.addEventListener('click', () => showSection(el.dataset.section, el));
+    });
+
+    // ============================================================
+    // CONVERSACIONES
+    // ============================================================
+    async function loadConversations() {
+        try {
+            const res = await fetch('/api/chat.php?action=list_conversations');
+            const data = await res.json();
+            if (data.success) {
+                conversations = data.data || [];
+                renderConversations(conversations);
+                updateUnreadCount();
+                if (currentConversationId) await loadMessages(currentConversationId);
             }
+        } catch (e) {
+            console.error('Error cargando conversaciones:', e);
+        }
+    }
 
-            // Configurar navegación
-            setupNavigation();
+    function renderConversations(convs) {
+        const list = document.getElementById('conversations-list');
+        const recentList = document.getElementById('recent-conversations-list');
 
-            // Mostrar sección inicial
-            const hash = window.location.hash.substring(1) || 'mapa';
-            showSection(hash);
+        if (!convs || convs.length === 0) {
+            const emptyHtml = `
+                <div style="padding:2rem;text-align:center;color:var(--text-light)">
+                    <i class="fas fa-comment-slash" style="font-size:2rem;opacity:0.3"></i>
+                    <p style="margin-top:0.5rem">Sin conversaciones aún</p>
+                    <button class="btn btn-primary" onclick="openNewConversation()" style="margin-top:0.8rem;font-size:0.8rem;padding:0.5rem 1rem">
+                        <i class="fas fa-plus"></i> Nueva conversación
+                    </button>
+                </div>`;
+            if (list) list.innerHTML = emptyHtml;
+            if (recentList) recentList.innerHTML = `<p style="color:var(--text-light);font-size:0.9rem">No tienes conversaciones aún. <button onclick="openNewConversation()" style="background:none;border:none;color:var(--primary);cursor:pointer;font-weight:600">Inicia una →</button></p>`;
+            return;
+        }
+
+        const convHtml = convs.map(c => {
+            const name = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Propietario';
+            const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+            const lastMsg = c.last_message ? c.last_message.substring(0, 50) + (c.last_message.length > 50 ? '...' : '') : 'Sin mensajes';
+            const time = c.last_message_at ? formatTime(c.last_message_at) : '';
+            const unread = parseInt(c.unread_count) || 0;
+            const isActive = c.conversation_id == currentConversationId ? 'active' : '';
+
+            return `<div class="conv-item ${isActive}" onclick="openConversation(${c.conversation_id}, '${escapeHtml(name)}', '${escapeHtml(c.user_type || 'gestor')}', '${initials}')">
+                <div class="conv-avatar">${initials}</div>
+                <div class="conv-info">
+                    <div class="conv-name">${escapeHtml(name)}</div>
+                    <div class="conv-preview">${escapeHtml(lastMsg)}</div>
+                </div>
+                <div class="conv-meta">
+                    <span class="conv-time">${time}</span>
+                    ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+                </div>
+            </div>`;
+        }).join('');
+
+        if (list) list.innerHTML = convHtml;
+
+        // Recent conversations en inicio (máx 3)
+        if (recentList) {
+            const recent = convs.slice(0, 3);
+            recentList.innerHTML = recent.map(c => {
+                const name = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Propietario';
+                const lastMsg = c.last_message ? c.last_message.substring(0, 60) + '...' : 'Sin mensajes';
+                const unread = parseInt(c.unread_count) || 0;
+                return `<div class="conv-item" onclick="showSection('mensajes', null); openConversation(${c.conversation_id}, '${escapeHtml(name)}', '${c.user_type || 'gestor'}', '${name.slice(0,2).toUpperCase()}')">
+                    <div class="conv-avatar">${name.slice(0,2).toUpperCase()}</div>
+                    <div class="conv-info">
+                        <div class="conv-name">${escapeHtml(name)}</div>
+                        <div class="conv-preview">${escapeHtml(lastMsg)}</div>
+                    </div>
+                    <div class="conv-meta">
+                        ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+    }
+
+    function filterConversations(query) {
+        const filtered = conversations.filter(c => {
+            const name = [c.first_name, c.last_name].filter(Boolean).join(' ').toLowerCase();
+            return name.includes(query.toLowerCase());
+        });
+        renderConversations(filtered);
+    }
+
+    function updateUnreadCount() {
+        const total = conversations.reduce((sum, c) => sum + (parseInt(c.unread_count) || 0), 0);
+        const badge = document.getElementById('unread-badge');
+        const statUnread = document.getElementById('stat-unread');
+        const statConversations = document.getElementById('stat-conversations');
+
+        if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'inline' : 'none'; }
+        if (statUnread) statUnread.textContent = total;
+        if (statConversations) statConversations.textContent = conversations.length;
+    }
+
+    function updateInitialStats() {
+        const statConversations = document.getElementById('stat-conversations');
+        if (statConversations) statConversations.textContent = conversations.length;
+    }
+
+    // ============================================================
+    // ABRIR / CARGAR CHAT
+    // ============================================================
+    async function openConversation(convId, name, type, initials) {
+        currentConversationId = convId;
+
+        // Actualizar UI
+        document.getElementById('chat-empty').style.display = 'none';
+        document.getElementById('chat-header').style.display = 'flex';
+        document.getElementById('chat-messages').style.display = 'flex';
+        document.getElementById('templates-bar').style.display = 'flex';
+        document.getElementById('chat-input-area').style.display = 'block';
+
+        document.getElementById('chat-avatar').textContent = initials || name.slice(0, 2).toUpperCase();
+        document.getElementById('chat-contact-name').textContent = name;
+        document.getElementById('chat-contact-type').textContent =
+            type === 'gestor' ? '🏠 Propietario / Gestor' : '👤 Usuario';
+
+        // Marcar conversación activa
+        document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+        event?.currentTarget?.classList?.add('active');
+
+        await loadMessages(convId);
+    }
+
+    async function loadMessages(convId) {
+        try {
+            const res = await fetch(`/api/chat.php?action=get_messages&conversation_id=${convId}`);
+            const data = await res.json();
+            if (data.success) {
+                renderMessages(data.data || []);
+            }
+        } catch (e) {
+            console.error('Error cargando mensajes:', e);
+        }
+    }
+
+    function renderMessages(msgs) {
+        const container = document.getElementById('chat-messages');
+        if (!container) return;
+
+        if (!msgs || msgs.length === 0) {
+            container.innerHTML = `<div style="text-align:center;color:var(--text-light);padding:2rem;font-size:0.85rem">
+                <i class="fas fa-comment" style="font-size:2rem;opacity:0.2"></i>
+                <p style="margin-top:0.5rem">Aún no hay mensajes. ¡Sé el primero!</p>
+            </div>`;
+            return;
+        }
+
+        container.innerHTML = msgs.map(m => {
+            const isSent = currentUser && m.sender_id == currentUser.id;
+            const time = formatDateTime(m.created_at);
+            return `<div class="message-bubble ${isSent ? 'sent' : 'received'}">
+                ${!isSent ? `<div class="message-sender-name">${escapeHtml(m.first_name || 'Usuario')}</div>` : ''}
+                <div>${escapeHtml(m.content || '').replace(/\n/g, '<br>')}</div>
+                <div class="message-time">${time}${isSent ? ' <i class="fas fa-check-double" style="opacity:0.7"></i>' : ''}</div>
+            </div>`;
+        }).join('');
+
+        // Scroll al final
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // ============================================================
+    // ENVIAR MENSAJE
+    // ============================================================
+    async function sendMessage() {
+        const input = document.getElementById('msg-input');
+        const content = input.value.trim();
+        if (!content || !currentConversationId) return;
+
+        const btn = document.getElementById('btn-send');
+        btn.disabled = true;
+        input.disabled = true;
+
+        try {
+            const res = await fetch('/api/chat.php?action=send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conversation_id: currentConversationId, content })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                input.value = '';
+                input.style.height = 'auto';
+                await loadMessages(currentConversationId);
+                await loadConversations();
+
+                // Mostrar mensajes restantes si hay límite
+                if (data.data.messages_remaining !== null) {
+                    const info = document.getElementById('msg-limit-info');
+                    const remaining = data.data.messages_remaining;
+                    info.textContent = `${remaining} mensajes restantes hoy`;
+                    info.className = 'msg-limit-info' + (remaining < 10 ? ' warning' : '');
+                }
+            } else {
+                alert('❌ ' + (data.error || 'Error al enviar el mensaje'));
+            }
+        } catch (e) {
+            alert('❌ Error de conexión');
+        } finally {
+            btn.disabled = false;
+            input.disabled = false;
+            input.focus();
+        }
+    }
+
+    function handleMsgKeydown(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    }
+
+    function autoResizeTextarea(el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+
+    // ============================================================
+    // PLANTILLAS EN CHAT
+    // ============================================================
+    function useTemplate(templateName) {
+        chatTemplate = templateName;
+        const titles = {
+            busco_alojamiento: '🛏️ Busco Alojamiento',
+            info_general: '❓ Pedir Información',
+            disponibilidad: '📅 Consultar Disponibilidad'
+        };
+        document.getElementById('modal-template-title').innerHTML =
+            `<i class="fas fa-magic"></i> ${titles[templateName] || templateName}`;
+
+        // Mostrar plantilla correcta
+        ['busco_alojamiento', 'info_general', 'disponibilidad'].forEach(t => {
+            const el = document.getElementById('chat-tpl-' + t);
+            if (el) el.style.display = t === templateName ? 'block' : 'none';
         });
 
-        // --- MAPA ---
-
-        function initMap() {
-            // Inicializar en el centro de Aragón (España)
-            map = L.map('map').setView([41.6855, -0.8858], 7);
-
-            // Capa de OpenStreetMap
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 19
-            }).addTo(map);
-
-            // Evento para detectar área visible
-            map.on('moveend', () => {
-                updateVisibleResults();
-            });
-        }
-
-        function updateVisibleResults() {
-            if (!map) return;
-            
-            const bounds = map.getBounds();
-            const visibleAlojamientos = alojamientosData.filter(a => {
-                if (!a.latitude || !a.longitude) return false;
-                return bounds.contains([a.latitude, a.longitude]);
-            });
-
-            const visibleLugares = lugaresData.filter(l => {
-                if (!l.latitude || !l.longitude) return false;
-                return bounds.contains([l.latitude, l.longitude]);
-            });
-
-            if (visibleAlojamientos.length > 0 || visibleLugares.length > 0) {
-                showResultsInPanel(visibleAlojamientos, visibleLugares);
-            }
-        }
-
-        function showResultsInPanel(alojamientos, lugares) {
-            const container = document.getElementById('resultsContainer');
-            const section = document.getElementById('mapResults');
-            
-            section.style.display = 'block';
-            container.innerHTML = '';
-
-            // Mostrar alojamientos visibles
-            if (alojamientos.length > 0) {
-                alojamientos.forEach(a => {
-                    const card = createAlojamientoCard(a);
-                    container.appendChild(card);
-                });
-            }
-
-            // Mostrar lugares visibles
-            if (lugares.length > 0) {
-                lugares.forEach(l => {
-                    const card = createLugarCard(l);
-                    container.appendChild(card);
-                });
-            }
-
-            if (alojamientos.length === 0 && lugares.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #666;">No hay resultados en esta área del mapa</div>';
-            }
-        }
-
-        // --- CARGA DE DATOS ---
-
-        async function loadUserPreferences() {
-            try {
-                const response = await fetch('api/get_preferences.php');
-                const data = await response.json();
-                
-                if (data.success) {
-                    userPreferences = data.data || {};
-                    updatePreferencesUI();
-                }
-            } catch (error) {
-                console.error('Error cargando preferencias:', error);
-            }
-        }
-
-        async function loadAlojamientos() {
-            try {
-                // Usar la nueva API del dashboard turista
-                const response = await fetch('api/tourist_dashboard.php?action=get_filtered_accommodations');
-                const data = await response.json();
-                
-                if (data.success) {
-                    alojamientosData = data.data || [];
-                    // Los datos ya vienen con lat/lng formateados
-                    addAlojamientosToMap(alojamientosData);
-                } else {
-                    // Fallback a la API antigua si falla
-                    console.warn('API nueva falló, usando API antigua');
-                    const fallback = await fetch('api/alojamientos.php?table=accommodations&limit=200');
-                    const fallbackData = await fallback.json();
-                    if (fallbackData.success) {
-                        alojamientosData = fallbackData.data.alojamientos.filter(a => a.latitude && a.longitude);
-                        addAlojamientosToMap(alojamientosData);
-                    }
-                }
-            } catch (error) {
-                console.error('Error cargando alojamientos:', error);
-            }
-        }
-
-        async function loadLugaresInteres() {
-            try {
-                // Usar la nueva API del dashboard turista
-                const response = await fetch('api/tourist_dashboard.php?action=get_nearby_places');
-                const data = await response.json();
-                
-                if (data.success) {
-                    lugaresData = data.data || [];
-                    addLugaresToMap(lugaresData);
-                } else {
-                    // Fallback a la API antigua si falla
-                    console.warn('API nueva falló, usando API antigua');
-                    const fallback = await fetch('api/lugares-interes.php');
-                    const fallbackData = await fallback.json();
-                    if (fallbackData.success) {
-                        lugaresData = fallbackData.data.map(l => ({
-                            ...l,
-                            latitude: l.latitude || getRandomLat(),
-                            longitude: l.longitude || getRandomLon()
-                        }));
-                        addLugaresToMap(lugaresData);
-                    }
-                }
-            } catch (error) {
-                console.error('Error cargando lugares:', error);
-            }
-        }
-
-        // --- MANIPULACIÓN DE MARCADORES ---
-
-        function addAlojamientosToMap(alojamientos) {
-            // Limpiar marcadores existentes
-            alojamientosMarkers.forEach(m => map.removeLayer(m));
-            alojamientosMarkers = [];
-
-            alojamientos.forEach(alojamiento => {
-                if (!alojamiento.latitude || !alojamiento.longitude) return;
-
-                const marker = L.marker([alojamiento.latitude, alojamiento.longitude], {
-                    icon: L.divIcon({
-                        className: 'custom-marker',
-                        html: '<div style="background: #2f5233; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
-                        iconSize: [24, 24],
-                        iconAnchor: [12, 12]
-                    })
-                });
-
-                const popupContent = `
-                    <div class="custom-popup">
-                        <h4>${alojamiento.Nombre || alojamiento.name}</h4>
-                        <p><strong>Tipo:</strong> ${alojamiento.Tipo || alojamiento.accommodation_type}</p>
-                        <p><strong>Localidad:</strong> ${alojamiento.Localidad || alojamiento.municipality}</p>
-                        <p><strong>Plazas:</strong> ${alojamiento.Plazas || alojamiento.capacity}</p>
-                        ${alojamiento.Precio ? `<p><strong>Precio:</strong> ${alojamiento.Precio}€/noche</p>` : ''}
-                        <div class="popup-actions">
-                            <a href="/alojamiento-detalle.html?id=${alojamiento.id || alojamiento.slug}" class="popup-btn" style="background: #2f5233;">Ver</a>
-                            <a href="#" onclick="contactarAlojamiento(${alojamiento.id || alojamiento.slug})" class="popup-btn" style="background: #e67e22;">Contactar</a>
-                        </div>
-                    </div>
-                `;
-
-                marker.bindPopup(popupContent);
-                marker.addTo(map);
-                alojamientosMarkers.push(marker);
-            });
-        }
-
-        function addLugaresToMap(lugares) {
-            // Limpiar marcadores existentes
-            lugaresMarkers.forEach(m => map.removeLayer(m));
-            lugaresMarkers = [];
-
-            lugares.forEach(lugar => {
-                if (!lugar.latitude || !lugar.longitude) return;
-
-                const marker = L.marker([lugar.latitude, lugar.longitude], {
-                    icon: L.divIcon({
-                        className: 'custom-marker',
-                        html: '<div style="background: #e67e22; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
-                        iconSize: [20, 20],
-                        iconAnchor: [10, 10]
-                    })
-                });
-
-                const popupContent = `
-                    <div class="custom-popup">
-                        <h4>${lugar.nombre}</h4>
-                        <p><strong>Categoría:</strong> ${getCategoryName(lugar.categoria)}</p>
-                        <p><strong>Localidad:</strong> ${lugar.localidad || 'N/A'}</p>
-                        <p>${lugar.descripcion_corta || ''}</p>
-                        <div class="popup-actions">
-                            <a href="/lugar-interes.html?id=${lugar.id}" class="popup-btn" style="background: #e67e22;">Ver</a>
-                        </div>
-                    </div>
-                `;
-
-                marker.bindPopup(popupContent);
-                marker.addTo(map);
-                lugaresMarkers.push(marker);
-            });
-        }
-
-        // --- FILTROS Y BÚSQUEDA ---
-
-        function applyFilters() {
-            const type = document.getElementById('filterType').value;
-            const province = document.getElementById('filterProvince').value;
-            const search = document.getElementById('filterSearch').value.toLowerCase();
-
-            let filtered = alojamientosData;
-
-            if (type) {
-                filtered = filtered.filter(a => 
-                    (a.Tipo || a.accommodation_type).toLowerCase() === type.toLowerCase()
-                );
-            }
-
-            if (province) {
-                filtered = filtered.filter(a => 
-                    (a.Provincia || a.province).toLowerCase() === province.toLowerCase()
-                );
-            }
-
-            if (search) {
-                filtered = filtered.filter(a => {
-                    const nombre = (a.Nombre || a.name || '').toLowerCase();
-                    const direccion = (a.Direccion || a.address || '').toLowerCase();
-                    return nombre.includes(search) || direccion.includes(search);
-                });
-            }
-
-            // Actualizar mapa con resultados filtrados
-            addAlojamientosToMap(filtered);
-
-            // Si hay resultados, centrar el mapa en el primero
-            if (filtered.length > 0 && filtered[0].latitude && filtered[0].longitude) {
-                map.setView([filtered[0].latitude, filtered[0].longitude], 10);
-            }
-
-            // Mostrar resultados en panel
-            if (filtered.length > 0) {
-                const container = document.getElementById('resultsContainer');
-                const section = document.getElementById('mapResults');
-                section.style.display = 'block';
-                container.innerHTML = '';
-                
-                filtered.forEach(a => {
-                    const card = createAlojamientoCard(a);
-                    container.appendChild(card);
-                });
-            }
-        }
-
-        function resetFilters() {
-            document.getElementById('filterType').value = '';
-            document.getElementById('filterProvince').value = '';
-            document.getElementById('filterSearch').value = '';
-            
-            // Restaurar todos los marcadores
-            addAlojamientosToMap(alojamientosData);
-            addLugaresToMap(lugaresData);
-            
-            // Ocultar panel de resultados
-            document.getElementById('mapResults').style.display = 'none';
-        }
-
-        function filterAccommodations() {
-            const type = document.getElementById('alojTypeFilter').value;
-            const capacity = document.getElementById('alojCapacityFilter').value;
-            const maxPrice = document.getElementById('alojPriceFilter').value;
-
-            let filtered = alojamientosData;
-
-            if (type) {
-                filtered = filtered.filter(a => 
-                    (a.Tipo || a.accommodation_type).toLowerCase() === type.toLowerCase()
-                );
-            }
-
-            if (capacity) {
-                filtered = filtered.filter(a => {
-                    const cap = parseInt(a.Plazas || a.capacity || 0);
-                    const filterCap = parseInt(capacity);
-                    if (filterCap === 6) return cap >= 6;
-                    return cap >= filterCap && cap < (filterCap + 2);
-                });
-            }
-
-            if (maxPrice) {
-                filtered = filtered.filter(a => {
-                    const price = parseFloat(a.Precio || a.price_per_night || 0);
-                    return price <= parseFloat(maxPrice);
-                });
-            }
-
-            // Aplicar preferencias del usuario como filtro adicional
-            if (userPreferences.interests && userPreferences.interests.length > 0) {
-                // Filtrar por intereses (lógica simple: mostrar más de lo que le gusta)
-                // En una app real, esto sería más sofisticado
-                console.log('Filtrando por intereses:', userPreferences.interests);
-            }
-
-            const container = document.getElementById('alojamientosList');
-            container.innerHTML = '';
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #666;">No se encontraron alojamientos con esos criterios</div>';
-                return;
-            }
-
-            filtered.forEach(a => {
-                const card = createAlojamientoCard(a);
-                container.appendChild(card);
-            });
-        }
-
-        function filterPlaces() {
-            const category = document.getElementById('lugarCategoryFilter').value;
-            const province = document.getElementById('lugarProvinceFilter').value;
-
-            let filtered = lugaresData;
-
-            if (category) {
-                filtered = filtered.filter(l => l.categoria == category);
-            }
-
-            if (province) {
-                filtered = filtered.filter(l => 
-                    (l.provincia || '').toLowerCase() === province.toLowerCase()
-                );
-            }
-
-            const container = document.getElementById('lugaresList');
-            container.innerHTML = '';
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #666;">No se encontraron lugares con esos criterios</div>';
-                return;
-            }
-
-            filtered.forEach(l => {
-                const card = createLugarCard(l);
-                container.appendChild(card);
-            });
-        }
-
-        // --- UI HELPERS ---
-
-        function updatePreferencesUI() {
-            const tagsContainer = document.getElementById('prefsTags');
-            const currentPrefsList = document.getElementById('currentPrefsList');
-            
-            if (!tagsContainer || !currentPrefsList) return;
-
-            // Actualizar tags destacados
-            tagsContainer.innerHTML = '';
-            currentPrefsList.innerHTML = '';
-
-            if (userPreferences.interests && userPreferences.interests.length > 0) {
-                userPreferences.interests.forEach(interest => {
-                    const tag = document.createElement('span');
-                    tag.className = 'tag';
-                    tag.textContent = getInterestName(interest);
-                    tagsContainer.appendChild(tag);
-
-                    const prefItem = document.createElement('div');
-                    prefItem.className = 'pref-item';
-                    prefItem.innerHTML = `<i class="fas fa-check-circle"></i> Interés: ${getInterestName(interest)}`;
-                    currentPrefsList.appendChild(prefItem);
-                });
-            }
-
-            if (userPreferences.budget) {
-                const prefItem = document.createElement('div');
-                prefItem.className = 'pref-item';
-                prefItem.innerHTML = `<i class="fas fa-euro-sign"></i> Presupuesto: ${getBudgetName(userPreferences.budget)}`;
-                currentPrefsList.appendChild(prefItem);
-            }
-
-            if (userPreferences.duration) {
-                const prefItem = document.createElement('div');
-                prefItem.className = 'pref-item';
-                prefItem.innerHTML = `<i class="fas fa-clock"></i> Duración: ${getDurationName(userPreferences.duration)}`;
-                currentPrefsList.appendChild(prefItem);
-            }
-
-            if (currentPrefsList.children.length === 0) {
-                currentPrefsList.innerHTML = '<p style="color: #666;">No hay preferencias guardadas. <a href="/preferences.html">Configura tus preferencias</a></p>';
-            }
-
-            // Actualizar mensaje de preferencias en el mapa
-            const prefsHighlight = document.getElementById('prefsHighlight');
-            if (prefsHighlight && tagsContainer.children.length > 0) {
-                prefsHighlight.querySelector('p').textContent = 'Te mostramos alojamientos que coinciden con tus intereses:';
-            }
-        }
-
-        function createAlojamientoCard(alojamiento) {
-            const card = document.createElement('div');
-            card.className = 'result-card';
-            
-            const nombre = alojamiento.Nombre || alojamiento.name || 'Sin nombre';
-            const tipo = alojamiento.Tipo || alojamiento.accommodation_type || '';
-            const localidad = alojamiento.Localidad || alojamiento.municipality || '';
-            const provincia = alojamiento.Provincia || alojamiento.province || '';
-            const plazas = alojamiento.Plazas || alojamiento.capacity || 0;
-            const precio = alojamiento.Precio || alojamiento.price_per_night || '';
-
-            card.innerHTML = `
-                <h3>${nombre}</h3>
-                <span class="type">${tipo}</span>
-                <div class="location">
-                    <i class="fas fa-map-marker-alt"></i> ${localidad}, ${provincia}
-                </div>
-                <div class="description">
-                    <i class="fas fa-users"></i> ${plazas} plazas 
-                    ${precio ? `| <i class="fas fa-euro-sign"></i> ${precio}€/noche` : ''}
-                </div>
-                <div class="actions">
-                    <a href="/alojamiento-detalle.html?id=${alojamiento.id || alojamiento.slug}" class="btn-small btn-view">Ver Detalle</a>
-                    <button onclick="contactarAlojamiento(${alojamiento.id || alojamiento.slug})" class="btn-small btn-contact">Contactar</button>
-                </div>
-            `;
-
-            return card;
-        }
-
-        function createLugarCard(lugar) {
-            const card = document.createElement('div');
-            card.className = 'result-card';
-            
-            card.innerHTML = `
-                <h3>${lugar.nombre}</h3>
-                <span class="type">${getCategoryName(lugar.categoria)}</span>
-                <div class="location">
-                    <i class="fas fa-map-marker-alt"></i> ${lugar.localidad || 'N/A'}, ${lugar.provincia || ''}
-                </div>
-                <div class="description">
-                    ${lugar.descripcion_corta || ''}
-                </div>
-                <div class="actions">
-                    <a href="/lugar-interes.html?id=${lugar.id}" class="btn-small btn-view">Ver Detalle</a>
-                </div>
-            `;
-
-            return card;
-        }
-
-        // --- UTILIDADES ---
-
-        function showSection(sectionId) {
-            // Ocultar todas las secciones
-            document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.remove('active'));
-            // Desactivar links del menú
-            document.querySelectorAll('.sidebar-menu a').forEach(link => link.classList.remove('active'));
-
-            // Mostrar sección deseada
-            const target = document.getElementById(sectionId + '-section');
-            if (target) target.classList.add('active');
-
-            // Activar link correspondiente
-            const activeLink = document.querySelector(`.sidebar-menu a[href="#${sectionId}"]`);
-            if (activeLink) activeLink.classList.add('active');
-
-            // Actualizar URL sin recargar
-            history.pushState(null, null, '#' + sectionId);
-
-            // Cargar datos específicos si es necesario
-            if (sectionId === 'preferencias') {
-                loadRecommendations();
-            }
-        }
-
-        function setupNavigation() {
-            // Logout
-            document.getElementById('logoutBtn').addEventListener('click', async function(e) {
-                e.preventDefault();
-                await fetch('api/logout.php');
-                window.location.href = 'index.html';
-            });
-        }
-
-        async function loadRecommendations() {
-            const container = document.getElementById('recommendationsContainer');
-            if (!container) return;
-
-            // Filtrar alojamientos según preferencias
-            let recommendations = [...alojamientosData];
-
-            if (userPreferences.interests && userPreferences.interests.length > 0) {
-                // Lógica simple: mostrar todos, pero podríamos priorizar
-                // En una app real, esto usaría ML o algoritmos de matching
-            }
-
-            if (userPreferences.budget) {
-                const maxPrice = userPreferences.budget === 'bajo' ? 50 : 
-                               userPreferences.budget === 'medio' ? 150 : 9999;
-                recommendations = recommendations.filter(a => {
-                    const price = parseFloat(a.Precio || a.price_per_night || 0);
-                    return price <= maxPrice;
-                });
-            }
-
-            container.innerHTML = '';
-            if (recommendations.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #666;">No hay recomendaciones específicas. <a href="/preferences.html">Actualiza tus preferencias</a></div>';
-                return;
-            }
-
-            // Mostrar solo las primeras 6
-            recommendations.slice(0, 6).forEach(a => {
-                const card = createAlojamientoCard(a);
-                container.appendChild(card);
-            });
-        }
-
-        function contactarAlojamiento(id) {
-            // Iniciar chat con el propietario del alojamiento
-            // Primero necesitamos obtener el ID del propietario
-            // Para simplificar, asumimos que el alojamiento tiene un campo owner_id
-            // En la práctica, esto vendría de la API
-            
-            alert('Para contactar con este alojamiento, usa el botón "Contactar" en su página de detalle. El sistema de chat se activará automáticamente.');
-            
-            // Redirigir al detalle con parámetro de contacto
-            // window.location.href = `/alojamiento-detalle.html?id=${id}&contact=1`;
-        }
-
-        function getCategoryName(categoryId) {
-            const categories = {
-                1: 'Naturaleza',
-                2: 'Cultura',
-                3: 'Gastronomía',
-                4: 'Aventura'
-            };
-            return categories[categoryId] || 'Sin categoría';
-        }
-
-        function getInterestName(interest) {
-            const interests = {
-                'naturaleza': 'Naturaleza',
-                'cultura': 'Cultura',
-                'gastronomia': 'Gastronomía',
-                'aventura': 'Aventura'
-            };
-            return interests[interest] || interest;
-        }
-
-        function getBudgetName(budget) {
-            const budgets = {
-                'bajo': 'Económico (< 50€)',
-                'medio': 'Medio (50€ - 150€)',
-                'alto': 'Alto (> 150€)'
-            };
-            return budgets[budget] || budget;
-        }
-
-        function getDurationName(duration) {
-            const durations = {
-                'fin_semana': 'Fin de semana',
-                'puente': 'Puente (3-4 días)',
-                'semana': 'Semana completa'
-            };
-            return durations[duration] || duration;
-        }
-
-        // Funciones para generar coordenadas aleatorias (solo para demo si no hay datos reales)
-        function getRandomLat() {
-            // Latitudes aproximadas de Aragón: 40.0 a 42.8
-            return 40.0 + Math.random() * 2.8;
-        }
-
-        function getRandomLon() {
-            // Longitudes aproximadas de Aragón: -1.8 a 0.5
-            return -1.8 + Math.random() * 2.3;
-        }
-
-        // --- CARGA INICIAL DE MENSAJES (para la sección de mensajes) ---
-        async function loadConversations() {
-            const listContainer = document.getElementById('conversationsList');
-            if (!listContainer) return;
-
-            try {
-                const response = await fetch('api/chat.php?action=list_conversations');
-                const result = await response.json();
-
-                if (result.success && result.data.length > 0) {
-                    listContainer.innerHTML = '';
-                    result.data.forEach(chat => {
-                        const chatElement = document.createElement('div');
-                        chatElement.className = 'chat-item';
-                        chatElement.setAttribute('data-id', chat.conversation_id);
-
-                        const avatar = chat.avatar_url ? `<img src="${chat.avatar_url}" alt="Avatar">` : `<i class="fas fa-user" style="font-size: 1.5rem; color: #ccc;"></i>`;
-                        const unreadBadge = chat.unread_count > 0 ? `<span style="background: var(--primary-color); color: white; border-radius: 50%; padding: 2px 7px; font-size: 0.7rem; font-weight: bold;">${chat.unread_count}</span>` : '';
-
-                        chatElement.innerHTML = `
-                            <div class="chat-avatar">${avatar}</div>
-                            <div class="chat-info" style="flex-grow: 1;">
-                                <h4 style="margin: 0 0 4px 0; font-size: 1rem;">${chat.first_name} ${chat.last_name}</h4>
-                                <p>${chat.last_message ? (chat.last_message.substring(0, 30) + (chat.last_message.length > 30 ? '...' : '')) : '<i>Sin mensajes</i>'}</p>
-                            </div>
-                            <div style="text-align: right; flex-shrink: 0;">
-                                <small style="font-size: 0.75rem; color: #999;">${new Date(chat.last_message_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
-                                <div style="margin-top: 5px; height: 16px;">${unreadBadge}</div>
-                            </div>
-                        `;
-                        listContainer.appendChild(chatElement);
-                    });
-                } else if (result.success) {
-                    listContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: #999;">No tienes conversaciones. Inicia una desde el detalle de un alojamiento.</div>';
-                } else {
-                    listContainer.innerHTML = `<div style="text-align: center; padding: 2rem; color: #d9534f;">Error: ${result.error}</div>`;
-                }
-            } catch (error) {
-                console.error('Error loading conversations:', error);
-                listContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: #d9534f;">Error de conexión al cargar el chat.</div>';
-            }
-        }
-
-        // Inicializar carga de mensajes cuando se muestra la sección
-        document.addEventListener('DOMContentLoaded', () => {
-            // Observar cambios en la sección de mensajes
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.target.classList.contains('active') && 
-                        mutation.target.id === 'mensajes-section') {
-                        loadConversations();
-                    }
-                });
-            });
-
-            const mensajesSection = document.getElementById('mensajes-section');
-            if (mensajesSection) {
-                observer.observe(mensajesSection, { attributes: true, attributeFilter: ['class'] });
-            }
+        updateChatPreview();
+        openModal('modal-template-chat');
+    }
+
+    function updateChatPreview() {
+        const preview = document.getElementById('chat-message-preview');
+        if (!preview) return;
+        preview.textContent = buildMessage(chatTemplate, 'chat');
+    }
+
+    function insertTemplateInChat() {
+        const msg = buildMessage(chatTemplate, 'chat');
+        document.getElementById('msg-input').value = msg;
+        autoResizeTextarea(document.getElementById('msg-input'));
+        closeModal('modal-template-chat');
+        document.getElementById('msg-input').focus();
+    }
+
+    // ============================================================
+    // MODAL NUEVA CONVERSACIÓN
+    // ============================================================
+    function openNewConversation() {
+        selectedAccommodation = null;
+        currentTemplate = 'busco_alojamiento';
+        document.getElementById('search-accommodation-input').value = '';
+        document.getElementById('search-results').style.display = 'none';
+        document.getElementById('selected-accommodation-display').style.display = 'none';
+        document.getElementById('modal-alert').innerHTML = '';
+
+        // Resetear selección de plantillas
+        document.querySelectorAll('.template-option').forEach(el => el.classList.remove('selected'));
+        document.querySelector('.template-option').classList.add('selected');
+
+        // Mostrar plantilla por defecto
+        showTemplateFields('busco_alojamiento');
+        updateMessagePreview();
+        openModal('modal-new-conv');
+    }
+
+    function selectTemplate(name, el) {
+        currentTemplate = name;
+        document.querySelectorAll('.template-option').forEach(e => e.classList.remove('selected'));
+        el.classList.add('selected');
+        showTemplateFields(name);
+        updateMessagePreview();
+    }
+
+    function showTemplateFields(name) {
+        ['busco_alojamiento', 'disponibilidad', 'info_general', 'mensaje_libre'].forEach(t => {
+            const el = document.getElementById('tpl-' + t);
+            if (el) el.style.display = t === name ? 'block' : 'none';
         });
+    }
+
+    // ============================================================
+    // BUSCAR ALOJAMIENTOS
+    // ============================================================
+    function searchAccommodations(query) {
+        clearTimeout(searchTimeout);
+        if (query.length < 2) {
+            document.getElementById('search-results').style.display = 'none';
+            return;
+        }
+        searchTimeout = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/search_accommodation_contact.php?query=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                const resultsDiv = document.getElementById('search-results');
+
+                if (data.success && data.data.results && data.data.results.length > 0) {
+                    resultsDiv.innerHTML = data.data.results.map(a => `
+                        <div class="search-result-item" onclick="selectAccommodation(${JSON.stringify(a).replace(/"/g, '&quot;')})">
+                            <i class="fas fa-home"></i>
+                            <div>
+                                <div class="search-result-name">${escapeHtml(a.name)}</div>
+                                <div class="search-result-location">${escapeHtml(a.municipality || '')} ${escapeHtml(a.province || '')}</div>
+                            </div>
+                        </div>`).join('');
+                    resultsDiv.style.display = 'block';
+                } else {
+                    resultsDiv.innerHTML = `<div class="search-result-item" style="color:var(--text-light)"><i class="fas fa-info-circle"></i> Sin resultados para "${escapeHtml(query)}"</div>`;
+                    resultsDiv.style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Error buscando:', e);
+            }
+        }, 400);
+    }
+
+    function selectAccommodation(acc) {
+        selectedAccommodation = acc;
+        document.getElementById('search-results').style.display = 'none';
+        document.getElementById('search-accommodation-input').value = acc.name;
+
+        const display = document.getElementById('selected-accommodation-display');
+        display.innerHTML = `
+            <div class="selected-accommodation">
+                <i class="fas fa-home"></i>
+                <div>
+                    <strong>${escapeHtml(acc.name)}</strong>
+                    <div style="font-size:0.78rem;color:var(--text-light)">${escapeHtml(acc.municipality || '')} · ${escapeHtml(acc.accommodation_type || '')}</div>
+                </div>
+                <button class="btn-clear-selection" onclick="clearAccommodationSelection()"><i class="fas fa-times"></i></button>
+            </div>`;
+        display.style.display = 'block';
+
+        // Prellenar localidad
+        if (acc.municipality) {
+            const localidadEl = document.getElementById('tpl-localidad');
+            if (localidadEl && !localidadEl.value) {
+                localidadEl.value = acc.municipality;
+                updateMessagePreview();
+            }
+        }
+    }
+
+    function clearAccommodationSelection() {
+        selectedAccommodation = null;
+        document.getElementById('search-accommodation-input').value = '';
+        document.getElementById('selected-accommodation-display').style.display = 'none';
+        document.getElementById('tpl-localidad').value = '';
+        updateMessagePreview();
+    }
+
+    // ============================================================
+    // CONSTRUIR MENSAJES DESDE PLANTILLA
+    // ============================================================
+    function buildMessage(template, context = 'modal') {
+        const prefix = context === 'modal' ? 'tpl-' : 'ct-';
+
+        switch (template) {
+            case 'busco_alojamiento': {
+                const localidad = document.getElementById(prefix + 'localidad')?.value || '[Localidad]';
+                const personas = document.getElementById(prefix + 'personas')?.value || '2';
+                const entrada = document.getElementById(prefix + (context === 'modal' ? 'fecha-entrada' : 'entrada'))?.value;
+                const salida = document.getElementById(prefix + (context === 'modal' ? 'fecha-salida' : 'salida'))?.value;
+                const extra = document.getElementById(prefix + (context === 'modal' ? 'info-extra' : 'extra'))?.value || '';
+
+                let fechas = '';
+                if (entrada && salida) {
+                    fechas = `del ${formatDateEs(entrada)} al ${formatDateEs(salida)}`;
+                } else if (entrada) {
+                    fechas = `a partir del ${formatDateEs(entrada)}`;
+                } else {
+                    fechas = 'para próximas fechas';
+                }
+
+                let msg = `Hola, 👋\n\nEstoy buscando alojamiento en ${localidad} ${fechas} para ${personas} persona${personas == 1 ? '' : 's'}.`;
+                if (extra) msg += `\n\nAdemás, me gustaría indicar: ${extra}`;
+                msg += `\n\n¿Tenéis disponibilidad? Muchas gracias.`;
+                return msg;
+            }
+
+            case 'disponibilidad': {
+                const entrada = document.getElementById(context === 'modal' ? 'tpl-disp-entrada' : 'ct-disp-entrada')?.value;
+                const salida = document.getElementById(context === 'modal' ? 'tpl-disp-salida' : 'ct-disp-salida')?.value;
+                const personas = document.getElementById(context === 'modal' ? 'tpl-disp-personas' : 'ct-disp-personas')?.value || '2';
+
+                let fechas = entrada && salida
+                    ? `del ${formatDateEs(entrada)} al ${formatDateEs(salida)}`
+                    : 'en las fechas indicadas';
+
+                return `Hola, 😊\n\n¿Tenéis disponibilidad ${fechas} para ${personas} persona${personas == 1 ? '' : 's'}?\n\nMuchas gracias.`;
+            }
+
+            case 'info_general': {
+                const pregunta = document.getElementById(context === 'modal' ? 'tpl-info-pregunta' : 'ct-pregunta')?.value || '';
+                if (!pregunta) return 'Hola, me gustaría haceros una consulta sobre vuestro alojamiento. Muchas gracias.';
+                return `Hola, 🙋\n\nMe gustaría haceros una consulta:\n\n${pregunta}\n\nMuchas gracias por vuestra atención.`;
+            }
+
+            case 'mensaje_libre': {
+                return document.getElementById('tpl-mensaje-libre')?.value || '';
+            }
+
+            default:
+                return '';
+        }
+    }
+
+    function updateMessagePreview() {
+        const preview = document.getElementById('message-preview');
+        if (preview) preview.textContent = buildMessage(currentTemplate, 'modal') || 'Completa los campos para ver el mensaje...';
+    }
+
+    // ============================================================
+    // ENVIAR MENSAJE DESDE MODAL (nueva conversación + mensaje)
+    // ============================================================
+    async function sendTemplateMessage() {
+        const alertDiv = document.getElementById('modal-alert');
+        alertDiv.innerHTML = '';
+
+        if (!selectedAccommodation) {
+            alertDiv.innerHTML = `<div class="alert-msg warning"><i class="fas fa-exclamation-triangle"></i> Selecciona primero un alojamiento</div>`;
+            return;
+        }
+
+        const content = buildMessage(currentTemplate, 'modal').trim();
+        if (!content) {
+            alertDiv.innerHTML = `<div class="alert-msg warning"><i class="fas fa-exclamation-triangle"></i> El mensaje no puede estar vacío</div>`;
+            return;
+        }
+
+        // Necesitamos el owner_user_id. Si no lo tenemos en el accommodation, buscar por API
+        let ownerId = selectedAccommodation.owner_user_id;
+
+        if (!ownerId) {
+            alertDiv.innerHTML = `<div class="alert-msg warning"><i class="fas fa-info-circle"></i> Este alojamiento no tiene propietario registrado en el sistema de chat. Inténtalo con otro.</div>`;
+            return;
+        }
+
+        const btn = document.getElementById('btn-send-template');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block"></div> Enviando...';
+
+        try {
+            // Crear conversación
+            const convRes = await fetch('/api/chat.php?action=start_conversation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ recipient_id: ownerId })
+            });
+            const convData = await convRes.json();
+
+            if (!convData.success) {
+                alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> ${convData.error || 'Error al iniciar conversación'}</div>`;
+                return;
+            }
+
+            const convId = convData.data.conversation_id;
+
+            // Enviar mensaje
+            const msgRes = await fetch('/api/chat.php?action=send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conversation_id: convId, content })
+            });
+            const msgData = await msgRes.json();
+
+            if (msgData.success) {
+                alertDiv.innerHTML = `<div class="alert-msg success"><i class="fas fa-check-circle"></i> ¡Mensaje enviado correctamente!</div>`;
+                await loadConversations();
+                setTimeout(() => {
+                    closeModal('modal-new-conv');
+                    showSection('mensajes', null);
+                    openConversation(convId, selectedAccommodation.name || 'Propietario', 'gestor',
+                        (selectedAccommodation.name || 'P').slice(0, 2).toUpperCase());
+                }, 1200);
+            } else {
+                alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> ${msgData.error || 'Error al enviar'}</div>`;
+            }
+        } catch (e) {
+            alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> Error de conexión</div>`;
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Mensaje';
+        }
+    }
+
+    // ============================================================
+    // UTILS
+    // ============================================================
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function formatDateEs(dateStr) {
+        if (!dateStr) return '';
+        const [year, month, day] = dateStr.split('-');
+        const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+        return `${parseInt(day)} ${months[parseInt(month)-1]} ${year}`;
+    }
+
+    function formatTime(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        const now = new Date();
+        const diffMs = now - d;
+        const diffDays = Math.floor(diffMs / 86400000);
+        if (diffDays === 0) return d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        if (diffDays === 1) return 'Ayer';
+        if (diffDays < 7) return d.toLocaleDateString('es-ES', { weekday: 'short' });
+        return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+    }
+
+    function formatDateTime(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // Cerrar modales al hacer clic fuera
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) closeModal(overlay.id);
+        });
+    });
     </script>
 </body>
 </html>

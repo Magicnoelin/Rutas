@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel - Gestor | Rutas Rurales</title>
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2f5233;
+            --primary-light: #4a7c59;
+            --primary-dark: #1e3a21;
+            --accent: #b8956a;
+            --accent-light: #d4a574;
+            --bg: #f4f6f4;
+            --white: #ffffff;
+            --text: #2c3e2c;
+            --text-light: #6c7a6c;
+            --border: #d5e0d5;
+            --shadow: 0 2px 12px rgba(47,82,51,0.10);
+            --shadow-hover: 0 6px 24px rgba(47,82,51,0.18);
+            --radius: 14px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            background: var(--primary-dark);
+            color: white;
+            padding: 0 2rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .topbar-brand img { height: 36px; }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-badge {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .role-tag {
+            background: var(--accent);
+            color: white;
+            border-radius: 10px;
+            padding: 0.15rem 0.55rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+
+        /* ── LAYOUT ── */
+        .app-layout {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 240px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+            overflow-y: auto;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+        }
+
+        .sidebar-nav { list-style: none; }
+
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.85rem 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background: #f0f4f0;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-nav li a i {
+            width: 20px;
+            text-align: center;
+            color: var(--primary-light);
+        }
+
+        .sidebar-nav li a.active i { color: var(--primary); }
+
+        .sidebar-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            padding: 1rem 1.5rem 0.3rem;
+        }
+
+        .badge-count {
+            background: #e74c3c;
+            color: white;
+            border-radius: 10px;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: auto;
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 2rem;
+            max-width: calc(100vw - 240px);
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-header p { color: var(--text-light); margin-top: 0.3rem; }
+
+        /* ── CARDS ── */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ── STATS ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-top: 4px solid var(--primary);
+        }
+
+        .stat-card.accent { border-top-color: var(--accent); }
+        .stat-card.green { border-top-color: #27ae60; }
+        .stat-card.blue { border-top-color: #2980b9; }
+        .stat-card.orange { border-top-color: #e67e22; }
+
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: #f0f4f0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.6rem;
+        }
+
+        .stat-icon.accent { background: #fdf0e0; color: var(--accent); }
+        .stat-icon.green { background: #eafaf1; color: #27ae60; }
+        .stat-icon.blue { background: #eaf4fb; color: #2980b9; }
+        .stat-icon.orange { background: #fef5ec; color: #e67e22; }
+
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--text); }
+        .stat-label { font-size: 0.82rem; color: var(--text-light); margin-top: 0.2rem; }
+
+        /* ── ALOJAMIENTOS LISTA ── */
+        .alo-list { display: flex; flex-direction: column; gap: 0.8rem; }
+
+        .alo-item {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .alo-icon {
+            width: 44px; height: 44px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-light);
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .alo-info { flex: 1; }
+        .alo-name { font-weight: 600; color: var(--text); }
+        .alo-location { font-size: 0.8rem; color: var(--text-light); }
+
+        .alo-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .alo-badge.active { background: #eafaf1; color: #1e8449; }
+        .alo-badge.inactive { background: #fdecea; color: #c0392b; }
+
+        .btn-alo-msg {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-alo-msg:hover { background: var(--primary-light); }
+
+        /* ── MENSAJERÍA ── */
+        .messaging-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1rem;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+        }
+
+        .conversations-panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .conv-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .conv-header h3 { font-size: 1rem; color: var(--primary); }
+
+        .conv-search {
+            padding: 0.7rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .conv-search input {
+            width: 100%;
+            padding: 0.5rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .conv-list { flex: 1; overflow-y: auto; }
+
+        .conv-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.9rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.15s;
+        }
+
+        .conv-item:hover, .conv-item.active { background: #f0f4f0; }
+
+        .conv-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .conv-info { flex: 1; min-width: 0; }
+
+        .conv-name {
+            font-weight: 600; font-size: 0.9rem; color: var(--text);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .conv-preview {
+            font-size: 0.78rem; color: var(--text-light);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            margin-top: 0.1rem;
+        }
+
+        .conv-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
+        .conv-time { font-size: 0.72rem; color: var(--text-light); }
+
+        .unread-badge {
+            background: var(--accent);
+            color: white;
+            border-radius: 10px;
+            padding: 0.1rem 0.45rem;
+            font-size: 0.7rem; font-weight: 700;
+        }
+
+        /* ── CHAT PANEL ── */
+        .chat-panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #fafcfa;
+        }
+
+        .chat-header-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600;
+        }
+
+        .chat-header-info { flex: 1; }
+        .chat-header-name { font-weight: 700; color: var(--text); }
+        .chat-header-type { font-size: 0.78rem; color: var(--text-light); }
+
+        .chat-messages {
+            flex: 1; overflow-y: auto;
+            padding: 1rem;
+            display: flex; flex-direction: column; gap: 0.7rem;
+            background: #f8faf8;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.7rem 1rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .message-bubble.sent {
+            background: var(--primary-dark);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bubble.received {
+            background: var(--white);
+            color: var(--text);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .message-time {
+            font-size: 0.68rem;
+            margin-top: 0.3rem;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        .message-sender-name {
+            font-size: 0.72rem; font-weight: 600;
+            color: var(--accent); margin-bottom: 0.2rem;
+        }
+
+        .chat-empty {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--text-light); gap: 1rem; padding: 2rem; text-align: center;
+        }
+
+        .chat-empty i { font-size: 3rem; color: var(--border); }
+
+        /* ── TEMPLATES BAR ── */
+        .templates-bar {
+            padding: 0.5rem 1rem;
+            border-top: 1px solid var(--border);
+            background: #f5f8f5;
+            display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+        }
+
+        .templates-label { font-size: 0.75rem; color: var(--text-light); font-weight: 600; }
+
+        .btn-template {
+            background: var(--white);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 0.3rem;
+        }
+
+        .btn-template:hover { background: var(--accent); color: white; }
+
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            background: #fafcfa;
+        }
+
+        .chat-input-row { display: flex; gap: 0.7rem; align-items: flex-end; }
+
+        .chat-input-row textarea {
+            flex: 1; padding: 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem; resize: none; outline: none;
+            font-family: inherit; max-height: 120px; min-height: 42px;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input-row textarea:focus { border-color: var(--accent); }
+
+        .btn-send {
+            background: var(--primary-dark);
+            color: white; border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.7rem 1.2rem;
+            cursor: pointer; font-size: 1rem;
+            transition: background 0.2s; flex-shrink: 0;
+        }
+
+        .btn-send:hover { background: var(--primary); }
+        .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .msg-limit-info {
+            font-size: 0.72rem; color: var(--text-light);
+            text-align: right; margin-top: 0.3rem;
+        }
+
+        /* ── MODALES ── */
+        .modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center; justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            width: 90%; max-width: 520px;
+            max-height: 90vh; overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .modal-header h3 { color: var(--primary); font-size: 1.1rem; }
+
+        .btn-close-modal {
+            background: none; border: none;
+            font-size: 1.3rem; cursor: pointer; color: var(--text-light);
+        }
+
+        .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex; gap: 0.8rem; justify-content: flex-end;
+        }
+
+        /* ── TEMPLATE SELECTOR ── */
+        .template-selector {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 0.8rem; margin-bottom: 1.5rem;
+        }
+
+        .template-option {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem; cursor: pointer;
+            text-align: center; transition: all 0.2s;
+        }
+
+        .template-option:hover, .template-option.selected {
+            border-color: var(--accent); background: #fdf5ec;
+        }
+
+        .template-option i {
+            font-size: 1.8rem; color: var(--accent);
+            margin-bottom: 0.5rem; display: block;
+        }
+
+        .template-option span { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+
+        .form-group { margin-bottom: 1rem; }
+
+        .form-group label {
+            display: block; font-size: 0.85rem;
+            font-weight: 600; color: var(--text); margin-bottom: 0.4rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.65rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem; outline: none;
+            font-family: inherit; transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+        .message-preview {
+            background: #fdf5ec;
+            border-radius: var(--radius-sm);
+            padding: 1rem; font-size: 0.85rem; color: var(--text);
+            border-left: 3px solid var(--accent);
+            margin: 1rem 0; white-space: pre-wrap; font-style: italic;
+        }
+
+        /* ── ALERTS ── */
+        .alert-msg {
+            padding: 0.8rem 1rem; border-radius: var(--radius-sm);
+            font-size: 0.85rem; margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .alert-msg.success { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+        .alert-msg.error { background: #fdecea; color: #c0392b; border: 1px solid #f1948a; }
+        .alert-msg.warning { background: #fef9e7; color: #9a7d0a; border: 1px solid #f9e79f; }
+        .alert-msg.info { background: #eaf4fb; color: #1a6fa0; border: 1px solid #85c1e9; }
+
+        /* ── BUTTONS ── */
+        .btn {
+            padding: 0.65rem 1.4rem; border-radius: var(--radius-sm);
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            border: none; transition: all 0.2s;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-accent:hover { background: var(--accent-light); }
+        .btn-secondary { background: #f0f0f0; color: var(--text); }
+        .btn-secondary:hover { background: #e0e0e0; }
+
+        /* ── LOADING ── */
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; max-width: 100vw; }
+            .messaging-layout { grid-template-columns: 1fr; }
+            .conversations-panel { display: none; }
+            .conversations-panel.show { display: flex; height: 400px; }
+        }
+
+        @media (max-width: 600px) {
+            .main-content { padding: 1rem; }
+            .modal { width: 95%; }
+            .form-row { grid-template-columns: 1fr; }
+            .template-selector { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+    <a href="/index.php" class="topbar-brand">
+        <img src="/menu_images/Logo%20transparente.webp" alt="Rutas" onerror="this.style.display='none'">
+        <span>Rutas Rurales</span>
+    </a>
+    <div class="topbar-user">
+        <div class="user-badge">
+            <i class="fas fa-user-tie"></i>
+            <span id="topbar-name">Cargando...</span>
+            <span class="role-tag">GESTOR</span>
+        </div>
+        <a href="/api/logout.php" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </a>
+    </div>
+</div>
+
+<!-- Layout -->
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-section-title">Mi Panel</div>
+        <ul class="sidebar-nav">
+            <li>
+                <a href="#" class="active" onclick="showSection('inicio', this)">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showSection('mensajes', this)">
+                    <i class="fas fa-comments"></i> Mensajes
+                    <span class="badge-count" id="unread-badge" style="display:none">0</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showSection('alojamientos', this)">
+                    <i class="fas fa-bed"></i> Mis Alojamientos
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-section-title">Gestión</div>
+        <ul class="sidebar-nav">
+            <li>
+                <a href="/editar-mi-alojamiento.php">
+                    <i class="fas fa-edit"></i> Editar Alojamiento
+                </a>
+            </li>
+            <li>
+                <a href="/gestion-fotos-alojamiento.html">
+                    <i class="fas fa-images"></i> Gestión de Fotos
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- ===== INICIO ===== -->
+        <div class="section active" id="section-inicio">
+            <div class="section-header">
+                <h2><i class="fas fa-tachometer-alt"></i> Panel del Gestor</h2>
+                <p id="welcome-msg">Gestiona tu alojamiento y comunícate con los turistas</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-bed"></i></div>
+                    <div class="stat-value" id="stat-alojamientos">-</div>
+                    <div class="stat-label">Mis Alojamientos</div>
+                </div>
+                <div class="stat-card accent">
+                    <div class="stat-icon accent"><i class="fas fa-comments"></i></div>
+                    <div class="stat-value" id="stat-conversations">-</div>
+                    <div class="stat-label">Conversaciones</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon green"><i class="fas fa-envelope-open"></i></div>
+                    <div class="stat-value" id="stat-unread">-</div>
+                    <div class="stat-label">Sin leer</div>
+                </div>
+            </div>
+
+            <!-- Acciones rápidas -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-bolt"></i> Acciones Rápidas</div>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                    <button class="btn btn-accent" onclick="openOfferModal()">
+                        <i class="fas fa-tag"></i> Enviar Oferta
+                    </button>
+                    <button class="btn btn-primary" onclick="showSection('mensajes', null)">
+                        <i class="fas fa-inbox"></i> Ver Mensajes
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSection('alojamientos', null)">
+                        <i class="fas fa-bed"></i> Mis Alojamientos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Últimas conversaciones -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-history"></i> Últimas Conversaciones</div>
+                <div id="recent-conversations-list">
+                    <div style="color:var(--text-light)"><div class="spinner"></div> Cargando...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MENSAJES ===== -->
+        <div class="section" id="section-mensajes">
+            <div class="section-header">
+                <h2><i class="fas fa-comments"></i> Mensajes</h2>
+                <p>Responde a las consultas de los turistas</p>
+            </div>
+
+            <div class="messaging-layout">
+                <!-- Lista conversaciones -->
+                <div class="conversations-panel">
+                    <div class="conv-header">
+                        <h3><i class="fas fa-inbox"></i> Bandeja</h3>
+                    </div>
+                    <div class="conv-search">
+                        <input type="text" placeholder="🔍 Buscar..." id="conv-search-input" oninput="filterConversations(this.value)">
+                    </div>
+                    <div class="conv-list" id="conversations-list">
+                        <div style="padding:1rem;text-align:center;">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat panel -->
+                <div class="chat-panel" id="chat-panel">
+                    <div class="chat-empty" id="chat-empty">
+                        <i class="fas fa-comment-dots"></i>
+                        <div>
+                            <strong>Selecciona una conversación</strong>
+                            <p style="font-size:0.85rem;margin-top:0.4rem">Las consultas de los turistas aparecerán aquí</p>
+                        </div>
+                    </div>
+
+                    <div class="chat-header" id="chat-header" style="display:none">
+                        <div class="chat-header-avatar" id="chat-avatar">T</div>
+                        <div class="chat-header-info">
+                            <div class="chat-header-name" id="chat-contact-name">-</div>
+                            <div class="chat-header-type" id="chat-contact-type">Turista</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chat-messages" style="display:none"></div>
+
+                    <!-- Plantillas del gestor -->
+                    <div class="templates-bar" id="templates-bar" style="display:none">
+                        <span class="templates-label"><i class="fas fa-tag"></i> Plantillas:</span>
+                        <button class="btn-template" onclick="useTemplate('oferta_alojamiento')">
+                            <i class="fas fa-tag"></i> Oferta alojamiento
+                        </button>
+                        <button class="btn-template" onclick="useTemplate('disponibilidad_confirmada')">
+                            <i class="fas fa-check-circle"></i> Confirmar disponibilidad
+                        </button>
+                        <button class="btn-template" onclick="useTemplate('info_alojamiento')">
+                            <i class="fas fa-info-circle"></i> Info alojamiento
+                        </button>
+                        <button class="btn-template" onclick="useTemplate('solicitar_datos')">
+                            <i class="fas fa-clipboard-list"></i> Solicitar datos
+                        </button>
+                    </div>
+
+                    <div class="chat-input-area" id="chat-input-area" style="display:none">
+                        <div class="chat-input-row">
+                            <textarea id="msg-input" placeholder="Escribe tu respuesta..." rows="1"
+                                onkeydown="handleMsgKeydown(event)" oninput="autoResizeTextarea(this)"></textarea>
+                            <button class="btn-send" onclick="sendMessage()" id="btn-send">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="msg-limit-info" id="msg-limit-info"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MIS ALOJAMIENTOS ===== -->
+        <div class="section" id="section-alojamientos">
+            <div class="section-header">
+                <h2><i class="fas fa-bed"></i> Mis Alojamientos</h2>
+                <p>Gestiona tus propiedades registradas</p>
+            </div>
+            <div class="card">
+                <div class="alo-list" id="alo-list">
+                    <div style="color:var(--text-light)"><div class="spinner"></div> Cargando...</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- ===== MODAL: PLANTILLA ENVIAR OFERTA ===== -->
+<div class="modal-overlay" id="modal-offer">
+    <div class="modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-tag"></i> Enviar Oferta / Mensaje al Turista</h3>
+            <button class="btn-close-modal" onclick="closeModal('modal-offer')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="offer-alert"></div>
+
+            <!-- Elegir plantilla -->
+            <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1rem">Elige la plantilla de tu mensaje:</p>
+            <div class="template-selector">
+                <div class="template-option selected" onclick="selectOfferTemplate('oferta_alojamiento', this)">
+                    <i class="fas fa-tag"></i>
+                    <span>Oferta de Alojamiento</span>
+                </div>
+                <div class="template-option" onclick="selectOfferTemplate('disponibilidad_confirmada', this)">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Confirmar Disponibilidad</span>
+                </div>
+                <div class="template-option" onclick="selectOfferTemplate('info_alojamiento', this)">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Info del Alojamiento</span>
+                </div>
+                <div class="template-option" onclick="selectOfferTemplate('solicitar_datos', this)">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Pedir Datos Turista</span>
+                </div>
+            </div>
+
+            <!-- ===== OFERTA ALOJAMIENTO ===== -->
+            <div id="tpl-oferta_alojamiento">
+                <div class="form-group">
+                    <label><i class="fas fa-home"></i> Nombre del Alojamiento</label>
+                    <select id="of-alojamiento" onchange="ofUpdatePreview()">
+                        <option value="">-- Selecciona tu alojamiento --</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Fecha de llegada</label>
+                        <input type="date" id="of-entrada" onchange="ofUpdatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-check"></i> Fecha de salida</label>
+                        <input type="date" id="of-salida" onchange="ofUpdatePreview()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-euro-sign"></i> Precio total oferta (€)</label>
+                        <input type="number" id="of-precio" placeholder="Ej: 250" min="0" oninput="ofUpdatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> Máx. personas</label>
+                        <select id="of-personas" onchange="ofUpdatePreview()">
+                            <option value="2">2 personas</option>
+                            <option value="4">4 personas</option>
+                            <option value="6">6 personas</option>
+                            <option value="8">8 personas</option>
+                            <option value="10+">10 o más</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-gift"></i> Extras incluidos (opcional)</label>
+                    <input type="text" id="of-extras" placeholder="Ej: desayuno, leña, parking gratuito..." oninput="ofUpdatePreview()">
+                </div>
+            </div>
+
+            <!-- ===== DISPONIBILIDAD CONFIRMADA ===== -->
+            <div id="tpl-disponibilidad_confirmada" style="display:none">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fecha llegada</label>
+                        <input type="date" id="of-disp-entrada" onchange="ofUpdatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha salida</label>
+                        <input type="date" id="of-disp-salida" onchange="ofUpdatePreview()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-euro-sign"></i> Precio por noche (€)</label>
+                    <input type="number" id="of-disp-precio-noche" placeholder="Ej: 120" min="0" oninput="ofUpdatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Indicaciones para la reserva (opcional)</label>
+                    <input type="text" id="of-disp-instrucciones" placeholder="Ej: reservar con 50% de anticipo..." oninput="ofUpdatePreview()">
+                </div>
+            </div>
+
+            <!-- ===== INFO ALOJAMIENTO ===== -->
+            <div id="tpl-info_alojamiento" style="display:none">
+                <div class="form-group">
+                    <label>Alojamiento</label>
+                    <select id="of-info-alo" onchange="ofUpdatePreview()">
+                        <option value="">-- Selecciona --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Características destacadas</label>
+                    <textarea id="of-info-caracteristicas" rows="3"
+                        placeholder="Ej: Casa rural con jardín, chimenea y vistas al pinar. Capacidad 6 personas."
+                        oninput="ofUpdatePreview()"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-euro-sign"></i> Precio desde (€/noche)</label>
+                        <input type="number" id="of-info-precio" placeholder="Ej: 100" min="0" oninput="ofUpdatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Localidad</label>
+                        <input type="text" id="of-info-localidad" placeholder="Ej: Vinuesa" oninput="ofUpdatePreview()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PEDIR DATOS ===== -->
+            <div id="tpl-solicitar_datos" style="display:none">
+                <div class="form-group">
+                    <label>Datos que necesitas (marca los que apliquen)</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.4rem">
+                        <label style="display:flex;align-items:center;gap:0.3rem;font-weight:normal">
+                            <input type="checkbox" id="of-datos-nombre" onchange="ofUpdatePreview()"> Nombre completo
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.3rem;font-weight:normal">
+                            <input type="checkbox" id="of-datos-tel" onchange="ofUpdatePreview()"> Teléfono
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.3rem;font-weight:normal">
+                            <input type="checkbox" id="of-datos-personas" onchange="ofUpdatePreview()"> Nº personas
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.3rem;font-weight:normal">
+                            <input type="checkbox" id="of-datos-fechas" onchange="ofUpdatePreview()"> Fechas exactas
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div>
+                <div style="font-size:0.82rem;font-weight:600;color:var(--text-light);margin-bottom:0.4rem">
+                    <i class="fas fa-eye"></i> Vista previa:
+                </div>
+                <div class="message-preview" id="offer-preview">Completa los campos para ver el mensaje...</div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-offer')">Cancelar</button>
+            <button class="btn btn-accent" onclick="sendOfferFromModal()" id="btn-send-offer">
+                <i class="fas fa-paper-plane"></i> Enviar a Conversación Activa
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: PLANTILLA EN CHAT ===== -->
+<div class="modal-overlay" id="modal-template-chat">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="chat-tpl-title"><i class="fas fa-tag"></i> Plantilla</h3>
+            <button class="btn-close-modal" onclick="closeModal('modal-template-chat')">✕</button>
+        </div>
+        <div class="modal-body">
+            <!-- Oferta alojamiento -->
+            <div id="ctpl-oferta_alojamiento">
+                <div class="form-group">
+                    <label>Alojamiento</label>
+                    <select id="ct-alo" onchange="ctUpdatePreview()">
+                        <option value="">-- Selecciona --</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Llegada</label>
+                        <input type="date" id="ct-entrada" onchange="ctUpdatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Salida</label>
+                        <input type="date" id="ct-salida" onchange="ctUpdatePreview()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio total (€)</label>
+                        <input type="number" id="ct-precio" placeholder="Ej: 250" oninput="ctUpdatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Máx. personas</label>
+                        <select id="ct-personas" onchange="ctUpdatePreview()">
+                            <option value="2">2</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8+">8+</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Extras incluidos</label>
+                    <input type="text" id="ct-extras" placeholder="Desayuno, parking, leña..." oninput="ctUpdatePreview()">
+                </div>
+            </div>
+
+            <!-- Disponibilidad confirmada -->
+            <div id="ctpl-disponibilidad_confirmada" style="display:none">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Llegada</label>
+                        <input type="date" id="ct-disp-entrada" onchange="ctUpdatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Salida</label>
+                        <input type="date" id="ct-disp-salida" onchange="ctUpdatePreview()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Precio por noche (€)</label>
+                    <input type="number" id="ct-disp-precio" placeholder="Ej: 120" oninput="ctUpdatePreview()">
+                </div>
+            </div>
+
+            <!-- Info alojamiento -->
+            <div id="ctpl-info_alojamiento" style="display:none">
+                <div class="form-group">
+                    <label>Descripción breve</label>
+                    <textarea id="ct-desc" rows="3" placeholder="Casa rural con jardín..." oninput="ctUpdatePreview()"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio desde (€/noche)</label>
+                        <input type="number" id="ct-info-precio" oninput="ctUpdatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Localidad</label>
+                        <input type="text" id="ct-info-loc" oninput="ctUpdatePreview()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pedir datos -->
+            <div id="ctpl-solicitar_datos" style="display:none">
+                <p style="font-size:0.88rem;color:var(--text-light)">Se enviará un mensaje solicitando los datos necesarios para confirmar la reserva.</p>
+            </div>
+
+            <div class="message-preview" id="ct-preview">Completa los campos...</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-template-chat')">Cancelar</button>
+            <button class="btn btn-accent" onclick="insertChatTemplate()">
+                <i class="fas fa-check"></i> Usar este mensaje
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// ESTADO
+// ============================================================
+let currentUser   = null;
+let conversations = [];
+let myAccommodations = [];
+let currentConvId = null;
+let offerTemplate = 'oferta_alojamiento';
+let chatTpl       = 'oferta_alojamiento';
+let pollInterval  = null;
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadUserProfile();
+    await loadConversations();
+    await loadMyAccommodations();
+    updateStats();
+
+    initDefaultDates();
+
+    pollInterval = setInterval(async () => {
+        await loadConversations();
+        if (currentConvId) await loadMessages(currentConvId);
+    }, 30000);
+});
+
+async function loadUserProfile() {
+    try {
+        const res  = await fetch('/api/get_profile.php');
+        const data = await res.json();
+        if (data.success) {
+            currentUser = data.data;
+            const name  = currentUser.first_name || currentUser.nickname || 'Gestor';
+            document.getElementById('topbar-name').textContent = name;
+            document.getElementById('welcome-msg').textContent =
+                `Hola ${name}, gestiona tus alojamientos y mensajes`;
+        } else {
+            window.location.href = '/login.html';
+        }
+    } catch(e) { window.location.href = '/login.html'; }
+}
+
+function initDefaultDates() {
+    const today = new Date();
+    const daysToFriday = (5 - today.getDay() + 7) % 7 || 7;
+    const friday = new Date(today); friday.setDate(today.getDate() + daysToFriday);
+    const sunday = new Date(friday); sunday.setDate(friday.getDate() + 2);
+    const fmt = d => d.toISOString().split('T')[0];
+    ['of-entrada','of-disp-entrada','ct-entrada','ct-disp-entrada'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = fmt(friday);
+    });
+    ['of-salida','of-disp-salida','ct-salida','ct-disp-salida'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = fmt(sunday);
+    });
+    ofUpdatePreview();
+}
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+function showSection(name, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('section-' + name).classList.add('active');
+    if (el) el.classList.add('active');
+    if (name === 'mensajes') loadConversations();
+    if (name === 'alojamientos') renderMyAccommodations();
+}
+
+// ============================================================
+// MIS ALOJAMIENTOS
+// ============================================================
+async function loadMyAccommodations() {
+    try {
+        const res  = await fetch('/api/get_user_resources.php');
+        const data = await res.json();
+        if (data.success) {
+            myAccommodations = data.data.accommodations || [];
+            populateAccommodationSelects();
+            updateStats();
+        }
+    } catch(e) { console.error('Error cargando alojamientos:', e); }
+}
+
+function populateAccommodationSelects() {
+    const selects = ['of-alojamiento','of-info-alo','ct-alo'];
+    selects.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = '<option value="">-- Selecciona --</option>';
+        myAccommodations.forEach(a => {
+            el.innerHTML += `<option value="${a.id}" data-name="${escapeHtml(a.name)}" data-loc="${escapeHtml(a.municipality||'')}">
+                ${escapeHtml(a.name)} - ${escapeHtml(a.municipality||'')}
+            </option>`;
+        });
+    });
+}
+
+function renderMyAccommodations() {
+    const list = document.getElementById('alo-list');
+    if (!myAccommodations.length) {
+        list.innerHTML = `<p style="color:var(--text-light);text-align:center;padding:1.5rem">
+            No tienes alojamientos registrados.
+            <a href="/agregar-alojamiento.html" style="color:var(--primary);font-weight:600">Añadir uno →</a>
+        </p>`;
+        return;
+    }
+    list.innerHTML = myAccommodations.map(a => `
+        <div class="alo-item">
+            <div class="alo-icon"><i class="fas fa-home"></i></div>
+            <div class="alo-info">
+                <div class="alo-name">${escapeHtml(a.name)}</div>
+                <div class="alo-location">${escapeHtml(a.municipality||'')} ${escapeHtml(a.province||'')} · ${escapeHtml(a.accommodation_type||'')}
+                    ${a.price_per_night ? ` · <strong>${a.price_per_night}€/noche</strong>` : ''}
+                </div>
+            </div>
+            <span class="alo-badge ${a.status === 'active' ? 'active' : 'inactive'}">
+                ${a.status === 'active' ? 'Activo' : 'Inactivo'}
+            </span>
+        </div>
+    `).join('');
+}
+
+// ============================================================
+// CONVERSACIONES
+// ============================================================
+async function loadConversations() {
+    try {
+        const res  = await fetch('/api/chat.php?action=list_conversations');
+        const data = await res.json();
+        if (data.success) {
+            conversations = data.data || [];
+            renderConversations(conversations);
+            updateUnreadCount();
+            if (currentConvId) await loadMessages(currentConvId);
+        }
+    } catch(e) { console.error('Error:', e); }
+}
+
+function renderConversations(convs) {
+    const list       = document.getElementById('conversations-list');
+    const recentList = document.getElementById('recent-conversations-list');
+
+    if (!convs || !convs.length) {
+        const empty = `<div style="padding:2rem;text-align:center;color:var(--text-light)">
+            <i class="fas fa-inbox" style="font-size:2rem;opacity:0.3"></i>
+            <p style="margin-top:0.5rem">No hay conversaciones aún</p>
+        </div>`;
+        if (list) list.innerHTML = empty;
+        if (recentList) recentList.innerHTML = `<p style="color:var(--text-light);font-size:0.9rem">Aún no has recibido mensajes de turistas.</p>`;
+        return;
+    }
+
+    const html = convs.map(c => {
+        const name   = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Turista';
+        const inits  = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+        const last   = c.last_message ? c.last_message.substring(0,48)+'...' : 'Sin mensajes';
+        const time   = c.last_message_at ? formatTime(c.last_message_at) : '';
+        const unread = parseInt(c.unread_count) || 0;
+        const act    = c.conversation_id == currentConvId ? 'active' : '';
+        return `<div class="conv-item ${act}" onclick="openConversation(${c.conversation_id},'${escapeHtml(name)}','${inits}')">
+            <div class="conv-avatar">${inits}</div>
+            <div class="conv-info">
+                <div class="conv-name">${escapeHtml(name)}</div>
+                <div class="conv-preview">${escapeHtml(last)}</div>
+            </div>
+            <div class="conv-meta">
+                <span class="conv-time">${time}</span>
+                ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+
+    if (list) list.innerHTML = html;
+
+    if (recentList) {
+        recentList.innerHTML = convs.slice(0,3).map(c => {
+            const name   = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Turista';
+            const unread = parseInt(c.unread_count) || 0;
+            return `<div class="conv-item" onclick="showSection('mensajes',null);openConversation(${c.conversation_id},'${escapeHtml(name)}','${name.slice(0,2).toUpperCase()}')">
+                <div class="conv-avatar">${name.slice(0,2).toUpperCase()}</div>
+                <div class="conv-info">
+                    <div class="conv-name">${escapeHtml(name)}</div>
+                    <div class="conv-preview">${escapeHtml(c.last_message||'').substring(0,50)}...</div>
+                </div>
+                <div class="conv-meta">
+                    ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+                </div>
+            </div>`;
+        }).join('');
+    }
+}
+
+function filterConversations(q) {
+    const filtered = conversations.filter(c => {
+        const name = [c.first_name, c.last_name].filter(Boolean).join(' ').toLowerCase();
+        return name.includes(q.toLowerCase());
+    });
+    renderConversations(filtered);
+}
+
+function updateUnreadCount() {
+    const total = conversations.reduce((s,c) => s + (parseInt(c.unread_count)||0), 0);
+    const badge = document.getElementById('unread-badge');
+    if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'inline' : 'none'; }
+    const el = document.getElementById('stat-unread');
+    if (el) el.textContent = total;
+    const el2 = document.getElementById('stat-conversations');
+    if (el2) el2.textContent = conversations.length;
+}
+
+function updateStats() {
+    const el = document.getElementById('stat-alojamientos');
+    if (el) el.textContent = myAccommodations.length;
+}
+
+// ============================================================
+// CHAT
+// ============================================================
+async function openConversation(convId, name, initials) {
+    currentConvId = convId;
+
+    document.getElementById('chat-empty').style.display       = 'none';
+    document.getElementById('chat-header').style.display      = 'flex';
+    document.getElementById('chat-messages').style.display    = 'flex';
+    document.getElementById('templates-bar').style.display    = 'flex';
+    document.getElementById('chat-input-area').style.display  = 'block';
+
+    document.getElementById('chat-avatar').textContent        = initials || name.slice(0,2).toUpperCase();
+    document.getElementById('chat-contact-name').textContent  = name;
+    document.getElementById('chat-contact-type').textContent  = '✈️ Turista';
+
+    await loadMessages(convId);
+}
+
+async function loadMessages(convId) {
+    try {
+        const res  = await fetch(`/api/chat.php?action=get_messages&conversation_id=${convId}`);
+        const data = await res.json();
+        if (data.success) renderMessages(data.data || []);
+    } catch(e) { console.error(e); }
+}
+
+function renderMessages(msgs) {
+    const container = document.getElementById('chat-messages');
+    if (!container) return;
+    if (!msgs.length) {
+        container.innerHTML = `<div style="text-align:center;color:var(--text-light);padding:2rem;font-size:0.85rem">
+            <i class="fas fa-comment" style="font-size:2rem;opacity:0.2"></i>
+            <p style="margin-top:0.5rem">Aún no hay mensajes</p>
+        </div>`;
+        return;
+    }
+    container.innerHTML = msgs.map(m => {
+        const isSent = currentUser && m.sender_id == currentUser.id;
+        return `<div class="message-bubble ${isSent ? 'sent' : 'received'}">
+            ${!isSent ? `<div class="message-sender-name">${escapeHtml(m.first_name||'Turista')}</div>` : ''}
+            <div>${escapeHtml(m.content||'').replace(/\n/g,'<br>')}</div>
+            <div class="message-time">${formatDateTime(m.created_at)}${isSent?' <i class="fas fa-check-double" style="opacity:0.7"></i>':''}</div>
+        </div>`;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+}
+
+async function sendMessage() {
+    const input = document.getElementById('msg-input');
+    const content = input.value.trim();
+    if (!content || !currentConvId) return;
+
+    const btn = document.getElementById('btn-send');
+    btn.disabled = true; input.disabled = true;
+
+    try {
+        const res  = await fetch('/api/chat.php?action=send_message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conversation_id: currentConvId, content })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            input.value = '';
+            input.style.height = 'auto';
+            await loadMessages(currentConvId);
+            await loadConversations();
+        } else {
+            alert('❌ ' + (data.error || 'Error al enviar'));
+        }
+    } catch(e) { alert('❌ Error de conexión'); }
+    finally {
+        btn.disabled = false; input.disabled = false; input.focus();
+    }
+}
+
+function handleMsgKeydown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResizeTextarea(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// ============================================================
+// PLANTILLAS EN CHAT
+// ============================================================
+function useTemplate(name) {
+    chatTpl = name;
+    const titles = {
+        oferta_alojamiento:      '🏷️ Oferta de Alojamiento',
+        disponibilidad_confirmada:'✅ Confirmar Disponibilidad',
+        info_alojamiento:        'ℹ️ Info del Alojamiento',
+        solicitar_datos:         '📋 Pedir Datos al Turista'
+    };
+    document.getElementById('chat-tpl-title').innerHTML =
+        `<i class="fas fa-tag"></i> ${titles[name] || name}`;
+
+    ['oferta_alojamiento','disponibilidad_confirmada','info_alojamiento','solicitar_datos'].forEach(t => {
+        const el = document.getElementById('ctpl-' + t);
+        if (el) el.style.display = t === name ? 'block' : 'none';
+    });
+    ctUpdatePreview();
+    openModal('modal-template-chat');
+}
+
+function ctUpdatePreview() {
+    const p = document.getElementById('ct-preview');
+    if (p) p.textContent = buildGestorMessage(chatTpl, 'chat') || 'Completa los campos...';
+}
+
+function insertChatTemplate() {
+    const msg = buildGestorMessage(chatTpl, 'chat');
+    document.getElementById('msg-input').value = msg;
+    autoResizeTextarea(document.getElementById('msg-input'));
+    closeModal('modal-template-chat');
+    document.getElementById('msg-input').focus();
+}
+
+// ============================================================
+// MODAL OFERTA
+// ============================================================
+function openOfferModal() {
+    offerTemplate = 'oferta_alojamiento';
+    document.getElementById('offer-alert').innerHTML = '';
+    document.querySelectorAll('#modal-offer .template-option').forEach((el,i) => {
+        el.classList.toggle('selected', i === 0);
+    });
+    showOfferTemplateFields('oferta_alojamiento');
+    ofUpdatePreview();
+    openModal('modal-offer');
+}
+
+function selectOfferTemplate(name, el) {
+    offerTemplate = name;
+    document.querySelectorAll('#modal-offer .template-option').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    showOfferTemplateFields(name);
+    ofUpdatePreview();
+}
+
+function showOfferTemplateFields(name) {
+    ['oferta_alojamiento','disponibilidad_confirmada','info_alojamiento','solicitar_datos'].forEach(t => {
+        const el = document.getElementById('tpl-' + t);
+        if (el) el.style.display = t === name ? 'block' : 'none';
+    });
+}
+
+function ofUpdatePreview() {
+    const p = document.getElementById('offer-preview');
+    if (p) p.textContent = buildGestorMessage(offerTemplate, 'modal') || 'Completa los campos...';
+}
+
+async function sendOfferFromModal() {
+    const alertDiv = document.getElementById('offer-alert');
+    alertDiv.innerHTML = '';
+
+    if (!currentConvId) {
+        alertDiv.innerHTML = `<div class="alert-msg warning"><i class="fas fa-exclamation-triangle"></i> Primero abre una conversación desde la sección de Mensajes</div>`;
+        return;
+    }
+
+    const content = buildGestorMessage(offerTemplate, 'modal').trim();
+    if (!content) {
+        alertDiv.innerHTML = `<div class="alert-msg warning"><i class="fas fa-exclamation-triangle"></i> El mensaje está vacío</div>`;
+        return;
+    }
+
+    const btn = document.getElementById('btn-send-offer');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px"></div> Enviando...';
+
+    try {
+        const res  = await fetch('/api/chat.php?action=send_message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conversation_id: currentConvId, content })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            alertDiv.innerHTML = `<div class="alert-msg success"><i class="fas fa-check-circle"></i> ¡Mensaje enviado!</div>`;
+            await loadMessages(currentConvId);
+            await loadConversations();
+            setTimeout(() => closeModal('modal-offer'), 1200);
+        } else {
+            alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> ${data.error||'Error al enviar'}</div>`;
+        }
+    } catch(e) {
+        alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> Error de conexión</div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar a Conversación Activa';
+    }
+}
+
+// ============================================================
+// CONSTRUIR MENSAJES GESTOR
+// ============================================================
+function buildGestorMessage(template, ctx) {
+    switch (template) {
+
+        case 'oferta_alojamiento': {
+            const aloSel = document.getElementById(ctx === 'modal' ? 'of-alojamiento' : 'ct-alo');
+            const aloName = aloSel?.options[aloSel.selectedIndex]?.dataset?.name || '[nombre alojamiento]';
+            const entrada = document.getElementById(ctx === 'modal' ? 'of-entrada' : 'ct-entrada')?.value;
+            const salida  = document.getElementById(ctx === 'modal' ? 'of-salida'  : 'ct-salida')?.value;
+            const precio  = document.getElementById(ctx === 'modal' ? 'of-precio'  : 'ct-precio')?.value;
+            const personas= document.getElementById(ctx === 'modal' ? 'of-personas': 'ct-personas')?.value || '2';
+            const extras  = document.getElementById(ctx === 'modal' ? 'of-extras'  : 'ct-extras')?.value || '';
+
+            let fechas = '';
+            if (entrada && salida) {
+                const noches = Math.round((new Date(salida) - new Date(entrada)) / 86400000);
+                fechas = `del ${formatDateEs(entrada)} al ${formatDateEs(salida)}${noches > 0 ? ` (${noches} noche${noches>1?'s':''})` : ''}`;
+            } else {
+                fechas = '[fechas a confirmar]';
+            }
+
+            let msg = `Hola, 🏡\n\nTe envío una oferta especial para nuestro alojamiento "${aloName}":\n\n📅 Fechas: ${fechas}\n👥 Capacidad: hasta ${personas} personas`;
+            if (precio) msg += `\n💶 Precio total: ${precio} €`;
+            if (extras) msg += `\n🎁 Incluye: ${extras}`;
+            msg += `\n\nSi te interesa, escríbenos y te confirmamos la disponibilidad. ¡Esperamos darte la bienvenida! 😊`;
+            return msg;
+        }
+
+        case 'disponibilidad_confirmada': {
+            const entrada = document.getElementById(ctx === 'modal' ? 'of-disp-entrada' : 'ct-disp-entrada')?.value;
+            const salida  = document.getElementById(ctx === 'modal' ? 'of-disp-salida'  : 'ct-disp-salida')?.value;
+            const precio  = document.getElementById(ctx === 'modal' ? 'of-disp-precio-noche' : 'ct-disp-precio')?.value;
+            const instruc = document.getElementById('of-disp-instrucciones')?.value || '';
+
+            let fechas = entrada && salida
+                ? `del ${formatDateEs(entrada)} al ${formatDateEs(salida)}`
+                : '[fechas]';
+
+            let msg = `Hola! ✅\n\n¡Buenas noticias! Tenemos disponibilidad ${fechas}.`;
+            if (precio) msg += `\n\nEl precio es de ${precio} €/noche.`;
+            if (instruc) msg += `\n\n📌 Indicaciones para la reserva: ${instruc}`;
+            msg += `\n\n¿Confirmas la reserva? ¡Quedamos a tu disposición! 🙂`;
+            return msg;
+        }
+
+        case 'info_alojamiento': {
+            const aloSel  = document.getElementById(ctx === 'modal' ? 'of-info-alo' : 'ct-alo');
+            const aloName = aloSel?.options[aloSel.selectedIndex]?.dataset?.name || '[alojamiento]';
+            const desc    = document.getElementById(ctx === 'modal' ? 'of-info-caracteristicas' : 'ct-desc')?.value || '';
+            const precio  = document.getElementById(ctx === 'modal' ? 'of-info-precio' : 'ct-info-precio')?.value;
+            const loc     = document.getElementById(ctx === 'modal' ? 'of-info-localidad' : 'ct-info-loc')?.value || '';
+
+            let msg = `Hola 😊\n\nTe cuento sobre "${aloName}"`;
+            if (loc) msg += ` en ${loc}`;
+            msg += ':\n\n';
+            if (desc) msg += `${desc}\n\n`;
+            if (precio) msg += `💶 Precio desde ${precio} €/noche\n\n`;
+            msg += '¿Tienes alguna pregunta? ¡Con gusto te ayudamos!';
+            return msg;
+        }
+
+        case 'solicitar_datos': {
+            const datos = [];
+            if (document.getElementById('of-datos-nombre')?.checked) datos.push('✅ Nombre completo');
+            if (document.getElementById('of-datos-tel')?.checked)    datos.push('✅ Teléfono de contacto');
+            if (document.getElementById('of-datos-personas')?.checked)datos.push('✅ Número de personas');
+            if (document.getElementById('of-datos-fechas')?.checked)  datos.push('✅ Fechas exactas de estancia');
+
+            let msg = `Hola 📋\n\nPara gestionar tu reserva necesitamos los siguientes datos:\n\n`;
+            if (datos.length) {
+                msg += datos.join('\n') + '\n\n';
+            } else {
+                msg += `✅ Nombre completo\n✅ Teléfono de contacto\n✅ Número de personas\n✅ Fechas exactas\n\n`;
+            }
+            msg += 'Cuando los tengas, confírmanos y tramitamos la reserva. ¡Gracias!';
+            return msg;
+        }
+
+        default: return '';
+    }
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function formatDateEs(d) {
+    if (!d) return '';
+    const [y,m,day] = d.split('-');
+    const ms = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    return `${parseInt(day)} ${ms[parseInt(m)-1]} ${y}`;
+}
+
+function formatTime(dateStr) {
+    if (!dateStr) return '';
+    const d   = new Date(dateStr);
+    const now = new Date();
+    const diff= Math.floor((now - d) / 86400000);
+    if (diff === 0) return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    if (diff === 1) return 'Ayer';
+    if (diff <  7)  return d.toLocaleDateString('es-ES',{weekday:'short'});
+    return d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'});
+}
+
+function formatDateTime(dateStr) {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Cerrar modales al clicar fuera
+document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
+});
+</script>
+</body>
+</html>
