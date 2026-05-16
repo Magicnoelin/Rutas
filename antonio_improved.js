@@ -361,15 +361,17 @@ function procesarMensajeUsuario(mensaje) {
     setTimeout(() => {
         ocultarTypingIndicator();
         switch(intencion.tipo) {
-            case 'saludo':        responderSaludo(); break;
-            case 'categoria':     mostrarCategoria(intencion.categoria); break;
-            case 'busqueda':      buscarEnCategoria(intencion.categoria, intencion.terminos); break;
-            case 'provincia':     mostrarTodasProvincias(); break;
-            case 'provincia_sola': responderProvinciaSola(intencion.provincia); break;
-            case 'ayuda':         mostrarAyuda(); break;
-            case 'desconocido':   responderDesconocido(); break;
+            case 'saludo':         responderSaludo(); break;
+            case 'categoria':      mostrarCategoria(intencion.categoria); break;
+            case 'busqueda':       buscarEnCategoria(intencion.categoria, intencion.terminos); break;
+            case 'busqueda_global': busquedaGlobal(intencion.termino); break;
+            case 'provincia':      mostrarTodasProvincias(); break;
+            case 'provincia_sola':  responderProvinciaSola(intencion.provincia); break;
+            case 'ayuda':          mostrarAyuda(); break;
+            case 'desconocido':    responderDesconocido(); break;
         }
     }, 1500);
+
 
 }
 
@@ -489,8 +491,19 @@ function analizarIntencion(mensaje) {
         return { tipo: 'ayuda' };
     }
 
-    // 7. Desconocido
+    // 7. Si el mensaje tiene al menos 3 caracteres y no es una palabra vacía,
+    //    hacer búsqueda global en todas las categorías
+    const palabras = mensaje.split(/\s+/).filter(p => p.length > 2);
+    if (palabras.length > 0 && palabras.length <= 4) {
+        const termino = mensaje.replace(/^(busca|encuentra|dime|sabes|conoces|qué|como|donde|dónde)\s+/i, '').trim();
+        if (termino.length >= 3) {
+            return { tipo: 'busqueda_global', termino: termino };
+        }
+    }
+
+    // 8. Desconocido
     return { tipo: 'desconocido' };
+
 }
 
 
@@ -765,10 +778,82 @@ function responderDesconocido() {
 }
 
 // ===============================================
+// BÚSQUEDA GLOBAL EN TODAS LAS CATEGORÍAS
+// ===============================================
+
+function busquedaGlobal(termino) {
+    const terminoLower = termino.toLowerCase();
+    let todosResultados = [];
+    const categoriasConDatos = ['accommodations', 'places_of_interest', 'tourist_activities', 'cultural_events', 'routes'];
+
+    categoriasConDatos.forEach(cat => {
+        const datos = antonioDatabase[cat];
+        if (!datos || datos.length === 0) return;
+
+        datos.forEach(item => {
+            const textoBusqueda = `${item.nombre} ${item.descripcion} ${item.ubicacion || ''} ${item.province || ''}`.toLowerCase();
+            if (textoBusqueda.includes(terminoLower)) {
+                const infoCat = antonioState.categorias[cat];
+                todosResultados.push({
+                    item: item,
+                    categoria: cat,
+                    infoCategoria: infoCat
+                });
+            }
+        });
+    });
+
+    if (todosResultados.length === 0) {
+        agregarMensajeBot(`<p>No encontré nada sobre "<strong>${escapeHTML(termino)}</strong>" en mi base de datos 🤔</p>
+            <p>¿Quieres probar con otra palabra o explorar alguna categoría?</p>`);
+        setTimeout(() => {
+            agregarMensajeBot(`
+                <div class="antonio-suggestions">
+                    <div class="antonio-suggestions-title"><i class="fas fa-bolt"></i> Prueba con:</div>
+                    <div class="antonio-suggestions-list">
+                        <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('alojamientos')">🏨 Alojamientos</button>
+                        <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('lugares')">🏛️ Lugares</button>
+                        <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('actividades')">🥾 Actividades</button>
+                        <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('eventos')">🎭 Eventos</button>
+                        <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('rutas')">🗺️ Rutas</button>
+                    </div>
+                </div>
+            `);
+        }, 500);
+        return;
+    }
+
+    // Agrupar resultados por categoría
+    const agrupados = {};
+    todosResultados.forEach(r => {
+        if (!agrupados[r.categoria]) agrupados[r.categoria] = [];
+        agrupados[r.categoria].push(r);
+    });
+
+    let respuesta = `<p>He encontrado <strong>${todosResultados.length} resultado(s)</strong> sobre "<strong>${escapeHTML(termino)}</strong>" 🔍</p>`;
+
+    Object.keys(agrupados).forEach(cat => {
+        const items = agrupados[cat];
+        const infoCat = items[0].infoCategoria;
+        respuesta += `<div style="margin:10px 0 4px;">
+            <span style="font-weight:600;color:${infoCat.color};">${infoCat.icono} ${infoCat.nombre} (${items.length})</span>
+        </div>`;
+        respuesta += `<div class="antonio-cards-grid">`;
+        items.forEach(r => {
+            respuesta += crearTarjetaItem(r.item, r.infoCategoria);
+        });
+        respuesta += `</div>`;
+    });
+
+    agregarMensajeBot(respuesta);
+}
+
+// ===============================================
 // RESPUESTA CUANDO SOLO MENCIONA PROVINCIA
 // ===============================================
 
 function responderProvinciaSola(provincia) {
+
     agregarMensajeBot(`<p>¡Estupendo! Te interesa <strong>${provincia}</strong> 🗺️</p>
         <p>¿Qué te gustaría conocer de ${provincia}? Puedo ayudarte con:</p>`);
 
