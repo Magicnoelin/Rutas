@@ -199,6 +199,25 @@
     50% { opacity: 0.4; }
 }
 
+@keyframes antonio-blink {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Copia esto justo debajo */
+#antonio-fab.has-news {
+    animation: antonio-pulse-border 2s infinite;
+}
+
+@keyframes antonio-pulse-border {
+    0% { box-shadow: 0 0 0 0 rgba(44, 95, 45, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(44, 95, 45, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(44, 95, 45, 0); }
+}
+
+
+
 #antonio-close {
     background: rgba(255, 255, 255, 0.15);
     border: none;
@@ -219,6 +238,17 @@
     background: rgba(255, 255, 255, 0.3);
     transform: rotate(90deg);
 }
+.antonio-card-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+
+
 
 /* ÁREA DE MENSAJES */
 #antonio-messages {
@@ -332,6 +362,34 @@
 .antonio-msg-user-bubble a {
     color: #d4f5d4;
 }
+
+
+/* Refinamiento de la "Voz" de Antonio */
+.antonio-msg-bot .antonio-msg-bubble {
+    border-left: 4px solid var(--antonio-accent); 
+    background: #ffffff;
+    color: var(--antonio-dark);
+}
+
+/* Enlaces tipo "Botón de Acción" */
+.antonio-msg-bubble a {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: rgba(212, 165, 116, 0.1); 
+    border-radius: 8px;
+    text-decoration: none !important;
+    border: 1px solid var(--antonio-accent);
+    font-size: 0.85rem;
+    transition: var(--antonio-transition);
+}
+
+.antonio-msg-bubble a:hover {
+    background: var(--antonio-accent);
+    color: white !important;
+}
+
+
 
 /* TARJETAS DE DATOS (CARDS) */
 .antonio-cards-grid {
@@ -457,15 +515,15 @@
 }
 
 /* TYPING INDICATOR */
-.antonio-typing-bubble {
+.antonio-typing-indicator {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 14px 18px;
-    min-width: 70px;
+    padding: 6px 0;
+    min-width: 60px;
 }
 
-.antonio-typing-bubble span {
+.antonio-typing-indicator span {
     width: 8px;
     height: 8px;
     background: var(--antonio-secondary);
@@ -474,11 +532,11 @@
     animation: antonio-typing 1.2s infinite;
 }
 
-.antonio-typing-bubble span:nth-child(2) {
+.antonio-typing-indicator span:nth-child(2) {
     animation-delay: 0.2s;
 }
 
-.antonio-typing-bubble span:nth-child(3) {
+.antonio-typing-indicator span:nth-child(3) {
     animation-delay: 0.4s;
 }
 
@@ -492,6 +550,97 @@
         opacity: 1;
     }
 }
+
+/* RELATED SUGGESTIONS */
+.antonio-related-suggestions {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #d0e8d0;
+}
+
+/* CARD IMAGE - MINIATURA */
+.antonio-card-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: block;
+    background: #f0f0f0;
+}
+
+/* MENSAJES - NUEVO SISTEMA */
+.antonio-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    animation: antonio-fadein 0.3s ease;
+    margin-bottom: 4px;
+}
+
+.antonio-message.antonio-user {
+    justify-content: flex-end;
+}
+
+.antonio-message.antonio-bot {
+    justify-content: flex-start;
+}
+
+.antonio-bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.antonio-user .antonio-bubble {
+    background: linear-gradient(135deg, var(--antonio-primary), var(--antonio-secondary));
+    color: var(--antonio-white);
+    border-radius: 18px 18px 6px 18px;
+}
+
+.antonio-bot .antonio-bubble {
+    background: var(--antonio-white);
+    color: #333;
+    border-radius: 18px 18px 18px 6px;
+    box-shadow: var(--antonio-shadow);
+    border-left: 4px solid var(--antonio-accent);
+}
+
+.antonio-bubble p {
+    margin-bottom: 0.5rem;
+}
+
+.antonio-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.antonio-bubble ul,
+.antonio-bubble ol {
+    margin: 0.5rem 0 0.5rem 1.5rem;
+    padding-left: 0;
+}
+
+.antonio-bubble li {
+    margin-bottom: 0.3rem;
+    line-height: 1.4;
+}
+
+.antonio-bubble a {
+    color: var(--antonio-primary);
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.antonio-bubble strong {
+    color: var(--antonio-primary) !important;
+    background: none !important;
+    padding: 0 !important;
+    font-weight: 700 !important;
+}
+
 
 /* OPCIONES RÁPIDAS */
 #antonio-quick-options {
