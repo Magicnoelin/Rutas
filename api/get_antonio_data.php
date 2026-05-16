@@ -115,8 +115,9 @@ try {
         ];
     }
 
-    // ── 4. EVENTOS CULTURALES ─────────────────────────────────────────
-    $stmt = $pdo->query("
+    // ── 4. EVENTOS CULTURALES (solo desde hoy en adelante) ────────────
+    $hoy = date('Y-m-d');
+    $stmt = $pdo->prepare("
         SELECT e.id, e.name AS nombre, e.slug,
                COALESCE(e.short_description, e.description) AS descripcion,
                e.municipality AS ubicacion, e.province,
@@ -125,9 +126,12 @@ try {
                e.poster_image, e.photo1
         FROM cultural_events e
         WHERE e.is_active = 1
+          AND (e.end_date IS NULL OR e.end_date >= ?)
         ORDER BY e.start_date ASC
         LIMIT 50
     ");
+    $stmt->execute([$hoy]);
+
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $foto = $row['poster_image'] ?: $row['photo1'] ?? '';
         if ($foto && !preg_match('/^https?:\/\//', $foto)) {

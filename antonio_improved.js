@@ -361,15 +361,18 @@ function procesarMensajeUsuario(mensaje) {
     setTimeout(() => {
         ocultarTypingIndicator();
         switch(intencion.tipo) {
-            case 'saludo':       responderSaludo(); break;
-            case 'categoria':    mostrarCategoria(intencion.categoria); break;
-            case 'busqueda':     buscarEnCategoria(intencion.categoria, intencion.terminos); break;
-            case 'provincia':    mostrarTodasProvincias(); break;
-            case 'ayuda':        mostrarAyuda(); break;
-            case 'desconocido':  responderDesconocido(); break;
+            case 'saludo':        responderSaludo(); break;
+            case 'categoria':     mostrarCategoria(intencion.categoria); break;
+            case 'busqueda':      buscarEnCategoria(intencion.categoria, intencion.terminos); break;
+            case 'provincia':     mostrarTodasProvincias(); break;
+            case 'provincia_sola': responderProvinciaSola(intencion.provincia); break;
+            case 'ayuda':         mostrarAyuda(); break;
+            case 'desconocido':   responderDesconocido(); break;
         }
     }, 1500);
+
 }
+
 
 function esPreguntaNoPermitida(mensaje) {
     const palabrasNoPermitidas = [
@@ -399,47 +402,97 @@ function redirigirPreguntaNoPermitida(mensaje) {
     agregarMensajeBot(respuesta);
 }
 
+// Lista completa de provincias para detección en mensajes
+const provinciasEspana = [
+    'Álava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
+    'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ciudad Real', 'Córdoba', 'Cuenca',
+    'Gerona', 'Granada', 'Guadalajara', 'Guipúzcoa', 'Huelva', 'Huesca', 'Islas Baleares',
+    'Jaén', 'La Coruña', 'La Rioja', 'Las Palmas', 'León', 'Lérida', 'Lugo', 'Madrid', 'Málaga',
+    'Murcia', 'Navarra', 'Orense', 'Palencia', 'Pontevedra', 'Salamanca', 'Santa Cruz de Tenerife',
+    'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Teruel', 'Toledo', 'Valencia', 'Valladolid',
+    'Vizcaya', 'Zamora', 'Zaragoza'
+];
+
+// Provincias en minúscula para búsqueda
+const provinciasLower = provinciasEspana.map(p => p.toLowerCase());
+
+function detectarProvinciaEnMensaje(mensaje) {
+    // Normalizar: quitar tildes para comparación
+    const mensajeNorm = mensaje.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    for (let i = 0; i < provinciasLower.length; i++) {
+        const provNorm = provinciasLower[i].normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        // Buscar la provincia como palabra completa (no parte de otra palabra)
+        const regex = new RegExp('\\b' + provNorm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+        if (regex.test(mensajeNorm)) {
+            return provinciasEspana[i];
+        }
+    }
+    return null;
+}
+
+
 function analizarIntencion(mensaje) {
-    // Saludos
+    // 1. Detectar provincia mencionada en el mensaje
+    const provinciaDetectada = detectarProvinciaEnMensaje(mensaje);
+    if (provinciaDetectada) {
+        antonioState.provincia = provinciaDetectada;
+    }
+
+    // 2. Saludos
     if (mensaje.match(/hola|buenas|hey|hi|hello|qué tal|como estás|buenos días|buenas tardes/)) {
         return { tipo: 'saludo' };
     }
-    // Provincia
-    if (mensaje.match(/provincia|dónde estoy|ubicación|localización/)) {
-        return { tipo: 'provincia' };
-    }
+
+    // 3. Detectar categoría + provincia (ej: "alojamientos en Soria")
+    let categoria = null;
+
     // Rutas
     if (mensaje.match(/ruta|itinerario|escapada|puente|viaje organizado|plan de viaje/)) {
-        return { tipo: 'categoria', categoria: 'routes' };
+        categoria = 'routes';
     }
     // Alojamientos
-    if (mensaje.match(/alojamiento|hotel|casa rural|apartamento|dormir|pernoctar|hospedaje/)) {
-        return { tipo: 'categoria', categoria: 'accommodations' };
+    else if (mensaje.match(/alojamiento|hotel|casa rural|apartamento|dormir|pernoctar|hospedaje/)) {
+        categoria = 'accommodations';
     }
     // Lugares
-    if (mensaje.match(/lugar|sitio|monumento|patrimonio|naturaleza|parque|mirador|qué visitar|qué ver/)) {
-        return { tipo: 'categoria', categoria: 'places_of_interest' };
+    else if (mensaje.match(/lugar|sitio|monumento|patrimonio|naturaleza|parque|mirador|qué visitar|qué ver/)) {
+        categoria = 'places_of_interest';
     }
     // Actividades
-    if (mensaje.match(/actividad|excursión|senderismo|deporte|aventura|experiencia|qué hacer/)) {
-        return { tipo: 'categoria', categoria: 'tourist_activities' };
+    else if (mensaje.match(/actividad|excursión|senderismo|deporte|aventura|experiencia|qué hacer/)) {
+        categoria = 'tourist_activities';
     }
     // Eventos
-    if (mensaje.match(/evento|festival|concierto|teatro|exposición|fiesta|cultural|qué hay/)) {
-        return { tipo: 'categoria', categoria: 'cultural_events' };
+    else if (mensaje.match(/evento|festival|concierto|teatro|exposición|fiesta|cultural|qué hay/)) {
+        categoria = 'cultural_events';
     }
-    // Búsqueda con términos
+
+    if (categoria) {
+        return { tipo: 'categoria', categoria: categoria };
+    }
+
+    // 4. Provincia sola (sin categoría)
+    if (provinciaDetectada) {
+        // Si solo menciona provincia, preguntar qué quiere ver allí
+        return { tipo: 'provincia_sola', provincia: provinciaDetectada };
+    }
+
+    // 5. Búsqueda con términos específicos
     const terminos = extraerTerminosBusqueda(mensaje);
     if (terminos.length > 0) {
-        let categoria = determinarCategoriaPorTerminos(terminos);
-        return { tipo: 'busqueda', categoria: categoria, terminos: terminos };
+        let cat = determinarCategoriaPorTerminos(terminos);
+        return { tipo: 'busqueda', categoria: cat, terminos: terminos };
     }
-    // Ayuda
+
+    // 6. Ayuda
     if (mensaje.match(/ayuda|qué puedes|qué sabes|información|capacidades/)) {
         return { tipo: 'ayuda' };
     }
+
+    // 7. Desconocido
     return { tipo: 'desconocido' };
 }
+
 
 function extraerTerminosBusqueda(mensaje) {
     const palabrasClave = [
@@ -712,10 +765,35 @@ function responderDesconocido() {
 }
 
 // ===============================================
+// RESPUESTA CUANDO SOLO MENCIONA PROVINCIA
+// ===============================================
+
+function responderProvinciaSola(provincia) {
+    agregarMensajeBot(`<p>¡Estupendo! Te interesa <strong>${provincia}</strong> 🗺️</p>
+        <p>¿Qué te gustaría conocer de ${provincia}? Puedo ayudarte con:</p>`);
+
+    setTimeout(() => {
+        agregarMensajeBot(`
+            <div class="antonio-suggestions">
+                <div class="antonio-suggestions-title"><i class="fas fa-bolt"></i> Elige una opción:</div>
+                <div class="antonio-suggestions-list">
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('alojamientos')">🏨 Alojamientos en ${provincia}</button>
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('lugares')">🏛️ Lugares en ${provincia}</button>
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('actividades')">🥾 Actividades en ${provincia}</button>
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('eventos')">🎭 Eventos en ${provincia}</button>
+                    <button class="antonio-suggestion-btn" onclick="manejarOpcionRapida('rutas')">🗺️ Rutas en ${provincia}</button>
+                </div>
+            </div>
+        `);
+    }, 500);
+}
+
+// ===============================================
 // MANEJO DE MENSAJES EN EL CHAT
 // ===============================================
 
 function agregarMensajeUsuario(texto) {
+
     const messages = document.getElementById('antonio-messages');
     const div = document.createElement('div');
     div.className = 'antonio-message antonio-user';
