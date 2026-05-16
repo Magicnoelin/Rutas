@@ -589,11 +589,16 @@ function mostrarCategoria(categoria) {
     // Filtrar por provincia si está seleccionada
     let datosFiltrados = datos;
     if (antonioState.provincia) {
+        const provLower = antonioState.provincia.toLowerCase();
         datosFiltrados = datos.filter(item => {
-            const ubicacion = (item.ubicacion || item.province || '').toLowerCase();
-            return ubicacion.includes(antonioState.provincia.toLowerCase());
+            // Comparar con el campo province (que es la provincia exacta)
+            const provinciaItem = (item.province || '').toLowerCase();
+            // También comprobar ubicacion por si acaso
+            const ubicacionItem = (item.ubicacion || '').toLowerCase();
+            return provinciaItem === provLower || ubicacionItem.includes(provLower);
         });
     }
+
 
     if (datosFiltrados.length === 0) {
         const msgProv = antonioState.provincia ? ` en ${antonioState.provincia}` : '';
@@ -675,11 +680,14 @@ function buscarEnCategoria(categoria, terminos) {
         const textoBusqueda = `${item.nombre} ${item.descripcion} ${item.ubicacion || ''} ${item.province || ''}`.toLowerCase();
         const tieneTerminos = terminos.some(termino => textoBusqueda.includes(termino));
         if (antonioState.provincia) {
-            const ubicacion = (item.ubicacion || item.province || '').toLowerCase();
-            return tieneTerminos && ubicacion.includes(antonioState.provincia.toLowerCase());
+            const provLower = antonioState.provincia.toLowerCase();
+            const provinciaItem = (item.province || '').toLowerCase();
+            const ubicacionItem = (item.ubicacion || '').toLowerCase();
+            return tieneTerminos && (provinciaItem === provLower || ubicacionItem.includes(provLower));
         }
         return tieneTerminos;
     });
+
 
     if (resultados.length === 0) {
         const msgProv = antonioState.provincia ? ` en ${antonioState.provincia}` : '';
