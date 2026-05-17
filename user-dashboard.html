@@ -296,6 +296,42 @@ DOCTYPE html>
             color: #888;
             font-size: 0.9rem;
         }
+
+        /* Estilos para el Modal de Nueva Conversación (Plantillas Turista) */
+        .modal-overlay-chat {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+            z-index: 10000; align-items: center; justify-content: center;
+        }
+        .modal-overlay-chat.active { display: flex; }
+        .modal-chat {
+            background: white; border-radius: 15px; width: 90%; max-width: 540px;
+            max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+        .template-selector-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px; margin-bottom: 1.5rem;
+        }
+        .tpl-opt {
+            border: 2px solid #eee; border-radius: 10px; padding: 1rem;
+            text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .tpl-opt:hover, .tpl-opt.selected { border-color: var(--primary-color); background: #f0f7f0; }
+        .tpl-opt i { font-size: 1.6rem; color: var(--primary-color); margin-bottom: 5px; display: block; }
+        .tpl-opt span { font-size: 0.82rem; font-weight: 600; color: #333; }
+        
+        .search-results-box {
+            border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; 
+            max-height: 180px; overflow-y: auto; background: white;
+        }
+        .search-item { padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 10px; }
+        .search-item:hover { background: #f8fcf8; }
+        .search-item i { color: var(--primary-color); }
+        
+        .tpl-preview {
+            background: #f8fdf8; border-left: 4px solid var(--primary-color);
+            padding: 15px; border-radius: 8px; font-size: 0.88rem; font-style: italic;
+            margin: 1.2rem 0; white-space: pre-wrap; color: #444;
+        }
     </style>
 </head>
 <body>
@@ -780,6 +816,87 @@ DOCTYPE html>
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- Modal: Nueva Conversación con Plantillas de Turista -->
+    <div id="modal-new-conv" class="modal-overlay-chat">
+        <div class="modal-chat">
+            <div class="modal-header">
+                <h3><i class="fas fa-paper-plane"></i> Contactar Alojamiento</h3>
+                <button class="btn-close-modal" onclick="closeNewConvModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-chat-alert"></div>
+                
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">Selecciona una plantilla para facilitar tu consulta:</p>
+                
+                <div class="template-selector-grid">
+                    <div class="tpl-opt selected" onclick="setChatTemplate('busco_alojamiento', this)">
+                        <i class="fas fa-search"></i><span>Busco Alojamiento</span>
+                    </div>
+                    <div class="tpl-opt" onclick="setChatTemplate('disponibilidad', this)">
+                        <i class="fas fa-calendar-check"></i><span>Disponibilidad</span>
+                    </div>
+                    <div class="tpl-opt" onclick="setChatTemplate('busco_oferta', this)">
+                        <i class="fas fa-tags"></i><span>Pedir Oferta</span>
+                    </div>
+                    <div class="tpl-opt" onclick="setChatTemplate('info_general', this)">
+                        <i class="fas fa-info-circle"></i><span>Información</span>
+                    </div>
+                </div>
+
+                <!-- Buscador de Alojamiento -->
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label><i class="fas fa-hotel"></i> ¿A quién quieres contactar?</label>
+                    <input type="text" id="search-acc-input" placeholder="Nombre del alojamiento o pueblo..." oninput="doSearchAcc(this.value)">
+                    <div id="acc-results" class="search-results-box" style="display:none"></div>
+                    <div id="acc-selected-box" style="display:none; margin-top: 10px; padding: 10px; background: #e8f5e9; border: 1px solid var(--primary-color); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+                        <span id="acc-selected-name" style="font-weight: 600; color: var(--primary-color);"></span>
+                        <button onclick="resetAccSelection()" style="background:none; border:none; color: #e74c3c; cursor: pointer;"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+
+                <!-- Campos dinámicos según plantilla -->
+                <div id="tpl-fields-area">
+                    <div id="fields-busco_alojamiento">
+                        <div class="form-row">
+                            <div class="form-group"><label>Pueblo/Zona</label><input type="text" id="f-localidad" placeholder="Ej: Vinuesa" oninput="refreshTplPreview()"></div>
+                            <div class="form-group"><label>Personas</label><input type="number" id="f-personas" value="2" min="1" oninput="refreshTplPreview()"></div>
+                        </div>
+                    </div>
+                    <div id="fields-disponibilidad" style="display:none">
+                        <div class="form-row">
+                            <div class="form-group"><label>Llegada</label><input type="date" id="f-llegada" onchange="refreshTplPreview()"></div>
+                            <div class="form-group"><label>Salida</label><input type="date" id="f-salida" onchange="refreshTplPreview()"></div>
+                        </div>
+                    </div>
+                    <div id="fields-busco_oferta" style="display:none">
+                        <div class="form-group">
+                            <label>Tipo de oferta</label>
+                            <select id="f-oferta" onchange="refreshTplPreview()">
+                                <option value="fin de semana">Fin de semana</option>
+                                <option value="estancia larga">Estancia larga</option>
+                                <option value="última hora">Última hora</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="fields-info_general" style="display:none">
+                        <div class="form-group">
+                            <label>Tu pregunta</label>
+                            <textarea id="f-pregunta" rows="2" placeholder="¿Admiten mascotas? ¿Tienen cuna?..." oninput="refreshTplPreview()"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tpl-preview" id="tpl-preview-text">Completa los datos...</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" style="padding: 0.6rem 1.2rem; border-radius: 20px; border: none; cursor: pointer;" onclick="closeNewConvModal()">Cancelar</button>
+                <button id="btn-submit-chat" class="btn-primary" style="padding: 0.6rem 1.5rem; border-radius: 20px; border: none; cursor: pointer; font-weight: 600;" onclick="submitNewChat()">
+                    <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                </button>
+            </div>
+        </div>
     </div>
 
     <footer class="footer">
@@ -1958,13 +2075,156 @@ DOCTYPE html>
         }, 10000);
     }
 
-    // Mostrar modal para nueva conversación
+    // ============================================================
+    // LOGICA NUEVA CONVERSACIÓN CON PLANTILLAS
+    // ============================================================
+    let selAcc = null;
+    let curTpl = 'busco_alojamiento';
+    let searchWait = null;
+
     async function showNewConversationModal() {
-        // Por ahora, mostrar un mensaje simple
-        alert('Para iniciar una nueva conversación, visita la página del alojamiento, restaurante o servicio que te interese y haz clic en "Contactar".\n\nEsta funcionalidad estará disponible próximamente en el dashboard.');
-        
-        // TODO: Implementar búsqueda de usuarios/entidades para iniciar conversación
+        const modal = document.getElementById('modal-new-conv');
+        if (modal) {
+            modal.classList.add('active');
+            resetAccSelection();
+            refreshTplPreview();
+        }
     }
+
+    window.closeNewConvModal = () => {
+        document.getElementById('modal-new-conv').classList.remove('active');
+    };
+
+    window.setChatTemplate = (tpl, el) => {
+        curTpl = tpl;
+        document.querySelectorAll('.tpl-opt').forEach(opt => opt.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        ['busco_alojamiento', 'disponibilidad', 'busco_oferta', 'info_general'].forEach(t => {
+            const div = document.getElementById('fields-' + t);
+            if (div) div.style.display = (t === tpl) ? 'block' : 'none';
+        });
+        refreshTplPreview();
+    };
+
+    window.doSearchAcc = (q) => {
+        clearTimeout(searchWait);
+        if (q.length < 3) { document.getElementById('acc-results').style.display = 'none'; return; }
+        
+        searchWait = setTimeout(async () => {
+            try {
+                const res = await fetch(`api/search_accommodation_contact.php?query=${encodeURIComponent(q)}`);
+                const data = await res.json();
+                const box = document.getElementById('acc-results');
+                if (data.success && data.data.results.length > 0) {
+                    box.innerHTML = data.data.results.map(a => `
+                        <div class="search-item" onclick='selectAcc(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
+                            <i class="fas fa-home"></i>
+                            <div>
+                                <div style="font-weight:600; font-size:0.85rem;">${a.name}</div>
+                                <div style="font-size:0.75rem; color:#888;">${a.municipality || ''} (${a.province || ''})</div>
+                            </div>
+                        </div>
+                    `).join('');
+                    box.style.display = 'block';
+                } else {
+                    box.innerHTML = '<div class="search-item" style="color:#999; font-size:0.8rem;">No se encontraron resultados</div>';
+                    box.style.display = 'block';
+                }
+            } catch (e) { console.error(e); }
+        }, 400);
+    };
+
+    window.selectAcc = (a) => {
+        selAcc = a;
+        document.getElementById('acc-results').style.display = 'none';
+        document.getElementById('search-acc-input').style.display = 'none';
+        document.getElementById('acc-selected-box').style.display = 'flex';
+        document.getElementById('acc-selected-name').textContent = a.name;
+        refreshTplPreview();
+    };
+
+    window.resetAccSelection = () => {
+        selAcc = null;
+        document.getElementById('search-acc-input').value = '';
+        document.getElementById('search-acc-input').style.display = 'block';
+        document.getElementById('acc-selected-box').style.display = 'none';
+        refreshTplPreview();
+    };
+
+    window.refreshTplPreview = () => {
+        const preview = document.getElementById('tpl-preview-text');
+        let msg = "";
+        const accName = selAcc ? selAcc.name : "[Alojamiento]";
+        
+        switch(curTpl) {
+            case 'busco_alojamiento':
+                const loc = document.getElementById('f-localidad').value || "[Localidad]";
+                const per = document.getElementById('f-personas').value || "2";
+                msg = `Hola, 👋\n\nEstoy buscando alojamiento en ${loc} para ${per} personas.\n\n¿Tienen disponibilidad en ${accName}? Muchas gracias.`;
+                break;
+            case 'disponibilidad':
+                const checkin = document.getElementById('f-llegada').value || "[Fecha]";
+                const checkout = document.getElementById('f-salida').value || "[Fecha]";
+                msg = `Hola, 😊\n\nQuería consultar disponibilidad en ${accName} para las fechas del ${checkin} al ${checkout}.\n\nMuchas gracias.`;
+                break;
+            case 'busco_oferta':
+                const type = document.getElementById('f-oferta').value;
+                msg = `Hola, 👋\n\nEstoy buscando una oferta de ${type} para ${accName}.\n\n¿Tienen algún descuento disponible? Gracias.`;
+                break;
+            case 'info_general':
+                const q = document.getElementById('f-pregunta').value || "...";
+                msg = `Hola, me gustaría hacerles una consulta sobre ${accName}:\n\n${q}\n\nGracias.`;
+                break;
+        }
+        preview.textContent = msg;
+    };
+
+    window.submitNewChat = async () => {
+        const alertDiv = document.getElementById('modal-chat-alert');
+        alertDiv.innerHTML = '';
+        
+        if (!selAcc || !selAcc.owner_user_id) {
+            alertDiv.innerHTML = '<div class="alert-msg warning"><i class="fas fa-exclamation-triangle"></i> Selecciona un alojamiento válido.</div>';
+            return;
+        }
+
+        const content = document.getElementById('tpl-preview-text').textContent;
+        const btn = document.getElementById('btn-submit-chat');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+        try {
+            // 1. Iniciar conversación
+            const resConv = await fetch('api/chat.php?action=start_conversation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ recipient_id: selAcc.owner_user_id })
+            });
+            const dataConv = await resConv.json();
+            
+            if (!dataConv.success) throw new Error(dataConv.error || "No se pudo iniciar el chat");
+            
+            const convId = dataConv.data.conversation_id;
+
+            // 2. Enviar primer mensaje
+            await fetch('api/chat.php?action=send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conversation_id: convId, content: content })
+            });
+
+            alertDiv.innerHTML = '<div class="alert-msg success"><i class="fas fa-check-circle"></i> ¡Mensaje enviado con éxito!</div>';
+            setTimeout(() => {
+                closeNewConvModal();
+                loadConversations().then(() => selectConversation(convId));
+            }, 1500);
+        } catch (e) {
+            alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> ${e.message}</div>`;
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Mensaje';
+        }
+    };
 
     // Función auxiliar: calcular tiempo transcurrido
     function getTimeAgo(timestamp) {
