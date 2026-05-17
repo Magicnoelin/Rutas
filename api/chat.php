@@ -114,6 +114,7 @@ try {
                             $avatarColumnSQL,
                             $userTypeSQL,
                             (SELECT content FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
+                            (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :me) as unread_count
                         FROM conversations c
                         JOIN users u ON (CASE WHEN c.user_1_id = :me THEN c.user_2_id ELSE c.user_1_id END) = u.id
                         WHERE c.user_1_id = :me OR c.user_2_id = :me
@@ -126,7 +127,6 @@ try {
                             c.id as conversation_id,
                             c.last_message_at,
                             CASE 
-                                WHEN c.user_1_id = $userId THEN c.provider_id
                                 WHEN c.user_1_id = :me THEN c.provider_id
                                 ELSE c.user_1_id
                             END as other_user_id,
@@ -134,13 +134,9 @@ try {
                             u.last_name,
                             $avatarColumnSQL,
                             $userTypeSQL,
-                            (SELECT message_text FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
-                            (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != $userId) as unread_count
                             (SELECT content FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
                             (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :me) as unread_count
                         FROM conversations c
-                        JOIN users u ON (CASE WHEN c.user_1_id = $userId THEN c.provider_id ELSE c.user_1_id END) = u.id
-                        WHERE c.user_1_id = $userId OR c.provider_id = $userId
                         JOIN users u ON (CASE WHEN c.user_1_id = :me THEN c.provider_id ELSE c.user_1_id END) = u.id
                         WHERE c.user_1_id = :me OR c.provider_id = :me
                         ORDER BY c.last_message_at DESC
@@ -152,13 +148,6 @@ try {
                 
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([':me' => $userId]);
-                
-                // Ejecutar según estructura
-                if ($hasUser2) {
-                    $stmt->execute([':me' => $userId]);
-                } else {
-                    $stmt->execute(); // Sin parámetros para estructura provider_id
-                }
                 
                 $conversations = $stmt->fetchAll();
                 
