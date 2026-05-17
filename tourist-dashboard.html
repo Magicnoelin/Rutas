@@ -979,6 +979,9 @@
                             <button class="btn-template" onclick="useTemplate('disponibilidad')">
                                 <i class="fas fa-calendar-check"></i> Consultar disponibilidad
                             </button>
+                            <button class="btn-template" onclick="useTemplate('busco_oferta')">
+                                <i class="fas fa-tags"></i> Pedir oferta
+                            </button>
                         </div>
 
                         <!-- Input de mensaje -->
@@ -1023,6 +1026,10 @@
                         <div class="template-option" onclick="selectTemplate('disponibilidad', this)">
                             <i class="fas fa-calendar-check"></i>
                             <span>Disponibilidad</span>
+                        </div>
+                        <div class="template-option" onclick="selectTemplate('busco_oferta', this)">
+                            <i class="fas fa-tags"></i>
+                            <span>Busco Oferta</span>
                         </div>
                         <div class="template-option" onclick="selectTemplate('mensaje_libre', this)">
                             <i class="fas fa-pencil-alt"></i>
@@ -1098,6 +1105,19 @@
                             <option value="4">4 personas</option>
                             <option value="5">5 personas</option>
                             <option value="6+">6 o más</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ===== PLANTILLA: BUSCO OFERTA ===== -->
+                <div id="tpl-busco_oferta" style="display:none">
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Tipo de oferta que buscas</label>
+                        <select id="tpl-oferta-tipo" onchange="updateMessagePreview()">
+                            <option value="fin de semana" selected>Fin de semana</option>
+                            <option value="estancia larga">Estancia larga (+5 días)</option>
+                            <option value="última hora">Última hora (Last minute)</option>
+                            <option value="romántica">Escapada romántica</option>
                         </select>
                     </div>
                 </div>
@@ -1205,6 +1225,18 @@
                     <div class="form-group">
                         <label>¿Qué quieres saber?</label>
                         <textarea id="ct-pregunta" rows="3" placeholder="¿Hay piscina? ¿Admiten mascotas?..." oninput="updateChatPreview()"></textarea>
+                    </div>
+                </div>
+
+                <!-- Plantilla busco oferta -->
+                <div id="chat-tpl-busco_oferta" style="display:none">
+                    <div class="form-group">
+                        <label>¿Qué oferta buscas?</label>
+                        <select id="ct-oferta-tipo" onchange="updateChatPreview()">
+                            <option value="fin de semana" selected>Fin de semana</option>
+                            <option value="estancia larga">Estancia larga</option>
+                            <option value="última hora">Última hora</option>
+                        </select>
                     </div>
                 </div>
 
@@ -1542,13 +1574,14 @@
         const titles = {
             busco_alojamiento: '🛏️ Busco Alojamiento',
             info_general: '❓ Pedir Información',
-            disponibilidad: '📅 Consultar Disponibilidad'
+            disponibilidad: '📅 Consultar Disponibilidad',
+            busco_oferta: '🏷️ Pedir Oferta'
         };
         document.getElementById('modal-template-title').innerHTML =
             `<i class="fas fa-magic"></i> ${titles[templateName] || templateName}`;
 
         // Mostrar plantilla correcta
-        ['busco_alojamiento', 'info_general', 'disponibilidad'].forEach(t => {
+        ['busco_alojamiento', 'info_general', 'disponibilidad', 'busco_oferta'].forEach(t => {
             const el = document.getElementById('chat-tpl-' + t);
             if (el) el.style.display = t === templateName ? 'block' : 'none';
         });
@@ -1601,7 +1634,7 @@
     }
 
     function showTemplateFields(name) {
-        ['busco_alojamiento', 'disponibilidad', 'info_general', 'mensaje_libre'].forEach(t => {
+        ['busco_alojamiento', 'disponibilidad', 'info_general', 'mensaje_libre', 'busco_oferta'].forEach(t => {
             const el = document.getElementById('tpl-' + t);
             if (el) el.style.display = t === name ? 'block' : 'none';
         });
@@ -1716,6 +1749,14 @@
                     : 'en las fechas indicadas';
 
                 return `Hola, 😊\n\n¿Tenéis disponibilidad ${fechas} para ${personas} persona${personas == 1 ? '' : 's'}?\n\nMuchas gracias.`;
+            }
+
+            case 'busco_oferta': {
+                const tipo = document.getElementById(prefix + 'oferta-tipo')?.value || 'fin de semana';
+                const localidad = selectedAccommodation ? selectedAccommodation.municipality : (document.getElementById('tpl-localidad')?.value || '');
+                const locText = localidad ? ` en ${localidad}` : '';
+                
+                return `Hola, 👋\n\nEstoy buscando una oferta para un ${tipo}${locText}. ¿Tenéis algún descuento o pack especial disponible para esas características?\n\nMuchas gracias.`;
             }
 
             case 'info_general': {
