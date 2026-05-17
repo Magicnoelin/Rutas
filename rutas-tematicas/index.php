@@ -31,6 +31,7 @@ $alojamientos = [];
 $lugares      = [];
 $actividades  = [];
 $eventos      = [];
+$faqs         = []; // FAQs desde BD (tabla route_faqs)
 $error        = null;
 
 try {
@@ -339,6 +340,23 @@ try {
         }
     }
 
+    // 4. FAQs personalizadas desde BD (tabla route_faqs)
+    // Nota: si la tabla no existe, se captura el error silenciosamente
+    try {
+        $stmtFaqs = $pdo->prepare("
+            SELECT id, question, answer, display_order
+            FROM route_faqs
+            WHERE route_id = :route_id AND is_active = 1
+            ORDER BY display_order ASC, id ASC
+        ");
+        $stmtFaqs->execute([':route_id' => $ruta['id']]);
+        $faqs = $stmtFaqs->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Tabla no existe aún → usar fallback automático
+        $faqs = [];
+        error_log('route_faqs table not found (first run?): ' . $e->getMessage());
+    }
+
     // Incrementar visitas
     $pdo->prepare("UPDATE routes SET views_count = COALESCE(views_count,0)+1 WHERE id=:id")
         ->execute([':id' => $ruta['id']]);
@@ -429,7 +447,7 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
 <noscript><link rel="stylesheet" href="/rutas-tematicas/css/ruta.css"></noscript>
 
 <!-- Schema.org JSON-LD -->
-<?php if ($ruta): renderSchema($ruta, $alojamientos, $lugares, $actividades, $eventos); endif; ?>
+<?php if ($ruta): renderSchema($ruta, $alojamientos, $lugares, $actividades, $eventos, $faqs); endif; ?>
 
 <!-- GTM diferido -->
 <script>
@@ -495,7 +513,7 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
 <?php renderEventos($eventos, $ruta); ?>
 
 <!-- ── FAQ + SEO TEXT ──────────────────────────────────────── -->
-<?php renderFaq($ruta, $alojamientos, $lugares, $actividades); ?>
+<?php renderFaq($ruta, $alojamientos, $lugares, $actividades, $faqs); ?>
 
 <!-- ── CTA FINAL ───────────────────────────────────────────── -->
 <section class="rt-cta-final">

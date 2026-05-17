@@ -5,7 +5,7 @@
  * + FAQPage + BreadcrumbList
  */
 
-function renderSchema(array $ruta, array $alojamientos, array $lugares, array $actividades, array $eventos): void
+function renderSchema(array $ruta, array $alojamientos, array $lugares, array $actividades, array $eventos, array $faqs = []): void
 {
     $baseUrl  = 'https://rutasrurales.io';
     $rutaUrl  = $baseUrl . '/rutas/' . $ruta['slug'];
@@ -129,53 +129,84 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
         ],
     ];
 
-    // ── FAQPage ──────────────────────────────────────────────────────────────
+    // ── FAQPage (JSON-LD Schema) ─────────────────────────────────────────────
     $provincia = $ruta['province'] ?? 'Soria';
+    $duracion  = (int)($ruta['duration_days'] ?? 3);
+
+    // Determinar época del año automáticamente
+    $mes_actual = (int)date('m');
+    $evento_proximo = match(true) {
+        $mes_actual >= 3 && $mes_actual <= 5  => 'el puente de mayo o primavera',
+        $mes_actual >= 6 && $mes_actual <= 8  => 'las vacaciones de verano',
+        $mes_actual >= 9 && $mes_actual <= 11 => 'el puente de diciembre u otoño',
+        default                               => 'las vacaciones de Navidad o invierno',
+    };
+
+    // Construir mainEntity para FAQPage
+    $faqMainEntity = [];
+
+    if (!empty($faqs)) {
+        // PRIORIDAD 1: FAQs desde BD
+        foreach ($faqs as $f) {
+            $faqMainEntity[] = [
+                '@type'          => 'Question',
+                'name'           => $f['question'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $f['answer'],
+                ],
+            ];
+        }
+    } else {
+        // PRIORIDAD 2: Fallback automático con lógica temporal
+        $faqMainEntity = [
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Qué hacer en ' . $provincia . ' durante ' . $evento_proximo . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => 'En ' . $provincia . ' durante ' . $evento_proximo . ' puedes visitar sus monumentos y parajes naturales, hacer senderismo y rutas por la zona y disfrutar de la gastronomía local. Es uno de los destinos rurales más auténticos de España.',
+                ],
+            ],
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Cuánto cuesta una escapada rural a ' . $provincia . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => 'Una escapada de ' . $duracion . ' días a ' . $provincia . ' tiene un coste estimado de 350€ por persona, incluyendo alojamiento en casa rural, actividades y gastronomía local.',
+                ],
+            ],
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Hay casas rurales disponibles en ' . $provincia . ' para ' . $evento_proximo . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => 'Sí, en rutasrurales.io encontrarás casas rurales y apartamentos turísticos en ' . $provincia . ' disponibles para ' . $evento_proximo . '. Te recomendamos reservar con antelación ya que es una fecha muy demandada.',
+                ],
+            ],
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Cuántos días necesito para visitar ' . $provincia . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => 'Con ' . $duracion . ' días tienes tiempo suficiente para disfrutar de los principales atractivos de ' . $provincia . '. El itinerario recomendado incluye historia, naturaleza, gastronomía y cultura.',
+                ],
+            ],
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Es ' . $provincia . ' un buen destino para ' . $evento_proximo . ' con niños?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $provincia . ' es un destino ideal para familias con niños durante ' . $evento_proximo . '. Las rutas de senderismo de dificultad baja, los centros de interpretación y los espacios naturales hacen de esta provincia un lugar perfecto para el turismo familiar.',
+                ],
+            ],
+        ];
+    }
+
     $faqPage = [
         '@context'   => 'https://schema.org',
         '@type'      => 'FAQPage',
-        'mainEntity' => [
-            [
-                '@type'          => 'Question',
-                'name'           => '¿Qué hacer en ' . $provincia . ' el puente del 1 de mayo?',
-                'acceptedAnswer' => [
-                    '@type' => 'Answer',
-                    'text'  => 'En ' . $provincia . ' el puente del 1 de mayo puedes visitar el yacimiento de Numancia, hacer senderismo en la Laguna Negra, explorar el Cañón del Río Lobos y disfrutar de eventos culturales locales. Es uno de los destinos rurales más auténticos de España.',
-                ],
-            ],
-            [
-                '@type'          => 'Question',
-                'name'           => '¿Cuánto cuesta una escapada rural a ' . $provincia . ' el puente de mayo?',
-                'acceptedAnswer' => [
-                    '@type' => 'Answer',
-                     'text'  => 'Una escapada de 3 días a ' . $provincia . ' el puente de mayo tiene un coste estimado de 350€ por persona, incluyendo alojamiento en casa rural, actividades y gastronomía local.',
-                ],
-            ],
-            [
-                '@type'          => 'Question',
-                'name'           => '¿Hay casas rurales disponibles en ' . $provincia . ' para el puente del 1 de mayo?',
-                'acceptedAnswer' => [
-                    '@type' => 'Answer',
-                    'text'  => 'Sí, en rutasrurales.io encontrarás casas rurales y apartamentos turísticos en ' . $provincia . ' disponibles para el puente del 1 de mayo. Te recomendamos reservar con antelación ya que es una fecha muy demandada.',
-                ],
-            ],
-            [
-                '@type'          => 'Question',
-                'name'           => '¿Cuántos días necesito para visitar ' . $provincia . ' el puente de mayo?',
-                'acceptedAnswer' => [
-                    '@type' => 'Answer',
-                    'text'  => 'Con ' . ($ruta['duration_days'] ?? 3) . ' días tienes tiempo suficiente para disfrutar de los principales atractivos de ' . $provincia . '. El itinerario recomendado incluye historia, naturaleza, gastronomía y cultura.',
-                ],
-            ],
-            [
-                '@type'          => 'Question',
-                'name'           => '¿Es ' . $provincia . ' un buen destino para el puente del 1 de mayo con niños?',
-                'acceptedAnswer' => [
-                    '@type' => 'Answer',
-                    'text'  => $provincia . ' es un destino ideal para familias con niños el puente de mayo. Las rutas de senderismo de dificultad baja, los yacimientos arqueológicos y los espacios naturales hacen de esta provincia un lugar perfecto para el turismo familiar.',
-                ],
-            ],
-        ],
+        'mainEntity' => $faqMainEntity,
     ];
 
     // ── Renderizar todos los schemas ─────────────────────────────────────────
