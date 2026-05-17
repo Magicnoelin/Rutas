@@ -262,6 +262,22 @@
 .rt-lugar__link:hover { text-decoration: underline; }
 
 /* ── ITINERARIO ─────────────────────────────────────────────── */
+
+/* Imagen pequeña en items del itinerario */
+.rt-dia__item-img {
+  flex-shrink: 0;
+  width: 100px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+.rt-dia__item-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .rt-itinerario { position: relative; padding-left: 40px; }
 .rt-itinerario::before {
   content: ''; position: absolute; left: 18px; top: 0; bottom: 0;
