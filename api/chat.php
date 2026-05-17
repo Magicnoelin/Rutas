@@ -78,7 +78,20 @@ try {
 }
 
 // --------------------------------------------------------------------------
-// 2. LÓGICA DE NEGOCIO
+// 2. DETECCIÓN DE ESTRUCTURA (Para compatibilidad total)
+// --------------------------------------------------------------------------
+$convColumns = $pdo->query("SHOW COLUMNS FROM conversations")->fetchAll(PDO::FETCH_COLUMN);
+$user2Col = in_array('user_2_id', $convColumns) ? 'user_2_id' : (in_array('provider_id', $convColumns) ? 'provider_id' : null);
+
+$msgColumns = $pdo->query("SHOW COLUMNS FROM messages")->fetchAll(PDO::FETCH_COLUMN);
+$contentCol = in_array('content', $msgColumns) ? 'content' : (in_array('message_text', $msgColumns) ? 'message_text' : 'content');
+
+$userColumns = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN);
+$avatarColumnSQL = in_array('avatar_url', $userColumns) ? 'u.avatar_url' : 'NULL as avatar_url';
+$userTypeSQL = in_array('user_type', $userColumns) ? 'u.user_type' : "'turista' as user_type";
+
+// --------------------------------------------------------------------------
+// 3. LÓGICA DE NEGOCIO
 // --------------------------------------------------------------------------
 
 $action = $_GET['action'] ?? '';
@@ -88,66 +101,34 @@ try {
         // Listar todas las conversaciones del usuario (para el Dashboard)
         case 'list_conversations':
             try {
-                // Verificar estructura de la tabla conversations
-                $convColumns = $pdo->query("SHOW COLUMNS FROM conversations")->fetchAll(PDO::FETCH_COLUMN);
-                $hasUser2 = in_array('user_2_id', $convColumns);
-                $hasProvider = in_array('provider_id', $convColumns);
-                
-                // Comprobar columnas en users
-                $userColumns = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN);
-                $avatarColumnSQL = in_array('avatar_url', $userColumns) ? 'u.avatar_url' : 'NULL as avatar_url';
-                $userTypeSQL = in_array('user_type', $userColumns) ? 'u.user_type' : "'turista' as user_type";
+                if (!$user2Col) jsonError('Estructura de tabla conversations no compatible', 500);
 
-                // Adaptar consulta según estructura de tabla
-                if ($hasUser2) {
-                    // Estructura nueva (user_1_id, user_2_id)
-                    $sql = "
-                        SELECT 
-                            c.id as conversation_id,
-                            c.last_message_at,
-                            CASE 
-                                WHEN c.user_1_id = :me THEN c.user_2_id
-                                ELSE c.user_1_id
-                            END as other_user_id,
-                            u.first_name,
-                            u.last_name,
-                            $avatarColumnSQL,
-                            $userTypeSQL,
-                            (SELECT content FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
-                            (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :me) as unread_count
-                        FROM conversations c
-                        JOIN users u ON (CASE WHEN c.user_1_id = :me THEN c.user_2_id ELSE c.user_1_id END) = u.id
-                        WHERE c.user_1_id = :me OR c.user_2_id = :me
-                        ORDER BY c.last_message_at DESC
-                    ";
-                } else if ($hasProvider) {
-                    // Estructura antigua (user_1_id, provider_id)
-                    $sql = "
-                        SELECT 
-                            c.id as conversation_id,
-                            c.last_message_at,
-                            CASE 
-                                WHEN c.user_1_id = :me THEN c.provider_id
-                                ELSE c.user_1_id
-                            END as other_user_id,
-                            u.first_name,
-                            u.last_name,
-                            $avatarColumnSQL,
-                            $userTypeSQL,
-                            (SELECT content FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
-                            (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :me) as unread_count
-                        FROM conversations c
-                        JOIN users u ON (CASE WHEN c.user_1_id = :me THEN c.provider_id ELSE c.user_1_id END) = u.id
-                        WHERE c.user_1_id = :me OR c.provider_id = :me
-                        ORDER BY c.last_message_at DESC
-                    ";
-                } else {
-                    jsonError('Estructura de tabla conversations no compatible', 500);
-                    break;
-                }
+                $sql = "
+                    SELECT 
+                        c.id as conversation_id,
+                        c.last_message_at,
+                        CASE 
+                            WHEN c.user_1_id = :me1 THEN c.$user2Col
+                            ELSE c.user_1_id
+                        END as other_user_id,
+                        u.first_name,
+                        u.last_name,
+                        $avatarColumnSQL,
+                        $userTypeSQL,
+                        (SELECT $contentCol FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
+                        (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :me2) as unread_count
+                    FROM conversations c
+                    JOIN users u ON (CASE WHEN c.user_1_id = :me3 THEN c.$user2Col ELSE c.user_1_id END) = u.id
+                    WHERE c.user_1_id = :me4 OR c.$user2Col = :me5
+                    ORDER BY c.last_message_at DESC
+                ";
                 
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute([':me' => $userId]);
+
+                $stmt->execute([
+                    ':me1' => $userId, ':me2' => $userId, ':me3' => $userId, 
+                    ':me4' => $userId, ':me5' => $userId
+                ]);
                 
                 $conversations = $stmt->fetchAll();
                 
@@ -163,34 +144,21 @@ try {
             if (empty($_GET['conversation_id'])) jsonError('ID de conversación requerido', 400);
             
             $convId = sanitizeInput($_GET['conversation_id']);
-            
-            // Verificar estructura de conversations
-            $convColumns = $pdo->query("SHOW COLUMNS FROM conversations")->fetchAll(PDO::FETCH_COLUMN);
-            $hasUser2 = in_array('user_2_id', $convColumns);
-            $hasProvider = in_array('provider_id', $convColumns);
-            
-            // Verificar pertenencia según estructura
-            if ($hasUser2) {
-                $check = $pdo->prepare("SELECT id FROM conversations WHERE id = ? AND (user_1_id = ? OR user_2_id = ?)");
-                $check->execute([$convId, $userId, $userId]);
-            } else if ($hasProvider) {
-                $check = $pdo->prepare("SELECT id FROM conversations WHERE id = ? AND (user_1_id = ? OR provider_id = ?)");
-                $check->execute([$convId, $userId, $userId]);
-            }
+
+            if (!$user2Col) jsonError('Estructura de tabla conversations no compatible', 500);
+
+            $check = $pdo->prepare("SELECT id FROM conversations WHERE id = ? AND (user_1_id = ? OR $user2Col = ?)");
+            $check->execute([$convId, $userId, $userId]);
             
             if (!$check->fetch()) jsonError('No tienes permiso para ver esta conversación', 403);
 
             // Marcar como leídos los mensajes recibidos
             $markRead = $pdo->prepare("UPDATE messages SET is_read = 1 WHERE conversation_id = ? AND sender_id != ?");
             $markRead->execute([$convId, $userId]);
-
-            // Verificar columnas en users
-            $userColumns = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN);
-            $avatarSQL = in_array('avatar_url', $userColumns) ? 'u.avatar_url' : 'NULL as avatar_url';
             
             // Obtener mensajes
             $sql = "
-                SELECT m.*, u.first_name, $avatarSQL 
+                SELECT m.*, u.first_name, $avatarColumnSQL 
                 FROM messages m 
                 JOIN users u ON m.sender_id = u.id
                 WHERE m.conversation_id = ? 
@@ -213,7 +181,8 @@ try {
             // VALIDAR PERMISOS DE MEMBRESÍA
             // Obtener información de ambos usuarios
             $stmt = $pdo->prepare("
-                SELECT id, user_type, LOWER(COALESCE(membership_type, 'free')) as membership_type
+                SELECT id, user_type, LOWER(COALESCE(membership_type, 'free')) as membership_type,
+                       (SELECT GROUP_CONCAT(r.slug) FROM roles r JOIN role_user ru ON ru.role_id = r.id WHERE ru.user_id = users.id) as all_roles
                 FROM users
                 WHERE id IN (?, ?)
             ");
@@ -230,10 +199,16 @@ try {
             $initiator = $users[$userId];
             $recipient = $users[$recipientId];
             
+            $myRoles = explode(',', $initiator['all_roles'] ?? '');
+            $recipientRoles = explode(',', $recipient['all_roles'] ?? '');
+
             // Determinar tipos
-            $initiatorType = $initiator['user_type'] === 'turista' ? 'turista' : 'gestor';
             $recipientType = $recipient['user_type'] === 'turista' ? 'turista' : 'gestor';
-            
+
+            // Lógica inteligente: Si tengo el rol turista y contacto a un gestor, actúo como turista
+            // sin importar mi user_type principal.
+            $initiatorType = (in_array('turista', $myRoles) && $recipientType === 'gestor') ? 'turista' : ($initiator['user_type'] === 'turista' ? 'turista' : 'gestor');
+
             // Verificar permisos
             $stmtPerm = $pdo->prepare("
                 SELECT can_initiate_conversation, description
@@ -265,19 +240,25 @@ try {
             }
 
             // Verificar si ya existe conversación
+            if (!$user2Col) jsonError('Estructura de tabla no detectada', 500);
+
             $sql = "SELECT id FROM conversations 
-                    WHERE (user_1_id = :me AND user_2_id = :other) 
-                       OR (user_1_id = :other AND user_2_id = :me) 
+                    WHERE (user_1_id = :me1 AND $user2Col = :other1) 
+                       OR (user_1_id = :other2 AND $user2Col = :me2) 
                     LIMIT 1";
+            
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([':me' => $userId, ':other' => $recipientId]);
+            $stmt->execute([
+                ':me1' => $userId, ':other1' => $recipientId, 
+                ':other2' => $recipientId, ':me2' => $userId
+            ]);
             $existing = $stmt->fetch();
 
             if ($existing) {
                 jsonSuccess(['conversation_id' => $existing['id'], 'is_new' => false]);
             } else {
                 // Crear nueva conversación
-                $stmt = $pdo->prepare("INSERT INTO conversations (user_1_id, user_2_id) VALUES (?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO conversations (user_1_id, $user2Col) VALUES (?, ?)");
                 $stmt->execute([$userId, $recipientId]);
                 jsonSuccess(['conversation_id' => $pdo->lastInsertId(), 'is_new' => true]);
             }
@@ -294,11 +275,10 @@ try {
             if (!$convId || !$content) jsonError('Datos incompletos', 400);
 
             // Verificar que la conversación existe y obtener el destinatario
-            $checkConv = $pdo->prepare("
-                SELECT user_1_id, user_2_id 
-                FROM conversations 
-                WHERE id = ? AND (user_1_id = ? OR user_2_id = ?)
-            ");
+            if (!$user2Col) jsonError('Estructura de tabla no detectada', 500);
+
+            $checkConv = $pdo->prepare("SELECT user_1_id, $user2Col as other_id FROM conversations WHERE id = ? AND (user_1_id = ? OR $user2Col = ?)");
+
             $checkConv->execute([$convId, $userId, $userId]);
             $conversation = $checkConv->fetch();
             
@@ -306,7 +286,7 @@ try {
             
             // Determinar el destinatario
             $recipientId = ($conversation['user_1_id'] == $userId) 
-                ? $conversation['user_2_id'] 
+                ? $conversation['other_id'] 
                 : $conversation['user_1_id'];
 
             // VALIDAR PERMISOS Y LÍMITES
@@ -372,7 +352,7 @@ try {
             }
 
             // Insertar mensaje
-            $stmt = $pdo->prepare("INSERT INTO messages (conversation_id, sender_id, content) VALUES (?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO messages (conversation_id, sender_id, $contentCol) VALUES (?, ?, ?)");
             $stmt->execute([$convId, $userId, $content]);
             
             // Incrementar contador diario
