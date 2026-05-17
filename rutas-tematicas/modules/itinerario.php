@@ -16,9 +16,28 @@ function renderItinerario(array $ruta, array $alojamientos, array $lugares, arra
         $itemsPorDia[$dia][] = $item;
     }
 
+    // Mapa de tipos: soporta tanto inglés como español
     $iconosTipo = [
-        'name'        => ['alojamiento' => '🏠', 'lugar' => '🏛️', 'actividad' => '🥾', 'evento' => '🎭'],
-        'label'       => ['alojamiento' => 'Alojamiento', 'lugar' => 'Lugar de interés', 'actividad' => 'Actividad', 'evento' => 'Evento'],
+        'name'        => [
+            'alojamiento'   => '🏠',
+            'accommodation' => '🏠',
+            'lugar'         => '🏛️',
+            'place'         => '🏛️',
+            'actividad'     => '🥾',
+            'activity'      => '🥾',
+            'evento'        => '🎭',
+            'event'         => '🎭',
+        ],
+        'label'       => [
+            'alojamiento'   => 'Alojamiento',
+            'accommodation' => 'Alojamiento',
+            'lugar'         => 'Lugar de interés',
+            'place'         => 'Lugar de interés',
+            'actividad'     => 'Actividad',
+            'activity'      => 'Actividad',
+            'evento'        => 'Evento',
+            'event'         => 'Evento',
+        ],
     ];
 ?>
 <section class="rt-section" id="itinerario">

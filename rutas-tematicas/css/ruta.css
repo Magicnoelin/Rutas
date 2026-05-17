@@ -308,10 +308,14 @@
   font-size: 0.72rem; font-weight: 700;
   padding: 2px 8px; border-radius: 10px;
 }
-.rt-tag--alojamiento { background: #e3f2fd; color: #1565c0; }
-.rt-tag--lugar       { background: #f3e5f5; color: #6a1b9a; }
-.rt-tag--actividad   { background: #e8f5e9; color: #2e7d32; }
-.rt-tag--evento      { background: #fff3e0; color: #e65100; }
+.rt-tag--alojamiento,
+.rt-tag--accommodation { background: #e3f2fd; color: #1565c0; }
+.rt-tag--lugar,
+.rt-tag--place         { background: #f3e5f5; color: #6a1b9a; }
+.rt-tag--actividad,
+.rt-tag--activity      { background: #e8f5e9; color: #2e7d32; }
+.rt-tag--evento,
+.rt-tag--event         { background: #fff3e0; color: #e65100; }
 .rt-tag--slot        { background: var(--rt-gris-bg); color: var(--rt-texto-suave); }
 .rt-tag--highlight   { background: #fff8f0; color: var(--rt-marron); }
 

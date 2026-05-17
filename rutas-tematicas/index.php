@@ -59,6 +59,33 @@ try {
 
     $ruta['itinerary_json'] = json_decode($ruta['itinerary_json'] ?? '[]', true);
 
+    // Normalizar formato del itinerario: soportar tanto el formato array estándar
+    // como el formato antiguo con clave "steps" (ej: {"steps": [...]})
+    if (is_array($ruta['itinerary_json'])) {
+        if (isset($ruta['itinerary_json']['steps'])) {
+            // Formato antiguo: {"steps": [{"place_name": "...", "description": "..."}, ...]}
+            $ruta['itinerary_json'] = $ruta['itinerary_json']['steps'];
+        }
+        // Si es un array indexado pero los elementos no tienen 'titulo', intentar normalizar
+        if (!empty($ruta['itinerary_json']) && !isset($ruta['itinerary_json'][0]['titulo'])) {
+            $normalized = [];
+            foreach ($ruta['itinerary_json'] as $step) {
+                if (is_array($step)) {
+                    $normalized[] = [
+                        'dia'         => $step['dia'] ?? (count($normalized) + 1),
+                        'fecha'       => $step['fecha'] ?? '',
+                        'titulo'      => $step['titulo'] ?? $step['place_name'] ?? $step['name'] ?? 'Punto de interés',
+                        'descripcion' => $step['descripcion'] ?? $step['description'] ?? '',
+                        'icono'       => $step['icono'] ?? '📍',
+                    ];
+                }
+            }
+            if (!empty($normalized)) {
+                $ruta['itinerary_json'] = $normalized;
+            }
+        }
+    }
+
     // 2. Items de la ruta (columnas reales confirmadas)
     $stmtItems = $pdo->prepare("
         SELECT id, item_type, item_id, title, display_order,
@@ -70,17 +97,43 @@ try {
     $stmtItems->execute([':route_id' => $ruta['id']]);
     $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 
-    // Agrupar IDs por tipo (enum real: accommodation, place, activity, event)
+    // Agrupar IDs por tipo (soporta tanto inglés como español)
+    // Inglés: accommodation, place, activity, event
+    // Español: alojamiento, lugar, actividad, evento
+    $typeMap = [
+        'accommodation' => 'accommodation',
+        'alojamiento'   => 'accommodation',
+        'place'         => 'place',
+        'lugar'         => 'place',
+        'activity'      => 'activity',
+        'actividad'     => 'activity',
+        'event'         => 'event',
+        'evento'        => 'event',
+    ];
     $ids = ['accommodation' => [], 'place' => [], 'activity' => [], 'event' => []];
     foreach ($items as $item) {
         $t = $item['item_type'];
-        if (isset($ids[$t])) $ids[$t][] = (int)$item['item_id'];
+        $normalizedType = $typeMap[$t] ?? null;
+        if ($normalizedType && isset($ids[$normalizedType])) {
+            $ids[$normalizedType][] = (int)$item['item_id'];
+        }
     }
 
     // Helper: merge item con metadatos de route_items
-    $mergeItem = function(array $data, array $item): array {
+    // Normaliza item_type a inglés para consistencia en el renderizado
+    $typeToEnglish = [
+        'accommodation' => 'accommodation',
+        'alojamiento'   => 'accommodation',
+        'place'         => 'place',
+        'lugar'         => 'place',
+        'activity'      => 'activity',
+        'actividad'     => 'activity',
+        'event'         => 'event',
+        'evento'        => 'event',
+    ];
+    $mergeItem = function(array $data, array $item) use ($typeToEnglish): array {
         return array_merge($data, [
-            'item_type'      => $item['item_type'],
+            'item_type'      => $typeToEnglish[$item['item_type']] ?? $item['item_type'],
             'day_number'     => $item['day_number'],
             'time_slot'      => $item['time_slot'],
             'editorial_note' => $item['editorial_note'],
@@ -114,7 +167,8 @@ try {
             $map[$a['id']] = $a;
         }
         foreach ($items as $item) {
-            if ($item['item_type'] === 'accommodation' && isset($map[$item['item_id']])) {
+            $normalizedType = $typeMap[$item['item_type']] ?? null;
+            if ($normalizedType === 'accommodation' && isset($map[$item['item_id']])) {
                 $alojamientos[] = $mergeItem($map[$item['item_id']], $item);
             }
         }
@@ -145,7 +199,8 @@ try {
             $map[$l['id']] = $l;
         }
         foreach ($items as $item) {
-            if ($item['item_type'] === 'place' && isset($map[$item['item_id']])) {
+            $normalizedType = $typeMap[$item['item_type']] ?? null;
+            if ($normalizedType === 'place' && isset($map[$item['item_id']])) {
                 $lugares[] = $mergeItem($map[$item['item_id']], $item);
             }
         }
@@ -177,11 +232,14 @@ try {
             $map[$a['id']] = $a;
         }
         foreach ($items as $item) {
-            if ($item['item_type'] === 'activity' && isset($map[$item['item_id']])) {
+            $normalizedType = $typeMap[$item['item_type']] ?? null;
+            if ($normalizedType === 'activity' && isset($map[$item['item_id']])) {
                 $actividades[] = $mergeItem($map[$item['item_id']], $item);
             }
         }
     }
+
+    $provincia = $ruta['province'] ?? 'Soria';
 
     // 3d. Eventos
     // Prioridad 1: items de tipo 'event' añadidos manualmente en el gestor
