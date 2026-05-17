@@ -245,6 +245,12 @@
         <a class="nav-item" href="https://rutasrurales.io/admin_tablas/rutas.php">
             <i class="fas fa-route"></i> Gestor de Rutas
         </a>
+        <a class="nav-item" href="https://rutasrurales.io/admin_tablas/rutas.php?action=new">
+            <i class="fas fa-plus-circle"></i> Nueva Ruta
+        </a>
+        <a class="nav-item" href="https://rutasrurales.io/api/route-faqs.php?route_id=1" target="_blank">
+            <i class="fas fa-question-circle"></i> FAQs de Rutas (API)
+        </a>
         <a class="nav-item" href="https://rutasrurales.io/admin_tablas/sql_manager.php">
             <i class="fas fa-database"></i> SQL Manager
         </a>

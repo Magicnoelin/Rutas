@@ -338,6 +338,7 @@ textarea{resize:vertical;min-height:80px}
     <button class="tab-btn <?= $activeTab==='itinerario'?'active':'' ?>" onclick="showTab('itinerario')"><i class="fas fa-calendar-alt"></i> Itinerario JSON</button>
     <?php if (!$isNew): ?>
     <button class="tab-btn <?= $activeTab==='items'?'active':'' ?>" onclick="showTab('items')" id="tab-items-btn"><i class="fas fa-list"></i> Items (<?= count($editItems) ?>)</button>
+    <button class="tab-btn <?= $activeTab==='faqs'?'active':'' ?>" onclick="showTab('faqs')"><i class="fas fa-question-circle"></i> FAQs</button>
     <?php endif; ?>
 </div>
 
@@ -615,7 +616,45 @@ textarea{resize:vertical;min-height:80px}
     <?php endif; ?>
 </div>
 
-</div><!-- /tab-items -->
+<!-- TAB: FAQs -->
+<div class="tab-content <?= $activeTab==='faqs'?'active':'' ?>" id="tab-faqs">
+<div class="form-card">
+    <h3><i class="fas fa-question-circle"></i> Preguntas Frecuentes de esta ruta</h3>
+    <p style="font-size:.85rem;color:#666;margin-bottom:16px">
+        Si añades FAQs aquí, se mostrarán estas en lugar del contenido automático.
+        Si no hay FAQs, el sistema genera preguntas automáticas adaptadas a la época del año.
+    </p>
+
+    <div id="faqs-container">
+        <!-- Las FAQs se cargan vía AJAX -->
+        <div style="text-align:center;padding:20px;color:#888">
+            <i class="fas fa-spinner fa-spin"></i> Cargando FAQs...
+        </div>
+    </div>
+
+    <hr style="margin:20px 0;border:none;border-top:1px solid #eee">
+
+    <h4 style="margin-bottom:12px;color:#2c3e50"><i class="fas fa-plus-circle"></i> Añadir nueva FAQ</h4>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr">
+        <div class="form-group full">
+            <label>Pregunta</label>
+            <input type="text" id="new-faq-question" placeholder="¿Cuál es la mejor época para visitar...?">
+        </div>
+        <div class="form-group full">
+            <label>Respuesta</label>
+            <textarea id="new-faq-answer" rows="3" placeholder="La mejor época para visitar..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Orden</label>
+            <input type="number" id="new-faq-order" value="0" min="0" style="width:80px">
+        </div>
+        <div style="display:flex;align-items:flex-end">
+            <button class="btn btn-success" onclick="addFaq(<?= (int)$r['id'] ?>)"><i class="fas fa-save"></i> Guardar FAQ</button>
+        </div>
+    </div>
+</div>
+</div><!-- /tab-faqs -->
+
 <?php endif; ?>
 
 <?php else: ?>
@@ -807,6 +846,115 @@ document.addEventListener('click', e => {
         const box = document.getElementById('search-results');
         if (box) box.style.display = 'none';
     }
+});
+
+// ── FAQs: Cargar, añadir, eliminar ────────────────────────────
+const FAQS_API = '/api/route-faqs.php';
+
+function loadFaqs(routeId) {
+    const container = document.getElementById('faqs-container');
+    if (!container) return;
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#888"><i class="fas fa-spinner fa-spin"></i> Cargando FAQs...</div>';
+
+    fetch(FAQS_API + '?route_id=' + routeId)
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success || !res.data.length) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:30px;color:#888;background:#f9f9f9;border-radius:8px">
+                        <i class="fas fa-question-circle" style="font-size:2rem;display:block;margin-bottom:8px;color:#ccc"></i>
+                        No hay FAQs personalizadas. Se usa el contenido automático.
+                    </div>`;
+                return;
+            }
+            container.innerHTML = res.data.map((faq, i) => `
+                <div style="background:#f8f9fa;border-radius:8px;padding:14px 16px;margin-bottom:10px;border-left:4px solid #1abc9c">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+                        <div style="flex:1">
+                            <div style="font-weight:700;font-size:.9rem;color:#2c3e50;margin-bottom:4px">
+                                <span style="color:#1abc9c;margin-right:6px">Q:</span> ${escHtml(faq.question)}
+                            </div>
+                            <div style="font-size:.85rem;color:#555;line-height:1.5">
+                                <span style="color:#e67e22;margin-right:6px">A:</span> ${escHtml(faq.answer)}
+                            </div>
+                            <div style="font-size:.75rem;color:#999;margin-top:6px">
+                                Orden: ${faq.display_order}
+                            </div>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteFaq(${faq.id}, ${routeId})" style="flex-shrink:0">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        })
+        .catch(err => {
+            container.innerHTML = '<div style="text-align:center;padding:20px;color:#e74c3c">Error al cargar FAQs</div>';
+        });
+}
+
+function addFaq(routeId) {
+    const question = document.getElementById('new-faq-question').value.trim();
+    const answer   = document.getElementById('new-faq-answer').value.trim();
+    const order    = parseInt(document.getElementById('new-faq-order').value) || 0;
+
+    if (!question || !answer) {
+        alert('Debes rellenar la pregunta y la respuesta.');
+        return;
+    }
+
+    fetch(FAQS_API, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            route_id: routeId,
+            question: question,
+            answer: answer,
+            display_order: order
+        })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            document.getElementById('new-faq-question').value = '';
+            document.getElementById('new-faq-answer').value = '';
+            document.getElementById('new-faq-order').value = '0';
+            loadFaqs(routeId);
+        } else {
+            alert('Error: ' + (res.error || 'No se pudo guardar'));
+        }
+    })
+    .catch(err => alert('Error de conexión'));
+}
+
+function deleteFaq(faqId, routeId) {
+    if (!confirm('¿Eliminar esta FAQ?')) return;
+    fetch(FAQS_API + '?id=' + faqId, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                loadFaqs(routeId);
+            } else {
+                alert('Error: ' + (res.error || 'No se pudo eliminar'));
+            }
+        })
+        .catch(err => alert('Error de conexión'));
+}
+
+// Cargar FAQs al entrar en la pestaña
+document.addEventListener('DOMContentLoaded', function() {
+    const faqTabBtn = document.querySelector('.tab-btn[onclick*="faqs"]');
+    if (faqTabBtn) {
+        faqTabBtn.addEventListener('click', function() {
+            <?php if (isset($r['id']) && $r['id'] > 0): ?>
+            setTimeout(() => loadFaqs(<?= (int)$r['id'] ?>), 100);
+            <?php endif; ?>
+        });
+    }
+    // Si la pestaña FAQs está activa al cargar, cargar directamente
+    <?php if ($activeTab === 'faqs' && isset($r['id']) && $r['id'] > 0): ?>
+    loadFaqs(<?= (int)$r['id'] ?>);
+    <?php endif; ?>
 });
 </script>
 
