@@ -113,8 +113,7 @@ try {
                             u.last_name,
                             $avatarColumnSQL,
                             $userTypeSQL,
-                            (SELECT message_text FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
-                            (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :me) as unread_count
+                            (SELECT content FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
                         FROM conversations c
                         JOIN users u ON (CASE WHEN c.user_1_id = :me THEN c.user_2_id ELSE c.user_1_id END) = u.id
                         WHERE c.user_1_id = :me OR c.user_2_id = :me
@@ -128,6 +127,7 @@ try {
                             c.last_message_at,
                             CASE 
                                 WHEN c.user_1_id = $userId THEN c.provider_id
+                                WHEN c.user_1_id = :me THEN c.provider_id
                                 ELSE c.user_1_id
                             END as other_user_id,
                             u.first_name,
@@ -136,9 +136,13 @@ try {
                             $userTypeSQL,
                             (SELECT message_text FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
                             (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != $userId) as unread_count
+                            (SELECT content FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
+                            (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :me) as unread_count
                         FROM conversations c
                         JOIN users u ON (CASE WHEN c.user_1_id = $userId THEN c.provider_id ELSE c.user_1_id END) = u.id
                         WHERE c.user_1_id = $userId OR c.provider_id = $userId
+                        JOIN users u ON (CASE WHEN c.user_1_id = :me THEN c.provider_id ELSE c.user_1_id END) = u.id
+                        WHERE c.user_1_id = :me OR c.provider_id = :me
                         ORDER BY c.last_message_at DESC
                     ";
                 } else {
@@ -147,6 +151,7 @@ try {
                 }
                 
                 $stmt = $pdo->prepare($sql);
+                $stmt->execute([':me' => $userId]);
                 
                 // Ejecutar según estructura
                 if ($hasUser2) {
@@ -219,7 +224,7 @@ try {
             // VALIDAR PERMISOS DE MEMBRESÍA
             // Obtener información de ambos usuarios
             $stmt = $pdo->prepare("
-                SELECT id, user_type, membership_type
+                SELECT id, user_type, LOWER(COALESCE(membership_type, 'free')) as membership_type
                 FROM users
                 WHERE id IN (?, ?)
             ");
