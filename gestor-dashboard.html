@@ -1217,17 +1217,19 @@ function showSection(name, el) {
 // ============================================================
 // MIS ALOJAMIENTOS
 // ============================================================
-async function loadMyAccommodations() {
-    try {
-        const res  = await fetch('/api/get_user_resources.php');
-        const data = await res.json();
-        if (data.success) {
-            myAccommodations = data.data.accommodations || [];
-            populateAccommodationSelects();
-            updateStats();
-        }
-    } catch(e) { console.error('Error cargando alojamientos:', e); }
-}
+    async function loadMyAccommodations() {
+        try {
+            const res  = await fetch('/api/get_user_resources.php');
+            const data = await res.json();
+            if (data.success) {
+                // La API devuelve los recursos en data.data.resources.accommodation
+                const resources = data.data.resources || {};
+                myAccommodations = resources.accommodation || [];
+                populateAccommodationSelects();
+                updateStats();
+            }
+        } catch(e) { console.error('Error cargando alojamientos:', e); }
+    }
 
 function populateAccommodationSelects() {
     const selects = ['of-alojamiento','of-info-alo','ct-alo'];
