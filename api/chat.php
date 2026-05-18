@@ -200,25 +200,41 @@ try {
             $initiator = $users[$userId];
             $recipient = $users[$recipientId];
             
-            $myRoles = explode(',', $initiator['all_roles'] ?? '');
-            $recipientRoles = explode(',', $recipient['all_roles'] ?? '');
+            $myRoles = array_filter(explode(',', $initiator['all_roles'] ?? ''));
+            $recipientRoles = array_filter(explode(',', $recipient['all_roles'] ?? ''));
 
-            // Determinar tipos
-            $recipientType = $recipient['user_type'] === 'turista' ? 'turista' : 'gestor';
+            // Determinar si el REMITENTE es turista
+            $senderIsTurista = in_array('turista', $myRoles)
+                || $initiator['user_type'] === 'turista'
+                || $userType === 'turista'
+                || empty($myRoles); // sin roles = turista por defecto
 
-            // Si se especificó un rol desde el frontend, validarlo. Si no, usar lógica inteligente.
-            $initiatorType = null;
-            if (!empty($initiatorRole) && in_array($initiatorRole, $myRoles)) {
-                $initiatorType = ($initiatorRole === 'turista') ? 'turista' : 'gestor';
-            } else {
-                // Lógica inteligente por defecto: Si tengo el rol turista y contacto a un gestor, actúo como turista
-                $initiatorType = (in_array('turista', $myRoles) && $recipientType === 'gestor') ? 'turista' : ($initiator['user_type'] === 'turista' ? 'turista' : 'gestor');
+            // Si se especificó un rol desde el frontend, respetarlo
+            if (!empty($initiatorRole)) {
+                if ($initiatorRole === 'turista') {
+                    $senderIsTurista = true;
+                } elseif (in_array($initiatorRole, array_merge($myRoles, [$initiator['user_type']]))) {
+                    $senderIsTurista = false;
+                }
             }
 
+            // Determinar si el DESTINATARIO es turista:
+            // Solo es turista si tiene el rol turista Y NO tiene ningún otro rol de negocio
+            $recipientNonTuristaRoles = array_diff($recipientRoles, ['turista']);
+            $recipientIsTurista = in_array('turista', $recipientRoles) && empty($recipientNonTuristaRoles);
+            // Si el destinatario no tiene roles, usar user_type; pero si user_type es 'turista'
+            // podría ser un error de base de datos — por defecto asumir 'gestor' para no bloquear
+            if (empty($recipientRoles)) {
+                $recipientIsTurista = ($recipient['user_type'] === 'turista' && !empty($recipient['user_type']));
+            }
+
+            $initiatorType = $senderIsTurista ? 'turista' : 'gestor';
+            $recipientType  = $recipientIsTurista ? 'turista' : 'gestor';
+
             // Turistas pueden iniciar conversaciones con gestores sin restricciones
-            if ($initiatorType === 'turista' && $recipientType === 'gestor') {
-                // OK - permitir siempre
-            } elseif ($initiatorType === 'turista' && $recipientType === 'turista') {
+            if ($senderIsTurista && !$recipientIsTurista) {
+                // OK - turista contacta a gestor/servicio, permitir siempre
+            } elseif ($senderIsTurista && $recipientIsTurista) {
                 jsonError('No puedes iniciar conversaciones con otros turistas.', 403);
             } else {
                 // Verificar permisos en tabla chat_permissions para otros casos (gestor→gestor, gestor→turista)
@@ -300,7 +316,7 @@ try {
                 : $conversation['user_1_id'];
 
             // VALIDAR PERMISOS Y LÍMITES
-            // Obtener información de ambos usuarios
+            // Obtener información del remitente (y roles)
             $stmt = $pdo->prepare("
                 SELECT id, user_type,
                        LOWER(COALESCE(membership_type, 'free')) as membership_type,
@@ -313,24 +329,31 @@ try {
             while ($row = $stmt->fetch()) {
                 $users[$row['id']] = $row;
             }
-            
-            $initiator = $users[$userId];
-            $recipient = $users[$recipientId];
-            
-            // Determinar tipos usando roles y user_type
-            $myRoles = explode(',', $initiator['all_roles'] ?? '');
-            $recipientRoles = explode(',', $recipient['all_roles'] ?? '');
 
-            // Si tiene el rol turista (nuevo sistema de roles) o user_type turista → tipo turista
-            $initiatorType = (in_array('turista', $myRoles) || $initiator['user_type'] === 'turista') ? 'turista' : 'gestor';
-            $recipientType = (in_array('turista', $recipientRoles) || $recipient['user_type'] === 'turista') ? 'turista' : 'gestor';
+            $initiator = $users[$userId] ?? null;
+            $recipient = $users[$recipientId] ?? null;
 
-            // Si el initiator es turista y el recipient NO es turista, siempre permitir (turista puede contactar gestores)
-            if ($initiatorType === 'turista' && $recipientType === 'gestor') {
-                // Turistas pueden enviar mensajes a gestores sin restricciones
+            if (!$initiator) jsonError('Usuario no encontrado', 404);
+
+            // Determinar si el remitente es turista (por rol, por user_type o por sesión)
+            $myRoles = array_filter(explode(',', $initiator['all_roles'] ?? ''));
+            $sessionType = $userType ?? 'turista'; // valor de sesión cargado al inicio
+
+            $senderIsTurista = in_array('turista', $myRoles)
+                || $initiator['user_type'] === 'turista'
+                || $sessionType === 'turista'
+                || empty($myRoles); // sin roles = turista por defecto
+
+            if ($senderIsTurista) {
+                // Turistas siempre pueden enviar mensajes en conversaciones existentes, sin restricciones
                 $permission = ['can_send_messages' => true, 'max_messages_per_day' => null];
             } else {
-                // Verificar permisos en tabla chat_permissions para otros casos
+                // Gestores: verificar permisos según tabla chat_permissions
+                $recipientRoles = array_filter(explode(',', ($recipient['all_roles'] ?? '')));
+                $recipientIsTurista = in_array('turista', $recipientRoles) || ($recipient['user_type'] ?? '') === 'turista';
+                $initiatorType = 'gestor';
+                $recipientType  = $recipientIsTurista ? 'turista' : 'gestor';
+
                 $stmtPerm = $pdo->prepare("
                     SELECT can_send_messages, max_messages_per_day
                     FROM chat_permissions
@@ -345,7 +368,7 @@ try {
                     $initiatorType,
                     $initiator['membership_type'],
                     $recipientType,
-                    $recipient['membership_type']
+                    $recipient['membership_type'] ?? 'free'
                 ]);
                 $permission = $stmtPerm->fetch();
             }

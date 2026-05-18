@@ -2274,14 +2274,33 @@ DOCTYPE html>
 
     window.submitNewChat = async () => {
         const alertDiv = document.getElementById('modal-chat-alert');
+
+        // Helper para mostrar mensajes visibles
+        const showAlert = (msg, type) => {
+            const colors = { warning: '#856404', error: '#842029', success: '#155724' };
+            const bgs    = { warning: '#fff3cd', error: '#f8d7da', success: '#d1e7dd' };
+            const borders= { warning: '#ffc107', error: '#f5c2c7', success: '#badbcc' };
+            alertDiv.innerHTML = `<div style="padding:0.8rem 1rem;border-radius:8px;background:${bgs[type]};border:1px solid ${borders[type]};color:${colors[type]};font-size:0.9rem;margin-bottom:0.5rem;">${msg}</div>`;
+        };
+
         alertDiv.innerHTML = '';
         
-        if (!selAcc || !selAcc.owner_user_id) {
-            alertDiv.innerHTML = '<div class="alert-msg warning"><i class="fas fa-exclamation-triangle"></i> Selecciona un alojamiento válido.</div>';
+        if (!selAcc) {
+            showAlert('<i class="fas fa-exclamation-triangle"></i> Selecciona primero un alojamiento de la lista.', 'warning');
+            return;
+        }
+        
+        if (!selAcc.owner_user_id) {
+            showAlert('<i class="fas fa-exclamation-triangle"></i> Este alojamiento no tiene propietario registrado en la plataforma. No es posible contactar con él por mensaje.', 'warning');
             return;
         }
 
         const content = document.getElementById('tpl-preview-text').textContent;
+        if (!content || content === 'Completa los datos...') {
+            showAlert('<i class="fas fa-exclamation-triangle"></i> Completa los campos del mensaje antes de enviar.', 'warning');
+            return;
+        }
+
         const btn = document.getElementById('btn-submit-chat');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
@@ -2298,24 +2317,27 @@ DOCTYPE html>
             });
             const dataConv = await resConv.json();
             
-            if (!dataConv.success) throw new Error(dataConv.error || "No se pudo iniciar el chat");
+            if (!dataConv.success) throw new Error(dataConv.error || 'No se pudo iniciar el chat');
             
             const convId = dataConv.data.conversation_id;
 
             // 2. Enviar primer mensaje
-            await fetch('api/chat.php?action=send_message', {
+            const resSend = await fetch('api/chat.php?action=send_message', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ conversation_id: convId, content: content })
             });
+            const dataSend = await resSend.json();
+            
+            if (!dataSend.success) throw new Error(dataSend.error || 'No se pudo enviar el mensaje');
 
-            alertDiv.innerHTML = '<div class="alert-msg success"><i class="fas fa-check-circle"></i> ¡Mensaje enviado con éxito!</div>';
+            showAlert('<i class="fas fa-check-circle"></i> ¡Mensaje enviado con éxito!', 'success');
             setTimeout(() => {
                 closeNewConvModal();
                 loadConversations().then(() => selectConversation(convId));
             }, 1500);
         } catch (e) {
-            alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> ${e.message}</div>`;
+            showAlert(`<i class="fas fa-times-circle"></i> ${e.message}`, 'error');
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Mensaje';
         }
