@@ -1001,17 +1001,24 @@
         </main>
     </div>
 
-    <!-- ===== MODAL: NUEVA CONVERSACIÓN / BUSCAR ALOJAMIENTO ===== -->
-    <div class="modal-overlay" id="modal-new-conv">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-bed"></i> Contactar con Alojamiento</h3>
-                <button class="btn-close-modal" onclick="closeModal('modal-new-conv')">✕</button>
-            </div>
-            <div class="modal-body">
-                <div id="modal-alert"></div>
+            <!-- ===== MODAL: NUEVA CONVERSACIÓN / BUSCAR ALOJAMIENTO ===== -->
+            <div class="modal-overlay" id="modal-new-conv">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-bed"></i> Contactar con Alojamiento</h3>
+                        <button class="btn-close-modal" onclick="closeModal('modal-new-conv')">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Aviso de privacidad -->
+                        <div class="alert-msg info" style="margin-bottom: 1rem;">
+                            <i class="fas fa-shield-alt"></i> 
+                            <strong>Privacidad:</strong> Tu información de contacto NO se revela al propietario. 
+                            Solo verán tu <u>nickname</u>. El propietario te contactará primero si está interesado.
+                        </div>
+                        
+                        <div id="modal-alert"></div>
 
-                <!-- Paso 1: Elegir plantilla -->
+                        <!-- Paso 1: Elegir plantilla -->
                 <div id="step-template">
                     <p style="font-size:0.9rem;color:var(--text-light);margin-bottom:1rem">Elige cómo quieres contactar:</p>
                     <div class="template-selector">
@@ -1343,84 +1350,83 @@
     });
 
     // ============================================================
-    // CONVERSACIONES
+    // ENVIAR MENSAJE DESDE MODAL
+    // El turista puede enviar mensajes libremente
     // ============================================================
-    async function loadConversations() {
-        try {
-            const res = await fetch('/api/chat.php?action=list_conversations');
-            const data = await res.json();
-            if (data.success) {
-                conversations = data.data || [];
-                renderConversations(conversations);
-                updateUnreadCount();
-                if (currentConversationId) await loadMessages(currentConversationId);
-            }
-        } catch (e) {
-            console.error('Error cargando conversaciones:', e);
-        }
-    }
+    async function sendTemplateMessage() {
+        const alertDiv = document.getElementById('modal-alert');
+        alertDiv.innerHTML = '';
 
-    function renderConversations(convs) {
-        const list = document.getElementById('conversations-list');
-        const recentList = document.getElementById('recent-conversations-list');
-
-        if (!convs || convs.length === 0) {
-            const emptyHtml = `
-                <div style="padding:2rem;text-align:center;color:var(--text-light)">
-                    <i class="fas fa-comment-slash" style="font-size:2rem;opacity:0.3"></i>
-                    <p style="margin-top:0.5rem">Sin conversaciones aún</p>
-                    <button class="btn btn-primary" onclick="openNewConversation()" style="margin-top:0.8rem;font-size:0.8rem;padding:0.5rem 1rem">
-                        <i class="fas fa-plus"></i> Nueva conversación
-                    </button>
-                </div>`;
-            if (list) list.innerHTML = emptyHtml;
-            if (recentList) recentList.innerHTML = `<p style="color:var(--text-light);font-size:0.9rem">No tienes conversaciones aún. <button onclick="openNewConversation()" style="background:none;border:none;color:var(--primary);cursor:pointer;font-weight:600">Inicia una →</button></p>`;
+        if (!selectedAccommodation) {
+            alertDiv.innerHTML = `<div class="alert-msg warning"><i class="fas fa-exclamation-triangle"></i> Selecciona primero un alojamiento</div>`;
             return;
         }
 
-        const convHtml = convs.map(c => {
-            const name = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Propietario';
-            const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-            const lastMsg = c.last_message ? c.last_message.substring(0, 50) + (c.last_message.length > 50 ? '...' : '') : 'Sin mensajes';
-            const time = c.last_message_at ? formatTime(c.last_message_at) : '';
-            const unread = parseInt(c.unread_count) || 0;
-            const isActive = c.conversation_id == currentConversationId ? 'active' : '';
+        // Construimos el mensaje - todos los campos son opcionales
+        let content = buildMessage(currentTemplate, 'modal').trim();
+        
+        // Si está vacío, usar un mensaje genérico
+        if (!content) {
+            const nombreAlojamiento = selectedAccommodation.name || 'el alojamiento';
+            content = `Hola, 👋\n\nEstoy interesado/a en ${nombreAlojamiento}.\n\nPor favor, ¿podríais darme información?\n\nGracias.`;
+        }
 
-            return `<div class="conv-item ${isActive}" onclick="openConversation(${c.conversation_id}, '${escapeHtml(name)}', '${escapeHtml(c.user_type || 'gestor')}', '${initials}')">
-                <div class="conv-avatar">${initials}</div>
-                <div class="conv-info">
-                    <div class="conv-name">${escapeHtml(name)}</div>
-                    <div class="conv-preview">${escapeHtml(lastMsg)}</div>
-                </div>
-                <div class="conv-meta">
-                    <span class="conv-time">${time}</span>
-                    ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
-                </div>
-            </div>`;
-        }).join('');
+        // Necesitamos el owner_user_id
+        let ownerId = selectedAccommodation.owner_user_id;
 
-        if (list) list.innerHTML = convHtml;
+        if (!ownerId) {
+            alertDiv.innerHTML = `<div class="alert-msg warning"><i class="fas fa-info-circle"></i> Este alojamiento no tiene propietario registrado. Intenta con otro.</div>`;
+            return;
+        }
 
-        // Recent conversations en inicio (máx 3)
-        if (recentList) {
-            const recent = convs.slice(0, 3);
-            recentList.innerHTML = recent.map(c => {
-                const name = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Propietario';
-                const lastMsg = c.last_message ? c.last_message.substring(0, 60) + '...' : 'Sin mensajes';
-                const unread = parseInt(c.unread_count) || 0;
-                return `<div class="conv-item" onclick="showSection('mensajes', null); openConversation(${c.conversation_id}, '${escapeHtml(name)}', '${c.user_type || 'gestor'}', '${name.slice(0,2).toUpperCase()}')">
-                    <div class="conv-avatar">${name.slice(0,2).toUpperCase()}</div>
-                    <div class="conv-info">
-                        <div class="conv-name">${escapeHtml(name)}</div>
-                        <div class="conv-preview">${escapeHtml(lastMsg)}</div>
-                    </div>
-                    <div class="conv-meta">
-                        ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
-                    </div>
-                </div>`;
-            }).join('');
+        const btn = document.getElementById('btn-send-template');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block"></div> Enviando...';
+
+        try {
+            // Crear conversación
+            const convRes = await fetch('/api/chat.php?action=start_conversation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ recipient_id: ownerId })
+            });
+            const convData = await convRes.json();
+
+            if (!convData.success) {
+                alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> ${convData.error || 'Error al iniciar conversación'}</div>`;
+                return;
+            }
+
+            const convId = convData.data.conversation_id;
+
+            // Enviar mensaje
+            const msgRes = await fetch('/api/chat.php?action=send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conversation_id: convId, content })
+            });
+            const msgData = await msgRes.json();
+
+            if (msgData.success) {
+                alertDiv.innerHTML = `<div class="alert-msg success"><i class="fas fa-check-circle"></i> ¡Mensaje enviado! Te contactarán pronto.</div>`;
+                await loadConversations();
+                setTimeout(() => {
+                    closeModal('modal-new-conv');
+                    showSection('mensajes', null);
+                    openConversation(convId, selectedAccommodation.name || 'Propietario', 'gestor',
+                        (selectedAccommodation.name || 'P').slice(0, 2).toUpperCase());
+                }, 1200);
+            } else {
+                alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> ${msgData.error || 'Error al enviar'}</div>`;
+            }
+        } catch (e) {
+            alertDiv.innerHTML = `<div class="alert-msg error"><i class="fas fa-times-circle"></i> Error de conexión</div>`;
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Mensaje';
         }
     }
+     ------- REPLACE
 
     function filterConversations(query) {
         const filtered = conversations.filter(c => {
@@ -1553,6 +1559,8 @@
             input.focus();
         }
     }
+     ------- REPLACE
+     ------- REPLACE
 
     function handleMsgKeydown(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -1780,7 +1788,9 @@
     }
 
     // ============================================================
-    // ENVIAR MENSAJE DESDE MODAL (nueva conversación + mensaje)
+    // ENVIAR MENSAJE DESDE MODAL (RESTRINGIDO PARA TURISTAS)
+    // Como turista, NO puede enviar mensajes - solo puede iniciar contacto
+    // El mensaje se envía al propietario, pero el turista no puede escribir en el chat
     // ============================================================
     async function sendTemplateMessage() {
         const alertDiv = document.getElementById('modal-alert');
@@ -1791,10 +1801,14 @@
             return;
         }
 
-        const content = buildMessage(currentTemplate, 'modal').trim();
+        // Los turistas pueden iniciar contacto (enviar un mensaje inicial), pero no pueden chatear
+        // Construimos el mensaje con los campos disponibles (todos opcionales)
+        let content = buildMessage(currentTemplate, 'modal').trim();
+        
+        // Si está vacío, usar un mensaje genérico ya que todos los campos son opcionales
         if (!content) {
-            alertDiv.innerHTML = `<div class="alert-msg warning"><i class="fas fa-exclamation-triangle"></i> El mensaje no puede estar vacío</div>`;
-            return;
+            const nombreAlojamiento = selectedAccommodation.name || 'el alojamiento';
+            content = `Hola, 👋\n\nEstoy interesado/a en ${nombreAlojamiento}.\n\nPor favor, ¿podríais darme información?\n\nGracias.`;
         }
 
         // Necesitamos el owner_user_id. Si no lo tenemos en el accommodation, buscar por API
@@ -1825,7 +1839,7 @@
 
             const convId = convData.data.conversation_id;
 
-            // Enviar mensaje
+            // Enviar mensaje inicial
             const msgRes = await fetch('/api/chat.php?action=send_message', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1834,7 +1848,7 @@
             const msgData = await msgRes.json();
 
             if (msgData.success) {
-                alertDiv.innerHTML = `<div class="alert-msg success"><i class="fas fa-check-circle"></i> ¡Mensaje enviado correctamente!</div>`;
+                alertDiv.innerHTML = `<div class="alert-msg success"><i class="fas fa-check-circle"></i> ¡Mensaje enviado! El propietario te contactará pronto.</div>`;
                 await loadConversations();
                 setTimeout(() => {
                     closeModal('modal-new-conv');
@@ -1852,6 +1866,7 @@
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Mensaje';
         }
     }
+     ------- REPLACE
 
     // ============================================================
     // UTILS
