@@ -1491,13 +1491,7 @@ DOCTYPE html>
 
                 // Actualizar resumen en el Inicio (acciones de gestor)
                 actualizarResumenInicioRecursos(data.data);
-                
-                // Cargar lugares
-                if (resources.place && resources.place.length > 0) {
-                    cargarMisLugares(resources.place);
-                }
-                
-                // Cargar eventos
+            }
         } catch (error) {
             console.error('Error cargando recursos:', error);
         }
@@ -1835,19 +1829,11 @@ DOCTYPE html>
         // Cargar datos de membresía
         await loadMembershipData();
         
-        // Obtener roles y actualizar menú
-        try {
-            const respRoles = await fetch('api/roles.php?action=mis_roles');
-            const datosRoles = await respRoles.json();
-            if (datosRoles.success && datosRoles.data) {
-                const rolesSlugs = datosRoles.data.map(r => r.slug);
-                actualizarMenuPorRoles(rolesSlugs);
-                
-                // Cargar recursos del usuario (alojamientos, actividades, etc.)
-                await loadUserResources();
-            }
-        } catch (error) {
-            console.error('Error cargando roles para menú:', error);
+        // Configurar menú y recursos basándose en los roles ya cargados en loadUserProfile
+        if (window.myRolesList) {
+            const rolesSlugs = window.myRolesList.map(r => r.slug);
+            actualizarMenuPorRoles(rolesSlugs);
+            await loadUserResources();
         }
         
         document.addEventListener('keydown', (e) => {
