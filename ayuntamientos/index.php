@@ -2,11 +2,11 @@
 /**
  * Ayuntamientos — Landing page B2B para municipios
  * Dirigida a alcaldes, concejales de turismo y técnicos municipales
- * Plan Básico: 19€ (5 lugares) | Plan Cultural: 39€ (5 lugares + 5 eventos)
- * Renovación anual eventos: 19,99€ | Evento extra: 5€/ud
+ * Plan Básico: 60€ (lanzamiento, antes 120€) | Plan Cultural: 80€ (antes 160€) | Plan Territorio: 100€ (antes 200€)
+ * Todos incluyen mensajería directa con turistas y traducción en 4 idiomas
  */
-$page_title       = "Pon tu Municipio en el Mapa — Rutas Rurales para Ayuntamientos";
-$page_description = "¿Tus fiestas patronales, rutas y monumentos no aparecen en el mapa? Inscribe tu municipio desde 19€. Llega a miles de turistas que buscan turismo rural auténtico en España.";
+$page_title       = "Digitaliza tu Municipio — Rutas Rurales para Ayuntamientos";
+$page_description = "Pon tu municipio en el mapa turístico digital. Planes desde 60€ con oferta de lanzamiento Mayo 2026. Mensajería directa con turistas, 5 idiomas, lugares de interés, eventos y actividades.";
 $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
 ?>
 <!DOCTYPE html>
@@ -34,52 +34,76 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
            VARIABLES & RESET
         ============================================ */
         :root {
+            /* Corporate palette */
             --azul:        #1B4F72;
-            --azul-dark:   #0E2D45;
-            --azul-light:  #2E86C1;
-            --terra:       #C0392B;
+            --azul-dark:   #0D2137;
+            --azul-mid:    #1a3a57;
+            --azul-light:  #2980B9;
+            --azul-bright: #3498DB;
+            --dorado:      #C9A227;
+            --dorado-light:#F0C040;
+            --dorado-dark: #A07810;
+            --terra:       #B03A2E;
             --terra-light: #E74C3C;
-            --ocre:        #D4AC0D;
-            --ocre-light:  #F1C40F;
-            --verde:       #1E8449;
+            --verde:       #1A7A43;
             --verde-light: #27AE60;
-            --crema:       #FDF6EC;
-            --crema-dark:  #F0E6D3;
-            --ivory:       #FFFDF9;
-            --text-dark:   #1A1A1A;
-            --text-mid:    #4A4A4A;
-            --text-light:  #7A7A7A;
+            --crema:       #F8F3EC;
+            --crema-dark:  #EDE0CC;
+            --ivory:       #FDFAF6;
+            --text-dark:   #151F2B;
+            --text-mid:    #3D4F5F;
+            --text-light:  #7A8A9A;
+            /* Plan colors */
+            --plan1: #2980B9;
+            --plan2: #1A7A43;
+            --plan3: #8E44AD;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; overflow-x: hidden; }
         body { font-family: 'Montserrat', sans-serif; color: var(--text-dark); background: var(--ivory); overflow-x: hidden; }
 
         /* ============================================
+           URGENCY BAR
+        ============================================ */
+        .urgency-bar {
+            background: linear-gradient(90deg, #8E44AD, #C9A227, #B03A2E);
+            background-size: 300% 100%;
+            animation: gradientShift 4s ease infinite;
+            padding: 0.55rem 1rem; text-align: center;
+            font-size: 0.78rem; font-weight: 800; color: #fff;
+            letter-spacing: 0.05em; position: relative; z-index: 10001;
+        }
+        .urgency-bar span { background: rgba(0,0,0,0.25); padding: 0.15rem 0.7rem; border-radius: 20px; margin: 0 0.3rem; }
+        @keyframes gradientShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+        /* ============================================
            NAVBAR
         ============================================ */
         .ayto-nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-            background: rgba(11,29,48,0.93); backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(212,172,13,0.25);
+            position: fixed; top: 32px; left: 0; right: 0; z-index: 9999;
+            background: rgba(13,33,55,0.96); backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(201,162,39,0.3);
             padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
             transition: all 0.3s;
         }
-        .ayto-nav.scrolled { background: rgba(11,29,48,0.99); padding: 0.5rem 2rem; }
+        .ayto-nav.scrolled { top: 0; padding: 0.5rem 2rem; }
         .nav-brand { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; }
-        .nav-brand img { height: 36px; }
+        .nav-brand img { height: 38px; }
         .nav-brand-text { display: flex; flex-direction: column; line-height: 1.1; }
-        .nav-brand-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: #F1C40F; }
-        .nav-brand-sub { font-size: 0.6rem; font-weight: 600; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.15em; }
+        .nav-brand-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--dorado-light); }
+        .nav-brand-sub { font-size: 0.58rem; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.15em; }
         .nav-cta { display: flex; align-items: center; gap: 1rem; }
-        .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.8rem; font-weight: 600; transition: color 0.2s; }
-        .nav-link:hover { color: #F1C40F; }
+        .nav-link { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.78rem; font-weight: 600; transition: color 0.2s; }
+        .nav-link:hover { color: var(--dorado-light); }
         .btn-nav-inscribir {
-            background: var(--terra); color: #fff;
-            padding: 0.5rem 1.2rem; border-radius: 25px;
-            font-size: 0.8rem; font-weight: 800; text-decoration: none;
+            background: linear-gradient(135deg, var(--dorado), var(--dorado-dark));
+            color: var(--azul-dark);
+            padding: 0.5rem 1.4rem; border-radius: 25px;
+            font-size: 0.78rem; font-weight: 800; text-decoration: none;
             transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem; white-space: nowrap;
+            box-shadow: 0 3px 14px rgba(201,162,39,0.5);
         }
-        .btn-nav-inscribir:hover { background: var(--terra-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(192,57,43,0.4); }
+        .btn-nav-inscribir:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,162,39,0.6); }
 
         /* ============================================
            HERO
@@ -87,303 +111,464 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
         .hero {
             min-height: 100vh;
             background:
-                linear-gradient(150deg,
-                    rgba(14,45,69,0.91) 0%,
-                    rgba(27,79,114,0.82) 45%,
-                    rgba(30,132,73,0.75) 100%),
-                url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80') center/cover no-repeat;
+                linear-gradient(155deg,
+                    rgba(13,33,55,0.95) 0%,
+                    rgba(27,79,114,0.88) 40%,
+                    rgba(26,122,67,0.78) 80%,
+                    rgba(142,68,173,0.6) 100%),
+                url('https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=1800&q=80') center/cover no-repeat;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 8rem 2rem 4rem; position: relative; overflow: hidden;
+            text-align: center; padding: 9rem 2rem 5rem; position: relative; overflow: hidden;
         }
-        .hero::before {
+        .hero::after {
             content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-            height: 120px; background: linear-gradient(to top, var(--ivory), transparent);
+            height: 140px; background: linear-gradient(to top, var(--ivory), transparent);
         }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            background: rgba(212,172,13,0.2); border: 1px solid rgba(212,172,13,0.5);
-            color: #F1C40F; padding: 0.4rem 1.2rem; border-radius: 30px;
-            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-            margin-bottom: 1.5rem; animation: fadeInDown 0.6s ease;
+        /* Animated background elements */
+        .hero-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+        .particle {
+            position: absolute; border-radius: 50%;
+            background: rgba(201,162,39,0.15); animation: floatParticle linear infinite;
         }
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+
+        .hero-official-badge {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            background: rgba(201,162,39,0.18); border: 1.5px solid rgba(201,162,39,0.55);
+            color: var(--dorado-light); padding: 0.5rem 1.4rem; border-radius: 30px;
+            font-size: 0.7rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase;
+            margin-bottom: 1.8rem; animation: fadeInDown 0.6s ease; position: relative; z-index: 2;
+        }
+        .hero-official-badge .shield { font-size: 0.9rem; }
+
         .hero-title {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(2.6rem, 6vw, 5rem); font-weight: 900; color: #fff;
-            line-height: 1.1; margin-bottom: 0.8rem; animation: fadeInUp 0.7s ease;
+            font-size: clamp(2.8rem, 6.5vw, 5.5rem); font-weight: 900; color: #fff;
+            line-height: 1.05; margin-bottom: 1rem; animation: fadeInUp 0.7s ease;
+            position: relative; z-index: 2;
         }
-        .hero-title em { font-style: italic; color: #F1C40F; }
+        .hero-title em { font-style: italic; color: var(--dorado-light); }
+        .hero-title .under { 
+            text-decoration: underline; text-decoration-color: rgba(201,162,39,0.4); text-underline-offset: 8px;
+        }
+
         .hero-subtitle {
-            font-size: clamp(1rem, 2.2vw, 1.35rem); color: rgba(255,255,255,0.82);
-            margin-bottom: 2.5rem; max-width: 580px; animation: fadeInUp 0.8s ease;
+            font-size: clamp(1rem, 2.2vw, 1.3rem); color: rgba(255,255,255,0.8);
+            margin-bottom: 3rem; max-width: 620px; animation: fadeInUp 0.8s ease;
+            line-height: 1.6; position: relative; z-index: 2;
         }
-        .hero-hook-box {
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
-            border: 2px solid rgba(212,172,13,0.55); border-radius: 20px;
-            padding: 2rem 3rem; max-width: 750px; margin: 0 auto 3rem;
-            animation: fadeInUp 0.9s ease;
+
+        /* Offer countdown box */
+        .hero-offer-box {
+            background: rgba(201,162,39,0.12); backdrop-filter: blur(12px);
+            border: 2px solid rgba(201,162,39,0.6); border-radius: 24px;
+            padding: 2rem 2.5rem; max-width: 820px; margin: 0 auto 3rem;
+            animation: fadeInUp 0.9s ease; position: relative; z-index: 2;
         }
-        .hero-hook-eyebrow { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: #F1C40F; margin-bottom: 0.8rem; }
-        .hero-hook-headline { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 3.5vw, 2.8rem); font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 0.8rem; }
-        .hero-hook-headline .missing { color: #F1C40F; text-decoration: underline; text-decoration-color: rgba(212,172,13,0.5); text-underline-offset: 6px; }
-        .hero-hook-desc { font-size: 0.93rem; color: rgba(255,255,255,0.78); line-height: 1.65; margin-bottom: 1.5rem; }
-        .hero-from-price {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            background: var(--terra); color: #fff;
-            padding: 0.5rem 1.5rem; border-radius: 30px; font-size: 1rem; font-weight: 800; margin-bottom: 1.2rem;
+        .offer-flag {
+            position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--terra), #922B21);
+            color: #fff; font-size: 0.7rem; font-weight: 900; padding: 0.4rem 1.6rem;
+            border-radius: 20px; white-space: nowrap; letter-spacing: 0.08em;
+            box-shadow: 0 4px 16px rgba(176,58,46,0.5);
         }
+        .offer-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; color: var(--dorado-light); text-transform: uppercase; margin-bottom: 0.8rem; }
+        .offer-headline { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3.2vw, 2.6rem); font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 0.8rem; }
+        .offer-headline .highlight { color: var(--dorado-light); }
+        .offer-desc { font-size: 0.9rem; color: rgba(255,255,255,0.75); line-height: 1.65; margin-bottom: 1.8rem; }
+        
+        /* Plans mini preview in hero */
+        .hero-plans-mini { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.8rem; }
+        .hero-plan-mini {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 14px; padding: 0.8rem 1.2rem; text-align: center; min-width: 150px;
+            transition: all 0.2s;
+        }
+        .hero-plan-mini:hover { background: rgba(255,255,255,0.18); transform: translateY(-3px); }
+        .hero-plan-mini .mini-name { font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; }
+        .hero-plan-mini .mini-price-old { font-size: 0.7rem; color: rgba(255,255,255,0.4); text-decoration: line-through; margin-bottom: 0.1rem; }
+        .hero-plan-mini .mini-price { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--dorado-light); line-height: 1; }
+        .hero-plan-mini .mini-price sup { font-size: 0.8rem; vertical-align: top; margin-top: 0.3rem; }
+        .hero-plan-mini .mini-iva { font-size: 0.62rem; color: rgba(255,255,255,0.4); margin-top: 0.1rem; }
+        .hero-plan-mini.plan3-mini { border-color: rgba(142,68,173,0.5); background: rgba(142,68,173,0.15); }
+        .hero-plan-mini.plan3-mini .mini-price { color: #C39BD3; }
+
         .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
         .btn-primary {
-            background: var(--ocre); color: var(--azul-dark);
+            background: linear-gradient(135deg, var(--dorado), var(--dorado-dark));
+            color: var(--azul-dark);
             padding: 1rem 2.2rem; border-radius: 50px; font-size: 0.95rem; font-weight: 800;
             text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.6rem;
-            border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(212,172,13,0.4);
+            border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(201,162,39,0.5);
         }
-        .btn-primary:hover { background: #F1C40F; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,172,13,0.5); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,162,39,0.65); }
         .btn-secondary {
             background: transparent; color: #fff;
             padding: 1rem 2.2rem; border-radius: 50px; font-size: 0.95rem; font-weight: 700;
             text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.6rem;
-            border: 2px solid rgba(255,255,255,0.4); cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.35); cursor: pointer;
         }
-        .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.7); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.65); }
         .hero-scroll-hint {
-            position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-            color: rgba(255,255,255,0.45); font-size: 0.72rem; text-align: center; animation: bounce 2s infinite;
+            position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.4); font-size: 0.7rem; text-align: center; animation: bounce 2.2s infinite;
+            z-index: 2;
         }
         .hero-scroll-hint i { display: block; font-size: 1.2rem; margin-top: 0.3rem; }
 
         /* ============================================
-           SEASONS STRIP — "No solo verano"
+           TRUST BAR (official logos / certifications)
         ============================================ */
-        .seasons-strip {
-            background: linear-gradient(90deg, #1B4F72, #1E8449, #C0392B, #D4AC0D);
-            padding: 0.1rem;
+        .trust-bar {
+            background: var(--azul-dark); padding: 1.5rem 2rem;
+            display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap;
+            border-top: 3px solid var(--dorado);
         }
-        .seasons-inner {
-            background: var(--azul-dark); display: flex; justify-content: center;
-            gap: 0; flex-wrap: wrap;
-        }
-        .season-item {
-            padding: 0.8rem 2rem; text-align: center; flex: 1; min-width: 140px;
-            border-right: 1px solid rgba(255,255,255,0.08);
-        }
-        .season-item:last-child { border-right: none; }
-        .season-icon { font-size: 1.5rem; display: block; margin-bottom: 0.2rem; }
-        .season-label { font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.1em; }
+        .trust-item { display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.55); font-size: 0.78rem; font-weight: 700; }
+        .trust-item i { color: var(--dorado-light); font-size: 1.1rem; }
 
         /* ============================================
            STATS BAR
         ============================================ */
-        .stats-bar { background: var(--azul-dark); padding: 2rem; display: flex; justify-content: center; flex-wrap: wrap; }
-        .stat-item { text-align: center; padding: 1rem 2.5rem; border-right: 1px solid rgba(212,172,13,0.2); flex: 1; min-width: 130px; }
+        .stats-bar {
+            background: linear-gradient(90deg, var(--azul-dark), var(--azul-mid), var(--azul-dark));
+            padding: 2.5rem 2rem; display: flex; justify-content: center; flex-wrap: wrap;
+            border-bottom: 1px solid rgba(201,162,39,0.15);
+        }
+        .stat-item { text-align: center; padding: 1rem 2.5rem; border-right: 1px solid rgba(201,162,39,0.15); flex: 1; min-width: 130px; }
         .stat-item:last-child { border-right: none; }
-        .stat-number { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #F1C40F; line-height: 1; }
-        .stat-label { font-size: 0.68rem; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; }
+        .stat-number { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--dorado-light); line-height: 1; }
+        .stat-label { font-size: 0.66rem; font-weight: 700; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 0.4rem; }
+
+        /* ============================================
+           SECTION COMMONS
+        ============================================ */
+        .section-header { text-align: center; padding: 0 2rem 3.5rem; max-width: 800px; margin: 0 auto; }
+        .section-eyebrow {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            font-size: 0.68rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase;
+            color: var(--azul); margin-bottom: 1rem;
+        }
+        .section-eyebrow::before, .section-eyebrow::after { content: ''; display: block; width: 28px; height: 2px; background: var(--dorado); }
+        .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 700; color: var(--azul-dark); line-height: 1.15; margin-bottom: 1rem; }
+        .section-desc { font-size: 0.97rem; color: var(--text-mid); line-height: 1.75; }
+
+        /* Light section eyebrow */
+        .section-eyebrow-light { color: var(--dorado-light); }
+        .section-eyebrow-light::before, .section-eyebrow-light::after { background: var(--dorado-light); }
 
         /* ============================================
            MAP SECTION
         ============================================ */
         .map-section { padding: 5rem 0 0; background: var(--crema); }
-        .section-header { text-align: center; padding: 0 2rem 3rem; max-width: 800px; margin: 0 auto; }
-        .section-eyebrow {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--azul);
-            margin-bottom: 1rem;
-        }
-        .section-eyebrow::before, .section-eyebrow::after { content: ''; display: block; width: 30px; height: 1px; background: var(--azul); }
-        .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 700; color: var(--azul-dark); line-height: 1.2; margin-bottom: 1rem; }
-        .section-desc { font-size: 0.97rem; color: var(--text-mid); line-height: 1.7; }
-
-        .map-wrapper { display: grid; grid-template-columns: 1fr 380px; min-height: 600px; }
-        #ayto-map { height: 100%; min-height: 600px; width: 100%; }
-        .map-sidebar { background: var(--azul-dark); padding: 2rem 1.5rem; overflow-y: auto; max-height: 600px; }
-        .map-sidebar-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #F1C40F; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(212,172,13,0.2); }
-        .municipio-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(212,172,13,0.15); border-radius: 12px; padding: 1rem; margin-bottom: 0.8rem; cursor: pointer; transition: all 0.2s; }
-        .municipio-card:hover { background: rgba(212,172,13,0.1); border-color: rgba(212,172,13,0.4); transform: translateX(3px); }
+        .map-wrapper { display: grid; grid-template-columns: 1fr 380px; min-height: 580px; }
+        #ayto-map { height: 100%; min-height: 580px; width: 100%; }
+        .map-sidebar { background: var(--azul-dark); padding: 2rem 1.5rem; overflow-y: auto; max-height: 580px; }
+        .map-sidebar-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--dorado-light); margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(201,162,39,0.2); }
+        .municipio-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(201,162,39,0.15); border-radius: 12px; padding: 1rem; margin-bottom: 0.8rem; cursor: pointer; transition: all 0.2s; }
+        .municipio-card:hover { background: rgba(201,162,39,0.1); border-color: rgba(201,162,39,0.4); transform: translateX(4px); }
         .municipio-card-name { font-size: 0.88rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
         .municipio-card-meta { font-size: 0.7rem; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 0.4rem; }
-        .municipio-card-meta i { color: #F1C40F; }
+        .municipio-card-meta i { color: var(--dorado-light); }
         .municipio-badge { display: inline-flex; gap: 0.3rem; margin-top: 0.4rem; flex-wrap: wrap; }
-        .badge-small { background: rgba(212,172,13,0.2); color: #F1C40F; font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.1rem 0.45rem; border-radius: 20px; }
-        .badge-blue { background: rgba(46,134,193,0.2); color: #85C1E9; }
-        .badge-green { background: rgba(39,174,96,0.2); color: #82E0AA; }
-        .map-cta-banner { background: linear-gradient(135deg, var(--terra), #922B21); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1rem; }
+        .badge-small { background: rgba(201,162,39,0.2); color: var(--dorado-light); font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.1rem 0.45rem; border-radius: 20px; }
+        .badge-blue { background: rgba(41,128,185,0.2); color: #7FB3D3; }
+        .badge-purple { background: rgba(142,68,173,0.2); color: #C39BD3; }
+        .map-cta-banner { background: linear-gradient(135deg, #0D2137, #1B4F72); border: 1px solid rgba(201,162,39,0.3); padding: 1.5rem; border-radius: 14px; text-align: center; margin-top: 1rem; }
         .map-cta-banner p { color: rgba(255,255,255,0.85); font-size: 0.8rem; line-height: 1.5; margin-bottom: 1rem; }
-        .map-cta-banner strong { color: #F1C40F; }
-        .btn-map-cta { display: block; background: #F1C40F; color: var(--azul-dark); padding: 0.7rem 1rem; border-radius: 25px; font-size: 0.8rem; font-weight: 800; text-decoration: none; transition: all 0.2s; }
-        .btn-map-cta:hover { background: #D4AC0D; }
+        .map-cta-banner strong { color: var(--dorado-light); }
+        .btn-map-cta { display: block; background: linear-gradient(135deg, var(--dorado), var(--dorado-dark)); color: var(--azul-dark); padding: 0.8rem 1rem; border-radius: 25px; font-size: 0.8rem; font-weight: 800; text-decoration: none; transition: all 0.2s; }
+        .btn-map-cta:hover { transform: scale(1.03); }
 
         /* ============================================
            VALUE PROPS
         ============================================ */
         .value-section { padding: 5rem 2rem; background: var(--ivory); }
-        .value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1100px; margin: 0 auto; }
-        .value-card { background: #fff; border-radius: 20px; padding: 2rem; border: 1px solid var(--crema-dark); transition: all 0.3s; position: relative; overflow: hidden; }
-        .value-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--azul), var(--ocre)); }
-        .value-card:hover { transform: translateY(-5px); box-shadow: 0 8px 32px rgba(27,79,114,0.15); }
-        .value-icon { width: 58px; height: 58px; background: linear-gradient(135deg, var(--azul), var(--azul-light)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #F1C40F; margin-bottom: 1.2rem; }
-        .value-card h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--azul-dark); margin-bottom: 0.7rem; }
-        .value-card p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.65; }
+        .value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.8rem; max-width: 1150px; margin: 0 auto; }
+        .value-card {
+            background: #fff; border-radius: 22px; padding: 2rem;
+            border: 1px solid var(--crema-dark); transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .value-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+        .value-card.v1::before { background: linear-gradient(90deg, var(--plan1), #85C1E9); }
+        .value-card.v2::before { background: linear-gradient(90deg, var(--dorado-dark), var(--dorado)); }
+        .value-card.v3::before { background: linear-gradient(90deg, var(--verde), #82E0AA); }
+        .value-card.v4::before { background: linear-gradient(90deg, var(--terra), #E98B80); }
+        .value-card.v5::before { background: linear-gradient(90deg, var(--plan3), #C39BD3); }
+        .value-card.v6::before { background: linear-gradient(90deg, #2C3E50, #5D6D7E); }
+        .value-card.v7::before { background: linear-gradient(90deg, #16A085, #76D7C4); }
+        .value-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(27,79,114,0.12); }
+        .value-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; margin-bottom: 1.2rem; }
+        .v1 .value-icon { background: linear-gradient(135deg, #1B4F72, #2980B9); color: #fff; }
+        .v2 .value-icon { background: linear-gradient(135deg, var(--dorado-dark), var(--dorado-light)); color: var(--azul-dark); }
+        .v3 .value-icon { background: linear-gradient(135deg, var(--verde), #27AE60); color: #fff; }
+        .v4 .value-icon { background: linear-gradient(135deg, var(--terra), #E74C3C); color: #fff; }
+        .v5 .value-icon { background: linear-gradient(135deg, #6C3483, #8E44AD); color: #fff; }
+        .v6 .value-icon { background: linear-gradient(135deg, #1A252F, #2C3E50); color: var(--dorado-light); }
+        .v7 .value-icon { background: linear-gradient(135deg, #0E6655, #16A085); color: #fff; }
+        .value-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--azul-dark); margin-bottom: 0.6rem; }
+        .value-card p { font-size: 0.87rem; color: var(--text-mid); line-height: 1.7; }
+        .value-highlight { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(201,162,39,0.12); border: 1px solid rgba(201,162,39,0.3); color: var(--dorado-dark); font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.7rem; border-radius: 20px; margin-top: 0.8rem; }
 
         /* ============================================
-           PRICING — 2 PLANES
+           MESSAGING FEATURE — destacado
         ============================================ */
-        .pricing-section { padding: 5rem 2rem; background: linear-gradient(160deg, #0E2D45 0%, #1B4F72 60%, #1A5276 100%); }
-        .pricing-section .section-title { color: #fff; }
-        .pricing-section .section-desc { color: rgba(255,255,255,0.65); }
-        .pricing-section .section-eyebrow { color: #F1C40F; }
-        .pricing-section .section-eyebrow::before,
-        .pricing-section .section-eyebrow::after { background: #F1C40F; }
+        .messaging-section { padding: 4.5rem 2rem; background: linear-gradient(135deg, #0D2137 0%, #1a3a57 60%, #0a1f30 100%); }
+        .messaging-container { max-width: 1050px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .messaging-text .section-eyebrow-light::before,
+        .messaging-text .section-eyebrow-light::after { background: var(--dorado-light); }
+        .messaging-title { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 3.5vw, 2.8rem); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 1rem; }
+        .messaging-title .accent { color: var(--dorado-light); }
+        .messaging-desc { font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.75; margin-bottom: 1.5rem; }
+        .messaging-features { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+        .messaging-features li { display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.88rem; color: rgba(255,255,255,0.8); }
+        .messaging-features li i { color: var(--dorado-light); flex-shrink: 0; margin-top: 0.15rem; width: 16px; }
+        /* Mock chat UI */
+        .chat-mock {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(201,162,39,0.25);
+            border-radius: 20px; padding: 1.5rem; overflow: hidden;
+        }
+        .chat-mock-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .chat-mock-avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--dorado-dark), var(--dorado-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: var(--azul-dark); font-weight: 800; }
+        .chat-mock-name { font-size: 0.82rem; font-weight: 700; color: #fff; }
+        .chat-mock-sub { font-size: 0.65rem; color: rgba(255,255,255,0.4); }
+        .chat-online { display: inline-block; width: 8px; height: 8px; background: #27AE60; border-radius: 50%; margin-right: 0.3rem; animation: blink 2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        .chat-messages { display: flex; flex-direction: column; gap: 0.8rem; }
+        .msg { max-width: 80%; padding: 0.7rem 1rem; border-radius: 14px; font-size: 0.78rem; line-height: 1.4; }
+        .msg-tourist { align-self: flex-start; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); border-radius: 14px 14px 14px 4px; }
+        .msg-ayto { align-self: flex-end; background: linear-gradient(135deg, var(--azul), var(--azul-light)); color: #fff; border-radius: 14px 14px 4px 14px; }
+        .msg-meta { font-size: 0.6rem; color: rgba(255,255,255,0.3); margin-top: 0.2rem; text-align: right; }
 
-        .pricing-grid-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 860px; margin: 3rem auto 0; }
+        /* ============================================
+           TRANSLATIONS SECTION
+        ============================================ */
+        .lang-section { padding: 3.5rem 2rem; background: var(--crema); }
+        .lang-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 900px; margin: 0 auto; }
+        .lang-card {
+            background: #fff; border-radius: 18px; padding: 1.5rem 2rem;
+            border: 2px solid var(--crema-dark); text-align: center;
+            transition: all 0.2s; min-width: 140px; flex: 1;
+        }
+        .lang-card:hover { transform: translateY(-4px); border-color: var(--dorado); box-shadow: 0 8px 25px rgba(201,162,39,0.15); }
+        .lang-flag { font-size: 2.5rem; margin-bottom: 0.6rem; display: block; }
+        .lang-name { font-size: 0.88rem; font-weight: 800; color: var(--azul-dark); margin-bottom: 0.2rem; }
+        .lang-sub { font-size: 0.68rem; color: var(--text-light); }
+        .lang-note { text-align: center; font-size: 0.82rem; color: var(--text-mid); margin-top: 1.5rem; }
+        .lang-note strong { color: var(--azul); }
+
+        /* ============================================
+           PRICING — 3 PLANES
+        ============================================ */
+        .pricing-section { padding: 6rem 2rem 4rem; background: linear-gradient(170deg, #0D2137 0%, #1B4F72 55%, #16344f 100%); }
+        .pricing-section .section-title { color: #fff; }
+        .pricing-section .section-desc { color: rgba(255,255,255,0.6); }
+
+        /* Oferta banner */
+        .offer-banner {
+            max-width: 860px; margin: 0 auto 3rem;
+            background: linear-gradient(135deg, rgba(176,58,46,0.25), rgba(142,68,173,0.25));
+            border: 2px solid rgba(201,162,39,0.5); border-radius: 20px; padding: 1.5rem 2rem;
+            text-align: center;
+        }
+        .offer-banner-label { font-size: 0.68rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dorado-light); margin-bottom: 0.5rem; }
+        .offer-banner-text { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: #fff; }
+        .offer-banner-text .pct { font-size: clamp(2.5rem, 5vw, 4rem); color: var(--dorado-light); font-weight: 900; }
+        .offer-banner-sub { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin-top: 0.4rem; }
+
+        .pricing-grid-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; max-width: 1100px; margin: 0 auto; }
+
         .plan-card {
-            background: rgba(255,255,255,0.07); backdrop-filter: blur(8px);
-            border: 2px solid rgba(212,172,13,0.25); border-radius: 24px;
-            padding: 2.5rem 2rem; position: relative; transition: all 0.3s;
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(12px);
+            border: 2px solid rgba(255,255,255,0.1); border-radius: 26px;
+            padding: 2.5rem 1.8rem; position: relative; transition: all 0.3s;
+            display: flex; flex-direction: column;
         }
-        .plan-card.featured { border-color: #D4AC0D; background: rgba(212,172,13,0.1); }
-        .plan-card.featured::before {
-            content: '⭐ MÁS COMPLETO';
-            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-            background: #D4AC0D; color: var(--azul-dark);
-            font-size: 0.62rem; font-weight: 900; padding: 0.3rem 1.2rem;
-            border-radius: 20px; white-space: nowrap; letter-spacing: 0.1em;
+        .plan-card:hover { transform: translateY(-8px); box-shadow: 0 16px 50px rgba(0,0,0,0.3); }
+        .plan-card.plan-basico { border-color: rgba(41,128,185,0.35); }
+        .plan-card.plan-basico:hover { border-color: rgba(41,128,185,0.7); }
+        .plan-card.plan-cultural { border-color: rgba(26,122,67,0.4); }
+        .plan-card.plan-cultural:hover { border-color: rgba(26,122,67,0.8); }
+        .plan-card.plan-territorio { border-color: rgba(201,162,39,0.5); background: rgba(201,162,39,0.07); }
+        .plan-card.plan-territorio:hover { border-color: rgba(201,162,39,0.9); box-shadow: 0 16px 50px rgba(201,162,39,0.2); }
+        .plan-card.plan-territorio::before {
+            content: '🏆 MÁS COMPLETO';
+            position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--dorado), var(--dorado-dark));
+            color: var(--azul-dark); font-size: 0.62rem; font-weight: 900;
+            padding: 0.35rem 1.4rem; border-radius: 20px; white-space: nowrap; letter-spacing: 0.1em;
+            box-shadow: 0 4px 14px rgba(201,162,39,0.5);
         }
-        .plan-card:hover { transform: translateY(-6px); border-color: #D4AC0D; box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
-        .plan-label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.5rem; }
-        .plan-name { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
-        .plan-desc-short { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-bottom: 1.5rem; min-height: 2.5rem; line-height: 1.4; }
-        .plan-price-block { margin-bottom: 1.5rem; }
-        .plan-price-main { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 900; color: #F1C40F; line-height: 1; }
-        .plan-price-main sup { font-size: 1.4rem; vertical-align: top; margin-top: 0.5rem; }
-        .plan-price-sub { font-size: 0.72rem; color: rgba(255,255,255,0.45); margin-top: 0.2rem; }
-        .plan-price-renewal {
-            background: rgba(30,132,73,0.2); border: 1px solid rgba(30,132,73,0.4);
-            color: #82E0AA; font-size: 0.72rem; font-weight: 700;
-            padding: 0.3rem 0.8rem; border-radius: 20px; display: inline-block; margin-top: 0.5rem;
+
+        .plan-color-bar { height: 5px; border-radius: 4px; margin-bottom: 1.5rem; }
+        .plan-basico .plan-color-bar { background: linear-gradient(90deg, #1B4F72, #2980B9); }
+        .plan-cultural .plan-color-bar { background: linear-gradient(90deg, #1A7A43, #27AE60); }
+        .plan-territorio .plan-color-bar { background: linear-gradient(90deg, var(--dorado-dark), var(--dorado-light)); }
+
+        .plan-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 1rem; }
+        .plan-basico .plan-icon { background: rgba(41,128,185,0.2); color: #85C1E9; }
+        .plan-cultural .plan-icon { background: rgba(26,122,67,0.2); color: #82E0AA; }
+        .plan-territorio .plan-icon { background: rgba(201,162,39,0.2); color: var(--dorado-light); }
+
+        .plan-label { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 0.4rem; }
+        .plan-name { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+        .plan-tagline { font-size: 0.78rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; line-height: 1.4; min-height: 2.2rem; }
+
+        .plan-price-block { margin-bottom: 1.5rem; padding: 1.2rem; background: rgba(0,0,0,0.2); border-radius: 14px; }
+        .plan-price-regular { font-size: 0.75rem; color: rgba(255,255,255,0.35); text-decoration: line-through; margin-bottom: 0.1rem; }
+        .plan-price-offer-label { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--terra-light); margin-bottom: 0.3rem; }
+        .plan-price-main { font-family: 'Playfair Display', serif; font-size: 3.8rem; font-weight: 900; color: #fff; line-height: 1; }
+        .plan-price-main sup { font-size: 1.3rem; vertical-align: top; margin-top: 0.5rem; }
+        .plan-price-iva { font-size: 0.72rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem; }
+        .plan-price-year { font-size: 0.7rem; color: rgba(255,255,255,0.35); }
+
+        .plan-features { list-style: none; margin-bottom: 2rem; flex: 1; }
+        .plan-features li { font-size: 0.82rem; color: rgba(255,255,255,0.78); padding: 0.4rem 0; display: flex; align-items: flex-start; gap: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .plan-features li:last-child { border-bottom: none; }
+        .plan-features li .fi { flex-shrink: 0; margin-top: 0.15rem; width: 14px; }
+        .plan-features li .fi-yes1 { color: #85C1E9; }
+        .plan-features li .fi-yes2 { color: #82E0AA; }
+        .plan-features li .fi-yes3 { color: var(--dorado-light); }
+        .plan-features li .fi-no { color: rgba(255,255,255,0.2); }
+        .plan-features li strong { color: #fff; }
+        .plan-features li .feat-badge {
+            background: rgba(201,162,39,0.2); color: var(--dorado-light);
+            font-size: 0.6rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 10px; margin-left: auto; white-space: nowrap;
         }
-        .plan-includes-basic {
-            background: rgba(46,134,193,0.15); border: 1px solid rgba(46,134,193,0.3);
-            color: #85C1E9; font-size: 0.72rem; font-weight: 700;
-            padding: 0.3rem 0.8rem; border-radius: 20px; display: inline-block; margin-top: 0.5rem;
-        }
-        .plan-features { list-style: none; margin-bottom: 1.8rem; }
-        .plan-features li { font-size: 0.82rem; color: rgba(255,255,255,0.78); padding: 0.4rem 0; display: flex; align-items: flex-start; gap: 0.6rem; }
-        .plan-features li .fa-check { color: #D4AC0D; flex-shrink: 0; margin-top: 0.1rem; }
-        .plan-features li .fa-check-circle { color: #27AE60; flex-shrink: 0; margin-top: 0.1rem; }
-        .plan-features li .fa-times { color: rgba(255,255,255,0.2); flex-shrink: 0; margin-top: 0.1rem; }
-        .plan-features li span.pill {
-            background: rgba(192,57,43,0.25); color: #E98B80; font-size: 0.65rem; font-weight: 700;
-            padding: 0.1rem 0.45rem; border-radius: 10px; margin-left: 0.2rem;
-        }
+
         .btn-plan {
             width: 100%; padding: 1rem; border-radius: 14px;
-            font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 800;
+            font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 800;
             cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center; gap: 0.6rem;
             border: none; text-decoration: none;
         }
-        .btn-plan-primary { background: #D4AC0D; color: var(--azul-dark); box-shadow: 0 6px 20px rgba(212,172,13,0.4); }
-        .btn-plan-primary:hover { background: #F1C40F; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,172,13,0.55); }
-        .btn-plan-secondary { background: rgba(255,255,255,0.1); color: #fff; border: 2px solid rgba(255,255,255,0.25); }
-        .btn-plan-secondary:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.5); }
+        .btn-plan-basico { background: rgba(41,128,185,0.25); color: #85C1E9; border: 2px solid rgba(41,128,185,0.5); }
+        .btn-plan-basico:hover { background: rgba(41,128,185,0.4); border-color: #2980B9; color: #fff; transform: translateY(-2px); }
+        .btn-plan-cultural { background: rgba(26,122,67,0.25); color: #82E0AA; border: 2px solid rgba(26,122,67,0.5); }
+        .btn-plan-cultural:hover { background: rgba(26,122,67,0.4); border-color: #1A7A43; color: #fff; transform: translateY(-2px); }
+        .btn-plan-territorio { background: linear-gradient(135deg, var(--dorado), var(--dorado-dark)); color: var(--azul-dark); box-shadow: 0 6px 20px rgba(201,162,39,0.4); }
+        .btn-plan-territorio:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(201,162,39,0.6); }
 
         /* Extras */
-        .pricing-extras { max-width: 860px; margin: 2.5rem auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-        .extra-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(212,172,13,0.2); border-radius: 16px; padding: 1.5rem; text-align: center; }
-        .extra-price { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #F1C40F; font-weight: 700; line-height: 1; margin-bottom: 0.4rem; }
-        .extra-price sup { font-size: 1rem; vertical-align: top; margin-top: 0.3rem; }
-        .extra-label { font-size: 0.8rem; color: rgba(255,255,255,0.65); font-weight: 600; line-height: 1.4; }
-        .pricing-note { max-width: 860px; margin: 1.5rem auto 0; text-align: center; color: rgba(255,255,255,0.4); font-size: 0.75rem; }
+        .pricing-extras { max-width: 1100px; margin: 2.5rem auto 0; }
+        .extras-title { text-align: center; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 1.2rem; }
+        .extras-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .extra-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,162,39,0.2); border-radius: 16px; padding: 1.5rem; text-align: center; transition: all 0.2s; }
+        .extra-card:hover { background: rgba(201,162,39,0.08); border-color: rgba(201,162,39,0.4); }
+        .extra-icon { font-size: 1.8rem; margin-bottom: 0.6rem; display: block; }
+        .extra-price { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--dorado-light); font-weight: 700; line-height: 1; margin-bottom: 0.3rem; }
+        .extra-price sup { font-size: 0.9rem; vertical-align: top; margin-top: 0.3rem; }
+        .extra-label { font-size: 0.78rem; color: rgba(255,255,255,0.6); font-weight: 600; line-height: 1.4; }
+        .extra-sub { font-size: 0.65rem; color: rgba(255,255,255,0.35); margin-top: 0.3rem; }
+        .pricing-note { max-width: 860px; margin: 1.5rem auto 0; text-align: center; color: rgba(255,255,255,0.35); font-size: 0.73rem; }
+
+        /* Messaging included badge */
+        .messaging-included-badge {
+            max-width: 860px; margin: 2rem auto 0;
+            background: rgba(26,122,67,0.15); border: 1px solid rgba(26,122,67,0.4);
+            border-radius: 14px; padding: 1rem 1.5rem;
+            display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center;
+        }
+        .messaging-included-badge i { color: #82E0AA; font-size: 1.1rem; }
+        .messaging-included-badge span { font-size: 0.82rem; color: #82E0AA; font-weight: 700; }
+        .messaging-included-badge small { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
 
         /* ============================================
            CTA / FORMULARIO INLINE
         ============================================ */
         .cta-section { padding: 5rem 2rem; background: var(--crema); }
-        .cta-container { max-width: 780px; margin: 0 auto; }
+        .cta-container { max-width: 820px; margin: 0 auto; }
         .cta-eyebrow {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            background: rgba(27,79,114,0.12); border: 1px solid rgba(27,79,114,0.3);
+            background: rgba(27,79,114,0.1); border: 1px solid rgba(27,79,114,0.25);
             color: var(--azul); padding: 0.4rem 1.2rem; border-radius: 30px;
-            font-size: 0.72rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;
+            font-size: 0.7rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;
         }
         .cta-headline { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 900; color: var(--azul-dark); line-height: 1.15; margin-bottom: 0.8rem; text-align: center; }
         .cta-headline .accent { color: var(--terra); }
         .cta-sub { text-align: center; color: var(--text-mid); font-size: 0.95rem; margin-bottom: 2.5rem; line-height: 1.65; }
 
-        /* Selector de plan */
-        .plan-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        /* Selector de plan — 3 opciones */
+        .plan-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 2rem; }
         .plan-option {
-            border: 2px solid var(--crema-dark); border-radius: 16px; padding: 1.2rem 1rem;
+            border: 2px solid var(--crema-dark); border-radius: 16px; padding: 1.2rem 0.8rem;
             cursor: pointer; transition: all 0.2s; background: #fff; text-align: center; position: relative;
         }
-        .plan-option.selected { border-color: var(--azul); background: rgba(27,79,114,0.05); }
+        .plan-option.selected { border-color: var(--azul); background: rgba(27,79,114,0.05); box-shadow: 0 4px 16px rgba(27,79,114,0.12); }
         .plan-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
-        .plan-option-name { font-weight: 800; font-size: 1rem; color: var(--azul-dark); margin-bottom: 0.3rem; }
-        .plan-option-price { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--terra); line-height: 1; }
-        .plan-option-price sup { font-size: 0.9rem; vertical-align: top; margin-top: 0.3rem; }
-        .plan-option-desc { font-size: 0.72rem; color: var(--text-light); margin-top: 0.3rem; line-height: 1.3; }
+        .plan-option-name { font-weight: 800; font-size: 0.88rem; color: var(--azul-dark); margin-bottom: 0.3rem; }
+        .plan-option-price-old { font-size: 0.68rem; color: var(--text-light); text-decoration: line-through; margin-bottom: 0.1rem; }
+        .plan-option-price { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--terra); line-height: 1; }
+        .plan-option-price sup { font-size: 0.8rem; vertical-align: top; margin-top: 0.3rem; }
+        .plan-option-desc { font-size: 0.65rem; color: var(--text-light); margin-top: 0.3rem; line-height: 1.3; }
         .plan-option-badge {
             position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-            background: var(--verde); color: #fff; font-size: 0.6rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--dorado), var(--dorado-dark)); color: var(--azul-dark); font-size: 0.58rem; font-weight: 900;
             padding: 0.2rem 0.8rem; border-radius: 20px; white-space: nowrap;
         }
         .plan-checkmark {
-            position: absolute; top: 0.7rem; right: 0.7rem;
-            width: 22px; height: 22px; border-radius: 50%;
+            position: absolute; top: 0.6rem; right: 0.6rem;
+            width: 20px; height: 20px; border-radius: 50%;
             background: var(--azul); color: #fff; display: none;
-            align-items: center; justify-content: center; font-size: 0.7rem;
+            align-items: center; justify-content: center; font-size: 0.65rem;
         }
         .plan-option.selected .plan-checkmark { display: flex; }
 
         /* Formulario */
         .inscripcion-form-wrapper {
             background: #fff; border: 1px solid var(--crema-dark);
-            border-radius: 24px; padding: 2.5rem 2rem 2rem; box-shadow: 0 4px 24px rgba(27,79,114,0.08);
+            border-radius: 26px; padding: 2.5rem 2rem 2rem; box-shadow: 0 6px 30px rgba(27,79,114,0.08);
         }
         .form-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--azul-dark); text-align: center; margin-bottom: 1.5rem; }
         .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-mid); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.08em; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--text-mid); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.08em; }
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 0.8rem 1rem;
+            width: 100%; padding: 0.85rem 1rem;
             border: 2px solid var(--crema-dark); border-radius: 10px;
             font-family: 'Montserrat', sans-serif; font-size: 16px; color: var(--text-dark);
             background: #fff; transition: border-color 0.2s;
         }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px rgba(27,79,114,0.08);
+            outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px rgba(27,79,114,0.07);
         }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-        /* Resumen del plan seleccionado */
         .form-plan-summary {
-            background: rgba(27,79,114,0.06); border: 1px solid rgba(27,79,114,0.15);
-            border-radius: 12px; padding: 1rem 1.2rem; margin: 1.2rem 0;
-            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(27,79,114,0.05); border: 1.5px solid rgba(27,79,114,0.15);
+            border-radius: 14px; padding: 1rem 1.2rem; margin: 1.2rem 0;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;
         }
-        .summary-label { font-size: 0.82rem; color: var(--text-mid); font-weight: 600; }
+        .summary-label { font-size: 0.78rem; color: var(--text-mid); font-weight: 600; }
         .summary-plan-name { font-size: 0.95rem; font-weight: 800; color: var(--azul-dark); }
-        .summary-price { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--terra); }
-        .summary-note { font-size: 0.68rem; color: var(--text-light); }
+        .summary-price { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--terra); }
+        .summary-note { font-size: 0.65rem; color: var(--text-light); }
 
         .btn-pagar {
-            width: 100%; padding: 1.1rem 2rem; background: var(--azul);
+            width: 100%; padding: 1.1rem 2rem;
+            background: linear-gradient(135deg, var(--azul), #2980B9);
             color: #fff; border: none; border-radius: 14px;
             font-family: 'Montserrat', sans-serif; font-size: 1.05rem; font-weight: 900;
             cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center; gap: 0.6rem;
-            margin-top: 1.5rem; box-shadow: 0 6px 20px rgba(27,79,114,0.3);
+            margin-top: 1.5rem; box-shadow: 0 6px 24px rgba(27,79,114,0.35);
         }
-        .btn-pagar:hover { background: var(--azul-dark); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(27,79,114,0.4); }
+        .btn-pagar:hover { background: linear-gradient(135deg, var(--azul-dark), var(--azul)); transform: translateY(-3px); box-shadow: 0 12px 35px rgba(27,79,114,0.45); }
         .btn-pagar:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
-        .btn-pagar .price-pill { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 20px; }
+        .btn-pagar .price-pill { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.9rem; }
 
         .form-trust { display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
-        .trust-item { display: flex; align-items: center; gap: 0.4rem; color: var(--text-light); font-size: 0.72rem; font-weight: 600; }
-        .trust-item i { color: var(--azul); font-size: 0.85rem; }
+        .form-trust .trust-item-sm { display: flex; align-items: center; gap: 0.35rem; color: var(--text-light); font-size: 0.7rem; font-weight: 600; }
+        .form-trust .trust-item-sm i { color: var(--azul); font-size: 0.85rem; }
 
-        .cta-alternative { margin-top: 2rem; text-align: center; }
+        .cta-alternative { margin-top: 2.5rem; text-align: center; }
         .cta-alt-text { color: var(--text-light); font-size: 0.82rem; margin-bottom: 0.8rem; }
         .cta-alt-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-        .btn-alt { padding: 0.6rem 1.3rem; border-radius: 25px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+        .btn-alt { padding: 0.65rem 1.3rem; border-radius: 25px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
         .btn-alt-whatsapp { background: rgba(37,211,102,0.1); color: #25d366; border: 1px solid rgba(37,211,102,0.4); }
         .btn-alt-whatsapp:hover { background: rgba(37,211,102,0.2); }
         .btn-alt-email { background: rgba(27,79,114,0.1); color: var(--azul); border: 1px solid rgba(27,79,114,0.3); }
@@ -393,26 +578,26 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
            FAQ
         ============================================ */
         .faq-section { padding: 5rem 2rem; background: var(--ivory); }
-        .faq-list { max-width: 750px; margin: 0 auto; }
+        .faq-list { max-width: 760px; margin: 0 auto; }
         .faq-item { border-bottom: 1px solid var(--crema-dark); overflow: hidden; }
-        .faq-question { width: 100%; background: none; border: none; padding: 1.2rem 0; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--azul-dark); gap: 1rem; }
-        .faq-question i { color: var(--azul); font-size: 0.8rem; transition: transform 0.3s; flex-shrink: 0; }
+        .faq-question { width: 100%; background: none; border: none; padding: 1.3rem 0; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.94rem; font-weight: 700; color: var(--azul-dark); gap: 1rem; }
+        .faq-question i { color: var(--dorado-dark); font-size: 0.8rem; transition: transform 0.3s; flex-shrink: 0; }
         .faq-question.open i { transform: rotate(180deg); }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-        .faq-answer.open { max-height: 300px; }
-        .faq-answer-inner { padding: 0 0 1.2rem; font-size: 0.88rem; color: var(--text-mid); line-height: 1.7; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+        .faq-answer.open { max-height: 350px; }
+        .faq-answer-inner { padding: 0 0 1.3rem; font-size: 0.88rem; color: var(--text-mid); line-height: 1.75; }
 
         /* ============================================
            FOOTER
         ============================================ */
-        .ayto-footer { background: var(--azul-dark); padding: 2.5rem 2rem; text-align: center; }
+        .ayto-footer { background: var(--azul-dark); padding: 2.5rem 2rem; text-align: center; border-top: 3px solid var(--dorado); }
         .footer-logo { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-bottom: 1rem; }
         .footer-logo img { height: 32px; filter: brightness(0) invert(1) opacity(0.7); }
         .footer-logo span { font-family: 'Playfair Display', serif; font-size: 1rem; color: rgba(255,255,255,0.5); }
         .footer-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-        .footer-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.78rem; transition: color 0.2s; }
-        .footer-links a:hover { color: #F1C40F; }
-        .footer-copyright { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
+        .footer-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.76rem; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--dorado-light); }
+        .footer-copyright { font-size: 0.7rem; color: rgba(255,255,255,0.25); }
 
         /* ============================================
            ANIMATIONS + FLOATING CTA
@@ -425,48 +610,66 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
         .floating-cta { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; transform: translateY(120px); transition: transform 0.4s ease; }
         .floating-cta.visible { transform: translateY(0); }
         .floating-cta-btn {
-            background: var(--terra); color: #fff;
-            padding: 0.9rem 1.8rem; border-radius: 50px; font-size: 0.85rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--dorado), var(--dorado-dark));
+            color: var(--azul-dark);
+            padding: 0.9rem 1.8rem; border-radius: 50px; font-size: 0.85rem; font-weight: 900;
             display: flex; align-items: center; gap: 0.6rem;
-            box-shadow: 0 8px 30px rgba(192,57,43,0.5); transition: all 0.2s; border: none; cursor: pointer;
+            box-shadow: 0 8px 30px rgba(201,162,39,0.55); transition: all 0.2s; border: none; cursor: pointer;
         }
-        .floating-cta-btn:hover { background: var(--terra-light); transform: scale(1.05); }
-        .floating-pulse { position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; background: #F1C40F; border-radius: 50%; border: 2px solid var(--ivory); animation: pulse 2s infinite; }
+        .floating-cta-btn:hover { transform: scale(1.05); box-shadow: 0 12px 40px rgba(201,162,39,0.7); }
+        .floating-pulse { position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; background: var(--terra); border-radius: 50%; border: 2px solid var(--ivory); animation: pulse 2s infinite; }
 
         /* ============================================
            RESPONSIVE
         ============================================ */
+        @media (max-width: 1024px) {
+            .pricing-grid-wrap { grid-template-columns: 1fr 1fr; }
+            .plan-card.plan-territorio { grid-column: span 2; max-width: 480px; margin: 0 auto; }
+            .messaging-container { grid-template-columns: 1fr; gap: 2rem; }
+        }
         @media (max-width: 900px) {
             .map-wrapper { grid-template-columns: 1fr; }
             #ayto-map { min-height: 400px; }
             .map-sidebar { max-height: 350px; }
-            .pricing-grid-wrap, .pricing-extras { grid-template-columns: 1fr; max-width: 400px; }
-            .plan-card.featured::before { top: -12px; }
+        }
+        @media (max-width: 700px) {
+            .pricing-grid-wrap { grid-template-columns: 1fr; }
+            .plan-card.plan-territorio { grid-column: unset; max-width: 100%; }
+            .plan-selector { grid-template-columns: 1fr; }
         }
         @media (max-width: 640px) {
-            .form-grid, .plan-selector { grid-template-columns: 1fr; }
-            .hero-hook-box { padding: 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .hero-plans-mini { flex-direction: column; align-items: center; }
             .hero-buttons { flex-direction: column; align-items: stretch; }
-            .seasons-inner { flex-direction: row; }
-            .season-item { padding: 0.6rem 1rem; min-width: 70px; }
+            .trust-bar { gap: 1.5rem; }
+            .urgency-bar { font-size: 0.7rem; }
         }
         @media (max-width: 600px) {
-            .ayto-nav { padding: 0.6rem 1rem; }
+            .ayto-nav { padding: 0.6rem 1rem; top: 28px; }
             .nav-brand-text { display: none; }
             .floating-cta { bottom: 1rem; right: 1rem; }
         }
 
         /* Leaflet popup */
-        .leaflet-popup-content-wrapper { border-radius: 12px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important; }
+        .leaflet-popup-content-wrapper { border-radius: 14px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important; }
         .popup-title { font-weight: 700; font-size: 0.92rem; color: var(--azul-dark); margin-bottom: 0.3rem; }
-        .popup-meta { font-size: 0.76rem; color: var(--text-mid); margin-bottom: 0.5rem; }
+        .popup-meta { font-size: 0.74rem; color: var(--text-mid); margin-bottom: 0.5rem; }
         .popup-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
         .popup-tag { background: rgba(27,79,114,0.1); color: var(--azul); padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.65rem; font-weight: 700; }
-        .popup-tag-event { background: rgba(192,57,43,0.1); color: var(--terra); }
+        .popup-tag-event { background: rgba(176,58,46,0.1); color: var(--terra); }
+        .popup-tag-activ { background: rgba(142,68,173,0.1); color: #8E44AD; }
     </style>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<!-- ========== URGENCY BAR ========== -->
+<div class="urgency-bar">
+    <i class="fas fa-fire" style="color:#F1C40F;"></i>
+    <span>🎉 OFERTA LANZAMIENTO MAYO 2026</span>
+    &nbsp;50% de descuento en todos los planes &nbsp;·&nbsp; Precio especial para organismos oficiales
+    <span>⏳ Plazas limitadas</span>
+</div>
 
 <!-- ========== NAVBAR ========== -->
 <nav class="ayto-nav" id="aytoNav">
@@ -478,8 +681,9 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
         </div>
     </a>
     <div class="nav-cta">
-        <a href="#mapa" class="nav-link"><i class="fas fa-map-marked-alt"></i> Ver el mapa</a>
-        <a href="#planes" class="nav-link"><i class="fas fa-tag"></i> Precios</a>
+        <a href="#mapa" class="nav-link"><i class="fas fa-map-marked-alt"></i> Mapa</a>
+        <a href="#planes" class="nav-link"><i class="fas fa-tag"></i> Planes</a>
+        <a href="#mensajeria" class="nav-link"><i class="fas fa-comments"></i> Mensajería</a>
         <a href="#inscribir" class="btn-nav-inscribir">
             <i class="fas fa-landmark"></i> Inscribe tu municipio
         </a>
@@ -488,54 +692,85 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
 
 <!-- ========== HERO ========== -->
 <section class="hero">
-    <div class="hero-badge"><i class="fas fa-map-marked-alt"></i> Turismo Rural · España · Las 4 Estaciones</div>
-    <h1 class="hero-title">Rutas Rurales<br><em>para Ayuntamientos</em></h1>
-    <p class="hero-subtitle">El escaparate digital que tu municipio necesita para atraer turistas durante todo el año</p>
+    <div class="hero-particles" id="particles"></div>
 
-    <div class="hero-hook-box">
-        <p class="hero-hook-eyebrow">🔔 Atención alcalde/concejal de turismo</p>
-        <h2 class="hero-hook-headline">
-            <span class="missing">¡Tu municipio no está en el mapa!</span><br>
-            Los turistas te buscan y no te encuentran
+    <div class="hero-official-badge">
+        <span class="shield">🛡️</span>
+        Plataforma oficial para Ayuntamientos y Organismos Públicos
+    </div>
+
+    <h1 class="hero-title">
+        Haz que tu municipio<br>
+        <em>lidere el turismo rural</em><br>
+        <span class="under">en la era digital</span>
+    </h1>
+
+    <p class="hero-subtitle">
+        Presencia digital completa para tu Ayuntamiento: lugares de interés, eventos culturales, actividades
+        y mensajería directa con turistas. En 5 idiomas, visible todo el año.
+    </p>
+
+    <div class="hero-offer-box">
+        <div class="offer-flag">🎉 OFERTA ESPECIAL LANZAMIENTO · MAYO 2026</div>
+        <p class="offer-label"><i class="fas fa-bolt"></i> Precio reducido 50% para primeros municipios</p>
+        <h2 class="offer-headline">
+            Tres planes adaptados a cada<br><span class="highlight">municipio y presupuesto</span>
         </h2>
-        <p class="hero-hook-desc">
-            Miles de viajeros buscan cada semana destinos rurales auténticos para el puente, el fin de semana
-            o las vacaciones. <strong>No solo en verano.</strong> Tus monumentos, rutas de senderismo, fiestas patronales
-            y eventos culturales merecen estar visibles. Inscríbete hoy desde <strong>19€</strong>.
+        <p class="offer-desc">
+            Desde lugares de interés hasta eventos culturales y actividades turísticas completas.
+            <strong style="color:#fff;">Mensajería directa con turistas incluida</strong> en todos los planes.
+            Alta en menos de 24h.
         </p>
-        <div style="margin-bottom:1.2rem;">
-            <span class="hero-from-price"><i class="fas fa-tag"></i> Desde <strong>19€</strong> IVA incluido</span>
+        <div class="hero-plans-mini">
+            <div class="hero-plan-mini">
+                <div class="mini-name">Plan Básico</div>
+                <div class="mini-price-old">120€/año</div>
+                <div class="mini-price"><sup>€</sup>60</div>
+                <div class="mini-iva">IVA incluido</div>
+            </div>
+            <div class="hero-plan-mini">
+                <div class="mini-name">Plan Cultural</div>
+                <div class="mini-price-old">160€/año</div>
+                <div class="mini-price"><sup>€</sup>80</div>
+                <div class="mini-iva">IVA incluido</div>
+            </div>
+            <div class="hero-plan-mini plan3-mini">
+                <div class="mini-name">Plan Territorio</div>
+                <div class="mini-price-old">200€/año</div>
+                <div class="mini-price"><sup>€</sup>100</div>
+                <div class="mini-iva">IVA incluido</div>
+            </div>
         </div>
         <div class="hero-buttons">
-            <a href="#inscribir" class="btn-primary">
-                <i class="fas fa-magic"></i> Inscribir mi municipio — desde 19€
+            <a href="#planes" class="btn-primary">
+                <i class="fas fa-rocket"></i> Ver todos los planes
             </a>
             <a href="https://wa.me/34605249696?text=Hola%2C%20soy%20del%20Ayuntamiento%20y%20quiero%20inscribir%20mi%20municipio%20en%20Rutas%20Rurales" target="_blank" class="btn-secondary">
-                <i class="fab fa-whatsapp"></i> Hablamos por WhatsApp
+                <i class="fab fa-whatsapp"></i> Consultar por WhatsApp
             </a>
         </div>
     </div>
-    <div class="hero-scroll-hint">Descubre el mapa <i class="fas fa-chevron-down"></i></div>
+    <div class="hero-scroll-hint">Descubre más <i class="fas fa-chevron-down"></i></div>
 </section>
 
-<!-- ========== STRIP: 4 ESTACIONES ========== -->
-<div class="seasons-strip">
-    <div class="seasons-inner">
-        <div class="season-item"><span class="season-icon">🌸</span><span class="season-label">Primavera</span></div>
-        <div class="season-item"><span class="season-icon">☀️</span><span class="season-label">Verano</span></div>
-        <div class="season-item"><span class="season-icon">🍂</span><span class="season-label">Otoño</span></div>
-        <div class="season-item"><span class="season-icon">❄️</span><span class="season-label">Invierno</span></div>
-        <div class="season-item"><span class="season-icon">📍</span><span class="season-label">Todo el año</span></div>
-    </div>
+<!-- ========== TRUST BAR ========== -->
+<div class="trust-bar">
+    <div class="trust-item"><i class="fas fa-shield-alt"></i> Plataforma oficial verificada</div>
+    <div class="trust-item"><i class="fas fa-globe"></i> 5 idiomas incluidos</div>
+    <div class="trust-item"><i class="fas fa-comments"></i> Mensajería directa con turistas</div>
+    <div class="trust-item"><i class="fas fa-lock"></i> Pago seguro Stripe</div>
+    <div class="trust-item"><i class="fas fa-clock"></i> Alta en &lt;24 horas</div>
+    <div class="trust-item"><i class="fas fa-receipt"></i> Factura oficial emitida</div>
 </div>
 
 <!-- ========== STATS ========== -->
 <div class="stats-bar">
     <div class="stat-item"><div class="stat-number">320+</div><div class="stat-label">Municipios activos</div></div>
-    <div class="stat-item"><div class="stat-number">12.000+</div><div class="stat-label">Visitas/mes</div></div>
+    <div class="stat-item"><div class="stat-number">18.000+</div><div class="stat-label">Visitas/mes</div></div>
     <div class="stat-item"><div class="stat-number">850+</div><div class="stat-label">Eventos publicados</div></div>
+    <div class="stat-item"><div class="stat-number">5</div><div class="stat-label">Idiomas</div></div>
     <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">Estaciones cubiertas</div></div>
-    <div class="stat-item"><div class="stat-number">19€</div><div class="stat-label">Desde · IVA incl.</div></div>
+    <div class="stat-item"><div class="stat-number">60€</div><div class="stat-label">Desde · oferta</div></div>
 </div>
 
 <!-- ========== MAPA ========== -->
@@ -543,7 +778,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
     <div class="section-header">
         <p class="section-eyebrow"><i class="fas fa-map-marked-alt"></i> Mapa interactivo <i class="fas fa-map-marked-alt"></i></p>
         <h2 class="section-title">Tu municipio merece estar aquí.<br>¿Está el tuyo?</h2>
-        <p class="section-desc">Explora los municipios inscritos. Lugares de interés, eventos culturales y rutas organizadas por estación. ¿No ves el tuyo? Únete hoy.</p>
+        <p class="section-desc">Explora los municipios inscritos. Lugares de interés, eventos culturales, actividades y rutas. ¿No ves el tuyo? Únete hoy.</p>
     </div>
     <div class="map-wrapper">
         <div id="ayto-map"></div>
@@ -551,8 +786,8 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
             <h3 class="map-sidebar-title">🏛 Municipios en el mapa</h3>
             <div id="municipiosList"></div>
             <div class="map-cta-banner">
-                <p>¿No aparece tu municipio?<br><strong>¡Miles de turistas te buscan!</strong><br>Alta en menos de 24h.</p>
-                <a href="#inscribir" class="btn-map-cta"><i class="fas fa-plus-circle"></i> Inscribir mi municipio — desde 19€</a>
+                <p>¿No aparece tu municipio?<br><strong>¡Miles de turistas te buscan!</strong><br>Alta en menos de 24h con oferta lanzamiento.</p>
+                <a href="#inscribir" class="btn-map-cta"><i class="fas fa-plus-circle"></i> Inscribir mi municipio — desde 60€</a>
             </div>
         </aside>
     </div>
@@ -562,150 +797,358 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
 <section class="value-section" id="ventajas">
     <div class="section-header">
         <p class="section-eyebrow"><i class="fas fa-star"></i> Por qué inscribirse <i class="fas fa-star"></i></p>
-        <h2 class="section-title">Turismo durante todo el año,<br>no solo en verano</h2>
-        <p class="section-desc">Buscamos Ayuntamientos comprometidos con el turismo rural sostenible en <strong>todas las estaciones</strong>. Primavera, verano, otoño e invierno tienen su encanto.</p>
+        <h2 class="section-title">Todo lo que necesita tu municipio<br>para atraer turistas</h2>
+        <p class="section-desc">Una plataforma diseñada para <strong>organismos públicos</strong> que quieren posicionarse en el turismo rural durante <strong>las cuatro estaciones</strong>.</p>
     </div>
     <div class="value-grid">
-        <div class="value-card">
+        <div class="value-card v1">
             <div class="value-icon"><i class="fas fa-map-pin"></i></div>
-            <h3>Lugares de interés visibles</h3>
-            <p>Monumentos, ermitas, miradores, fuentes, rutas de senderismo. Todo lo que hace único a tu municipio aparece en el mapa con ficha completa.</p>
+            <h3>Lugares de interés en el mapa</h3>
+            <p>Monumentos, ermitas, miradores, fuentes, rutas de senderismo. Todo lo que hace único a tu municipio con ficha completa, fotos y horarios.</p>
+            <span class="value-highlight"><i class="fas fa-check"></i> Todos los planes</span>
         </div>
-        <div class="value-card">
-            <div class="value-icon"><i class="fas fa-calendar-alt"></i></div>
-            <h3>Eventos culturales actualizados</h3>
-            <p>Fiestas patronales, ferias medievales, mercados artesanales, conciertos, teatro. Publica hasta 5 eventos con el Plan Cultural y amplía cuando quieras.</p>
+        <div class="value-card v2">
+            <div class="value-icon"><i class="fas fa-calendar-star"></i></div>
+            <h3>Eventos culturales publicados</h3>
+            <p>Fiestas patronales, ferias medievales, mercados artesanales, conciertos, teatro. Visible para turistas nacionales e internacionales.</p>
+            <span class="value-highlight"><i class="fas fa-check"></i> Cultural y Territorio</span>
         </div>
-        <div class="value-card">
-            <div class="value-icon"><i class="fas fa-route"></i></div>
-            <h3>Rutas temáticas por temporada</h3>
-            <p>Formamos parte activa en la creación de rutas temáticas: ruta de la naturaleza en primavera, festivales en verano, vendimia en otoño, navidades en invierno.</p>
+        <div class="value-card v3">
+            <div class="value-icon"><i class="fas fa-hiking"></i></div>
+            <h3>Actividades turísticas</h3>
+            <p>Senderismo, rutas en bicicleta, experiencias gastronómicas, talleres artesanales. Convierte tu municipio en un destino de experiencias.</p>
+            <span class="value-highlight"><i class="fas fa-check"></i> Plan Territorio</span>
         </div>
-        <div class="value-card">
+        <div class="value-card v4">
+            <div class="value-icon"><i class="fas fa-comments"></i></div>
+            <h3>Mensajería directa con turistas</h3>
+            <p>Los turistas pueden contactar directamente con tu Ayuntamiento a través de la plataforma. Resuelve dudas, atiende consultas y fideliza visitantes.</p>
+            <span class="value-highlight"><i class="fas fa-check"></i> Incluido en todos</span>
+        </div>
+        <div class="value-card v5">
+            <div class="value-icon"><i class="fas fa-globe-europe"></i></div>
+            <h3>5 idiomas: internacional</h3>
+            <p>Español, inglés, francés, alemán y chino. Tu municipio llega a turistas europeos y del resto del mundo que buscan destinos rurales auténticos.</p>
+            <span class="value-highlight"><i class="fas fa-check"></i> Incluido en todos</span>
+        </div>
+        <div class="value-card v6">
             <div class="value-icon"><i class="fas fa-search"></i></div>
             <h3>SEO local potente</h3>
-            <p>Aprovecha el posicionamiento de rutasrurales.io. Cuando alguien busca "qué hacer en [tu provincia]", tu municipio aparece entre los resultados.</p>
+            <p>Aprovecha el posicionamiento de rutasrurales.io. Cuando alguien busca «qué hacer en [tu provincia]», tu municipio aparece entre los primeros resultados.</p>
+            <span class="value-highlight"><i class="fas fa-check"></i> Incluido en todos</span>
         </div>
-        <div class="value-card">
-            <div class="value-icon"><i class="fas fa-globe-europe"></i></div>
-            <h3>Turistas nacionales e internacionales</h3>
-            <p>La plataforma está disponible en 5 idiomas. Alcanza a turistas españoles, europeos y del resto del mundo que buscan turismo rural auténtico.</p>
+        <div class="value-card v7">
+            <div class="value-icon"><i class="fas fa-route"></i></div>
+            <h3>Rutas temáticas estacionales</h3>
+            <p>Formamos parte de rutas temáticas activas todo el año: naturaleza en primavera, festivales en verano, vendimia en otoño, navidades en invierno.</p>
+            <span class="value-highlight"><i class="fas fa-check"></i> Incluido en todos</span>
         </div>
-        <div class="value-card">
+        <div class="value-card v1">
             <div class="value-icon"><i class="fas fa-handshake"></i></div>
             <h3>Gestión sencilla para la administración</h3>
-            <p>Formulario simple, pago seguro, alta en menos de 24h. Sin complicaciones técnicas para el personal municipal. Actualizamos por ti si lo necesitas.</p>
+            <p>Formulario simple, pago seguro con factura oficial, alta en menos de 24h. Sin complicaciones técnicas. Actualizamos por ti si lo necesitas.</p>
+            <span class="value-highlight"><i class="fas fa-check"></i> Soporte incluido</span>
         </div>
     </div>
 </section>
 
-<!-- ========== PRICING ========== -->
+<!-- ========== MENSAJERÍA DIRECTA — FEATURE HIGHLIGHT ========== -->
+<section class="messaging-section" id="mensajeria">
+    <div class="messaging-container">
+        <div class="messaging-text">
+            <p class="section-eyebrow section-eyebrow-light" style="justify-content:flex-start;"><i class="fas fa-comments"></i> Mensajería directa <i class="fas fa-comments"></i></p>
+            <h2 class="messaging-title">Conecta directamente<br>con los <span class="accent">turistas que te visitan</span></h2>
+            <p class="messaging-desc">
+                Todos los planes incluyen mensajería directa entre el Ayuntamiento y los turistas. Responde preguntas sobre alojamiento, accesos, fiestas locales, aparcamiento... 
+                y transforma cada consulta en una visita real.
+            </p>
+            <ul class="messaging-features">
+                <li><i class="fas fa-check-circle"></i> Turistas pueden escribirte directamente desde la ficha de tu municipio</li>
+                <li><i class="fas fa-check-circle"></i> Panel de gestión de mensajes para el Ayuntamiento</li>
+                <li><i class="fas fa-check-circle"></i> Notificaciones por email para el responsable de turismo</li>
+                <li><i class="fas fa-check-circle"></i> Historial de conversaciones guardado</li>
+                <li><i class="fas fa-check-circle"></i> Disponible en los 5 idiomas de la plataforma</li>
+                <li><i class="fas fa-check-circle"></i> <strong style="color:#fff;">Incluido en los 3 planes sin coste adicional</strong></li>
+            </ul>
+        </div>
+        <div class="chat-mock">
+            <div class="chat-mock-header">
+                <div class="chat-mock-avatar">🏛</div>
+                <div>
+                    <div class="chat-mock-name">Ayto. Medinaceli</div>
+                    <div class="chat-mock-sub"><span class="chat-online"></span> En línea · Concejal de Turismo</div>
+                </div>
+            </div>
+            <div class="chat-messages">
+                <div class="msg msg-tourist">
+                    Hola, ¿está abierto el arco romano el domingo por la tarde? 🏛
+                    <div class="msg-meta">Marie (🇫🇷 turista francesa) · 14:32</div>
+                </div>
+                <div class="msg msg-ayto">
+                    Bonjour Marie! Sí, el recinto está abierto todos los días de 10h a 19h. ¡Te esperamos! 😊
+                    <div class="msg-meta">Ayto. Medinaceli · 14:35 ✓✓</div>
+                </div>
+                <div class="msg msg-tourist">
+                    Perfecto, ¿hay parking cerca para autocaravana? 🚐
+                    <div class="msg-meta">Marie · 14:36</div>
+                </div>
+                <div class="msg msg-ayto">
+                    Sí, tenemos área de autocaravanas gratuita a 200m. Coordenadas: 41.175, -2.432 📍
+                    <div class="msg-meta">Ayto. Medinaceli · 14:38 ✓✓</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== IDIOMAS ========== -->
+<section class="lang-section">
+    <div class="section-header" style="padding-bottom:2rem;">
+        <p class="section-eyebrow"><i class="fas fa-globe"></i> Alcance internacional <i class="fas fa-globe"></i></p>
+        <h2 class="section-title">Tu municipio en 5 idiomas</h2>
+        <p class="section-desc">Traducciones automáticas incluidas en todos los planes. Llega a turistas de toda Europa y más allá.</p>
+    </div>
+    <div class="lang-grid">
+        <div class="lang-card">
+            <span class="lang-flag">🇪🇸</span>
+            <div class="lang-name">Español</div>
+            <div class="lang-sub">Mercado nacional</div>
+        </div>
+        <div class="lang-card">
+            <span class="lang-flag">🇬🇧</span>
+            <div class="lang-name">Inglés</div>
+            <div class="lang-sub">Turismo internacional</div>
+        </div>
+        <div class="lang-card">
+            <span class="lang-flag">🇫🇷</span>
+            <div class="lang-name">Francés</div>
+            <div class="lang-sub">Turistas franceses y belgas</div>
+        </div>
+        <div class="lang-card">
+            <span class="lang-flag">🇩🇪</span>
+            <div class="lang-name">Alemán</div>
+            <div class="lang-sub">Turismo alemán y austriaco</div>
+        </div>
+        <div class="lang-card">
+            <span class="lang-flag">🇨🇳</span>
+            <div class="lang-name">Chino</div>
+            <div class="lang-sub">Turismo asiático</div>
+        </div>
+    </div>
+    <p class="lang-note">
+        <strong>Traducciones incluidas en todos los planes.</strong> Páginas adicionales en cualquier idioma disponibles como extra (+10€/página).
+    </p>
+</section>
+
+<!-- ========== PRICING — 3 PLANES ========== -->
 <section class="pricing-section" id="planes">
     <div class="section-header">
-        <p class="section-eyebrow"><i class="fas fa-tag"></i> Planes y precios <i class="fas fa-tag"></i></p>
-        <h2 class="section-title">Simple, justo y sin sorpresas</h2>
-        <p class="section-desc">El Plan Cultural incluye todo lo del Plan Básico. Sin ilimitados que nadie usa — pagas lo que necesitas, cuando lo necesitas.</p>
+        <p class="section-eyebrow section-eyebrow-light"><i class="fas fa-tag"></i> Planes y precios <i class="fas fa-tag"></i></p>
+        <h2 class="section-title">Sin sorpresas, sin letra pequeña</h2>
+        <p class="section-desc">Tres planes pensados para municipios de diferente tamaño y ambición turística. Todos incluyen mensajería con turistas y 5 idiomas.</p>
     </div>
+
+    <!-- OFERTA BANNER -->
+    <div class="offer-banner">
+        <div class="offer-banner-label"><i class="fas fa-fire"></i> Oferta de lanzamiento — Mayo 2026</div>
+        <div class="offer-banner-text">
+            <span class="pct">50%</span> de descuento<br>en todos los planes
+        </div>
+        <div class="offer-banner-sub">Precio especial para los primeros Ayuntamientos. Válido durante el período de lanzamiento.</div>
+    </div>
+
     <div class="pricing-grid-wrap">
 
         <!-- PLAN BÁSICO -->
-        <div class="plan-card">
+        <div class="plan-card plan-basico">
+            <div class="plan-color-bar"></div>
+            <div class="plan-icon"><i class="fas fa-map-pin"></i></div>
             <p class="plan-label">Plan</p>
             <h3 class="plan-name">Básico</h3>
-            <p class="plan-desc-short">Tus lugares de interés en el mapa. El punto de partida perfecto.</p>
+            <p class="plan-tagline">Tus lugares de interés en el mapa. El punto de partida perfecto para municipios que comienzan su presencia digital.</p>
+
             <div class="plan-price-block">
-                <div class="plan-price-main"><sup>€</sup>19</div>
-                <div class="plan-price-sub">IVA incluido · pago único</div>
-                <span class="plan-price-renewal">🔄 Renovación anual 9,99€</span>
+                <div class="plan-price-regular">120€ / año (precio regular)</div>
+                <div class="plan-price-offer-label"><i class="fas fa-bolt"></i> Oferta lanzamiento Mayo 2026</div>
+                <div class="plan-price-main"><sup>€</sup>60</div>
+                <div class="plan-price-iva">IVA incluido · pago anual</div>
+                <div class="plan-price-year" style="margin-top:0.4rem; color:rgba(255,255,255,0.5);">Precio regular: 120€/año</div>
             </div>
+
             <ul class="plan-features">
-                <li><i class="fas fa-check"></i> <strong>5 lugares de interés</strong> en el mapa</li>
-                <li><i class="fas fa-check"></i> Ficha completa (fotos, descripción, horarios)</li>
-                <li><i class="fas fa-check"></i> Enlace a la web del Ayuntamiento</li>
-                <li><i class="fas fa-check"></i> SEO local incluido</li>
-                <li><i class="fas fa-check"></i> Visible en 5 idiomas</li>
-                <li><i class="fas fa-check"></i> Apareces en las rutas temáticas</li>
-                <li class="dim"><i class="fas fa-times"></i> Eventos culturales <span class="pill">Plan Cultural</span></li>
+                <li><i class="fas fa-check fi fi-yes1"></i> <strong>5 lugares de interés</strong> en el mapa interactivo</li>
+                <li><i class="fas fa-check fi fi-yes1"></i> Ficha completa (fotos, descripción, horarios)</li>
+                <li><i class="fas fa-check fi fi-yes1"></i> Enlace a la web del Ayuntamiento</li>
+                <li><i class="fas fa-check fi fi-yes1"></i> SEO local incluido</li>
+                <li><i class="fas fa-check fi fi-yes1"></i> Traducción en 5 idiomas</li>
+                <li><i class="fas fa-check fi fi-yes1"></i> Rutas temáticas estacionales</li>
+                <li><i class="fas fa-check fi fi-yes1"></i> <strong>Mensajería directa con turistas</strong></li>
+                <li><i class="fas fa-times fi fi-no"></i> Eventos culturales <span style="font-size:0.72rem;color:rgba(255,255,255,0.3)">(Plan Cultural)</span></li>
+                <li><i class="fas fa-times fi fi-no"></i> Actividades turísticas <span style="font-size:0.72rem;color:rgba(255,255,255,0.3)">(Plan Territorio)</span></li>
+                <li><i class="fas fa-plus-circle fi fi-yes1"></i> Páginas adicionales: <span class="feat-badge">10€/página</span></li>
             </ul>
-            <button class="btn-plan btn-plan-secondary" onclick="seleccionarPlan('basico')">
-                <i class="fas fa-map-pin"></i> Elegir Plan Básico — 19€
+            <button class="btn-plan btn-plan-basico" onclick="seleccionarPlan('basico')">
+                <i class="fas fa-map-pin"></i> Elegir Plan Básico — 60€
             </button>
         </div>
 
         <!-- PLAN CULTURAL -->
-        <div class="plan-card featured">
+        <div class="plan-card plan-cultural">
+            <div class="plan-color-bar"></div>
+            <div class="plan-icon"><i class="fas fa-calendar-alt"></i></div>
             <p class="plan-label">Plan</p>
             <h3 class="plan-name">Cultural</h3>
-            <p class="plan-desc-short">Lugares de interés + eventos culturales. Todo lo del Básico incluido.</p>
+            <p class="plan-tagline">Lugares de interés más eventos culturales. Muestra las fiestas, ferias y celebraciones que hacen único a tu pueblo.</p>
+
             <div class="plan-price-block">
-                <div class="plan-price-main"><sup>€</sup>39</div>
-                <div class="plan-price-sub">IVA incluido · pago único</div>
-                <span class="plan-includes-basic">✓ Incluye el Plan Básico completo</span><br>
-                <span class="plan-price-renewal">🔄 Renovación anual eventos 19,99€</span>
+                <div class="plan-price-regular">160€ / año (precio regular)</div>
+                <div class="plan-price-offer-label"><i class="fas fa-bolt"></i> Oferta lanzamiento Mayo 2026</div>
+                <div class="plan-price-main"><sup>€</sup>80</div>
+                <div class="plan-price-iva">IVA incluido · pago anual</div>
+                <div class="plan-price-year" style="margin-top:0.4rem; color:rgba(255,255,255,0.5);">Precio regular: 160€/año</div>
             </div>
+
             <ul class="plan-features">
-                <li><i class="fas fa-check-circle"></i> <strong>5 lugares de interés</strong> en el mapa</li>
-                <li><i class="fas fa-check-circle"></i> <strong>5 eventos culturales</strong> publicados</li>
-                <li><i class="fas fa-check-circle"></i> Fichas completas para lugares y eventos</li>
-                <li><i class="fas fa-check-circle"></i> SEO local + eventos en Google</li>
-                <li><i class="fas fa-check-circle"></i> Visible en 5 idiomas</li>
-                <li><i class="fas fa-check-circle"></i> Destacado en rutas temáticas estacionales</li>
-                <li><i class="fas fa-check-circle"></i> Evento extra: <strong>5€/evento adicional</strong></li>
+                <li><i class="fas fa-check fi fi-yes2"></i> <strong>5 lugares de interés</strong> en el mapa interactivo</li>
+                <li><i class="fas fa-check fi fi-yes2"></i> <strong>5 eventos culturales</strong> publicados</li>
+                <li><i class="fas fa-check fi fi-yes2"></i> Fichas completas para lugares y eventos</li>
+                <li><i class="fas fa-check fi fi-yes2"></i> SEO local + eventos en Google</li>
+                <li><i class="fas fa-check fi fi-yes2"></i> Traducción en 5 idiomas</li>
+                <li><i class="fas fa-check fi fi-yes2"></i> Destacado en rutas temáticas estacionales</li>
+                <li><i class="fas fa-check fi fi-yes2"></i> <strong>Mensajería directa con turistas</strong></li>
+                <li><i class="fas fa-times fi fi-no"></i> Actividades turísticas <span style="font-size:0.72rem;color:rgba(255,255,255,0.3)">(Plan Territorio)</span></li>
+                <li><i class="fas fa-plus-circle fi fi-yes2"></i> Páginas adicionales: <span class="feat-badge">10€/página</span></li>
             </ul>
-            <button class="btn-plan btn-plan-primary" onclick="seleccionarPlan('cultural')">
-                <i class="fas fa-calendar-star"></i> Elegir Plan Cultural — 39€
+            <button class="btn-plan btn-plan-cultural" onclick="seleccionarPlan('cultural')">
+                <i class="fas fa-calendar-alt"></i> Elegir Plan Cultural — 80€
+            </button>
+        </div>
+
+        <!-- PLAN TERRITORIO -->
+        <div class="plan-card plan-territorio">
+            <div class="plan-color-bar"></div>
+            <div class="plan-icon"><i class="fas fa-trophy"></i></div>
+            <p class="plan-label">Plan</p>
+            <h3 class="plan-name">Territorio</h3>
+            <p class="plan-tagline">La presencia digital completa. Lugares, eventos y actividades. Para municipios que quieren ser un referente turístico.</p>
+
+            <div class="plan-price-block">
+                <div class="plan-price-regular">200€ / año (precio regular)</div>
+                <div class="plan-price-offer-label"><i class="fas fa-bolt"></i> Oferta lanzamiento Mayo 2026</div>
+                <div class="plan-price-main" style="color:var(--dorado-light);"><sup>€</sup>100</div>
+                <div class="plan-price-iva">IVA incluido · pago anual</div>
+                <div class="plan-price-year" style="margin-top:0.4rem; color:rgba(255,255,255,0.5);">Precio regular: 200€/año</div>
+            </div>
+
+            <ul class="plan-features">
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> <strong>5 lugares de interés</strong> en el mapa interactivo</li>
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> <strong>5 eventos culturales</strong> publicados</li>
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> <strong>5 actividades turísticas</strong> publicadas</li>
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> Fichas completas para todo el contenido</li>
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> SEO máximo: lugares + eventos + actividades</li>
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> Traducción en 5 idiomas</li>
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> Máxima visibilidad en rutas temáticas</li>
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> <strong>Mensajería directa con turistas</strong></li>
+                <li><i class="fas fa-star fi fi-yes3"></i> <strong>Perfil destacado</strong> en búsquedas</li>
+                <li><i class="fas fa-plus-circle fi fi-yes3"></i> Páginas adicionales: <span class="feat-badge">10€/página</span></li>
+            </ul>
+            <button class="btn-plan btn-plan-territorio" onclick="seleccionarPlan('territorio')">
+                <i class="fas fa-trophy"></i> Elegir Plan Territorio — 100€
             </button>
         </div>
     </div>
 
+    <!-- MENSAJERÍA INCLUIDA -->
+    <div class="messaging-included-badge">
+        <i class="fas fa-comments"></i>
+        <span>💬 Mensajería directa con turistas</span>
+        <small>·</small>
+        <small>Incluida en todos los planes sin coste adicional</small>
+    </div>
+
     <!-- EXTRAS -->
     <div class="pricing-extras">
-        <div class="extra-card">
-            <div class="extra-price"><sup>€</sup>5</div>
-            <div class="extra-label">por evento adicional<br><span style="color:rgba(255,255,255,0.4);">Más allá de los 5 incluidos en el Plan Cultural</span></div>
-        </div>
-        <div class="extra-card">
-            <div class="extra-price"><sup>€</sup>19,99</div>
-            <div class="extra-label">renovación anual de eventos<br><span style="color:rgba(255,255,255,0.4);">Para mantener tus eventos actualizados cada año</span></div>
+        <p class="extras-title"><i class="fas fa-plus-circle"></i> Extras disponibles para todos los planes</p>
+        <div class="extras-grid">
+            <div class="extra-card">
+                <span class="extra-icon">📄</span>
+                <div class="extra-price"><sup>€</sup>10</div>
+                <div class="extra-label">por página adicional</div>
+                <div class="extra-sub">Cada lugar, evento o actividad extra más allá de los incluidos</div>
+            </div>
+            <div class="extra-card">
+                <span class="extra-icon">🇫🇷</span>
+                <div class="extra-price"><sup>€</sup>10</div>
+                <div class="extra-label">traducción página en francés</div>
+                <div class="extra-sub">Versión traducida adicional por página</div>
+            </div>
+            <div class="extra-card">
+                <span class="extra-icon">🇬🇧</span>
+                <div class="extra-price"><sup>€</sup>10</div>
+                <div class="extra-label">traducción página en inglés</div>
+                <div class="extra-sub">Versión traducida adicional por página</div>
+            </div>
+            <div class="extra-card">
+                <span class="extra-icon">🇩🇪</span>
+                <div class="extra-price"><sup>€</sup>10</div>
+                <div class="extra-label">traducción página en alemán</div>
+                <div class="extra-sub">Versión traducida adicional por página</div>
+            </div>
+            <div class="extra-card">
+                <span class="extra-icon">🇨🇳</span>
+                <div class="extra-price"><sup>€</sup>10</div>
+                <div class="extra-label">traducción página en chino</div>
+                <div class="extra-sub">Versión traducida adicional por página</div>
+            </div>
         </div>
     </div>
-    <p class="pricing-note">Todos los precios incluyen IVA. Factura emitida automáticamente. Pago seguro vía Stripe.</p>
+    <p class="pricing-note">Todos los precios incluyen IVA. Factura oficial emitida automáticamente. Pago seguro vía Stripe. Las traducciones automáticas del plan están incluidas — el extra es para páginas adicionales traducidas.</p>
 </section>
 
 <!-- ========== FORMULARIO INSCRIPCIÓN INLINE ========== -->
 <section class="cta-section" id="inscribir">
     <div class="cta-container">
         <p style="text-align:center;">
-            <span class="cta-eyebrow"><i class="fas fa-landmark"></i> Inscripción de municipio <i class="fas fa-landmark"></i></span>
+            <span class="cta-eyebrow"><i class="fas fa-landmark"></i> Inscripción oficial de municipio <i class="fas fa-landmark"></i></span>
         </p>
-        <h2 class="cta-headline"><span class="accent">¡Tu municipio merece estar en el mapa!</span><br>Elige tu plan y empieza hoy</h2>
+        <h2 class="cta-headline"><span class="accent">¡Tu municipio merece liderar!</span><br>Elige plan y empieza hoy</h2>
         <p class="cta-sub">
-            Selecciona el plan que mejor se ajusta a tu municipio, rellena el formulario y te llevamos directamente al pago.
-            Alta en menos de <strong>24 horas</strong>. Sin complicaciones técnicas.
+            Selecciona el plan, rellena el formulario y te llevamos al pago seguro.
+            Alta en menos de <strong>24 horas</strong>. Oferta de lanzamiento: <strong>50% dto hasta fin de mayo 2026</strong>.
         </p>
 
-        <!-- SELECTOR DE PLAN -->
+        <!-- SELECTOR DE PLAN — 3 opciones -->
         <div class="plan-selector" id="planSelector">
             <label class="plan-option" id="optionBasico">
                 <input type="radio" name="plan" value="basico" id="radioBasico">
                 <div class="plan-checkmark"><i class="fas fa-check"></i></div>
                 <div class="plan-option-name">Plan Básico</div>
-                <div class="plan-option-price"><sup>€</sup>19</div>
-                <div class="plan-option-desc">5 lugares de interés · IVA incluido</div>
+                <div class="plan-option-price-old">120€/año</div>
+                <div class="plan-option-price"><sup>€</sup>60</div>
+                <div class="plan-option-desc">5 lugares de interés<br>IVA incluido</div>
             </label>
             <label class="plan-option" id="optionCultural">
                 <input type="radio" name="plan" value="cultural" id="radioCultural">
-                <div class="plan-option-badge">⭐ MÁS COMPLETO</div>
                 <div class="plan-checkmark"><i class="fas fa-check"></i></div>
                 <div class="plan-option-name">Plan Cultural</div>
-                <div class="plan-option-price"><sup>€</sup>39</div>
-                <div class="plan-option-desc">5 lugares + 5 eventos · IVA incluido</div>
+                <div class="plan-option-price-old">160€/año</div>
+                <div class="plan-option-price"><sup>€</sup>80</div>
+                <div class="plan-option-desc">5 lugares + 5 eventos<br>IVA incluido</div>
+            </label>
+            <label class="plan-option" id="optionTerritorio">
+                <input type="radio" name="plan" value="territorio" id="radioTerritorio">
+                <div class="plan-option-badge">🏆 MÁS COMPLETO</div>
+                <div class="plan-checkmark"><i class="fas fa-check"></i></div>
+                <div class="plan-option-name">Plan Territorio</div>
+                <div class="plan-option-price-old">200€/año</div>
+                <div class="plan-option-price"><sup>€</sup>100</div>
+                <div class="plan-option-desc">5 lugares + 5 eventos + 5 actividades<br>IVA incluido</div>
             </label>
         </div>
 
         <!-- FORMULARIO -->
         <div class="inscripcion-form-wrapper">
-            <p class="form-title">🏛 Datos del municipio</p>
+            <p class="form-title">🏛 Datos del municipio y responsable</p>
             <form id="formInscripcion" onsubmit="pagarConStripe(event)">
                 <input type="hidden" name="plan" id="planSeleccionado" value="basico">
                 <div class="form-grid">
@@ -725,12 +1168,12 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                     </div>
                     <div class="form-group">
                         <label>Cargo</label>
-                        <input type="text" name="cargo" placeholder="Ej: Concejal de Turismo">
+                        <input type="text" name="cargo" placeholder="Ej: Concejal/a de Turismo">
                     </div>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Email del Ayuntamiento *</label>
+                        <label>Email oficial del Ayuntamiento *</label>
                         <input type="email" name="email" required placeholder="turismo@ayto-municipio.es" autocomplete="email">
                     </div>
                     <div class="form-group">
@@ -743,7 +1186,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                     <input type="text" name="web" placeholder="www.ayto-municipio.es">
                 </div>
                 <div class="form-group">
-                    <label>Cuéntanos brevemente qué ofrece tu municipio</label>
+                    <label>¿Qué ofrece tu municipio? (breve descripción)</label>
                     <textarea name="descripcion" rows="2" placeholder="Monumentos, rutas, fiestas, qué destaca de tu pueblo..."></textarea>
                 </div>
 
@@ -752,32 +1195,34 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                     <div>
                         <div class="summary-label">Plan seleccionado</div>
                         <div class="summary-plan-name" id="summaryPlanName">Plan Básico — 5 lugares de interés</div>
-                        <div class="summary-note" id="summaryPlanNote">IVA incluido · pago único · renovación anual 9,99€</div>
+                        <div class="summary-note" id="summaryPlanNote">IVA incluido · precio lanzamiento Mayo 2026 (regular 120€)</div>
                     </div>
                     <div style="text-align:right;">
-                        <div class="summary-price" id="summaryPrice">19€</div>
+                        <div style="font-size:0.7rem;color:var(--text-light);text-decoration:line-through;" id="summaryPriceOld">120€</div>
+                        <div class="summary-price" id="summaryPrice">60€</div>
                     </div>
                 </div>
 
                 <button type="submit" class="btn-pagar" id="btnPagar">
                     <i class="fas fa-lock"></i>
                     Pagar con tarjeta
-                    <span class="price-pill" id="btnPriceLabel">19€ IVA incl.</span>
+                    <span class="price-pill" id="btnPriceLabel">60€ IVA incl.</span>
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </form>
 
             <div class="form-trust">
-                <div class="trust-item"><i class="fas fa-lock"></i> Pago seguro Stripe</div>
-                <div class="trust-item"><i class="fas fa-shield-alt"></i> RGPD</div>
-                <div class="trust-item"><i class="fas fa-undo"></i> Garantía 14 días</div>
-                <div class="trust-item"><i class="fas fa-receipt"></i> Factura automática</div>
+                <div class="trust-item-sm"><i class="fas fa-lock"></i> Pago seguro Stripe</div>
+                <div class="trust-item-sm"><i class="fas fa-shield-alt"></i> RGPD compliant</div>
+                <div class="trust-item-sm"><i class="fas fa-undo"></i> Garantía 14 días</div>
+                <div class="trust-item-sm"><i class="fas fa-receipt"></i> Factura oficial</div>
+                <div class="trust-item-sm"><i class="fas fa-clock"></i> Alta &lt;24h</div>
             </div>
         </div>
 
         <!-- ALTERNATIVA -->
         <div class="cta-alternative">
-            <p class="cta-alt-text">¿Prefieren que lo tramitemos nosotros? Contacta directamente.</p>
+            <p class="cta-alt-text">¿Prefieren tramitarlo por otro canal? Contacta directamente con nosotros.</p>
             <div class="cta-alt-links">
                 <a href="https://wa.me/34605249696?text=Hola%2C%20soy%20del%20Ayuntamiento%20y%20quiero%20inscribir%20mi%20municipio%20en%20Rutas%20Rurales" target="_blank" class="btn-alt btn-alt-whatsapp">
                     <i class="fab fa-whatsapp"></i> WhatsApp · +34 605 249 696
@@ -799,18 +1244,34 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
     <div class="faq-list">
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFaq(this)">
-                ¿El Plan Cultural incluye el Plan Básico? <i class="fas fa-chevron-down"></i>
+                ¿Cuál es la diferencia entre los tres planes? <i class="fas fa-chevron-down"></i>
             </button>
             <div class="faq-answer"><div class="faq-answer-inner">
-                Sí, completamente. El Plan Cultural incluye todo lo del Plan Básico (5 lugares de interés) más 5 eventos culturales. No hace falta contratar los dos por separado — con el Cultural tienes todo en uno.
+                El <strong>Plan Básico</strong> incluye 5 lugares de interés en el mapa. El <strong>Plan Cultural</strong> añade 5 eventos culturales (fiestas, ferias, mercados...). El <strong>Plan Territorio</strong> es la propuesta completa: 5 lugares + 5 eventos + 5 actividades turísticas, más perfil destacado en búsquedas. Todos incluyen mensajería directa con turistas y traducción en 5 idiomas.
             </div></div>
         </div>
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFaq(this)">
-                ¿Qué pasa cuando terminan los 5 eventos del Plan Cultural? <i class="fas fa-chevron-down"></i>
+                ¿Qué incluye la mensajería directa con turistas? <i class="fas fa-chevron-down"></i>
             </button>
             <div class="faq-answer"><div class="faq-answer-inner">
-                Puedes añadir eventos adicionales a 5€ cada uno. Al año siguiente, la renovación para mantener y actualizar los eventos cuesta 19,99€. Los lugares de interés del Plan Básico son permanentes sin cuota adicional una vez inscritos.
+                Los turistas pueden enviar mensajes directamente al Ayuntamiento desde la ficha del municipio en la plataforma. El responsable de turismo recibe notificaciones por email y puede responder desde un panel de gestión. El historial de conversaciones se guarda y el sistema funciona en los 5 idiomas disponibles.
+            </div></div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                ¿Qué significa la oferta de lanzamiento del 50%? <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer"><div class="faq-answer-inner">
+                Durante el período de lanzamiento de mayo 2026, los precios están reducidos al 50%: Básico a 60€ (antes 120€/año), Cultural a 80€ (antes 160€/año), Territorio a 100€ (antes 200€/año). Esta oferta es para los primeros municipios que se inscriban y tiene plazas limitadas.
+            </div></div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                ¿Cómo funcionan las páginas adicionales a 10€? <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer"><div class="faq-answer-inner">
+                Cada plan incluye un número determinado de páginas (lugares, eventos o actividades). Si necesitas añadir más, cada página adicional cuesta 10€ (IVA incluido). También las traducciones de páginas adicionales a francés, inglés, alemán o chino cuestan 10€ por página.
             </div></div>
         </div>
         <div class="faq-item">
@@ -818,7 +1279,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                 ¿En qué idiomas aparece nuestro municipio? <i class="fas fa-chevron-down"></i>
             </button>
             <div class="faq-answer"><div class="faq-answer-inner">
-                La plataforma está disponible en español, inglés, francés, alemán y chino. Tus fichas se traducen automáticamente, lo que significa que también llegas a turistas europeos e internacionales.
+                La plataforma está disponible en <strong>español, inglés, francés, alemán y chino</strong>. Tus fichas se traducen automáticamente, lo que significa que también llegas a turistas europeos e internacionales. Si necesitas páginas adicionales traducidas, están disponibles como extra a 10€/página.
             </div></div>
         </div>
         <div class="faq-item">
@@ -826,23 +1287,15 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                 ¿Necesitamos conocimientos técnicos para inscribirse? <i class="fas fa-chevron-down"></i>
             </button>
             <div class="faq-answer"><div class="faq-answer-inner">
-                No. El proceso es completamente guiado: rellenáis el formulario de esta página, pagáis con tarjeta de crédito de forma segura a través de Stripe, y nosotros nos encargamos de publicar vuestro municipio en menos de 24 horas. Si preferís, podemos hacerlo nosotros directamente por el mismo precio.
+                No. El proceso es completamente guiado: rellenáis el formulario, pagáis con tarjeta de crédito de forma segura a través de Stripe, y nosotros nos encargamos de publicar vuestro municipio en menos de 24 horas. Si preferís, podemos hacerlo nosotros directamente. La factura se emite automáticamente.
             </div></div>
         </div>
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFaq(this)">
-                ¿Cómo funciona la renovación anual de eventos? <i class="fas fa-chevron-down"></i>
+                ¿Por qué es importante estar visible durante todo el año? <i class="fas fa-chevron-down"></i>
             </button>
             <div class="faq-answer"><div class="faq-answer-inner">
-                Cada año os enviaremos un aviso para actualizar vuestros eventos (fiestas patronales, mercados, eventos culturales del nuevo año). La renovación cuesta 19,99€ e incluye hasta 5 eventos actualizados. Los lugares de interés permanecen visibles indefinidamente sin coste adicional.
-            </div></div>
-        </div>
-        <div class="faq-item">
-            <button class="faq-question" onclick="toggleFaq(this)">
-                ¿Por qué es importante estar en el mapa también en invierno o primavera? <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="faq-answer"><div class="faq-answer-inner">
-                Porque el turismo rural ya no es solo de verano. El turista de interior busca activamente destinos para puentes de noviembre, Navidades, Semana Santa o escapadas de otoño. Los municipios que tienen presencia digital durante todo el año captan significativamente más visitantes que los que solo se activan en verano.
+                Porque el turismo rural ya no es solo de verano. El turista de interior busca activamente destinos para puentes, Navidades, Semana Santa o escapadas de otoño. Los municipios con presencia digital activa todo el año captan significativamente más visitantes. Nuestra plataforma está diseñada para mostrar el atractivo de cada municipio en las cuatro estaciones.
             </div></div>
         </div>
     </div>
@@ -861,7 +1314,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
         <a href="tel:+34605249696">+34 605 249 696</a>
         <a href="/">← Volver a Rutas Rurales</a>
     </div>
-    <p class="footer-copyright">&copy; 2026 rutasrurales.io · Todos los derechos reservados</p>
+    <p class="footer-copyright">&copy; 2026 rutasrurales.io · Todos los derechos reservados · Plataforma oficial para Ayuntamientos y Organismos Públicos</p>
 </footer>
 
 <!-- ========== FLOATING CTA ========== -->
@@ -876,21 +1329,36 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ================================================================
+// PARTICLES
+// ================================================================
+(function() {
+    const container = document.getElementById('particles');
+    if (!container) return;
+    for (let i = 0; i < 12; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 60 + 20;
+        p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*10}s;`;
+        container.appendChild(p);
+    }
+})();
+
+// ================================================================
 // DATOS DE MUESTRA — municipios
 // ================================================================
 const municipiosData = [
-    { id:1,  nombre:"Medinaceli",        lat:41.175, lng:-2.432, prov:"Soria",      lugares:["Arco romano","Colegiata","Plaza Mayor"], eventos:["Feria Medieval","Semana Santa"], desc:"La ciudad de los tres horizontes. Arco romano, judería y naturaleza." },
-    { id:2,  nombre:"Albarracín",        lat:40.411, lng:-1.440, prov:"Teruel",     lugares:["Murallas medievales","Catedral","Barrio árabe"], eventos:["Mercado Medieval","Festival Teatro"], desc:"El pueblo más bonito de España. Arquitectura mudéjar declarada Patrimonio." },
-    { id:3,  nombre:"Sigüenza",          lat:41.068, lng:-2.638, prov:"Guadalajara",lugares:["Castillo-Parador","Catedral románica","Plaza Mayor"], eventos:["Feria Renacentista","Conciertos Catedral"], desc:"Ciudad medieval con parador en el castillo. Catedral románica impresionante." },
-    { id:4,  nombre:"Pedraza",           lat:41.124, lng:-3.808, prov:"Segovia",    lugares:["Castillo de Pedraza","Plaza Mayor","Arco de la Villa"], eventos:["Conciertos de las Velas","Mercado Castellano"], desc:"Villa medieval amurallada. Los Conciertos de las Velas, únicos en el mundo." },
-    { id:5,  nombre:"Frías",             lat:42.760, lng:-3.407, prov:"Burgos",     lugares:["Castillo medieval","Puente medieval","Barrio rupestre"], eventos:["Feria Medieval","Jornadas Medievales"], desc:"El pueblo más pequeño de España con condado. Castillo y puente románico." },
-    { id:6,  nombre:"Brihuega",          lat:40.762, lng:-2.870, prov:"Guadalajara",lugares:["Real Fábrica de Paños","Murallas","Jardines"], eventos:["Festival Lavanda","Mercado Artesano"], desc:"La capital de la lavanda. En junio, un mar violeta incomparable." },
-    { id:7,  nombre:"Sepúlveda",         lat:41.303, lng:-3.743, prov:"Segovia",    lugares:["Hoces del Río Duratón","Iglesias románicas","Murallas"], eventos:["Senderismo Hoces","Fiestas Patronales"], desc:"Parque Natural de las Hoces del Duratón y cochinillo asado." },
-    { id:8,  nombre:"Pastrana",          lat:40.427, lng:-2.917, prov:"Guadalajara",lugares:["Palacio Ducal","Iglesia Colegiata","Albarradas"], eventos:["Semana Cultural","Feria del Libro"], desc:"Villa ducal con tapices únicos en la Colegiata. Historia renacentista." },
-    { id:9,  nombre:"Sos del Rey Católico",lat:42.490,lng:-1.221,prov:"Zaragoza",  lugares:["Casa natal Fernando II","Iglesia San Esteban","Lonja"], eventos:["Festival Medieval","Mercado Navideño"], desc:"Cuna del Rey Fernando el Católico. Villa medieval perfectamente conservada." },
-    { id:10, nombre:"Daroca",            lat:41.118, lng:-1.419, prov:"Zaragoza",  lugares:["Murallas medievales","Colegial Santa María","Puerta Alta"], eventos:["Corpus Christi","Jornadas Medievales"], desc:"Murallas medievales de 4km. Una de las mejores conservadas de España." },
-    { id:11, nombre:"Berlanga de Duero", lat:41.472, lng:-2.862, prov:"Soria",     lugares:["Castillo","Colegiata","Murallas"], eventos:["Feria Castellana","Mercado Medieval"], desc:"Conjunto monumental con castillo, colegiata y murallas renacentistas." },
-    { id:12, nombre:"Potes",             lat:43.157, lng:-4.625, prov:"Cantabria", lugares:["Torre del Infantado","Picos de Europa","Liébana"], eventos:["Feria de Orujo","Semana Medieval"], desc:"Puerta a los Picos de Europa. Capital de la comarca de Liébana." },
+    { id:1,  nombre:"Medinaceli",        lat:41.175, lng:-2.432, prov:"Soria",      lugares:["Arco romano","Colegiata","Plaza Mayor"], eventos:["Feria Medieval","Semana Santa"], actividades:["Senderismo","Ruta del vino"], desc:"La ciudad de los tres horizontes. Arco romano, judería y naturaleza." },
+    { id:2,  nombre:"Albarracín",        lat:40.411, lng:-1.440, prov:"Teruel",     lugares:["Murallas medievales","Catedral","Barrio árabe"], eventos:["Mercado Medieval","Festival Teatro"], actividades:["Vía ferrata","Rutas BTT"], desc:"El pueblo más bonito de España. Arquitectura mudéjar declarada Patrimonio." },
+    { id:3,  nombre:"Sigüenza",          lat:41.068, lng:-2.638, prov:"Guadalajara",lugares:["Castillo-Parador","Catedral románica","Plaza Mayor"], eventos:["Feria Renacentista","Conciertos Catedral"], actividades:[], desc:"Ciudad medieval con parador en el castillo. Catedral románica impresionante." },
+    { id:4,  nombre:"Pedraza",           lat:41.124, lng:-3.808, prov:"Segovia",    lugares:["Castillo de Pedraza","Plaza Mayor","Arco de la Villa"], eventos:["Conciertos de las Velas","Mercado Castellano"], actividades:["Turismo ecuestre"], desc:"Villa medieval amurallada. Los Conciertos de las Velas, únicos en el mundo." },
+    { id:5,  nombre:"Frías",             lat:42.760, lng:-3.407, prov:"Burgos",     lugares:["Castillo medieval","Puente medieval","Barrio rupestre"], eventos:["Feria Medieval","Jornadas Medievales"], actividades:[], desc:"El pueblo más pequeño de España con condado. Castillo y puente románico." },
+    { id:6,  nombre:"Brihuega",          lat:40.762, lng:-2.870, prov:"Guadalajara",lugares:["Real Fábrica de Paños","Murallas","Jardines"], eventos:["Festival Lavanda","Mercado Artesano"], actividades:["Recogida de lavanda"], desc:"La capital de la lavanda. En junio, un mar violeta incomparable." },
+    { id:7,  nombre:"Sepúlveda",         lat:41.303, lng:-3.743, prov:"Segovia",    lugares:["Hoces del Río Duratón","Iglesias románicas","Murallas"], eventos:["Senderismo Hoces","Fiestas Patronales"], actividades:["Piragüismo","Senderismo guiado"], desc:"Parque Natural de las Hoces del Duratón y cochinillo asado." },
+    { id:8,  nombre:"Pastrana",          lat:40.427, lng:-2.917, prov:"Guadalajara",lugares:["Palacio Ducal","Iglesia Colegiata","Albarradas"], eventos:["Semana Cultural","Feria del Libro"], actividades:[], desc:"Villa ducal con tapices únicos en la Colegiata. Historia renacentista." },
+    { id:9,  nombre:"Sos del Rey Católico",lat:42.490,lng:-1.221,prov:"Zaragoza",  lugares:["Casa natal Fernando II","Iglesia San Esteban","Lonja"], eventos:["Festival Medieval","Mercado Navideño"], actividades:["Senderismo medieval"], desc:"Cuna del Rey Fernando el Católico. Villa medieval perfectamente conservada." },
+    { id:10, nombre:"Daroca",            lat:41.118, lng:-1.419, prov:"Zaragoza",  lugares:["Murallas medievales","Colegial Santa María","Puerta Alta"], eventos:["Corpus Christi","Jornadas Medievales"], actividades:[], desc:"Murallas medievales de 4km. Una de las mejores conservadas de España." },
+    { id:11, nombre:"Berlanga de Duero", lat:41.472, lng:-2.862, prov:"Soria",     lugares:["Castillo","Colegiata","Murallas"], eventos:["Feria Castellana","Mercado Medieval"], actividades:["Ruta castillos","Birdwatching"], desc:"Conjunto monumental con castillo, colegiata y murallas renacentistas." },
+    { id:12, nombre:"Potes",             lat:43.157, lng:-4.625, prov:"Cantabria", lugares:["Torre del Infantado","Picos de Europa","Liébana"], eventos:["Feria de Orujo","Semana Medieval"], actividades:["Barranquismo","Rutas a caballo"], desc:"Puerta a los Picos de Europa. Capital de la comarca de Liébana." },
 ];
 
 // ================================================================
@@ -903,13 +1371,13 @@ function initMap() {
         attribution: '&copy; OpenStreetMap', maxZoom: 18
     }).addTo(aytoMap);
 
-    function createIcon(hasEvents) {
-        const bg = hasEvents ? '#1B4F72' : '#1E8449';
-        const emoji = hasEvents ? '🏛' : '📍';
+    function createIcon(hasActivities) {
+        const bg = hasActivities ? '#8E44AD' : '#1B4F72';
+        const emoji = hasActivities ? '🏆' : '🏛';
         return L.divIcon({
             className: '',
-            html: `<div style="background:${bg};color:#fff;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #D4AC0D;box-shadow:0 3px 10px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><span style="transform:rotate(45deg);font-size:13px;">${emoji}</span></div>`,
-            iconSize: [34,34], iconAnchor: [17,34], popupAnchor: [0,-34]
+            html: `<div style="background:${bg};color:#fff;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #C9A227;box-shadow:0 3px 10px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><span style="transform:rotate(45deg);font-size:13px;">${emoji}</span></div>`,
+            iconSize: [36,36], iconAnchor: [18,36], popupAnchor: [0,-36]
         });
     }
 
@@ -917,17 +1385,18 @@ function initMap() {
     list.innerHTML = '';
 
     municipiosData.forEach(m => {
-        const hasEvents = m.eventos && m.eventos.length > 0;
-        const marker = L.marker([m.lat, m.lng], { icon: createIcon(hasEvents) })
+        const hasActivities = m.actividades && m.actividades.length > 0;
+        const marker = L.marker([m.lat, m.lng], { icon: createIcon(hasActivities) })
             .addTo(aytoMap)
             .bindPopup(`
-                <div style="width:230px;font-family:'Montserrat',sans-serif;">
+                <div style="width:240px;font-family:'Montserrat',sans-serif;">
                     <div class="popup-title">🏛 ${m.nombre}</div>
                     <div class="popup-meta"><i class="fas fa-map-marker-alt" style="color:#1B4F72;"></i> ${m.prov}</div>
-                    <p style="font-size:0.76rem;color:#555;line-height:1.4;margin-bottom:0.5rem;">${m.desc}</p>
+                    <p style="font-size:0.74rem;color:#555;line-height:1.4;margin-bottom:0.5rem;">${m.desc}</p>
                     <div class="popup-tags">
                         ${m.lugares.slice(0,2).map(l=>`<span class="popup-tag">${l}</span>`).join('')}
                         ${m.eventos.slice(0,1).map(e=>`<span class="popup-tag popup-tag-event">📅 ${e}</span>`).join('')}
+                        ${m.actividades.slice(0,1).map(a=>`<span class="popup-tag popup-tag-activ">🎯 ${a}</span>`).join('')}
                     </div>
                 </div>
             `);
@@ -939,7 +1408,8 @@ function initMap() {
             <div class="municipio-card-meta"><i class="fas fa-map-marker-alt"></i> ${m.prov}</div>
             <div class="municipio-badge">
                 <span class="badge-small">${m.lugares.length} lugares</span>
-                ${hasEvents ? `<span class="badge-small badge-blue">${m.eventos.length} eventos</span>` : ''}
+                ${m.eventos.length > 0 ? `<span class="badge-small badge-blue">${m.eventos.length} eventos</span>` : ''}
+                ${m.actividades.length > 0 ? `<span class="badge-small badge-purple">${m.actividades.length} activ.</span>` : ''}
             </div>`;
         card.onclick = () => { aytoMap.setView([m.lat, m.lng], 13); marker.openPopup(); };
         list.appendChild(card);
@@ -953,26 +1423,25 @@ function initMap() {
 // SELECTOR DE PLAN
 // ================================================================
 const PLANES = {
-    basico:   { nombre: 'Plan Básico — 5 lugares de interés',    nota: 'IVA incluido · pago único · renovación anual 9,99€',           precio: 19, label: '19€ IVA incl.' },
-    cultural: { nombre: 'Plan Cultural — 5 lugares + 5 eventos', nota: 'IVA incluido · pago único · renovación anual eventos 19,99€', precio: 39, label: '39€ IVA incl.' }
+    basico:    { nombre: 'Plan Básico — 5 lugares de interés',                        nota: 'IVA incluido · oferta lanzamiento Mayo 2026 (regular 120€)',        precio: 60,  precioOld: '120€', label: '60€ IVA incl.' },
+    cultural:  { nombre: 'Plan Cultural — 5 lugares + 5 eventos',                     nota: 'IVA incluido · oferta lanzamiento Mayo 2026 (regular 160€)',        precio: 80,  precioOld: '160€', label: '80€ IVA incl.' },
+    territorio:{ nombre: 'Plan Territorio — 5 lugares + 5 eventos + 5 actividades',  nota: 'IVA incluido · oferta lanzamiento Mayo 2026 (regular 200€)',        precio: 100, precioOld: '200€', label: '100€ IVA incl.' }
 };
 
 function seleccionarPlan(plan) {
-    // Actualizar radio
-    document.getElementById('radioBasico').checked  = (plan === 'basico');
-    document.getElementById('radioCultural').checked = (plan === 'cultural');
-    // Actualizar clases visuales
-    document.getElementById('optionBasico').classList.toggle('selected',   plan === 'basico');
-    document.getElementById('optionCultural').classList.toggle('selected', plan === 'cultural');
-    // Actualizar campo oculto
+    ['basico','cultural','territorio'].forEach(p => {
+        const radio = document.getElementById('radio' + p.charAt(0).toUpperCase() + p.slice(1));
+        const option = document.getElementById('option' + p.charAt(0).toUpperCase() + p.slice(1));
+        if (radio) radio.checked = (plan === p);
+        if (option) option.classList.toggle('selected', plan === p);
+    });
     document.getElementById('planSeleccionado').value = plan;
-    // Actualizar resumen
     const p = PLANES[plan];
     document.getElementById('summaryPlanName').textContent = p.nombre;
     document.getElementById('summaryPlanNote').textContent = p.nota;
     document.getElementById('summaryPrice').textContent = p.precio + '€';
-    document.getElementById('btnPriceLabel').textContent  = p.label;
-    // Scroll al formulario si viene de los botones del pricing
+    document.getElementById('summaryPriceOld').textContent = p.precioOld;
+    document.getElementById('btnPriceLabel').textContent = p.label;
     document.getElementById('inscribir').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -980,8 +1449,10 @@ function seleccionarPlan(plan) {
 seleccionarPlan('basico');
 
 // Click en las cards del selector
-document.getElementById('optionBasico').addEventListener('click',   () => seleccionarPlan('basico'));
-document.getElementById('optionCultural').addEventListener('click', () => seleccionarPlan('cultural'));
+['Basico','Cultural','Territorio'].forEach(p => {
+    const el = document.getElementById('option' + p);
+    if (el) el.addEventListener('click', () => seleccionarPlan(p.toLowerCase()));
+});
 
 // ================================================================
 // PAGO STRIPE — FORMULARIO DIRECTO
@@ -1062,7 +1533,7 @@ function toggleFaq(btn) {
 function showToast(msg, type = 'info') {
     const old = document.querySelector('.ayto-toast');
     if (old) old.remove();
-    const colors = { success:'#1E8449', error:'#C0392B', info:'#1B4F72' };
+    const colors = { success:'#1A7A43', error:'#B03A2E', info:'#1B4F72' };
     const icons  = { success:'check-circle', error:'exclamation-circle', info:'info-circle' };
     const t = document.createElement('div');
     t.className = 'ayto-toast';
