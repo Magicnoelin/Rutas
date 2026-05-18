@@ -1477,10 +1477,15 @@ async function pagarConStripe(e) {
         showToast('Por favor, introduce un email válido', 'error'); return;
     }
 
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando con Stripe...';
-
     const planInfo = PLANES[plan];
+    if (!planInfo) {
+        showToast('Plan no válido. Recarga la página e inténtalo de nuevo.', 'error'); return;
+    }
+
+    // Deshabilitar botón y mostrar spinner
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando sesión de pago...';
+
     const payload = {
         plan,
         precio:   planInfo.precio,
@@ -1495,24 +1500,48 @@ async function pagarConStripe(e) {
         cancel_url:  'https://rutasrurales.io/ayuntamientos/#inscribir'
     };
 
+    const restoreBtn = () => {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-lock"></i> Pagar con tarjeta <span class="price-pill">${planInfo.label}</span> <i class="fas fa-arrow-right"></i>`;
+    };
+
     try {
-        const res  = await fetch('/ayuntamientos/api/checkout-ayuntamiento.php', {
+        const res = await fetch('/ayuntamientos/api/checkout-ayuntamiento.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        if (data.success && data.checkout_url) {
-            window.location.href = data.checkout_url;
-        } else {
-            throw new Error(data.message || 'Sin URL de pago');
+
+        // Leer el cuerpo como texto para diagnosticar errores PHP
+        const rawText = await res.text();
+
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch(parseErr) {
+            // El servidor devolvió HTML/texto de error PHP
+            console.error('Respuesta no-JSON del servidor:', rawText.substring(0, 500));
+            showToast('Error del servidor (respuesta no válida). Contacta con olgamarin@rutasrurales.io', 'error');
+            restoreBtn();
+            return;
         }
-    } catch (err) {
-        console.error('Checkout error:', err);
-        showToast('Error al conectar con el servidor de pago. Contacta con olgamarin@rutasrurales.io o por WhatsApp.', 'error');
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fas fa-lock"></i> Pagar con tarjeta <span class="price-pill">${planInfo.label}</span> <i class="fas fa-arrow-right"></i>`;
+
+        if (data.success && data.checkout_url) {
+            // Éxito → redirigir a Stripe
+            btn.innerHTML = '<i class="fas fa-check"></i> Redirigiendo a Stripe...';
+            showToast('¡Perfecto! Redirigiendo al pago seguro...', 'success');
+            setTimeout(() => { window.location.href = data.checkout_url; }, 800);
+        } else {
+            const errMsg = data.message || 'Error desconocido al crear el pago';
+            console.error('API error:', errMsg);
+            showToast('Error: ' + errMsg + ' — Contacta con olgamarin@rutasrurales.io o WhatsApp.', 'error');
+            restoreBtn();
+        }
+
+    } catch (networkErr) {
+        console.error('Error de red:', networkErr);
+        showToast('Error de conexión. Verifica tu internet e inténtalo de nuevo.', 'error');
+        restoreBtn();
     }
 }
 
