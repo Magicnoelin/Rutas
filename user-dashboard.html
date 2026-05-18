@@ -1481,14 +1481,8 @@ DOCTYPE html>
             const data = await response.json();
             
             if (data.success && data.data) {
-                const resources = data.data.resources;
-                const summary = data.data.summary;
                 const resources = data.data.resources || {};
                 
-                // Cargar alojamientos
-                if (resources.accommodation && resources.accommodation.length > 0) {
-                    cargarMisAlojamientos(resources.accommodation);
-                }
                 // Llamar siempre para limpiar estados de carga o mostrar vacíos
                 cargarMisAlojamientos(resources.accommodation || []);
                 cargarMisActividades(resources.activity || []);
@@ -1498,23 +1492,12 @@ DOCTYPE html>
                 // Actualizar resumen en el Inicio (acciones de gestor)
                 actualizarResumenInicioRecursos(data.data);
                 
-                // Cargar actividades
-                if (resources.activity && resources.activity.length > 0) {
-                    cargarMisActividades(resources.activity);
-                }
-                
                 // Cargar lugares
                 if (resources.place && resources.place.length > 0) {
                     cargarMisLugares(resources.place);
                 }
                 
                 // Cargar eventos
-                if (resources.event && resources.event.length > 0) {
-                    cargarMisEventos(resources.event);
-                }
-                
-                console.log('Recursos cargados:', summary);
-            }
         } catch (error) {
             console.error('Error cargando recursos:', error);
         }
@@ -1572,7 +1555,6 @@ DOCTYPE html>
         
         container.innerHTML = `
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
-                ${alojamientos.map(alojamiento => `
                 ${alojamientos.map(alojamiento => {
                     // Robustez: Detectar si los datos vienen en .data o en la raíz
                     const d = alojamiento.data || alojamiento;
@@ -1585,10 +1567,6 @@ DOCTYPE html>
 
                     return `
                     <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                        <div style="height: 180px; background: ${alojamiento.data.photo ? `url('${alojamiento.data.photo}') center/cover` : '#eee'}; position: relative;">
-                            ${!alojamiento.data.photo ? '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;"><i class="fas fa-bed" style="font-size:3rem;"></i></div>' : ''}
-                            <span style="position: absolute; top: 10px; right: 10px; background: ${alojamiento.data.is_active == 1 ? '#28a745' : '#dc3545'}; color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
-                                ${alojamiento.data.is_active == 1 ? 'Activo' : 'Inactivo'}
                         <div style="height: 180px; background: ${photo ? `url('${photo}') center/cover` : '#eee'}; position: relative;">
                             ${!photo ? '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;"><i class="fas fa-bed" style="font-size:3rem;"></i></div>' : ''}
                             <span style="position: absolute; top: 10px; right: 10px; background: ${isActive ? '#28a745' : '#dc3545'}; color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
@@ -1596,31 +1574,22 @@ DOCTYPE html>
                             </span>
                         </div>
                         <div style="padding: 1.2rem;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${alojamiento.data.name || 'Sin nombre'}</h4>
                             <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${name}</h4>
                             <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.9rem;">
-                                <i class="fas fa-map-marker-alt"></i> ${alojamiento.data.municipality || ''}, ${alojamiento.data.province || ''}
                                 <i class="fas fa-map-marker-alt"></i> ${d.municipality || ''}, ${d.province || ''}
                             </p>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                                <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-eye"></i> ${alojamiento.stats?.views || 0}</span>
-                                <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-heart"></i> ${alojamiento.stats?.favorites || 0}</span>
-                                <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-envelope"></i> ${alojamiento.stats?.messages || 0}</span>
                                 <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-eye"></i> ${stats.views || 0}</span>
                                 <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-heart"></i> ${stats.favorites || 0}</span>
                                 <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-envelope"></i> ${stats.messages || 0}</span>
                             </div>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                <a href="/detalle.html?slug=${alojamiento.data.slug}" target="_blank" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-eye"></i> Ver</a>
-                                <a href="/dashboard/editar-mi-alojamiento.php?id=${alojamiento.data.id}" target="_blank" style="flex:1;text-align:center;background:#666;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-edit"></i> Editar</a>
-                                <a href="/gestion-fotos-alojamiento.html?slug=${alojamiento.data.slug}" target="_blank" style="flex:1;text-align:center;background:#e67e22;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-camera"></i> Fotos</a>
                                 <a href="/detalle.html?slug=${slug}" target="_blank" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-eye"></i> Ver</a>
                                 <a href="/dashboard/editar-mi-alojamiento.php?id=${id}" target="_blank" style="flex:1;text-align:center;background:#666;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-edit"></i> Editar</a>
                                 <a href="/gestion-fotos-alojamiento.html?slug=${slug}" target="_blank" style="flex:1;text-align:center;background:#e67e22;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-camera"></i> Fotos</a>
                             </div>
                         </div>
                     </div>
-                `).join('')}
                 `;
                 }).join('')}
             </div>
@@ -1644,7 +1613,6 @@ DOCTYPE html>
         
         container.innerHTML = `
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
-                ${actividades.map(actividad => `
                 ${actividades.map(actividad => {
                     const d = actividad.data || actividad;
                     const stats = actividad.stats || {};
@@ -1655,10 +1623,6 @@ DOCTYPE html>
 
                     return `
                     <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                        <div style="height: 180px; background: ${actividad.data.photo ? `url('${actividad.data.photo}') center/cover` : '#eee'}; position: relative;">
-                            ${!actividad.data.photo ? '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;"><i class="fas fa-hiking" style="font-size:3rem;"></i></div>' : ''}
-                            <span style="position: absolute; top: 10px; right: 10px; background: ${actividad.data.is_active == 1 ? '#28a745' : '#dc3545'}; color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
-                                ${actividad.data.is_active == 1 ? 'Activo' : 'Inactivo'}
                         <div style="height: 180px; background: ${photo ? `url('${photo}') center/cover` : '#eee'}; position: relative;">
                             ${!photo ? '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;"><i class="fas fa-hiking" style="font-size:3rem;"></i></div>' : ''}
                             <span style="position: absolute; top: 10px; right: 10px; background: ${d.is_active == 1 ? '#28a745' : '#dc3545'}; color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
@@ -1666,31 +1630,22 @@ DOCTYPE html>
                             </span>
                         </div>
                         <div style="padding: 1.2rem;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${actividad.data.name || 'Sin nombre'}</h4>
                             <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${name}</h4>
                             <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.9rem;">
-                                <i class="fas fa-map-marker-alt"></i> ${actividad.data.municipality || ''}, ${actividad.data.province || ''}
                                 <i class="fas fa-map-marker-alt"></i> ${d.municipality || ''}, ${d.province || ''}
                             </p>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                                <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-eye"></i> ${actividad.stats?.views || 0}</span>
-                                <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-heart"></i> ${actividad.stats?.favorites || 0}</span>
-                                <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-envelope"></i> ${actividad.stats?.messages || 0}</span>
                                 <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-eye"></i> ${stats.views || 0}</span>
                                 <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-heart"></i> ${stats.favorites || 0}</span>
                                 <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;"><i class="fas fa-envelope"></i> ${stats.messages || 0}</span>
                             </div>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                <a href="/actividad/${actividad.data.slug}" target="_blank" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-eye"></i> Ver</a>
-                                <a href="/dashboard/editar-mi-actividad.php?id=${actividad.data.id}" target="_blank" style="flex:1;text-align:center;background:#666;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-edit"></i> Editar</a>
-                                <a href="/gestion-fotos-actividades.html?slug=${actividad.data.slug}" target="_blank" style="flex:1;text-align:center;background:#e67e22;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-camera"></i> Fotos</a>
                                 <a href="/actividad/${slug}" target="_blank" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-eye"></i> Ver</a>
                                 <a href="/dashboard/editar-mi-actividad.php?id=${id}" target="_blank" style="flex:1;text-align:center;background:#666;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-edit"></i> Editar</a>
                                 <a href="/gestion-fotos-actividades.html?slug=${slug}" target="_blank" style="flex:1;text-align:center;background:#e67e22;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-camera"></i> Fotos</a>
                             </div>
                         </div>
                     </div>
-                `).join('')}
                 `;
                 }).join('')}
             </div>
