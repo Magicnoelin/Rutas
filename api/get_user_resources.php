@@ -56,7 +56,8 @@ try {
     // 3. Fetch Resources
 
     // --- Accommodations ---
-    $accommodationColumns = ['id', 'name', 'slug', 'municipality', 'province', 'accommodation_type', 'price_per_night', 'status', 'photo1 AS photo', 'is_active'];
+    // Nota: 'status' no existe como columna en accommodations, se omite
+    $accommodationColumns = ['id', 'name', 'slug', 'municipality', 'province', 'accommodation_type', 'price_per_night', 'photo1 AS photo', 'is_active'];
     $colsSql = implode(', ', array_map(fn($col) => "a.$col", $accommodationColumns));
     
     $tempAccommodations = [];
