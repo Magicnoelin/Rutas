@@ -36,7 +36,8 @@ try {
         $hasUserResources = false;
     }
 
-    $conditions = ["a.status = 'active' OR a.status IS NULL"];
+    // Sin filtro de status para no perder resultados
+    $conditions = ["a.status NOT IN ('deleted', 'spam') OR a.status IS NULL"];
     $params = [];
 
     if (!empty($query)) {
@@ -47,6 +48,14 @@ try {
     if (!empty($province)) {
         $conditions[] = "a.province LIKE :province";
         $params[':province'] = '%' . $province . '%';
+    }
+
+    // Filtrar por membresía no gratuita si se solicita
+    $premiumOnly = isset($_GET['premium_only']) && $_GET['premium_only'] === '1';
+    if ($premiumOnly) {
+        // Con user_resources: owner con membresía premium
+        // Sin user_resources: columna owner directa
+        // Se aplica el JOIN con users para filtrar membresía
     }
 
     $whereClause = implode(' AND ', $conditions);

@@ -866,7 +866,7 @@ DOCTYPE html>
                 <div id="tpl-fields-area">
                     <div id="fields-busco_alojamiento">
                         <div class="form-row">
-                            <div class="form-group"><label>Pueblo/Zona</label><input type="text" id="f-localidad" placeholder="Ej: Vinuesa" oninput="refreshTplPreview()"></div>
+                            <div class="form-group"><label>Pueblo/Zona</label><input type="text" id="f-localidad" placeholder="Ej: Vinuesa" oninput="refreshTplPreview(); if(this.value.length>=2){clearTimeout(window._zoneTimer);window._zoneTimer=setTimeout(()=>loadDefaultAccommodations(this.value),500);}"></div>
                             <div class="form-group"><label>Personas</label><input type="number" id="f-personas" value="2" min="1" oninput="refreshTplPreview()"></div>
                         </div>
                     </div>
@@ -2135,6 +2135,7 @@ DOCTYPE html>
     // LOGICA NUEVA CONVERSACIÓN CON PLANTILLAS
     // ============================================================
     let selAcc = null;
+    let currentAccList = []; // Lista actual de alojamientos mostrados
     let curTpl = 'busco_alojamiento';
     let searchWait = null;
     window.selectedInitiatorRole = 'turista';
@@ -2146,7 +2147,50 @@ DOCTYPE html>
             renderRoleSelectorInModal();
             resetAccSelection();
             refreshTplPreview();
+            // Pre-cargar lista de alojamientos disponibles
+            await loadDefaultAccommodations();
         }
+    }
+
+    // Carga inicial de alojamientos (sin filtro, los primeros disponibles)
+    async function loadDefaultAccommodations(zone) {
+        const box = document.getElementById('acc-results');
+        if (!box) return;
+        const q = zone ? `&query=${encodeURIComponent(zone)}` : '';
+        box.style.display = 'block';
+        box.innerHTML = '<div style="padding:10px 15px;color:#888;font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Cargando alojamientos...</div>';
+        try {
+            const res = await fetch(`api/search_accommodation_contact.php?limit=15${q}`);
+            const data = await res.json();
+            if (data.success && data.data.results.length > 0) {
+                renderAccList(data.data.results);
+            } else {
+                box.innerHTML = '<div style="padding:10px 15px;color:#999;font-size:0.85rem;">No se encontraron alojamientos en esta zona.</div>';
+            }
+        } catch(e) {
+            box.innerHTML = '<div style="padding:10px 15px;color:#f88;font-size:0.85rem;">Error al cargar alojamientos.</div>';
+        }
+    }
+
+    function renderAccList(results) {
+        currentAccList = results; // Guardar lista para uso posterior
+        const box = document.getElementById('acc-results');
+        box.style.display = 'block';
+        box.innerHTML = results.map(a => `
+            <div class="search-item ${selAcc && selAcc.id === a.id ? 'selected-acc' : ''}" 
+                 id="acc-item-${a.id}"
+                 onclick='selectAcc(${JSON.stringify(a).replace(/'/g, "&apos;")})'
+                 style="${selAcc && selAcc.id === a.id ? 'background:#e8f5e9;border-left:3px solid var(--primary-color);' : ''}">
+                <i class="fas fa-home" style="color:var(--primary-color);"></i>
+                <div style="flex:1;">
+                    <div style="font-weight:600;font-size:0.85rem;">${a.name}</div>
+                    <div style="font-size:0.75rem;color:#888;">${a.municipality || ''}, ${a.province || ''}
+                        ${a.has_owner ? '<span style="color:#28a745;margin-left:5px;"><i class="fas fa-check-circle"></i> Disponible</span>' : ''}
+                    </div>
+                </div>
+                ${selAcc && selAcc.id === a.id ? '<i class="fas fa-check" style="color:var(--primary-color);"></i>' : ''}
+            </div>
+        `).join('');
     }
 
     function renderRoleSelectorInModal() {
@@ -2201,26 +2245,19 @@ DOCTYPE html>
 
     window.doSearchAcc = (q) => {
         clearTimeout(searchWait);
-        if (q.length < 3) { document.getElementById('acc-results').style.display = 'none'; return; }
+        // Mínimo 2 caracteres para buscar
+        if (q.length < 2) { loadDefaultAccommodations(); return; }
         
         searchWait = setTimeout(async () => {
             try {
-                const res = await fetch(`api/search_accommodation_contact.php?query=${encodeURIComponent(q)}`);
+                const res = await fetch(`api/search_accommodation_contact.php?query=${encodeURIComponent(q)}&limit=15`);
                 const data = await res.json();
                 const box = document.getElementById('acc-results');
                 if (data.success && data.data.results.length > 0) {
-                    box.innerHTML = data.data.results.map(a => `
-                        <div class="search-item" onclick='selectAcc(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
-                            <i class="fas fa-home"></i>
-                            <div>
-                                <div style="font-weight:600; font-size:0.85rem;">${a.name}</div>
-                                <div style="font-size:0.75rem; color:#888;">${a.municipality || ''} (${a.province || ''})</div>
-                            </div>
-                        </div>
-                    `).join('');
-                    box.style.display = 'block';
+                    renderAccList(data.data.results);
                 } else {
-                    box.innerHTML = '<div class="search-item" style="color:#999; font-size:0.8rem;">No se encontraron resultados</div>';
+                    currentAccList = [];
+                    box.innerHTML = '<div class="search-item" style="color:#999; font-size:0.8rem;">No se encontraron resultados para esta búsqueda</div>';
                     box.style.display = 'block';
                 }
             } catch (e) { console.error(e); }
@@ -2284,14 +2321,24 @@ DOCTYPE html>
         };
 
         alertDiv.innerHTML = '';
-        
-        if (!selAcc) {
-            showAlert('<i class="fas fa-exclamation-triangle"></i> Selecciona primero un alojamiento de la lista.', 'warning');
-            return;
+
+        // Si no hay alojamiento seleccionado, intentar auto-seleccionar el primero de la lista con propietario
+        let targetAcc = selAcc;
+        if (!targetAcc) {
+            const withOwner = currentAccList.find(a => a.owner_user_id);
+            if (withOwner) {
+                targetAcc = withOwner;
+            } else if (currentAccList.length > 0) {
+                showAlert('<i class="fas fa-exclamation-triangle"></i> Los alojamientos encontrados aún no tienen propietario registrado en la plataforma. Prueba a buscar en otra zona.', 'warning');
+                return;
+            } else {
+                showAlert('<i class="fas fa-info-circle"></i> Escribe una zona o pueblo en el campo "Pueblo/Zona" para buscar alojamientos disponibles, o usa el buscador para encontrar uno específico.', 'warning');
+                return;
+            }
         }
         
-        if (!selAcc.owner_user_id) {
-            showAlert('<i class="fas fa-exclamation-triangle"></i> Este alojamiento no tiene propietario registrado en la plataforma. No es posible contactar con él por mensaje.', 'warning');
+        if (!targetAcc.owner_user_id) {
+            showAlert('<i class="fas fa-exclamation-triangle"></i> Este alojamiento no tiene propietario registrado en la plataforma. Selecciona otro de la lista.', 'warning');
             return;
         }
 
@@ -2311,7 +2358,7 @@ DOCTYPE html>
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    recipient_id: selAcc.owner_user_id,
+                    recipient_id: targetAcc.owner_user_id,
                     initiator_role: window.selectedInitiatorRole
                 })
             });
