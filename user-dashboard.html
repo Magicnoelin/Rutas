@@ -1663,25 +1663,29 @@ DOCTYPE html>
         
         container.innerHTML = `
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
-                ${lugares.map(lugar => `
+                ${lugares.map(lugar => {
+                    const d = lugar.data || lugar;
+                    const stats = lugar.stats || {};
+                    const photo = d.photo || d.photo1 || null;
+                    return `
                     <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                        <div style="height: 180px; background: ${lugar.data.photo ? `url('${lugar.data.photo}') center/cover` : '#eee'}; position: relative;">
-                            ${!lugar.data.photo ? '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;"><i class="fas fa-map-marker-alt" style="font-size:3rem;"></i></div>' : ''}
-                            <span style="position: absolute; top: 10px; right: 10px; background: ${lugar.data.is_active == 1 ? '#28a745' : '#dc3545'}; color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
-                                ${lugar.data.is_active == 1 ? 'Activo' : 'Inactivo'}
+                        <div style="height: 180px; background: ${photo ? `url('${photo}') center/cover` : '#eee'}; position: relative;">
+                            ${!photo ? '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;"><i class="fas fa-map-marker-alt" style="font-size:3rem;"></i></div>' : ''}
+                            <span style="position: absolute; top: 10px; right: 10px; background: ${d.is_active == 1 ? '#28a745' : '#dc3545'}; color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
+                                ${d.is_active == 1 ? 'Activo' : 'Inactivo'}
                             </span>
                         </div>
                         <div style="padding: 1.2rem;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${lugar.data.name || 'Sin nombre'}</h4>
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${d.name || 'Sin nombre'}</h4>
                             <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.9rem;">
-                                <i class="fas fa-map-marker-alt"></i> ${lugar.data.municipality || ''}, ${lugar.data.province || ''}
+                                <i class="fas fa-map-marker-alt"></i> ${d.municipality || ''}, ${d.province || ''}
                             </p>
                             <div style="display: flex; gap: 0.5rem;">
-                                <a href="/lugar-interes.html?slug=${lugar.data.slug}" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.9rem;">Ver</a>
+                                <a href="/lugar-interes.html?slug=${d.slug || ''}" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.9rem;">Ver</a>
                             </div>
                         </div>
                     </div>
-                `).join('')}
+                `}).join('')}
             </div>
         `;
     }
@@ -1703,25 +1707,29 @@ DOCTYPE html>
         
         container.innerHTML = `
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
-                ${eventos.map(evento => `
+                ${eventos.map(evento => {
+                    const d = evento.data || evento;
+                    const stats = evento.stats || {};
+                    const photo = d.photo || d.photo1 || null;
+                    return `
                     <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                        <div style="height: 180px; background: ${evento.data.photo ? `url('${evento.data.photo}') center/cover` : '#eee'}; position: relative;">
-                            ${!evento.data.photo ? '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;"><i class="fas fa-calendar-alt" style="font-size:3rem;"></i></div>' : ''}
-                            <span style="position: absolute; top: 10px; right: 10px; background: ${evento.data.is_active == 1 ? '#28a745' : '#dc3545'}; color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
-                                ${evento.data.is_active == 1 ? 'Activo' : 'Inactivo'}
+                        <div style="height: 180px; background: ${photo ? `url('${photo}') center/cover` : '#eee'}; position: relative;">
+                            ${!photo ? '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;"><i class="fas fa-calendar-alt" style="font-size:3rem;"></i></div>' : ''}
+                            <span style="position: absolute; top: 10px; right: 10px; background: ${d.is_active == 1 ? '#28a745' : '#dc3545'}; color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
+                                ${d.is_active == 1 ? 'Activo' : 'Inactivo'}
                             </span>
                         </div>
                         <div style="padding: 1.2rem;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${evento.data.name || 'Sin nombre'}</h4>
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${d.name || 'Sin nombre'}</h4>
                             <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.9rem;">
-                                <i class="fas fa-map-marker-alt"></i> ${evento.data.municipality || ''}, ${evento.data.province || ''}
+                                <i class="fas fa-map-marker-alt"></i> ${d.municipality || ''}, ${d.province || ''}
                             </p>
                             <div style="display: flex; gap: 0.5rem;">
-                                <a href="/evento-detalle.html?slug=${evento.data.slug}" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.9rem;">Ver</a>
+                                <a href="/evento-detalle.html?slug=${d.slug || ''}" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.9rem;">Ver</a>
                             </div>
                         </div>
                     </div>
-                `).join('')}
+                `}).join('')}
             </div>
         `;
     }

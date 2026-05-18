@@ -215,33 +215,37 @@ try {
                 $initiatorType = (in_array('turista', $myRoles) && $recipientType === 'gestor') ? 'turista' : ($initiator['user_type'] === 'turista' ? 'turista' : 'gestor');
             }
 
-            // Verificar permisos
-            $stmtPerm = $pdo->prepare("
-                SELECT can_initiate_conversation, description
-                FROM chat_permissions
-                WHERE initiator_type = ?
-                AND initiator_membership = ?
-                AND recipient_type = ?
-                AND (recipient_membership = ? OR recipient_membership = 'any')
-                AND is_active = TRUE
-                LIMIT 1
-            ");
-            $stmtPerm->execute([
-                $initiatorType,
-                $initiator['membership_type'],
-                $recipientType,
-                $recipient['membership_type']
-            ]);
-            $permission = $stmtPerm->fetch();
-            
-            if (!$permission || !$permission['can_initiate_conversation']) {
-                // Mensaje personalizado según el caso
-                if ($initiatorType === 'gestor' && $initiator['membership_type'] === 'free') {
-                    jsonError('Tu membresía gratuita no permite iniciar conversaciones. Los gestores solo pueden responder cuando un turista les contacta. Actualiza a Premium para esta funcionalidad.', 403);
-                } elseif ($initiatorType === 'turista' && $recipientType === 'turista') {
-                    jsonError('No puedes iniciar conversaciones con otros turistas.', 403);
-                } else {
-                    jsonError('No tienes permisos para iniciar esta conversación.', 403);
+            // Turistas pueden iniciar conversaciones con gestores sin restricciones
+            if ($initiatorType === 'turista' && $recipientType === 'gestor') {
+                // OK - permitir siempre
+            } elseif ($initiatorType === 'turista' && $recipientType === 'turista') {
+                jsonError('No puedes iniciar conversaciones con otros turistas.', 403);
+            } else {
+                // Verificar permisos en tabla chat_permissions para otros casos (gestor→gestor, gestor→turista)
+                $stmtPerm = $pdo->prepare("
+                    SELECT can_initiate_conversation, description
+                    FROM chat_permissions
+                    WHERE initiator_type = ?
+                    AND initiator_membership = ?
+                    AND recipient_type = ?
+                    AND (recipient_membership = ? OR recipient_membership = 'any')
+                    AND is_active = TRUE
+                    LIMIT 1
+                ");
+                $stmtPerm->execute([
+                    $initiatorType,
+                    $initiator['membership_type'],
+                    $recipientType,
+                    $recipient['membership_type']
+                ]);
+                $permission = $stmtPerm->fetch();
+                
+                if (!$permission || !$permission['can_initiate_conversation']) {
+                    if ($initiatorType === 'gestor' && $initiator['membership_type'] === 'free') {
+                        jsonError('Tu membresía gratuita no permite iniciar conversaciones. Los gestores solo pueden responder cuando un turista les contacta. Actualiza a Premium para esta funcionalidad.', 403);
+                    } else {
+                        jsonError('No tienes permisos para iniciar esta conversación.', 403);
+                    }
                 }
             }
 
@@ -298,7 +302,9 @@ try {
             // VALIDAR PERMISOS Y LÍMITES
             // Obtener información de ambos usuarios
             $stmt = $pdo->prepare("
-                SELECT id, user_type, membership_type
+                SELECT id, user_type,
+                       LOWER(COALESCE(membership_type, 'free')) as membership_type,
+                       (SELECT GROUP_CONCAT(r.slug) FROM roles r JOIN role_user ru ON ru.role_id = r.id WHERE ru.user_id = users.id) as all_roles
                 FROM users
                 WHERE id IN (?, ?)
             ");
@@ -311,28 +317,38 @@ try {
             $initiator = $users[$userId];
             $recipient = $users[$recipientId];
             
-            // Determinar tipos
-            $initiatorType = $initiator['user_type'] === 'turista' ? 'turista' : 'gestor';
-            $recipientType = $recipient['user_type'] === 'turista' ? 'turista' : 'gestor';
-            
-            // Verificar permisos
-            $stmtPerm = $pdo->prepare("
-                SELECT can_send_messages, max_messages_per_day
-                FROM chat_permissions
-                WHERE initiator_type = ?
-                AND initiator_membership = ?
-                AND recipient_type = ?
-                AND (recipient_membership = ? OR recipient_membership = 'any')
-                AND is_active = TRUE
-                LIMIT 1
-            ");
-            $stmtPerm->execute([
-                $initiatorType,
-                $initiator['membership_type'],
-                $recipientType,
-                $recipient['membership_type']
-            ]);
-            $permission = $stmtPerm->fetch();
+            // Determinar tipos usando roles y user_type
+            $myRoles = explode(',', $initiator['all_roles'] ?? '');
+            $recipientRoles = explode(',', $recipient['all_roles'] ?? '');
+
+            // Si tiene el rol turista (nuevo sistema de roles) o user_type turista → tipo turista
+            $initiatorType = (in_array('turista', $myRoles) || $initiator['user_type'] === 'turista') ? 'turista' : 'gestor';
+            $recipientType = (in_array('turista', $recipientRoles) || $recipient['user_type'] === 'turista') ? 'turista' : 'gestor';
+
+            // Si el initiator es turista y el recipient NO es turista, siempre permitir (turista puede contactar gestores)
+            if ($initiatorType === 'turista' && $recipientType === 'gestor') {
+                // Turistas pueden enviar mensajes a gestores sin restricciones
+                $permission = ['can_send_messages' => true, 'max_messages_per_day' => null];
+            } else {
+                // Verificar permisos en tabla chat_permissions para otros casos
+                $stmtPerm = $pdo->prepare("
+                    SELECT can_send_messages, max_messages_per_day
+                    FROM chat_permissions
+                    WHERE initiator_type = ?
+                    AND initiator_membership = ?
+                    AND recipient_type = ?
+                    AND (recipient_membership = ? OR recipient_membership = 'any')
+                    AND is_active = TRUE
+                    LIMIT 1
+                ");
+                $stmtPerm->execute([
+                    $initiatorType,
+                    $initiator['membership_type'],
+                    $recipientType,
+                    $recipient['membership_type']
+                ]);
+                $permission = $stmtPerm->fetch();
+            }
             
             if (!$permission || !$permission['can_send_messages']) {
                 jsonError('No tienes permisos para enviar mensajes a este usuario.', 403);
