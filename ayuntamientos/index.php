@@ -673,13 +673,13 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
 
 <!-- ========== NAVBAR ========== -->
 <nav class="ayto-nav" id="aytoNav">
-    <a href="/" class="nav-brand">
-        <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales">
-        <div class="nav-brand-text">
-            <span class="nav-brand-title">Rutas Rurales · Ayuntamientos</span>
-            <span class="nav-brand-sub">rutasrurales.io</span>
-        </div>
-    </a>
+        <a href="/" class="nav-brand">
+            <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales">
+            <div class="nav-brand-text">
+                <span class="nav-brand-title">Rutas Rurales · Organismos Oficiales</span>
+                <span class="nav-brand-sub">rutasrurales.io</span>
+            </div>
+        </a>
     <div class="nav-cta">
         <a href="#mapa" class="nav-link"><i class="fas fa-map-marked-alt"></i> Mapa</a>
         <a href="#planes" class="nav-link"><i class="fas fa-tag"></i> Planes</a>
@@ -707,7 +707,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
 
     <p class="hero-subtitle">
         Presencia digital completa para tu Ayuntamiento: lugares de interés, eventos culturales, actividades
-        y mensajería directa con turistas. En 5 idiomas, visible todo el año.
+        y mensajería directa con turistas. Plataforma visible todo el año en toda Europa.
     </p>
 
     <div class="hero-offer-box">
@@ -756,7 +756,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
 <!-- ========== TRUST BAR ========== -->
 <div class="trust-bar">
     <div class="trust-item"><i class="fas fa-shield-alt"></i> Plataforma oficial verificada</div>
-    <div class="trust-item"><i class="fas fa-globe"></i> 5 idiomas incluidos</div>
+    <div class="trust-item"><i class="fas fa-globe"></i> Plataforma en 5 idiomas</div>
     <div class="trust-item"><i class="fas fa-comments"></i> Mensajería directa con turistas</div>
     <div class="trust-item"><i class="fas fa-lock"></i> Pago seguro Stripe</div>
     <div class="trust-item"><i class="fas fa-clock"></i> Alta en &lt;24 horas</div>
@@ -827,9 +827,9 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
         </div>
         <div class="value-card v5">
             <div class="value-icon"><i class="fas fa-globe-europe"></i></div>
-            <h3>5 idiomas: internacional</h3>
-            <p>Español, inglés, francés, alemán y chino. Tu municipio llega a turistas europeos y del resto del mundo que buscan destinos rurales auténticos.</p>
-            <span class="value-highlight"><i class="fas fa-check"></i> Incluido en todos</span>
+            <h3>Plataforma en 5 idiomas</h3>
+            <p>La plataforma existe en español, inglés, francés, alemán y chino. Añade páginas traducidas a 10€/página y llega a turistas europeos de toda Europa.</p>
+            <span class="value-highlight"><i class="fas fa-plus"></i> Extra: 10€/página</span>
         </div>
         <div class="value-card v6">
             <div class="value-icon"><i class="fas fa-search"></i></div>
@@ -905,8 +905,8 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
 <section class="lang-section">
     <div class="section-header" style="padding-bottom:2rem;">
         <p class="section-eyebrow"><i class="fas fa-globe"></i> Alcance internacional <i class="fas fa-globe"></i></p>
-        <h2 class="section-title">Tu municipio en 5 idiomas</h2>
-        <p class="section-desc">Traducciones automáticas incluidas en todos los planes. Llega a turistas de toda Europa y más allá.</p>
+        <h2 class="section-title">Plataforma en 5 idiomas</h2>
+        <p class="section-desc">La plataforma rutasrurales.io está disponible en 5 idiomas. Añade versiones traducidas de tus páginas por solo <strong>10€/página</strong> y llega a turistas de toda Europa.</p>
     </div>
     <div class="lang-grid">
         <div class="lang-card">
@@ -936,7 +936,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
         </div>
     </div>
     <p class="lang-note">
-        <strong>Traducciones incluidas en todos los planes.</strong> Páginas adicionales en cualquier idioma disponibles como extra (+10€/página).
+        <strong>Cada página traducida a cualquier idioma: 10€ (IVA incluido).</strong> Lo mismo para páginas de contenido adicional. Sin límite de páginas.
     </p>
 </section>
 
@@ -945,7 +945,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
     <div class="section-header">
         <p class="section-eyebrow section-eyebrow-light"><i class="fas fa-tag"></i> Planes y precios <i class="fas fa-tag"></i></p>
         <h2 class="section-title">Sin sorpresas, sin letra pequeña</h2>
-        <p class="section-desc">Tres planes pensados para municipios de diferente tamaño y ambición turística. Todos incluyen mensajería con turistas y 5 idiomas.</p>
+        <p class="section-desc">Tres planes pensados para municipios de diferente tamaño y ambición turística. Todos incluyen mensajería con turistas. Páginas extra o traducidas: 10€/página.</p>
     </div>
 
     <!-- OFERTA BANNER -->
@@ -980,12 +980,12 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                 <li><i class="fas fa-check fi fi-yes1"></i> Ficha completa (fotos, descripción, horarios)</li>
                 <li><i class="fas fa-check fi fi-yes1"></i> Enlace a la web del Ayuntamiento</li>
                 <li><i class="fas fa-check fi fi-yes1"></i> SEO local incluido</li>
-                <li><i class="fas fa-check fi fi-yes1"></i> Traducción en 5 idiomas</li>
+                <li><i class="fas fa-check fi fi-yes1"></i> Plataforma disponible en 5 idiomas</li>
                 <li><i class="fas fa-check fi fi-yes1"></i> Rutas temáticas estacionales</li>
                 <li><i class="fas fa-check fi fi-yes1"></i> <strong>Mensajería directa con turistas</strong></li>
                 <li><i class="fas fa-times fi fi-no"></i> Eventos culturales <span style="font-size:0.72rem;color:rgba(255,255,255,0.3)">(Plan Cultural)</span></li>
                 <li><i class="fas fa-times fi fi-no"></i> Actividades turísticas <span style="font-size:0.72rem;color:rgba(255,255,255,0.3)">(Plan Territorio)</span></li>
-                <li><i class="fas fa-plus-circle fi fi-yes1"></i> Páginas adicionales: <span class="feat-badge">10€/página</span></li>
+                <li><i class="fas fa-plus-circle fi fi-yes1"></i> Páginas extra o traducidas: <span class="feat-badge">10€/página</span></li>
             </ul>
             <button class="btn-plan btn-plan-basico" onclick="seleccionarPlan('basico')">
                 <i class="fas fa-map-pin"></i> Elegir Plan Básico — 60€
@@ -1013,11 +1013,11 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                 <li><i class="fas fa-check fi fi-yes2"></i> <strong>5 eventos culturales</strong> publicados</li>
                 <li><i class="fas fa-check fi fi-yes2"></i> Fichas completas para lugares y eventos</li>
                 <li><i class="fas fa-check fi fi-yes2"></i> SEO local + eventos en Google</li>
-                <li><i class="fas fa-check fi fi-yes2"></i> Traducción en 5 idiomas</li>
+                <li><i class="fas fa-check fi fi-yes2"></i> Plataforma disponible en 5 idiomas</li>
                 <li><i class="fas fa-check fi fi-yes2"></i> Destacado en rutas temáticas estacionales</li>
                 <li><i class="fas fa-check fi fi-yes2"></i> <strong>Mensajería directa con turistas</strong></li>
                 <li><i class="fas fa-times fi fi-no"></i> Actividades turísticas <span style="font-size:0.72rem;color:rgba(255,255,255,0.3)">(Plan Territorio)</span></li>
-                <li><i class="fas fa-plus-circle fi fi-yes2"></i> Páginas adicionales: <span class="feat-badge">10€/página</span></li>
+                <li><i class="fas fa-plus-circle fi fi-yes2"></i> Páginas extra o traducidas: <span class="feat-badge">10€/página</span></li>
             </ul>
             <button class="btn-plan btn-plan-cultural" onclick="seleccionarPlan('cultural')">
                 <i class="fas fa-calendar-alt"></i> Elegir Plan Cultural — 80€
@@ -1046,11 +1046,11 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                 <li><i class="fas fa-check-circle fi fi-yes3"></i> <strong>5 actividades turísticas</strong> publicadas</li>
                 <li><i class="fas fa-check-circle fi fi-yes3"></i> Fichas completas para todo el contenido</li>
                 <li><i class="fas fa-check-circle fi fi-yes3"></i> SEO máximo: lugares + eventos + actividades</li>
-                <li><i class="fas fa-check-circle fi fi-yes3"></i> Traducción en 5 idiomas</li>
+                <li><i class="fas fa-check-circle fi fi-yes3"></i> Plataforma disponible en 5 idiomas</li>
                 <li><i class="fas fa-check-circle fi fi-yes3"></i> Máxima visibilidad en rutas temáticas</li>
                 <li><i class="fas fa-check-circle fi fi-yes3"></i> <strong>Mensajería directa con turistas</strong></li>
                 <li><i class="fas fa-star fi fi-yes3"></i> <strong>Perfil destacado</strong> en búsquedas</li>
-                <li><i class="fas fa-plus-circle fi fi-yes3"></i> Páginas adicionales: <span class="feat-badge">10€/página</span></li>
+                <li><i class="fas fa-plus-circle fi fi-yes3"></i> Páginas extra o traducidas: <span class="feat-badge">10€/página</span></li>
             </ul>
             <button class="btn-plan btn-plan-territorio" onclick="seleccionarPlan('territorio')">
                 <i class="fas fa-trophy"></i> Elegir Plan Territorio — 100€
@@ -1102,7 +1102,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
             </div>
         </div>
     </div>
-    <p class="pricing-note">Todos los precios incluyen IVA. Factura oficial emitida automáticamente. Pago seguro vía Stripe. Las traducciones automáticas del plan están incluidas — el extra es para páginas adicionales traducidas.</p>
+    <p class="pricing-note">Todos los precios incluyen IVA. Factura oficial emitida automáticamente. Pago seguro vía Stripe. Cada página adicional de contenido o traducción a cualquier idioma: 10€ IVA incluido.</p>
 </section>
 
 <!-- ========== FORMULARIO INSCRIPCIÓN INLINE ========== -->
@@ -1247,7 +1247,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                 ¿Cuál es la diferencia entre los tres planes? <i class="fas fa-chevron-down"></i>
             </button>
             <div class="faq-answer"><div class="faq-answer-inner">
-                El <strong>Plan Básico</strong> incluye 5 lugares de interés en el mapa. El <strong>Plan Cultural</strong> añade 5 eventos culturales (fiestas, ferias, mercados...). El <strong>Plan Territorio</strong> es la propuesta completa: 5 lugares + 5 eventos + 5 actividades turísticas, más perfil destacado en búsquedas. Todos incluyen mensajería directa con turistas y traducción en 5 idiomas.
+                El <strong>Plan Básico</strong> incluye 5 lugares de interés en el mapa. El <strong>Plan Cultural</strong> añade 5 eventos culturales (fiestas, ferias, mercados...). El <strong>Plan Territorio</strong> es la propuesta completa: 5 lugares + 5 eventos + 5 actividades turísticas, más perfil destacado en búsquedas. Todos incluyen mensajería directa con turistas. Cualquier página adicional (de contenido o traducción a cualquier idioma) cuesta 10€ IVA incluido.
             </div></div>
         </div>
         <div class="faq-item">
@@ -1279,7 +1279,7 @@ $page_canonical   = "https://rutasrurales.io/ayuntamientos/";
                 ¿En qué idiomas aparece nuestro municipio? <i class="fas fa-chevron-down"></i>
             </button>
             <div class="faq-answer"><div class="faq-answer-inner">
-                La plataforma está disponible en <strong>español, inglés, francés, alemán y chino</strong>. Tus fichas se traducen automáticamente, lo que significa que también llegas a turistas europeos e internacionales. Si necesitas páginas adicionales traducidas, están disponibles como extra a 10€/página.
+                La plataforma rutasrurales.io está disponible en <strong>español, inglés, francés, alemán y chino</strong>. Si quieres que las fichas de tu municipio aparezcan traducidas, cada página en un idioma adicional tiene un coste de <strong>10€ IVA incluido</strong>. Lo mismo aplica para cualquier página de contenido extra.
             </div></div>
         </div>
         <div class="faq-item">
