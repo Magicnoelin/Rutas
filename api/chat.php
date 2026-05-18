@@ -174,6 +174,7 @@ try {
         case 'start_conversation':
             $data = json_decode(file_get_contents('php://input'), true);
             $recipientId = (int)($data['recipient_id'] ?? 0);
+            $initiatorRole = sanitizeInput($data['initiator_role'] ?? '');
             
             if (!$recipientId) jsonError('Destinatario requerido', 400);
             if ($recipientId == $userId) jsonError('No puedes hablar contigo mismo', 400);
@@ -205,9 +206,14 @@ try {
             // Determinar tipos
             $recipientType = $recipient['user_type'] === 'turista' ? 'turista' : 'gestor';
 
-            // Lógica inteligente: Si tengo el rol turista y contacto a un gestor, actúo como turista
-            // sin importar mi user_type principal.
-            $initiatorType = (in_array('turista', $myRoles) && $recipientType === 'gestor') ? 'turista' : ($initiator['user_type'] === 'turista' ? 'turista' : 'gestor');
+            // Si se especificó un rol desde el frontend, validarlo. Si no, usar lógica inteligente.
+            $initiatorType = null;
+            if (!empty($initiatorRole) && in_array($initiatorRole, $myRoles)) {
+                $initiatorType = ($initiatorRole === 'turista') ? 'turista' : 'gestor';
+            } else {
+                // Lógica inteligente por defecto: Si tengo el rol turista y contacto a un gestor, actúo como turista
+                $initiatorType = (in_array('turista', $myRoles) && $recipientType === 'gestor') ? 'turista' : ($initiator['user_type'] === 'turista' ? 'turista' : 'gestor');
+            }
 
             // Verificar permisos
             $stmtPerm = $pdo->prepare("
