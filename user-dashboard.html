@@ -2033,7 +2033,12 @@ DOCTYPE html>
         const sendBtn = document.getElementById('sendMessageBtn');
         const statusDiv = document.getElementById('messageStatus');
         
-        if (!messageInput || !sendBtn) return;
+        if (!messageInput || !sendBtn) {
+            console.log('Elementos no encontrados:', { messageInput, sendBtn });
+            return;
+        }
+        
+        console.log('Configurando sendMessage para conversación:', conversationId);
         
         const sendMessage = async () => {
             const content = messageInput.value.trim();
