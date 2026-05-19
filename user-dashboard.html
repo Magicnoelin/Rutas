@@ -202,15 +202,25 @@
                 border-bottom: 1px solid #eee;
             }
             .sidebar-menu {
-                display: flex;
-                overflow-x: auto;
-                gap: 10px;
-                padding-bottom: 5px;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                padding-bottom: 10px;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
             }
             .sidebar-menu a {
-                white-space: nowrap;
-                padding: 8px 12px;
-                font-size: 0.9rem;
+                flex-direction: column;
+                padding: 12px 5px;
+                font-size: 0.72rem;
+                text-align: center;
+                gap: 6px;
+                background: #fdfdfd;
+                border: 1px solid #f0f0f0;
+            }
+            .sidebar-menu a i {
+                font-size: 1.4rem;
             }
             .form-row {
                 grid-template-columns: 1fr;
