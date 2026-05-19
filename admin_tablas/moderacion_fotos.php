@@ -106,8 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         'entity_type_name' => 'evento'
                     ],
                     'activities' => [
-                        'table' => 'activities',
-                        'name_field' => 'title',
+                        'table' => 'tourist_activities',
+                        'name_field' => 'name',
                         'slug_field' => 'slug',
                         'default_category' => 1,
                         'entity_type_name' => 'actividad'
@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         
                     } elseif ($entityType === 'activities') {
                         $insertSql = "INSERT INTO {$config['table']} 
-                            (title, slug, description, municipality, province, is_active, moderation_status, created_at) 
+                            (name, slug, description, municipality, province, is_active, moderation_status, created_at) 
                             VALUES (?, ?, ?, ?, ?, 0, 'draft', NOW())";
                         $stmtInsert = $pdo->prepare($insertSql);
                         $stmtInsert->execute([$name, $slug, $description, $municipality, $province]);
@@ -272,7 +272,7 @@ function movePhotoToSeoFolder(PDO $pdo, array $photo): array
             'max_photos' => 4,
         ],
         'activities' => [
-            'table'      => 'activities',
+            'table'      => 'tourist_activities',
             'web_folder' => 'img/actividades',
             'max_photos' => 4,
         ],

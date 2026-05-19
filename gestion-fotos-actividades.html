@@ -406,7 +406,7 @@
 
                         data.data.photos_by_category[cat].forEach(photo => {
                             html += `<div class="photo-card">
-                                <img src="${photo.url}" alt="${cat}" loading="lazy" onerror="this.src='/tourist_activities_images/default.webp'">
+                                <img src="${photo.url}" alt="${cat}" loading="lazy" onerror="this.src='/img/actividades/default.webp'">
                                 <button class="delete" onclick="deletePhoto('${photo.url}')">×</button>
                                 <div class="date">${new Date(photo.created_at).toLocaleDateString()}</div>
                             </div>`;

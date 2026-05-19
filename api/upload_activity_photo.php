@@ -8,9 +8,9 @@
 header('Content-Type: application/json');
 require_once 'config.php';
 
-// Configuración de carpetas
-$uploadDir = __DIR__ . '/../tourist_activities_images/';
-$baseUrl = '/tourist_activities_images/';
+// Configuración de carpetas - img/actividades/ como el resto de entidades
+$uploadDir = __DIR__ . '/../img/actividades/';
+$baseUrl = '/img/actividades/';
 
 // Verificar método de solicitud
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
