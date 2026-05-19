@@ -1404,24 +1404,24 @@
                 priceHtml = `
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_monthly}€</span>
-                        <span style="color: #888; font-size: 0.9rem;">/mes</span>
+                        <span style="color: #888; font-size: 0.9rem;">/mes (IVA no incluido)</span>
                     </div>
                     <div style="color: #888; font-size: 0.85rem;">
-                        o <strong>${plan.price_yearly}€/año</strong> (ahorra ${Math.round((1 - plan.price_yearly / (plan.price_monthly * 12)) * 100)}%)
+                        o <strong>${plan.price_yearly}€/año</strong> (IVA no incluido - ahorra ${Math.round((1 - plan.price_yearly / (plan.price_monthly * 12)) * 100)}%)
                     </div>
                 `;
             } else if (hasMonthly) {
                 priceHtml = `
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_monthly}€</span>
-                        <span style="color: #888; font-size: 0.9rem;">/mes</span>
+                        <span style="color: #888; font-size: 0.9rem;">/mes (IVA no incluido)</span>
                     </div>
                 `;
             } else if (hasYearly) {
                 priceHtml = `
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_yearly}€</span>
-                        <span style="color: #888; font-size: 0.9rem;">/año</span>
+                        <span style="color: #888; font-size: 0.9rem;">/año (IVA no incluido)</span>
                     </div>
                 `;
             } else {
