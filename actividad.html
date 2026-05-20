@@ -170,6 +170,94 @@
             border: 2px solid rgba(44, 95, 45, 0.1);
         }
         
+        /* Botón de "Qué hay cerca" - reemplaza al mapa de Google */
+        .nearby-btn-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .nearby-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            background: linear-gradient(135deg, #2c5f2d 0%, #4a8c4b 100%);
+            color: white;
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 16px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-decoration: none;
+            box-shadow: 0 6px 25px rgba(44, 95, 45, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nearby-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .nearby-btn:hover {
+            background: linear-gradient(135deg, #1a3a1c 0%, #2c5f2d 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(44, 95, 45, 0.4);
+        }
+        
+        .nearby-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .nearby-btn i {
+            font-size: 1.5rem;
+            animation: bounce-marker 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce-marker {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .nearby-btn .btn-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.3;
+        }
+        
+        .nearby-btn .btn-text small {
+            font-weight: 400;
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .nearby-location-label {
+            text-align: center;
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .nearby-location-label i {
+            color: #2c5f2d;
+        }
+        
         #loading {
             text-align: center;
             padding: 3rem;
@@ -368,6 +456,9 @@
         }
 
         function displayActivityData(activity) {
+            // Guardar datos de actividad para acceso global (usado por showActivityMap)
+            window._activityData = activity;
+            
             // Ocultar loading y mostrar contenido
             document.getElementById('loading').style.display = 'none';
             document.getElementById('actividadContent').style.display = 'block';
@@ -586,18 +677,25 @@
 
         function showActivityMap(lat, lng, title) {
             const mapContainer = document.getElementById('actividadMapa');
+            // Obtener localidad y provincia de los datos de la actividad
+            const localidad = window._activityData?.localidad || '';
+            const provincia = window._activityData?.provincia || '';
+            const ubicacionTexto = [localidad, provincia].filter(Boolean).join(', ');
+            
+            const nearbyUrl = `/rutas.php?lat=${lat}&lng=${lng}&radius=30&actividades=1&alojamientos=1&lugares=1&eventos=1`;
+            
             mapContainer.innerHTML = `
-                <iframe 
-                    width="100%" 
-                    height="300" 
-                    frameborder="0" 
-                    style="border:0; border-radius: 8px;" 
-                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${lat},${lng}&zoom=15" 
-                    allowfullscreen>
-                </iframe>
-                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
-                    Ubicación aproximada de la actividad
-                </p>
+                <div class="nearby-btn-container">
+                    <a href="${nearbyUrl}" class="nearby-btn" target="_blank">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span class="btn-text">
+                            <span>📍 ¡Mira dónde está y no te pierdas lo que hay cerca!</span>
+                            <small>Alojamientos, lugares, actividades y eventos en la zona</small>
+                        </span>
+                        <i class="fas fa-chevron-circle-right" style="font-size: 1.3rem; animation: none;"></i>
+                    </a>
+                    ${ubicacionTexto ? `<div class="nearby-location-label"><i class="fas fa-map-pin"></i> ${ubicacionTexto}</div>` : ''}
+                </div>
             `;
         }
     </script>
