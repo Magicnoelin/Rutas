@@ -1993,14 +1993,14 @@ if (file_exists($header_path)) {
             <div style="font-size:1.8rem;margin-bottom:8px;line-height:1;">🌿</div>
             <h3 style="font-size:1rem;font-weight:700;color:#fff!important;margin-bottom:8px;"><?php echo htmlspecialchars($t['cta_titulo']); ?></h3>
             <p style="font-size:0.8rem;color:rgba(255,255,255,0.85)!important;margin-bottom:14px;line-height:1.5;"><?php echo htmlspecialchars($t['cta_desc']); ?></p>
-            <a href="/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
-               style="display:flex!important;align-items:center!important;justify-content:center!important;background:#fff!important;color:#2F5233!important;padding:10px 16px!important;border-radius:8px!important;font-weight:700!important;font-size:0.85rem!important;text-decoration:none!important;margin-bottom:8px!important;width:100%!important;box-sizing:border-box!important;">
-                <?php echo htmlspecialchars($t['cta_register']); ?>
-            </a>
-            <a href="/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
-               style="display:flex;align-items:center;justify-content:center;background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.6);padding:9px 16px;border-radius:8px;font-weight:600;font-size:0.82rem;text-decoration:none;width:100%;box-sizing:border-box;">
-                <?php echo htmlspecialchars($t['cta_login']); ?>
-            </a>
+            <div onclick="window.location.href='/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>'"
+               style="display:flex;align-items:center;justify-content:center;background:#ffffff;color:#1a3d1e;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.85rem;margin-bottom:8px;width:100%;box-sizing:border-box;border:2px solid rgba(255,255,255,0.3);cursor:pointer;user-select:none;">
+                ✨ Registrarme gratis
+            </div>
+            <div onclick="window.location.href='/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>'"
+               style="display:flex;align-items:center;justify-content:center;background:#ffffff;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.85rem;width:100%;box-sizing:border-box;border:2px solid rgba(255,255,255,0.3);cursor:pointer;user-select:none;">
+                <span style="color:#1a3d1e!important;font-weight:700!important;font-size:0.85rem!important;">Ya tengo cuenta</span>
+            </div>
         </div>
 
         <!-- Compartir -->
