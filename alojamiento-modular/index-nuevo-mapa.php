@@ -1803,7 +1803,7 @@ if (file_exists($header_path)) {
             <div class="loc-address">📍 <?php echo htmlspecialchars($direccion_completa); ?></div>
             <?php endif; ?>
             <a href="<?php echo $rutas_url; ?>" class="loc-btn" target="_blank" rel="noopener">
-                📍 ¡Mira la ubicación y qué ver cerca!
+                🗺️ <?php echo $t['ver_en_rutas']; ?>
             </a>
         </div>
         <?php endif; ?>
@@ -1994,7 +1994,7 @@ if (file_exists($header_path)) {
             <h3 style="font-size:1rem;font-weight:700;color:#fff!important;margin-bottom:8px;"><?php echo htmlspecialchars($t['cta_titulo']); ?></h3>
             <p style="font-size:0.8rem;color:rgba(255,255,255,0.85)!important;margin-bottom:14px;line-height:1.5;"><?php echo htmlspecialchars($t['cta_desc']); ?></p>
             <a href="/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
-               style="display:flex!important;align-items:center!important;justify-content:center!important;background:#fff!important;color:#2F5233!important;padding:10px 16px!important;border-radius:8px!important;font-weight:700!important;font-size:0.85rem!important;text-decoration:none!important;margin-bottom:8px!important;width:100%!important;box-sizing:border-box!important;">
+               style="display:flex;align-items:center;justify-content:center;background:#fff;color:#2F5233;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none;margin-bottom:8px;width:100%;box-sizing:border-box;">
                 <?php echo htmlspecialchars($t['cta_register']); ?>
             </a>
             <a href="/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>"

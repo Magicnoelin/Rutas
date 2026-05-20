@@ -85,9 +85,6 @@ $ui = [
         'ubicacion'     => 'Ubicación',
         'ver_mapa'      => 'Ver en el mapa',
         'click_mapa'    => 'Haz clic para cargar el mapa interactivo',
-        'explora_alrededores' => 'Explora los alrededores',
-        'descubre_alrededor'  => 'Descubre alojamientos, lugares de interés, actividades y eventos cerca de',
-        'ver_en_rutas'        => 'Ver todo lo que hay alrededor',
         'cercanos'      => '¿Qué hay cerca?',
         'aloj_cercanos' => '🏠 Alojamientos cercanos',
         'ver_mas_aloj'  => 'Ver más alojamientos',
@@ -143,9 +140,6 @@ $ui = [
         'ubicacion'     => 'Location',
         'ver_mapa'      => 'View on map',
         'click_mapa'    => 'Click to load the interactive map',
-        'explora_alrededores' => 'Explore the surroundings',
-        'descubre_alrededor'  => 'Discover accommodations, points of interest, activities and events near',
-        'ver_en_rutas'        => 'See everything around',
         'cercanos'      => 'What\'s nearby?',
         'aloj_cercanos' => '🏠 Nearby accommodation',
         'ver_mas_aloj'  => 'View more accommodation',
@@ -201,9 +195,6 @@ $ui = [
         'ubicacion'     => 'Emplacement',
         'ver_mapa'      => 'Voir sur la carte',
         'click_mapa'    => 'Cliquez pour charger la carte interactive',
-        'explora_alrededores' => 'Explorez les environs',
-        'descubre_alrededor'  => 'Découvrez hébergements, lieux d\'intérêt, activités et événements près de',
-        'ver_en_rutas'        => 'Voir tout ce qui se trouve autour',
         'cercanos'      => 'Qu\'y a-t-il à proximité ?',
         'aloj_cercanos' => '🏠 Hébergements à proximité',
         'ver_mas_aloj'  => 'Voir plus d\'hébergements',
@@ -259,9 +250,6 @@ $ui = [
         'ubicacion'     => 'Standort',
         'ver_mapa'      => 'Auf der Karte anzeigen',
         'click_mapa'    => 'Klicken Sie, um die interaktive Karte zu laden',
-        'explora_alrededores' => 'Erkunden Sie die Umgebung',
-        'descubre_alrededor'  => 'Entdecken Sie Unterkünfte, Sehenswürdigkeiten, Aktivitäten und Veranstaltungen in der Nähe von',
-        'ver_en_rutas'        => 'Alles in der Umgebung anzeigen',
         'cercanos'      => 'Was gibt es in der Nähe?',
         'aloj_cercanos' => '🏠 Unterkünfte in der Nähe',
         'ver_mas_aloj'  => 'Mehr Unterkünfte anzeigen',
@@ -317,9 +305,6 @@ $ui = [
         'ubicacion'     => '位置',
         'ver_mapa'      => '在地图上查看',
         'click_mapa'    => '点击加载互动地图',
-        'explora_alrededores' => '探索周边',
-        'descubre_alrededor'  => '发现附近的住宿、景点、活动和活动',
-        'ver_en_rutas'        => '查看周边所有内容',
         'cercanos'      => '附近有什么？',
         'aloj_cercanos' => '🏠 附近住宿',
         'ver_mas_aloj'  => '查看更多住宿',
@@ -1045,56 +1030,39 @@ $alo_js = $alojamiento ? json_encode([
             border-radius: 8px;
         }
 
-        /* ── Card de ubicación (enlace a rutas.php) ── */
-        .location-card {
-            background: linear-gradient(135deg, #e8f0e8, #d4e8d4);
+        /* ── Mapa ── */
+        #alo-map-container {
             border-radius: var(--radius);
-            padding: 28px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
             margin-bottom: 24px;
-            text-align: center;
-            border: 1px solid #c8e6c9;
         }
-        .location-card .loc-icon { font-size: 3rem; margin-bottom: 12px; }
-        .location-card h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 8px;
+        #alo-map {
+            height: 380px;
+            width: 100%;
+            background: #e8f0e8;
         }
-        .location-card p {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-bottom: 6px;
-            line-height: 1.5;
-        }
-        .location-card .loc-address {
-            font-size: 0.88rem;
-            color: var(--text);
-            font-weight: 600;
-            margin-bottom: 18px;
-            padding: 8px 12px;
-            background: rgba(255,255,255,0.6);
-            border-radius: 8px;
-            display: inline-block;
-        }
-        .location-card .loc-btn {
-            display: inline-flex;
+        .map-placeholder {
+            height: 380px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8f0e8, #d4e8d4);
+            color: var(--primary);
+            gap: 12px;
+            cursor: pointer;
+        }
+        .map-placeholder .map-icon { font-size: 3rem; }
+        .map-placeholder strong { font-size: 1rem; }
+        .map-placeholder p { font-size: 0.9rem; color: var(--text-light); }
+        .map-placeholder .map-hint {
             background: var(--primary);
             color: #fff;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            text-decoration: none;
-            transition: all var(--transition);
-        }
-        .location-card .loc-btn:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
         }
 
         /* ── Contenido cercano ── */
@@ -1786,25 +1754,16 @@ if (file_exists($header_path)) {
         </div>
         <?php endif; ?>
 
-        <!-- Card de ubicación con enlace a rutas.php -->
-        <?php if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])): 
-            $rutas_url = 'https://rutasrurales.io/rutas.php'
-                . '?lat=' . urlencode($alojamiento['latitude'])
-                . '&lng=' . urlencode($alojamiento['longitude'])
-                . '&provincia=' . urlencode($alojamiento['municipality'] ?? $alojamiento['province'] ?? '')
-                . '&radius=30';
-            $direccion_completa = trim(($alojamiento['address'] ?? '') . ', ' . ($alojamiento['municipality'] ?? '') . ', ' . ($alojamiento['province'] ?? ''), ', ');
-        ?>
-        <div class="location-card">
-            <div class="loc-icon">🗺️</div>
-            <h3><?php echo $t['explora_alrededores']; ?></h3>
-            <p><?php echo $t['descubre_alrededor']; ?> <strong><?php echo htmlspecialchars($alojamiento['municipality'] ?? $alojamiento['province'] ?? ''); ?></strong></p>
-            <?php if ($direccion_completa): ?>
-            <div class="loc-address">📍 <?php echo htmlspecialchars($direccion_completa); ?></div>
-            <?php endif; ?>
-            <a href="<?php echo $rutas_url; ?>" class="loc-btn" target="_blank" rel="noopener">
-                📍 ¡Mira la ubicación y qué ver cerca!
-            </a>
+        <!-- MAPA (carga diferida con Leaflet) -->
+        <?php if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])): ?>
+        <div id="alo-map-container" class="alo-card">
+            <div id="map-placeholder" class="map-placeholder" onclick="initMap()">
+                <div class="map-icon">🗺️</div>
+                <strong><?php echo $t['ver_mapa']; ?></strong>
+                <p><?php echo htmlspecialchars($ubicacion_display); ?></p>
+                <span class="map-hint"><?php echo $t['click_mapa']; ?></span>
+            </div>
+            <div id="alo-map" style="display:none;"></div>
         </div>
         <?php endif; ?>
 
@@ -1994,7 +1953,7 @@ if (file_exists($header_path)) {
             <h3 style="font-size:1rem;font-weight:700;color:#fff!important;margin-bottom:8px;"><?php echo htmlspecialchars($t['cta_titulo']); ?></h3>
             <p style="font-size:0.8rem;color:rgba(255,255,255,0.85)!important;margin-bottom:14px;line-height:1.5;"><?php echo htmlspecialchars($t['cta_desc']); ?></p>
             <a href="/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
-               style="display:flex!important;align-items:center!important;justify-content:center!important;background:#fff!important;color:#2F5233!important;padding:10px 16px!important;border-radius:8px!important;font-weight:700!important;font-size:0.85rem!important;text-decoration:none!important;margin-bottom:8px!important;width:100%!important;box-sizing:border-box!important;">
+               style="display:flex;align-items:center;justify-content:center;background:#fff;color:#2F5233;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none;margin-bottom:8px;width:100%;box-sizing:border-box;">
                 <?php echo htmlspecialchars($t['cta_register']); ?>
             </a>
             <a href="/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
@@ -2057,7 +2016,10 @@ if (file_exists($header_path)) {
 
 <!-- ── SCRIPTS DIFERIDOS ── -->
 
-<!-- Leaflet CSS eliminado — ahora se usa enlace a rutas.php -->
+<!-- Leaflet CSS (diferido, solo si hay mapa) -->
+<?php if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])): ?>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
+<?php endif; ?>
 
 <!-- GTM diferido (después de interacción) -->
 <script>
@@ -2160,7 +2122,110 @@ if (file_exists($header_path)) {
         if (btn)  btn.remove();
     };
 
-    // ── Mapa eliminado — ahora se usa enlace a rutas.php ──────────────────────
+    // ── Mapa (Leaflet, carga diferida) ────────────────────────────────────────
+    var mapLoaded = false;
+
+    window.initMap = function() {
+        if (mapLoaded || !alo || !alo.latitude || !alo.longitude) return;
+        mapLoaded = true;
+
+        var placeholder = document.getElementById('map-placeholder');
+        var mapEl       = document.getElementById('alo-map');
+        if (!mapEl) return;
+
+        if (placeholder) {
+            placeholder.innerHTML = '<div style="font-size:2rem">⏳</div><p style="margin-top:8px;font-size:0.85rem">Cargando mapa…</p>';
+        }
+
+        // Cargar Leaflet JS
+        var script = document.createElement('script');
+        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        script.onload = function() {
+            if (placeholder) placeholder.style.display = 'none';
+            mapEl.style.display = 'block';
+
+            var map = L.map(mapEl, { zoomControl: true, scrollWheelZoom: false })
+                .setView([alo.latitude, alo.longitude], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 18
+            }).addTo(map);
+
+            // Marcador principal
+            var icon = L.divIcon({
+                className: '',
+                html: '<div style="background:#2F5233;color:#fff;border-radius:50% 50% 50% 0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,0.3);border:2px solid #fff;"><span style="transform:rotate(45deg)">🏠</span></div>',
+                iconSize: [36, 36],
+                iconAnchor: [18, 36],
+                popupAnchor: [0, -36]
+            });
+
+            var popupHtml = '<div style="padding:6px 2px;min-width:160px;">'
+                + '<strong style="color:#2F5233;font-size:0.95rem;">' + escHtml(alo.name) + '</strong>'
+                + (alo.address ? '<br><small style="color:#666">' + escHtml(alo.address) + '</small>' : '')
+                + (alo.precio_noche > 0 ? '<br><span style="color:#2F5233;font-weight:700">' + alo.precio_noche + '€ / noche</span>' : '')
+                + '</div>';
+
+            L.marker([alo.latitude, alo.longitude], { icon: icon })
+                .addTo(map)
+                .bindPopup(popupHtml)
+                .openPopup();
+
+            // Añadir marcadores cercanos si ya tenemos datos
+            if (window._nearbyData) addNearbyMarkers(map, window._nearbyData);
+            window._nearbyMap = map;
+        };
+        script.onerror = function() {
+            mapLoaded = false;
+            if (placeholder) {
+                placeholder.style.display = 'flex';
+                placeholder.innerHTML = '<div class="map-icon">🗺️</div><strong>Error al cargar el mapa</strong><span class="map-hint">Haz clic para reintentar</span>';
+            }
+        };
+        document.head.appendChild(script);
+    };
+
+    function addNearbyMarkers(map, data) {
+        var configs = [
+            { items: (data.alojamientos || []).slice(0, 5),      emoji: '🏠', color: '#2F5233' },
+            { items: (data.lugares || []).slice(0, 5),           emoji: '🏛️', color: '#1565C0' },
+            { items: (data.actividades || []).slice(0, 4),       emoji: '🎯', color: '#E65100' },
+            { items: (data.eventos_similares || []).slice(0, 4), emoji: '🎭', color: '#6A1B9A' }
+        ];
+        configs.forEach(function(cfg) {
+            cfg.items.forEach(function(item) {
+                if (!item.latitude || !item.longitude) return;
+                var icon = L.divIcon({
+                    className: '',
+                    html: '<div style="background:' + cfg.color + ';color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.25);border:2px solid #fff;">' + cfg.emoji + '</div>',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14],
+                    popupAnchor: [0, -14]
+                });
+                var dist = item.distance > 0 ? ' · ' + item.distance + ' km' : '';
+                L.marker([item.latitude, item.longitude], { icon: icon })
+                    .addTo(map)
+                    .bindPopup('<b>' + escHtml(item.name) + '</b><br><small>' + escHtml(item.municipality || '') + dist + '</small>');
+            });
+        });
+    }
+
+    // Auto-cargar mapa cuando sea visible (IntersectionObserver)
+    if (alo && alo.latitude && alo.longitude) {
+        var mapContainer = document.getElementById('alo-map-container');
+        if (mapContainer && 'IntersectionObserver' in window) {
+            var mapObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        mapObserver.disconnect();
+                        initMap();
+                    }
+                });
+            }, { rootMargin: '200px', threshold: 0.1 });
+            mapObserver.observe(mapContainer);
+        }
+    }
 
     // ── Contenido cercano ─────────────────────────────────────────────────────
     var nearbyData   = null;
@@ -2192,6 +2257,9 @@ if (file_exists($header_path)) {
                 if (!resp.success || !resp.data) return;
                 nearbyData = resp.data;
                 window._nearbyData = nearbyData;
+
+                // Añadir marcadores al mapa si ya está cargado
+                if (window._nearbyMap) addNearbyMarkers(window._nearbyMap, nearbyData);
 
                 // Renderizar secciones
                 Object.keys(nearbyConfig).forEach(function(type) {
