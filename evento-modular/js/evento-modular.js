@@ -409,12 +409,37 @@ function _renderSimilarEvents() {
 
     if (!container || !STATE.nearbyData?.eventos_similares?.length) return;
 
-    section.style.display = 'block';
-    const eventos = STATE.nearbyData.eventos_similares;
+    // Filtrar solo eventos futuros (posteriores a hoy)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const eventosFuturos = STATE.nearbyData.eventos_similares.filter(e => {
+        // Usar end_date si existe, si no usar start_date
+        const fechaRef = e.end_date || e.start_date;
+        if (!fechaRef) return false;
+        const fechaEvento = new Date(fechaRef + 'T00:00:00');
+        return fechaEvento >= today;
+    });
 
-    container.innerHTML = eventos.map(e => {
+    if (!eventosFuturos.length) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+
+    container.innerHTML = eventosFuturos.map(e => {
         const precio = e.is_free == 1 ? '🆓 Gratis' : (e.ticket_price > 0 ? `💶 ${formatPrice(e.ticket_price)}` : '');
-        const fecha = formatDate(e.start_date);
+        // Mostrar rango de fechas si start_date y end_date son diferentes
+        let fechaHtml = '';
+        if (e.start_date) {
+            const start = formatDate(e.start_date);
+            if (e.end_date && e.end_date !== e.start_date) {
+                const end = formatDate(e.end_date);
+                fechaHtml = `<span>📅 ${start} → ${end}</span>`;
+            } else {
+                fechaHtml = `<span>📅 ${start}</span>`;
+            }
+        }
         return `
         <a href="${e.url}" class="similar-event-card" style="text-decoration:none;">
             <div class="similar-event-img">
@@ -427,7 +452,7 @@ function _renderSimilarEvents() {
             <div class="similar-event-body">
                 <div class="similar-event-name">${e.name}</div>
                 <div class="similar-event-meta">
-                    ${fecha ? `<span>📅 ${fecha}</span>` : ''}
+                    ${fechaHtml}
                     <span>📍 ${e.municipality || e.province || ''}</span>
                 </div>
             </div>
