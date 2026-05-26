@@ -450,24 +450,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function procesarEventos(eventos) {
-            // Ordenar: eventos de 1 día (sin fecha_fin o misma fecha) primero,
-            // luego eventos de larga duración
+            // Ordenar: eventos cortos (1 día o menos) primero por fecha de inicio,
+            // eventos de larga duración después también por fecha de inicio
             eventos.sort(function(a, b) {
-                var aFin = a.fecha_fin || a.fecha_evento;
-                var bFin = b.fecha_fin || b.fecha_evento;
-                var aInicio = a.fecha_evento;
-                var bInicio = b.fecha_evento;
+                // Si algún evento no tiene fecha, mandarlo al final
+                if (!a.fecha_evento && !b.fecha_evento) return 0;
+                if (!a.fecha_evento) return 1;
+                if (!b.fecha_evento) return -1;
                 
-                // Duración en días
-                var aDuracion = (new Date(aFin) - new Date(aInicio)) / (1000 * 60 * 60 * 24);
-                var bDuracion = (new Date(bFin) - new Date(bInicio)) / (1000 * 60 * 60 * 24);
+                var aInicio = new Date(a.fecha_evento);
+                var bInicio = new Date(b.fecha_evento);
                 
-                // Si uno es de 1 día y el otro no, el de 1 día va primero
+                // Si alguna fecha es inválida, mandarla al final
+                if (isNaN(aInicio.getTime()) && isNaN(bInicio.getTime())) return 0;
+                if (isNaN(aInicio.getTime())) return 1;
+                if (isNaN(bInicio.getTime())) return -1;
+                
+                // Calcular duración en días
+                var aFechaFin = a.fecha_fin ? new Date(a.fecha_fin) : null;
+                var bFechaFin = b.fecha_fin ? new Date(b.fecha_fin) : null;
+                
+                var aDuracion = aFechaFin ? (aFechaFin - aInicio) / (1000 * 60 * 60 * 24) : 1;
+                var bDuracion = bFechaFin ? (bFechaFin - bInicio) / (1000 * 60 * 60 * 24) : 1;
+                
+                // Si una duración es NaN (fecha inválida), tratarla como 1 día
+                if (isNaN(aDuracion)) aDuracion = 1;
+                if (isNaN(bDuracion)) bDuracion = 1;
+                
+                // Eventos de 1 día o menos van primero
                 if (aDuracion <= 1 && bDuracion > 1) return -1;
                 if (aDuracion > 1 && bDuracion <= 1) return 1;
                 
-                // Si ambos son del mismo tipo, ordenar por fecha de inicio
-                return new Date(aInicio) - new Date(bInicio);
+                // Si ambos son del mismo tipo, ordenar por fecha de inicio (más próximos primero)
+                return aInicio - bInicio;
             });
             
             todosLosEventos = eventos;
