@@ -58,6 +58,11 @@ if (isset($_GET['msg']) && $_GET['msg'] === 'updated') {
         <div class="d-flex justify-content-between mb-4 align-items-center">
             <h2><i class="bi bi-calendar-event"></i> Eventos Culturales</h2>
             <div class="d-flex gap-2">
+                <a href="generar_traducciones_eventos.php" class="btn btn-outline-info btn-sm shadow-sm" 
+                   title="Genera traducciones automáticas (en, fr, de, zh) para eventos que no tengan"
+                   onclick="return confirm('¿Generar traducciones automáticas para los eventos que falten?\n\nSe crearán en inglés, francés, alemán y chino.\nNo se sobrescribirán las existentes.');">
+                    <i class="bi bi-translate"></i> Generar Traducciones
+                </a>
                 <a href="eventos_index.php?regenerar_sitemap=1" class="btn btn-outline-warning btn-sm shadow-sm" 
                    title="Regenera sitemap-eventos-i18n.xml desde la tabla de traducciones"
                    onclick="return confirm('¿Regenerar el sitemap de traducciones (i18n)?');">
