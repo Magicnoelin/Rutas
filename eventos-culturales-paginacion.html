@@ -450,6 +450,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function procesarEventos(eventos) {
+            // Ordenar: eventos de 1 día (sin fecha_fin o misma fecha) primero,
+            // luego eventos de larga duración
+            eventos.sort(function(a, b) {
+                var aFin = a.fecha_fin || a.fecha_evento;
+                var bFin = b.fecha_fin || b.fecha_evento;
+                var aInicio = a.fecha_evento;
+                var bInicio = b.fecha_evento;
+                
+                // Duración en días
+                var aDuracion = (new Date(aFin) - new Date(aInicio)) / (1000 * 60 * 60 * 24);
+                var bDuracion = (new Date(bFin) - new Date(bInicio)) / (1000 * 60 * 60 * 24);
+                
+                // Si uno es de 1 día y el otro no, el de 1 día va primero
+                if (aDuracion <= 1 && bDuracion > 1) return -1;
+                if (aDuracion > 1 && bDuracion <= 1) return 1;
+                
+                // Si ambos son del mismo tipo, ordenar por fecha de inicio
+                return new Date(aInicio) - new Date(bInicio);
+            });
+            
             todosLosEventos = eventos;
             eventosFiltrados = [...eventos];
             
@@ -655,10 +675,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const card = document.createElement('div');
             card.className = 'card-evento';
 
-            const fechaParts = evento.fecha_formateada ? evento.fecha_formateada.split('/') : ['', '', ''];
-            const dia = fechaParts[0] || '';
-            const mes = obtenerNombreMes(fechaParts[1]) || '';
-
             const categoriaId = parseInt(evento.categoria);
             const categoriaNombre = obtenerNombreCategoria(categoriaId);
             const categoriaClase = `cat-${categoriaId}`;
@@ -668,11 +684,48 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             // Calcular badge según estado del evento
             const badge = calcularBadge(evento);
 
+            // Generar el bloque de fecha: si tiene fecha_fin y es distinta, mostrar rango
+            var fechaHtml = '';
+            if (evento.fecha_evento) {
+                var fechaInicio = new Date(evento.fecha_evento);
+                var diaInicio = fechaInicio.getDate();
+                var mesInicio = obtenerNombreMes(fechaInicio.getMonth() + 1);
+                
+                if (evento.fecha_fin) {
+                    var fechaFin = new Date(evento.fecha_fin);
+                    var diaFin = fechaFin.getDate();
+                    var mesFin = obtenerNombreMes(fechaFin.getMonth() + 1);
+                    
+                    // Calcular duración en días
+                    var duracion = (fechaFin - fechaInicio) / (1000 * 60 * 60 * 24);
+                    
+                    if (duracion > 1) {
+                        // Evento de varios días: mostrar rango "1 ENE → 31 DIC"
+                        fechaHtml = '<div class="evento-fecha" style="padding: 0.4rem 0.7rem; min-width: 70px;">' +
+                            '<span class="dia" style="font-size:1.2rem;">' + diaInicio + '</span>' +
+                            '<span class="mes" style="font-size:0.7rem;">' + mesInicio + '</span>' +
+                            '<span style="display:block;font-size:0.8rem;line-height:1;">→</span>' +
+                            '<span class="dia" style="font-size:1.2rem;">' + diaFin + '</span>' +
+                            '<span class="mes" style="font-size:0.7rem;">' + mesFin + '</span>' +
+                            '</div>';
+                    } else {
+                        // Misma fecha o 1 día: mostrar solo la fecha de inicio
+                        fechaHtml = '<div class="evento-fecha">' +
+                            '<span class="dia">' + diaInicio + '</span>' +
+                            '<span class="mes">' + mesInicio + '</span>' +
+                            '</div>';
+                    }
+                } else {
+                    // Sin fecha_fin: mostrar solo la fecha de inicio
+                    fechaHtml = '<div class="evento-fecha">' +
+                        '<span class="dia">' + diaInicio + '</span>' +
+                        '<span class="mes">' + mesInicio + '</span>' +
+                        '</div>';
+                }
+            }
+
             card.innerHTML = `
-                <div class="evento-fecha">
-                    <span class="dia">${dia}</span>
-                    <span class="mes">${mes}</span>
-                </div>
+                ${fechaHtml}
                 <img src="${evento.imagen}" alt="${evento.titulo}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=250&fit=crop'">
                 <div class="card-content">
                     <div class="evento-categoria ${categoriaClase}">
@@ -705,18 +758,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const diasHastaInicio = Math.ceil((inicio - ahora) / (1000 * 60 * 60 * 24));
             const diasHastaFin = Math.ceil((fechaFinReal - ahora) / (1000 * 60 * 60 * 24));
             
+            // Calcular duración total del evento
+            var duracionEvento = (fechaFinReal - inicio) / (1000 * 60 * 60 * 24);
+            
             // Determinar estado
             if (diasHastaFin < 0) {
                 // Evento ya terminado (no debería mostrarse por el filtro API, pero por seguridad)
                 return '';
             } else if (diasHastaFin >= 0 && diasHastaFin <= 30) {
-                // Evento activo o termina en menos de 30 días: badge verde "🟢 Activo"
+                // Evento activo o termina en menos de 30 días
+                if (duracionEvento > 60) {
+                    // Evento de larga duración actualmente activo
+                    var mesInicio = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
+                    var mesFin = fechaFinReal.toLocaleString('es', { month: 'short' }).toUpperCase();
+                    return '<div class="evento-badge badge-activo">🟢 ' + mesInicio + '-' + mesFin + '</div>';
+                }
                 return '<div class="evento-badge badge-activo">🟢 Activo</div>';
             } else if (diasHastaInicio >= 0 && diasHastaInicio <= 30) {
                 // Evento próximo (entre hoy y 30 días): badge azul "📅 Próximamente"
                 return '<div class="evento-badge badge-proximo">📅 Próximamente</div>';
             } else if (diasHastaInicio > 30) {
                 // Evento futuro (más de 30 días): badge gris con el mes
+                if (duracionEvento > 60) {
+                    // Evento de larga duración futuro
+                    var mesInicio = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
+                    var mesFin = fechaFinReal.toLocaleString('es', { month: 'short' }).toUpperCase();
+                    return '<div class="evento-badge badge-futuro">📆 ' + mesInicio + '-' + mesFin + '</div>';
+                }
                 const mesInicio = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
                 return '<div class="evento-badge badge-futuro">📆 Desde ' + mesInicio + '</div>';
             }
