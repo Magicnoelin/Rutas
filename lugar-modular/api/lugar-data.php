@@ -128,6 +128,29 @@ try {
         foreach ($actividades as &$act) {
             $act['distance'] = round((float)$act['distance'], 1);
             $act['url'] = '/actividad/' . $act['slug'];
+            // Limpiar espacios en main_image (pueden quedar por errores de carga)
+            if (!empty($act['main_image'])) {
+                $act['main_image'] = trim($act['main_image']);
+            }
+            // Fallback: si no hay main_image, buscar en entity_photos
+            if (empty($act['main_image'])) {
+                try {
+                    $stmtEp = $pdo->prepare("
+                        SELECT file_url FROM entity_photos
+                        WHERE entity_type = 'tourist_activities'
+                          AND entity_id = ?
+                          AND permission_status = 'approved'
+                          AND status = 'active'
+                        ORDER BY is_cover DESC, featured DESC, uploaded_at DESC
+                        LIMIT 1
+                    ");
+                    $stmtEp->execute([$act['id']]);
+                    $ep = $stmtEp->fetch(PDO::FETCH_ASSOC);
+                    if (!empty($ep['file_url'])) {
+                        $act['main_image'] = '/' . ltrim(str_replace('\\', '/', $ep['file_url']), '/');
+                    }
+                } catch (Exception $e) { /* ignorar */ }
+            }
         }
         $result['actividades'] = $actividades;
 

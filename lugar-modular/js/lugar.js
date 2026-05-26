@@ -310,7 +310,7 @@
 
         if (item.main_image) {
             var img = document.createElement('img');
-            img.src     = fixUrl(item.main_image);
+            img.src     = fixUrl(item.main_image.trim ? item.main_image.trim() : item.main_image);
             img.alt     = item.name || '';
             img.loading = 'lazy';
             img.onerror = function() {
