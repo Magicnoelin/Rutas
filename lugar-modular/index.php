@@ -670,10 +670,12 @@ function fixUrl($url) {
             <?php endif; ?>
 
             <?php $esGratis = empty($lugar['entry_fee']) || $lugar['entry_fee'] == 0; ?>
-            <?php if ($esGratis): ?>
+            <?php if ($esGratis && empty($lugar['entry_fee_details'])): ?>
             <span class="lug-hero-free">✅ Entrada gratuita</span>
             <?php elseif (!empty($lugar['entry_fee'])): ?>
-            <span class="lug-hero-free" style="background:var(--lug-warm);color:#1a1a1a;">💶 <?php echo esc($lugar['entry_fee']); ?>€</span>
+            <span class="lug-hero-free" style="background:var(--lug-warm);color:#1a1a1a;">💶 <?php echo esc($lugar['entry_fee']); ?>€<?php if (!empty($lugar['entry_fee_details'])): ?> · <?php echo esc($lugar['entry_fee_details']); ?><?php endif; ?></span>
+            <?php elseif (!empty($lugar['entry_fee_details'])): ?>
+            <span class="lug-hero-free" style="background:var(--lug-warm);color:#1a1a1a;">💶 <?php echo esc($lugar['entry_fee_details']); ?></span>
             <?php endif; ?>
         </div>
     </div>
@@ -745,7 +747,7 @@ function fixUrl($url) {
 
         <!-- ▸ INFORMACIÓN PRÁCTICA -->
         <?php
-        $hayInfo = !empty($lugar['opening_hours']) || !empty($lugar['entry_fee']) || !empty($lugar['visit_duration'])
+        $hayInfo = !empty($lugar['opening_hours']) || !empty($lugar['entry_fee']) || !empty($lugar['entry_fee_details']) || !empty($lugar['visit_duration'])
                 || !empty($lugar['best_season']) || !empty($lugar['accessibility'])
                 || !empty($lugar['pet_friendly']) || !empty($lugar['suitable_for_children']);
         if ($hayInfo): ?>
@@ -756,8 +758,16 @@ function fixUrl($url) {
                     <?php if (!empty($lugar['opening_hours'])): ?>
                     <div class="info-item"><div class="info-icon">🕐</div><div class="info-label">Horario</div><div class="info-value"><?php echo esc($lugar['opening_hours']); ?></div></div>
                     <?php endif; ?>
-                    <?php if (isset($lugar['entry_fee'])): ?>
-                    <div class="info-item"><div class="info-icon">🎫</div><div class="info-label">Entrada</div><div class="info-value"><?php echo ($lugar['entry_fee'] == 0 || empty($lugar['entry_fee'])) ? 'Gratuita' : esc($lugar['entry_fee']) . '€'; ?><?php if (!empty($lugar['entry_fee_details'])): ?><br><small style="color:var(--lug-text-l);font-weight:400;"><?php echo esc($lugar['entry_fee_details']); ?></small><?php endif; ?></div></div>
+                    <?php if (isset($lugar['entry_fee']) || !empty($lugar['entry_fee_details'])): ?>
+                    <div class="info-item"><div class="info-icon">🎫</div><div class="info-label">Entrada</div><div class="info-value"><?php
+                        if (!empty($lugar['entry_fee'])) {
+                            echo esc($lugar['entry_fee']) . '€';
+                        } elseif (!empty($lugar['entry_fee_details'])) {
+                            echo esc($lugar['entry_fee_details']);
+                        } else {
+                            echo 'Gratuita';
+                        }
+                        if (!empty($lugar['entry_fee']) && !empty($lugar['entry_fee_details'])): ?><br><small style="color:var(--lug-text-l);font-weight:400;"><?php echo esc($lugar['entry_fee_details']); ?></small><?php endif; ?></div></div>
                     <?php endif; ?>
                     <?php if (!empty($lugar['visit_duration'])): ?>
                     <div class="info-item"><div class="info-icon">⏱️</div><div class="info-label">Duración visita</div><div class="info-value"><?php echo esc($lugar['visit_duration']); ?></div></div>
@@ -892,7 +902,15 @@ function fixUrl($url) {
             <ul class="info-list">
                 <?php if (!empty($lugar['category_name'])): ?><li><span class="li-icon">🏷️</span><span><?php echo esc($lugar['category_name']); ?></span></li><?php endif; ?>
                 <?php if (!empty($lugar['municipality'])): ?><li><span class="li-icon">📍</span><span><?php echo esc($lugar['municipality']); ?><?php if (!empty($lugar['province'])): ?>, <?php echo esc($lugar['province']); ?><?php endif; ?></span></li><?php endif; ?>
-                <?php if (isset($lugar['entry_fee'])): ?><li><span class="li-icon">🎫</span><span><?php echo ($lugar['entry_fee'] == 0 || empty($lugar['entry_fee'])) ? '✅ Entrada gratuita' : '💶 ' . esc($lugar['entry_fee']) . '€'; ?></span></li><?php endif; ?>
+                <?php if (isset($lugar['entry_fee']) || !empty($lugar['entry_fee_details'])): ?><li><span class="li-icon">🎫</span><span><?php
+                    if (!empty($lugar['entry_fee'])) {
+                        echo '💶 ' . esc($lugar['entry_fee']) . '€';
+                    } elseif (!empty($lugar['entry_fee_details'])) {
+                        echo '💶 ' . esc($lugar['entry_fee_details']);
+                    } else {
+                        echo '✅ Entrada gratuita';
+                    }
+                    if (!empty($lugar['entry_fee']) && !empty($lugar['entry_fee_details'])): ?> · <small><?php echo esc($lugar['entry_fee_details']); ?></small><?php endif; ?></span></li><?php endif; ?>
                 <?php if (!empty($lugar['opening_hours'])): ?><li><span class="li-icon">🕐</span><span><?php echo esc($lugar['opening_hours']); ?></span></li><?php endif; ?>
                 <?php if (!empty($lugar['visit_duration'])): ?><li><span class="li-icon">⏱️</span><span>Visita: <?php echo esc($lugar['visit_duration']); ?></span></li><?php endif; ?>
                 <?php if (!empty($lugar['best_season'])): ?><li><span class="li-icon">🌸</span><span>Mejor época: <?php echo esc($lugar['best_season']); ?></span></li><?php endif; ?>
