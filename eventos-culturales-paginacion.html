@@ -784,9 +784,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 // Evento activo o termina en menos de 30 días
                 if (duracionEvento > 60) {
                     // Evento de larga duración actualmente activo
-                    var mesInicio = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
-                    var mesFin = fechaFinReal.toLocaleString('es', { month: 'short' }).toUpperCase();
-                    return '<div class="evento-badge badge-activo">🟢 ' + mesInicio + '-' + mesFin + '</div>';
+                    var mesInicioLargo = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
+                    var mesFinLargo = fechaFinReal.toLocaleString('es', { month: 'short' }).toUpperCase();
+                    return '<div class="evento-badge badge-activo">🟢 ' + mesInicioLargo + '-' + mesFinLargo + '</div>';
                 }
                 return '<div class="evento-badge badge-activo">🟢 Activo</div>';
             } else if (diasHastaInicio >= 0 && diasHastaInicio <= 30) {
@@ -796,11 +796,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 // Evento futuro (más de 30 días): badge gris con el mes
                 if (duracionEvento > 60) {
                     // Evento de larga duración futuro
-                    var mesInicio = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
-                    var mesFin = fechaFinReal.toLocaleString('es', { month: 'short' }).toUpperCase();
-                    return '<div class="evento-badge badge-futuro">📆 ' + mesInicio + '-' + mesFin + '</div>';
+                    var mesInicioLargo = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
+                    var mesFinLargo = fechaFinReal.toLocaleString('es', { month: 'short' }).toUpperCase();
+                    return '<div class="evento-badge badge-futuro">📆 ' + mesInicioLargo + '-' + mesFinLargo + '</div>';
                 }
-                const mesInicio = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
+                var mesInicio = inicio.toLocaleString('es', { month: 'short' }).toUpperCase();
                 return '<div class="evento-badge badge-futuro">📆 Desde ' + mesInicio + '</div>';
             }
             
