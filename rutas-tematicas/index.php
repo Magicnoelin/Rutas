@@ -261,17 +261,25 @@ try {
         $stmtEv2->execute($ids['event']);
         foreach ($stmtEv2->fetchAll(PDO::FETCH_ASSOC) as $e) {
             $img = $e['poster_image'] ?: $e['photo1'] ?: null;
-            // Solo mostrar imagen si es una URL real (no un placeholder genérico como "1.webp")
-            if ($img && !preg_match('/^https?:\/\//', $img)) {
-                $basename = basename($img);
-                    // Filtro optimizado: solo ocultar si es un placeholder puramente numérico (ej: 1.webp, 2.jpg)
-                    if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename)) {
-                    $img = null; // No mostrar imagen placeholder genérica
+            if ($img) {
+                if (preg_match('/^https?:\/\//', $img)) {
+                    // Ya es una URL completa, usar tal cual
+                    $e['imagen'] = $img;
+                } elseif (str_starts_with($img, '/')) {
+                    // Es una ruta relativa a la raíz, añadir el dominio
+                    $e['imagen'] = 'https://rutasrurales.io' . $img;
                 } else {
-                    $img = 'https://rutasrurales.io/cultural_events_images/' . $basename;
+                    // Asumir que es un nombre de archivo, comprobar si es un placeholder genérico
+                    $basename = basename($img);
+                    if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename)) {
+                        $e['imagen'] = null; // No mostrar imagen placeholder genérica
+                    } else {
+                        $e['imagen'] = 'https://rutasrurales.io/cultural_events_images/' . $basename;
+                    }
                 }
+            } else {
+                $e['imagen'] = null; // No hay imagen
             }
-            $e['imagen'] = $img;
             $e['precio_display'] = $e['is_free'] ? 'Entrada gratuita'
                 : (!empty($e['ticket_price']) ? number_format($e['ticket_price'], 2) . '€' : 'Consultar precio');
             $e['url'] = 'https://rutasrurales.io/evento/' . ($e['slug'] ?? '');
@@ -335,17 +343,25 @@ try {
 
             foreach ($evRows as $e) {
                 $img = $e['poster_image'] ?: $e['photo1'] ?: null;
-                // Solo mostrar imagen si es una URL real (no un placeholder genérico como "1.webp")
-                if ($img && !preg_match('/^https?:\/\//', $img)) {
-                    $basename = basename($img);
-                    // Filtro optimizado: solo ocultar si es un placeholder puramente numérico (ej: 1.webp, 2.jpg)
-                    if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename)) {
-                        $img = null; // No mostrar imagen placeholder genérica
+                if ($img) {
+                    if (preg_match('/^https?:\/\//', $img)) {
+                        // Ya es una URL completa, usar tal cual
+                        $e['imagen'] = $img;
+                    } elseif (str_starts_with($img, '/')) {
+                        // Es una ruta relativa a la raíz, añadir el dominio
+                        $e['imagen'] = 'https://rutasrurales.io' . $img;
                     } else {
-                        $img = 'https://rutasrurales.io/cultural_events_images/' . $basename;
+                        // Asumir que es un nombre de archivo, comprobar si es un placeholder genérico
+                        $basename = basename($img);
+                        if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename)) {
+                            $e['imagen'] = null; // No mostrar imagen placeholder genérica
+                        } else {
+                            $e['imagen'] = 'https://rutasrurales.io/cultural_events_images/' . $basename;
+                        }
                     }
+                } else {
+                    $e['imagen'] = null; // No hay imagen
                 }
-                $e['imagen'] = $img;
                 $e['precio_display'] = $e['is_free'] ? 'Entrada gratuita'
                     : (!empty($e['ticket_price']) ? number_format($e['ticket_price'], 2) . '€' : 'Consultar precio');
                 $e['url'] = 'https://rutasrurales.io/evento/' . ($e['slug'] ?? '');
