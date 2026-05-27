@@ -110,6 +110,32 @@ RewriteCond %{QUERY_STRING} ^id=(.+)$ [NC]
 RewriteRule ^(alojamiento|lugar-interes|actividad)\.html$ /api/external-id-redirect.php?type=$1&id=%1 [R=302,L]
 
 # ============================================================
+# 4c. LANDINGS SEO LONG-TAIL — Sistema dinámico por provincia/filtro
+# ============================================================
+# Patrón: /alojamientos/{filtro1}-{filtro2}-{provincia}
+# Las landings tienen siempre ≥ 4 tokens separados por guion.
+# Slugs con < 4 tokens se consideran alojamientos individuales
+# y caen en la regla de compatibilidad de la sección 5.
+#
+# Ejemplos de landing:
+#   casas-rurales-con-chimenea-soria
+#   turismo-rural-mascotas-zamora
+#   alojamiento-rural-con-piscina-burgos
+#
+# MULTIIDIOMA: /{lang}/alojamientos/{slug}
+# Idiomas soportados: en · fr · de · zh  (es = sin prefijo)
+
+# 1. Versión multilingüe con prefijo de idioma
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(en|fr|de|zh)/alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){3,})/?$ alojamientos-landing/index.php?lang=$1&slug=$2 [L,QSA]
+
+# 2. Versión española (sin prefijo de idioma)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){3,})/?$ alojamientos-landing/index.php?lang=es&slug=$1 [L,QSA]
+
+# ============================================================
 # 5. LIMPIEZA DE URLs ANTIGUAS
 # ============================================================
 RewriteRule ^alojamiento/lugar/(.+)$ /alojamiento/$1 [R=301,L]
