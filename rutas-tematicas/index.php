@@ -264,8 +264,8 @@ try {
             // Solo mostrar imagen si es una URL real (no un placeholder genérico como "1.webp")
             if ($img && !preg_match('/^https?:\/\//', $img)) {
                 $basename = basename($img);
-                // Si el nombre del archivo es genérico (1.webp, 2.webp, etc.) o muy corto, no mostrar imagen
-                if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename) || strlen($basename) < 8) {
+                    // Filtro optimizado: solo ocultar si es un placeholder puramente numérico (ej: 1.webp, 2.jpg)
+                    if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename)) {
                     $img = null; // No mostrar imagen placeholder genérica
                 } else {
                     $img = 'https://rutasrurales.io/cultural_events_images/' . $basename;
@@ -338,8 +338,8 @@ try {
                 // Solo mostrar imagen si es una URL real (no un placeholder genérico como "1.webp")
                 if ($img && !preg_match('/^https?:\/\//', $img)) {
                     $basename = basename($img);
-                    // Si el nombre del archivo es genérico (1.webp, 2.webp, etc.) o muy corto, no mostrar imagen
-                    if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename) || strlen($basename) < 8) {
+                    // Filtro optimizado: solo ocultar si es un placeholder puramente numérico (ej: 1.webp, 2.jpg)
+                    if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename)) {
                         $img = null; // No mostrar imagen placeholder genérica
                     } else {
                         $img = 'https://rutasrurales.io/cultural_events_images/' . $basename;
