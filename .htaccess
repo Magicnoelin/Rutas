@@ -112,28 +112,28 @@ RewriteRule ^(alojamiento|lugar-interes|actividad)\.html$ /api/external-id-redir
 # ============================================================
 # 4c. LANDINGS SEO LONG-TAIL — Sistema dinámico por provincia/filtro
 # ============================================================
-# Patrón: /alojamientos/{filtro1}-{filtro2}-{provincia}
-# Las landings tienen siempre ≥ 4 tokens separados por guion.
-# Slugs con < 4 tokens se consideran alojamientos individuales
-# y caen en la regla de compatibilidad de la sección 5.
-#
-# Ejemplos de landing:
-#   casas-rurales-con-chimenea-soria
-#   turismo-rural-mascotas-zamora
-#   alojamiento-rural-con-piscina-burgos
+# Patrón: /alojamientos/{filtro}-{provincia}  (mínimo 3 tokens)
+# Ejemplos válidos:
+#   grandes-grupos-ourense          (3 tokens: filtro-filtro-provincia)
+#   turismo-rural-soria             (3 tokens)
+#   casas-rurales-con-chimenea-soria (5 tokens)
+#   turismo-rural-mascotas-zamora   (4 tokens)
+# Slugs con 1-2 tokens (ej: "mi-casa") caen en sección 5 (compatibilidad).
 #
 # MULTIIDIOMA: /{lang}/alojamientos/{slug}
 # Idiomas soportados: en · fr · de · zh  (es = sin prefijo)
 
 # 1. Versión multilingüe con prefijo de idioma
+# Mínimo 3 tokens (ej: grandes-grupos-ourense = 3, turismo-rural-soria = 3)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(en|fr|de|zh)/alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){3,})/?$ alojamientos-landing/index.php?lang=$1&slug=$2 [L,QSA]
+RewriteRule ^(en|fr|de|zh)/alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){2,})/?$ alojamientos-landing/index.php?lang=$1&slug=$2 [L,QSA]
 
 # 2. Versión española (sin prefijo de idioma)
+# Mínimo 3 tokens (ej: grandes-grupos-ourense = 3, turismo-rural-soria = 3)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){3,})/?$ alojamientos-landing/index.php?lang=es&slug=$1 [L,QSA]
+RewriteRule ^alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){2,})/?$ alojamientos-landing/index.php?lang=es&slug=$1 [L,QSA]
 
 # ============================================================
 # 5. LIMPIEZA DE URLs ANTIGUAS
