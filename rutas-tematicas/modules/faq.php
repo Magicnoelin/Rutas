@@ -42,7 +42,8 @@ function renderFaq(array $ruta, array $alojamientos, array $lugares, array $acti
     };
 
     // ── PRIORIDAD 1: FAQs desde BD ────────────────────────────────────────
-    if (!empty($faqs)) {
+    $hasCustomFaqs = !empty($faqs);
+    if ($hasCustomFaqs) {
         $faqsRender = [];
         foreach ($faqs as $f) {
             $faqsRender[] = [
@@ -87,6 +88,7 @@ function renderFaq(array $ruta, array $alojamientos, array $lugares, array $acti
             ];
         }
     }
+
 ?>
 <section class="rt-section" id="faq">
     <div class="rt-container">
@@ -114,7 +116,8 @@ function renderFaq(array $ruta, array $alojamientos, array $lugares, array $acti
             <?php endforeach; ?>
         </div>
 
-        <!-- Bloque SEO de texto enriquecido -->
+        <?php if (!$hasCustomFaqs): ?>
+        <!-- Bloque SEO de texto enriquecido (solo cuando NO hay FAQs personalizadas) -->
         <div class="rt-seo-text">
             <h2>Escapada rural a <?= $prov ?> para <?= $evento_proximo ?></h2>
             <p>
@@ -130,6 +133,8 @@ function renderFaq(array $ruta, array $alojamientos, array $lugares, array $acti
                 <strong>Reserva tu alojamiento cuanto antes</strong>: <?= $evento_proximo ?> es una de las fechas más demandadas del año y las mejores casas rurales de <?= $prov ?> se agotan semanas antes.
             </p>
         </div>
+        <?php endif; ?>
+
     </div>
 </section>
 <?php
