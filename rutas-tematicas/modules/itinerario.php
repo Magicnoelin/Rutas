@@ -2,6 +2,7 @@
 /**
  * Módulo: Itinerario día a día
  * Renderiza los días del itinerario con sus items agrupados
+ * Soporta formato compacto con items_resumen (thumbnails/tags)
  */
 
 function renderItinerario(array $ruta, array $alojamientos, array $lugares, array $actividades, array $eventos): void
@@ -9,7 +10,7 @@ function renderItinerario(array $ruta, array $alojamientos, array $lugares, arra
     $dias = $ruta['itinerary_json'] ?? [];
     if (empty($dias)) return;
 
-    // Agrupar items por día
+    // Agrupar items por día (para el formato detallado tradicional)
     $itemsPorDia = [];
     foreach (array_merge($alojamientos, $lugares, $actividades) as $item) {
         $dia = (int)($item['day_number'] ?? 1);
@@ -59,6 +60,7 @@ function renderItinerario(array $ruta, array $alojamientos, array $lugares, arra
                 $tituloDia = htmlspecialchars($dia['titulo'] ?? "Día $numDia");
                 $descDia   = htmlspecialchars($dia['descripcion'] ?? '');
                 $iconoDia  = $dia['icono'] ?? '📍';
+                $itemsResumen = $dia['items_resumen'] ?? []; // Nuevo formato compacto
                 $itemsDia  = $itemsPorDia[$numDia] ?? [];
 
                 // Formatear fecha
@@ -96,11 +98,30 @@ function renderItinerario(array $ruta, array $alojamientos, array $lugares, arra
                             <span class="rt-dia__icono" aria-hidden="true"><?= $iconoDia ?></span>
                         </div>
                         <h3 class="rt-dia__titulo"><?= $tituloDia ?></h3>
+                        <?php if ($descDia): ?>
                         <p class="rt-dia__desc"><?= $descDia ?></p>
+                        <?php endif; ?>
                     </header>
 
-                    <!-- Items del día -->
-                    <?php if (!empty($itemsDia)): ?>
+                    <!-- Items del día: formato compacto (items_resumen) -->
+                    <?php if (!empty($itemsResumen)): ?>
+                    <div class="rt-dia__resumen">
+                        <?php foreach ($itemsResumen as $ir):
+                            $irIcono  = htmlspecialchars($ir['icono'] ?? '📍');
+                            $irNombre = htmlspecialchars($ir['nombre'] ?? '');
+                            $irUbic   = htmlspecialchars($ir['ubicacion'] ?? '');
+                        ?>
+                        <span class="rt-dia__resumen-item">
+                            <span class="rt-dia__resumen-icono"><?= $irIcono ?></span>
+                            <span class="rt-dia__resumen-nombre"><?= $irNombre ?></span>
+                            <?php if ($irUbic): ?>
+                            <span class="rt-dia__resumen-ubic"><?= $irUbic ?></span>
+                            <?php endif; ?>
+                        </span>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php elseif (!empty($itemsDia)): ?>
+                    <!-- Items del día: formato detallado tradicional -->
                     <div class="rt-dia__items">
                         <?php foreach ($itemsDia as $item):
                             $tipo       = $item['item_type'] ?? 'lugar';
@@ -168,3 +189,4 @@ function renderItinerario(array $ruta, array $alojamientos, array $lugares, arra
 </section>
 <?php
 }
+

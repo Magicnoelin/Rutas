@@ -129,8 +129,56 @@ if ($action === 'del_item' && isset($_GET['item_id'])) {
     exit;
 }
 
+// Obtener items de una ruta (para generar itinerario automático)
+if ($action === 'get_route_items' && isset($_GET['route_id'])) {
+    header('Content-Type: application/json');
+    $route_id = (int)$_GET['route_id'];
+    
+    // Obtener la ruta para saber duration_days
+    $r = $pdo->prepare("SELECT id, name, duration_days FROM routes WHERE id=?");
+    $r->execute([$route_id]);
+    $route = $r->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$route) {
+        echo json_encode(['success' => false, 'error' => 'Ruta no encontrada']);
+        exit;
+    }
+    
+    // Obtener items
+    $si = $pdo->prepare("SELECT ri.*, 
+        CASE 
+            WHEN ri.item_type = 'accommodation' THEN a.name
+            WHEN ri.item_type = 'place' THEN p.name
+            WHEN ri.item_type = 'activity' THEN t.name
+            WHEN ri.item_type = 'event' THEN e.name
+        END as item_name,
+        CASE 
+            WHEN ri.item_type = 'accommodation' THEN a.municipality
+            WHEN ri.item_type = 'place' THEN p.municipality
+            WHEN ri.item_type = 'activity' THEN t.municipality
+            WHEN ri.item_type = 'event' THEN e.municipality
+        END as item_location
+        FROM route_items ri
+        LEFT JOIN accommodations a ON ri.item_type = 'accommodation' AND ri.item_id = a.id
+        LEFT JOIN places_of_interest p ON ri.item_type = 'place' AND ri.item_id = p.id
+        LEFT JOIN tourist_activities t ON ri.item_type = 'activity' AND ri.item_id = t.id
+        LEFT JOIN cultural_events e ON ri.item_type = 'event' AND ri.item_id = e.id
+        WHERE ri.route_id = ?
+        ORDER BY ri.day_number ASC, ri.display_order ASC");
+    $si->execute([$route_id]);
+    $items = $si->fetchAll(PDO::FETCH_ASSOC);
+    
+    echo json_encode([
+        'success' => true,
+        'route' => $route,
+        'items' => $items
+    ]);
+    exit;
+}
+
 // Búsqueda AJAX de items
 if ($action === 'search_items') {
+
     header('Content-Type: application/json');
     $q    = '%' . trim($_GET['q'] ?? '') . '%';
     $type = $_GET['type'] ?? 'place';
@@ -465,17 +513,19 @@ textarea{resize:vertical;min-height:80px}
 <div class="form-card">
     <h3><i class="fas fa-calendar-alt"></i> Itinerario JSON</h3>
     <p style="font-size:.85rem;color:#666;margin-bottom:12px">
-        Define los días del itinerario. Cada día tiene: <code>dia</code>, <code>fecha</code>, <code>titulo</code>, <code>descripcion</code>, <code>icono</code>.<br>
-        Las fechas se usan para cargar eventos automáticamente del período.
+        Define los días del itinerario. Cada día tiene: <code>dia</code>, <code>titulo</code>, <code>descripcion</code>, <code>icono</code>, <code>items_resumen</code>.<br>
+        Usa <strong>"Generar desde items"</strong> para crearlo automáticamente a partir de los items que has añadido en la pestaña Items.
     </p>
+
     <div class="form-group">
         <label>JSON del itinerario</label>
         <textarea name="itinerary_json" id="itinerary-json" rows="14" style="font-family:monospace;font-size:.82rem"><?= htmlspecialchars($r['itinerary_json'] ?? '[]') ?></textarea>
     </div>
     <div style="margin-top:8px;display:flex;gap:8px">
         <button type="button" class="btn btn-info btn-sm" onclick="formatJson()"><i class="fas fa-code"></i> Formatear JSON</button>
-        <button type="button" class="btn btn-secondary btn-sm" onclick="insertTemplate()"><i class="fas fa-magic"></i> Insertar plantilla 3 días</button>
+        <button type="button" class="btn btn-success btn-sm" onclick="generateFromItems()"><i class="fas fa-magic"></i> Generar desde items</button>
         <button type="button" class="btn btn-secondary btn-sm" onclick="validateJson()"><i class="fas fa-check"></i> Validar</button>
+
     </div>
 </div>
 <div style="display:flex;gap:12px">
@@ -787,16 +837,144 @@ function validateJson() {
     try { JSON.parse(ta.value); alert('✅ JSON válido'); }
     catch(e) { alert('❌ JSON inválido: ' + e.message); }
 }
-function insertTemplate() {
+function generateFromItems() {
     const ta = document.getElementById('itinerary-json');
     if (!ta) return;
-    if (ta.value.trim() !== '[]' && !confirm('¿Reemplazar el itinerario actual con la plantilla?')) return;
-    ta.value = JSON.stringify([
-        {"dia":1,"fecha":"2026-04-29","titulo":"Llegada y primer contacto","descripcion":"Llega, instálate y da un primer paseo.","icono":"🚗"},
-        {"dia":2,"fecha":"2026-04-30","titulo":"Historia y naturaleza","descripcion":"Visita los lugares más emblemáticos.","icono":"🏛️"},
-        {"dia":3,"fecha":"2026-05-01","titulo":"Día festivo: cultura y gastronomía","descripcion":"Disfruta de los eventos y la gastronomía local.","icono":"🎉"}
-    ], null, 2);
+    
+    // Obtener el ID de la ruta desde el campo oculto
+    const routeId = document.querySelector('input[name="id"]')?.value;
+    if (!routeId || routeId === '0') {
+        alert('Guarda primero la ruta antes de generar el itinerario desde los items.');
+        return;
+    }
+    
+    if (ta.value.trim() !== '[]' && !confirm('¿Reemplazar el itinerario actual con el generado automáticamente?')) return;
+    
+    // Mostrar estado de carga
+    ta.value = 'Generando itinerario desde los items...';
+    
+    fetch('rutas.php?action=get_route_items&route_id=' + routeId)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) {
+                alert('Error: ' + (data.error || 'No se pudieron cargar los items'));
+                ta.value = '[]';
+                return;
+            }
+            
+            const items = data.items;
+            const totalDias = parseInt(data.route.duration_days) || 1;
+            
+            if (!items.length) {
+                alert('No hay items en esta ruta. Añade algunos items en la pestaña "Items" primero.');
+                ta.value = '[]';
+                return;
+            }
+            
+            // Agrupar items por día
+            const porDia = {};
+            items.forEach(item => {
+                const d = item.day_number || 1;
+                if (!porDia[d]) porDia[d] = [];
+                porDia[d].push(item);
+            });
+            
+            // Generar array de días
+            const itinerario = [];
+            const iconosTipo = {
+                'accommodation': '🏠',
+                'place': '🏛️',
+                'activity': '🥾',
+                'event': '🎭'
+            };
+            const labelsTipo = {
+                'accommodation': 'Alojamiento',
+                'place': 'Lugar',
+                'activity': 'Actividad',
+                'event': 'Evento'
+            };
+            
+            // Temáticas para títulos según composición del día
+            const temas = {
+                'accommodation': ['Llegada y alojamiento', 'Descanso y relax', 'Noche de alojamiento'],
+                'place': ['Descubriendo la historia', 'Rincones con encanto', 'Patrimonio y cultura'],
+                'activity': ['Aventura y naturaleza', 'Actividades al aire libre', 'Día de exploración'],
+                'event': ['Cultura y eventos', 'Fiestas y tradiciones', 'Agenda cultural'],
+                'mixed': ['Jornada completa', 'Día de inmersión', 'Explorando la provincia']
+            };
+            
+            for (let d = 1; d <= totalDias; d++) {
+                const itemsDia = porDia[d] || [];
+                
+                // Determinar tipos predominantes
+                const tipos = {};
+                itemsDia.forEach(item => {
+                    const t = item.item_type || 'place';
+                    tipos[t] = (tipos[t] || 0) + 1;
+                });
+                
+                // Elegir título según composición
+                let titulo = 'Día ' + d;
+                let icono = '📍';
+                let descParts = [];
+                let itemsResumen = [];
+                
+                if (itemsDia.length === 0) {
+                    // Día sin items → día libre
+                    titulo = 'Día libre / Explora por tu cuenta';
+                    icono = '🗺️';
+                    descParts.push('Día sin planificar. Aprovecha para descubrir rincones por tu cuenta.');
+                } else {
+                    // Elegir icono predominante
+                    const sorted = Object.entries(tipos).sort((a, b) => b[1] - a[1]);
+                    const tipoMain = sorted[0][0];
+                    icono = iconosTipo[tipoMain] || '📍';
+                    
+                    // Generar título según mix de tipos
+                    const numTipos = Object.keys(tipos).length;
+                    if (numTipos >= 3) {
+                        titulo = temas['mixed'][d % 3];
+                    } else if (numTipos === 1) {
+                        const t = sorted[0][0];
+                        const idx = Math.min(d - 1, 2);
+                        titulo = temas[t] ? temas[t][idx] : 'Día ' + d;
+                    } else {
+                        titulo = temas['mixed'][d % 3];
+                    }
+                    
+                    // Generar descripción con nombres de items
+                    itemsDia.forEach(item => {
+                        const tipoLabel = labelsTipo[item.item_type] || item.item_type;
+                        const nombre = item.item_name || '(sin nombre)';
+                        const loc = item.item_location ? ' (' + item.item_location + ')' : '';
+                        descParts.push(tipoLabel + ': ' + nombre + loc);
+                        itemsResumen.push({
+                            tipo: item.item_type,
+                            icono: iconosTipo[item.item_type] || '📍',
+                            nombre: nombre,
+                            ubicacion: item.item_location || ''
+                        });
+                    });
+                }
+                
+                itinerario.push({
+                    dia: d,
+                    titulo: titulo,
+                    descripcion: descParts.join(' · '),
+                    icono: icono,
+                    items_resumen: itemsResumen
+                });
+            }
+            
+            ta.value = JSON.stringify(itinerario, null, 2);
+            alert('✅ Itinerario generado desde ' + items.length + ' items en ' + totalDias + ' días.');
+        })
+        .catch(err => {
+            alert('Error al cargar los items: ' + err.message);
+            ta.value = '[]';
+        });
 }
+
 
 // ── Búsqueda de items ─────────────────────────────────────────
 let searchTimeout;

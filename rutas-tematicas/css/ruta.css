@@ -318,7 +318,49 @@
 .rt-dia__item-nota { font-size: 0.82rem; color: var(--rt-texto-suave); margin: 0 0 4px; line-height: 1.4; }
 .rt-dia__item-precio { font-size: 0.82rem; color: var(--rt-verde); font-weight: 700; margin: 0; }
 
+/* ── ITINERARIO: Formato compacto (items_resumen) ────────────── */
+.rt-dia__resumen {
+  padding: 14px 24px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rt-dia__resumen-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--rt-gris-bg);
+  border: 1px solid var(--rt-gris-borde);
+  border-radius: 20px;
+  padding: 5px 12px 5px 8px;
+  font-size: 0.85rem;
+  transition: var(--rt-trans);
+  cursor: default;
+}
+.rt-dia__resumen-item:hover {
+  background: #edf5ed;
+  border-color: var(--rt-verde-claro);
+}
+.rt-dia__resumen-icono {
+  font-size: 1rem;
+  line-height: 1;
+}
+.rt-dia__resumen-nombre {
+  font-weight: 600;
+  color: var(--rt-texto);
+}
+.rt-dia__resumen-ubic {
+  font-size: 0.75rem;
+  color: var(--rt-texto-suave);
+}
+.rt-dia__resumen-ubic::before {
+  content: '·';
+  margin-right: 4px;
+  color: var(--rt-gris-borde);
+}
+
 /* Tags */
+
 .rt-tag {
   display: inline-flex; align-items: center; gap: 3px;
   font-size: 0.72rem; font-weight: 700;
