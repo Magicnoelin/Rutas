@@ -79,24 +79,18 @@ function renderLandingListing(array $ctx): void
             $capacity  = (int)($alo['capacity'] ?? 0);
             $precio    = $alo['precio_display'] ?? null;
 
-            // Badges de características
-            $badges = [];
-            if (!empty($alo['pet_friendly']))         $badges[] = $t['badge_pet']     ?? '🐾 Mascotas';
-            if (!empty($alo['wifi']))                  $badges[] = $t['badge_wifi']    ?? '📶 WiFi';
-            if (!empty($alo['suitable_for_children'])) $badges[] = $t['badge_kids']    ?? '👶 Niños';
-            // Badges de amenities
+            // Badges de características (wifi detectado vía amenities — la columna wifi no existe en BD)
             $amenStr = strtolower($alo['amenities'] ?? '');
-            if (str_contains($amenStr, 'piscina') || str_contains($amenStr, 'pool'))
-                $badges[] = $t['badge_pool']    ?? '🏊 Piscina';
-            if (str_contains($amenStr, 'chimenea') || str_contains($amenStr, 'fireplace'))
-                $badges[] = $t['badge_chimney'] ?? '🔥 Chimenea';
-            if (str_contains($amenStr, 'jacuzzi'))
-                $badges[] = $t['badge_jacuzzi'] ?? '♨️ Jacuzzi';
-            if (str_contains($amenStr, 'terraza'))
-                $badges[] = $t['badge_terrace'] ?? '🌅 Terraza';
-            if (str_contains($amenStr, 'barbacoa') || str_contains($amenStr, 'barbecue'))
-                $badges[] = $t['badge_bbq']     ?? '🍖 Barbacoa';
-            $badges = array_slice($badges, 0, 4); // máx 4 badges
+            $badges = [];
+            if (!empty($alo['pet_friendly']))                                     $badges[] = $t['badge_pet']     ?? '🐾 Mascotas';
+            if (!empty($alo['suitable_for_children']))                            $badges[] = $t['badge_kids']    ?? '👶 Niños';
+            if (str_contains($amenStr, 'wifi') || str_contains($amenStr, 'wi-fi')) $badges[] = $t['badge_wifi']    ?? '📶 WiFi';
+            if (str_contains($amenStr, 'piscina') || str_contains($amenStr, 'pool')) $badges[] = $t['badge_pool']  ?? '🏊 Piscina';
+            if (str_contains($amenStr, 'chimenea') || str_contains($amenStr, 'fireplace')) $badges[] = $t['badge_chimney'] ?? '🔥 Chimenea';
+            if (str_contains($amenStr, 'jacuzzi'))                                $badges[] = $t['badge_jacuzzi'] ?? '♨️ Jacuzzi';
+            if (str_contains($amenStr, 'terraza'))                                $badges[] = $t['badge_terrace'] ?? '🌅 Terraza';
+            if (str_contains($amenStr, 'barbacoa') || str_contains($amenStr, 'barbecue')) $badges[] = $t['badge_bbq'] ?? '🍖 Barbacoa';
+            $badges = array_slice($badges, 0, 4); // máx 4 badges visibles
         ?>
         <li class="lnd-card" itemscope itemtype="https://schema.org/LodgingBusiness">
 

@@ -212,8 +212,9 @@ const LANDING_FILTROS = [
         'labels' => ['es'=>'para mascotas','en'=>'pet-friendly','fr'=>'pour animaux','de'=>'haustierfreundlich','zh'=>'宠物友好'],
         'icon'   => '🐾', 'order' => 2,
     ],
+    // La columna `wifi` no existe en la BD; se detecta vía el campo `amenities`
     'con-wifi' => [
-        'sql'    => "a.wifi = 1",
+        'sql'    => "(a.amenities LIKE '%wifi%' OR a.amenities LIKE '%WiFi%' OR a.amenities LIKE '%wi-fi%')",
         'labels' => ['es'=>'con WiFi','en'=>'with WiFi','fr'=>'avec WiFi','de'=>'mit WLAN','zh'=>'含WiFi'],
         'icon'   => '📶', 'order' => 2,
     ],

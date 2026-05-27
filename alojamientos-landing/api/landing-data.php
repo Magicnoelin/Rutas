@@ -73,6 +73,8 @@ function getLandingAccommodations(
     $offset = ($page - 1) * $per_page;
 
     // Query principal
+    // Columnas verificadas contra el esquema real de la BD:
+    // wifi, check_in_time, check_out_time NO existen → eliminadas
     $sql = "
         SELECT
             a.id, a.name, a.slug, a.municipality, a.province,
@@ -80,11 +82,10 @@ function getLandingAccommodations(
             a.price_per_night, a.capacity, a.bedrooms,
             a.photo1, a.photo2, a.photo3,
             a.latitude, a.longitude,
-            a.pet_friendly, a.wifi, a.suitable_for_children,
+            a.pet_friendly, a.suitable_for_children,
             a.kitchen_available, a.amenities,
             a.accommodation_type,
-            c.name AS category_name,
-            a.check_in_time, a.check_out_time
+            c.name AS category_name
         FROM accommodations a
         LEFT JOIN categories_accommodations c ON a.category_id = c.id
         $whereClause
@@ -257,17 +258,17 @@ function getUpcomingEvents(PDO $pdo, ?string $province_db, int $limit = 4): arra
     if (empty($province_db)) return [];
 
     try {
+        // Solo eventos futuros o en curso (end_date >= hoy, o start_date >= hoy si no hay end_date)
         $stmt = $pdo->prepare("
             SELECT e.id, e.name AS title, e.slug,
                    e.short_description, e.municipality,
-                   e.start_date, e.is_free, e.ticket_price,
+                   e.start_date, e.end_date, e.is_free, e.ticket_price,
                    e.poster_image, e.photo1
             FROM cultural_events e
             WHERE e.province = :province
               AND e.is_active = 1
-            ORDER BY
-                CASE WHEN e.start_date >= CURDATE() THEN 0 ELSE 1 END ASC,
-                e.start_date ASC
+              AND COALESCE(e.end_date, e.start_date) >= CURDATE()
+            ORDER BY e.start_date ASC
             LIMIT :limit
         ");
         $stmt->bindValue(':province', $province_db);
@@ -276,10 +277,22 @@ function getUpcomingEvents(PDO $pdo, ?string $province_db, int $limit = 4): arra
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($rows as &$e) {
+            // Construir URL de foto de forma robusta:
+            // - Si ya es URL completa → usar tal cual
+            // - Si contiene '/' → es una ruta relativa → añadir dominio
+            // - Si es solo un nombre de archivo → añadir directorio de eventos
             $img = $e['poster_image'] ?: $e['photo1'] ?: null;
-            $e['photo_url'] = $img
-                ? (preg_match('/^https?:\/\//', $img) ? $img : 'https://rutasrurales.io/cultural_events_images/' . basename($img))
-                : null;
+            if (!$img) {
+                $e['photo_url'] = null;
+            } elseif (preg_match('/^https?:\/\//', $img)) {
+                $e['photo_url'] = $img;
+            } elseif (str_contains($img, '/')) {
+                // Ruta relativa con subdirectorio (ej: "cultural_events_images/foto.jpg")
+                $e['photo_url'] = 'https://rutasrurales.io/' . ltrim($img, '/');
+            } else {
+                // Solo nombre de archivo → asumir directorio estándar
+                $e['photo_url'] = 'https://rutasrurales.io/cultural_events_images/' . $img;
+            }
             $e['url']            = 'https://rutasrurales.io/evento/' . ($e['slug'] ?? '');
             $e['precio_display'] = $e['is_free'] ? null : (!empty($e['ticket_price']) ? number_format((float)$e['ticket_price'], 2) . ' €' : null);
         }
