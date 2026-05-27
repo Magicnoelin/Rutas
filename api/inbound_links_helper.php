@@ -66,7 +66,7 @@ function getInboundLinks(PDO $pdo): array
  * @param PDO         $pdo    Conexión a base de datos
  * @return string             Texto con inbound links insertados
  */
-function procesarInboundLinks(?string $texto, PDO $pdo): string
+function procesarInboundLinks(?string $texto, PDO $pdo, array &$yaEnlazadas = []): string
 {
     if (empty($texto)) {
         return (string)$texto;
@@ -85,9 +85,6 @@ function procesarInboundLinks(?string $texto, PDO $pdo): string
     if ($tokens === false) {
         return $texto;
     }
-
-    // Registro de qué keywords ya han sido enlazadas (para solo enlazar 1 vez)
-    $yaEnlazadas = [];
 
     $resultado = '';
     $dentroDeEnlace = false; // Rastrear si estamos dentro de <a ...>...</a>
@@ -127,7 +124,7 @@ function procesarInboundLinks(?string $texto, PDO $pdo): string
             $pattern = '/(' . preg_quote($kw, '/') . ')/iu';
 
             $reemplazado = false;
-            $token = preg_replace_callback(
+            $nuevoToken = preg_replace_callback(
                 $pattern,
                 function ($m) use ($entry, &$reemplazado) {
                     $reemplazado = true;
@@ -147,6 +144,13 @@ function procesarInboundLinks(?string $texto, PDO $pdo): string
 
             if ($reemplazado) {
                 $yaEnlazadas[$kwKey] = true;
+                // ═══ IMPORTANTE: Al crear un enlace dentro de un token de texto plano,
+                // ese token ahora contiene HTML (<a>). Debemos re-tokenizar el resultado
+                // para evitar que keywords posteriores coincidan dentro de los atributos
+                // del nuevo enlace (ej: "soria" dentro de href="/evento/...soria...").
+                // Procesamos el nuevo token recursivamente y luego continuamos.
+                $resultado .= procesarInboundLinks($nuevoToken, $pdo, $yaEnlazadas);
+                continue 2; // Salta al siguiente token principal
             }
         }
 
