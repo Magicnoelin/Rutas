@@ -942,19 +942,28 @@ function deleteFaq(faqId, routeId) {
 }
 
 // Cargar FAQs al entrar en la pestaña
-document.addEventListener('DOMContentLoaded', function() {
-    const faqTabBtn = document.querySelector('.tab-btn[onclick*="faqs"]');
-    if (faqTabBtn) {
-        faqTabBtn.addEventListener('click', function() {
-            <?php if (isset($r['id']) && $r['id'] > 0): ?>
-            setTimeout(() => loadFaqs(<?= (int)$r['id'] ?>), 100);
-            <?php endif; ?>
+function initFaqs() {
+    <?php if (isset($r['id']) && $r['id'] > 0): ?>
+    const routeId = <?= (int)$r['id'] ?>;
+    
+    // Detectar clicks en TODOS los botones de pestaña
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.textContent.includes('FAQs') || this.getAttribute('onclick')?.includes('faqs')) {
+                setTimeout(() => loadFaqs(routeId), 200);
+            }
         });
-    }
+    });
+    
     // Si la pestaña FAQs está activa al cargar, cargar directamente
-    <?php if ($activeTab === 'faqs' && isset($r['id']) && $r['id'] > 0): ?>
-    loadFaqs(<?= (int)$r['id'] ?>);
+    <?php if ($activeTab === 'faqs'): ?>
+    setTimeout(() => loadFaqs(routeId), 300);
     <?php endif; ?>
+    <?php endif; ?>
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initFaqs();
 });
 </script>
 

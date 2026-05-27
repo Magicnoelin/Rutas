@@ -261,8 +261,15 @@ try {
         $stmtEv2->execute($ids['event']);
         foreach ($stmtEv2->fetchAll(PDO::FETCH_ASSOC) as $e) {
             $img = $e['poster_image'] ?: $e['photo1'] ?: null;
+            // Solo mostrar imagen si es una URL real (no un placeholder genérico como "1.webp")
             if ($img && !preg_match('/^https?:\/\//', $img)) {
-                $img = 'https://rutasrurales.io/cultural_events_images/' . basename($img);
+                $basename = basename($img);
+                // Si el nombre del archivo es genérico (1.webp, 2.webp, etc.) o muy corto, no mostrar imagen
+                if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename) || strlen($basename) < 8) {
+                    $img = null; // No mostrar imagen placeholder genérica
+                } else {
+                    $img = 'https://rutasrurales.io/cultural_events_images/' . $basename;
+                }
             }
             $e['imagen'] = $img;
             $e['precio_display'] = $e['is_free'] ? 'Entrada gratuita'
@@ -328,8 +335,15 @@ try {
 
             foreach ($evRows as $e) {
                 $img = $e['poster_image'] ?: $e['photo1'] ?: null;
+                // Solo mostrar imagen si es una URL real (no un placeholder genérico como "1.webp")
                 if ($img && !preg_match('/^https?:\/\//', $img)) {
-                    $img = 'https://rutasrurales.io/cultural_events_images/' . basename($img);
+                    $basename = basename($img);
+                    // Si el nombre del archivo es genérico (1.webp, 2.webp, etc.) o muy corto, no mostrar imagen
+                    if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename) || strlen($basename) < 8) {
+                        $img = null; // No mostrar imagen placeholder genérica
+                    } else {
+                        $img = 'https://rutasrurales.io/cultural_events_images/' . $basename;
+                    }
                 }
                 $e['imagen'] = $img;
                 $e['precio_display'] = $e['is_free'] ? 'Entrada gratuita'
