@@ -89,7 +89,10 @@ foreach (LANDING_FILTROS as $filter_slug => $filter_data) {
         // ── EMITIR URLs PARA LOS 5 IDIOMAS ───────────────────────────────
         // La URL canónica española va sin prefijo; el resto con /{lang}/
         $urlSlug = $filter_slug . '-' . $prov_slug;
-        $lastmod = date('Y-m-d'); // Fecha actual (se podría mejorar con MAX(updated_at) de BD)
+        $lastmod = date('Y-m-d');
+
+        // Comentario separador para legibilidad del XML
+        echo "\n\n  <!-- {$urlSlug} -->";
 
         foreach ($idiomas as $langPrefix => $langCode) {
             $url = 'https://rutasrurales.io/' . $langPrefix . 'alojamientos/' . $urlSlug;
@@ -100,7 +103,7 @@ foreach (LANDING_FILTROS as $filter_slug => $filter_data) {
             echo "\n    <changefreq>weekly</changefreq>";
             echo "\n    <priority>" . ($langCode === 'es' ? '0.8' : '0.7') . "</priority>";
 
-            // Etiquetas xhtml:link para hreflang en sitemap (señal adicional para Google)
+            // Etiquetas xhtml:link para hreflang
             foreach ($idiomas as $hlPrefix => $hlCode) {
                 $hlUrl = 'https://rutasrurales.io/' . $hlPrefix . 'alojamientos/' . $urlSlug;
                 echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$hlCode}\" href=\"" . htmlspecialchars($hlUrl, ENT_XML1) . "\"/>";

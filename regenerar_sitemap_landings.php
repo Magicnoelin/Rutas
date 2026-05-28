@@ -130,6 +130,9 @@ foreach (LANDING_FILTROS as $filter_slug => $filter_data) {
         // ── Emitir URLs para los 5 idiomas ────────────────────────────────────
         $urlSlug = $filter_slug . '-' . $prov_slug;
 
+        // Comentario separador para facilitar la lectura del XML
+        $xml .= "\n\n  <!-- {$urlSlug} -->";
+
         foreach ($idiomas as $langPrefix => $langCode) {
             $url = $baseUrl . '/' . $langPrefix . 'alojamientos/' . $urlSlug;
             $priority = ($langCode === 'es') ? '0.8' : '0.7';
