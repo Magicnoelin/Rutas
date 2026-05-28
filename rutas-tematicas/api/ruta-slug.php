@@ -249,7 +249,7 @@ try {
     }
 
     if ($fecha_inicio && $fecha_fin) {
-        // Cargar eventos del período de la ruta
+        // Cargar eventos del período de la ruta (solo actuales y futuros)
         $stmtEv = $pdo->prepare("
             SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
                    e.venue_name, e.municipality, e.province,
@@ -259,6 +259,7 @@ try {
                    e.latitude, e.longitude
             FROM cultural_events e
             WHERE e.is_active = 1
+              AND e.start_date >= CURDATE()
               AND e.start_date <= :fecha_fin
               AND COALESCE(e.end_date, e.start_date) >= :fecha_inicio
             ORDER BY e.start_date ASC
@@ -270,7 +271,7 @@ try {
         ]);
         $rawEv = $stmtEv->fetchAll(PDO::FETCH_ASSOC);
     } elseif (!empty($ids_evento)) {
-        // Cargar eventos vinculados explícitamente
+        // Cargar eventos vinculados explícitamente (solo actuales y futuros)
         $placeholders = implode(',', array_fill(0, count($ids_evento), '?'));
         $stmtEv2 = $pdo->prepare("
             SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
@@ -282,6 +283,7 @@ try {
             FROM cultural_events e
             WHERE e.id IN ($placeholders)
               AND e.is_active = 1
+              AND e.start_date >= CURDATE()
             ORDER BY e.start_date ASC
         ");
         $stmtEv2->execute($ids_evento);

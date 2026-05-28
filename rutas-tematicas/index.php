@@ -246,7 +246,7 @@ try {
     // Prioridad 1: items de tipo 'event' añadidos manualmente en el gestor
     // Prioridad 2: búsqueda automática por fecha + provincia del itinerario
     if (!empty($ids['event'])) {
-        // Eventos seleccionados manualmente → mostrar siempre estos
+        // Eventos seleccionados manualmente → mostrar solo actuales y futuros
         $ph = implode(',', array_fill(0, count($ids['event']), '?'));
         $stmtEv2 = $pdo->prepare("
             SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
@@ -255,7 +255,7 @@ try {
                    e.is_free, e.ticket_price, e.ticket_url,
                    e.organizer, e.poster_image, e.photo1
             FROM cultural_events e
-            WHERE e.id IN ($ph) AND e.is_active = 1
+            WHERE e.id IN ($ph) AND e.is_active = 1 AND e.start_date >= CURDATE()
             ORDER BY e.start_date ASC
         ");
         $stmtEv2->execute($ids['event']);
@@ -301,7 +301,7 @@ try {
             $evRows = [];
 
             if ($fechaInicio && $fechaFin) {
-                // Intento 1: eventos que coincidan exactamente con las fechas del puente
+                // Intento 1: eventos actuales y futuros que coincidan con las fechas del puente
                 $rangoIni = date('Y-m-d', strtotime($fechaInicio . ' -30 days'));
                 $rangoFin = date('Y-m-d', strtotime($fechaFin . ' +30 days'));
                 $stmtEv = $pdo->prepare("
@@ -312,6 +312,7 @@ try {
                            e.organizer, e.poster_image, e.photo1
                     FROM cultural_events e
                     WHERE e.is_active = 1
+                      AND e.start_date >= CURDATE()
                       AND e.province = :prov
                       AND e.start_date <= :fin
                       AND COALESCE(e.end_date, e.start_date) >= :ini
@@ -323,7 +324,7 @@ try {
                 $evRows = $stmtEv->fetchAll(PDO::FETCH_ASSOC);
             }
 
-            // Fallback: si no hay nada en ±30 días, mostrar los próximos eventos de la provincia
+            // Fallback: si no hay nada en ±30 días, mostrar solo los próximos eventos actuales y futuros de la provincia
             if (empty($evRows)) {
                 $stmtEv2 = $pdo->prepare("
                     SELECT e.id, e.name as title, e.slug, e.description, e.short_description,
@@ -333,6 +334,7 @@ try {
                            e.organizer, e.poster_image, e.photo1
                     FROM cultural_events e
                     WHERE e.is_active = 1
+                      AND e.start_date >= CURDATE()
                       AND e.province = :prov
                     ORDER BY e.start_date ASC
                     LIMIT 6
