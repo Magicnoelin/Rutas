@@ -191,9 +191,21 @@ try {
         foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $l) {
             $l['fotos'] = array_values(array_filter([$l['photo1'], $l['photo2'], $l['photo3']]));
             $l['fotos'] = array_map(function($f) {
-                return preg_match('/^https?:\/\//', $f) ? $f
-                    : 'https://rutasrurales.io/interest_places_images/' . basename($f);
+                if (preg_match('/^https?:\/\//', $f)) {
+                    return $f; // Ya es URL completa
+                }
+                if (str_starts_with($f, '/')) {
+                    return 'https://rutasrurales.io' . $f; // Ruta relativa a la raíz
+                }
+                // Filtrar placeholders genéricos (solo números)
+                $basename = basename($f);
+                if (preg_match('/^\d+\.(webp|jpg|jpeg|png)$/i', $basename)) {
+                    return ''; // No mostrar placeholder genérico
+                }
+                return 'https://rutasrurales.io/interest_places_images/' . $basename;
             }, $l['fotos']);
+            // Filtrar entradas vacías después del mapeo
+            $l['fotos'] = array_values(array_filter($l['fotos']));
             $l['precio_entrada'] = (!empty($l['entry_fee']) && $l['entry_fee'] > 0)
                 ? number_format($l['entry_fee'], 2) . '€' : 'Entrada gratuita';
             $l['url'] = 'https://rutasrurales.io/lugar/' . ($l['slug'] ?? '');

@@ -412,6 +412,39 @@
 .rt-evento__precio--free { color: #2e7d32; }
 .rt-evento__ctas { display: flex; gap: 6px; }
 
+/* ── LUGARES (cards estilo eventos con thumbnail) ───────────── */
+.rt-lugares { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.rt-lugar-card {
+  background: var(--rt-blanco); border-radius: var(--rt-radio);
+  box-shadow: var(--rt-sombra); overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: var(--rt-trans); position: relative;
+}
+.rt-lugar-card:hover { box-shadow: var(--rt-sombra-hover); transform: translateY(-2px); }
+.rt-lugar-card--highlight { border: 2px solid var(--rt-marron); }
+.rt-lugar-card__img-wrap { height: 160px; overflow: hidden; }
+.rt-lugar-card__img  { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.rt-lugar-card:hover .rt-lugar-card__img { transform: scale(1.04); }
+.rt-lugar-card__body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+.rt-lugar-card__meta { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.rt-lugar-card__location {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.78rem; color: var(--rt-texto-suave);
+}
+.rt-lugar-card__slot { font-size: 0.78rem; color: var(--rt-verde); font-weight: 600; }
+.rt-lugar-card__badge {
+  font-size: 0.72rem; font-weight: 700;
+  background: var(--rt-marron); color: #fff;
+  padding: 2px 8px; border-radius: 10px;
+}
+.rt-lugar-card__title { font-size: 1rem; font-weight: 700; margin: 0 0 6px; }
+.rt-lugar-card__title a { color: var(--rt-texto); text-decoration: none; }
+.rt-lugar-card__title a:hover { color: var(--rt-verde); }
+.rt-lugar-card__desc { font-size: 0.85rem; color: var(--rt-texto-suave); margin: 0 0 12px; line-height: 1.4; flex: 1; }
+.rt-lugar-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.rt-lugar-card__precio { font-size: 0.85rem; font-weight: 700; color: var(--rt-verde); display: flex; align-items: center; gap: 4px; }
+.rt-lugar-card__ctas { display: flex; gap: 6px; }
+
 /* ── FAQ ────────────────────────────────────────────────────── */
 .rt-faq { max-width: 800px; margin: 0 auto 48px; }
 .rt-faq__item {
@@ -473,6 +506,7 @@ details[open] .rt-faq__icon { transform: rotate(180deg); }
   .rt-dia__item { flex-direction: column; }
   .rt-dia__item-img { width: 100%; height: 140px; }
   .rt-eventos { grid-template-columns: 1fr; }
+  .rt-lugares { grid-template-columns: 1fr; }
   .rt-lugar__img-wrap { height: 180px; }
   .rt-countdown { flex-wrap: wrap; }
   .rt-hero__ctas { flex-direction: column; }
