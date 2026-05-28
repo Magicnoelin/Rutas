@@ -484,6 +484,21 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
 .rt-navbar__back:hover{color:#fff}
 /* Hero placeholder para evitar CLS */
 .rt-hero{min-height:520px;background:#2F5233;display:flex;align-items:center;padding:80px 0 60px}
+/* Grids críticos */
+.rt-lugares,.rt-eventos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.rt-lugar-card,.rt-evento{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;transition:all 0.25s ease}
+.rt-lugar-card__img-wrap,.rt-evento__img-wrap{height:160px;overflow:hidden}
+.rt-lugar-card__img,.rt-evento__img{width:100%;height:100%;object-fit:cover}
+.rt-lugar-card__body,.rt-evento__body{padding:16px;flex:1;display:flex;flex-direction:column}
+.rt-lugar-card__title,.rt-evento__title{font-size:1rem;font-weight:700;margin:0 0 6px}
+.rt-lugar-card__title a,.rt-evento__title a{color:#1A2E1A;text-decoration:none}
+.rt-lugar-card__desc,.rt-evento__desc{font-size:0.85rem;color:#5A6B5A;margin:0 0 12px;line-height:1.4;flex:1}
+.rt-lugar-card__footer,.rt-evento__footer{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.rt-lugar-card__precio,.rt-evento__precio{font-size:0.85rem;font-weight:700;color:#2F5233}
+.rt-lugar-card__meta,.rt-evento__meta{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.rt-lugar-card__location,.rt-evento__location{display:flex;align-items:center;gap:4px;font-size:0.78rem;color:#5A6B5A}
+.rt-lugar-card__badge{font-size:0.72rem;font-weight:700;background:#B8956A;color:#fff;padding:2px 8px;border-radius:10px}
+.rt-lugar-card__slot{font-size:0.78rem;color:#2F5233;font-weight:600}
 </style>
 
 <!-- CSS principal (no bloqueante) -->

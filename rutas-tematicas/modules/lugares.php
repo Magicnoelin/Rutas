@@ -21,7 +21,7 @@ function renderLugares(array $lugares, array $ruta): void
             </p>
         </div>
 
-        <div class="rt-lugares">
+        <div class="rt-eventos">
             <?php foreach ($lugares as $l):
                 $nombre    = htmlspecialchars($l['name'] ?? '');
                 $localidad = htmlspecialchars($l['municipality'] ?? '');
@@ -40,51 +40,51 @@ function renderLugares(array $lugares, array $ruta): void
                     'todo-el-dia' => '📅 Todo el día',
                 ][$timeSlot] ?? null;
             ?>
-            <article class="rt-lugar-card <?= $highlight ? 'rt-lugar-card--highlight' : '' ?>">
+            <article class="rt-evento <?= $highlight ? 'rt-evento--highlight' : '' ?>">
                 <!-- Imagen thumbnail -->
                 <?php if ($foto): ?>
-                <div class="rt-lugar-card__img-wrap">
+                <div class="rt-evento__img-wrap">
                     <img
                         src="<?= htmlspecialchars($foto) ?>"
                         alt="<?= $nombre ?> — <?= $localidad ?>, <?= $prov ?>"
                         width="320" height="180"
                         loading="lazy"
                         decoding="async"
-                        class="rt-lugar-card__img"
-                        onerror="this.closest('.rt-lugar-card__img-wrap').style.display='none'"
+                        class="rt-evento__img"
+                        onerror="this.closest('.rt-evento__img-wrap').style.display='none'"
                     >
                 </div>
                 <?php endif; ?>
 
                 <!-- Contenido -->
-                <div class="rt-lugar-card__body">
-                    <div class="rt-lugar-card__meta">
-                        <span class="rt-lugar-card__location">
+                <div class="rt-evento__body">
+                    <div class="rt-evento__meta">
+                        <span class="rt-evento__location">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             <?= $localidad ?>, <?= $prov ?>
                         </span>
                         <?php if ($slotLabel): ?>
-                        <span class="rt-lugar-card__slot"><?= $slotLabel ?></span>
+                        <span class="rt-evento__hora"><?= $slotLabel ?></span>
                         <?php endif; ?>
                         <?php if ($highlight): ?>
                         <span class="rt-lugar-card__badge">⭐ Imprescindible</span>
                         <?php endif; ?>
                     </div>
 
-                    <h3 class="rt-lugar-card__title">
+                    <h3 class="rt-evento__title">
                         <a href="<?= htmlspecialchars($url) ?>"><?= $nombre ?></a>
                     </h3>
 
                     <?php if ($desc): ?>
-                    <p class="rt-lugar-card__desc"><?= $desc ?>…</p>
+                    <p class="rt-evento__desc"><?= $desc ?>…</p>
                     <?php endif; ?>
 
-                    <div class="rt-lugar-card__footer">
-                        <span class="rt-lugar-card__precio">
+                    <div class="rt-evento__footer">
+                        <span class="rt-evento__precio">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                             <?= $precio ?>
                         </span>
-                        <div class="rt-lugar-card__ctas">
+                        <div class="rt-evento__ctas">
                             <a href="<?= htmlspecialchars($url) ?>" class="rt-btn rt-btn--evento">
                                 Más info
                             </a>
