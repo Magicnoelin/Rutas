@@ -20,4 +20,8 @@
     <loc>https://rutasrurales.io/sitemap-eventos.xml</loc>
     <lastmod>2026-04-16</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>https://rutasrurales.io/sitemap-landings.xml</loc>
+    <lastmod>2026-05-28</lastmod>
+  </sitemap>
 </sitemapindex>

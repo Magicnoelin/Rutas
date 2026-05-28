@@ -45,13 +45,12 @@ $urlsOmitidas  = 0;
 
 foreach (LANDING_FILTROS as $filter_slug => $filter_data) {
 
-    $sql_filter_condition = $filter_data['sql'];
+    // Saltar filtros excluidos explícitamente del sitemap (ej: alias duplicados)
+    if (isset($filter_data['sitemap']) && $filter_data['sitemap'] === false) {
+        continue;
+    }
 
-    // Saltarse el filtro genérico "1=1" para que no genere landings vacías
-    // (turismo-rural sin provincia tendría miles de resultados, pero
-    //  turismo-rural-XX sí tiene sentido; se mantiene con provincia)
-    // Nota: "1=1" sin provincia en la query devolvería TODOS los alojamientos,
-    // lo cual es válido siempre. Lo dejamos pasar pero solo con provincia.
+    $sql_filter_condition = $filter_data['sql'];
 
     foreach (LANDING_PROVINCIAS as $prov_slug => $prov_data) {
 

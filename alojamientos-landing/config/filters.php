@@ -206,11 +206,13 @@ const LANDING_FILTROS = [
         'labels' => ['es'=>'para mascotas','en'=>'pet-friendly','fr'=>'pour animaux','de'=>'haustierfreundlich','zh'=>'宠物友好'],
         'icon'   => '🐾', 'order' => 2,
     ],
-    // alias sin "con-"
+    // alias sin "con-" — solo para compatibilidad de URLs antiguas
+    // sitemap => false: se excluye del sitemap (URL canónica es "con-mascotas")
     'mascotas' => [
-        'sql'    => "a.pet_friendly = 1",
-        'labels' => ['es'=>'para mascotas','en'=>'pet-friendly','fr'=>'pour animaux','de'=>'haustierfreundlich','zh'=>'宠物友好'],
-        'icon'   => '🐾', 'order' => 2,
+        'sql'     => "a.pet_friendly = 1",
+        'labels'  => ['es'=>'para mascotas','en'=>'pet-friendly','fr'=>'pour animaux','de'=>'haustierfreundlich','zh'=>'宠物友好'],
+        'icon'    => '🐾', 'order' => 2,
+        'sitemap' => false, // excluido del sitemap: URL canónica = con-mascotas-{provincia}
     ],
     // La columna `wifi` no existe en la BD; se detecta vía el campo `amenities`
     'con-wifi' => [
