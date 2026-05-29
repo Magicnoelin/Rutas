@@ -203,10 +203,17 @@ function renderCruceSemantico(array $ctx): void
                 $evTitle = htmlspecialchars($ev['title'] ?? '');
                 $evMunic = htmlspecialchars($ev['municipality'] ?? '');
                 $evDate  = '';
+                $evEndDate = '';
                 if (!empty($ev['start_date'])) {
                     $dt = DateTime::createFromFormat('Y-m-d', $ev['start_date']);
                     if ($dt) {
                         $evDate = $dt->format($lang === 'en' ? 'd M Y' : 'd/m/Y');
+                    }
+                }
+                if (!empty($ev['end_date']) && $ev['end_date'] !== $ev['start_date']) {
+                    $dtEnd = DateTime::createFromFormat('Y-m-d', $ev['end_date']);
+                    if ($dtEnd) {
+                        $evEndDate = $dtEnd->format($lang === 'en' ? 'd M Y' : 'd/m/Y');
                     }
                 }
                 $evFree = empty($ev['precio_display']);
@@ -233,6 +240,13 @@ function renderCruceSemantico(array $ctx): void
                                   datetime="<?= htmlspecialchars($ev['start_date'] ?? '') ?>"
                                   itemprop="startDate">
                                 📅 <?= $evDate ?>
+                            </time>
+                            <?php endif; ?>
+                            <?php if ($evEndDate): ?>
+                            <time class="lnd-event-card__date lnd-event-card__date--end"
+                                  datetime="<?= htmlspecialchars($ev['end_date'] ?? '') ?>"
+                                  itemprop="endDate">
+                                ➡ <?= $evEndDate ?>
                             </time>
                             <?php endif; ?>
                             <?php if ($evMunic): ?>
