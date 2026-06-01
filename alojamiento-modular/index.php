@@ -34,6 +34,15 @@ if (!empty($slug)) {
         $stmt->execute([$slug]);
         $alojamiento = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        // ─── CONTROL DE ACCESO POR MEMBRESÍA ───────────────────────────────
+        // Si el alojamiento NO es premium y se accede desde un idioma que NO es español,
+        // redirigir 301 a la versión en español (consolidar SEO, eliminar 404)
+        if ($alojamiento && empty($alojamiento['is_premium']) && $lang !== 'es') {
+            header('HTTP/1.1 301 Moved Permanently');
+            header('Location: https://rutasrurales.io/alojamiento/' . rawurlencode($alojamiento['slug']));
+            exit();
+        }
+
         if ($alojamiento) {
             for ($i = 1; $i <= 10; $i++) {
                 $campo = 'photo' . $i;
@@ -576,8 +585,8 @@ $alo_js = $alojamiento ? json_encode([
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="<?php echo $canonical; ?>">
 
-    <!-- hreflang — todos los idiomas disponibles -->
-    <?php if ($alojamiento): ?>
+    <!-- hreflang — SOLO para alojamientos Premium (con derecho a traducciones) -->
+    <?php if ($alojamiento && !empty($alojamiento['is_premium'])): ?>
     <link rel="alternate" hreflang="es"       href="https://rutasrurales.io/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
     <link rel="alternate" hreflang="en"       href="https://rutasrurales.io/en/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
     <link rel="alternate" hreflang="fr"       href="https://rutasrurales.io/fr/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
