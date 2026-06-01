@@ -3,6 +3,9 @@
  * API: Obtener opciones de membresía disponibles
  * GET /api/get_membership_options.php
  * Retorna los planes de membresía disponibles para upgrade
+ * 
+ * Ahora incluye: official_price_yearly, max_photos, has_direct_link,
+ * is_launch_offer, launch_discount_percent, multipropiedad_note, etc.
  */
 
 require_once 'config.php';
@@ -21,12 +24,30 @@ try {
                 description,
                 price_monthly,
                 price_yearly,
+                official_price_yearly,
                 features,
+                max_accommodations,
+                max_photos,
+                can_send_offers,
+                has_advanced_stats,
+                has_basic_stats,
+                has_priority_support,
+                has_direct_link,
+                has_api,
+                has_personalized_consulting,
+                has_reports,
+                can_receive_messages,
+                can_send_messages,
+                has_priority_position,
                 is_popular,
+                is_launch_offer,
+                launch_discount_percent,
+                multipropiedad_note,
                 stripe_product_id,
                 stripe_monthly_price_id,
                 stripe_yearly_price_id
             FROM membership_plans
+            WHERE is_active = TRUE
             ORDER BY id ASC
         ");
 
@@ -38,64 +59,116 @@ try {
     }
 
     if (empty($plans)) {
-        // Si no hay planes en la base de datos, devolver planes por defecto
-        // basados en los que deberían estar insertados por configurar_membresias_produccion.sql
+        // Planes por defecto con la NUEVA estructura de precios
         $defaultPlans = [
             [
                 'id' => 1,
-                'name' => 'Gratuito Alojamiento',
-                'description' => 'Plan gratuito para empezar. Publica hasta 2 alojamientos con máximo 15 plazas totales.',
+                'name' => 'Free',
+                'description' => 'Plan básico para probar la plataforma. Publica 1 alojamiento con máximo 4 fotos y descripción básica.',
                 'price_monthly' => 0,
                 'price_yearly' => 0,
+                'official_price_yearly' => null,
                 'features' => [
-                    'Publicar hasta 2 alojamientos',
-                    'Máximo 15 plazas totales',
-                    'Gestión básica de reservas',
-                    'Soporte por email',
-                    'Panel de control básico',
-                    'Sin coste inicial'
+                    'Publicar 1 alojamiento',
+                    'Máximo 4 fotos por alojamiento',
+                    'Descripción básica',
+                    'Ver mensajes de turistas',
+                    'Estadísticas básicas',
+                    'Sin coste'
                 ],
+                'max_accommodations' => 1,
+                'max_photos' => 4,
+                'can_send_offers' => false,
+                'has_advanced_stats' => false,
+                'has_basic_stats' => true,
+                'has_priority_support' => false,
+                'has_direct_link' => false,
+                'has_api' => false,
+                'has_personalized_consulting' => false,
+                'has_reports' => false,
+                'can_receive_messages' => true,
+                'can_send_messages' => false,
+                'has_priority_position' => false,
                 'is_popular' => false,
+                'is_launch_offer' => false,
+                'launch_discount_percent' => null,
+                'multipropiedad_note' => null,
                 'stripe_product_id' => null,
                 'stripe_monthly_price_id' => null,
                 'stripe_yearly_price_id' => null
             ],
             [
                 'id' => 2,
-                'name' => 'Básico Alojamiento',
-                'description' => 'Plan básico para alojamientos rurales. Publica hasta 4 alojamientos con máximo 30 plazas totales.',
-                'price_monthly' => 10.00,
-                'price_yearly' => 50.00,
+                'name' => 'Premium',
+                'description' => 'Plan profesional para alojamientos que quieren destacar. Oferta de lanzamiento con 50% de descuento.',
+                'price_monthly' => 19.99,
+                'price_yearly' => 120.00,
+                'official_price_yearly' => 240.00,
                 'features' => [
-                    'Publicar hasta 4 alojamientos',
-                    'Máximo 30 plazas totales',
-                    'Gestión básica de reservas',
-                    'Soporte por email',
-                    'Panel de control básico',
-                    'Ahorra 20€ con pago anual'
+                    'Fotos ilimitadas',
+                    'Descripción completa',
+                    'ENLACE DIRECTO a tu web o motor de reservas (0% comisiones)',
+                    'Posicionamiento destacado en búsquedas',
+                    'Soporte prioritario',
+                    'Mensajes ilimitados con turistas',
+                    'Estadísticas avanzadas'
                 ],
+                'max_accommodations' => 1,
+                'max_photos' => null,
+                'can_send_offers' => true,
+                'has_advanced_stats' => true,
+                'has_basic_stats' => true,
+                'has_priority_support' => true,
+                'has_direct_link' => true,
+                'has_api' => false,
+                'has_personalized_consulting' => false,
+                'has_reports' => false,
+                'can_receive_messages' => true,
+                'can_send_messages' => true,
+                'has_priority_position' => true,
                 'is_popular' => true,
+                'is_launch_offer' => true,
+                'launch_discount_percent' => 50,
+                'multipropiedad_note' => '¿Tienes más de un alojamiento? Consúltanos por nuestro Pack Multipropiedad',
                 'stripe_product_id' => null,
                 'stripe_monthly_price_id' => null,
                 'stripe_yearly_price_id' => null
             ],
             [
                 'id' => 3,
-                'name' => 'Premium Alojamiento',
-                'description' => 'Plan premium para alojamientos con crecimiento. Precio dinámico según número de alojamientos y plazas.',
-                'price_monthly' => 10.00,
-                'price_yearly' => 100.00,
+                'name' => 'Business',
+                'description' => 'Plan empresarial para agencias, complejos grandes o gestión avanzada.',
+                'price_monthly' => 49.99,
+                'price_yearly' => 499.99,
+                'official_price_yearly' => null,
                 'features' => [
-                    'Alojamientos ilimitados',
-                    'Plazas ilimitadas',
-                    'Gestión avanzada de reservas',
-                    'Soporte prioritario 24/7',
-                    'Panel de control avanzado',
-                    'Estadísticas detalladas',
+                    'Hasta 10 alojamientos',
+                    'Todas las funciones Premium',
+                    'API para integración con tu web',
+                    'Informes personalizados',
+                    'Asesoramiento personalizado',
+                    'Fotos ilimitadas',
+                    'Enlace directo a tu web (0% comisiones)',
                     'Posicionamiento destacado',
-                    'API de integración'
+                    'Soporte prioritario 24/7'
                 ],
+                'max_accommodations' => 10,
+                'max_photos' => null,
+                'can_send_offers' => true,
+                'has_advanced_stats' => true,
+                'has_basic_stats' => true,
+                'has_priority_support' => true,
+                'has_direct_link' => true,
+                'has_api' => true,
+                'has_personalized_consulting' => true,
+                'has_reports' => true,
+                'can_receive_messages' => true,
+                'can_send_messages' => true,
+                'has_priority_position' => true,
                 'is_popular' => false,
+                'is_launch_offer' => false,
+                'launch_discount_percent' => null,
+                'multipropiedad_note' => null,
                 'stripe_product_id' => null,
                 'stripe_monthly_price_id' => null,
                 'stripe_yearly_price_id' => null
@@ -113,6 +186,19 @@ try {
                     $plan['features'] = explode(',', $plan['features']);
                 }
             }
+            // Asegurar tipos correctos
+            $plan['price_monthly'] = (float)$plan['price_monthly'];
+            $plan['price_yearly'] = (float)$plan['price_yearly'];
+            $plan['official_price_yearly'] = $plan['official_price_yearly'] ? (float)$plan['official_price_yearly'] : null;
+            $plan['max_accommodations'] = (int)$plan['max_accommodations'];
+            $plan['max_photos'] = $plan['max_photos'] ? (int)$plan['max_photos'] : null;
+            $plan['launch_discount_percent'] = $plan['launch_discount_percent'] ? (int)$plan['launch_discount_percent'] : null;
+            $plan['is_popular'] = (bool)$plan['is_popular'];
+            $plan['is_launch_offer'] = (bool)$plan['is_launch_offer'];
+            $plan['has_direct_link'] = (bool)$plan['has_direct_link'];
+            $plan['has_api'] = (bool)$plan['has_api'];
+            $plan['has_priority_position'] = (bool)$plan['has_priority_position'];
+            $plan['can_send_messages'] = (bool)$plan['can_send_messages'];
         }
 
         jsonSuccess($plans);

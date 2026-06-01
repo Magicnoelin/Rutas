@@ -2,6 +2,9 @@
 /**
  * API: Obtener límites de membresía del usuario actual
  * GET /api/get_membership_limits.php
+ * 
+ * Devuelve los límites según el plan del usuario y los planes disponibles
+ * con la nueva estructura de precios (Free, Premium, Business)
  */
 
 session_start();
@@ -18,7 +21,7 @@ try {
 
     // Obtener información de membresía del usuario
     $stmtUser = $pdo->prepare("
-        SELECT id, email, first_name, last_name, membership_type, membership_status 
+        SELECT id, email, first_name, last_name, user_type, membership_type, membership_status 
         FROM users 
         WHERE id = ?
     ");
@@ -31,33 +34,56 @@ try {
 
     $membershipType = strtolower($user['membership_type'] ?? 'free');
     $membershipStatus = $user['membership_status'] ?? 'active';
+    $userType = strtolower($user['user_type'] ?? '');
 
-    // Definir límites según tipo de membresía
+    // Definir límites según tipo de membresía (NUEVA ESTRUCTURA)
     $limits = [
         'free' => [
             'maxAccommodations' => 1,
-            'maxPlaces' => 8,
-            'name' => 'Gratuita'
-        ],
-        'basic' => [
-            'maxAccommodations' => 2,
-            'maxPlaces' => 15,
-            'name' => 'Básica'
+            'maxPhotos' => 4,
+            'name' => 'Free',
+            'description' => 'Plan básico para probar la plataforma',
+            'canSendOffers' => false,
+            'hasAdvancedStats' => false,
+            'hasDirectLink' => false,
+            'hasPriorityPosition' => false,
+            'hasPrioritySupport' => false,
+            'hasApi' => false,
+            'canSendMessages' => false,
+            'canReceiveMessages' => true
         ],
         'premium' => [
-            'maxAccommodations' => 10,
-            'maxPlaces' => 100,
-            'name' => 'Premium'
+            'maxAccommodations' => 1,
+            'maxPhotos' => null, // ilimitado
+            'name' => 'Premium',
+            'description' => 'Plan profesional con oferta de lanzamiento 50%',
+            'canSendOffers' => true,
+            'hasAdvancedStats' => true,
+            'hasDirectLink' => true,
+            'hasPriorityPosition' => true,
+            'hasPrioritySupport' => true,
+            'hasApi' => false,
+            'canSendMessages' => true,
+            'canReceiveMessages' => true
         ],
-        'enterprise' => [
-            'maxAccommodations' => 50,
-            'maxPlaces' => 500,
-            'name' => 'Empresa'
+        'business' => [
+            'maxAccommodations' => 10,
+            'maxPhotos' => null, // ilimitado
+            'name' => 'Business',
+            'description' => 'Plan empresarial para gestión avanzada',
+            'canSendOffers' => true,
+            'hasAdvancedStats' => true,
+            'hasDirectLink' => true,
+            'hasPriorityPosition' => true,
+            'hasPrioritySupport' => true,
+            'hasApi' => true,
+            'canSendMessages' => true,
+            'canReceiveMessages' => true
         ]
     ];
 
-    // Usar límites básicos por defecto si el tipo no está definido
-    $membershipLimits = $limits[$membershipType] ?? $limits['basic'];
+    // Usar límites free por defecto si el tipo no está definido
+    $membershipLimits = $limits[$membershipType] ?? $limits['free'];
 
     // Contar alojamientos existentes del usuario
     $stmtCount = $pdo->prepare("
@@ -74,29 +100,63 @@ try {
     $totalPlazas = $counts['total_plazas'] ?? 0;
 
     // Obtener información de planes de membresía disponibles
-    $stmtPlans = $pdo->prepare("
-        SELECT id, name, price_monthly, price_yearly, description, features
+    $stmtPlans = $pdo->query("
+        SELECT id, name, description, price_monthly, price_yearly, official_price_yearly,
+               features, max_accommodations, max_photos, is_popular, is_launch_offer,
+               launch_discount_percent, multipropiedad_note, has_direct_link, has_api,
+               has_priority_position, can_send_messages
         FROM membership_plans
-        WHERE status = 'active'
-        ORDER BY price_monthly ASC
+        WHERE is_active = TRUE
+        ORDER BY id ASC
     ");
-    $stmtPlans->execute();
     $plans = $stmtPlans->fetchAll();
+
+    // Procesar features
+    foreach ($plans as &$plan) {
+        if ($plan['features'] && is_string($plan['features'])) {
+            try {
+                $plan['features'] = json_decode($plan['features'], true);
+            } catch (Exception $e) {
+                $plan['features'] = explode(',', $plan['features']);
+            }
+        }
+        $plan['price_monthly'] = (float)$plan['price_monthly'];
+        $plan['price_yearly'] = (float)$plan['price_yearly'];
+        $plan['official_price_yearly'] = $plan['official_price_yearly'] ? (float)$plan['official_price_yearly'] : null;
+    }
+
+    // Determinar mensaje de upgrade
+    $upgradeMessage = '';
+    $canUpgrade = true;
+    if ($membershipType === 'free') {
+        $upgradeMessage = 'Actualiza a Premium y destaca tu alojamiento. ¡50% de descuento por lanzamiento!';
+    } elseif ($membershipType === 'premium') {
+        $upgradeMessage = '¿Necesitas más alojamientos? Consulta nuestro Plan Business o Pack Multipropiedad.';
+    } elseif ($membershipType === 'business') {
+        $upgradeMessage = 'Ya tienes el plan más completo. ¡Gracias por confiar en nosotros!';
+        $canUpgrade = false;
+    }
 
     // Preparar respuesta
     $response = [
         'membershipType' => $membershipType,
         'membershipName' => $membershipLimits['name'],
         'membershipStatus' => $membershipStatus,
+        'userType' => $userType,
         'currentAccommodations' => (int)$totalAlojamientos,
         'currentPlaces' => (int)$totalPlazas,
         'maxAccommodations' => $membershipLimits['maxAccommodations'],
-        'maxPlaces' => $membershipLimits['maxPlaces'],
+        'maxPhotos' => $membershipLimits['maxPhotos'],
+        'canSendOffers' => $membershipLimits['canSendOffers'],
+        'hasAdvancedStats' => $membershipLimits['hasAdvancedStats'],
+        'hasDirectLink' => $membershipLimits['hasDirectLink'],
+        'hasPriorityPosition' => $membershipLimits['hasPriorityPosition'],
+        'hasPrioritySupport' => $membershipLimits['hasPrioritySupport'],
+        'hasApi' => $membershipLimits['hasApi'],
+        'canSendMessages' => $membershipLimits['canSendMessages'],
         'availablePlans' => $plans,
-        'canUpgrade' => $membershipType !== 'enterprise',
-        'upgradeMessage' => $membershipType === 'free' ? 'Actualiza a Básica para más límites' : 
-                          ($membershipType === 'basic' ? 'Actualiza a Premium para límites ilimitados' : 
-                          ($membershipType === 'premium' ? 'Ya tienes el plan más completo' : ''))
+        'canUpgrade' => $canUpgrade,
+        'upgradeMessage' => $upgradeMessage
     ];
 
     jsonSuccess($response, 'Límites de membresía obtenidos correctamente');
@@ -105,4 +165,3 @@ try {
     error_log('get_membership_limits.php Error: ' . $e->getMessage());
     jsonError('Error al obtener límites de membresía: ' . $e->getMessage(), 500);
 }
-?>
