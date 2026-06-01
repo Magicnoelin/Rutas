@@ -93,9 +93,14 @@ try {
         jsonError('Este plan es gratuito, no requiere pago', 400);
     }
 
-    // Calcular precios con IVA
-    $vatCalculation = calculateVAT($price);
-    $priceWithVAT   = $vatCalculation['total'];
+    // Los precios mostrados al usuario YA INCLUYEN IVA.
+    // El precio final cobrado en Stripe es el mismo que se muestra (IVA incluido).
+    $priceWithVAT = $price; // El precio es ya el precio final con IVA incluido
+
+    // Desglose de IVA para contabilidad (21% incluido en el precio)
+    $vatRate          = 0.21;
+    $priceWithoutVAT  = round($price / (1 + $vatRate), 2);
+    $vatAmount        = round($price - $priceWithoutVAT, 2);
 
     // Metadata para Stripe y para nuestra BD
     $metadata = [
@@ -104,9 +109,11 @@ try {
         'plan_name'        => $plan['name'],
         'plan_type'        => $plan['plan_type'] ?? 'alojamiento',
         'billing_cycle'    => $billingCycle,
-        'price_without_vat'=> (string)$price,
-        'vat_rate'         => (string)$vatCalculation['vat_rate'],
         'price_with_vat'   => (string)$priceWithVAT,
+        'price_without_vat'=> (string)$priceWithoutVAT,
+        'vat_rate'         => '21',
+        'vat_amount'       => (string)$vatAmount,
+        'vat_included'     => 'true',
     ];
 
     // ============================================================
@@ -180,8 +187,8 @@ try {
             $planId,
             $sessionId,
             $stripePriceId ?: 'price_inline',
-            $price,
-            $vatCalculation['vat_amount'],
+            $priceWithoutVAT,
+            $vatAmount,
             $priceWithVAT,
             $billingCycle,
             json_encode($metadata),
@@ -199,13 +206,13 @@ try {
         'checkout_url' => $checkoutUrl,
         'plan_name'    => $plan['name'],
         'billing_cycle'=> $billingCycle,
-        'amount'       => $price,
-        'vat_amount'   => $vatCalculation['vat_amount'],
+        'amount'       => $priceWithoutVAT,
+        'vat_amount'   => $vatAmount,
         'total_amount' => $priceWithVAT,
         'currency'     => 'EUR',
         'expires_at'   => date('c', strtotime('+24 hours')),
         'metadata'     => $metadata,
-        'mode'         => 'live', // ya no es simulado
+        'mode'         => 'live',
     ], 'Sesión de pago creada correctamente');
 
 } catch (PDOException $e) {

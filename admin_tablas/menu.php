@@ -242,8 +242,12 @@
         <a class="nav-item" href="https://rutasrurales.io/admin_tablas/moderacion_fotos.php">
             <i class="fas fa-images"></i> Fotos Sugeridas
         </a>
+        <a class="nav-item highlight" href="https://rutasrurales.io/admin_tablas/historial_fotos_alojamientos.php">
+            <i class="fas fa-history"></i> Historial Fotos Alojamientos
+        </a>
 
         <div class="nav-divider"></div>
+
 
         <!-- SEO y Herramientas -->
         <div class="nav-section">SEO &amp; Herramientas</div>

@@ -741,14 +741,27 @@
 
             <!-- SECCIÓN: MI MEMBRESÍA -->
             <section id="membresia-section" class="dashboard-section">
-                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Mi Membresía</h2>
+                <h2 style="color: var(--primary-color); margin-bottom: 0.5rem;"><i class="fas fa-crown"></i> Mi Membresía</h2>
+
+                <!-- Banner rol alojamiento -->
+                <div style="background: linear-gradient(135deg, #1b5e20, var(--primary-color)); border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <div style="background: rgba(255,255,255,0.2); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-bed" style="color: white; font-size: 1.4rem;"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="color: white; font-weight: 700; font-size: 1.05rem; margin-bottom: 0.2rem;">
+                            Planes para Propietarios de Alojamientos
+                        </div>
+                        <div style="color: rgba(255,255,255,0.85); font-size: 0.88rem;">
+                            Estas membresías están diseñadas para que puedas publicar y gestionar tus alojamientos en Rutas Rurales. <strong style="color:white;">Todos los precios incluyen IVA.</strong>
+                        </div>
+                    </div>
+                    <div id="currentMembershipBadge" style="padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; background: rgba(255,255,255,0.25); color: white; border: 1.5px solid rgba(255,255,255,0.5); white-space: nowrap;">
+                        Cargando...
+                    </div>
+                </div>
 
                 <div class="profile-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3 style="margin: 0; color: var(--primary-color);">Tu Plan Actual</h3>
-                        <span id="currentMembershipBadge" style="padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; background: #e8f5e9; color: var(--primary-color);">Cargando...</span>
-                    </div>
-
                     <div id="membershipStatus" style="margin-bottom: 2rem;">
                         <div style="text-align: center; padding: 2rem; color: #999;">
                             <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
@@ -762,10 +775,22 @@
                         </ul>
                     </div>
 
-                    <div style="margin-bottom: 2rem;">
-                        <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Planes Disponibles</h4>
-                        <div id="membershipPlans" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 0.4rem; font-size: 1.05rem;"><i class="fas fa-th-large"></i> Planes Disponibles</h4>
+                        <p style="color: #888; font-size: 0.85rem; margin: 0 0 1.2rem 0;">
+                            <i class="fas fa-info-circle" style="color: var(--primary-color);"></i>
+                            Los precios mostrados ya incluyen el 21% de IVA. Lo que ves es exactamente lo que pagas.
+                        </p>
+                        <div id="membershipPlans" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                         </div>
+                    </div>
+
+                    <!-- Nota informativa -->
+                    <div style="margin-top: 1.5rem; padding: 1rem 1.2rem; background: #f8fdf8; border-left: 4px solid var(--primary-color); border-radius: 0 8px 8px 0;">
+                        <p style="margin: 0; font-size: 0.85rem; color: #555;">
+                            <i class="fas fa-shield-alt" style="color: var(--primary-color);"></i>
+                            <strong>Pago seguro</strong> procesado por Stripe · Cancela en cualquier momento · Facturas automáticas con desglose de IVA
+                        </p>
                     </div>
                 </div>
             </section>
@@ -1387,116 +1412,163 @@
     function renderMembershipPlans(plans) {
         const container = document.getElementById('membershipPlans');
         if (!container) return;
-        
+
+        // Filtrar: solo mostrar planes de alojamiento (no mostrar plan "Gratuito" si el usuario ya lo tiene por defecto)
+        // Solo mostrar planes de pago para upgrade; el Free se muestra en el estado actual
+        const paidPlans = plans.filter(p => p.price_monthly > 0 || p.price_yearly > 0);
+
         if (!plans || plans.length === 0) {
             container.innerHTML = '<div style="text-align:center;padding:2rem;color:#aaa;grid-column:1/-1;">No hay planes disponibles</div>';
             return;
         }
-        
+
         container.innerHTML = plans.map(plan => {
             const features = Array.isArray(plan.features) ? plan.features : [];
             const isPopular = plan.is_popular == 1 || plan.is_popular === true;
+            const isLaunchOffer = plan.is_launch_offer == 1 || plan.is_launch_offer === true;
             const hasMonthly = plan.price_monthly > 0;
             const hasYearly = plan.price_yearly > 0;
-            
+            const isFree = !hasMonthly && !hasYearly;
+            const maxAcc = plan.max_accommodations || 1;
+
+            // Badge de alojamientos permitidos
+            const accBadge = `<div style="display:inline-flex;align-items:center;gap:.4rem;background:#e8f5e9;color:var(--primary-color);padding:.3rem .8rem;border-radius:12px;font-size:.82rem;font-weight:700;margin-bottom:.8rem;">
+                <i class="fas fa-bed"></i> Hasta ${maxAcc === 1 ? '1 alojamiento' : maxAcc + ' alojamientos'}
+            </div>`;
+
             let priceHtml = '';
             if (hasMonthly && hasYearly) {
+                const savePct = Math.round((1 - plan.price_yearly / (plan.price_monthly * 12)) * 100);
                 priceHtml = `
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_monthly}€</span>
-                        <span style="color: #888; font-size: 0.9rem;">/mes (IVA no incluido)</span>
+                    <div style="margin-bottom: 0.4rem;">
+                        <span style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">${plan.price_monthly}€</span>
+                        <span style="color: #888; font-size: 0.88rem;">/mes · IVA incl.</span>
                     </div>
-                    <div style="color: #888; font-size: 0.85rem;">
-                        o <strong>${plan.price_yearly}€/año</strong> (IVA no incluido - ahorra ${Math.round((1 - plan.price_yearly / (plan.price_monthly * 12)) * 100)}%)
+                    <div style="color: #555; font-size: 0.85rem; margin-bottom: 0.4rem;">
+                        o <strong style="color:var(--primary-color);">${plan.price_yearly}€/año</strong>
+                        <span style="color:#888;"> · IVA incl.</span>
+                        ${savePct > 0 ? `<span style="background:#e8f5e9;color:var(--primary-color);padding:1px 6px;border-radius:8px;font-size:.78rem;font-weight:700;margin-left:4px;">Ahorra ${savePct}%</span>` : ''}
                     </div>
                 `;
             } else if (hasMonthly) {
                 priceHtml = `
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_monthly}€</span>
-                        <span style="color: #888; font-size: 0.9rem;">/mes (IVA no incluido)</span>
+                    <div style="margin-bottom: 0.4rem;">
+                        <span style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">${plan.price_monthly}€</span>
+                        <span style="color: #888; font-size: 0.88rem;">/mes · IVA incl.</span>
                     </div>
                 `;
             } else if (hasYearly) {
                 priceHtml = `
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${plan.price_yearly}€</span>
-                        <span style="color: #888; font-size: 0.9rem;">/año (IVA no incluido)</span>
+                    <div style="margin-bottom: 0.4rem;">
+                        <span style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">${plan.price_yearly}€</span>
+                        <span style="color: #888; font-size: 0.88rem;">/año · IVA incl.</span>
                     </div>
                 `;
             } else {
-                priceHtml = `<div style="margin-bottom: 0.5rem;"><span style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">Gratis</span></div>`;
+                priceHtml = `<div style="margin-bottom: 0.4rem;"><span style="font-size: 1.8rem; font-weight: 700; color: #888;">Sin coste</span></div>`;
             }
-            
+
+            // Oferta de lanzamiento
+            const launchBadge = isLaunchOffer && plan.launch_discount_percent
+                ? `<div style="background: linear-gradient(135deg,#e65100,#ff9800); color:white; padding:0.3rem 0.8rem; border-radius: 8px; font-size:0.78rem; font-weight:700; margin-bottom:0.8rem; display:inline-block;">
+                    🔥 Oferta de lanzamiento · ${plan.launch_discount_percent}% dto.
+                  </div>`
+                : '';
+
+            // Precio oficial tachado
+            const officialPriceHtml = (isLaunchOffer && plan.official_price_yearly && hasYearly)
+                ? `<div style="color:#aaa;font-size:.82rem;text-decoration:line-through;margin-bottom:.3rem;">Precio normal: ${plan.official_price_yearly}€/año</div>`
+                : '';
+
+            const btnHtml = isFree
+                ? `<button disabled style="width:100%;padding:0.8rem;border:2px solid #ddd;border-radius:10px;background:#f9f9f9;color:#aaa;font-weight:600;font-size:1rem;cursor:default;">
+                      <i class="fas fa-check"></i> Tu plan gratuito
+                   </button>`
+                : `<button onclick="selectPlan(${plan.id}, '${plan.name.replace(/'/g,"\\'")}', ${plan.price_monthly}, ${plan.price_yearly})"
+                      style="width:100%;padding:0.8rem;border:none;border-radius:10px;background:var(--primary-color);color:white;font-weight:700;cursor:pointer;font-size:1rem;transition:opacity .2s;"
+                      onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                      <i class="fas fa-crown"></i> Contratar Plan
+                   </button>`;
+
             return `
-                <div style="background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; ${isPopular ? 'border: 2px solid var(--primary-color);' : ''}">
-                    ${isPopular ? '<div style="position: absolute; top: -10px; right: 15px; background: var(--primary-color); color: white; padding: 0.3rem 1rem; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">Más popular</div>' : ''}
-                    <h3 style="margin: 0 0 0.5rem 0; color: var(--primary-color);">${plan.name}</h3>
-                    <p style="color: #888; font-size: 0.9rem; margin-bottom: 1rem;">${plan.description || ''}</p>
+                <div style="background:white;border-radius:15px;padding:1.5rem;box-shadow:0 4px 15px rgba(0,0,0,0.08);position:relative;${isPopular ? 'border:2px solid var(--primary-color);' : 'border:1px solid #f0f0f0;'}">
+                    ${isPopular ? '<div style="position:absolute;top:-12px;right:15px;background:var(--primary-color);color:white;padding:.3rem 1rem;border-radius:15px;font-size:.78rem;font-weight:700;"><i class="fas fa-star"></i> Más popular</div>' : ''}
+                    <h3 style="margin:0 0 0.3rem 0;color:var(--primary-color);font-size:1.15rem;">${plan.name}</h3>
+                    ${launchBadge}
+                    ${accBadge}
+                    ${officialPriceHtml}
                     ${priceHtml}
-                    <ul style="list-style: none; padding: 0; margin: 1rem 0;">
-                        ${features.map(f => `<li style="padding: 0.3rem 0; color: #555; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--primary-color); margin-right: 0.5rem;"></i>${f}</li>`).join('')}
+                    <hr style="border:none;border-top:1px solid #f0f0f0;margin:0.8rem 0;">
+                    <ul style="list-style:none;padding:0;margin:0 0 1.2rem 0;">
+                        ${features.map(f => `<li style="padding:.28rem 0;color:#444;font-size:.88rem;display:flex;align-items:flex-start;gap:.5rem;"><i class="fas fa-check-circle" style="color:var(--primary-color);margin-top:2px;flex-shrink:0;"></i><span>${f}</span></li>`).join('')}
                     </ul>
-                    <button onclick="selectPlan(${plan.id}, '${plan.name}', ${plan.price_monthly}, ${plan.price_yearly})" style="width: 100%; padding: 0.8rem; border: none; border-radius: 10px; background: var(--primary-color); color: white; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                        ${plan.price_monthly > 0 || plan.price_yearly > 0 ? 'Seleccionar Plan' : 'Plan Actual'}
-                    </button>
+                    ${btnHtml}
+                    ${plan.multipropiedad_note ? `<p style="margin:.8rem 0 0;font-size:.78rem;color:#888;text-align:center;"><i class="fas fa-info-circle"></i> ${plan.multipropiedad_note}</p>` : ''}
                 </div>
             `;
         }).join('');
     }
-    
+
     // Función global para seleccionar plan
     window.selectPlan = function(planId, planName, priceMonthly, priceYearly) {
-        // Mostrar modal de selección de ciclo de facturación
         const modal = document.createElement('div');
-        modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
-        
+        modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;z-index:10000;';
+
         const hasMonthly = priceMonthly > 0;
         const hasYearly = priceYearly > 0;
-        
+
         let optionsHtml = '';
         if (hasMonthly) {
             optionsHtml += `
-                <button id="btn-monthly-${planId}" style="display:block;width:100%;padding:1rem;margin:0.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:white;color:var(--primary-color);font-weight:600;cursor:pointer;font-size:1rem;">
-                    Mensual - ${priceMonthly}€/mes
+                <button id="btn-monthly-${planId}" style="display:block;width:100%;padding:1.1rem;margin:.5rem 0;border:2px solid #ddd;border-radius:10px;background:white;color:#333;font-weight:600;cursor:pointer;font-size:1rem;text-align:left;transition:border-color .2s;">
+                    <div style="font-size:.78rem;color:#888;margin-bottom:.2rem;">Facturación mensual</div>
+                    <strong style="font-size:1.15rem;color:var(--primary-color);">${priceMonthly}€/mes</strong>
+                    <span style="font-size:.8rem;color:#888;"> · IVA incluido</span>
                 </button>
             `;
         }
         if (hasYearly) {
+            const savePct = hasMonthly ? Math.round((1 - priceYearly / (priceMonthly * 12)) * 100) : 0;
             optionsHtml += `
-                <button id="btn-yearly-${planId}" style="display:block;width:100%;padding:1rem;margin:0.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:var(--primary-color);color:white;font-weight:600;cursor:pointer;font-size:1rem;">
-                    Anual - ${priceYearly}€/año
+                <button id="btn-yearly-${planId}" style="display:block;width:100%;padding:1.1rem;margin:.5rem 0;border:2px solid var(--primary-color);border-radius:10px;background:#f0f7f0;color:#333;font-weight:600;cursor:pointer;font-size:1rem;text-align:left;">
+                    <div style="font-size:.78rem;color:var(--primary-color);margin-bottom:.2rem;">Facturación anual ${savePct > 0 ? `<span style="background:var(--primary-color);color:white;padding:1px 6px;border-radius:8px;font-size:.72rem;">Ahorra ${savePct}%</span>` : ''}</div>
+                    <strong style="font-size:1.15rem;color:var(--primary-color);">${priceYearly}€/año</strong>
+                    <span style="font-size:.8rem;color:#888;"> · IVA incluido</span>
                 </button>
             `;
         }
-        
+
         modal.innerHTML = `
-            <div style="background:white;border-radius:15px;padding:2rem;max-width:400px;width:90%;">
-                <h3 style="margin:0 0 1rem 0;color:var(--primary-color);">${planName}</h3>
-                <p style="color:#888;margin-bottom:1rem;">Selecciona tu ciclo de facturación:</p>
+            <div style="background:white;border-radius:15px;padding:2rem;max-width:420px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+                <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;">
+                    <div style="background:#e8f5e9;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-crown" style="color:var(--primary-color);font-size:1.1rem;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin:0;color:var(--primary-color);font-size:1.1rem;">${planName}</h3>
+                        <p style="margin:0;color:#888;font-size:.82rem;">Elige tu ciclo de facturación</p>
+                    </div>
+                </div>
                 ${optionsHtml}
-                <button id="btn-cancel-plan" style="display:block;width:100%;padding:0.8rem;margin-top:1rem;border:none;border-radius:10px;background:#f5f5f5;color:#888;cursor:pointer;font-size:0.9rem;">
+                <p style="font-size:.78rem;color:#aaa;text-align:center;margin:.8rem 0 .5rem;">
+                    <i class="fas fa-lock"></i> Pago seguro · Los precios incluyen IVA · Cancela cuando quieras
+                </p>
+                <button id="btn-cancel-plan" style="display:block;width:100%;padding:.7rem;border:none;border-radius:10px;background:#f5f5f5;color:#888;cursor:pointer;font-size:.9rem;">
                     Cancelar
                 </button>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
-        // Asignar event listeners después de agregar al DOM
+
         if (hasMonthly) {
-            document.getElementById(`btn-monthly-${planId}`).addEventListener('click', function() {
-                redirectToCheckout(planId, 'monthly');
-            });
+            document.getElementById(`btn-monthly-${planId}`).addEventListener('click', () => redirectToCheckout(planId, 'monthly'));
         }
         if (hasYearly) {
-            document.getElementById(`btn-yearly-${planId}`).addEventListener('click', function() {
-                redirectToCheckout(planId, 'yearly');
-            });
+            document.getElementById(`btn-yearly-${planId}`).addEventListener('click', () => redirectToCheckout(planId, 'yearly'));
         }
-        document.getElementById('btn-cancel-plan').addEventListener('click', function() {
-            modal.remove();
-        });
+        document.getElementById('btn-cancel-plan').addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
     };
     
     window.redirectToCheckout = async function(planId, billingCycle) {

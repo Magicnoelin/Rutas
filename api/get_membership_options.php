@@ -100,11 +100,12 @@ try {
             [
                 'id' => 2,
                 'name' => 'Premium',
-                'description' => 'Plan profesional para alojamientos que quieren destacar. Oferta de lanzamiento con 50% de descuento.',
+                'description' => 'Plan profesional para alojamientos que quieren destacar. Oferta de lanzamiento con 50% de descuento. Precio con IVA incluido.',
                 'price_monthly' => 19.99,
                 'price_yearly' => 120.00,
                 'official_price_yearly' => 240.00,
                 'features' => [
+                    'Hasta 4 alojamientos',
                     'Fotos ilimitadas',
                     'Descripción completa',
                     'ENLACE DIRECTO a tu web o motor de reservas (0% comisiones)',
@@ -113,7 +114,7 @@ try {
                     'Mensajes ilimitados con turistas',
                     'Estadísticas avanzadas'
                 ],
-                'max_accommodations' => 1,
+                'max_accommodations' => 4,
                 'max_photos' => null,
                 'can_send_offers' => true,
                 'has_advanced_stats' => true,

@@ -206,6 +206,51 @@ try {
         error_log('Error al crear notificación: ' . $e->getMessage());
     }
 
+    // ── Registrar en el historial de actividad de fotos ──
+    try {
+        // Crear la tabla si no existe
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS accommodation_photo_activity_log (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                accommodation_id INT NOT NULL,
+                accommodation_name VARCHAR(255) DEFAULT NULL,
+                accommodation_slug VARCHAR(255) DEFAULT NULL,
+                user_id INT DEFAULT NULL,
+                user_name VARCHAR(255) DEFAULT NULL,
+                action_type VARCHAR(50) NOT NULL COMMENT 'upload / delete',
+                category VARCHAR(100) DEFAULT NULL,
+                filename VARCHAR(255) DEFAULT NULL,
+                file_url VARCHAR(500) DEFAULT NULL,
+                details TEXT DEFAULT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_accommodation (accommodation_id),
+                INDEX idx_action_type (action_type),
+                INDEX idx_created_at (created_at),
+                INDEX idx_user (user_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ");
+
+        $stmtLog = $pdo->prepare("
+            INSERT INTO accommodation_photo_activity_log 
+                (accommodation_id, accommodation_name, accommodation_slug, user_id, user_name, 
+                 action_type, category, filename, file_url, details)
+            VALUES (?, ?, ?, ?, ?, 'upload', ?, ?, ?, ?)
+        ");
+        $stmtLog->execute([
+            $accommodationId,
+            $accommodation['name'],
+            $accommodationSlug,
+            $userId,
+            $authorName,
+            $photoCategories[$photoCategory],
+            $filename,
+            $publicUrl,
+            'Foto subida desde gestión de fotos'
+        ]);
+    } catch (Exception $e) {
+        error_log('Error al registrar en historial de fotos: ' . $e->getMessage());
+    }
+
     // Return success response
     jsonSuccess([
         'url' => $publicUrl,
