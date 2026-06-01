@@ -209,6 +209,14 @@
 
         <div class="nav-divider"></div>
 
+        <!-- Monetización -->
+        <div class="nav-section">Monetización</div>
+        <a class="nav-item highlight" href="https://rutasrurales.io/admin_tablas/membresias_index.php">
+            <i class="fas fa-crown"></i> Gestión de Membresías
+        </a>
+
+        <div class="nav-divider"></div>
+
         <!-- Usuarios -->
         <div class="nav-section">Usuarios</div>
         <a class="nav-item" href="https://rutasrurales.io/admin_tablas/usuarios_index.php">
@@ -302,6 +310,9 @@
             </a>
             <a class="quick-link" href="https://rutasrurales.io/admin_tablas/moderacion_alojamientos.php">
                 <i class="fas fa-clipboard-check"></i><span>Moderación</span>
+            </a>
+            <a class="quick-link" href="https://rutasrurales.io/admin_tablas/membresias_index.php">
+                <i class="fas fa-crown"></i><span>Membresías</span>
             </a>
             <a class="quick-link" href="https://rutasrurales.io/admin_tablas/cola_tareas.php">
                 <i class="fas fa-cogs"></i><span>Cola Tareas</span>
