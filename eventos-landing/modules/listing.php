@@ -26,6 +26,7 @@ function renderEventosLandingListing(array $ctx): void
     $h2        = $ctx['h2_listing']     ?? ($t['h2_listing'] ?? 'Eventos disponibles');
     $province  = $ctx['province_label'] ?? '';
     $prov_key  = $ctx['province_key']   ?? '';
+    $pdo       = $ctx['pdo']            ?? null;
 
     $base_url = 'https://rutasrurales.io';
 
@@ -88,6 +89,9 @@ function renderEventosLandingListing(array $ctx): void
             $isFree    = !empty($ev['is_free']) && $ev['is_free'];
             $precio    = $ev['precio_display'] ?? null;
             $desc      = mb_substr(strip_tags($ev['short_description'] ?? $ev['description'] ?? ''), 0, 100);
+            $desc_html = (!empty($desc) && $pdo !== null)
+                ? procesarInboundLinks(htmlspecialchars($desc), $pdo)
+                : htmlspecialchars($desc);
 
             // Fecha inicio formateada
             $fechaStart  = '';
@@ -189,7 +193,7 @@ function renderEventosLandingListing(array $ctx): void
                 <!-- Descripción corta -->
                 <?php if ($desc): ?>
                 <p class="lnd-card__desc" itemprop="description">
-                    <?= htmlspecialchars($desc) ?>…
+                    <?= $desc_html ?>…
                 </p>
                 <?php endif; ?>
 

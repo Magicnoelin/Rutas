@@ -28,6 +28,7 @@ define('API_NO_HEADERS', true);
 // ── Dependencias ─────────────────────────────────────────────────────────────
 $_BASE = dirname(__DIR__);
 require_once $_BASE . '/api/config.php';
+require_once $_BASE . '/api/inbound_links_helper.php';
 require_once __DIR__ . '/config/filters.php';
 require_once __DIR__ . '/i18n/translations.php';
 require_once __DIR__ . '/api/landing-data.php';
@@ -206,6 +207,9 @@ $ctx = [
 
     // Traducciones
     't'             => $t,
+
+    // BD (para procesarInboundLinks en módulos — una sola query gracias al cache)
+    'pdo'           => $pdo ?? null,
 ];
 
 // ── 9. Imagen OG ──────────────────────────────────────────────────────────────

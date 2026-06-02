@@ -27,6 +27,7 @@ function renderLandingListing(array $ctx): void
     $h2       = $ctx['h2_listing'] ?? ($t['h2_listing'] ?? 'Alojamientos disponibles');
     $province = $ctx['province_label'] ?? '';
     $prov_key = $ctx['province_key']   ?? '';
+    $pdo      = $ctx['pdo']            ?? null;
 
     $base_url = 'https://rutasrurales.io';
 ?>
@@ -135,9 +136,17 @@ function renderLandingListing(array $ctx): void
                 </h3>
 
                 <!-- Descripción corta -->
-                <?php if (!empty($alo['short_description'])): ?>
+                <?php
+                    $desc_text = !empty($alo['short_description'])
+                        ? mb_substr(strip_tags($alo['short_description']), 0, 100)
+                        : '';
+                    $desc_html = (!empty($desc_text) && $pdo !== null)
+                        ? procesarInboundLinks(htmlspecialchars($desc_text), $pdo)
+                        : htmlspecialchars($desc_text);
+                ?>
+                <?php if (!empty($desc_text)): ?>
                 <p class="lnd-card__desc" itemprop="description">
-                    <?= htmlspecialchars(mb_substr(strip_tags($alo['short_description']), 0, 100)) ?>…
+                    <?= $desc_html ?>…
                 </p>
                 <?php endif; ?>
 

@@ -26,6 +26,7 @@ function renderLandingIntro(array $ctx): void
     $filter_icons = $ctx['filter_icons']   ?? [];
     $lang         = $ctx['lang']           ?? 'es';
     $stats        = $ctx['stats']          ?? [];
+    $pdo          = $ctx['pdo']            ?? null;
 
     // No renderizar si no hay provincia ni filtros
     if (empty($province) && empty($filter_labels)) return;
@@ -65,6 +66,13 @@ function renderLandingIntro(array $ctx): void
     $p2  = t($t['intro_p2']  ?? '', $vars);
     $tip = t($t['intro_tip'] ?? '', $vars);
     $h2  = t($t['h2_porque'] ?? '¿Por qué alojarse en {PROVINCE}?', $vars);
+
+    // ── Inbound links: enriquecer párrafos con links internos ────────────
+    if ($pdo !== null) {
+        $p1  = procesarInboundLinks($p1,  $pdo);
+        $p2  = procesarInboundLinks($p2,  $pdo);
+        $tip = procesarInboundLinks($tip, $pdo);
+    }
 ?>
 <!-- ══════════════════════════════════════════════════════════ INTRO ══ -->
 <section class="lnd-intro" aria-label="Descripción del destino">
@@ -75,12 +83,12 @@ function renderLandingIntro(array $ctx): void
 
         <!-- Párrafo 1: provincia + vibe -->
         <?php if (!empty($p1)): ?>
-        <p class="lnd-intro__p"><?= htmlspecialchars($p1) ?></p>
+        <p class="lnd-intro__p"><?= $p1 ?></p>
         <?php endif; ?>
 
         <!-- Párrafo 2: diferenciador rutasrurales.io -->
         <?php if (!empty($p2)): ?>
-        <p class="lnd-intro__p"><?= htmlspecialchars($p2) ?></p>
+        <p class="lnd-intro__p"><?= $p2 ?></p>
         <?php endif; ?>
 
         <!-- Consejo local (HTML permitido para <strong>) -->
