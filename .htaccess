@@ -145,14 +145,17 @@ RewriteRule ^alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){2,})/?$ alojamientos-lan
 # IMPORTANTE: "eventos" (plural) ≠ "evento" (singular → evento-detalle.php)
 # Google Search Console los tratará como verticales distintas.
 # ── Multilingüe (idioma en prefijo) ──────────────────────────────────────────
+# Regex: permite slugs con 0 o más guiones → cubre tanto /de/eventos/salamanca
+# (solo provincia) como /de/eventos/musica-salamanca (filtro+provincia)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(en|fr|de|zh)/eventos/([a-z][a-z0-9]*(?:-[a-z0-9]+)+)/?$ eventos-landing/index.php?lang=$1&slug=$2 [L,QSA]
+RewriteRule ^(en|fr|de|zh)/eventos/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ eventos-landing/index.php?lang=$1&slug=$2 [L,QSA]
 
 # ── Español (sin prefijo de idioma) ──────────────────────────────────────────
+# Regex: permite slugs con 0 o más guiones → cubre /eventos/soria y /eventos/musica-soria
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^eventos/([a-z][a-z0-9]*(?:-[a-z0-9]+)+)/?$ eventos-landing/index.php?lang=es&slug=$1 [L,QSA]
+RewriteRule ^eventos/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ eventos-landing/index.php?lang=es&slug=$1 [L,QSA]
 
 # ============================================================
 # 5. LIMPIEZA DE URLs ANTIGUAS
