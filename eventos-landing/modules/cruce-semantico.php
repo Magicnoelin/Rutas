@@ -115,7 +115,7 @@ function renderEventosCruceSemantico(array $ctx): void
         <!-- CTA ver más alojamientos -->
         <?php if (!empty($province)): ?>
         <div class="lnd-semantico__cta-wrap">
-            <a href="<?= $base_url . $lang_prefix ?>/alojamientos/turismo-rural-<?= urlencode(strtolower(str_replace(' ', '-', $province))) ?>"
+            <a href="https://rutasrurales.io/alojamientos-turisticos"
                class="lnd-btn lnd-btn--outline">
                 <?= htmlspecialchars(str_replace('{PROVINCE}', $province, $t['semantic_cta_alo'] ?? 'Ver todos los alojamientos')) ?>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
