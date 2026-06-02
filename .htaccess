@@ -136,6 +136,25 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){2,})/?$ alojamientos-landing/index.php?lang=es&slug=$1 [L,QSA]
 
 # ============================================================
+# 5c. LANDINGS LONG-TAIL DE EVENTOS — /eventos/{filtros}-{provincia}
+# ============================================================
+# Patrón: /eventos/musica-soria, /eventos/gratuitos-zamora,
+#         /eventos/tradiciones-verano-burgos, etc.
+# Idiomas: /en/eventos/music-soria, /fr/eventos/concerts-salamanca
+#
+# IMPORTANTE: "eventos" (plural) ≠ "evento" (singular → evento-detalle.php)
+# Google Search Console los tratará como verticales distintas.
+# ── Multilingüe (idioma en prefijo) ──────────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(en|fr|de|zh)/eventos/([a-z][a-z0-9]*(?:-[a-z0-9]+)+)/?$ eventos-landing/index.php?lang=$1&slug=$2 [L,QSA]
+
+# ── Español (sin prefijo de idioma) ──────────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^eventos/([a-z][a-z0-9]*(?:-[a-z0-9]+)+)/?$ eventos-landing/index.php?lang=es&slug=$1 [L,QSA]
+
+# ============================================================
 # 5. LIMPIEZA DE URLs ANTIGUAS
 # ============================================================
 RewriteRule ^alojamiento/lugar/(.+)$ /alojamiento/$1 [R=301,L]
