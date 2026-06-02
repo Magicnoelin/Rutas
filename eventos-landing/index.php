@@ -151,7 +151,7 @@ $semantic = ['accommodations' => [], 'places' => [], 'routes' => []];
 try {
     $pdo = getDBConnection();
 
-    $result  = getLandingEventos($pdo, $province_db, $sql_conditions, $page);
+    $result  = getLandingEventos($pdo, $province_db, $sql_conditions, $page, EVENTOS_PER_PAGE, $lang);
     $stats   = getLandingEventosStats($pdo, $province_db, $sql_conditions);
 
     if (!empty($province_db)) {

@@ -36,7 +36,8 @@ function getLandingEventos(
     ?string $province_db,
     array   $sql_conditions,
     int     $page     = 1,
-    int     $per_page = EVENTOS_PER_PAGE
+    int     $per_page = EVENTOS_PER_PAGE,
+    string  $lang     = 'es'
 ): array {
     $where  = ['e.is_active = 1', "e.moderation_status = 'approved'"];
     $params = [];
@@ -45,7 +46,7 @@ function getLandingEventos(
     $where[] = 'COALESCE(e.end_date, e.start_date) >= CURDATE()';
 
     if (!empty($province_db)) {
-        $where[]           = 'e.province = :province';
+        $where[]             = 'e.province = :province';
         $params[':province'] = $province_db;
     }
 
@@ -58,14 +59,37 @@ function getLandingEventos(
 
     $whereClause = 'WHERE ' . implode(' AND ', $where);
 
+    // ── JOIN con traducciones cuando el idioma no es español ──────────────────
+    // Si lang = 'es' no se hace JOIN (sin overhead).
+    // Si lang ≠ 'es': LEFT JOIN cultural_events_trads para obtener nombre,
+    // descripción corta y slug traducido.  COALESCE garantiza fallback al español.
+    $joinTrad  = '';
+    $selectTrad = '';
+    if ($lang !== 'es') {
+        $params[':lang'] = $lang;
+        $joinTrad = "LEFT JOIN cultural_events_trads t
+                       ON t.event_id = e.id AND t.language_code = :lang";
+        $selectTrad = "
+            COALESCE(t.name,              e.name)              AS name,
+            COALESCE(t.short_description, e.short_description) AS short_description,
+            COALESCE(t.slug,              e.slug)              AS trad_slug,";
+    } else {
+        $selectTrad = "
+            e.name,
+            e.short_description,
+            e.slug AS trad_slug,";
+    }
+
     // Total para paginación
     $countSql = "
         SELECT COUNT(DISTINCT e.id)
         FROM cultural_events e
         $whereClause
     ";
+    // El count no necesita el JOIN de traducciones (no afecta al total)
+    $countParams = array_filter($params, fn($k) => $k !== ':lang', ARRAY_FILTER_USE_KEY);
     $stmtCount = $pdo->prepare($countSql);
-    $stmtCount->execute($params);
+    $stmtCount->execute($countParams);
     $total = (int)$stmtCount->fetchColumn();
     $pages = $total > 0 ? (int)ceil($total / $per_page) : 0;
 
@@ -73,11 +97,12 @@ function getLandingEventos(
     $page   = max(1, min($page, max(1, $pages)));
     $offset = ($page - 1) * $per_page;
 
-    // Query principal — columnas verificadas contra el esquema real de cultural_events
+    // Query principal con traducciones opcionales
     $sql = "
         SELECT
-            e.id, e.name, e.slug,
-            e.short_description, e.description,
+            e.id, e.slug,
+            $selectTrad
+            e.description,
             e.start_date, e.end_date,
             e.municipality, e.province,
             e.venue_name, e.venue_address,
@@ -87,6 +112,7 @@ function getLandingEventos(
             e.poster_image, e.photo1, e.photo2,
             e.category_id
         FROM cultural_events e
+        $joinTrad
         $whereClause
         ORDER BY
             e.start_date ASC,
@@ -109,7 +135,14 @@ function getLandingEventos(
             $row['poster_image'] ?? '',
             $row['photo1'] ?? ''
         );
-        $row['url'] = 'https://rutasrurales.io/evento/' . ($row['slug'] ?? '');
+
+        // URL con prefijo de idioma — usa el slug traducido si existe
+        $slugParaUrl = $row['trad_slug'] ?? $row['slug'] ?? '';
+        if ($lang !== 'es') {
+            $row['url'] = 'https://rutasrurales.io/' . $lang . '/evento/' . $slugParaUrl;
+        } else {
+            $row['url'] = 'https://rutasrurales.io/evento/' . $slugParaUrl;
+        }
 
         // Precio display
         $row['precio_display'] = null;
