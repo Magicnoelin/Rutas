@@ -18,4 +18,10 @@
   <sitemap>
     <loc>https://rutasrurales.io/sitemap-eventos-i18n.xml</loc>
   </sitemap>
+  <sitemap>
+    <loc>https://rutasrurales.io/sitemap-landings.php</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://rutasrurales.io/sitemap-eventos-landing.php</loc>
+  </sitemap>
 </sitemapindex>
