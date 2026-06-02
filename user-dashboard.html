@@ -1413,16 +1413,17 @@
         const container = document.getElementById('membershipPlans');
         if (!container) return;
 
-        // Filtrar: solo mostrar planes de alojamiento (no mostrar plan "Gratuito" si el usuario ya lo tiene por defecto)
-        // Solo mostrar planes de pago para upgrade; el Free se muestra en el estado actual
-        const paidPlans = plans.filter(p => p.price_monthly > 0 || p.price_yearly > 0);
+        // Filtrar: excluir planes de apoyo/café que no son membresías de alojamiento
+        const filteredPlans = plans.filter(p =>
+            !p.plan_type || !['apoyo_plataforma', 'cafe', 'cafeteria'].includes(p.plan_type)
+        );
 
-        if (!plans || plans.length === 0) {
+        if (!filteredPlans || filteredPlans.length === 0) {
             container.innerHTML = '<div style="text-align:center;padding:2rem;color:#aaa;grid-column:1/-1;">No hay planes disponibles</div>';
             return;
         }
 
-        container.innerHTML = plans.map(plan => {
+        container.innerHTML = filteredPlans.map(plan => {
             const features = Array.isArray(plan.features) ? plan.features : [];
             const isPopular = plan.is_popular == 1 || plan.is_popular === true;
             const isLaunchOffer = plan.is_launch_offer == 1 || plan.is_launch_offer === true;

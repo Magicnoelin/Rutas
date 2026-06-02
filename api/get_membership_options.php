@@ -45,9 +45,11 @@ try {
                 multipropiedad_note,
                 stripe_product_id,
                 stripe_monthly_price_id,
-                stripe_yearly_price_id
+                stripe_yearly_price_id,
+                plan_type
             FROM membership_plans
             WHERE is_active = TRUE
+              AND (plan_type IS NULL OR plan_type NOT IN ('apoyo_plataforma','cafe','cafeteria'))
             ORDER BY id ASC
         ");
 
@@ -106,7 +108,7 @@ try {
                 'official_price_yearly' => 240.00,
                 'features' => [
                     'Hasta 4 alojamientos',
-                    'Fotos ilimitadas',
+                    'Hasta 20 fotos por alojamiento',
                     'Descripción completa',
                     'ENLACE DIRECTO a tu web o motor de reservas (0% comisiones)',
                     'Posicionamiento destacado en búsquedas',
@@ -115,7 +117,7 @@ try {
                     'Estadísticas avanzadas'
                 ],
                 'max_accommodations' => 4,
-                'max_photos' => null,
+                'max_photos' => 20,
                 'can_send_offers' => true,
                 'has_advanced_stats' => true,
                 'has_basic_stats' => true,
@@ -130,10 +132,11 @@ try {
                 'is_popular' => true,
                 'is_launch_offer' => true,
                 'launch_discount_percent' => 50,
-                'multipropiedad_note' => '¿Tienes más de un alojamiento? Consúltanos por nuestro Pack Multipropiedad',
+                'multipropiedad_note' => '¿Tienes más de 4 alojamientos? Consúltanos por nuestro Pack Multipropiedad',
                 'stripe_product_id' => null,
                 'stripe_monthly_price_id' => null,
-                'stripe_yearly_price_id' => null
+                'stripe_yearly_price_id' => null,
+                'plan_type' => 'alojamiento'
             ],
             [
                 'id' => 3,
