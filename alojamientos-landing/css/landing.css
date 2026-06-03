@@ -722,3 +722,25 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   .lnd-navbar, .lnd-footer, .lnd-pagination, .lnd-card__cta { display: none; }
   .lnd-card { box-shadow: none; border: 1px solid #ccc; }
 }
+
+/* ════════════════════════════════════════════ INBOUND LINKS (SEO) ══ */
+/*
+ * Links internos insertados dinámicamente por procesarInboundLinks().
+ * Aparecen dentro de .lnd-intro__p, .lnd-intro__tip y .lnd-card__desc
+ */
+.lnd-intro__p a,
+.lnd-intro__tip a,
+.lnd-card__desc a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: color var(--transition), text-decoration-color var(--transition);
+}
+.lnd-intro__p a:hover,
+.lnd-intro__tip a:hover,
+.lnd-card__desc a:hover {
+  color: var(--primary-dark);
+  text-decoration-color: var(--accent);
+}
