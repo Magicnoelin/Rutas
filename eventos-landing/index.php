@@ -439,7 +439,14 @@ a{color:var(--primary);text-decoration:none}
     ?>
 
     <!-- ── CTA FINAL ──────────────────────────────────────────────────── -->
-    <?php if ($stats['total'] > 0): ?>
+    <?php if ($stats['total'] > 0):
+        // Enlace a la agenda completa de la provincia (sin filtros)
+        $cta_url = !empty($province_key)
+            ? ($lang !== 'es'
+                ? "https://rutasrurales.io/$lang/eventos/$province_key"
+                : "https://rutasrurales.io/eventos/$province_key")
+            : "https://rutasrurales.io/eventos-culturales";
+    ?>
     <section class="lnd-intro" style="border-top:3px solid var(--accent);" aria-label="Llamada a la acción">
         <div class="lnd-intro__inner" style="text-align:center;padding:40px 20px;">
             <h2 class="lnd-intro__h2" style="display:block;text-align:left;">
@@ -448,12 +455,12 @@ a{color:var(--primary);text-decoration:none}
             <p class="lnd-intro__p">
                 <?= htmlspecialchars(str_replace('{PROVINCE}', $province_label ?: 'España', $t['cta_desc'] ?? '')) ?>
             </p>
-            <a href="https://rutasrurales.io/eventos-culturales"
+            <a href="<?= htmlspecialchars($cta_url) ?>"
                class="lnd-btn lnd-btn--primary"
                style="display:inline-flex;margin-top:12px;">
                 <?= htmlspecialchars($t['cta_button'] ?? 'Ver agenda completa') ?>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 19"/>
                 </svg>
             </a>
         </div>
