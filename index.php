@@ -327,6 +327,9 @@ ul{list-style:none}
         <a href="<?= $base_domain ?>/actividades-turisticas">
             <?= htmlspecialchars($t['nav_activities']) ?>
         </a>
+        <a href="<?= $base_domain ?>/rutas.php">
+            🗺️ <?= $lang === 'es' ? 'Mapa' : ($lang === 'en' ? 'Map' : ($lang === 'fr' ? 'Carte' : ($lang === 'de' ? 'Karte' : '地图'))) ?>
+        </a>
         <a href="<?= $base_domain ?>/login.html" class="hub-navbar__cta">
             <?= htmlspecialchars($t['nav_login']) ?>
         </a>
@@ -392,6 +395,10 @@ ul{list-style:none}
     <a href="<?= $base_domain ?>/actividades-turisticas">
         <span class="hub-cta__icon">🥾</span>
         <?= htmlspecialchars($t['nav_activities']) ?>
+    </a>
+    <a href="<?= $base_domain ?>/rutas.php">
+        <span class="hub-cta__icon">🗺️</span>
+        <?= $lang === 'es' ? 'Mapa interactivo' : ($lang === 'en' ? 'Interactive map' : ($lang === 'fr' ? 'Carte interactive' : ($lang === 'de' ? 'Interaktive Karte' : '互动地图'))) ?>
     </a>
     <a href="<?= $base_domain ?>/login.html">
         <span class="hub-cta__icon">👤</span>
@@ -512,6 +519,13 @@ ul{list-style:none}
                         <?php elseif ($lang === 'fr'): ?>Itinéraires thématiques
                         <?php elseif ($lang === 'de'): ?>Themenrouten
                         <?php else: ?>主题路线<?php endif; ?>
+                    </a>
+                    <a href="<?= $base_domain ?>/rutas.php">
+                        🗺️ <?php if ($lang === 'es'): ?>Mapa interactivo
+                        <?php elseif ($lang === 'en'): ?>Interactive map
+                        <?php elseif ($lang === 'fr'): ?>Carte interactive
+                        <?php elseif ($lang === 'de'): ?>Interaktive Karte
+                        <?php else: ?>互动地图<?php endif; ?>
                     </a>
                 </nav>
             </div>

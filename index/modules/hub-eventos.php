@@ -62,13 +62,19 @@ function renderHubEventos(array $ctx): void {
                 $url  = hubUrl($slug, $lang, 'eventos');
                 $labelEvt = HUB_FILTROS_EVT[$filtroTemp][$lang] ?? HUB_FILTROS_EVT[$filtroTemp]['es'];
             ?>
-            <li>
+            <li class="hub-season-item">
                 <a href="<?= htmlspecialchars($url) ?>"
                    class="hub-season-card"
                    title="<?= htmlspecialchars($labelEvt . ' en ' . $provData['label']) ?>">
                     <span class="hub-season-card__emoji" aria-hidden="true"><?= $provData['emoji'] ?></span>
                     <span class="hub-season-card__prov"><?= htmlspecialchars($provData['label']) ?></span>
                     <span class="hub-season-card__cat"><?= htmlspecialchars($labelEvt) ?></span>
+                </a>
+                <a href="<?= $base ?>/rutas.php?provincia=<?= urlencode($provData['label']) ?>&alojamientos=0&lugares=0&actividades=0&eventos=1"
+                   class="hub-prov-map-btn"
+                   title="Ver eventos en <?= htmlspecialchars($provData['label']) ?> en el mapa"
+                   aria-label="Mapa de eventos en <?= htmlspecialchars($provData['label']) ?>">
+                    🗺️
                 </a>
             </li>
             <?php endforeach; ?>
@@ -171,11 +177,15 @@ function renderHubEventos(array $ctx): void {
         </div>
     </details>
 
-    <!-- ── CTA Ver agenda completa ────────────────────────────────────────────── -->
+    <!-- ── CTA Ver agenda completa + Mapa ────────────────────────────────────── -->
     <div class="hub-section__cta">
         <a href="<?= $base ?>/eventos-culturales-paginacion.html"
            class="hub-btn hub-btn--outline hub-btn--events">
             <?= htmlspecialchars($t['hub_evt_all']) ?>
+        </a>
+        <a href="<?= $base ?>/rutas.php?alojamientos=0&lugares=0&actividades=0&eventos=1"
+           class="hub-btn hub-btn--map">
+            🗺️ <?= $lang === 'es' ? 'Ver en el mapa' : ($lang === 'en' ? 'View on map' : ($lang === 'fr' ? 'Voir sur la carte' : ($lang === 'de' ? 'Auf der Karte' : '在地图上查看'))) ?>
         </a>
     </div>
 

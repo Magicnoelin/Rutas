@@ -902,3 +902,71 @@ ul { list-style: none; }
   transition: top .15s ease;
 }
 .skip-link:focus { top: 0; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MAPA INTERACTIVO — botón 🗺️ en tarjetas y CTAs
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Wrapper que agrupa tarjeta de provincia + botón de mapa */
+.hub-prov-item { position: relative; display: flex; flex-direction: column; }
+
+/* Icono 🗺️ en tarjetas de provincia */
+.hub-prov-map-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  align-self: center;
+  margin-top: 4px;
+  text-decoration: none;
+  line-height: 1;
+}
+.hub-prov-map-btn:hover {
+  background: var(--bg-alt);
+  transform: scale(1.15);
+  box-shadow: 0 3px 10px rgba(0,0,0,.12);
+}
+
+/* Tarjetas estacionales de eventos con botón de mapa */
+.hub-season-item { display: flex; flex-direction: column; align-items: center; }
+.hub-season-item .hub-prov-map-btn { margin-top: 6px; }
+
+/* Botón CTA "Ver en el mapa" */
+.hub-btn--map {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-sm);
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform var(--transition);
+  text-decoration: none;
+}
+.hub-btn--map:hover {
+  background: var(--primary);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(47,82,51,.25);
+}
+
+/* Múltiples CTAs en la misma fila */
+.hub-section__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 36px;
+}
