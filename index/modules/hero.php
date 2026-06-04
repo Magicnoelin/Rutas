@@ -98,25 +98,6 @@ function renderHubHero(array $ctx): void {
             </div>
         </div>
 
-        <!-- CTA Antonio (asistente IA) -->
-        <button
-            class="hub-antonio-btn"
-            onclick="abrirAntonio()"
-            aria-label="<?= htmlspecialchars($t['hero_chat']) ?>">
-            <img
-                src="/menu_images/antonio.jpg"
-                alt="Antonio — Experto local"
-                class="hub-antonio-btn__avatar"
-                width="36" height="36"
-                loading="lazy">
-            <span><?= htmlspecialchars($t['hero_chat']) ?></span>
-            <svg class="hub-antonio-btn__arrow" width="16" height="16" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                <line x1="5" y1="12" x2="19" y2="12"/>
-                <polyline points="12 5 19 12 12 19"/>
-            </svg>
-        </button>
-
     </div><!-- /.hub-hero__inner -->
 </section>
     <?php
