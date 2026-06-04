@@ -56,7 +56,7 @@ function renderEventosLandingSchema(array $ctx): void
         '@id'   => $canonical . '#breadcrumb',
         'itemListElement' => [
             ['@type' => 'ListItem', 'position' => 1, 'name' => $bcLabel[0], 'item' => 'https://rutasrurales.io/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcLabel[1], 'item' => 'https://rutasrurales.io/eventos-culturales'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcLabel[1], 'item' => 'https://rutasrurales.io/eventos-culturales-paginacion.html'],
             ['@type' => 'ListItem', 'position' => 3, 'name' => $filter_label . (!empty($province) ? ' · ' . $province : ''), 'item' => $canonical],
         ],
     ];
@@ -169,7 +169,7 @@ function renderEventosLandingSchema(array $ctx): void
         'name'  => 'rutasrurales.io',
         'potentialAction' => [
             '@type'       => 'SearchAction',
-            'target'      => 'https://rutasrurales.io/eventos-culturales?q={search_term_string}',
+            'target'      => 'https://rutasrurales.io/eventos-culturales-paginacion.html?q={search_term_string}',
             'query-input' => 'required name=search_term_string',
         ],
     ];

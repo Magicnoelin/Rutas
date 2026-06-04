@@ -449,7 +449,7 @@ a{color:var(--primary);text-decoration:none}
             <a href="https://rutasrurales.io/"><?= htmlspecialchars($t['footer_home']) ?></a>
             <a href="https://rutasrurales.io/alojamientos-turisticos"><?= htmlspecialchars($t['footer_listings']) ?></a>
             <a href="https://rutasrurales.io/lugares-de-interes"><?= htmlspecialchars($t['footer_places']) ?></a>
-            <a href="https://rutasrurales.io/eventos-culturales"><?= htmlspecialchars($t['footer_events']) ?></a>
+            <a href="https://rutasrurales.io/eventos-culturales-paginacion.html"><?= htmlspecialchars($t['footer_events']) ?></a>
             <a href="https://rutasrurales.io/aviso-legal.html"><?= htmlspecialchars($t['footer_legal']) ?></a>
         </nav>
 
