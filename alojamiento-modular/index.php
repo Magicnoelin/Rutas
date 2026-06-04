@@ -63,6 +63,30 @@ if (!empty($slug)) {
     }
 }
 
+// ─── FALLBACK: Si no se encuentra el alojamiento, redirigir a landing de provincia ──
+// Si el slug tiene formato de landing (filtro-provincia), redirigir a /alojamientos/{slug}
+// Ej: /alojamiento/accesibles-leon → /alojamientos/accesibles-leon
+// Si no se puede parsear como landing, redirigir al listado general
+if (empty($alojamiento) && !empty($slug)) {
+    // Cargar parseLandingSlug desde config/filters.php
+    $filtersConfigPath = __DIR__ . '/../alojamientos-landing/config/filters.php';
+    if (file_exists($filtersConfigPath)) {
+        require_once $filtersConfigPath;
+        $parsed = parseLandingSlug($slug);
+        if ($parsed['valid']) {
+            // Redirigir 301 a la landing page correspondiente
+            $prefix = ($lang !== 'es') ? "/$lang" : '';
+            header('HTTP/1.1 301 Moved Permanently');
+            header('Location: https://rutasrurales.io' . $prefix . '/alojamientos/' . $slug);
+            exit;
+        }
+    }
+    // Si no se pudo parsear como landing, redirigir al listado general
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: https://rutasrurales.io/alojamientos-turisticos');
+    exit;
+}
+
 // ─── SEO ─────────────────────────────────────────────────────────────────────
 $page_title = $alojamiento
     ? ($alojamiento['meta_title'] ?: $alojamiento['name'] . ' — ' . ($alojamiento['municipality'] ?? '') . ' | Rutas Rurales')
