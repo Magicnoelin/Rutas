@@ -173,7 +173,7 @@ function renderHubEventos(array $ctx): void {
 
     <!-- ── CTA Ver agenda completa ────────────────────────────────────────────── -->
     <div class="hub-section__cta">
-        <a href="<?= $base ?>/eventos-culturales"
+        <a href="<?= $base ?>/eventos-culturales-paginacion.html"
            class="hub-btn hub-btn--outline hub-btn--events">
             <?= htmlspecialchars($t['hub_evt_all']) ?>
         </a>

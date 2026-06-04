@@ -75,7 +75,7 @@ function renderAutoridadSeo(array $ctx): void {
                     </a>
                 </li>
                 <li>
-                    <a href="<?= $base ?>/eventos-culturales"
+                    <a href="<?= $base ?>/eventos-culturales-paginacion.html"
                        class="hub-quick-link"
                        aria-label="<?= htmlspecialchars($t['footer_nav_events']) ?>">
                         <span class="hub-quick-link__icon" aria-hidden="true">🎭</span>

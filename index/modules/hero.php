@@ -20,7 +20,7 @@ function renderHubHero(array $ctx): void {
 
     // URLs de las verticales con soporte multilingüe
     $url_stays  = $base . $langPfx . '/alojamientos-turisticos';
-    $url_events = $base . $langPfx . '/eventos-culturales';
+    $url_events = $base . $langPfx . '/eventos-culturales-paginacion.html';
     $url_places = $base . '/lugares-de-interes'; // Solo ES por ahora
     $url_activ  = $base . '/actividades-turisticas'; // Solo ES por ahora
 
@@ -33,20 +33,14 @@ function renderHubHero(array $ctx): void {
 
     <!-- Imagen de fondo optimizada para LCP -->
     <div class="hub-hero__bg" aria-hidden="true">
-        <picture>
-            <source
-                media="(min-width: 768px)"
-                srcset="/menu_images/hero-desktop.webp"
-                type="image/webp">
-            <img
-                src="/menu_images/hero-mobile.webp"
-                alt=""
-                class="hub-hero__bg-img"
-                width="1200" height="600"
-                loading="eager"
-                fetchpriority="high"
-                decoding="async">
-        </picture>
+        <img
+            src="/menu_images/hero_main.webp"
+            alt=""
+            class="hub-hero__bg-img"
+            width="1200" height="600"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async">
         <div class="hub-hero__overlay" aria-hidden="true"></div>
     </div>
 

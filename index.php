@@ -166,6 +166,7 @@ $langPfx = ($lang !== 'es') ? '/' . $lang : '';
 
 <!-- ── Preload: Logo y hero (LCP crítico) ───────────────────────────────── -->
 <link rel="preload" as="image" href="/menu_images/Logo%20transparente.webp" type="image/webp">
+<link rel="preload" as="image" href="/menu_images/hero_main.webp" type="image/webp" fetchpriority="high">
 
 <!-- ── Fuentes locales (no bloquean render) ─────────────────────────────── -->
 <style>
@@ -317,7 +318,7 @@ ul{list-style:none}
         <a href="<?= $base_domain . $langPfx ?>/alojamientos-turisticos">
             <?= htmlspecialchars($t['nav_stays']) ?>
         </a>
-        <a href="<?= $base_domain . $langPfx ?>/eventos-culturales">
+        <a href="<?= $base_domain ?>/eventos-culturales-paginacion.html">
             <?= htmlspecialchars($t['nav_events']) ?>
         </a>
         <a href="<?= $base_domain ?>/lugares-de-interes">
@@ -380,7 +381,7 @@ ul{list-style:none}
         <span class="hub-cta__icon">🏡</span>
         <?= htmlspecialchars($t['nav_stays']) ?>
     </a>
-    <a href="<?= $base_domain . $langPfx ?>/eventos-culturales">
+    <a href="<?= $base_domain ?>/eventos-culturales-paginacion.html">
         <span class="hub-cta__icon">🎭</span>
         <?= htmlspecialchars($t['nav_events']) ?>
     </a>
@@ -496,7 +497,7 @@ ul{list-style:none}
                     <a href="<?= $base_domain ?>/alojamientos-turisticos">
                         <?= htmlspecialchars($t['footer_nav_stays']) ?>
                     </a>
-                    <a href="<?= $base_domain ?>/eventos-culturales">
+                    <a href="<?= $base_domain ?>/eventos-culturales-paginacion.html">
                         <?= htmlspecialchars($t['footer_nav_events']) ?>
                     </a>
                     <a href="<?= $base_domain ?>/lugares-de-interes">
