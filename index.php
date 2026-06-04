@@ -1,577 +1,646 @@
+<?php
+/**
+ * ════════════════════════════════════════════════════════════════════════════
+ *  INDEX.PHP — Hub de Autoridad de rutasrurales.io
+ *  Versión 2.0 — Rediseño completo orientado a SEO y Crawl Budget
+ *
+ *  Arquitectura:
+ *    1. Detección de idioma (por URL prefix o parámetro ?lang=)
+ *    2. Carga de configuración, traducciones y módulos
+ *    3. Query a BD para estadísticas (con fallback graceful)
+ *    4. Renderizado: head → navbar → hero → hub_alo → hub_evt → autoridad → footer
+ *
+ *  URLs multilingüe (gestionadas por el .htaccess):
+ *    /             → Español (este archivo)
+ *    /en/          → English  (en/index.html redirige aquí con ?lang=en)
+ *    /fr/          → Français
+ *    /de/          → Deutsch
+ *    /zh/          → 中文
+ *
+ *  Estrategia hreflang:
+ *    - Alojamientos y Eventos: 5 idiomas disponibles (/lang/alojamientos/slug)
+ *    - Lugares y Actividades:  solo ES por ahora; fallback a URL ES con nota
+ *    - x-default apunta siempre a la versión ES
+ * ════════════════════════════════════════════════════════════════════════════
+ */
+
+ini_set('display_errors', 0);
+error_reporting(E_ERROR | E_PARSE);
+if (!defined('API_NO_HEADERS')) {
+    define('API_NO_HEADERS', true);
+}
+
+// ── Rutas base ────────────────────────────────────────────────────────────────
+$_BASE  = __DIR__;
+$_INDEX = __DIR__ . '/index';
+
+// ── Dependencias de las landings (provincias, filtros, helpers) ───────────────
+// Solo las constantes de provincias/filtros que necesita el hub
+require_once $_INDEX . '/config/hub-config.php';
+require_once $_INDEX . '/i18n/translations.php';
+
+// ── Módulos del hub ───────────────────────────────────────────────────────────
+require_once $_INDEX . '/modules/schema.php';
+require_once $_INDEX . '/modules/hero.php';
+require_once $_INDEX . '/modules/hub-alojamientos.php';
+require_once $_INDEX . '/modules/hub-eventos.php';
+require_once $_INDEX . '/modules/autoridad-seo.php';
+
+// ── 1. DETECCIÓN DE IDIOMA ────────────────────────────────────────────────────
+// El .htaccess pasa ?lang=XX cuando accede desde /en/, /fr/, etc.
+// También acepta el parámetro directo en la URL (para compatibilidad)
+$lang = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
+$lang = in_array($lang, ['es', 'en', 'fr', 'de', 'zh'], true) ? $lang : 'es';
+
+// ── 2. TRADUCCIONES ───────────────────────────────────────────────────────────
+$t = getHubTranslations($lang);
+
+// ── 3. TEMPORADA ACTUAL (para el hub de eventos) ──────────────────────────────
+$temporada = getTemporadaActual();
+
+// ── 4. ESTADÍSTICAS DESDE BD (con fallback graceful) ─────────────────────────
+$stats = ['total_stays' => null, 'total_events' => null, 'total_prov' => 12];
+
+try {
+    if (file_exists($_BASE . '/api/config.php')) {
+        require_once $_BASE . '/api/config.php';
+        $pdo = getDBConnection();
+
+        $rowStays = $pdo->query(
+            "SELECT COUNT(*) AS c FROM accommodations WHERE is_active = 1"
+        )->fetch(PDO::FETCH_ASSOC);
+
+        $rowEvents = $pdo->query(
+            "SELECT COUNT(*) AS c FROM cultural_events WHERE is_active = 1"
+        )->fetch(PDO::FETCH_ASSOC);
+
+        $rowProv = $pdo->query(
+            "SELECT COUNT(DISTINCT province) AS c FROM accommodations WHERE is_active = 1"
+        )->fetch(PDO::FETCH_ASSOC);
+
+        $stats['total_stays']  = '+' . number_format((int)($rowStays['c'] ?? 0), 0, ',', '.');
+        $stats['total_events'] = '+' . number_format((int)($rowEvents['c'] ?? 0), 0, ',', '.');
+        $stats['total_prov']   = (int)($rowProv['c'] ?? 12);
+    }
+} catch (Throwable $e) {
+    error_log('[index.php] BD stats error: ' . $e->getMessage());
+    // Fallback: valores ilustrativos
+    $stats = ['total_stays' => '+500', 'total_events' => '+1.200', 'total_prov' => 12];
+}
+
+// ── 5. CONTEXTO COMPARTIDO ────────────────────────────────────────────────────
+$ctx = [
+    'lang'      => $lang,
+    't'         => $t,
+    'stats'     => $stats,
+    'temporada' => $temporada,
+];
+
+// ── 6. URLs CANÓNICAS Y HREFLANG ──────────────────────────────────────────────
+$base_domain = 'https://rutasrurales.io';
+$canonical   = $lang === 'es'
+    ? $base_domain . '/'
+    : $base_domain . '/' . $lang . '/';
+
+// Hreflang para el Index
+// Todos los idiomas apuntan a sus versiones de index.html en las carpetas de idioma
+// excepto ES que es la raíz
+$hreflang_urls = [
+    'es'        => $base_domain . '/',
+    'en'        => $base_domain . '/en/',
+    'fr'        => $base_domain . '/fr/',
+    'de'        => $base_domain . '/de/',
+    'zh'        => $base_domain . '/zh/',
+    'x-default' => $base_domain . '/',
+];
+
+// ── 7. OG IMAGE ───────────────────────────────────────────────────────────────
+$og_image = $base_domain . '/menu_images/og-default.jpg';
+$og_title = $t['og_title'] ?? $t['meta_title'];
+
+// ── HELPERS locales ───────────────────────────────────────────────────────────
+$langPfx = ($lang !== 'es') ? '/' . $lang : '';
+
+?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?= htmlspecialchars($lang) ?>" dir="<?= $t['dir'] ?? 'ltr' ?>">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Reserva el mejor turismo rural en España con Rutas. Encuentra alojamientos con encanto, rutas de senderismo, actividades de aventura y eventos culturales. Tu plataforma para vivir experiencias auténticas en la naturaleza.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- X (Twitter) Card meta tags -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@rutas_rurales">
-  <meta name="twitter:title" content="Turismo Rural en España | Reserva Alojamientos y Experiencias | Rutas">
-  <meta name="twitter:description" content="Reserva alojamientos únicos, rutas mágicas y experiencias auténticas en toda España con Rutas, tu plataforma de turismo rural.">
-  <meta name="twitter:image" content="https://rutasrurales.io/menu_images/Logo%20transparente.webp">
+<!-- ── SEO Primario ──────────────────────────────────────────────────────── -->
+<title><?= htmlspecialchars($t['meta_title']) ?></title>
+<meta name="description" content="<?= htmlspecialchars($t['meta_desc']) ?>">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
 
-  <!-- Cache control (temporal para ver cambios) -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+<!-- ── hreflang — 5 idiomas + x-default ─────────────────────────────────── -->
+<?php foreach ($hreflang_urls as $hl_lang => $hl_url): ?>
+<link rel="alternate" hreflang="<?= htmlspecialchars($hl_lang) ?>" href="<?= htmlspecialchars($hl_url) ?>">
+<?php endforeach; ?>
 
-  <title>Turismo Rural en España | Reserva las Mejores Casas Rurales y Experiencias | Rutas</title>
-  <link rel="canonical" href="https://rutasrurales.io/">
+<!-- ── Open Graph ───────────────────────────────────────────────────────── -->
+<meta property="og:type"         content="website">
+<meta property="og:title"        content="<?= htmlspecialchars($og_title) ?>">
+<meta property="og:description"  content="<?= htmlspecialchars($t['meta_desc']) ?>">
+<meta property="og:image"        content="<?= htmlspecialchars($og_image) ?>">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url"          content="<?= htmlspecialchars($canonical) ?>">
+<meta property="og:site_name"    content="Rutas Rurales">
+<meta property="og:locale"       content="<?= htmlspecialchars($t['lang_locale'] ?? 'es-ES') ?>">
 
-  <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.css?v=1.1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    /* Ajuste para que el logo no rompa el diseño en móviles */
-    @media (max-width: 768px) {
-      .logo-subtitle {
-        display: none; /* Ocultamos el subtítulo largo en móviles */
-      }
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-    }
-  </style>
+<!-- ── Twitter Card ─────────────────────────────────────────────────────── -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:site"        content="@rutas_rurales">
+<meta name="twitter:title"       content="<?= htmlspecialchars($og_title) ?>">
+<meta name="twitter:description" content="<?= htmlspecialchars($t['meta_desc']) ?>">
+<meta name="twitter:image"       content="<?= htmlspecialchars($og_image) ?>">
 
-  <!-- Google Tag Manager - Cargado solo después de interacción del usuario -->
-  <script>
-    // Cargar GTM solo después de interacción del usuario o cuando la página esté completamente inactiva
-    function loadGTM() {
-      if (window.gtmLoaded) return;
-      window.gtmLoaded = true;
-      
-      (function(w,d,s,l,i){
-        w[l]=w[l]||[];
-        w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
-        var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),
-        dl=l!='dataLayer'?'&l='+l:'';
-        j.async=true;
-        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-        f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-MBP57VQM');
-    }
-    
-    // Cargar después de interacción del usuario
-    ['click', 'scroll', 'keydown', 'mousemove', 'touchstart'].forEach(function(event) {
-      window.addEventListener(event, function() {
-        setTimeout(loadGTM, 3000); // 3 segundos después de interacción
-      }, { once: true });
-    });
-    
-    // Cargar después de 10 segundos si no hay interacción
-    setTimeout(loadGTM, 10000);
-  </script>
-  <!-- End Google Tag Manager -->
+<!-- ── Favicon ──────────────────────────────────────────────────────────── -->
+<link rel="icon"             href="/menu_images/Favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/menu_images/Favicon.png">
 
-  <!-- Google Analytics - Cargado solo después de interacción del usuario -->
-  <script>
-    // Cargar Google Analytics solo después de interacción del usuario
-    function loadGoogleAnalytics() {
-      if (window.gaLoaded) return;
-      window.gaLoaded = true;
-      
-      var script = document.createElement('script');
-      script.async = true;
-      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42';
-      document.head.appendChild(script);
-      
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-X990K5GE42');
-    }
-    
-    // Cargar después de interacción del usuario (más tarde que GTM)
-    ['click', 'scroll', 'keydown', 'mousemove', 'touchstart'].forEach(function(event) {
-      window.addEventListener(event, function() {
-        setTimeout(loadGoogleAnalytics, 5000); // 5 segundos después de interacción
-      }, { once: true });
-    });
-    
-    // Cargar después de 15 segundos si no hay interacción
-    setTimeout(loadGoogleAnalytics, 15000);
-  </script>
+<!-- ── Preconnect ───────────────────────────────────────────────────────── -->
+<link rel="preconnect" href="https://hatscripts.github.io" crossorigin>
+
+<!-- ── Preload: Logo y hero (LCP crítico) ───────────────────────────────── -->
+<link rel="preload" as="image" href="/menu_images/Logo%20transparente.webp" type="image/webp">
+
+<!-- ── Fuentes locales (no bloquean render) ─────────────────────────────── -->
+<style>
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:400;font-display:swap;
+  src:local('Montserrat Regular'),url('/fonts/montserrat-v31-latin-regular.woff2') format('woff2')}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:600;font-display:swap;
+  src:local('Montserrat SemiBold'),url('/fonts/montserrat-v31-latin-600.woff2') format('woff2')}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:800;font-display:swap;
+  src:local('Montserrat ExtraBold'),url('/fonts/montserrat-v31-latin-800.woff2') format('woff2')}
+</style>
+
+<!-- ── CSS CRÍTICO INLINE (above the fold — evita render-blocking) ───────── -->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#2F5233;--primary-dark:#1a3d1e;--primary-light:#3d6b42;
+  --accent:#81C784;--accent-warm:#F9A825;--accent-blue:#1a3a5c;
+  --white:#fff;--bg:#f8f9fa;--bg-alt:#f0f4f1;
+  --text:#2d3436;--text-light:#636e72;--border:#e8eaed;
+  --radius:14px;--radius-sm:8px;
+  --shadow:0 2px 12px rgba(0,0,0,.07);
+  --max-w:1200px;--transition:.18s ease}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--primary);text-decoration:none}
+ul{list-style:none}
+
+/* Navbar crítico */
+.hub-navbar{position:sticky;top:0;z-index:900;background:var(--white);
+  border-bottom:1px solid var(--border);height:64px;display:flex;
+  align-items:center;padding:0 20px;gap:16px;
+  box-shadow:0 1px 6px rgba(0,0,0,.06);contain:layout style}
+.hub-navbar__logo{display:flex;align-items:center;gap:10px;font-weight:800;
+  color:var(--primary);font-size:1rem;text-decoration:none;flex-shrink:0}
+.hub-navbar__logo img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.hub-navbar__nav{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:.82rem}
+.hub-navbar__nav a{color:var(--text);font-weight:600;padding:6px 12px;
+  border-radius:var(--radius-sm);white-space:nowrap}
+.hub-navbar__cta{background:var(--primary)!important;color:var(--white)!important;
+  padding:8px 16px!important;border-radius:var(--radius-sm)!important;font-weight:700!important}
+.hub-hamburger{display:none;flex-direction:column;gap:5px;background:none;
+  border:none;cursor:pointer;padding:8px;margin-left:auto}
+.hub-hamburger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
+
+/* Hero crítico (LCP zone) */
+.hub-hero{position:relative;min-height:540px;display:flex;align-items:center;
+  overflow:hidden;contain:layout}
+.hub-hero__bg{position:absolute;inset:0;z-index:0}
+.hub-hero__bg-img{width:100%;height:100%;object-fit:cover;object-position:center 40%}
+.hub-hero__overlay{position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(26,61,30,.88) 0%,rgba(47,82,51,.75) 50%,rgba(26,61,30,.55) 100%)}
+.hub-hero__inner{position:relative;z-index:1;padding:60px 20px 56px;width:100%}
+.hub-hero__h1{font-size:clamp(1.8rem,4.5vw,3rem);font-weight:800;color:var(--white);
+  line-height:1.1;margin-bottom:16px;text-shadow:0 2px 8px rgba(0,0,0,.25);max-width:700px}
+.hub-hero__sub{font-size:clamp(.95rem,2vw,1.15rem);color:rgba(255,255,255,.88);
+  margin-bottom:36px;max-width:600px;font-weight:500;line-height:1.5}
+.hub-container{max-width:var(--max-w);margin:0 auto;padding:0 20px}
+
+/* Placeholder acordeones (evita CLS) */
+.hub-accordion{background:var(--white);border:1px solid var(--border);
+  border-radius:var(--radius);margin-bottom:12px;overflow:hidden;
+  box-shadow:var(--shadow)}
+.hub-section{padding:72px 0}
+.hub-section--alt{background:var(--bg-alt)}
+
+@media(max-width:900px){
+  .hub-navbar__nav{display:none}
+  .hub-hamburger{display:flex}
+}
+@media(max-width:600px){
+  .hub-hero{min-height:480px}
+  .hub-hero__inner{padding:48px 16px 44px}
+  .hub-section{padding:52px 0}
+}
+</style>
+
+<!-- ── CSS no-crítico — carga asíncrona (no bloquea render) ─────────────── -->
+<link rel="stylesheet"
+      href="/index/css/index.css?v=2.0"
+      media="print"
+      onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/index/css/index.css?v=2.0"></noscript>
+
+<!-- ── JSON-LD Schema.org ───────────────────────────────────────────────── -->
+<?php renderHubSchema($ctx); ?>
+
+<!-- ── GTM diferido (no bloquea, carga tras interacción) ────────────────── -->
+<script>
+(function(){
+  var l=function(){if(window._gtm)return;window._gtm=1;
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+    j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MBP57VQM');
+  };
+  ['click','scroll','keydown','touchstart'].forEach(function(e){
+    window.addEventListener(e,function(){setTimeout(l,1e3)},{once:true,passive:true});
+  });
+  setTimeout(l,8000);
+})();
+</script>
+<!-- ── GA diferido ────────────────────────────────────────────────────────── -->
+<script>
+(function(){
+  var l=function(){if(window._ga)return;window._ga=1;
+    var s=document.createElement('script');s.async=true;
+    s.src='https://www.googletagmanager.com/gtag/js?id=G-X990K5GE42';
+    document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js',new Date());gtag('config','G-X990K5GE42');
+  };
+  ['click','scroll','keydown','touchstart'].forEach(function(e){
+    window.addEventListener(e,function(){setTimeout(l,3e3)},{once:true,passive:true});
+  });
+  setTimeout(l,12000);
+})();
+</script>
+
 </head>
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <!-- Header -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="container">
-                <div class="logo">
-                    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Logo" width="60" height="60">
-                    <div class="logo-text">
-                        <span class="logo-title">Rutas</span>
-                        <span class="logo-subtitle">Red Unificada de Turistas, Alojamientos y Servicios</span>
-                    </div>
-                </div>
-                
-                <!-- Selector de idiomas desktop -->
-                <div class="language-selector-nav">
-                    <button class="language-btn-nav" id="languageBtnNav" aria-label="Seleccionar idioma">
-                        <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
-                        <span>ES</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="language-dropdown-nav" id="languageDropdownNav">
-                        <a href="index.html">
-                            <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
-                            Español
-                        </a>
-                        <a href="en/index.html">
-                            <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
-                            English
-                        </a>
-                        <a href="fr/index.html">
-                            <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
-                            Français
-                        </a>
-                        <a href="de/index.html">
-                            <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
-                            Deutsch
-                        </a>
-                        <a href="zh/index.html">
-                            <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
-                            中文
-                        </a>
-                    </div>
-                </div>
-                
-                <button class="hamburger" id="hamburger" aria-label="Menú">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="#inicio"><i class="fas fa-home"></i> Inicio</a></li>
-                    <li><a href="alojamientos-turisticos.html"><i class="fas fa-bed"></i> Alojamientos Turísticos</a></li>
-                    <li><a href="lugares-interes-paginacion.html"><i class="fas fa-route"></i> Lugares de interés</a></li>
-                    <li><a href="https://rutasrurales.io/actividades-turisticas.html"><i class="fas fa-hiking"></i> Actividades Turísticas</a></li>
-                    <li><a href="https://rutasrurales.io/eventos-culturales-paginacion.html"><i class="fas fa-map-marker-alt"></i> Eventos culturales</a></li>
-                    <li><a href="https://rutasrurales.io/rutas.php"><i class="fas fa-route"></i> Rutas</a></li>
-                    <li><a href="compromiso-social.html"><i class="fas fa-heart"></i> Compromiso Social</a></li>
-                    <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
-                    <li><a href="#asistente" class="nav-asistente">
-                        <img src="/menu_images/antonio.jpg" alt="Antonio - Asistente" class="asistente-avatar">
-                        Antonio
-                    </a></li>
-                    
-                    <!-- Selector de idiomas móvil -->
-                    <li class="language-selector-mobile">
-                        <h4>🌐 Idiomas</h4>
-                        <div class="language-options-mobile">
-                            <a href="index.html">
-                                <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" alt="Español" width="24" height="24">
-                                ES
-                            </a>
-                            <a href="en/index.html">
-                                <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" alt="English" width="24" height="24">
-                                EN
-                            </a>
-                            <a href="fr/index.html">
-                                <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" alt="Français" width="24" height="24">
-                                FR
-                            </a>
-                            <a href="de/index.html">
-                                <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" alt="Deutsch" width="24" height="24">
-                                DE
-                            </a>
-                            <a href="zh/index.html">
-                                <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" alt="中文" width="24" height="24">
-                                ZH
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div class="hero" id="inicio">
-            <div class="hero-content">
-                <h1>Reserva las Mejores Experiencias de Turismo Rural en España</h1>
-                <p>Tu plataforma unificada para encontrar alojamientos con encanto, rutas únicas y actividades inolvidables en toda España</p>
-                <button class="btn-primary" onclick="abrirAntonio()">
-                    <i class="fas fa-robot"></i> Hablar con Antonio
-                </button>
-            </div>
-        </div>
-    </header>
 
-    <!-- Sección de Alojamientos -->
-    <section id="alojamientos" class="section">
-        <div class="container">
-            <h2 class="section-title">
-                <i class="fas fa-home"></i> Alojamientos Rurales
-            </h2>
-            <p style="text-align: center; margin-bottom: 2rem;">
-                <a href="alojamientos-turisticos.html" class="btn-primary">
-                    <i class="fas fa-search"></i> Ver Todos los Alojamientos
+<!-- GTM noscript -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<!-- Skip link (accesibilidad) -->
+<a href="#main-content" class="skip-link">
+    <?php echo $lang === 'es' ? 'Saltar al contenido principal' : 'Skip to main content'; ?>
+</a>
+
+<!-- ══════════════════════════════════════════════════════════ NAVBAR ══════ -->
+<header class="hub-navbar" role="banner">
+
+    <!-- Logo -->
+    <a href="<?= $base_domain ?>/" class="hub-navbar__logo" aria-label="Rutas Rurales — Inicio">
+        <img src="/menu_images/Logo%20transparente.webp"
+             alt="Rutas Rurales"
+             width="40" height="40"
+             loading="eager">
+        <span>Rutas Rurales</span>
+    </a>
+
+    <!-- Navegación desktop -->
+    <nav class="hub-navbar__nav" aria-label="Menú principal">
+        <a href="<?= $base_domain . $langPfx ?>/alojamientos-turisticos">
+            <?= htmlspecialchars($t['nav_stays']) ?>
+        </a>
+        <a href="<?= $base_domain . $langPfx ?>/eventos-culturales">
+            <?= htmlspecialchars($t['nav_events']) ?>
+        </a>
+        <a href="<?= $base_domain ?>/lugares-de-interes">
+            <?= htmlspecialchars($t['nav_places']) ?>
+        </a>
+        <a href="<?= $base_domain ?>/actividades-turisticas">
+            <?= htmlspecialchars($t['nav_activities']) ?>
+        </a>
+        <a href="<?= $base_domain ?>/login.html" class="hub-navbar__cta">
+            <?= htmlspecialchars($t['nav_login']) ?>
+        </a>
+    </nav>
+
+    <!-- Selector de idioma desktop -->
+    <div class="hub-lang-selector" id="langSelector" aria-label="<?= htmlspecialchars($t['nav_language']) ?>">
+        <button class="hub-lang-btn" id="langBtn" aria-expanded="false" aria-haspopup="listbox">
+            <img src="<?= HUB_LANGS[$lang]['flag_svg'] ?>"
+                 alt="<?= htmlspecialchars(HUB_LANGS[$lang]['label']) ?>"
+                 width="20" height="20" loading="lazy">
+            <span><?= strtoupper($lang) ?></span>
+            <svg class="hub-lang-chevron" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </button>
+        <div class="hub-lang-dropdown" id="langDropdown" role="listbox">
+            <?php foreach (HUB_LANGS as $lk => $lv):
+                $lUrl = $lk === 'es'
+                    ? $base_domain . '/'
+                    : $base_domain . '/' . $lk . '/';
+            ?>
+            <a href="<?= htmlspecialchars($lUrl) ?>"
+               role="option"
+               hreflang="<?= $lk ?>"
+               lang="<?= $lk ?>"
+               class="<?= ($lk === $lang) ? 'active' : '' ?>"
+               <?= ($lk === $lang) ? 'aria-selected="true"' : '' ?>>
+                <img src="<?= $lv['flag_svg'] ?>"
+                     alt="<?= htmlspecialchars($lv['label']) ?>"
+                     width="22" height="22" loading="lazy">
+                <?= htmlspecialchars($lv['label']) ?>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- Hamburguesa móvil -->
+    <button class="hub-hamburger" id="hubHamburger"
+            aria-label="<?= $lang === 'es' ? 'Abrir menú' : 'Open menu' ?>"
+            aria-expanded="false"
+            aria-controls="hubMobileMenu">
+        <span></span><span></span><span></span>
+    </button>
+
+</header>
+
+<!-- Menú móvil -->
+<nav class="hub-navbar__mobile-menu" id="hubMobileMenu" aria-label="Menú móvil" aria-hidden="true">
+    <a href="<?= $base_domain . $langPfx ?>/alojamientos-turisticos">
+        <span class="hub-cta__icon">🏡</span>
+        <?= htmlspecialchars($t['nav_stays']) ?>
+    </a>
+    <a href="<?= $base_domain . $langPfx ?>/eventos-culturales">
+        <span class="hub-cta__icon">🎭</span>
+        <?= htmlspecialchars($t['nav_events']) ?>
+    </a>
+    <a href="<?= $base_domain ?>/lugares-de-interes">
+        <span class="hub-cta__icon">🏛️</span>
+        <?= htmlspecialchars($t['nav_places']) ?>
+    </a>
+    <a href="<?= $base_domain ?>/actividades-turisticas">
+        <span class="hub-cta__icon">🥾</span>
+        <?= htmlspecialchars($t['nav_activities']) ?>
+    </a>
+    <a href="<?= $base_domain ?>/login.html">
+        <span class="hub-cta__icon">👤</span>
+        <?= htmlspecialchars($t['nav_login']) ?>
+    </a>
+    <!-- Selector de idioma móvil -->
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+        <p style="font-size:.78rem;font-weight:700;color:var(--text-light);text-transform:uppercase;
+                  letter-spacing:.08em;margin-bottom:12px">
+            <?= htmlspecialchars($t['nav_language']) ?>
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <?php foreach (HUB_LANGS as $lk => $lv):
+                $lUrl = $lk === 'es'
+                    ? $base_domain . '/'
+                    : $base_domain . '/' . $lk . '/';
+            ?>
+            <a href="<?= htmlspecialchars($lUrl) ?>"
+               hreflang="<?= $lk ?>"
+               style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;
+                      border:1px solid var(--border);border-radius:20px;font-size:.82rem;
+                      font-weight:600;color:<?= ($lk===$lang) ? 'var(--primary)' : 'var(--text)' ?>;
+                      background:<?= ($lk===$lang) ? 'var(--bg-alt)' : 'transparent' ?>;">
+                <img src="<?= $lv['flag_svg'] ?>" alt="<?= htmlspecialchars($lv['label']) ?>"
+                     width="18" height="18" loading="lazy" style="border-radius:50%">
+                <?= strtoupper($lk) ?>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════ MAIN ═════════ -->
+<main id="main-content">
+
+    <!-- ── HERO ───────────────────────────────────────────────────────────── -->
+    <?php renderHubHero($ctx); ?>
+
+    <!-- ── HUB ALOJAMIENTOS ───────────────────────────────────────────────── -->
+    <?php renderHubAlojamientos($ctx); ?>
+
+    <!-- ── HUB EVENTOS ────────────────────────────────────────────────────── -->
+    <?php renderHubEventos($ctx); ?>
+
+    <!-- ── SECCIÓN AUTORIDAD SEO ──────────────────────────────────────────── -->
+    <?php renderAutoridadSeo($ctx); ?>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════ FOOTER ══════ -->
+<footer class="hub-footer" role="contentinfo">
+    <div class="hub-footer__inner">
+
+        <div class="hub-footer__grid">
+
+            <!-- Columna 1: Marca -->
+            <div>
+                <div class="hub-footer__brand">
+                    <img src="/menu_images/Logo%20transparente.webp"
+                         alt="Rutas Rurales"
+                         width="36" height="36"
+                         loading="lazy">
+                    <span>Rutas Rurales</span>
+                </div>
+                <p class="hub-footer__tagline">
+                    <?php if ($lang === 'es'): ?>Plataforma de turismo rural auténtico en España. Alojamientos, eventos y experiencias verificadas.
+                    <?php elseif ($lang === 'en'): ?>Authentic rural tourism platform in Spain. Verified accommodation, events and experiences.
+                    <?php elseif ($lang === 'fr'): ?>Plateforme de tourisme rural authentique en Espagne. Hébergements, événements et expériences vérifiés.
+                    <?php elseif ($lang === 'de'): ?>Plattform für authentischen Landurlaub in Spanien. Geprüfte Unterkünfte, Veranstaltungen und Erlebnisse.
+                    <?php else: ?>西班牙正宗乡村旅游平台。经过核实的住宿、活动和体验。<?php endif; ?>
+                </p>
+                <!-- Selector de idioma en footer -->
+                <div class="hub-footer__langs" aria-label="Selector de idioma">
+                    <?php foreach (HUB_LANGS as $lk => $lv):
+                        $lUrl = $lk === 'es'
+                            ? $base_domain . '/'
+                            : $base_domain . '/' . $lk . '/';
+                    ?>
+                    <a href="<?= htmlspecialchars($lUrl) ?>"
+                       class="hub-footer-lang<?= ($lk === $lang) ? ' hub-footer-lang--active' : '' ?>"
+                       hreflang="<?= $lk ?>"
+                       lang="<?= $lk ?>"
+                       <?= ($lk === $lang) ? 'aria-current="true"' : '' ?>>
+                        <img src="<?= $lv['flag_svg'] ?>"
+                             alt="<?= htmlspecialchars($lv['label']) ?>"
+                             width="18" height="18" loading="lazy">
+                        <?= htmlspecialchars($lv['label']) ?>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Columna 2: Verticales -->
+            <div>
+                <p class="hub-footer__col-title">
+                    <?php if ($lang === 'es'): ?>Descubre
+                    <?php elseif ($lang === 'en'): ?>Explore
+                    <?php elseif ($lang === 'fr'): ?>Découvrez
+                    <?php elseif ($lang === 'de'): ?>Entdecken
+                    <?php else: ?>探索<?php endif; ?>
+                </p>
+                <nav class="hub-footer__links" aria-label="Secciones principales">
+                    <a href="<?= $base_domain ?>/alojamientos-turisticos">
+                        <?= htmlspecialchars($t['footer_nav_stays']) ?>
+                    </a>
+                    <a href="<?= $base_domain ?>/eventos-culturales">
+                        <?= htmlspecialchars($t['footer_nav_events']) ?>
+                    </a>
+                    <a href="<?= $base_domain ?>/lugares-de-interes">
+                        <?= htmlspecialchars($t['footer_nav_places']) ?>
+                    </a>
+                    <a href="<?= $base_domain ?>/actividades-turisticas">
+                        <?= htmlspecialchars($t['footer_nav_activ']) ?>
+                    </a>
+                    <a href="<?= $base_domain ?>/rutas/">
+                        <?php if ($lang === 'es'): ?>Rutas temáticas
+                        <?php elseif ($lang === 'en'): ?>Themed routes
+                        <?php elseif ($lang === 'fr'): ?>Itinéraires thématiques
+                        <?php elseif ($lang === 'de'): ?>Themenrouten
+                        <?php else: ?>主题路线<?php endif; ?>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Columna 3: Destinos destacados -->
+            <div>
+                <p class="hub-footer__col-title">
+                    <?php if ($lang === 'es'): ?>Destinos
+                    <?php elseif ($lang === 'en'): ?>Destinations
+                    <?php elseif ($lang === 'fr'): ?>Destinations
+                    <?php elseif ($lang === 'de'): ?>Reiseziele
+                    <?php else: ?>目的地<?php endif; ?>
+                </p>
+                <nav class="hub-footer__links" aria-label="Destinos principales">
+                    <?php
+                    // Mostramos las 6 provincias más importantes
+                    $footerProvs = ['soria', 'zamora', 'leon', 'burgos', 'valladolid', 'salamanca'];
+                    foreach ($footerProvs as $pk):
+                        if (!isset(HUB_PROVINCIAS[$pk])) continue;
+                        $pLabel = HUB_PROVINCIAS[$pk]['label'];
+                        $pEmoji = HUB_PROVINCIAS[$pk]['emoji'];
+                        $pUrl   = hubUrl('turismo-rural-' . $pk, $lang, 'alojamientos');
+                    ?>
+                    <a href="<?= htmlspecialchars($pUrl) ?>"
+                       title="<?= htmlspecialchars('Turismo rural en ' . $pLabel) ?>">
+                        <?= $pEmoji ?> <?= htmlspecialchars($pLabel) ?>
+                    </a>
+                    <?php endforeach; ?>
+                </nav>
+            </div>
+
+        </div><!-- /.hub-footer__grid -->
+
+        <!-- Pie: copyright + legal -->
+        <div class="hub-footer__bottom">
+            <p class="hub-footer__copy">
+                <?= htmlspecialchars(str_replace('{YEAR}', date('Y'), $t['footer_copy'])) ?>
+            </p>
+            <nav class="hub-footer__legal" aria-label="Links legales">
+                <a href="<?= $base_domain ?>/aviso-legal.html">
+                    <?= htmlspecialchars($t['footer_legal']) ?>
                 </a>
-            </p>
-            <div class="grid">
-                <div class="card">
-                    <img src="https://drive.google.com/thumbnail?id=1lCFCuPzjFknI25AJG5yMhDvs9l6c2FS6&sz=w400" alt="Casa Enrique" onerror="this.src='https://rutasrurales.io/menu_images/Casa_enrique.jpg'">
-                    <div class="card-content">
-                        <h3><strong>Casa Enrique</strong> 🏔️</h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Santervas de la Sierra, Soria</p>
-        <p>Vive la <strong>experiencia rural definitiva</strong> en nuestra casa acogedora y confortable. Situada en plena naturaleza soriana, es el refugio perfecto para familias o grupos de hasta <strong>6 personas</strong> que buscan vistas impresionantes y desconectar del estrés urbano.</p>
-
-        <p>Sabemos que <strong>viajar con niños</strong> requiere comodidad y un entorno estimulante. Nuestra casa rural ofrece un espacio seguro y natural donde los más pequeños pueden jugar en libertad mientras tú disfrutas del silencio y el aire puro de la provincia de Soria.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-users"></i> <strong>6 plazas</strong></span>
-                            <span><i class="fas fa-mountain"></i> <strong>Vistas espectaculares</strong></span>
-                            <span><i class="fas fa-wifi"></i> WiFi</span>
-                        </div>
-                        <p class="price"><strong>Desde 225€/noche</strong></p>
-                        <a href="https://sites.google.com/view/casaruralenrique/inicio" target="_blank" class="btn-secondary">✨ Ver disponibilidad</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/Alojamientos_Images/4758.Foto1.213750.jpg" alt="La Plaza Vinuesa">
-                    <div class="card-content">
-                        <h3><strong>La Plaza</strong> 💑</h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Vinuesa, Soria</p>
-                        <p>Disfruta de una estancia inolvidable en <strong>Vinuesa, Soria</strong>, uno de los pueblos más pintorescos de España. El <strong>Apartamento La Plaza</strong> es el alojamiento ideal para parejas que buscan combinar romance y naturaleza en un entorno privilegiado.</p>
-
-                        <p>Situado en la plaza principal, este <strong>apartamento céntrico</strong> te permite disfrutar del encanto histórico del pueblo a pie. Es el punto de partida perfecto para explorar la <strong>comarca de Pinares</strong> y desconectar en un ambiente lleno de magia y tranquilidad.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-users"></i> <strong>4 plazas</strong></span>
-                            <span><i class="fas fa-tree"></i> <strong>Naturaleza pura</strong></span>
-                            <span><i class="fas fa-parking"></i> Parking gratis</span>
-                        </div>
-                        <p class="price"><strong>Consultar oferta especial</strong></p>
-                        <a href="tel:629820592" class="btn-secondary">📞 Reservar ahora</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/casa_chaparrete_1.jpg" alt="Casa Chaparrete">
-                    <div class="card-content">
-                        <h3><strong>Casa Chaparrete</strong> 🔥</h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Deza, Soria</p>
-                        <p>¿Buscas el <strong>refugio perfecto</strong> en el corazón de Castilla? <strong>Casa Chaparrete</strong> es una casa rural tradicional ubicada en el encantador pueblo de <strong>Deza, Soria</strong>. Un espacio diseñado para quienes desean desconectar del ruido y reconectar con lo esencial en un entorno auténtico.</p>
-
-                        <p>Nuestra casa destaca por su calidez. Disfruta de una <strong>chimenea auténtica de leña</strong>, el alma de la casa, ideal para las tardes de invierno tras una jornada explorando la provincia de Soria.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-users"></i> <strong>6 plazas</strong></span>
-                            <span><i class="fas fa-fire"></i> <strong>Chimenea</strong></span>
-                            <span><i class="fas fa-hiking"></i> Senderismo</span>
-                        </div>
-                        <p class="price"><strong>Consultar precio</strong></p>
-                        <a href="tel:625594262" class="btn-secondary">📞 Contactar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección de Lugares de Interés -->
-    <section id="lugares" class="section">
-        <div class="container">
-            <h2 class="section-title">
-                <i class="fas fa-landmark"></i> Lugares de Interés
-            </h2>
-            <p style="text-align: center; margin-bottom: 2rem;">
-                <a href="lugares-interes-paginacion.html" class="btn-primary">
-                    <i class="fas fa-search"></i> Ver Todos los Lugares de Interés
+                <a href="<?= $base_domain ?>/politica-cookies.html">
+                    <?= htmlspecialchars($t['footer_cookies']) ?>
                 </a>
-            </p>
-            <div class="grid">
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/Yacimiento_Numancia.jpg" alt="Numancia">
-                    <div class="card-content">
-                        <h3>⚔️ <strong>Yacimiento de Numancia</strong></h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Garray | <strong>¡Leyenda viva!</strong></p>
-                        <p><strong>Historia que inspira.</strong> La ciudad celtíbera que <strong>resistió heroicamente</strong> al poderoso Imperio Romano durante 20 años. <strong>Imprescindible</strong> para amantes de la historia.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-ticket-alt"></i> <strong>5€ entrada</strong></span>
-                            <span><i class="fas fa-history"></i> <strong>Historia única</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/San_Juan_de_Duero.jpg" alt="San Juan de Duero">
-                    <div class="card-content">
-                        <h3>⛪ <strong>Monasterio de San Juan de Duero</strong></h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Soria Capital | <strong>¡Espectacular!</strong></p>
-                        <p><strong>Joy del románico.</strong> Descubre el <strong>claustro único en el mundo</strong> con sus arcos entrelazados de inspiración mudéjar. Un lugar <strong>fotogénico y mágico</strong>.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-church"></i> <strong>Arte Románico</strong></span>
-                            <span><i class="fas fa-camera"></i> <strong>Top foto</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/villa_de_medinaceli.jpg" alt="Medinaceli">
-                    <div class="card-content">
-                        <h3>👑 <strong>Villa de Medinaceli</strong></h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Medinaceli | <strong>Historia UNESCO</strong></p>
-                        <p><strong>Joy de Castilla.</strong> Admira el <strong>único arco romano de tres vanos</strong> de España en este Conjunto Histórico Declarado. Un tesoro que <strong>no puedes perderte</strong>.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-crown"></i> <strong>Conjunto Histórico</strong></span>
-                            <span><i class="fas fa-archway"></i> <strong>Arco Romano único</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/El_burgo_de_Osma.jpg" alt="Burgo de Osma">
-                    <div class="card-content">
-                        <h3>🏰 <strong>El Burgo de Osma</strong></h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Burgo de Osma | <strong>¡Maravilloso!</strong></p>
-                        <p><strong>Paseo por el tiempo.</strong> Explora la impresionante <strong>catedral gótica</strong> y el casco histórico medieval de esta villa episcopal única. <strong>Encanto asegurdo</strong>.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-church"></i> <strong>Catedral Gótica</strong></span>
-                            <span><i class="fas fa-walking"></i> <strong>Casco histórico</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/urbion.jpg" alt="Picos de Urbión">
-                    <div class="card-content">
-                        <h3>🏔️ <strong>Picos de Urbión</strong></h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Sistema Ibérico | <strong>2.228m de emoción</strong></p>
-                        <p><strong>Cima de Soria.</strong> La montaña más alta de la provincia esconde <strong>lagunas glaciares de ensueño</strong> y paisajes que quitan el aliento. <strong>Aventura garantizado</strong>.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-mountain"></i> <strong>2.228m altitud</strong></span>
-                            <span><i class="fas fa-water"></i> <strong>Lagunas glaciares</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/almenar.jpg" alt="Castillo de Almenar">
-                    <div class="card-content">
-                        <h3>🏰 <strong>Castillo de Almenar</strong></h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> Almenar de Soria | <strong>¡Imponente!</strong></p>
-                        <p><strong>Fortaleza legendaria.</strong> Admirar el <strong>castillo medieval del siglo XIII</strong> con sus murallas y torreones perfectamente conservados. <strong>Historia viva</strong>.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-chess-rook"></i> <strong>Siglo XIII</strong></span>
-                            <span><i class="fas fa-shield-alt"></i> <strong>Fortaleza</strong></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección de Actividades -->
-    <section id="actividades" class="section section-alt">
-        <div class="container">
-            <h2 class="section-title">
-                <i class="fas fa-hiking"></i> Actividades Turísticas
-            </h2>
-            <p style="text-align: center; margin-bottom: 2rem;">
-                <a href="actividades-turisticas.html" class="btn-primary">
-                    <i class="fas fa-search"></i> Ver Todas las Actividades
+                <a href="mailto:olgamarin@rutasrurales.io">
+                    <?= htmlspecialchars($t['footer_contact']) ?>
                 </a>
-            </p>
-            <div class="grid">
-                <div class="card">
-                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop" alt="Senderismo">
-                    <div class="card-content">
-                        <h3>🏔️ <strong>Senderismo en la Laguna Negra</strong></h3>
-                        <p class="location"><i class="fas fa-clock"></i> 3-4 horas | <strong>12 km</strong></p>
-                        <p><strong>¡Vive la aventura!</strong> Descubre la mítica Laguna Negra con una <strong>ruta circular impresionante</strong> de alta montaña. Paisajes de ensueño que te quitarán el aliento.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-signal"></i> <strong>Dificultad: Media</strong></span>
-                            <span><i class="fas fa-mountain"></i> <strong>Naturaleza salvaje</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/canon_rio_lobos.jpg" alt="Cañón del Río Lobos">
-                    <div class="card-content">
-                        <h3>🌄 <strong>Cañón del Río Lobos</strong></h3>
-                        <p class="location"><i class="fas fa-clock"></i> 2-5 horas | <strong>¡Imprescindible!</strong></p>
-                        <p><strong>Maravilla natural única.</strong> Explora formaciones rocosas espectaculares y la emblemática ermita de San Bartolomé en este <strong>Parque Natural de cuento</strong>.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-signal"></i> <strong>Dificultad: Baja</strong></span>
-                            <span><i class="fas fa-binoculars"></i> <strong>Observación fauna</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/ruta_micolica.jpg" alt="Micología">
-                    <div class="card-content">
-                        <h3>🍄 <strong>Ruta Micológica</strong></h3>
-                        <p class="location"><i class="fas fa-clock"></i> <strong>Otoño (Sep-Nov)</strong></p>
-                        <p><strong>¡Busca tesoros del bosque!</strong> Descubre los mejores spot de setas de la mano de <strong>expertos micólogos</strong>. Aventura, naturaleza y gastronomía aseguradas.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-user-tie"></i> <strong>Con Guía Experto</strong></span>
-                            <span><i class="fas fa-leaf"></i> <strong>100% Naturaleza</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/observación_astronomica.png" alt="Astronomía">
-                    <div class="card-content">
-                        <h3>✨ <strong>Observación Astronómica</strong></h3>
-                        <p class="location"><i class="fas fa-clock"></i> <strong>Experiencia nocturna única</strong></p>
-                        <p><strong>Contempla el universo.</strong> Soria ostenta el prestigioso certificado <strong>Starlight</strong> por sus cielos limpios. Vive una experiencia cósmica unforgettable.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-moon"></i> <strong>Cielo Starlight</strong></span>
-                            <span><i class="fas fa-telescope"></i> <strong>Telescopios profesionales</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/ciclismo.jpg" alt="Ciclismo">
-                    <div class="card-content">
-                        <h3>🚴 <strong>Ciclismo de Montaña</strong></h3>
-                        <p class="location"><i class="fas fa-clock"></i> 2-4 horas | <strong>Adrenalina pura</strong></p>
-                        <p><strong>Desafía los picos de Urbión.</strong> Rutas de BTT emocionantes por paisajes únicos. La mejor dosis de <strong>aventura y naturaleza</strong> para cyclists.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-signal"></i> <strong>Dificultad: Media-Alta</strong></span>
-                            <span><i class="fas fa-mountain"></i> <strong>Paisajes épicos</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://rutasrurales.io/menu_images/torreznos.jpg" alt="Gastronomía">
-                    <div class="card-content">
-                        <h3>🍖 <strong>Gastronomía Soriana</strong></h3>
-                        <p class="location"><i class="fas fa-clock"></i> <strong>Todo el año</strong> | <strong>Sabores auténticos</strong></p>
-                        <p><strong>Degustación única.</strong> Saborea la auténtica cocina soriana: <strong>caldereta, migas, asados</strong> y prestigiosos vinos DO. Una experiencia para el paladar.</p>
-                        <div class="card-features">
-                            <span><i class="fas fa-utensils"></i> <strong>Tradición 100%</strong></span>
-                            <span><i class="fas fa-wine-glass"></i> <strong>Vinos DO Soria</strong></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección de Eventos Culturales -->
-    <section id="eventos" class="section">
-        <div class="container">
-            <h2 class="section-title">
-                <i class="fas fa-calendar-alt"></i> Eventos Culturales
-            </h2>
-            <p style="text-align: center; margin-bottom: 2rem;">
-                <a href="eventos-culturales.html" class="btn-primary">
-                    <i class="fas fa-search"></i> Ver Todos los Eventos
+                <a href="<?= $base_domain ?>/compromiso-social.html">
+                    <?= htmlspecialchars($t['footer_social']) ?>
                 </a>
-            </p>
-            <div class="grid-eventos">
-                <div class="card-evento">
-                    <div class="evento-fecha">
-                        <span class="dia">15</span>
-                        <span class="mes">AGO</span>
-                    </div>
-                    <img src="menu_images/concierto_verano.webp" alt="Concierto">
-                    <div class="card-content">
-                        <span class="evento-categoria musica"><i class="fas fa-music"></i> Música</span>
-                        <h3>Concierto de Verano</h3>
-                        <p class="evento-descripcion">Música clásica al aire libre en un entorno incomparable.</p>
-                        <a href="eventos-culturales.html" class="btn-evento">Más info <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-                <div class="card-evento">
-                    <div class="evento-fecha">
-                        <span class="dia">22</span>
-                        <span class="mes">SEP</span>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&h=300&fit=crop" alt="Teatro">
-                    <div class="card-content">
-                        <span class="evento-categoria teatro"><i class="fas fa-theater-masks"></i> Teatro</span>
-                        <h3>Festival de Teatro</h3>
-                        <p class="evento-descripcion">Obras clásicas y modernas en los teatros de la provincia.</p>
-                        <a href="eventos-culturales.html" class="btn-evento">Más info <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-                <div class="card-evento">
-                    <div class="evento-fecha">
-                        <span class="dia">10</span>
-                        <span class="mes">OCT</span>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop" alt="Gastronomía">
-                    <div class="card-content">
-                        <span class="evento-categoria gastronomia"><i class="fas fa-utensils"></i> Gastronomía</span>
-                        <h3>Jornadas Micológicas</h3>
-                        <p class="evento-descripcion">Degustación de setas y hongos de los bosques sorianos.</p>
-                        <a href="eventos-culturales.html" class="btn-evento">Más info <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
+            </nav>
         </div>
-    </section>
 
-    <!-- Sección del Asistente de IA (Versión Mejorada) -->
-    <section id="asistente" class="section section-alt asistente-section">
-        <div class="container">
-            <h2 class="section-title">
-                <i class="fas fa-robot"></i> Antonio - Tu Experto Local
-            </h2>
-            <p class="asistente-intro">
-                Conoce a <strong>Antonio</strong>, nuestro experto local que te ayudará a descubrir lo mejor de nuestro destino 
-                usando exclusivamente nuestras bases de datos internas de alojamientos, lugares, actividades y eventos.
-            </p>
-            
-            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-                <div style="background: linear-gradient(135deg, #f7faf7 0%, #e8f5e9 100%); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; border: 2px solid #2c5f2d;">
-                    <img src="/antonio.jpg" alt="Antonio - Experto local" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #2c5f2d; margin-bottom: 1rem;">
-                    <h3 style="color: #2c5f2d; margin-bottom: 0.5rem;">Antonio, el experto local</h3>
-                    <p style="color: #666; margin-bottom: 1.5rem;">Servicial, entusiasta y conciso. Te ayuda mientras caminas por la calle 📱</p>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏨</div>
-                            <strong>Alojamientos</strong>
-                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Casas rurales, hoteles, apartamentos</p>
-                        </div>
-                        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏛️</div>
-                            <strong>Lugares de interés</strong>
-                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Patrimonio, naturaleza, monumentos</p>
-                        </div>
-                        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥾</div>
-                            <strong>Actividades</strong>
-                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Senderismo, rutas, experiencias</p>
-                        </div>
-                        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎭</div>
-                            <strong>Eventos</strong>
-                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Festivales, conciertos, exposiciones</p>
-                        </div>
-                    </div>
-                    
-                    <button class="btn-primary" onclick="abrirAntonio()" style="background: linear-gradient(135deg, #2c5f2d, #4a8c4b);">
-                        <i class="fas fa-comments"></i> Hablar con Antonio
-                    </button>
-                    
-                    <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
-                        <i class="fas fa-info-circle"></i> Antonio solo usa nuestras 4 bases de datos internas
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div><!-- /.hub-footer__inner -->
+</footer>
 
-<footer class="footer">
-        <div class="container">
-            <div class="footer-content-simple">
-                <div class="footer-info">
-                    <span><i class="fas fa-envelope"></i> olgamarin@rutasrurales.io</span>
-                    <span><i class="fas fa-phone"></i> +34 605 249 696</span>
-                </div>
-            <div class="footer-links">
-                <a href="aviso-legal.html">Aviso Legal</a>
-                <a href="politica-cookies.html">Política de Cookies</a>
-                <a href="agradecimientos.html">Agradecimientos</a>
-            </div>
-            </div>
-            <div class="footer-copyright">
-                <p>&copy; 2026 rutasrurales.io. Todos los derechos reservados.</p>
-            </div>
-        </div> </footer> 
-    <script src="script.js?v=1.1"></script>
-    <script src="antonio_improved.js"></script>
+<!-- ══════════════════════════════════════════════════════════ SCRIPTS ══════ -->
+
+<!-- Asistente Antonio (diferido) -->
+<script src="/antonio_improved.js" defer></script>
+
+<!-- JS del Hub: navbar hamburguesa + selector de idioma -->
+<script>
+(function () {
+    'use strict';
+
+    // ── Hamburguesa ──────────────────────────────────────────────────────────
+    var hamburger   = document.getElementById('hubHamburger');
+    var mobileMenu  = document.getElementById('hubMobileMenu');
+
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', function () {
+            var isOpen = mobileMenu.classList.toggle('open');
+            hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            mobileMenu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            // Animar hamburguesa
+            var spans = hamburger.querySelectorAll('span');
+            if (isOpen) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity   = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+            } else {
+                spans[0].style.transform = '';
+                spans[1].style.opacity   = '';
+                spans[2].style.transform = '';
+            }
+        });
+    }
+
+    // ── Selector de idioma desktop ────────────────────────────────────────────
+    var langSelector = document.getElementById('langSelector');
+    var langBtn      = document.getElementById('langBtn');
+    var langDropdown = document.getElementById('langDropdown');
+
+    if (langBtn && langDropdown && langSelector) {
+        langBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var isOpen = langSelector.classList.toggle('open');
+            langBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!langSelector.contains(e.target)) {
+                langSelector.classList.remove('open');
+                langBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                langSelector.classList.remove('open');
+                langBtn.setAttribute('aria-expanded', 'false');
+                langBtn.focus();
+            }
+        });
+    }
+
+    // ── Navbar scroll shadow ──────────────────────────────────────────────────
+    var navbar = document.querySelector('.hub-navbar');
+    if (navbar) {
+        window.addEventListener('scroll', function () {
+            navbar.style.boxShadow = window.scrollY > 10
+                ? '0 2px 12px rgba(0,0,0,.12)'
+                : '0 1px 6px rgba(0,0,0,.06)';
+        }, { passive: true });
+    }
+})();
+</script>
+
 </body>
 </html>

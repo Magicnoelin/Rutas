@@ -28,8 +28,20 @@
 RewriteEngine On
 RewriteBase /
 
+# ── DirectoryIndex global ─────────────────────────────────────────────────────
+DirectoryIndex index.php index.html
+
+# ── INDEX HUB MULTILINGÜE — reglas del hub de autoridad ──────────────────────
+# Añadir trailing slash a las raíces de idioma (SEO: evita contenido duplicado)
+RewriteRule ^(en|fr|de|zh)$ /$1/ [R=301,L]
+
+# Servir el index.php de cada idioma desde su carpeta
+# (Apache lo sirve automáticamente con DirectoryIndex; estas reglas son de seguridad)
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(en|fr|de|zh)/$ $1/index.php [L]
+
 # No redirigir carpetas del sistema (DEBE IR PRIMERO)
-RewriteRule ^(api|admin_tablas|dashboard)/ - [L]
+RewriteRule ^(api|admin_tablas|dashboard|index)/ - [L]
 
 # Excepciones: Archivos PHP directamente accesibles
 RewriteRule ^.*\.php$ - [L]
