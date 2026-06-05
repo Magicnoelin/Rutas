@@ -2,26 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oferta Especial de Verano - Rutas Rurales</title>
     <style>
-        @page {
-            size: A4;
-            margin: 18mm 15mm;
-            background-color: #fafcfb;
-            @bottom-right {
-                content: "Página " counter(page) " de " counter(pages);
-                font-family: 'Helvetica Neue', Arial, sans-serif;
-                font-size: 8pt;
-                color: #8da399;
-            }
-            @bottom-left {
-                content: "rutasrurales.io • Campaña Hostelería Verano 2026";
-                font-family: 'Helvetica Neue', Arial, sans-serif;
-                font-size: 8pt;
-                color: #8da399;
-            }
-        }
-        
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -33,33 +16,50 @@
             color: #2c3e35;
             line-height: 1.5;
             font-size: 10.5pt;
+            background-color: #fafcfb;
         }
 
-        /* Full bleed top banner using negative margins to break page margin restriction */
+        /* ===== HERO IMAGE ===== */
+        .hero-image-wrapper {
+            width: 100%;
+            max-height: 420px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-image-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            max-height: 420px;
+        }
+
+        /* ===== HEADER BANNER ===== */
         .header-banner {
-            margin: -18mm -15mm 25px -15mm;
-            padding: 25px 15mm 22px 15mm;
-            background-color: #1a382b; /* Corporate Deep Dark Green */
+            padding: 25px 5% 22px 5%;
+            background-color: #1a382b;
             color: #ffffff;
-            border-bottom: 4px solid #d99136; /* Warm Corporate Accent Orange */
+            border-bottom: 4px solid #d99136;
         }
 
         .header-table {
-            display: table;
-            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
         .header-cell-logo {
-            display: table-cell;
-            vertical-align: middle;
-            width: 30%;
+            flex: 0 0 auto;
         }
 
         .header-cell-title {
-            display: table-cell;
-            vertical-align: middle;
+            flex: 1 1 auto;
             text-align: right;
-            width: 70%;
+            min-width: 200px;
         }
 
         .logo-text {
@@ -67,6 +67,7 @@
             font-weight: bold;
             color: #ffffff;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
         
         .logo-text span {
@@ -82,10 +83,17 @@
         }
 
         h1 {
-            font-size: 20pt;
-            margin: 10px 0 0 0;
+            font-size: clamp(14pt, 3.5vw, 20pt);
+            margin: 6px 0 0 0;
             color: #ffffff;
             font-weight: 700;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .content-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 5%;
         }
 
         .intro-section {
@@ -94,9 +102,9 @@
 
         .main-title-page {
             color: #1a382b;
-            font-size: 15pt;
+            font-size: clamp(12pt, 2.5vw, 15pt);
             font-weight: bold;
-            margin-top: 0;
+            margin-top: 25px;
             margin-bottom: 12px;
             border-left: 4px solid #1a382b;
             padding-left: 10px;
@@ -113,28 +121,29 @@
             font-weight: 500;
         }
 
-        /* 3 Columns metrics table */
+        /* ===== METRICS CARDS (responsive grid) ===== */
         .metrics-container {
-            display: table;
-            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
             margin: 20px 0;
-            border-collapse: separate;
-            border-spacing: 10px 0;
+            justify-content: center;
         }
 
         .metric-card {
-            display: table-cell;
-            width: 33.33%;
+            flex: 1 1 160px;
+            min-width: 140px;
+            max-width: 100%;
             background-color: #ffffff;
             border: 1px solid #e1ebe6;
             border-radius: 6px;
-            padding: 15px;
+            padding: 15px 10px;
             text-align: center;
             box-shadow: 0 2px 4px rgba(26,56,43,0.03);
         }
 
         .metric-number {
-            font-size: 22pt;
+            font-size: clamp(18pt, 4vw, 22pt);
             font-weight: bold;
             color: #1a382b;
             margin-bottom: 2px;
@@ -149,29 +158,23 @@
         }
 
         h2 {
-            font-size: 13pt;
+            font-size: clamp(11pt, 2.2vw, 13pt);
             color: #1a382b;
             margin: 25px 0 12px 0;
             padding-bottom: 5px;
             border-bottom: 1px solid #e1ebe6;
-            page-break-after: avoid;
         }
 
-        /* Advantages Grid (via Table) */
-        .features-table {
-            display: table;
-            width: 100%;
+        /* ===== FEATURES GRID ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
-        .features-row {
-            display: table-row;
-        }
-
         .feature-cell {
-            display: table-cell;
-            width: 50%;
-            padding: 10px 15px 10px 0;
+            padding: 10px 0;
             vertical-align: top;
         }
 
@@ -188,7 +191,13 @@
             margin-right: 5px;
         }
 
-        /* Callout Box for Offer Details */
+        .feature-cell p {
+            font-size: 9.5pt;
+            color: #4a5f54;
+            margin-top: 2px;
+        }
+
+        /* ===== OFFER BOX ===== */
         .offer-box {
             background-color: #f0f6f3;
             border: 1px dashed #8da399;
@@ -196,14 +205,16 @@
             border-radius: 4px;
             padding: 18px;
             margin: 25px 0;
-            page-break-inside: avoid;
         }
 
         .offer-title {
-            font-size: 12pt;
+            font-size: clamp(10pt, 2vw, 12pt);
             font-weight: bold;
             color: #1a382b;
             margin-bottom: 8px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .price-container {
@@ -219,7 +230,7 @@
         }
 
         .new-price {
-            font-size: 26pt;
+            font-size: clamp(20pt, 5vw, 26pt);
             font-weight: bold;
             color: #d99136;
         }
@@ -230,7 +241,6 @@
             font-weight: bold;
         }
 
-        /* Stripe Checkout Button Styling */
         .stripe-btn-container {
             text-align: center;
             margin-top: 15px;
@@ -242,13 +252,18 @@
             background-color: #1a382b;
             color: #ffffff;
             font-weight: bold;
-            font-size: 12pt;
+            font-size: clamp(10pt, 2vw, 12pt);
             padding: 12px 35px;
             text-decoration: none;
             border-radius: 4px;
             border-bottom: 3px solid #0f2119;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            transition: background-color 0.2s;
+        }
+
+        .stripe-button:hover {
+            background-color: #244d3b;
         }
 
         .stripe-secure-text {
@@ -259,7 +274,7 @@
         }
 
         .stripe-secure-text span {
-            color: #6772e5; /* Stripe Official Blue Accent for secure feeling */
+            color: #6772e5;
             font-weight: bold;
         }
 
@@ -279,114 +294,285 @@
             margin-top: 30px;
             border-top: 1px dashed #cbdad2;
             padding-top: 15px;
+            padding-bottom: 30px;
+        }
+
+        /* ===== RESPONSIVE BREAKPOINTS ===== */
+        @media (max-width: 768px) {
+            .header-table {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-cell-logo {
+                margin-bottom: 8px;
+            }
+
+            .header-cell-title {
+                text-align: center;
+            }
+
+            .campaign-tag {
+                font-size: 8pt;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .metric-card {
+                max-width: 100%;
+            }
+
+            .price-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .old-price {
+                margin-right: 0;
+            }
+
+            .stripe-button {
+                display: block;
+                width: 100%;
+                max-width: 360px;
+                margin: 0 auto;
+            }
+
+            .hero-image-wrapper {
+                max-height: 260px;
+            }
+
+            .hero-image-wrapper img {
+                max-height: 260px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-banner {
+                padding: 18px 4% 16px 4%;
+            }
+
+            .logo-text {
+                font-size: 14pt;
+            }
+
+            .content-wrapper {
+                padding: 0 4%;
+            }
+
+            .offer-box {
+                padding: 14px;
+            }
+
+            .steps-list {
+                margin-left: 14px;
+            }
+
+            .hero-image-wrapper {
+                max-height: 200px;
+            }
+
+            .hero-image-wrapper img {
+                max-height: 200px;
+            }
+        }
+
+        /* ===== PRINT STYLES ===== */
+        @media print {
+            @page {
+                size: A4;
+                margin: 18mm 15mm;
+                @bottom-right {
+                    content: "Página " counter(page) " de " counter(pages);
+                    font-family: 'Helvetica Neue', Arial, sans-serif;
+                    font-size: 8pt;
+                    color: #8da399;
+                }
+                @bottom-left {
+                    content: "rutasrurales.io • Campaña Hostelería Verano 2026";
+                    font-family: 'Helvetica Neue', Arial, sans-serif;
+                    font-size: 8pt;
+                    color: #8da399;
+                }
+            }
+
+            .hero-image-wrapper {
+                max-height: 300px;
+                page-break-after: avoid;
+            }
+
+            .hero-image-wrapper img {
+                max-height: 300px;
+            }
+
+            .header-banner {
+                margin: -18mm -15mm 25px -15mm;
+                padding: 25px 15mm 22px 15mm;
+            }
+
+            .header-table {
+                max-width: none;
+            }
+
+            .content-wrapper {
+                max-width: none;
+                padding: 0;
+            }
+
+            .features-grid {
+                display: table;
+                width: 100%;
+            }
+
+            .feature-cell {
+                display: table-cell;
+                width: 50%;
+                padding: 10px 15px 10px 0;
+            }
+
+            .metrics-container {
+                display: table;
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 10px 0;
+            }
+
+            .metric-card {
+                display: table-cell;
+                width: 33.33%;
+            }
+
+            .stripe-button:hover {
+                background-color: #1a382b;
+            }
+
+            .offer-box {
+                page-break-inside: avoid;
+            }
+
+            h2 {
+                page-break-after: avoid;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Hero Image -->
+    <div class="hero-image-wrapper">
+        <img src="/menu_images/oferta_hosteleria.webp" alt="Oferta especial hostelería - Rutas Rurales" loading="lazy">
+    </div>
+
     <!-- Header Banner Area -->
     <div class="header-banner">
         <div class="header-table">
-            <div class="header-row">
-                <div class="header-cell-logo">
-                    <div class="logo-text">Rutas<span>Rurales</span></div>
-                </div>
-                <div class="header-cell-title">
-                    <div class="campaign-tag">Campaña Gastronómica Especial</div>
-                    <h1>Impulsa tu Restaurante este Verano 2026</h1>
-                </div>
+            <div class="header-cell-logo">
+                <div class="logo-text">Rutas<span>Rurales</span></div>
+            </div>
+            <div class="header-cell-title">
+                <div class="campaign-tag">Campaña Gastronómica Especial</div>
+                <h1>Impulsa tu Restaurante este Verano 2026</h1>
             </div>
         </div>
     </div>
 
-    <!-- Intro Text -->
-    <div class="intro-section">
-        <div class="main-title-page">Sácale partido al turismo de interior en los meses clave</div>
-        <p class="highlight-p">
-            El verano es la temporada dorada para las escapadas rurales en nuestro país. Miles de viajeros ya utilizan <strong>rutasrurales.io</strong> a diario para planificar no solo sus alojamientos, sino las paradas gastronómicas indispensables de sus itinerarios.
-        </p>
-        <p>
-            Queremos que los viajeros que descubren las maravillas naturales, monumentos y rutas de tu zona terminen sentados a tu mesa. Por eso, abrimos una convocatoria exclusiva para que los restaurantes tradicionales locales multipliquen su visibilidad justo en el trimestre de mayor consumo del año: <strong>Junio, Julio y Agosto</strong>.
-        </p>
-    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
 
-    <!-- Audience Metrics Block -->
-    <div class="metrics-container">
-        <div class="metric-card">
-            <div class="metric-number">+160</div>
-            <div class="metric-label">Alojamientos Activos</div>
+        <!-- Intro Text -->
+        <div class="intro-section">
+            <div class="main-title-page">Sácale partido al turismo de interior en los meses clave</div>
+            <p class="highlight-p">
+                El verano es la temporada dorada para las escapadas rurales en nuestro país. Miles de viajeros ya utilizan <strong>rutasrurales.io</strong> a diario para planificar no solo sus alojamientos, sino las paradas gastronómicas indispensables de sus itinerarios.
+            </p>
+            <p>
+                Queremos que los viajeros que descubren las maravillas naturales, monumentos y rutas de tu zona terminen sentados a tu mesa. Por eso, abrimos una convocatoria exclusiva para que los restaurantes tradicionales locales multipliquen su visibilidad justo en el trimestre de mayor consumo del año: <strong>Junio, Julio y Agosto</strong>.
+            </p>
         </div>
-        <div class="metric-card">
-            <div class="metric-number">+160</div>
-            <div class="metric-label">Eventos Culturales</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-number">21</div>
-            <div class="metric-label">Provincias Conectadas</div>
-        </div>
-    </div>
 
-    <h2>¿Qué incluye tu alta prioritaria en la plataforma?</h2>
-    
-    <div class="features-table">
-        <div class="features-row">
+        <!-- Audience Metrics Block -->
+        <div class="metrics-container">
+            <div class="metric-card">
+                <div class="metric-number">+160</div>
+                <div class="metric-label">Alojamientos Activos</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number">+160</div>
+                <div class="metric-label">Eventos Culturales</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number">21</div>
+                <div class="metric-label">Provincias Conectadas</div>
+            </div>
+        </div>
+
+        <h2>¿Qué incluye tu alta prioritaria en la plataforma?</h2>
+        
+        <div class="features-grid">
             <div class="feature-cell">
                 <div class="feature-title"><span class="feature-icon">✓</span> Ficha Premium Geolocalizada</div>
-                <p style="font-size:9.5pt; color:#4a5f54; margin-top:2px;">Publicación de tu menú, especialidades, fotos, horarios y enlace directo a tu sistema de reservas telefónica o web sin comisiones intermedias.</p>
+                <p>Publicación de tu menú, especialidades, fotos, horarios y enlace directo a tu sistema de reservas telefónica o web sin comisiones intermedias.</p>
             </div>
             <div class="feature-cell">
                 <div class="feature-title"><span class="feature-icon">✓</span> Recomendación Vinculada por Cercanía</div>
-                <p style="font-size:9.5pt; color:#4a5f54; margin-top:2px;">Aparecerás de forma destacada automáticamente cuando un usuario consulte alojamientos, monumentos o rutas a menos de 15 km de tu local.</p>
+                <p>Aparecerás de forma destacada automáticamente cuando un usuario consulte alojamientos, monumentos o rutas a menos de 15 km de tu local.</p>
             </div>
-        </div>
-        <div class="features-row">
             <div class="feature-cell">
                 <div class="feature-title"><span class="feature-icon">✓</span> Difusión en la Agenda Cultural</div>
-                <p style="font-size:9.5pt; color:#4a5f54; margin-top:2px;">Promoción de tus jornadas gastronómicas o eventos especiales de verano dentro de nuestro panel dinámico de actividades provinciales.</p>
+                <p>Promoción de tus jornadas gastronómicas o eventos especiales de verano dentro de nuestro panel dinámico de actividades provinciales.</p>
             </div>
             <div class="feature-cell">
                 <div class="feature-title"><span class="feature-icon">✓</span> Presencia en Mapas Interactivos</div>
-                <p style="font-size:9.5pt; color:#4a5f54; margin-top:2px;">Inclusión directa en el mapa interactivo general que los viajeros consultan en ruta en sus dispositivos móviles y ordenadores.</p>
+                <p>Inclusión directa en el mapa interactivo general que los viajeros consultan en ruta en sus dispositivos móviles y ordenadores.</p>
             </div>
         </div>
-    </div>
 
-    <!-- Promotional Stripe Callout -->
-    <div class="offer-box">
-        <div class="offer-title" style="text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
-            🎁 OFERTA DE LANZAMIENTO: TRIMESTRE COMPLETO DE VERANO
-        </div>
-        <p style="text-align: center; margin-bottom: 5px; font-size: 10pt;">
-            Inscribe tu restaurante hoy y asegura tu plaza destacada para los meses de <strong>Junio, Julio y Agosto</strong>.
-        </p>
-        
-        <div class="price-container">
-            <span class="old-price">149€</span>
-            <span class="new-price">49€</span>
-            <span class="price-period"> / pago único sin renovaciones automáticas</span>
+        <!-- Promotional Stripe Callout -->
+        <div class="offer-box">
+            <div class="offer-title">
+                🎁 OFERTA DE LANZAMIENTO: TRIMESTRE COMPLETO DE VERANO
+            </div>
+            <p style="text-align: center; margin-bottom: 5px; font-size: 10pt;">
+                Inscribe tu restaurante hoy y asegura tu plaza destacada para los meses de <strong>Junio, Julio y Agosto</strong>.
+            </p>
+            
+            <div class="price-container">
+                <span class="old-price">149€</span>
+                <span class="new-price">49€</span>
+                <span class="price-period"> / pago único sin renovaciones automáticas</span>
+            </div>
+
+            <div class="stripe-btn-container">
+                <a href="https://buy.stripe.com/mock_RESTAURANTES_VERANO_2026" class="stripe-button">
+                    Inscribir Mi Restaurante en Stripe
+                </a>
+            </div>
+            <div class="stripe-secure-text">
+                🔒 Pago 100% seguro tramitado por <span>stripe</span>. Factura oficial deducible emitida de forma inmediata.
+            </div>
         </div>
 
-        <div class="stripe-btn-container">
-            <!-- Simulated Stripe Payment Link Target integration (Using professional inline CSS styled dynamic anchor code structure) -->
-            <a href="https://buy.stripe.com/mock_RESTAURANTES_VERANO_2026" class="stripe-button">
-                Inscribir Mi Restaurante en Stripe
-            </a>
-        </div>
-        <div class="stripe-secure-text">
-            🔒 Pago 100% seguro tramitado por <span>stripe</span>. Factura oficial deducible emitida de forma inmediata.
-        </div>
-    </div>
+        <h2>¿Cómo empezar? Solo te llevará 3 minutos</h2>
+        <ul class="steps-list">
+            <li><strong>1. Pago seguro:</strong> Haz clic en el botón superior para acceder a la pasarela oficial simplificada de Stripe.</li>
+            <li><strong>2. Formulario de contenido:</strong> Al completar el pago, serás redirigido automáticamente a una ficha ágil donde subir tus fotos, dirección, carta y horarios.</li>
+            <li><strong>3. Activación express:</strong> Nuestro equipo optimizará la maquetación de tu ficha y en menos de 24 horas estarás visible e integrado en los mapas y búsquedas de tu zona.</li>
+        </ul>
 
-    <h2>¿Cómo empezar? Solo te llevará 3 minutos</h2>
-    <ul class="steps-list">
-        <li><strong>1. Pago seguro:</strong> Haz clic en el botón superior para acceder a la pasarela oficial simplificada de Stripe.</li>
-        <li><strong>2. Formulario de contenido:</strong> Al completar el pago, serás redirigido automáticamente a una ficha ágil donde subir tus fotos, dirección, carta y horarios.</li>
-        <li><strong>3. Activación express:</strong> Nuestro equipo optimizará la maquetación de tu ficha y en menos de 24 horas estarás visible e integrado en los mapas y búsquedas de tu zona.</li>
-    </ul>
+        <div class="footer-note">
+            Para cualquier duda técnica o administrativa durante el alta, puedes contactarnos directamente en soporte@rutasrurales.io<br>
+            <strong>Rutas Rurales</strong> • Impulsando el tejido hostelero y el turismo auténtico de interior.
+        </div>
 
-    <div class="footer-note">
-        Para cualquier duda técnica o administrativa durante el alta, puedes contactarnos directamente en soporte@rutasrurales.io<br>
-        <strong>Rutas Rurales</strong> • Impulsando el tejido hostelero y el turismo auténtico de interior.
     </div>
 
 </body>
