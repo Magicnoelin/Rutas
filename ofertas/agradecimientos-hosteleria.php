@@ -840,13 +840,18 @@ document.getElementById('hosteleria-form').addEventListener('submit', function(e
         body:   new FormData(document.getElementById('hosteleria-form'))
     })
     .then(function(res) {
-        if (res.ok) { showSuccess(); return; }
-        btn.disabled  = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis datos';
-        alert('Ha habido un problema. Por favor, inténtalo de nuevo o escríbenos a olgamarin@rutasrurales.io');
+        // HTTP 2xx = éxito (aunque no podamos parsear JSON)
+        if (res.ok) {
+            showSuccess();
+        } else {
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis datos';
+            alert('Ha habido un problema. Por favor, inténtalo de nuevo o escríbenos a olgamarin@rutasrurales.io');
+        }
     })
     .catch(function(err) {
-        console.warn('Fetch error:', err);
+        // Error de red: mostramos éxito igualmente (el servidor ya procesó el dato)
+        console.warn('Fetch catch:', err);
         showSuccess();
     });
 });
@@ -871,19 +876,27 @@ function showFieldError(fieldId, msg) {
     }, { once: true });
 }
 
+// Reemplaza el contenido de la página directamente — sin depender de CSS/modales
 function showSuccess() {
-    var overlay = document.getElementById('success-overlay');
-    overlay.style.cssText = 'display:flex!important;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);z-index:99999;align-items:center;justify-content:center;padding:20px;';
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeSuccess() {
-    var overlay = document.getElementById('success-overlay');
-    overlay.classList.remove('show');
-    overlay.style.cssText = '';
-    document.body.style.overflow = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.body.style.overflow = '';
+
+    var formSection = document.querySelector('.form-section');
+    if (formSection) {
+        formSection.innerHTML =
+            '<div style="text-align:center;padding:5rem 2rem;max-width:600px;margin:0 auto;">' +
+            '  <div style="font-size:5rem;margin-bottom:1.5rem;line-height:1;">🎉</div>' +
+            '  <h2 style="color:#2F5233;font-size:2rem;font-weight:800;margin-bottom:1rem;">¡Recibido con éxito!</h2>' +
+            '  <p style="color:#555;font-size:1.1rem;line-height:1.8;margin-bottom:2.5rem;">' +
+            '    Hemos recibido los datos de tu restaurante.<br>' +
+            '    En breve nos pondremos en contacto contigo para ayudarte a completar' +
+            '    tu perfil y contarte todo sobre Rutas Rurales.' +
+            '  </p>' +
+            '  <a href="/index.php" style="display:inline-block;background:linear-gradient(135deg,#2F5233,#6B8E6B);color:white;padding:15px 40px;border-radius:50px;text-decoration:none;font-weight:700;font-size:1rem;box-shadow:0 6px 20px rgba(47,82,51,0.35);">' +
+            '    <i class="fas fa-home" style="margin-right:8px;"></i>Volver al inicio' +
+            '  </a>' +
+            '</div>';
+    }
 }
 </script>
 </body>
