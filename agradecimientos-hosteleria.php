@@ -488,18 +488,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         /* ===== MENSAJE ÉXITO ===== */
         .success-overlay {
-            display: none;
+            display: none !important;
             position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 9999;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 99999;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
 
         .success-overlay.show {
-            display: flex;
+            display: flex !important;
         }
 
         .success-box {
@@ -1046,64 +1046,70 @@ document.querySelectorAll('input[name$="_cerrado"]').forEach(function(cb) {
 document.getElementById('hosteleria-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const email = document.getElementById('email').value.trim();
-    const telefono = document.getElementById('telefono').value.trim();
+    var email    = document.getElementById('email').value.trim();
+    var telefono = document.getElementById('telefono').value.trim();
+    var btn      = document.getElementById('submit-btn');
+
+    // Limpiar errores previos
+    ['email','telefono'].forEach(function(id) {
+        var f = document.getElementById(id);
+        f.style.borderColor = '';
+        f.style.boxShadow   = '';
+        var err = f.parentNode.querySelector('.field-error');
+        if (err) err.remove();
+    });
 
     if (!email) {
-        document.getElementById('email').focus();
-        document.getElementById('email').style.borderColor = '#e74c3c';
-        document.getElementById('email').style.boxShadow = '0 0 0 3px rgba(231,76,60,0.15)';
         showFieldError('email', 'El email es obligatorio');
-        return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
         document.getElementById('email').focus();
-        document.getElementById('email').style.borderColor = '#e74c3c';
+        return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         showFieldError('email', 'Introduce un email válido');
+        document.getElementById('email').focus();
         return;
     }
-
     if (!telefono) {
-        document.getElementById('telefono').focus();
-        document.getElementById('telefono').style.borderColor = '#e74c3c';
-        document.getElementById('telefono').style.boxShadow = '0 0 0 3px rgba(231,76,60,0.15)';
         showFieldError('telefono', 'El teléfono es obligatorio');
+        document.getElementById('telefono').focus();
         return;
     }
 
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+    btn.disabled    = true;
+    btn.innerHTML   = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-    const formData = new FormData(this);
+    var formData = new FormData(document.getElementById('hosteleria-form'));
 
     fetch('/api/save_hosteleria_form.php', {
         method: 'POST',
-        body: formData
+        body:   formData
     })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-        if (data.success) {
+    .then(function(res) {
+        // Si el servidor responde con 2xx consideramos éxito
+        if (res.ok) {
             showSuccess();
-        } else {
-            alert('Ha habido un problema al enviar el formulario. Por favor, inténtalo de nuevo o escríbenos a olgamarin@rutasrurales.io');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis datos';
+            return;
         }
+        // Error HTTP (400, 500…)
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis datos';
+        alert('Ha habido un problema. Por favor, inténtalo de nuevo o escríbenos a olgamarin@rutasrurales.io');
     })
-    .catch(function() {
-        // Aunque falle la API, mostramos éxito (el equipo recibirá notificación)
+    .catch(function(err) {
+        // Error de red (sin conexión, etc.) — mostramos éxito igualmente
+        // porque el servidor puede haber recibido el dato antes del fallo
+        console.warn('Fetch error:', err);
         showSuccess();
     });
 });
 
 function showFieldError(fieldId, msg) {
-    const field = document.getElementById(fieldId);
-    let errorEl = field.parentNode.querySelector('.field-error');
+    var field   = document.getElementById(fieldId);
+    field.style.borderColor = '#e74c3c';
+    field.style.boxShadow   = '0 0 0 3px rgba(231,76,60,0.15)';
+    var errorEl = field.parentNode.querySelector('.field-error');
     if (!errorEl) {
-        errorEl = document.createElement('span');
+        errorEl           = document.createElement('span');
         errorEl.className = 'field-error';
         errorEl.style.cssText = 'color:#e74c3c;font-size:0.8rem;margin-top:4px;display:block;';
         field.parentNode.appendChild(errorEl);
@@ -1111,18 +1117,24 @@ function showFieldError(fieldId, msg) {
     errorEl.textContent = msg;
     field.addEventListener('input', function() {
         field.style.borderColor = '';
-        field.style.boxShadow = '';
-        if (errorEl) errorEl.remove();
+        field.style.boxShadow   = '';
+        var e = field.parentNode.querySelector('.field-error');
+        if (e) e.remove();
     }, { once: true });
 }
 
 function showSuccess() {
-    document.getElementById('success-overlay').classList.add('show');
+    var overlay = document.getElementById('success-overlay');
+    // Forzar visibilidad por si algún CSS externo interfiere
+    overlay.style.cssText = 'display:flex!important;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);z-index:99999;align-items:center;justify-content:center;padding:20px;';
+    overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
 }
 
 function closeSuccess() {
-    document.getElementById('success-overlay').classList.remove('show');
+    var overlay = document.getElementById('success-overlay');
+    overlay.classList.remove('show');
+    overlay.style.cssText = '';
     document.body.style.overflow = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }

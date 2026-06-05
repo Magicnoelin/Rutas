@@ -5,9 +5,19 @@
  * guarda las fotos y envía un email de notificación al equipo.
  */
 
+// Capturar cualquier output previo para que no rompa el JSON
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
+
 header('Content-Type: application/json; charset=UTF-8');
-header('Access-Control-Allow-Origin: https://rutasrurales.io');
-header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 // Solo POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -240,6 +250,9 @@ $headers .= "X-Mailer: PHP/" . phpversion();
 $mail_sent = mail($NOTIFY_EMAIL, $subject, $body, $headers);
 
 // ===== RESPUESTA =====
+// Limpiar cualquier output previo (warnings, notices, etc.) que rompería el JSON
+ob_end_clean();
+header('Content-Type: application/json; charset=UTF-8');
 echo json_encode([
     'success'    => true,
     'message'    => '¡Gracias! Hemos recibido los datos de tu restaurante.',
