@@ -24,6 +24,7 @@ const EVENTOS_PROVINCIAS = [
     // Castilla y León
     'soria' => [
         'label' => 'Soria', 'db' => 'Soria',
+        'lat' => 41.766, 'lng' => -2.468,
         'attractions' => ['Cañón del Río Lobos', 'Lagunas de Urbión', 'Numancia', 'Sierra de Cebollera'],
         'vibe' => [
             'es' => 'una de las provincias más tranquilas y auténticas de España, donde las tradiciones se celebran con una intensidad que pocas ciudades pueden igualar',
@@ -35,6 +36,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'zamora' => [
         'label' => 'Zamora', 'db' => 'Zamora',
+        'lat' => 41.503, 'lng' => -5.744,
         'attractions' => ['Lago de Sanabria', 'Arribes del Duero', 'Semana Santa de Zamora', 'Sierra de la Culebra'],
         'vibe' => [
             'es' => 'tierra de contrastes con una de las Semanas Santas más antiguas de España, festivales medievales y una cultura popular arraigada en cada rincón',
@@ -46,6 +48,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'salamanca' => [
         'label' => 'Salamanca', 'db' => 'Salamanca',
+        'lat' => 40.970, 'lng' => -5.663,
         'attractions' => ['Ferias y Fiestas de Salamanca', 'Festival Universitario', 'La Alberca (Patrimonio)', 'Sierra de Francia'],
         'vibe' => [
             'es' => 'una ciudad universitaria vibrante donde la cultura no descansa: festivales de jazz, teatro clásico, ferias medievales y una agenda cultural que rivaliza con cualquier capital europea',
@@ -57,6 +60,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'burgos' => [
         'label' => 'Burgos', 'db' => 'Burgos',
+        'lat' => 42.344, 'lng' => -3.697,
         'attractions' => ['Festival Internacional de Folclore', 'Ruta del Cid', 'Catedral de Burgos', 'Las Merindades'],
         'vibe' => [
             'es' => 'cuna del Cid Campeador y puerta del Camino de Santiago, con festivales que honran siglos de historia y tradiciones que se transmiten de generación en generación',
@@ -68,6 +72,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'leon' => [
         'label' => 'León', 'db' => 'León',
+        'lat' => 42.599, 'lng' => -5.571,
         'attractions' => ['Las Cantaderas', 'Festival Noroeste Estrella Galicia', 'Fiesta de San Froilán', 'Camino de Santiago'],
         'vibe' => [
             'es' => 'una provincia monumental con una agenda cultural que mezcla tradición medieval con festivales de música contemporánea, todo bajo la sombra de su catedral gótica y los Picos de Europa',
@@ -79,6 +84,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'valladolid' => [
         'label' => 'Valladolid', 'db' => 'Valladolid',
+        'lat' => 41.652, 'lng' => -4.724,
         'attractions' => ['Semana Internacional de Cine', 'Fiestas de la Virgen de San Lorenzo', 'Ribera del Duero', 'Semana Santa'],
         'vibe' => [
             'es' => 'ciudad de cine, vino y Semana Santa declarada de Interés Turístico Internacional, con una agenda cultural que fusiona lo mejor del patrimonio castellano con la creatividad contemporánea',
@@ -90,6 +96,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'palencia' => [
         'label' => 'Palencia', 'db' => 'Palencia',
+        'lat' => 42.009, 'lng' => -4.528,
         'attractions' => ['Feria Renacentista de Aguilar', 'Canal de Castilla', 'Semana Santa de Palencia', 'Fuentes Carrionas'],
         'vibe' => [
             'es' => 'la joya oculta de Castilla, donde las ferias renacentistas de Aguilar de Campoo y los mercados medievales recuperan siglos de historia con espectacularidad',
@@ -101,6 +108,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'segovia' => [
         'label' => 'Segovia', 'db' => 'Segovia',
+        'lat' => 40.943, 'lng' => -4.118,
         'attractions' => ['Titirimundi (Festival Internacional de Títeres)', 'Hay Festival Segovia', 'Acueducto Romano', 'Pedraza'],
         'vibe' => [
             'es' => 'una provincia que desafía el tiempo, sede del Titirimundi —uno de los festivales de títeres más importantes del mundo— y del Hay Festival, que convierte cada verano en una fiesta del pensamiento',
@@ -112,6 +120,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'avila' => [
         'label' => 'Ávila', 'db' => 'Ávila',
+        'lat' => 40.656, 'lng' => -4.699,
         'attractions' => ['Fiesta de Santa Teresa', 'Mercado Medieval de Ávila', 'Muralla Medieval', 'Sierra de Gredos'],
         'vibe' => [
             'es' => 'la ciudad amurallada más alta de Europa con un calendario festivo que honra a Santa Teresa y revive la Edad Media en uno de los mercados medievales más auténticos de España',
@@ -123,6 +132,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'guadalajara' => [
         'label' => 'Guadalajara', 'db' => 'Guadalajara',
+        'lat' => 40.630, 'lng' => -3.164,
         'attractions' => ['Mercado Medieval de Sigüenza', 'Feria de Artesanía del Alto Tajo', 'Hayedo de Tejera Negra', 'Sigüenza'],
         'vibe' => [
             'es' => 'el secreto mejor guardado de la Meseta, con Sigüenza y su mercado medieval como joyas culturales y un calendario de eventos que recupera las tradiciones más auténticas de Castilla',
@@ -134,6 +144,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'cuenca' => [
         'label' => 'Cuenca', 'db' => 'Cuenca',
+        'lat' => 40.072, 'lng' => -2.134,
         'attractions' => ['Semana de Música Religiosa', 'Festival de Teatro', 'Ciudad Encantada', 'Casas Colgadas'],
         'vibe' => [
             'es' => 'tierra de paisajes imposibles y de la Semana de Música Religiosa más prestigiosa de España, que transforma cada primavera la ciudad en un templo del arte y la espiritualidad',
@@ -145,6 +156,7 @@ const EVENTOS_PROVINCIAS = [
     ],
     'ourense' => [
         'label' => 'Ourense', 'db' => 'Ourense',
+        'lat' => 42.336, 'lng' => -7.864,
         'attractions' => ['Entroido de Ourense (Carnaval Gallego)', 'Festival de Cine de Ourense', 'Ribeira Sacra', 'Termas Ourensanas'],
         'vibe' => [
             'es' => 'la provincia del Entroido más salvaje de Galicia y de un festival de cine internacional que compite con los mejores de Europa, todo entre viñedos verticales y aguas termales',
