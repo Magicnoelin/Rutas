@@ -263,7 +263,7 @@ function renderEventosCruceSemantico(array $ctx): void
         </ul>
 
         <div class="lnd-semantico__cta-wrap">
-            <a href="<?= $base_url . $lang_prefix ?>/rutas/"
+            <a href="https://rutasrurales.io/rutas.php"
                class="lnd-btn lnd-btn--outline">
                 <?= htmlspecialchars($t['semantic_cta_rt'] ?? 'Ver todas las rutas') ?>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">

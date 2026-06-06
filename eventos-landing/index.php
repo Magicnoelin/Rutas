@@ -397,7 +397,7 @@ a{color:var(--primary);text-decoration:none}
         <a href="https://rutasrurales.io/alojamientos-turisticos">
             <?= htmlspecialchars($t['footer_stays']) ?>
         </a>
-        <a href="https://rutasrurales.io/rutas/" class="lnd-navbar__cta">
+        <a href="https://rutasrurales.io/rutas.php" class="lnd-navbar__cta">
             <?= $lang === 'zh' ? '探索路线' : ($lang === 'de' ? 'Routen' : ($lang === 'fr' ? 'Itinéraires' : ($lang === 'en' ? 'Routes' : 'Rutas'))) ?>
         </a>
     </nav>
