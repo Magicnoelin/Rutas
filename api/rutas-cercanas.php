@@ -8,11 +8,17 @@ try {
     $longitud = isset($_GET['lng']) ? floatval($_GET['lng']) : null;
     $radio = isset($_GET['radius']) ? floatval($_GET['radius']) : 100; // Radio en km, default 100km
     $categorias = isset($_GET['categories']) ? explode(',', $_GET['categories']) : ['alojamientos', 'lugares', 'actividades', 'eventos'];
+    $provincia_filter = isset($_GET['provincia']) ? trim($_GET['provincia']) : '';
 
-    if (!$latitud || !$longitud) {
-        echo json_encode(['success' => false, 'message' => 'Coordenadas no proporcionadas']);
+    // Se necesita al menos coordenadas o provincia
+    if ((!$latitud || !$longitud) && empty($provincia_filter)) {
+        echo json_encode(['success' => false, 'message' => 'Coordenadas o provincia no proporcionadas']);
         exit;
     }
+
+    // Construir la parte WHERE de provincia (se usa en todas las tablas)
+    $use_provincia = !empty($provincia_filter);
+    $use_coords    = ($latitud && $longitud);
 
     $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASS);
     $resultados = [];
@@ -31,123 +37,163 @@ try {
         return $distancia;
     }
 
-    // Obtener alojamientos cercanos
+    // Cláusula WHERE de provincia (preparada)
+    $prov_where  = $use_provincia ? " AND LOWER(province) = LOWER(?)" : "";
+    $prov_params = $use_provincia ? [$provincia_filter] : [];
+
+    // ── ALOJAMIENTOS ──────────────────────────────────────────────────────────
     if (in_array('alojamientos', $categorias)) {
-        $stmt = $pdo->query("SELECT id, slug, name, address, municipality, province, latitude, longitude, photo1, price_per_night, category_id, created_by as propietario_id, description FROM accommodations WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0");
+        $sql = "SELECT id, slug, name, address, municipality, province, latitude, longitude,
+                       photo1, price_per_night, category_id, created_by AS propietario_id, description
+                FROM accommodations
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0
+                $prov_where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($prov_params);
         $alojamientos = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $distancia = calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude']);
-            if ($distancia <= $radio) {
+            $distancia = $use_coords
+                ? calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude'])
+                : 0;
+            if (!$use_coords || $distancia <= $radio) {
                 $alojamientos[] = [
-                    'id' => $row['id'],
-                    'slug' => $row['slug'],
-                    'nombre' => $row['name'],
-                    'direccion' => $row['address'],
-                    'localidad' => $row['municipality'],
-                    'provincia' => $row['province'],
-                    'latitud' => $row['latitude'],
-                    'longitud' => $row['longitude'],
-                    'foto' => $row['photo1'],
-                    'precio' => !empty($row['price_per_night']) && $row['price_per_night'] > 0 ? $row['price_per_night'].'€' : 'Consultar',
-                    'distancia' => round($distancia, 1),
-                    'tipo' => 'alojamiento',
-                    'categoria' => $row['category_id'],
+                    'id'           => $row['id'],
+                    'slug'         => $row['slug'],
+                    'nombre'       => $row['name'],
+                    'direccion'    => $row['address'],
+                    'localidad'    => $row['municipality'],
+                    'provincia'    => $row['province'],
+                    'latitud'      => $row['latitude'],
+                    'longitud'     => $row['longitude'],
+                    'foto'         => $row['photo1'],
+                    'precio'       => !empty($row['price_per_night']) && $row['price_per_night'] > 0
+                                        ? $row['price_per_night'].'€' : 'Consultar',
+                    'distancia'    => round($distancia, 1),
+                    'tipo'         => 'alojamiento',
+                    'categoria'    => $row['category_id'],
                     'propietario_id' => $row['propietario_id'],
-                    'description' => $row['description']
+                    'description'  => $row['description'],
                 ];
             }
         }
         $resultados = array_merge($resultados, $alojamientos);
     }
 
-    // Obtener lugares de interés cercanos
+    // ── LUGARES DE INTERÉS ────────────────────────────────────────────────────
     if (in_array('lugares', $categorias)) {
-        $stmt = $pdo->query("SELECT id, slug, name, address, municipality, province, latitude, longitude, photo1, entry_fee, category_id, created_by as propietario_id, description FROM places_of_interest WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0");
+        $sql = "SELECT id, slug, name, address, municipality, province, latitude, longitude,
+                       photo1, entry_fee, category_id, created_by AS propietario_id, description
+                FROM places_of_interest
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0
+                $prov_where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($prov_params);
         $lugares = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $distancia = calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude']);
-            if ($distancia <= $radio) {
+            $distancia = $use_coords
+                ? calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude'])
+                : 0;
+            if (!$use_coords || $distancia <= $radio) {
                 $lugares[] = [
-                    'id' => $row['id'],
-                    'slug' => $row['slug'],
-                    'nombre' => $row['name'],
-                    'direccion' => $row['address'],
-                    'localidad' => $row['municipality'],
-                    'provincia' => $row['province'],
-                    'latitud' => $row['latitude'],
-                    'longitud' => $row['longitude'],
-                    'foto' => $row['photo1'],
-                    'precio' => !empty($row['entry_fee']) && $row['entry_fee'] > 0 ? $row['entry_fee'].'€' : 'Gratis',
-                    'distancia' => round($distancia, 1),
-                    'tipo' => 'lugar',
-                    'categoria' => $row['category_id'],
+                    'id'           => $row['id'],
+                    'slug'         => $row['slug'],
+                    'nombre'       => $row['name'],
+                    'direccion'    => $row['address'],
+                    'localidad'    => $row['municipality'],
+                    'provincia'    => $row['province'],
+                    'latitud'      => $row['latitude'],
+                    'longitud'     => $row['longitude'],
+                    'foto'         => $row['photo1'],
+                    'precio'       => !empty($row['entry_fee']) && $row['entry_fee'] > 0
+                                        ? $row['entry_fee'].'€' : 'Gratis',
+                    'distancia'    => round($distancia, 1),
+                    'tipo'         => 'lugar',
+                    'categoria'    => $row['category_id'],
                     'propietario_id' => $row['propietario_id'],
-                    'description' => $row['description']
+                    'description'  => $row['description'],
                 ];
             }
         }
         $resultados = array_merge($resultados, $lugares);
     }
 
-    // Obtener actividades turísticas cercanas
+    // ── ACTIVIDADES TURÍSTICAS ────────────────────────────────────────────────
     if (in_array('actividades', $categorias)) {
-        $stmt = $pdo->query("SELECT id, slug, name, meeting_point, municipality, province, latitude, longitude, photo1, price_adult, category_id, created_by as propietario_id, description FROM tourist_activities WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0");
+        $sql = "SELECT id, slug, name, meeting_point, municipality, province, latitude, longitude,
+                       photo1, price_adult, category_id, created_by AS propietario_id, description
+                FROM tourist_activities
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0
+                $prov_where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($prov_params);
         $actividades = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $distancia = calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude']);
-            if ($distancia <= $radio) {
+            $distancia = $use_coords
+                ? calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude'])
+                : 0;
+            if (!$use_coords || $distancia <= $radio) {
                 $actividades[] = [
-                    'id' => $row['id'],
-                    'slug' => $row['slug'],
-                    'nombre' => $row['name'],
-                    'direccion' => $row['meeting_point'],
-                    'localidad' => $row['municipality'],
-                    'provincia' => $row['province'],
-                    'latitud' => $row['latitude'],
-                    'longitud' => $row['longitude'],
-                    'foto' => $row['photo1'],
-                    'precio' => !empty($row['price_adult']) && $row['price_adult'] > 0 ? $row['price_adult'].'€' : 'Gratis',
-                    'distancia' => round($distancia, 1),
-                    'tipo' => 'actividad',
-                    'categoria' => $row['category_id'],
+                    'id'           => $row['id'],
+                    'slug'         => $row['slug'],
+                    'nombre'       => $row['name'],
+                    'direccion'    => $row['meeting_point'],
+                    'localidad'    => $row['municipality'],
+                    'provincia'    => $row['province'],
+                    'latitud'      => $row['latitude'],
+                    'longitud'     => $row['longitude'],
+                    'foto'         => $row['photo1'],
+                    'precio'       => !empty($row['price_adult']) && $row['price_adult'] > 0
+                                        ? $row['price_adult'].'€' : 'Gratis',
+                    'distancia'    => round($distancia, 1),
+                    'tipo'         => 'actividad',
+                    'categoria'    => $row['category_id'],
                     'propietario_id' => $row['propietario_id'],
-                    'description' => $row['description']
+                    'description'  => $row['description'],
                 ];
             }
         }
         $resultados = array_merge($resultados, $actividades);
     }
 
-    // Obtener eventos culturales cercanos
+    // ── EVENTOS CULTURALES ────────────────────────────────────────────────────
     if (in_array('eventos', $categorias)) {
-        $stmt = $pdo->query("SELECT id, slug, name, venue_name as location, municipality, province, latitude, longitude, photo1, poster_image, ticket_price as price, category_id as category, created_by as propietario_id, description, start_date FROM cultural_events WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0 AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()");
+        $sql = "SELECT id, slug, name, venue_name AS location, municipality, province, latitude, longitude,
+                       photo1, poster_image, ticket_price AS price, category_id AS category,
+                       created_by AS propietario_id, description, start_date
+                FROM cultural_events
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0
+                  AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()
+                $prov_where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($prov_params);
         $eventos = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $distancia = calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude']);
-            if ($distancia <= $radio) {
-                // Usar poster_image o photo1 como imagen principal, con fallback al slug
+            $distancia = $use_coords
+                ? calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude'])
+                : 0;
+            if (!$use_coords || $distancia <= $radio) {
                 $foto = $row['poster_image'] ?: $row['photo1'];
                 if (empty($foto)) {
                     $foto = "/cultural_events_images/" . $row['slug'] . ".webp";
                 }
-
                 $eventos[] = [
-                    'id' => $row['id'],
-                    'slug' => $row['slug'],
-                    'nombre' => $row['name'],
-                    'direccion' => $row['location'],
-                    'localidad' => $row['municipality'],
-                    'provincia' => $row['province'],
-                    'latitud' => $row['latitude'],
-                    'longitud' => $row['longitude'],
-                    'foto' => $foto,
-                    'precio' => !empty($row['price']) && $row['price'] > 0 ? $row['price'].'€' : 'Gratis',
-                    'distancia' => round($distancia, 1),
-                    'tipo' => 'evento',
-                    'categoria' => $row['category'],
+                    'id'           => $row['id'],
+                    'slug'         => $row['slug'],
+                    'nombre'       => $row['name'],
+                    'direccion'    => $row['location'],
+                    'localidad'    => $row['municipality'],
+                    'provincia'    => $row['province'],
+                    'latitud'      => $row['latitude'],
+                    'longitud'     => $row['longitude'],
+                    'foto'         => $foto,
+                    'precio'       => !empty($row['price']) && $row['price'] > 0
+                                        ? $row['price'].'€' : 'Gratis',
+                    'distancia'    => round($distancia, 1),
+                    'tipo'         => 'evento',
+                    'categoria'    => $row['category'],
                     'propietario_id' => $row['propietario_id'],
-                    'description' => $row['description'],
-                    'fecha' => $row['start_date'] ?? null
+                    'description'  => $row['description'],
+                    'fecha'        => $row['start_date'] ?? null,
                 ];
             }
         }

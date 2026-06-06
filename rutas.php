@@ -448,7 +448,8 @@
 
     // Buscar lugares cercanos
     async function searchNearby() {
-        if (!currentLocation) {
+        // Cuando hay provincia pre-seleccionada no necesitamos coordenadas
+        if (!currentLocation && !presetData.provincia) {
             alert('Por favor, selecciona una ubicación primero');
             return;
         }
@@ -475,7 +476,15 @@
         const radius = document.getElementById('radiusInput').value;
 
         try {
-            const response = await fetch(`/api/rutas-cercanas.php?lat=${currentLocation.lat}&lng=${currentLocation.lng}&radius=${radius}&categories=${selectedCategories.join(',')}`);
+            // Construir URL de la API: provincia (si existe) + coordenadas (si existen)
+            let apiUrl = `/api/rutas-cercanas.php?categories=${selectedCategories.join(',')}&radius=${radius}`;
+            if (currentLocation) {
+                apiUrl += `&lat=${currentLocation.lat}&lng=${currentLocation.lng}`;
+            }
+            if (presetData.provincia) {
+                apiUrl += `&provincia=${encodeURIComponent(presetData.provincia)}`;
+            }
+            const response = await fetch(apiUrl);
             const data = await response.json();
 
             if (!data.success || !data.data || data.data.length === 0) {
@@ -711,19 +720,25 @@
                 // Buscar automáticamente
                 setTimeout(() => searchNearby(), 500);
             } 
-            // Si solo tenemos provincia, geocodificarla
+            // Si solo tenemos provincia:
+            // 1) Lanzar búsqueda de resultados INMEDIATAMENTE (no dependemos de coords)
+            // 2) Geocodificar en paralelo solo para centrar el mapa
             else if (presetData.provincia) {
+                // Buscar ya, sin esperar a Nominatim
+                setTimeout(() => searchNearby(), 400);
+
+                // Geocodificar para centrar el mapa (best-effort)
                 fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(presetData.provincia + ', España')}`)
                     .then(response => response.json())
-                    .then(data => {
-                        if (data && data.length > 0) {
-                            const result = data[0];
+                    .then(geoData => {
+                        if (geoData && geoData.length > 0) {
+                            const result = geoData[0];
                             const center = L.latLng(parseFloat(result.lat), parseFloat(result.lon));
-                            map.setView(center, 10);
-
-                            if (userMarker) {
-                                map.removeLayer(userMarker);
+                            // Solo centrar si el mapa no tiene ya marcadores visibles
+                            if (markers.length === 0) {
+                                map.setView(center, 10);
                             }
+                            if (userMarker) map.removeLayer(userMarker);
                             userMarker = L.marker(center, {
                                 icon: L.icon({
                                     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -735,9 +750,6 @@
                                 })
                             }).addTo(map).bindPopup(presetData.provincia);
                             currentLocation = center;
-                            
-                            // Buscar automáticamente
-                            setTimeout(() => searchNearby(), 500);
                         }
                     })
                     .catch(error => {
