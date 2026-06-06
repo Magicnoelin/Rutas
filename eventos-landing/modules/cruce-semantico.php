@@ -112,7 +112,7 @@ function renderEventosCruceSemantico(array $ctx): void
             <?php endforeach; ?>
         </ul>
 
-        <!-- CTA ver más alojamientos -->
+        <!-- CTA ver más alojamientos + Mapa -->
         <?php if (!empty($province)): ?>
         <div class="lnd-semantico__cta-wrap">
             <a href="https://rutasrurales.io/alojamientos-turisticos"
@@ -121,6 +121,11 @@ function renderEventosCruceSemantico(array $ctx): void
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                     <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                 </svg>
+            </a>
+            <a href="https://rutasrurales.io/rutas.php?provincia=<?= urlencode($province) ?>&alojamientos=1&lugares=0&actividades=0&eventos=0"
+               class="lnd-btn lnd-btn--outline"
+               style="margin-left:8px;">
+                🗺️ <?= htmlspecialchars($lang === 'es' ? 'Ver en el mapa' : ($lang === 'en' ? 'View on map' : ($lang === 'fr' ? 'Voir sur la carte' : ($lang === 'de' ? 'Auf der Karte' : '在地图上查看')))) ?>
             </a>
         </div>
         <?php endif; ?>
