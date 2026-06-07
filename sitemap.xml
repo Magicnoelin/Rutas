@@ -49,11 +49,15 @@
   </sitemap>
 
   <!-- Landings long-tail (solo URLs con contenido real en BD) -->
+  <!-- NOTA: estos archivos .xml se generan ejecutando regenerar_sitemap_landings.php -->
+  <!-- y regenerar_sitemap_eventos_landing.php en el servidor -->
   <sitemap>
-    <loc>https://rutasrurales.io/sitemap-landings.php</loc>
+    <loc>https://rutasrurales.io/sitemap-landings.xml</loc>
+    <lastmod>2026-07-06</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://rutasrurales.io/sitemap-eventos-landing.php</loc>
+    <loc>https://rutasrurales.io/sitemap-eventos-landing.xml</loc>
+    <lastmod>2026-07-06</lastmod>
   </sitemap>
 
 </sitemapindex>
