@@ -226,6 +226,7 @@ $rel_next = ($page < $result['pages'])   ? $canonical . '?p=' . ($page + 1) : nu
 <meta name="description" content="<?= htmlspecialchars($meta_desc) ?>">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <link rel="canonical" href="<?= htmlspecialchars($canonical . ($page > 1 ? '?p=' . $page : '')) ?>">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
 <?php if ($rel_prev): ?><link rel="prev" href="<?= htmlspecialchars($rel_prev) ?>"><?php endif; ?>
 <?php if ($rel_next): ?><link rel="next" href="<?= htmlspecialchars($rel_next) ?>"><?php endif; ?>
 

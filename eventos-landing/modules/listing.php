@@ -51,7 +51,7 @@ function renderEventosLandingListing(array $ctx): void
         <p class="lnd-listing__count">
             <?= $total ?> <?= htmlspecialchars($t['stat_count'] ?? 'eventos') ?>
             <?php if ($pages > 1): ?>
-            &nbsp;·&nbsp; <?= $t['page_of'] ?? 'Página' ?> <?= $page ?> <?= $t['page_of'] ?? 'de' ?> <?= $pages ?>
+            &nbsp;·&nbsp; <?= $page ?> <?= $t['page_of'] ?? 'de' ?> <?= $pages ?>
             <?php endif; ?>
         </p>
         <?php endif; ?>
