@@ -86,31 +86,36 @@ foreach (LANDING_FILTROS as $filter_slug => $filter_data) {
             continue; // Sin resultados → no incluir en sitemap
         }
 
-        // ── UNA ENTRADA POR LANDING (URL canónica española + hreflang de todos los idiomas)
-        // Google descubre las variantes de idioma a través de los <xhtml:link> internos.
-        // Esto produce 1 URL por landing (limpio) vs 5 entradas separadas (confuso).
+        // ── EMITIR URLs PARA LOS 5 IDIOMAS ───────────────────────────────────────
+        // Cada versión lingüística tiene su propia entrada <url> con hreflang completo.
+        // Google necesita encontrar <loc> explícitos para indexar cada idioma.
         $urlSlug    = $filter_slug . '-' . $prov_slug;
         $lastmod    = date('Y-m-d');
         $canonicUrl = 'https://rutasrurales.io/alojamientos/' . $urlSlug;
 
-        echo "\n";
-        echo "\n  <url>";
-        echo "\n    <loc>" . htmlspecialchars($canonicUrl, ENT_XML1) . "</loc>";
-        echo "\n    <lastmod>" . $lastmod . "</lastmod>";
-        echo "\n    <changefreq>weekly</changefreq>";
-        echo "\n    <priority>0.8</priority>";
+        echo "\n\n  <!-- {$urlSlug} -->";
 
-        // hreflang: una etiqueta por idioma
         foreach ($idiomas as $langPrefix => $langCode) {
-            $altUrl = 'https://rutasrurales.io/' . $langPrefix . 'alojamientos/' . $urlSlug;
-            echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$langCode}\" href=\"" . htmlspecialchars($altUrl, ENT_XML1) . "\"/>";
+            $url = 'https://rutasrurales.io/' . $langPrefix . 'alojamientos/' . $urlSlug;
+
+            echo "\n  <url>";
+            echo "\n    <loc>" . htmlspecialchars($url, ENT_XML1) . "</loc>";
+            echo "\n    <lastmod>" . $lastmod . "</lastmod>";
+            echo "\n    <changefreq>weekly</changefreq>";
+            echo "\n    <priority>" . ($langCode === 'es' ? '0.8' : '0.7') . "</priority>";
+
+            // hreflang completo: todas las variantes lingüísticas
+            foreach ($idiomas as $hlPrefix => $hlCode) {
+                $hlUrl = 'https://rutasrurales.io/' . $hlPrefix . 'alojamientos/' . $urlSlug;
+                echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$hlCode}\" href=\"" . htmlspecialchars($hlUrl, ENT_XML1) . "\"/>";
+            }
+            // x-default apunta a la versión española
+            echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
+
+            echo "\n  </url>";
         }
-        // x-default → versión española
-        echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
 
-        echo "\n  </url>";
-
-        $urlsIncluidas++;
+        $urlsIncluidas += count($idiomas);
     }
 }
 

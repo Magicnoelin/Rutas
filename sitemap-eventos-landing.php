@@ -102,18 +102,24 @@ foreach (EVENTOS_PROVINCIAS as $prov_slug => $prov_data) {
 
     $canonicUrl = 'https://rutasrurales.io/eventos/' . $prov_slug;
 
-    echo "\n\n  <url>";
-    echo "\n    <loc>" . htmlspecialchars($canonicUrl, ENT_XML1) . "</loc>";
-    echo "\n    <lastmod>" . $hoy . "</lastmod>";
-    echo "\n    <changefreq>weekly</changefreq>";
-    echo "\n    <priority>1.0</priority>";
+    // ── 5 entradas <url> (una por idioma) con hreflang completo ──────────────
+    echo "\n\n  <!-- {$prov_slug} -->";
     foreach ($idiomas as $langPrefix => $langCode) {
-        $altUrl = 'https://rutasrurales.io/' . $langPrefix . 'eventos/' . $prov_slug;
-        echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$langCode}\" href=\"" . htmlspecialchars($altUrl, ENT_XML1) . "\"/>";
+        $url = 'https://rutasrurales.io/' . $langPrefix . 'eventos/' . $prov_slug;
+
+        echo "\n  <url>";
+        echo "\n    <loc>" . htmlspecialchars($url, ENT_XML1) . "</loc>";
+        echo "\n    <lastmod>" . $hoy . "</lastmod>";
+        echo "\n    <changefreq>weekly</changefreq>";
+        echo "\n    <priority>" . ($langCode === 'es' ? '1.0' : '0.9') . "</priority>";
+        foreach ($idiomas as $hlPrefix => $hlCode) {
+            $hlUrl = 'https://rutasrurales.io/' . $hlPrefix . 'eventos/' . $prov_slug;
+            echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$hlCode}\" href=\"" . htmlspecialchars($hlUrl, ENT_XML1) . "\"/>";
+        }
+        echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
+        echo "\n  </url>";
     }
-    echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
-    echo "\n  </url>";
-    $urlsIncluidas++;
+    $urlsIncluidas += count($idiomas);
 }
 
 // ── BLOQUE 2: Filtro + provincia (/eventos/{filtro}-{provincia}) ─────────────
@@ -139,18 +145,24 @@ foreach (EVENTOS_FILTROS as $filter_slug => $filter_data) {
         $urlSlug    = $filter_slug . '-' . $prov_slug;
         $canonicUrl = 'https://rutasrurales.io/eventos/' . $urlSlug;
 
-        echo "\n\n  <url>";
-        echo "\n    <loc>" . htmlspecialchars($canonicUrl, ENT_XML1) . "</loc>";
-        echo "\n    <lastmod>" . $hoy . "</lastmod>";
-        echo "\n    <changefreq>weekly</changefreq>";
-        echo "\n    <priority>0.8</priority>";
+        // ── 5 entradas <url> (una por idioma) con hreflang completo ──────────
+        echo "\n\n  <!-- {$urlSlug} -->";
         foreach ($idiomas as $langPrefix => $langCode) {
-            $altUrl = 'https://rutasrurales.io/' . $langPrefix . 'eventos/' . $urlSlug;
-            echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$langCode}\" href=\"" . htmlspecialchars($altUrl, ENT_XML1) . "\"/>";
+            $url = 'https://rutasrurales.io/' . $langPrefix . 'eventos/' . $urlSlug;
+
+            echo "\n  <url>";
+            echo "\n    <loc>" . htmlspecialchars($url, ENT_XML1) . "</loc>";
+            echo "\n    <lastmod>" . $hoy . "</lastmod>";
+            echo "\n    <changefreq>weekly</changefreq>";
+            echo "\n    <priority>" . ($langCode === 'es' ? '0.8' : '0.7') . "</priority>";
+            foreach ($idiomas as $hlPrefix => $hlCode) {
+                $hlUrl = 'https://rutasrurales.io/' . $hlPrefix . 'eventos/' . $urlSlug;
+                echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$hlCode}\" href=\"" . htmlspecialchars($hlUrl, ENT_XML1) . "\"/>";
+            }
+            echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
+            echo "\n  </url>";
         }
-        echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
-        echo "\n  </url>";
-        $urlsIncluidas++;
+        $urlsIncluidas += count($idiomas);
     }
 }
 
@@ -200,18 +212,24 @@ foreach ($categoria_keys as $ckey) {
             $urlSlug    = $ckey . '-' . $tkey . '-' . $prov_slug;
             $canonicUrl = 'https://rutasrurales.io/eventos/' . $urlSlug;
 
-            echo "\n\n  <url>";
-            echo "\n    <loc>" . htmlspecialchars($canonicUrl, ENT_XML1) . "</loc>";
-            echo "\n    <lastmod>" . $hoy . "</lastmod>";
-            echo "\n    <changefreq>weekly</changefreq>";
-            echo "\n    <priority>0.7</priority>";
+            // ── 5 entradas <url> (una por idioma) con hreflang completo ──────
+            echo "\n\n  <!-- {$urlSlug} -->";
             foreach ($idiomas as $langPrefix => $langCode) {
-                $altUrl = 'https://rutasrurales.io/' . $langPrefix . 'eventos/' . $urlSlug;
-                echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$langCode}\" href=\"" . htmlspecialchars($altUrl, ENT_XML1) . "\"/>";
+                $url = 'https://rutasrurales.io/' . $langPrefix . 'eventos/' . $urlSlug;
+
+                echo "\n  <url>";
+                echo "\n    <loc>" . htmlspecialchars($url, ENT_XML1) . "</loc>";
+                echo "\n    <lastmod>" . $hoy . "</lastmod>";
+                echo "\n    <changefreq>weekly</changefreq>";
+                echo "\n    <priority>" . ($langCode === 'es' ? '0.7' : '0.6') . "</priority>";
+                foreach ($idiomas as $hlPrefix => $hlCode) {
+                    $hlUrl = 'https://rutasrurales.io/' . $hlPrefix . 'eventos/' . $urlSlug;
+                    echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$hlCode}\" href=\"" . htmlspecialchars($hlUrl, ENT_XML1) . "\"/>";
+                }
+                echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
+                echo "\n  </url>";
             }
-            echo "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
-            echo "\n  </url>";
-            $urlsIncluidas++;
+            $urlsIncluidas += count($idiomas);
         }
     }
 }

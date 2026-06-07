@@ -127,37 +127,42 @@ foreach (LANDING_FILTROS as $filter_slug => $filter_data) {
             continue;
         }
 
-        // ── UNA ENTRADA POR LANDING (URL canónica española + hreflang de todos los idiomas)
-        // 1 URL por landing = sitemap limpio y legible.
-        // Google descubre las variantes de idioma a través de los <xhtml:link> internos.
+        // ── EMITIR URLs PARA LOS 5 IDIOMAS ───────────────────────────────────
+        // Cada versión lingüística tiene su propia entrada <url> con hreflang completo.
+        // Google necesita <loc> explícitos para indexar cada idioma.
         $urlSlug    = $filter_slug . '-' . $prov_slug;
         $canonicUrl = $baseUrl . '/alojamientos/' . $urlSlug;
 
-        $xml .= "\n";
-        $xml .= "\n  <url>";
-        $xml .= "\n    <loc>" . htmlspecialchars($canonicUrl, ENT_XML1) . "</loc>";
-        $xml .= "\n    <lastmod>" . $today . "</lastmod>";
-        $xml .= "\n    <changefreq>weekly</changefreq>";
-        $xml .= "\n    <priority>0.8</priority>";
+        $xml .= "\n\n  <!-- {$urlSlug} -->";
 
-        // hreflang: una etiqueta por idioma
         foreach ($idiomas as $langPrefix => $langCode) {
-            $altUrl = $baseUrl . '/' . $langPrefix . 'alojamientos/' . $urlSlug;
-            $xml .= "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$langCode}\" href=\"" . htmlspecialchars($altUrl, ENT_XML1) . "\"/>";
+            $url = $baseUrl . '/' . $langPrefix . 'alojamientos/' . $urlSlug;
+
+            $xml .= "\n  <url>";
+            $xml .= "\n    <loc>" . htmlspecialchars($url, ENT_XML1) . "</loc>";
+            $xml .= "\n    <lastmod>" . $today . "</lastmod>";
+            $xml .= "\n    <changefreq>weekly</changefreq>";
+            $xml .= "\n    <priority>" . ($langCode === 'es' ? '0.8' : '0.7') . "</priority>";
+
+            // hreflang completo: todas las variantes lingüísticas
+            foreach ($idiomas as $hlPrefix => $hlCode) {
+                $hlUrl = $baseUrl . '/' . $hlPrefix . 'alojamientos/' . $urlSlug;
+                $xml .= "\n    <xhtml:link rel=\"alternate\" hreflang=\"{$hlCode}\" href=\"" . htmlspecialchars($hlUrl, ENT_XML1) . "\"/>";
+            }
+            // x-default apunta a la versión española
+            $xml .= "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
+
+            $xml .= "\n  </url>";
         }
-        // x-default → versión española
-        $xml .= "\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicUrl, ENT_XML1) . "\"/>";
 
-        $xml .= "\n  </url>";
-
-        $urlsIncluidas++;
+        $urlsIncluidas += count($idiomas);
     }
 }
 
 $xml .= "\n</urlset>\n";
 
 $log[] = "📊 Combinaciones evaluadas: {$combinaciones}";
-$log[] = "✅ URLs incluidas: {$urlsIncluidas} landings (1 URL canónica + " . count($idiomas) . " hreflang internos cada una)";
+$log[] = "✅ URLs incluidas: {$urlsIncluidas} entradas ({$urlsOmitidas} combinaciones sin contenido, " . count($idiomas) . " idiomas por landing)";
 $log[] = "⏭️  Combinaciones omitidas (sin contenido): {$urlsOmitidas}";
 
 // ── Guardar sitemap-landings.xml ──────────────────────────────────────────────
