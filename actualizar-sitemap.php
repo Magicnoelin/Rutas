@@ -215,7 +215,37 @@ try {
     echo "⚠️ Error generando sitemap i18n de eventos: " . $e->getMessage() . "<br>";
 }
 
-// 5. GENERACIÓN DEL ÍNDICE MAESTRO
+// 5. GENERACIÓN DE SITEMAPS DE LANDINGS LONG-TAIL
+// Indicamos a los regeneradores que NO toquen sitemap.xml (lo hacemos nosotros)
+define('SKIP_SITEMAP_INDEX_UPDATE', true);
+
+echo "<h3>🏨 Generando sitemap de landings de alojamientos...</h3>";
+try {
+    ob_start();
+    require_once __DIR__ . '/regenerar_sitemap_landings.php';
+    ob_end_clean();
+    if (file_exists(__DIR__ . '/sitemap-landings.xml')) {
+        $archivos_generados[] = 'sitemap-landings.xml';
+        echo "✅ Archivo <b>sitemap-landings.xml</b> incluido.<br>";
+    }
+} catch (Throwable $e) {
+    echo "⚠️ Error en landings de alojamientos: " . $e->getMessage() . "<br>";
+}
+
+echo "<h3>🗓️ Generando sitemap de landings de eventos...</h3>";
+try {
+    ob_start();
+    require_once __DIR__ . '/regenerar_sitemap_eventos_landing.php';
+    ob_end_clean();
+    if (file_exists(__DIR__ . '/sitemap-eventos-landing.xml')) {
+        $archivos_generados[] = 'sitemap-eventos-landing.xml';
+        echo "✅ Archivo <b>sitemap-eventos-landing.xml</b> incluido.<br>";
+    }
+} catch (Throwable $e) {
+    echo "⚠️ Error en landings de eventos: " . $e->getMessage() . "<br>";
+}
+
+// 6. GENERACIÓN DEL ÍNDICE MAESTRO
 $index = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 $index .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 foreach ($archivos_generados as $file) {

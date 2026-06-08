@@ -20,6 +20,7 @@ $baseDir = __DIR__;
 $baseUrl = 'https://rutasrurales.io';
 $outputFile   = $baseDir . '/sitemap-eventos-landing.xml';
 $sitemapIndex = $baseDir . '/sitemap.xml';
+$skipSitemapIndex = defined('SKIP_SITEMAP_INDEX_UPDATE') && SKIP_SITEMAP_INDEX_UPDATE;
 
 $log   = [];
 $now   = date('Y-m-d H:i:s');
@@ -233,7 +234,9 @@ if ($bytesWritten !== false) {
 }
 
 // ── Actualizar sitemap.xml (índice maestro) ────────────────────────────────────
-if (file_exists($sitemapIndex)) {
+// Si SKIP_SITEMAP_INDEX_UPDATE está definida, no tocamos sitemap.xml
+// (quien nos llama —actualizar-sitemap.php— se encarga del índice maestro)
+if (!$skipSitemapIndex && file_exists($sitemapIndex)) {
     $indexContent = file_get_contents($sitemapIndex);
 
     // Reemplazar referencia al .php por .xml (si existe la entrada .php)
