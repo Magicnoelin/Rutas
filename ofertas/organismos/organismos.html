@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planes para Organismos Públicos y Ayuntamientos - Rutas Rurales</title>
+    <style>
+        /* Estilos Base Dinámicos y Limpios */
+        :root {
+            --primary: #2c5234; /* Verde institucional, evoca naturaleza y entornos rurales */
+            --primary-light: #eef3ef;
+            --accent: #d97706; /* Ámbar/Oro para elementos destacados y ofertas */
+            --slate-dark: #1e293b;
+            --slate-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--slate-dark);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Encabezado Principal */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: var(--slate-dark);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 16px;
+            color: var(--slate-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Contenedor de las Tarjetas de Precios (Layout Clásico de Tabla de Precios) */
+        .pricing-grid {
+            display: block;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        /* Usamos display: inline-block de forma muy limpia para máxima compatibilidad */
+        .card {
+            display: inline-block;
+            vertical-align: top;
+            width: 100%;
+            max-width: 340px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 35px 25px;
+            margin: 15px;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        /* Destacar el plan intermedio/estrella */
+        .card.featured {
+            border: 2px solid var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(44, 82, 52, 0.1), 0 4px 6px -2px rgba(44, 82, 52, 0.05);
+        }
+
+        .badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--accent);
+            color: var(--white);
+            padding: 4px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--slate-dark);
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--slate-light);
+            height: 40px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* Sección de Precios */
+        .price-container {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .old-price {
+            font-size: 14px;
+            color: var(--slate-light);
+            text-decoration: line-through;
+            margin-bottom: 2px;
+        }
+
+        .current-price {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--slate-dark);
+            line-height: 1;
+        }
+
+        .current-price span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--slate-light);
+        }
+
+        .promo-tag {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        /* Listado de Características (Beneficios) */
+        .features-list {
+            list-style: none;
+            margin-bottom: 30px;
+            min-height: 220px; /* Alineación visual básica */
+        }
+
+        .features-list li {
+            font-size: 13.5px;
+            color: var(--slate-dark);
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        /* Checkmark en SVG nativo para evitar dependencias externas */
+        .features-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 3px;
+            width: 16px;
+            height: 16px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%232c5234'%3E%3Cpath fill-rule='evenodd' d='M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        /* Botón de Acción Principal estilo Stripe Link */
+        .btn {
+            display: block;
+            text-align: center;
+            background-color: var(--slate-dark);
+            color: var(--white);
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #0f172a;
+        }
+
+        .card.featured .btn {
+            background-color: var(--primary);
+        }
+
+        .card.featured .btn:hover {
+            background-color: #1e3a24;
+        }
+
+        /* Pie de página institucional */
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+        }
+
+        footer p {
+            font-size: 13px;
+            color: var(--slate-light);
+            margin-bottom: 10px;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card {
+                max-width: 100%;
+                margin: 15px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <div class="logo">Rutas<span>Rurales</span></div>
+            <h1>Planes de Visibilidad para Organismos</h1>
+            <p>Impulsa el turismo local, la gastronomía, el patrimonio y las actividades de tu municipio o comarca dentro del portal de referencia en el medio rural.</p>
+        </header>
+
+        <div class="pricing-grid">
+
+            <!-- PLAN BÁSICO / MUNICIPIO -->
+            <div class="card">
+                <div class="card-title">Ayuntamiento Básico</div>
+                <div class="card-subtitle">Ideal para pequeños municipios que desean digitalizar y centralizar sus puntos turísticos clave.</div>
+                
+                <div class="price-container">
+                    <div class="old-price">Antes 79€/mes</div>
+                    <div class="current-price">29€ <span>/ mes</span></div>
+                    <div class="promo-tag">Tarifa Institucional (IVA Inc.)</div>
+                </div>
+
+                <ul class="features-list">
+                    <li>Ficha oficial del Municipio personalizada</li>
+                    <li>Publicación de hasta 5 puntos de interés o rutas</li>
+                    <li>Enlace web institucional DoFollow institucional</li>
+                    <li>Galería fotográfica y tablón de anuncios local</li>
+                    <li>Soporte técnico estándar por email</li>
+                </ul>
+
+                <!-- Aquí sustituirás por tu enlace real de Stripe de 29€ -->
+                <a href="https://buy.stripe.com/test_7sY4gsb777y199EaRV4F204" class="btn">Impulsar Mi Municipio</a>
+            </div>
+
+            <!-- PLAN ORGANISMOS / PRO (DESTACADO) -->
+            <div class="card featured">
+                <div class="badge">Más Popular</div>
+                <div class="card-title">Organismos Pro</div>
+                <div class="card-subtitle">Perfecto para ayuntamientos activos y mancomunidades que gestionan agenda cultural y turística recurrente.</div>
+                
+                <div class="price-container">
+                    <div class="old-price">Antes 149€/mes</div>
+                    <div class="current-price">59€ <span>/ mes</span></div>
+                    <div class="promo-tag">OFERTA DE LANZAMIENTO (IVA Inc.)</div>
+                </div>
+
+                <ul class="features-list">
+                    <li><strong>Posicionamiento Preferente</strong> en el mapa comarcal</li>
+                    <li><strong>Publicación ILIMITADA</strong> de eventos, rutas y ferias</li>
+                    <li>Enlace web directo DoFollow (Beneficia al SEO institucional)</li>
+                    <li>Integración de vídeos y galerías HD completas</li>
+                    <li>Difusión de eventos clave en nuestras Redes Sociales</li>
+                    <li>Soporte técnico prioritario (24h)</li>
+                </ul>
+
+                <!-- Aquí sustituirás por tu enlace real de Stripe de 59€ -->
+                <a href="https://buy.stripe.com/test_cNi3coejj4lP3PkbVZ4F205" class="btn">Multiplicar Visibilidad</a>
+            </div>
+
+            <!-- PLAN DIPUTACIÓN / COMARCA TOTAL -->
+            <div class="card">
+                <div class="card-title">Territorio Total</div>
+                <div class="card-subtitle">Diseñado para Diputaciones Provinciales, Consorcios de Turismo o amplias Mancomunidades rurales.</div>
+                
+                <div class="price-container">
+                    <div class="old-price">Antes 299€/mes</div>
+                    <div class="current-price">129€ <span>/ mes</span></div>
+                    <div class="promo-tag">Ahorro Territorial (IVA Inc.)</div>
+                </div>
+
+                <ul class="features-list">
+                    <li>Presencia integral de toda la comarca o demarcación</li>
+                    <li>Ubicación prioritaria sobre cualquier otro plan</li>
+                    <li>Campañas de difusión exclusivas en nuestra Newsletter</li>
+                    <li>Informes analíticos mensuales de visitas e impacto</li>
+                    <li>Soporte y consultoría técnica de carga automatizada</li>
+                </ul>
+
+                <!-- Aquí sustituirás por tu enlace real de Stripe de 129€ -->
+                <a href="https://buy.stripe.com/test_eVq3coejjdWpdpU6BF4F206" class="btn">Contratar Plan Territorial</a>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>¿Necesitas una tramitación mediante Factura Oficial, REGE o un acuerdo a medida para tu institución?</p>
+            <p><a href="mailto:hola@rutasrurales.io">Contactar directamente con soporte institucional</a></p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

@@ -18,7 +18,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #2F5233;
+            --primary-color: ##246634;
             --secondary-color: #6B8E6B;
             --accent-color: #B8956A;
             --dark-color: #1A2E1A;
