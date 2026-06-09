@@ -27,6 +27,8 @@ function renderEventosLandingListing(array $ctx): void
     $province  = $ctx['province_label'] ?? '';
     $prov_key  = $ctx['province_key']   ?? '';
     $pdo       = $ctx['pdo']            ?? null;
+    $stats     = $ctx['stats']          ?? [];
+    $towns     = (int)($stats['towns']  ?? 0);
 
     $base_url = 'https://rutasrurales.io';
 
@@ -56,6 +58,50 @@ function renderEventosLandingListing(array $ctx): void
         </p>
         <?php endif; ?>
     </div>
+
+    <!-- ── CTA: ¿Tu municipio también tiene agenda? ─────────────────── -->
+    <?php if (!empty($province)): ?>
+    <style>
+    .lnd-munic-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;
+      background:linear-gradient(135deg,#fff8e1 0%,#fffde7 100%);
+      border:1px solid #ffe082;border-left:4px solid #F9A825;border-radius:12px;
+      padding:14px 20px;margin:0 0 28px;font-size:.88rem}
+    .lnd-munic-cta__icon{font-size:1.4rem;flex-shrink:0;line-height:1}
+    .lnd-munic-cta__text{flex:1;min-width:180px;color:#555;line-height:1.5;margin:0}
+    .lnd-munic-cta__text strong{color:#1a3d1e;font-weight:700}
+    .lnd-munic-cta__btn{display:inline-flex;align-items:center;gap:6px;
+      background:#2F5233;color:#fff!important;padding:9px 18px;border-radius:8px;
+      font-weight:700;font-size:.82rem;white-space:nowrap;
+      transition:background .18s ease;text-decoration:none!important}
+    .lnd-munic-cta__btn:hover{background:#1a3d1e}
+    @media(max-width:600px){.lnd-munic-cta{flex-direction:column;text-align:center}}
+    </style>
+    <div class="lnd-munic-cta" role="note" aria-label="¿Tu municipio tiene agenda cultural?">
+        <span class="lnd-munic-cta__icon" aria-hidden="true">📍</span>
+        <p class="lnd-munic-cta__text">
+            <?php if ($towns > 1): ?>
+                <strong><?= $towns ?> municipios</strong> ya tienen su agenda cultural
+                en <?= htmlspecialchars($province) ?>. ¿Falta el tuyo?
+                No dejes que tus vecinos se lleven todo el protagonismo.
+            <?php elseif ($towns === 1): ?>
+                <strong>1 municipio</strong> ya tiene su agenda cultural
+                en <?= htmlspecialchars($province) ?>. ¿Por qué no el tuyo también?
+            <?php else: ?>
+                ¿Tu municipio de <?= htmlspecialchars($province) ?> tiene eventos y
+                todavía no aparece aquí? <strong>¡Aún estás a tiempo!</strong>
+                Publica vuestra agenda cultural y que os encuentren.
+            <?php endif; ?>
+        </p>
+        <a href="https://rutasrurales.io/ofertas/organismos/organismos.html"
+           class="lnd-munic-cta__btn"
+           title="Publica la agenda cultural de tu municipio en Rutas Rurales">
+            ¡Ponlo en el mapa!
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+        </a>
+    </div>
+    <?php endif; ?>
 
     <?php if (empty($items)): ?>
     <!-- Sin resultados -->
