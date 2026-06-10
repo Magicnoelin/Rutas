@@ -41,7 +41,8 @@ try {
 
         $result = ['alojamientos' => [], 'lugares' => [], 'eventos_similares' => []];
 
-        // Alojamientos cercanos (por provincia o coordenadas)
+        // Alojamientos cercanos: prioridad por coordenadas, fallback por provincia
+        $alojamientos = [];
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province,
@@ -49,23 +50,45 @@ try {
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM accommodations
                 WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
-                HAVING distance < 50
+                HAVING distance < 100
                 ORDER BY distance ASC
                 LIMIT 8
             ");
             $stmt->execute([$lat, $lng, $lat]);
-        } else {
-            $stmt = $pdo->prepare("
-                SELECT id, name, slug, municipality, province,
-                       price_per_night, photo1 AS main_image, latitude, longitude, 0 AS distance
-                FROM accommodations
-                WHERE is_active = 1 AND province = ?
-                ORDER BY RAND()
-                LIMIT 8
-            ");
-            $stmt->execute([$prov]);
+            $alojamientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-        $alojamientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Si hay pocos resultados con coordenadas (o no hay lat/lng), completar con alojamientos de la misma provincia
+        if (count($alojamientos) < 6 && !empty($prov)) {
+            $existing_ids = array_column($alojamientos, 'id');
+            $needed = 8 - count($alojamientos);
+            if ($existing_ids) {
+                $placeholders = implode(',', array_map('intval', $existing_ids));
+                $stmt2 = $pdo->prepare("
+                    SELECT id, name, slug, municipality, province,
+                           price_per_night, photo1 AS main_image, latitude, longitude, 0 AS distance
+                    FROM accommodations
+                    WHERE is_active = 1 AND province = ?
+                      AND id NOT IN ($placeholders)
+                    ORDER BY RAND()
+                    LIMIT $needed
+                ");
+                $stmt2->execute([$prov]);
+            } else {
+                $stmt2 = $pdo->prepare("
+                    SELECT id, name, slug, municipality, province,
+                           price_per_night, photo1 AS main_image, latitude, longitude, 0 AS distance
+                    FROM accommodations
+                    WHERE is_active = 1 AND province = ?
+                    ORDER BY RAND()
+                    LIMIT $needed
+                ");
+                $stmt2->execute([$prov]);
+            }
+            $extra = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+            $alojamientos = array_merge($alojamientos, $extra);
+        }
+
         foreach ($alojamientos as &$a) {
             $a['distance'] = round((float)$a['distance'], 1);
             $a['url'] = '/alojamiento/' . $a['slug'];
