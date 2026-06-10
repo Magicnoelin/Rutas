@@ -31,7 +31,8 @@ if (!empty($slug)) {
                        e.venue_name AS localidad, e.venue_address, e.municipality, e.province,
                        e.latitude, e.longitude, e.is_free, e.ticket_price, e.organizer,
                        e.photo1, e.photo2, e.photo3, e.photo4, e.poster_image,
-                       e.category_id, e.is_active, e.status
+                       e.category_id, e.is_active, e.status,
+                       e.program, e.target_audience, e.accessibility
                 FROM cultural_events e
                 WHERE e.slug = ? AND e.is_active = 1
             ");
@@ -85,6 +86,11 @@ if (!empty($slug)) {
             $evento['programa']          = $traduccion['programa_trad']    ?? '';
             $evento['audiencia']         = $traduccion['audiencia_trad']   ?? '';
             $evento['accesibilidad']     = $traduccion['accesibilidad_trad'] ?? '';
+        } elseif ($evento) {
+            // Para español: mapear columnas nativas al alias esperado en las vistas
+            $evento['programa']     = $evento['program']          ?? '';
+            $evento['audiencia']    = $evento['target_audience']  ?? '';
+            $evento['accesibilidad']= $evento['accessibility']    ?? '';
         }
 
     } catch (Exception $e) {
@@ -1354,30 +1360,30 @@ if (file_exists($header_path)) {
                     ?>
                 </div>
 
-                <!-- Info adicional de traducciones -->
+                <!-- Info adicional: programa, público, accesibilidad -->
                 <?php
                 $programa = $evento['programa'] ?? '';
                 $audiencia = $evento['audiencia'] ?? '';
                 $accesibilidad = $evento['accesibilidad'] ?? '';
                 if ($programa || $audiencia || $accesibilidad):
                 ?>
-                <div style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
-                     <?php if ($programa): ?>
-                     <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo ($t['programa'] ?? ''); ?></h4>
-                        <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($programa)); ?></div>
+                <div style="margin-top:24px;display:flex;flex-direction:column;gap:16px;">
+                    <?php if ($programa): ?>
+                    <div style="background:var(--bg);padding:20px;border-radius:8px;border-left:3px solid var(--accent);">
+                        <h4 style="color:var(--primary);margin-bottom:12px;font-size:1rem;"><?php echo ($t['programa'] ?? ''); ?></h4>
+                        <div class="event-description" style="font-size:0.9rem;"><?php echo $programa; ?></div>
                     </div>
                     <?php endif; ?>
-                     <?php if ($audiencia): ?>
-                     <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo ($t['publico'] ?? ''); ?></h4>
-                        <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($audiencia)); ?></div>
+                    <?php if ($audiencia): ?>
+                    <div style="background:var(--bg);padding:20px;border-radius:8px;border-left:3px solid var(--accent);">
+                        <h4 style="color:var(--primary);margin-bottom:12px;font-size:1rem;"><?php echo ($t['publico'] ?? ''); ?></h4>
+                        <div class="event-description" style="font-size:0.9rem;"><?php echo $audiencia; ?></div>
                     </div>
                     <?php endif; ?>
-                     <?php if ($accesibilidad): ?>
-                     <div style="background:var(--bg);padding:16px;border-radius:8px;">
-                         <h4 style="color:var(--primary);margin-bottom:8px;font-size:0.95rem;"><?php echo ($t['accesibilidad'] ?? ''); ?></h4>
-                        <div style="font-size:0.9rem;"><?php echo nl2br(htmlspecialchars($accesibilidad)); ?></div>
+                    <?php if ($accesibilidad): ?>
+                    <div style="background:var(--bg);padding:20px;border-radius:8px;border-left:3px solid var(--accent);">
+                        <h4 style="color:var(--primary);margin-bottom:12px;font-size:1rem;"><?php echo ($t['accesibilidad'] ?? ''); ?></h4>
+                        <div class="event-description" style="font-size:0.9rem;"><?php echo $accesibilidad; ?></div>
                     </div>
                     <?php endif; ?>
                 </div>

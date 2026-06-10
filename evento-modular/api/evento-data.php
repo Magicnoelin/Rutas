@@ -217,7 +217,8 @@ try {
                    e.venue_name AS localidad, e.venue_address, e.municipality, e.province,
                    e.latitude, e.longitude, e.is_free, e.ticket_price, e.organizer,
                    e.photo1, e.photo2, e.photo3, e.photo4, e.poster_image,
-                   e.category_id, e.is_active, e.status
+                   e.category_id, e.is_active, e.status,
+                   e.program, e.target_audience, e.accessibility
             FROM cultural_events e
             WHERE e.slug = ? AND e.is_active = 1
         ");
@@ -282,6 +283,11 @@ try {
         $evento['audiencia']         = $traduccion['audiencia_trad']  ?? '';
         $evento['accesibilidad']     = $traduccion['accesibilidad_trad'] ?? '';
         $evento['slug_trad']         = $traduccion['slug_trad']       ?? $evento['slug'];
+    } else {
+        // Para español: mapear columnas nativas al alias esperado
+        $evento['programa']      = $evento['program']         ?? '';
+        $evento['audiencia']     = $evento['target_audience'] ?? '';
+        $evento['accesibilidad'] = $evento['accessibility']   ?? '';
     }
 
     // Construir array de fotos
