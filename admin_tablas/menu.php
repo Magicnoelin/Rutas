@@ -321,6 +321,10 @@
             <a class="quick-link" href="https://rutasrurales.io/admin_tablas/cola_tareas.php">
                 <i class="fas fa-cogs"></i><span>Cola Tareas</span>
             </a>
+            </a>
+            <a class="quick-link" href="https://rutasrurales.io/admin_tablas/contador-organismos.php">
+                <i class="fas fa-crown"></i><span>Cuenta organismos</span>
+            </a>
         </div>
     </div>
 </main>
