@@ -77,6 +77,23 @@ if (!empty($slug)) {
 
         $evento = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        // ── Fallback: si no se encontró traducción por slug (p.ej. la URL usa el
+        // slug en español pero el idioma solicitado es otro), buscarla por event_id.
+        // Esto ocurre cuando Google/usuarios acceden a /de/evento/<slug-español>.
+        if (!$traduccion && $evento && $lang !== 'es') {
+            $stmt_trad_fallback = $pdo->prepare("
+                SELECT event_id, name AS titulo_trad, slug AS slug_trad,
+                       short_description AS short_desc_trad, description AS descripcion_trad,
+                       meta_title AS meta_title_trad, meta_description AS meta_desc_trad,
+                       program AS programa_trad, target_audience AS audiencia_trad,
+                       accessibility AS accesibilidad_trad
+                FROM cultural_events_trads
+                WHERE event_id = ? AND language_code = ?
+            ");
+            $stmt_trad_fallback->execute([$evento['id'], $lang]);
+            $traduccion = $stmt_trad_fallback->fetch(PDO::FETCH_ASSOC);
+        }
+
         if ($traduccion && $evento) {
             $evento['titulo']            = $traduccion['titulo_trad']      ?? $evento['titulo'];
             $evento['description']       = $traduccion['descripcion_trad'] ?? $evento['description'];
