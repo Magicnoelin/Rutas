@@ -626,14 +626,14 @@ $evento_js = $evento ? json_encode([
             font-style: normal;
             font-weight: 400;
             font-display: swap;
-            src: url('/fonts/Montserrat-Regular.woff2') format('woff2');
+            src: url('/fonts/montserrat-v31-latin-regular.woff2') format('woff2');
         }
         @font-face {
             font-family: 'Montserrat';
             font-style: normal;
             font-weight: 700;
             font-display: swap;
-            src: url('/fonts/Montserrat-Bold.woff2') format('woff2');
+            src: url('/fonts/montserrat-v31-latin-600.woff2') format('woff2');
         }
     </style>
 
