@@ -37,7 +37,8 @@ function getLandingAccommodations(
     ?string $province_db,
     array  $sql_conditions,
     int    $page     = 1,
-    int    $per_page = LANDING_PER_PAGE
+    int    $per_page = LANDING_PER_PAGE,
+    string $lang     = 'es'
 ): array {
     $where  = ['a.is_active = 1'];
     $params = [];
@@ -57,6 +58,7 @@ function getLandingAccommodations(
     $whereClause = 'WHERE ' . implode(' AND ', $where);
 
     // Total para paginación
+    // (el count no necesita el parámetro de idioma si se añadiera alguno en el futuro)
     $countSql = "
         SELECT COUNT(DISTINCT a.id)
         FROM accommodations a
@@ -74,12 +76,12 @@ function getLandingAccommodations(
 
     // Query principal
     // Columnas verificadas contra el esquema real de la BD:
-    // wifi, check_in_time, check_out_time NO existen → eliminadas
+    // wifi, check_in_time, check_out_time, bedrooms NO existen → eliminadas
     $sql = "
         SELECT
             a.id, a.name, a.slug, a.municipality, a.province,
             a.short_description, a.description,
-            a.price_per_night, a.capacity, a.bedrooms,
+            a.price_per_night, a.capacity,
             a.photo1, a.photo2, a.photo3,
             a.latitude, a.longitude,
             a.pet_friendly, a.suitable_for_children,

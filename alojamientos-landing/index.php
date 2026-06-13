@@ -156,7 +156,7 @@ try {
     $pdo = getDBConnection();
 
     // Resultados paginados
-    $result = getLandingAccommodations($pdo, $province_db, $sql_conditions, $page);
+    $result = getLandingAccommodations($pdo, $province_db, $sql_conditions, $page, LANDING_PER_PAGE, $lang);
     $stats  = getLandingStats($pdo, $province_db, $sql_conditions);
 
     // Cruce semántico (solo si hay provincia)
