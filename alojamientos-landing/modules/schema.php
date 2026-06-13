@@ -54,12 +54,15 @@ function renderLandingSchema(array $ctx): void
     ];
     $bcLabel = $bcLabels[$lang] ?? $bcLabels['es'];
 
+    // Prefijo de idioma para las URLs del breadcrumb (vacío en español)
+    $langPrefix = ($lang !== 'es') ? '/' . $lang : '';
+
     $breadcrumb = [
         '@type' => 'BreadcrumbList',
         '@id'   => $canonical . '#breadcrumb',
         'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => $bcLabel[0],   'item' => 'https://rutasrurales.io/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcLabel[1],   'item' => 'https://rutasrurales.io/alojamientos-turisticos'],
+            ['@type' => 'ListItem', 'position' => 1, 'name' => $bcLabel[0],   'item' => 'https://rutasrurales.io' . $langPrefix . '/'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcLabel[1],   'item' => 'https://rutasrurales.io' . $langPrefix . '/alojamientos-turisticos'],
             ['@type' => 'ListItem', 'position' => 3, 'name' => $filter_label . (!empty($province) ? ' · ' . $province : ''), 'item' => $canonical],
         ],
     ];
