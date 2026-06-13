@@ -273,10 +273,10 @@ $rel_next = ($page < $result['pages'])   ? $canonical . '?p=' . ($page + 1) : nu
 <style>
 @font-face{font-family:'Montserrat';font-style:normal;font-weight:400;font-display:swap;
   src:local('Montserrat Regular'),url('/fonts/montserrat-v31-latin-regular.woff2') format('woff2')}
-@font-face{font-family:'Montserrat';font-style:normal;font-weight:600;font-display:swap;
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:500;font-display:swap;
+  src:local('Montserrat Medium'),url('/fonts/montserrat-v31-latin-500.woff2') format('woff2')}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:600 800;font-display:swap;
   src:local('Montserrat SemiBold'),url('/fonts/montserrat-v31-latin-600.woff2') format('woff2')}
-@font-face{font-family:'Montserrat';font-style:normal;font-weight:800;font-display:swap;
-  src:local('Montserrat ExtraBold'),url('/fonts/montserrat-v31-latin-800.woff2') format('woff2')}
 </style>
 
 <!-- ── CSS CRÍTICO INLINE — above the fold, evita render-blocking ── -->
