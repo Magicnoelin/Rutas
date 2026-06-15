@@ -476,12 +476,11 @@
         const radius = document.getElementById('radiusInput').value;
 
         try {
-            // Construir URL de la API: provincia (si existe) + coordenadas (si existen)
+// Construir URL de la API: Prioriza coordenadas si existen, si no usa provincia
             let apiUrl = `/api/rutas-cercanas.php?categories=${selectedCategories.join(',')}&radius=${radius}`;
             if (currentLocation) {
                 apiUrl += `&lat=${currentLocation.lat}&lng=${currentLocation.lng}`;
-            }
-            if (presetData.provincia) {
+            } else if (presetData.provincia) { // ¡Cambiado a 'else if' para que no mande ambos a la vez!
                 apiUrl += `&provincia=${encodeURIComponent(presetData.provincia)}`;
             }
             const response = await fetch(apiUrl);
@@ -671,9 +670,18 @@
         eventos: "<?php echo $preset_eventos; ?>" === '1'
     };
 
-    // Función para aplicar los valores pre-seleccionados
+// Función para aplicar los valores pre-seleccionados
     function applyPresetValues() {
-        // Aplicar radio
+        
+        // ¡Fuerza el texto en el cajetín al arrancar si existe en la URL!
+        if (presetData && presetData.provincia) {
+            const locationInput = document.getElementById('locationInput');
+            if (locationInput) {
+                locationInput.value = presetData.provincia;
+            }
+        }
+
+        // Aplicar radio (Aquí sigue tu código original...)
         const radiusInput = document.getElementById('radiusInput');
         const radiusValue = document.getElementById('radiusValue');
         if (presetData.radius) {
@@ -720,7 +728,7 @@
                 // Buscar automáticamente
                 setTimeout(() => searchNearby(), 500);
             } 
-            // Si solo tenemos provincia:
+// Si solo tenemos provincia:
             // 1) Lanzar búsqueda de resultados INMEDIATAMENTE (no dependemos de coords)
             // 2) Geocodificar en paralelo solo para centrar el mapa
             else if (presetData.provincia) {
@@ -728,9 +736,7 @@
                 setTimeout(() => searchNearby(), 400);
 
                 // Geocodificar para centrar el mapa (best-effort)
-                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(presetData.provincia + ', España')}`)
-                    .then(response => response.json())
-                    .then(geoData => {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(presetData.provincia + ', España')}`)                    .then(geoData => {
                         if (geoData && geoData.length > 0) {
                             const result = geoData[0];
                             const center = L.latLng(parseFloat(result.lat), parseFloat(result.lon));

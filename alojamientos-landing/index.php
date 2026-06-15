@@ -35,7 +35,7 @@ require_once __DIR__ . '/api/landing-data.php';
 require_once __DIR__ . '/modules/schema.php';
 require_once __DIR__ . '/modules/hero.php';
 require_once __DIR__ . '/modules/intro.php';
-require_once __DIR__ . '/modules/listing.php';
+require_once __DIR__ . '/modules/listing-alojamientos.php';
 require_once __DIR__ . '/modules/cruce-semantico.php';
 
 // ── 1. Parámetros de entrada ──────────────────────────────────────────────────
@@ -395,7 +395,7 @@ a{color:var(--primary);text-decoration:none}
     <?php renderLandingIntro($ctx); ?>
 
     <!-- ── LISTING DE ALOJAMIENTOS ────────────────────────────────────── -->
-    <?php renderLandingListing($ctx); ?>
+    <?php renderAlojamientosLandingListing($ctx); ?>
 
     <!-- ── CRUCE SEMÁNTICO (Lugares + Rutas + Eventos) ───────────────── -->
     <?php

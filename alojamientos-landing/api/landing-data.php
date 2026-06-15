@@ -74,18 +74,20 @@ function getLandingAccommodations(
     $page   = max(1, min($page, max(1, $pages)));
     $offset = ($page - 1) * $per_page;
 
-    // Query principal
-    // Columnas verificadas contra el esquema real de la BD:
-    // wifi, check_in_time, check_out_time, bedrooms NO existen → eliminadas
+    // Query principal.
+    // Columnas verificadas contra el esquema real de la BD
+    // (ver api/verificar_tabla_accommodations.php y api/get_accommodations_by_province.php):
+    //   NO existen: bedrooms, wifi, check_in_time, check_out_time,
+    //               pet_friendly, suitable_for_children, kitchen_available,
+    //               short_description, amenities
+    //   SÍ existen: las listadas abajo (CREATE TABLE + ALTER TABLE históricos)
     $sql = "
         SELECT
             a.id, a.name, a.slug, a.municipality, a.province,
-            a.short_description, a.description,
+            a.description,
             a.price_per_night, a.capacity,
-            a.photo1, a.photo2, a.photo3,
+            a.photo1, a.photo2, a.photo3, a.photo4,
             a.latitude, a.longitude,
-            a.pet_friendly, a.suitable_for_children,
-            a.kitchen_available, a.amenities,
             a.accommodation_type,
             c.name AS category_name
         FROM accommodations a
@@ -112,13 +114,13 @@ function getLandingAccommodations(
         $row['photo_url'] = _normalizePhoto($row['photo1'] ?? '', $row['slug'] ?? '');
         $row['url']       = 'https://rutasrurales.io/alojamiento/' . ($row['slug'] ?? '');
 
-        // Decodificar amenities JSON si existe
-        if (!empty($row['amenities'])) {
-            $decoded = json_decode($row['amenities'], true);
-            $row['amenities_arr'] = is_array($decoded) ? $decoded : [];
-        } else {
-            $row['amenities_arr'] = [];
-        }
+        // amenities no existe en la tabla accommodations → siempre vacío
+        $row['amenities']     = '';
+        $row['amenities_arr'] = [];
+        // short_description tampoco existe → usar description truncada
+        $row['short_description'] = !empty($row['description'])
+            ? mb_substr(strip_tags($row['description']), 0, 150)
+            : '';
 
         // Precio display
         $row['precio_display'] = ($row['price_per_night'] > 0)
