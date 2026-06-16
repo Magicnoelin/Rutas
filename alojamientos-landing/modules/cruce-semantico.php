@@ -219,48 +219,51 @@ function renderCruceSemantico(array $ctx): void
                 $evFree = empty($ev['precio_display']);
             ?>
             <li class="lnd-event-card" itemscope itemtype="https://schema.org/Event">
-                <a href="<?= $evUrl ?>" class="lnd-event-card__link">
-                    <?php if (!empty($ev['photo_url'])): ?>
-                    <div class="lnd-event-card__img-wrap">
-                        <img
-                            src="<?= htmlspecialchars($ev['photo_url']) ?>"
-                            alt="<?= $evTitle ?>"
-                            width="200" height="150"
-                            loading="lazy"
-                            decoding="async"
-                            class="lnd-event-card__img"
-                        >
-                    </div>
-                    <?php endif; ?>
-                    <div class="lnd-event-card__body">
-                        <h4 class="lnd-event-card__name" itemprop="name"><?= $evTitle ?></h4>
-                        <div class="lnd-event-card__meta">
-                            <?php if ($evDate): ?>
-                            <time class="lnd-event-card__date"
-                                  datetime="<?= htmlspecialchars($ev['start_date'] ?? '') ?>"
-                                  itemprop="startDate">
-                                📅 <?= $evDate ?>
-                            </time>
-                            <?php endif; ?>
-                            <?php if ($evEndDate): ?>
-                            <time class="lnd-event-card__date lnd-event-card__date--end"
-                                  datetime="<?= htmlspecialchars($ev['end_date'] ?? '') ?>"
-                                  itemprop="endDate">
-                                ➡ <?= $evEndDate ?>
-                            </time>
-                            <?php endif; ?>
-                            <?php if ($evMunic): ?>
-                            <span class="lnd-event-card__loc" itemprop="location">📍 <?= $evMunic ?></span>
-                            <?php endif; ?>
-                            <?php if ($evFree): ?>
-                            <span class="lnd-event-card__free"><?= htmlspecialchars($t['entry_fee_free'] ?? 'Gratuito') ?></span>
-                            <?php else: ?>
-                            <span class="lnd-event-card__price"><?= htmlspecialchars($ev['precio_display']) ?></span>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </a>
-            </li>
+    <a href="<?= $evUrl ?>" class="lnd-event-card__link">
+        <?php if (!empty($ev['photo_url'])): ?>
+        <div class="lnd-event-card__img-wrap">
+            <img
+                itemprop="image"
+                src="<?= htmlspecialchars($ev['photo_url']) ?>"
+                alt="<?= $evTitle ?>"
+                width="200" height="150"
+                loading="lazy"
+                decoding="async"
+                class="lnd-event-card__img"
+            >
+        </div>
+        <?php endif; ?>
+        <div class="lnd-event-card__body">
+            <h4 class="lnd-event-card__name" itemprop="name"><?= $evTitle ?></h4>
+            <div class="lnd-event-card__meta">
+                <?php if ($evDate): ?>
+                <time class="lnd-event-card__date"
+                      datetime="<?= htmlspecialchars($ev['start_date'] ?? '') ?>"
+                      itemprop="startDate">
+                    📅 <?= $evDate ?>
+                </time>
+                <?php endif; ?>
+                <?php if ($evEndDate): ?>
+                <time class="lnd-event-card__date lnd-event-card__date--end"
+                      datetime="<?= htmlspecialchars($ev['end_date'] ?? '') ?>"
+                      itemprop="endDate">
+                    ➡ <?= $evEndDate ?>
+                </time>
+                <?php endif; ?>
+                <?php if ($evMunic): ?>
+                <span class="lnd-event-card__loc" itemprop="location" itemscope itemtype="https://schema.org/Place">
+                    📍 <span itemprop="name"><?= $evMunic ?></span>
+                </span>
+                <?php endif; ?>
+                <?php if ($evFree): ?>
+                <span class="lnd-event-card__free"><?= htmlspecialchars($t['entry_fee_free'] ?? 'Gratuito') ?></span>
+                <?php else: ?>
+                <span class="lnd-event-card__price"><?= htmlspecialchars($ev['precio_display']) ?></span>
+                <?php endif; ?>
+            </div>
+        </div>
+    </a>
+</li>
             <?php endforeach; ?>
         </ul>
     </article>
