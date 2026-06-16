@@ -23,6 +23,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 try {
     $pdo = getDBConnection();
     
+    /**
+     * Buscar un evento por slug, incluyendo slugs traducidos (cultural_events_trads)
+     * @param PDO $pdo
+     * @param string $slug
+     * @return array|null Array con 'id' del evento o null si no se encuentra
+     */
+    function findEventBySlug($pdo, $slug) {
+        // Buscar primero en cultural_events (slug original en español)
+        $stmt = $pdo->prepare("SELECT id FROM cultural_events WHERE slug = ? AND is_active = 1");
+        $stmt->execute([$slug]);
+        $evento = $stmt->fetch();
+        if ($evento) return $evento;
+        
+        // Si no se encuentra, buscar en cultural_events_trads (slug traducido)
+        $stmt = $pdo->prepare("
+            SELECT e.id FROM cultural_events e
+            INNER JOIN cultural_events_trads t ON t.event_id = e.id
+            WHERE t.slug = ? AND e.is_active = 1
+            LIMIT 1
+        ");
+        $stmt->execute([$slug]);
+        return $stmt->fetch();
+    }
+    
     // ─── GET: Obtener estadísticas ────────────────────────────────────────────
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
@@ -33,10 +57,8 @@ try {
             exit;
         }
         
-        // Primero verificar que el evento existe y obtener su ID
-        $stmtEvent = $pdo->prepare("SELECT id FROM cultural_events WHERE slug = ? AND is_active = 1");
-        $stmtEvent->execute([$slug]);
-        $evento = $stmtEvent->fetch();
+        // Buscar evento por slug (incluye slugs traducidos)
+        $evento = findEventBySlug($pdo, $slug);
         
         if (!$evento) {
             http_response_code(404);
@@ -90,10 +112,8 @@ try {
             exit;
         }
         
-        // Obtener ID del evento
-        $stmtEvent = $pdo->prepare("SELECT id FROM cultural_events WHERE slug = ? AND is_active = 1");
-        $stmtEvent->execute([$slug]);
-        $evento = $stmtEvent->fetch();
+        // Obtener ID del evento (incluye slugs traducidos)
+        $evento = findEventBySlug($pdo, $slug);
         
         if (!$evento) {
             http_response_code(404);
