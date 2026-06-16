@@ -122,6 +122,13 @@ $page_description = $page_description ?? $t['description'];
             font-display: swap;
             src: local('Montserrat SemiBold'), local('Montserrat-SemiBold'), url('/fonts/montserrat-v31-latin-600.woff2') format('woff2');
         }
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 800;
+            font-display: swap;
+            src: local('Montserrat ExtraBold'), local('Montserrat-ExtraBold'), url('/fonts/montserrat-v31-latin-800.woff2') format('woff2');
+        }
 
         /* RESET GLOBAL */
         #navMenu a, #navMenu a:visited, #navMenu a:active {
