@@ -1371,9 +1371,21 @@ if (file_exists($header_path)) {
                     <?php
                     // Usar description_linked (inbound links ya insertados en BD, SSR puro → cero impacto en velocidad)
                     // Fallback a description si aún no se ha regenerado (contenido previo al sistema)
-                    echo !empty($evento['description_linked'])
+                    $desc_html = !empty($evento['description_linked'])
                         ? $evento['description_linked']
                         : $evento['description'];
+
+                    // ── Normalizar rutas de imágenes ───────────────────────────────────────
+                    // Las rutas relativas en <img src="..."> se rompen en URLs multiidioma
+                    // (ej: /de/evento/slug resuelve src="equipajes3.webp" como /de/evento/equipajes3.webp)
+                    // Convertimos rutas que no empiecen por / o http(s) a rutas absolutas con /
+                    $desc_html = preg_replace(
+                        '/<img\s+([^>]*?)src\s*=\s*"((?!https?:\/\/|\/|data:)[^"]+)"/i',
+                        '<img $1src="/$2"',
+                        $desc_html
+                    );
+
+                    echo $desc_html;
                     ?>
                 </div>
 
