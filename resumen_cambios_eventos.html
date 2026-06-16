@@ -18,7 +18,7 @@
     <h1>Resumen de Cambios Realizados</h1>
     
     <h2>Problema Identificado</h2>
-    <p>El usuario reportó que en la página <code>https://www.rutasrurales.io/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria</code>:</p>
+    <p>El usuario reportó que en la página <code>https://rutasrurales.io/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria</code>:</p>
     <ul>
         <li>La canonical NO era la misma URL de la página</li>
         <li>El meta name estaba mal</li>
@@ -36,7 +36,7 @@
     <div class="change">
         <h3>2. Canonical inicial actualizado</h3>
         <p><span class="success">✓ ACTUALIZADO</span> de <code>https://rutasrurales.io/evento-detalle.html</code> a:</p>
-        <div class="code"><link rel="canonical" id="dynamic-canonical" href="https://www.rutasrurales.io/evento-detalle.html"></div>
+        <div class="code"><link rel="canonical" id="dynamic-canonical" href="https://rutasrurales.io/evento-detalle.html"></div>
     </div>
     
     <div class="change">
@@ -74,12 +74,12 @@ if (shortDescMeta && evento.descripcion_corta && evento.descripcion_corta.trim()
     <div class="change">
         <h3>2. Canonical actualizado</h3>
         <p><span class="success">✓ ACTUALIZADO</span> de <code>https://rutasrurales.io/evento-v2.html</code> a:</p>
-        <div class="code"><link rel="canonical" href="https://www.rutasrurales.io/evento-v2.html"></div>
+        <div class="code"><link rel="canonical" href="https://rutasrurales.io/evento-v2.html"></div>
     </div>
     
     <h2>¿Cómo funciona ahora?</h2>
     <ol>
-        <li>Cuando un usuario visita <code>https://www.rutasrurales.io/evento/mi-evento-slug</code></li>
+        <li>Cuando un usuario visita <code>https://rutasrurales.io/evento/mi-evento-slug</code></li>
         <li>El .htaccess redirige internamente a <code>evento-detalle.html?slug=mi-evento-slug</code></li>
         <li>JavaScript carga los datos del evento desde la API</li>
         <li>La función <code>renderEvento()</code> actualiza:
@@ -95,7 +95,7 @@ if (shortDescMeta && evento.descripcion_corta && evento.descripcion_corta.trim()
     <h2>Verificación</h2>
     <p>Para verificar que los cambios funcionan:</p>
     <ul>
-        <li>Visitar una página de evento como <code>https://www.rutasrurales.io/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria</code></li>
+        <li>Visitar una página de evento como <code>https://rutasrurales.io/evento/jornadas-matanza-burgo-osma-2026-gastronomia-soria</code></li>
         <li>Ver el código fuente (Ctrl+U)</li>
         <li>Buscar:
             <ul>

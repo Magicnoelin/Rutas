@@ -2,7 +2,7 @@
 $lang = 'en';
 $page_title = 'Support Rutas Rurales — Buy us a coffee or make a contribution';
 $page_description = 'Support sustainable rural tourism. Buy us a coffee or make a voluntary contribution to Rutas Rurales.';
-$page_canonical = 'https://www.rutasrurales.io/en/apoyar.php';
+$page_canonical = 'https://rutasrurales.io/en/apoyar.php';
 require_once __DIR__ . '/../header.php';
 ?>
 

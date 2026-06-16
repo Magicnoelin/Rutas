@@ -2,7 +2,7 @@
 $lang = 'zh';
 $page_title = '支持 Rutas Rurales — 请我们喝杯咖啡';
 $page_description = '支持可持续乡村旅游。请我们喝杯咖啡或向 Rutas Rurales 自愿捐款。';
-$page_canonical = 'https://www.rutasrurales.io/zh/apoyar.php';
+$page_canonical = 'https://rutasrurales.io/zh/apoyar.php';
 require_once __DIR__ . '/../header.php';
 ?>
 

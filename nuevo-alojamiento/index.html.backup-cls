@@ -150,7 +150,7 @@
     </style>
     
     <!-- Preload critical resources -->
-    <link rel="preconnect" href="https://www.rutasrurales.io">
+    <link rel="preconnect" href="https://rutasrurales.io">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     
     <link rel="modulepreload" href="./alojamiento.js?v=3.0">
