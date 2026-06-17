@@ -160,7 +160,7 @@ if ($evento) {
         }
     }
 }
-$foto_og = !empty($fotos[0]) ? $fotos[0] : 'https://rutasrurales.io/menu_images/og-default.jpg';
+$foto_og = !empty($fotos[0]) ? $fotos[0] : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
 // ─── TRADUCCIONES DE UI ───────────────────────────────────────────────────────
 $ui = ['es' => [

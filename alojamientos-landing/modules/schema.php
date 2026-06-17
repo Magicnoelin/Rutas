@@ -71,7 +71,7 @@ function renderLandingSchema(array $ctx): void
     $listElements = [];
     foreach ($items as $idx => $alo) {
         $acanonical  = 'https://rutasrurales.io/alojamiento/' . ($alo['slug'] ?? '');
-        $imageUrl    = $alo['photo_url'] ?? 'https://rutasrurales.io/menu_images/og-default.jpg';
+        $imageUrl    = $alo['photo_url'] ?? 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
         // Tipo Schema más específico
         $catLower    = strtolower($alo['category_name'] ?? $alo['accommodation_type'] ?? '');

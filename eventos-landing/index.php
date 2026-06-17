@@ -208,7 +208,7 @@ $ctx = [
 // ── 9. Imagen OG ──────────────────────────────────────────────────────────────
 $og_image = !empty($result['items'][0]['photo_url'])
     ? $result['items'][0]['photo_url']
-    : 'https://rutasrurales.io/menu_images/og-default.jpg';
+    : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
 // ── Paginación: rel prev/next ─────────────────────────────────────────────────
 $rel_prev = ($page > 1)                  ? $canonical . '?p=' . ($page - 1) : null;

@@ -89,7 +89,7 @@ if (!empty($slug)) {
 $canonical = 'https://rutasrurales.io/lugar/' . $slug;
 $foto_og   = !empty($fotos[0])
     ? (preg_match('/^https?:\/\//', $fotos[0]) ? $fotos[0] : 'https://rutasrurales.io' . $fotos[0])
-    : 'https://rutasrurales.io/menu_images/og-default.jpg';
+    : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
 // Variables que espera header.php
 $page_title       = $lugar

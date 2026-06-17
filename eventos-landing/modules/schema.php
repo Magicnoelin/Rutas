@@ -65,7 +65,7 @@ function renderEventosLandingSchema(array $ctx): void
     $listElements = [];
     foreach ($items as $idx => $ev) {
         $evCanonical = 'https://rutasrurales.io/evento/' . ($ev['slug'] ?? '');
-        $imageUrl    = $ev['photo_url'] ?? 'https://rutasrurales.io/menu_images/og-default.jpg';
+        $imageUrl    = $ev['photo_url'] ?? 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
         $event = [
             '@type'     => 'Event',
