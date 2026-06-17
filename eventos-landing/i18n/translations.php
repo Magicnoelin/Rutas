@@ -86,6 +86,11 @@ const EVENTOS_I18N = [
         'no_results_p'  => 'No encontramos eventos con esos criterios en {PROVINCE}. Prueba con otra categoría o consulta todos los eventos de la zona.',
         'no_results_cta'=> 'Ver todos los eventos en {PROVINCE}',
 
+        // Botón compartir
+        'share_btn'  => 'Compartir esta página',
+        'share_copy' => 'Enlace copiado ✓',
+        'share_title'=> '¡Mira estos eventos!',
+
         // Footer CTA
         'cta_title'  => '¿Buscas más eventos en {PROVINCE}?',
         'cta_desc'   => 'Explora la agenda completa de {PROVINCE} con todos sus eventos culturales, fiestas y celebraciones.',
@@ -165,6 +170,11 @@ const EVENTOS_I18N = [
         'no_results_p'  => 'We couldn\'t find events matching those criteria in {PROVINCE}. Try a different category or browse all events in the area.',
         'no_results_cta'=> 'See all events in {PROVINCE}',
 
+        // Botón compartir
+        'share_btn'  => 'Share this page',
+        'share_copy' => 'Link copied ✓',
+        'share_title'=> 'Check out these events!',
+
         'cta_title'  => 'Looking for more events in {PROVINCE}?',
         'cta_desc'   => 'Explore the full calendar of {PROVINCE} with all its cultural events, festivals and celebrations.',
         'cta_button' => 'View full calendar',
@@ -241,6 +251,11 @@ const EVENTOS_I18N = [
         'no_results_h2' => 'Aucun événement avec ces filtres',
         'no_results_p'  => 'Nous n\'avons trouvé aucun événement correspondant à ces critères en {PROVINCE}. Essayez une autre catégorie ou consultez tous les événements de la région.',
         'no_results_cta'=> 'Voir tous les événements en {PROVINCE}',
+
+        // Botón compartir
+        'share_btn'  => 'Partager cette page',
+        'share_copy' => 'Lien copié ✓',
+        'share_title'=> 'Regardez ces événements !',
 
         'cta_title'  => 'Vous cherchez plus d\'événements en {PROVINCE} ?',
         'cta_desc'   => 'Explorez l\'agenda complet de {PROVINCE} avec tous ses événements culturels, fêtes et célébrations.',
@@ -319,6 +334,11 @@ const EVENTOS_I18N = [
         'no_results_p'  => 'Wir konnten keine Veranstaltungen mit diesen Kriterien in {PROVINCE} finden. Versuchen Sie eine andere Kategorie oder durchsuchen Sie alle Veranstaltungen in der Region.',
         'no_results_cta'=> 'Alle Veranstaltungen in {PROVINCE} ansehen',
 
+        // Botón compartir
+        'share_btn'  => 'Seite teilen',
+        'share_copy' => 'Link kopiert ✓',
+        'share_title'=> 'Schau dir diese Events an!',
+
         'cta_title'  => 'Suchen Sie mehr Veranstaltungen in {PROVINCE}?',
         'cta_desc'   => 'Erkunden Sie den vollständigen Kalender von {PROVINCE} mit allen Kulturveranstaltungen, Festen und Feiern.',
         'cta_button' => 'Vollständigen Kalender ansehen',
@@ -395,6 +415,11 @@ const EVENTOS_I18N = [
         'no_results_h2' => '未找到符合条件的活动',
         'no_results_p'  => '我们在{PROVINCE}未能找到符合这些标准的活动。请尝试其他类别或浏览该地区所有活动。',
         'no_results_cta'=> '查看{PROVINCE}所有活动',
+
+        // Botón compartir
+        'share_btn'  => '分享此页面',
+        'share_copy' => '链接已复制 ✓',
+        'share_title'=> '看看这些活动！',
 
         'cta_title'  => '想找更多{PROVINCE}活动？',
         'cta_desc'   => '探索{PROVINCE}的完整日历，包括所有文化活动、节日和庆典。',

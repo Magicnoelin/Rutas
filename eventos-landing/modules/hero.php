@@ -117,6 +117,72 @@ function renderEventosLandingHero(array $ctx): void
     </p>
     <?php endif; ?>
 
+    <!-- Botón compartir (móvil: Web Share API, desktop: clipboard) -->
+    <div class="lnd-hero__share">
+        <button type="button" class="lnd-share-btn" id="btnCompartir"
+                aria-label="<?= htmlspecialchars($t['share_btn'] ?? 'Compartir esta página') ?>"
+                onclick="compartirPagina(this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            <span><?= htmlspecialchars($t['share_btn'] ?? 'Compartir esta página') ?></span>
+        </button>
+    </div>
+
+    <style>
+    .lnd-hero__share{margin-top:16px}
+    .lnd-share-btn{display:inline-flex;align-items:center;gap:8px;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+      color:#fff;padding:8px 18px;border-radius:24px;font-size:.82rem;font-weight:600;
+      cursor:pointer;transition:background .18s ease,transform .12s ease;
+      font-family:inherit;line-height:1.4;backdrop-filter:blur(4px)}
+    .lnd-share-btn:hover,.lnd-share-btn:focus-visible{background:rgba(255,255,255,.22);outline:none}
+    .lnd-share-btn:active{transform:scale(.96)}
+    .lnd-share-btn--copied{background:rgba(129,199,132,.25);border-color:var(--accent)}
+    @media(max-width:480px){.lnd-share-btn{width:100%;justify-content:center;padding:10px 18px;font-size:.88rem}}
+    </style>
+
+    <script>
+    function compartirPagina(btn){
+      var url = window.location.href;
+      var title = '<?= htmlspecialchars($t['share_title'] ?? '¡Mira estos eventos!', ENT_QUOTES) ?>';
+      if(navigator.share){
+        navigator.share({title:title,url:url}).catch(function(){});
+      }else{
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(url).then(function(){
+            var span = btn.querySelector('span');
+            var orig = span.textContent;
+            span.textContent = '<?= htmlspecialchars($t['share_copy'] ?? 'Enlace copiado ✓', ENT_QUOTES) ?>';
+            btn.classList.add('lnd-share-btn--copied');
+            setTimeout(function(){
+              span.textContent = orig;
+              btn.classList.remove('lnd-share-btn--copied');
+            },2500);
+          }).catch(function(){});
+        }else{
+          // Fallback: seleccionar la URL manualmente
+          var input = document.createElement('input');
+          input.value = url;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+          var span = btn.querySelector('span');
+          var orig = span.textContent;
+          span.textContent = '<?= htmlspecialchars($t['share_copy'] ?? 'Enlace copiado ✓', ENT_QUOTES) ?>';
+          btn.classList.add('lnd-share-btn--copied');
+          setTimeout(function(){
+            span.textContent = orig;
+            btn.classList.remove('lnd-share-btn--copied');
+          },2500);
+        }
+      }
+    }
+    </script>
+
 </section>
 <!-- ════════════════════════════════════════════════════════ /HERO ══ -->
 <?php
