@@ -15,13 +15,18 @@ declare(strict_types=1);
 
 // =============================================================================
 // CONFIGURACIÓN DE BASE DE DATOS
-// Ajusta estos valores según tu entorno local/servidor.
+// ⚠️ AJUSTA estos valores en tu panel de hosting (cPanel / Hostinger / etc.)
+//
+// En Hostinger:
+//   - Entra en hPanel → Bases de datos → MySQL
+//   - Crea una base de datos y anota: nombre_bd, usuario_bd, contraseña_bd
+//   - DB_HOST suele ser 'localhost' (o el host que te indique Hostinger)
 // =============================================================================
 define('DB_HOST',    'localhost');
 define('DB_PORT',    '3306');
-define('DB_NAME',    'checkin_db');       // Nombre de tu base de datos
-define('DB_USER',    'root');             // Usuario de MySQL
-define('DB_PASS',    '');                 // Contraseña de MySQL
+define('DB_NAME',    'u412199647_checkin');   // ⚠️ Cambia por tu nombre de BD real
+define('DB_USER',    'u412199647_checkin');   // ⚠️ Cambia por tu usuario de BD real
+define('DB_PASS',    '');                      // ⚠️ Cambia por tu contraseña de BD real
 define('DB_CHARSET', 'utf8mb4');
 
 // =============================================================================
@@ -37,8 +42,8 @@ define('APP_NAME',    'Check-in Alojamientos');
 define('APP_VERSION', '1.0');
 
 // URL base — sin barra final.
-// Ajusta según si está en subcarpeta o en raíz del dominio.
-define('APP_URL', 'https://tudominio.com/checking_accommodations');
+// ⚠️ AJUSTA esta URL a la de tu servidor real.
+define('APP_URL', 'https://rutasrurales.io/checking_accommodations');
 
 // =============================================================================
 // ZONA HORARIA
@@ -63,11 +68,15 @@ function iniciar_sesion_segura(): void
         // Configuración de la cookie de sesión (antes de session_start)
         session_name(SESSION_NAME);
 
+        // Detecta HTTPS automáticamente (funciona en HTTP y HTTPS sin cambios)
+        $es_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+                    || (($_SERVER['SERVER_PORT'] ?? 80) == 443);
+
         session_set_cookie_params([
             'lifetime' => SESSION_LIFETIME,
             'path'     => '/',
             'domain'   => '',           // Dejar vacío para usar el dominio actual
-            'secure'   => true,         // Solo HTTPS — cambiar a false en localhost
+            'secure'   => $es_https,    // true en HTTPS, false en HTTP (autodetectado)
             'httponly' => true,         // Impide acceso desde JavaScript
             'samesite' => 'Strict',     // Protección CSRF básica
         ]);

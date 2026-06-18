@@ -15,6 +15,7 @@
 
 declare(strict_types=1);
 
+// Carga explícita con ruta absoluta para evitar problemas en servidores compartidos
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
 

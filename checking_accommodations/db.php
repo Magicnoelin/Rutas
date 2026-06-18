@@ -18,7 +18,11 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/config.php';
+// Carga config.php solo si las constantes aún no están definidas.
+// Protege contra problemas de path resolution en algunos servidores compartidos.
+if (!defined('DB_HOST')) {
+    require_once __DIR__ . '/config.php';
+}
 
 /**
  * Retorna la instancia singleton de PDO.
