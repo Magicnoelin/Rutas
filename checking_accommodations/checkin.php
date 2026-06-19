@@ -243,7 +243,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             } catch (PDOException $e) {
                 error_log('[CheckIn] Error al insertar huésped: ' . $e->getMessage());
-                $errores[] = 'Ocurrió un error al guardar el registro. Por favor, inténtalo de nuevo.';
+                // Mostrar error real para diagnóstico (quitar en producción)
+                $errores[] = 'Error al guardar: <code style="font-size:.85em;background:#f8d7da;padding:2px 6px;border-radius:4px;">'
+                           . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')
+                           . '</code> — Probablemente la tabla <strong>huespedes_registro</strong> no existe aún. '
+                           . '<strong>Importa schema.sql en phpMyAdmin.</strong>';
             }
         }
     }
