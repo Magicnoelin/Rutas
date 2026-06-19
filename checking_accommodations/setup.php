@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $clave_ok) {
             ]);
 
             $token_generado     = $token;
-            $url_checkin_generada = APP_URL . '/checkin.php?token=' . $token;
+            $url_checkin_generada = CHECKIN_APP_URL . '/checkin.php?token=' . $token;
             $mensaje  = "✅ Alojamiento <strong>" . esc($nombre) . "</strong> creado correctamente.";
             $tipo_msg = 'success';
 
@@ -314,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $clave_ok) {
                 </thead>
                 <tbody>
                     <?php foreach ($alojamientos_existentes as $alo): ?>
-                    <?php $url_alo = APP_URL . '/checkin.php?token=' . $alo['token_publico']; ?>
+                    <?php $url_alo = CHECKIN_APP_URL . '/checkin.php?token=' . $alo['token_publico']; ?>
                     <tr>
                         <td class="px-3 text-muted">#<?= (int)$alo['id'] ?></td>
                         <td><strong><?= esc($alo['nombre']) ?></strong></td>
@@ -360,7 +360,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $clave_ok) {
                 <li>
                     <strong>Envía el enlace de check-in</strong> a tus huéspedes
                     por WhatsApp, email o QR. Ejemplo:<br>
-                    <code style="font-size:.82rem;"><?= esc(APP_URL) ?>/checkin.php?token=<em>TOKEN_DEL_ALOJAMIENTO</em></code>
+                    <code style="font-size:.82rem;"><?= esc(CHECKIN_APP_URL) ?>/checkin.php?token=<em>TOKEN_DEL_ALOJAMIENTO</em></code>
                 </li>
                 <li>
                     El huésped <strong>rellena el formulario</strong> en su móvil o PC

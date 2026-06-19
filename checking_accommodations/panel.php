@@ -123,7 +123,7 @@ $stmt_token = $pdo->prepare(
 $stmt_token->execute([$alojamiento_id]);
 $token_row     = $stmt_token->fetch();
 $token_publico = $token_row['token_publico'] ?? '';
-$url_checkin   = APP_URL . '/checkin.php?token=' . $token_publico;
+$url_checkin   = CHECKIN_APP_URL . '/checkin.php?token=' . $token_publico;
 
 // ---------------------------------------------------------------------------
 // MENSAJE DE SESIÓN CERRADA (desde logout.php)

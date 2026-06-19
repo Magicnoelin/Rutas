@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- No indexar el panel de acceso -->
     <meta name="robots" content="noindex, nofollow">
-    <title>Acceso — <?= APP_NAME ?></title>
+    <title>Acceso — <?= CHECKIN_APP_NAME ?></title>
 
     <!-- Bootstrap 5 CDN -->
     <link rel="stylesheet"
