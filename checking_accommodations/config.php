@@ -3,42 +3,38 @@
  * =============================================================================
  * SISTEMA DE CHECK-IN — Configuración central
  * =============================================================================
- * Archivo  : config.php
- * Descripción: Constantes con prefijo CHECKIN_ para evitar colisiones con
- *              otras constantes definidas en el proyecto principal.
- *
- * ⚠️ AJUSTA las credenciales de BD antes de subir al servidor.
+ * Cada constante se protege individualmente con if(!defined()) para evitar
+ * que un auto_prepend_file del proyecto principal bloquee la carga completa.
  * =============================================================================
  */
 
-// Evitar doble inclusión (compatible con require_once en todos los archivos)
-if (defined('CHECKIN_CONFIG_LOADED')) {
-    return;
+// Marca de carga — permite detectar si el archivo ya fue incluido
+if (!defined('CHECKIN_CONFIG_LOADED')) {
+    define('CHECKIN_CONFIG_LOADED', true);
 }
-define('CHECKIN_CONFIG_LOADED', true);
 
 // =============================================================================
-// CONFIGURACIÓN DE BASE DE DATOS
-// ⚠️ Ajusta con los datos de tu hPanel → Bases de datos → MySQL
+// CONFIGURACIÓN DE LA APLICACIÓN
+// ⚠️ Ajusta CHECKIN_APP_URL si el directorio cambia
 // =============================================================================
-define('CHECKIN_DB_HOST',    'localhost');
-define('CHECKIN_DB_PORT',    '3306');
-define('CHECKIN_DB_NAME',    'u412199647_checkin');   // ⚠️ Tu nombre de BD
-define('CHECKIN_DB_USER',    'u412199647_checkin');   // ⚠️ Tu usuario de BD
-define('CHECKIN_DB_PASS',    '');                      // ⚠️ Tu contraseña de BD
-define('CHECKIN_DB_CHARSET', 'utf8mb4');
+if (!defined('CHECKIN_APP_NAME')) {
+    define('CHECKIN_APP_NAME', 'Check-in Alojamientos');
+}
+
+if (!defined('CHECKIN_APP_URL')) {
+    define('CHECKIN_APP_URL', 'https://rutasrurales.io/checking_accommodations');
+}
 
 // =============================================================================
 // CONFIGURACIÓN DE SESIÓN
 // =============================================================================
-define('CHECKIN_SESSION_NAME',    'checkin_sess');
-define('CHECKIN_SESSION_LIFETIME', 7200);             // 2 horas en segundos
+if (!defined('CHECKIN_SESSION_NAME')) {
+    define('CHECKIN_SESSION_NAME', 'checkin_sess');
+}
 
-// =============================================================================
-// CONFIGURACIÓN DE LA APLICACIÓN
-// =============================================================================
-define('CHECKIN_APP_NAME',    'Check-in Alojamientos');
-define('CHECKIN_APP_URL',     'https://rutasrurales.io/checking_accommodations');
+if (!defined('CHECKIN_SESSION_LIFETIME')) {
+    define('CHECKIN_SESSION_LIFETIME', 7200); // 2 horas
+}
 
 // =============================================================================
 // ZONA HORARIA
@@ -46,7 +42,7 @@ define('CHECKIN_APP_URL',     'https://rutasrurales.io/checking_accommodations')
 date_default_timezone_set('Europe/Madrid');
 
 // =============================================================================
-// ERRORES (cambiar a 0 en producción)
+// ERRORES — poner a 0 en producción cuando todo funcione
 // =============================================================================
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
