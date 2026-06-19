@@ -37,7 +37,7 @@ $pdo = obtener_pdo();
 
 // Buscar el alojamiento por token público en la tabla accommodations existente
 $stmt = $pdo->prepare(
-    "SELECT id, name FROM accommodations WHERE token_publico = ? AND status = 'active' LIMIT 1"
+    'SELECT id, name FROM accommodations WHERE token_publico = ? LIMIT 1'
 );
 $stmt->execute([$token_raw]);
 $alojamiento = $stmt->fetch();

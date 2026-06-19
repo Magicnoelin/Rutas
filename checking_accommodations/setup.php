@@ -28,7 +28,7 @@ $pdo      = obtener_pdo();
 // ---------------------------------------------------------------------------
 $todos = [];
 try {
-    $s = $pdo->query("SELECT id, name, email, token_publico, password_hash FROM accommodations WHERE status = 'active' ORDER BY name ASC");
+    $s = $pdo->query("SELECT id, name, email, token_publico, password_hash FROM accommodations ORDER BY name ASC");
     $todos = $s->fetchAll();
 } catch (PDOException $e) {
     $mensaje  = '⚠️ Error al leer accommodations: ' . $e->getMessage() . ' — ¿Importaste schema.sql?';
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $clave_ok) {
         } else {
             try {
                 // Verificar que el alojamiento existe
-                $check = $pdo->prepare("SELECT id, name FROM accommodations WHERE id = ? AND status = 'active' LIMIT 1");
+                $check = $pdo->prepare("SELECT id, name FROM accommodations WHERE id = ? LIMIT 1");
                 $check->execute([$acc_id]);
                 $alo = $check->fetch();
 
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $clave_ok) {
                     $tipo_msg = 'success';
 
                     // Recargar listado
-                    $s2 = $pdo->query("SELECT id, name, email, token_publico, password_hash FROM accommodations WHERE status = 'active' ORDER BY name ASC");
+                    $s2 = $pdo->query("SELECT id, name, email, token_publico, password_hash FROM accommodations ORDER BY name ASC");
                     $todos = $s2->fetchAll();
                 }
             } catch (PDOException $e) {
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $clave_ok) {
                 ->execute([$nuevo_token, $acc_id]);
             $mensaje  = '🔄 Token regenerado correctamente para el alojamiento #' . $acc_id;
             $tipo_msg = 'info';
-            $s3 = $pdo->query("SELECT id, name, email, token_publico, password_hash FROM accommodations WHERE status = 'active' ORDER BY name ASC");
+            $s3 = $pdo->query("SELECT id, name, email, token_publico, password_hash FROM accommodations ORDER BY name ASC");
             $todos = $s3->fetchAll();
         } catch (PDOException $e) {
             $mensaje  = 'Error al regenerar token: ' . $e->getMessage();

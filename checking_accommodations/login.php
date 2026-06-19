@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // NOTA: Siempre ejecutamos password_verify() aunque no exista el usuario,
                 // para evitar ataques de tiempo que permitan enumerar emails válidos.
                 $stmt = $pdo->prepare(
-                    "SELECT id, name, password_hash FROM accommodations WHERE email = ? AND status = 'active' LIMIT 1"
+                    'SELECT id, name, password_hash FROM accommodations WHERE email = ? LIMIT 1'
                 );
                 $stmt->execute([$email]);
                 $alojamiento = $stmt->fetch();
