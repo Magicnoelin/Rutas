@@ -69,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $pdo = obtener_pdo();
 
-                // Buscar alojamiento por email (solo activos)
+                // Buscar en la tabla accommodations existente del proyecto
                 // NOTA: Siempre ejecutamos password_verify() aunque no exista el usuario,
                 // para evitar ataques de tiempo que permitan enumerar emails válidos.
                 $stmt = $pdo->prepare(
-                    'SELECT id, nombre, password_hash FROM alojamientos WHERE email = ? AND activo = 1 LIMIT 1'
+                    "SELECT id, name, password_hash FROM accommodations WHERE email = ? AND status = 'active' LIMIT 1"
                 );
                 $stmt->execute([$email]);
                 $alojamiento = $stmt->fetch();
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     // Guardar datos en sesión
                     $_SESSION['alojamiento_id']     = (int) $alojamiento['id'];
-                    $_SESSION['alojamiento_nombre'] = $alojamiento['nombre'];
+                    $_SESSION['alojamiento_nombre'] = $alojamiento['name'];
                     $_SESSION['login_at']           = time();
 
                     // Limpiar token CSRF de login (ya no necesario)

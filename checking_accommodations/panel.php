@@ -118,7 +118,7 @@ $huespedes = $stmt_lista->fetchAll();
 // SIEMPRE filtrado por alojamiento_id de la sesión
 // ---------------------------------------------------------------------------
 $stmt_token = $pdo->prepare(
-    'SELECT token_publico FROM alojamientos WHERE id = ? AND activo = 1 LIMIT 1'
+    "SELECT token_publico FROM accommodations WHERE id = ? AND status = 'active' LIMIT 1"
 );
 $stmt_token->execute([$alojamiento_id]);
 $token_row     = $stmt_token->fetch();

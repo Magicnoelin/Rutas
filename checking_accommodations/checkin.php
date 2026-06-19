@@ -35,9 +35,9 @@ if (empty($token_raw) || !ctype_alnum($token_raw) || strlen($token_raw) !== 64) 
 
 $pdo = obtener_pdo();
 
-// Buscar el alojamiento por token público (solo activos)
+// Buscar el alojamiento por token público en la tabla accommodations existente
 $stmt = $pdo->prepare(
-    'SELECT id, nombre FROM alojamientos WHERE token_publico = ? AND activo = 1 LIMIT 1'
+    "SELECT id, name FROM accommodations WHERE token_publico = ? AND status = 'active' LIMIT 1"
 );
 $stmt->execute([$token_raw]);
 $alojamiento = $stmt->fetch();
@@ -49,7 +49,7 @@ if (!$alojamiento) {
 }
 
 $alojamiento_id     = (int) $alojamiento['id'];
-$alojamiento_nombre = $alojamiento['nombre'];
+$alojamiento_nombre = $alojamiento['name'];
 
 // ---------------------------------------------------------------------------
 // 2. INICIALIZAR VARIABLES DEL FORMULARIO
