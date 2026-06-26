@@ -1337,6 +1337,73 @@ if (file_exists($header_path)) {
         <span><span class="icon">🎟️</span> <?php echo htmlspecialchars($precio_display); ?></span>
         <?php endif; ?>
     </div>
+
+    <!-- Botón compartir (móvil: Web Share API, desktop: clipboard) -->
+    <div class="event-hero__share">
+        <button type="button" class="event-share-btn" id="btnCompartir"
+                aria-label="<?php echo ($t['share_btn'] ?? 'Compartir esta página'); ?>"
+                onclick="compartirPagina(this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            <span><?php echo ($t['share_btn'] ?? 'Compartir esta página'); ?></span>
+        </button>
+    </div>
+
+    <style>
+    .event-hero__share{margin-top:16px}
+    .event-share-btn{display:inline-flex;align-items:center;gap:8px;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+      color:#fff;padding:8px 18px;border-radius:24px;font-size:.82rem;font-weight:600;
+      cursor:pointer;transition:background .18s ease,transform .12s ease;
+      font-family:inherit;line-height:1.4;backdrop-filter:blur(4px)}
+    .event-share-btn:hover,.event-share-btn:focus-visible{background:rgba(255,255,255,.22);outline:none}
+    .event-share-btn:active{transform:scale(.96)}
+    .event-share-btn--copied{background:rgba(129,199,132,.25);border-color:var(--accent)}
+    @media(max-width:480px){.event-share-btn{width:100%;justify-content:center;padding:10px 18px;font-size:.88rem}}
+    </style>
+
+    <script>
+    function compartirPagina(btn){
+      var url = window.location.href;
+      var title = '<?php echo htmlspecialchars($t['share_title'] ?? '¡Mira este evento!', ENT_QUOTES); ?>';
+      if(navigator.share){
+        navigator.share({title:title,url:url}).catch(function(){});
+      }else{
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(url).then(function(){
+            var span = btn.querySelector('span');
+            var orig = span.textContent;
+            span.textContent = '<?php echo htmlspecialchars($t['share_copy'] ?? 'Enlace copiado ✓', ENT_QUOTES); ?>';
+            btn.classList.add('event-share-btn--copied');
+            setTimeout(function(){
+              span.textContent = orig;
+              btn.classList.remove('event-share-btn--copied');
+            },2500);
+          }).catch(function(){});
+        }else{
+          // Fallback: seleccionar la URL manualmente
+          var input = document.createElement('input');
+          input.value = url;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+          var span = btn.querySelector('span');
+          var orig = span.textContent;
+          span.textContent = '<?php echo htmlspecialchars($t['share_copy'] ?? 'Enlace copiado ✓', ENT_QUOTES); ?>';
+          btn.classList.add('event-share-btn--copied');
+          setTimeout(function(){
+            span.textContent = orig;
+            btn.classList.remove('event-share-btn--copied');
+          },2500);
+        }
+      }
+    }
+    </script>
+
 </section>
 
 <!-- ── LAYOUT PRINCIPAL ── -->

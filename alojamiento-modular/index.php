@@ -865,6 +865,24 @@ $alo_js = $alojamiento ? json_encode([
             text-decoration: none;
         }
         .alo-hero-btn:hover { background: rgba(255,255,255,0.35); color: #fff; }
+        .alo-hero-btn--share {
+            border-radius: 24px;
+            width: auto;
+            height: auto;
+            padding: 8px 18px;
+            gap: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+        .alo-hero-btn--share:hover,
+        .alo-hero-btn--share:focus-visible { background: rgba(255,255,255,0.28); outline: none; }
+        .alo-hero-btn--share:active { transform: scale(0.96); }
+        .alo-hero-btn--share.alo-hero-btn--copied { background: rgba(129,199,132,0.25); border-color: var(--accent); }
+        @media (max-width: 480px) {
+            .alo-hero-btn--share { padding: 10px 18px; font-size: 0.88rem; }
+        }
 
         /* ── Layout principal ── */
         .alo-layout {
@@ -1625,7 +1643,14 @@ if (file_exists($header_path)) {
     <div class="alo-hero-bg" style="background-image:url('<?php echo htmlspecialchars($fotos[0]); ?>')"></div>
 
     <div class="alo-hero-actions">
-        <button class="alo-hero-btn" id="btn-share" title="<?php echo $t['compartir']; ?>" aria-label="<?php echo $t['compartir']; ?>">🔗</button>
+        <button class="alo-hero-btn alo-hero-btn--share" id="btn-share" title="<?php echo $t['compartir']; ?>" aria-label="<?php echo $t['compartir']; ?>">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            <span><?php echo $t['compartir']; ?></span>
+        </button>
         <button class="alo-hero-btn" id="btn-fav" title="<?php echo $t['favorito']; ?>" aria-label="<?php echo $t['favorito']; ?>">🤍</button>
     </div>
 
@@ -2384,14 +2409,41 @@ if (file_exists($header_path)) {
         window.open(links[platform], '_blank', 'width=600,height=400');
     };
 
-    // Botón compartir del hero
+    // Botón compartir del hero (con feedback visual como en eventos_landing)
     var btnShare = document.getElementById('btn-share');
     if (btnShare) {
         btnShare.addEventListener('click', function() {
+            var url = window.location.href;
+            var title = alo ? alo.name : document.title;
             if (navigator.share) {
-                navigator.share({ title: alo ? alo.name : document.title, url: window.location.href }).catch(function(){});
+                navigator.share({ title: title, url: url }).catch(function(){});
+            } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(function() {
+                    var span = btnShare.querySelector('span');
+                    var orig = span ? span.textContent : '';
+                    if (span) span.textContent = '✅ Enlace copiado';
+                    btnShare.classList.add('alo-hero-btn--copied');
+                    setTimeout(function() {
+                        if (span) span.textContent = orig;
+                        btnShare.classList.remove('alo-hero-btn--copied');
+                    }, 2500);
+                }).catch(function(){});
             } else {
-                shareAlo('copy');
+                // Fallback
+                var input = document.createElement('input');
+                input.value = url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                var span = btnShare.querySelector('span');
+                var orig = span ? span.textContent : '';
+                if (span) span.textContent = '✅ Enlace copiado';
+                btnShare.classList.add('alo-hero-btn--copied');
+                setTimeout(function() {
+                    if (span) span.textContent = orig;
+                    btnShare.classList.remove('alo-hero-btn--copied');
+                }, 2500);
             }
         });
     }
