@@ -23,7 +23,14 @@ CREATE INDEX IF NOT EXISTS `idx_token_publico`
     ON `accommodations` (`token_publico`);
 
 -- =============================================================================
--- 2. CORREGIR LA FK DE huespedes_registro SI YA EXISTE
+-- 2. AÑADIR COLUMNA MUNICIPIO A LA TABLA EXISTENTE (si no existe ya)
+-- =============================================================================
+ALTER TABLE `huespedes_registro`
+    ADD COLUMN IF NOT EXISTS `municipio` VARCHAR(100) NOT NULL DEFAULT ''
+        COMMENT 'Municipio de residencia del huésped';
+
+-- =============================================================================
+-- 3. CORREGIR LA FK DE huespedes_registro SI YA EXISTE
 --    (el error 1452 indica que la FK apunta a 'alojamientos' en vez de 'accommodations')
 -- =============================================================================
 
@@ -70,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `huespedes_registro` (
     `email`                 VARCHAR(180)    NOT NULL,
     `direccion_calle`       VARCHAR(200)    NOT NULL,
     `direccion_numero`      VARCHAR(20)     NOT NULL,
+    `municipio`             VARCHAR(100)    NOT NULL DEFAULT '',
     `provincia`             VARCHAR(100)    NOT NULL,
     `codigo_postal`         VARCHAR(10)     NOT NULL,
     `pais`                  VARCHAR(80)     NOT NULL DEFAULT 'España',

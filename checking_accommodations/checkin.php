@@ -97,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email'                => trim($_POST['email']                ?? ''),
             'direccion_calle'      => trim($_POST['direccion_calle']      ?? ''),
             'direccion_numero'     => trim($_POST['direccion_numero']     ?? ''),
+            'municipio'            => trim($_POST['municipio']            ?? ''),
             'provincia'            => trim($_POST['provincia']            ?? ''),
             'codigo_postal'        => trim($_POST['codigo_postal']        ?? ''),
             'pais'                 => trim($_POST['pais']                 ?? 'España'),
@@ -121,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email'                => 'Correo electrónico',
             'direccion_calle'      => 'Calle',
             'direccion_numero'     => 'Número',
+            'municipio'            => 'Municipio',
             'provincia'            => 'Provincia',
             'codigo_postal'        => 'Código postal',
             'pais'                 => 'País',
@@ -197,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         fecha_nacimiento, nacionalidad,
                         tipo_documento, numero_documento, fecha_expedicion_doc, numero_soporte,
                         telefono, email,
-                        direccion_calle, direccion_numero, provincia, codigo_postal, pais,
+                        direccion_calle, direccion_numero, municipio, provincia, codigo_postal, pais,
                         fecha_entrada, fecha_salida_prevista,
                         ip_registro
                     ) VALUES (
@@ -205,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         :fecha_nacimiento, :nacionalidad,
                         :tipo_documento, :numero_documento, :fecha_expedicion_doc, :numero_soporte,
                         :telefono, :email,
-                        :direccion_calle, :direccion_numero, :provincia, :codigo_postal, :pais,
+                        :direccion_calle, :direccion_numero, :municipio, :provincia, :codigo_postal, :pais,
                         :fecha_entrada, :fecha_salida_prevista,
                         :ip_registro
                     )
@@ -227,6 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':email'                => $campos['email'],
                     ':direccion_calle'      => $campos['direccion_calle'],
                     ':direccion_numero'     => $campos['direccion_numero'],
+                    ':municipio'            => $campos['municipio'],
                     ':provincia'            => $campos['provincia'],
                     ':codigo_postal'        => $campos['codigo_postal'],
                     ':pais'                 => $campos['pais'],
@@ -810,8 +813,23 @@ function mostrar_error_404(): void
                            required>
                 </div>
 
-                <!-- Provincia -->
+                <!-- Municipio -->
                 <div class="col-md-5">
+                    <label class="form-label" for="municipio">
+                        Municipio <span class="required-mark">*</span>
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="municipio"
+                           name="municipio"
+                           value="<?= val('municipio', $form_valores) ?>"
+                           maxlength="100"
+                           placeholder="Ej: Madrid"
+                           required>
+                </div>
+
+                <!-- Provincia -->
+                <div class="col-md-4">
                     <label class="form-label" for="provincia">
                         Provincia <span class="required-mark">*</span>
                     </label>
