@@ -2290,7 +2290,86 @@ function renderStaticPlans() {
 // Cargar membresía al iniciar
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(loadMembershipData, 500);
+    // Cargar datos del Pasaporte Rural (gestor)
+    cargarPasaporteGestor();
 });
+
+// =============================================================================
+// PASAPORTE RURAL — Lógica del gestor
+// =============================================================================
+async function cargarPasaporteGestor() {
+    try {
+        const res  = await fetch('/pasaporte_rural/api_stats.php?rol=gestor', { credentials: 'same-origin' });
+        const data = await res.json();
+
+        if (!data.success) return;
+
+        if (!data.is_premium) {
+            // No premium: ocultar enlace sidebar, mostrar aviso en sección
+            const sp = document.getElementById('sidebar-pasaporte-section');
+            if (sp) sp.style.display = 'none';
+            const np = document.getElementById('pr-no-premium');
+            if (np) np.style.display = 'block';
+            return;
+        }
+
+        // ES PREMIUM → mostrar enlace en sidebar
+        const sp = document.getElementById('sidebar-pasaporte-section');
+        if (sp) sp.style.display = 'block';
+
+        // Rellenar estadísticas
+        const s = data.stats;
+        const elTotal = document.getElementById('pr-stat-sellos');
+        const elMes   = document.getElementById('pr-stat-mes');
+        const elMedia = document.getElementById('pr-stat-media');
+        if (elTotal) elTotal.textContent = s.total_sellos;
+        if (elMes)   elMes.textContent   = s.sellos_mes;
+        if (elMedia) elMedia.textContent = s.media !== null ? s.media + ' ⭐' : '—';
+
+        // Historial de sellos
+        const cont = document.getElementById('pr-ultimos-sellos');
+        if (!cont) return;
+
+        if (!data.ultimos_sellos || data.ultimos_sellos.length === 0) {
+            cont.innerHTML = `<p style="color:#6c757d;font-size:.85rem;text-align:center;padding:1rem;">
+                Aún no has sellado ningún Pasaporte Rural.<br>
+                Cuando un turista te visite, escanea su QR.
+            </p>`;
+            return;
+        }
+
+        const filas = data.ultimos_sellos.map(s => {
+            const ini = s.nombre_turista.charAt(0).toUpperCase();
+            const avatar = s.avatar_url
+                ? `<img src="${s.avatar_url}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">`
+                : `<div style="width:32px;height:32px;border-radius:50%;background:#2F5233;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;">${ini}</div>`;
+
+            const estrellas = n => '⭐'.repeat(Math.min(5, Math.max(1, n)));
+            const nivel_subio = s.subio_nivel ? ' <span style="font-size:.7rem;background:#e8f5e9;color:#2F5233;padding:1px 6px;border-radius:10px;font-weight:700;">↑ Nivel</span>' : '';
+
+            return `<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid #f0f4f0;">
+                ${avatar}
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        ${s.nombre_turista}${nivel_subio}
+                    </div>
+                    <div style="font-size:.75rem;color:#6c757d;">
+                        ${s.fecha_formateada} · 🧹${estrellas(s.puntuacion_limpieza)} 🤝${estrellas(s.puntuacion_civismo)}
+                    </div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div style="font-weight:800;color:#B8956A;font-size:.9rem;">+${s.puntos_sumados}pts</div>
+                    <div style="font-size:.72rem;color:#6c757d;">dto: ${s.descuento_nuevo}%</div>
+                </div>
+            </div>`;
+        }).join('');
+
+        cont.innerHTML = filas;
+
+    } catch (e) {
+        console.warn('[PasaporteRural] Error cargando stats gestor:', e);
+    }
+}
 </script>
 </body>
 </html>
