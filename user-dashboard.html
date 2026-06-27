@@ -529,6 +529,14 @@
                 <li><a href="#inicio" class="active" onclick="showSection('inicio')"><i class="fas fa-th-large"></i> Inicio</a></li>
                 <li><a href="#profile" onclick="showSection('profile')"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
                 <li id="nav-preferences" style="display: none;"><a href="#preferences" onclick="showSection('preferences')"><i class="fas fa-sliders-h"></i> Preferencias</a></li>
+                <li>
+                    <a href="/pasaporte_rural/mi-pasaporte.php"
+                       style="background:linear-gradient(135deg,#f0f7f0,#e8f5e9);color:#2F5233;font-weight:700;">
+                        <i class="fas fa-passport" style="color:#2F5233;"></i>
+                        Mi Pasaporte Rural
+                        <span style="margin-left:auto;background:#2F5233;color:#fff;font-size:.62rem;padding:2px 7px;border-radius:10px;font-weight:700;">QR</span>
+                    </a>
+                </li>
                 <li><a href="#favoritos" onclick="showSection('favoritos')"><i class="fas fa-heart"></i> Favoritos</a></li>
                 <li id="nav-mis-alojamientos" style="display: none;"><a href="#mis-alojamientos" onclick="showSection('mis-alojamientos')"><i class="fas fa-bed"></i> Mis Alojamientos</a></li>
                 <li id="nav-mis-actividades" style="display: none;"><a href="#mis-actividades" onclick="showSection('mis-actividades')"><i class="fas fa-hiking"></i> Mis Actividades</a></li>
@@ -571,6 +579,30 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- ── PASAPORTE RURAL ───────────────────────────────── -->
+                <div style="background:linear-gradient(135deg,#f0f7f0,#fff);border:1px solid #c3dcc3;
+                            border-left:5px solid #2F5233;border-radius:15px;padding:1.25rem 1.5rem;
+                            margin-bottom:2rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
+                    <div style="font-size:2.5rem;flex-shrink:0;">🌿</div>
+                    <div style="flex:1;min-width:180px;">
+                        <div style="font-weight:800;font-size:1rem;color:#2F5233;margin-bottom:.25rem;">
+                            Pasaporte Rural
+                            <span style="margin-left:.5rem;font-size:.65rem;background:#2F5233;color:#fff;
+                                         padding:2px 8px;border-radius:10px;font-weight:700;vertical-align:middle;">NUEVO</span>
+                        </div>
+                        <div id="pasaporte-mini-stats-user" style="font-size:.83rem;color:#6c757d;">
+                            <span>Cargando tu pasaporte...</span>
+                        </div>
+                    </div>
+                    <a href="/pasaporte_rural/mi-pasaporte.php"
+                       style="display:inline-flex;align-items:center;gap:.5rem;background:#2F5233;color:#fff;
+                              padding:.6rem 1.3rem;border-radius:10px;font-weight:700;font-size:.88rem;
+                              text-decoration:none;white-space:nowrap;flex-shrink:0;">
+                        <i class="fas fa-qrcode"></i> Abrir mi QR
+                    </a>
+                </div>
+                <!-- ── FIN PASAPORTE RURAL ──────────────────────────── -->
 
                 <h3 style="color:var(--primary-color);margin-bottom:1rem;font-size:1.1rem;">¿Qué quieres hacer hoy?</h3>
                 <div id="quick-actions-grid" class="role-selection-grid">
@@ -2671,4 +2703,46 @@
             messagePollInterval = null;
         }
     };
+
+    // ==========================================================================
+    // PASAPORTE RURAL — mini-stats en el inicio del user-dashboard
+    // ==========================================================================
+    async function cargarPasaporteUser() {
+        const el = document.getElementById('pasaporte-mini-stats-user');
+        if (!el) return;
+        try {
+            const res  = await fetch('/pasaporte_rural/api_stats.php?rol=turista', { credentials: 'same-origin' });
+            const data = await res.json();
+
+            if (!data.success || !data.tiene_pasaporte) {
+                el.innerHTML = '🌱 Sin sellos aún — pulsa <strong>Abrir mi QR</strong> para empezar';
+                return;
+            }
+
+            const maxDesc  = data.para_subir === 0;
+            const barColor = maxDesc ? '#B8956A' : '#2F5233';
+            const barLabel = maxDesc
+                ? '🏅 Descuento máximo alcanzado'
+                : `${data.para_subir} pts para subir a ${data.descuento + 1}%`;
+
+            el.innerHTML = `
+                <div style="display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center;">
+                    <span style="font-size:1.5rem;font-weight:900;color:#2F5233;">${data.descuento}%</span>
+                    <span style="color:#6c757d;">${data.nivel_emoji} <strong>${data.nivel}</strong> · ${data.puntos} pts · ${data.total_sellos} sellos</span>
+                    <div style="flex:1;min-width:120px;">
+                        <div style="font-size:.72rem;color:#6c757d;margin-bottom:3px;">${barLabel}</div>
+                        <div style="height:6px;background:#d5e0d5;border-radius:3px;overflow:hidden;">
+                            <div style="height:100%;width:${data.progreso_pct}%;background:${barColor};border-radius:3px;transition:width .6s;"></div>
+                        </div>
+                    </div>
+                </div>`;
+        } catch(e) {
+            el.innerHTML = 'Muestra tu QR en alojamientos Premium para acumular puntos y descuentos.';
+        }
+    }
+
+    // Ejecutar al cargar
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarPasaporteUser();
+    });
     </script>
