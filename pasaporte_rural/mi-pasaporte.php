@@ -322,7 +322,9 @@ $sellos_recientes = $stmt_sellos->fetchAll();
 'use strict';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
-const ENDPOINT_URL   = 'generar_token_qr.php';   // Relativo al mismo directorio
+// URL absoluta generada por PHP para evitar problemas con rutas relativas,
+// rewrites de .htaccess o si la página se sirve desde un subdirectorio.
+const ENDPOINT_URL   = '<?= PASAPORTE_URL ?>/generar_token_qr.php';
 const ROTACION_CADA  = <?= QR_ROTACION_SEGUNDOS ?>;  // 45 segundos (PHP → JS)
 const QR_SIZE        = 220;                          // Tamaño del QR en píxeles
 

@@ -28,20 +28,34 @@
 
 declare(strict_types=1);
 
-// ── Cabeceras de respuesta ────────────────────────────────────────────────────
-// Indicamos que siempre devolvemos JSON; no cache en cliente
-header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-header('Pragma: no-cache');
+// ── Capturar cualquier output inesperado (warnings, notices de PHP) ───────────
+// Así si hay un aviso de PHP no rompe el JSON
+ob_start();
 
 // ── Dependencias ──────────────────────────────────────────────────────────────
-// Cargamos config del módulo (que a su vez carga api/config.php)
-// API_NO_HEADERS evita que api/config.php emita cabeceras CORS duplicadas
+// API_NO_HEADERS evita que api/config.php emita cabeceras CORS y Content-Type
 define('API_NO_HEADERS', true);
 require_once __DIR__ . '/config.php';
 
-// ── 1. SESIÓN Y AUTENTICACIÓN ─────────────────────────────────────────────────
-pasaporte_iniciar_sesion();
+// ── 1. SESIÓN ─────────────────────────────────────────────────────────────────
+// Usamos session_start() directamente: no reconfiguramos cookies para evitar
+// warnings de PHP 8 ("Cannot change session name when session is active").
+// El proyecto principal ya inició sesión con los parámetros correctos.
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Descartar cualquier output generado hasta aquí (warnings de PHP, etc.)
+$output_previo = ob_get_clean();
+if ($output_previo !== '' && $output_previo !== false) {
+    // Loguear en error_log para diagnóstico pero no enviarlo al cliente
+    error_log('[PasaporteQR] Output no esperado antes del JSON: ' . substr($output_previo, 0, 500));
+}
+
+// ── Cabeceras de respuesta ────────────────────────────────────────────────────
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
 
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
