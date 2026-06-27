@@ -680,6 +680,8 @@
             .modal { width: 95%; }
             .form-row { grid-template-columns: 1fr; }
             .template-selector { grid-template-columns: 1fr; }
+            /* En móvil pequeño ocultar texto "Pasaporte" del botón topbar */
+            .pasaporte-topbar-label { display: none; }
         }
     </style>
 </head>
@@ -692,6 +694,18 @@
         <span>Rutas Rurales</span>
     </a>
     <div class="topbar-user">
+        <!-- Pasaporte Rural: cualquier usuario puede ser también turista -->
+        <a href="/pasaporte_rural/mi-pasaporte.php"
+           title="Mi Pasaporte Rural"
+           style="display:inline-flex;align-items:center;gap:5px;
+                  background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);
+                  color:#fff;padding:5px 12px;border-radius:20px;
+                  font-size:0.82rem;font-weight:700;text-decoration:none;
+                  white-space:nowrap;transition:background 0.2s;"
+           onmouseover="this.style.background='rgba(255,255,255,0.32)'"
+           onmouseout="this.style.background='rgba(255,255,255,0.18)'">
+            🌿 <span class="pasaporte-topbar-label">Pasaporte</span>
+        </a>
         <div class="user-badge">
             <i class="fas fa-user-tie"></i>
             <span id="topbar-name">Cargando...</span>
@@ -792,6 +806,28 @@
                     <div class="stat-icon green"><i class="fas fa-envelope-open"></i></div>
                     <div class="stat-value" id="stat-unread">-</div>
                     <div class="stat-label">Sin leer</div>
+                </div>
+            </div>
+
+            <!-- Pasaporte Rural — acceso destacado para cualquier usuario -->
+            <div class="card" style="border-left:4px solid #2F5233;background:linear-gradient(135deg,#f8fdf8,#fff);">
+                <div class="card-title" style="color:#2F5233;">
+                    <i class="fas fa-passport"></i> Mi Pasaporte Rural
+                    <span style="margin-left:auto;font-size:0.72rem;background:#2F5233;color:#fff;padding:2px 10px;border-radius:12px;font-weight:700;">NUEVO</span>
+                </div>
+                <p style="font-size:0.85rem;color:#6c757d;margin-bottom:0.9rem;">
+                    Como turista, muestra tu QR en alojamientos Premium y acumula puntos para descuentos del <strong>5% al 10%</strong>.
+                    Si tu alojamiento es Premium, también puedes escanear los pasaportes de tus huéspedes.
+                </p>
+                <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
+                    <a href="/pasaporte_rural/mi-pasaporte.php"
+                       style="display:inline-flex;align-items:center;gap:0.5rem;background:#2F5233;color:#fff;
+                              padding:0.55rem 1.2rem;border-radius:8px;font-weight:700;font-size:0.88rem;text-decoration:none;">
+                        <i class="fas fa-qrcode"></i> Abrir mi Pasaporte
+                    </a>
+                    <div id="pasaporte-mini-stats-gestor" style="font-size:0.82rem;color:#6c757d;">
+                        <span><div class="spinner" style="display:inline-block;"></div> Cargando...</span>
+                    </div>
                 </div>
             </div>
 
@@ -2290,9 +2326,39 @@ function renderStaticPlans() {
 // Cargar membresía al iniciar
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(loadMembershipData, 500);
-    // Cargar datos del Pasaporte Rural (gestor)
     cargarPasaporteGestor();
+    cargarMiniStatsTurista();
 });
+
+// Mini-stats del turista para la tarjeta de inicio
+async function cargarMiniStatsTurista() {
+    const el = document.getElementById('pasaporte-mini-stats-gestor');
+    if (!el) return;
+    try {
+        const res  = await fetch('/pasaporte_rural/api_stats.php?rol=turista', { credentials: 'same-origin' });
+        const data = await res.json();
+        if (!data.success || !data.tiene_pasaporte) {
+            el.innerHTML = '<span style="color:#6c757d;">🌱 Sin sellos aún — abre tu Pasaporte para empezar</span>';
+            return;
+        }
+        const maxDesc  = data.para_subir === 0;
+        const barColor = maxDesc ? '#B8956A' : '#2F5233';
+        const barLabel = maxDesc ? '🏅 Descuento máximo' : `${data.para_subir} pts para ${data.descuento + 1}%`;
+        el.innerHTML = `
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <span style="font-weight:800;font-size:1.2rem;color:#2F5233;">${data.descuento}%</span>
+                <span style="font-size:.78rem;color:#6c757d;">${data.nivel_emoji} ${data.nivel} · ${data.puntos} pts · ${data.total_sellos} sellos</span>
+                <div style="flex:1;min-width:100px;">
+                    <div style="font-size:.7rem;color:#6c757d;margin-bottom:2px;">${barLabel}</div>
+                    <div style="height:5px;background:#e0e0e0;border-radius:3px;overflow:hidden;">
+                        <div style="height:100%;width:${data.progreso_pct}%;background:${barColor};border-radius:3px;"></div>
+                    </div>
+                </div>
+            </div>`;
+    } catch(e) {
+        el.innerHTML = '';
+    }
+}
 
 // =============================================================================
 // PASAPORTE RURAL — Lógica del gestor

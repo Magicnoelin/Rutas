@@ -804,6 +804,8 @@
             .main-content { padding: 1rem; }
             .modal { width: 95%; }
             .form-row { grid-template-columns: 1fr; }
+            /* En móvil pequeño ocultar texto del botón pasaporte en topbar */
+            .pasaporte-topbar-label { display: none; }
         }
     </style>
 </head>
@@ -815,6 +817,18 @@
             <span>Rutas Rurales</span>
         </a>
         <div class="topbar-user">
+            <!-- Acceso rápido Pasaporte Rural — visible siempre, también en móvil -->
+            <a href="/pasaporte_rural/mi-pasaporte.php"
+               title="Mi Pasaporte Rural"
+               style="display:inline-flex;align-items:center;gap:5px;
+                      background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);
+                      color:#fff;padding:5px 12px;border-radius:20px;
+                      font-size:0.82rem;font-weight:700;text-decoration:none;
+                      white-space:nowrap;transition:background 0.2s;"
+               onmouseover="this.style.background='rgba(255,255,255,0.32)'"
+               onmouseout="this.style.background='rgba(255,255,255,0.18)'">
+                🌿 <span class="pasaporte-topbar-label">Pasaporte</span>
+            </a>
             <div class="user-badge">
                 <i class="fas fa-user-circle"></i>
                 <span id="topbar-name">Cargando...</span>
