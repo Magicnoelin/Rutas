@@ -122,9 +122,7 @@ $sellos_recientes = $stmt_sellos->fetchAll();
 
     <!-- QRCode.js — librería open-source para renderizar QR en canvas/img -->
     <!-- Documentación: https://github.com/davidshimjs/qrcodejs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
-            integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4zsuzycrYJ6uer9L3HRw=="
-            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body class="pasaporte-body">
 
@@ -508,9 +506,7 @@ document.addEventListener('visibilitychange', function () {
 </script>
 
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmFsgAGFKQHgMRLxkh+MXJqVBRy"
-        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
