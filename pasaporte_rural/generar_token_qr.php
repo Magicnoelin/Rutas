@@ -143,14 +143,18 @@ try {
 }
 
 // ── 6. RATE LIMIT SUAVE ───────────────────────────────────────────────────────
-// Si hay un token pendiente de menos de 30 segundos, devolverlo reutilizado
-// para evitar generación abusiva (p.ej. cliente con doble petición)
+// Reutilizar token solo si tiene al menos 15 segundos de vida restante.
+// (TTL=60s → solo reutilizar si tiene menos de 45s de antigüedad)
+// Esto evita devolver tokens a punto de expirar que generarían QR inútiles.
+$margen_minimo  = 15; // segundos mínimos de vida restante para reutilizar
+$max_antiguedad = QR_TTL_SEGUNDOS - $margen_minimo; // = 45 segundos
+
 $stmt_recent = $pdo->prepare(
     'SELECT hash_token, created_at
        FROM qr_temporales
       WHERE pasaporte_id = ?
         AND estado = "pendiente"
-        AND created_at > DATE_SUB(NOW(), INTERVAL 30 SECOND)
+        AND created_at > DATE_SUB(NOW(), INTERVAL ' . $max_antiguedad . ' SECOND)
       ORDER BY created_at DESC
       LIMIT 1'
 );
@@ -158,11 +162,9 @@ $stmt_recent->execute([$pasaporte_id]);
 $token_reciente = $stmt_recent->fetch();
 
 if ($token_reciente) {
-    // Reutilizar el token reciente: calcular segundos restantes
-    $creado_ts  = strtotime($token_reciente['created_at']);
-    $ahora_ts   = time();
-    $transcurrido = $ahora_ts - $creado_ts;
-    $expira_en  = max(1, QR_TTL_SEGUNDOS - $transcurrido);
+    $creado_ts    = strtotime($token_reciente['created_at']);
+    $transcurrido = time() - $creado_ts;
+    $expira_en    = max(1, QR_TTL_SEGUNDOS - $transcurrido);
 
     echo json_encode([
         'success'       => true,
