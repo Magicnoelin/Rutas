@@ -611,8 +611,5 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
     </div>
 </footer>
 
-<!-- JS para el botón de compartir -->
-<script src="/rutas-tematicas/js/share.js" defer></script>
-
 </body>
 </html>

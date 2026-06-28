@@ -39,7 +39,7 @@ function renderHero(array $ruta): void
         'invierno'    => '❄️ Invierno',
         'todo-el-año' => '📅 Todo el año',
     ][$season] ?? '';
-
+    
     $heroStyle = $heroImg
         ? "background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.55)), url('" . htmlspecialchars($heroImg) . "');"
         : "background-color: {$coverColor};";
