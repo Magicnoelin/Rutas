@@ -234,6 +234,11 @@ RewriteRule ^evento/([^/]+)/?$ evento-detalle.php?slug=$1 [L,QSA]
 # ============================================================
 # 301 desde la URL antigua .html a la URL limpia
 # Así Google consolida el PageRank en una sola URL
+
+# Redirigir index.html a la raíz /
+RewriteCond %{THE_REQUEST} \s/index\.html [NC]
+RewriteRule ^index\.html$ / [R=301,L]
+
 RewriteCond %{THE_REQUEST} \s/+alojamientos-turisticos\.html [NC]
 RewriteRule ^alojamientos-turisticos\.html$ /alojamientos-turisticos [R=301,L]
 
