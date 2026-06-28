@@ -75,7 +75,7 @@ try {
             // Vincular cuenta existente con el proveedor social
             $updateStmt = $pdo->prepare("
                 UPDATE users 
-                SET $idColumn = :provider_id,
+                SET $idColumn = :provider_id, 
                     auth_provider = :provider,
                     avatar_url = COALESCE(avatar_url, :avatar),
                     updated_at = NOW()
