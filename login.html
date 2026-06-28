@@ -501,14 +501,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <label for="password">
                             <i class="fas fa-lock"></i> Contraseña
                         </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Tu contraseña"
-                            required
-                        >
+                        <div class="password-container">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Tu contraseña"
+                                required
+                            >
+                            <i class="fas fa-eye" id="togglePassword"></i>
+                        </div>
                     </div>
+
+                    <style>
+                        .password-container {
+                            position: relative;
+                        }
+                        .password-container input {
+                            padding-right: 45px !important; /* Espacio para el icono */
+                        }
+                        .password-container #togglePassword {
+                            position: absolute;
+                            top: 50%;
+                            right: 15px;
+                            transform: translateY(-50%);
+                            cursor: pointer;
+                            color: #aaa;
+                            transition: color 0.2s;
+                        }
+                        .password-container #togglePassword:hover {
+                            color: var(--primary-color);
+                        }
+                    </style>
 
                     <div class="form-options">
                         <label class="remember-me">
@@ -870,6 +894,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             messageDiv.innerHTML = '<i class="fas fa-' + icon + '"></i> ' + message;
         }
 
+    </script>
+
+    <script>
+        // Funcionalidad para mostrar/ocultar contraseña
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+
+            if (togglePassword && password) {
+                togglePassword.addEventListener('click', function () {
+                    // Cambiar el tipo del input
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    
+                    // Cambiar el icono del ojo
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+        });
     </script>
 
     <script src="script.js"></script>
