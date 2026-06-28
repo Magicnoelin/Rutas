@@ -118,7 +118,9 @@ if ($alojamiento_id !== $alojamiento_id_post) {
 
 // ── 6. RE-VERIFICAR TOKEN QR (idempotencia) ───────────────────────────────────
 $stmt = $pdo->prepare(
-    'SELECT qt.id, qt.estado, qt.created_at, qt.pasaporte_id,
+    'SELECT qt.id, qt.estado, qt.created_at,
+            UNIX_TIMESTAMP(qt.created_at) AS created_unix,
+            qt.pasaporte_id,
             pt.descuento_actual, pt.puntos_totales, pt.nivel,
             pt.estado AS pasaporte_estado,
             CONCAT(u.first_name, " ", u.last_name) AS nombre_turista
@@ -149,7 +151,8 @@ if ($token_data['estado'] === 'expirado') {
 }
 
 // Doble comprobación del TTL en PHP
-$segundos_transcurridos = time() - strtotime($token_data['created_at']);
+// Usamos UNIX_TIMESTAMP de MySQL para evitar desfases de zona horaria
+$segundos_transcurridos = time() - (int) $token_data['created_unix'];
 if ($segundos_transcurridos > QR_TTL_SEGUNDOS) {
     $pdo->prepare('UPDATE qr_temporales SET estado = "expirado" WHERE id = ?')
         ->execute([$token_data['id']]);

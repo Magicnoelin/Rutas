@@ -70,6 +70,7 @@ $nombre_alojamiento = $info_premium['nombre_alojamiento'];
 // ── 5. BUSCAR EL TOKEN EN LA BASE DE DATOS ────────────────────────────────────
 $stmt = $pdo->prepare(
     'SELECT qt.*,
+            UNIX_TIMESTAMP(qt.created_at) AS created_unix,
             pt.id           AS pasaporte_id,
             pt.descuento_actual,
             pt.puntos_totales,
@@ -118,7 +119,8 @@ if ($datos['estado'] === 'expirado') {
 }
 
 // 6d. ¿El token sigue dentro del TTL de 60 segundos? (doble comprobación en PHP)
-$segundos_transcurridos = time() - strtotime($datos['created_at']);
+// Usamos UNIX_TIMESTAMP devuelto por MySQL para evitar desfases UTC/local (timezone bug)
+$segundos_transcurridos = time() - (int) $datos['created_unix'];
 if ($segundos_transcurridos > QR_TTL_SEGUNDOS) {
     // Marcar como expirado en BD para futuras consultas
     $pdo->prepare(

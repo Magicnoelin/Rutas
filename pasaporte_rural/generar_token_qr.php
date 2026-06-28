@@ -150,7 +150,8 @@ $margen_minimo  = 15; // segundos mínimos de vida restante para reutilizar
 $max_antiguedad = QR_TTL_SEGUNDOS - $margen_minimo; // = 45 segundos
 
 $stmt_recent = $pdo->prepare(
-    'SELECT hash_token, created_at
+    'SELECT hash_token, created_at,
+            UNIX_TIMESTAMP(created_at) AS created_unix
        FROM qr_temporales
       WHERE pasaporte_id = ?
         AND estado = "pendiente"
@@ -162,8 +163,8 @@ $stmt_recent->execute([$pasaporte_id]);
 $token_reciente = $stmt_recent->fetch();
 
 if ($token_reciente) {
-    $creado_ts    = strtotime($token_reciente['created_at']);
-    $transcurrido = time() - $creado_ts;
+    // Usamos UNIX_TIMESTAMP de MySQL para evitar desfases de zona horaria
+    $transcurrido = time() - (int) $token_reciente['created_unix'];
     $expira_en    = max(1, QR_TTL_SEGUNDOS - $transcurrido);
 
     echo json_encode([
