@@ -21,7 +21,8 @@ try {
 
     // Obtener información de membresía del usuario
     $stmtUser = $pdo->prepare("
-        SELECT id, email, first_name, last_name, user_type, membership_type, membership_status 
+        SELECT id, email, first_name, last_name, user_type, membership_type, membership_status,
+               membership_start_date, membership_end_date
         FROM users 
         WHERE id = ?
     ");
@@ -34,6 +35,8 @@ try {
 
     $membershipType = strtolower($user['membership_type'] ?? 'free');
     $membershipStatus = $user['membership_status'] ?? 'active';
+    $membershipStartDate = $user['membership_start_date'] ?? null;
+    $membershipEndDate = $user['membership_end_date'] ?? null;
     $userType = strtolower($user['user_type'] ?? '');
 
     // Definir límites según tipo de membresía (NUEVA ESTRUCTURA)
@@ -142,6 +145,8 @@ try {
         'membershipType' => $membershipType,
         'membershipName' => $membershipLimits['name'],
         'membershipStatus' => $membershipStatus,
+        'membershipStartDate' => $membershipStartDate,
+        'membershipEndDate' => $membershipEndDate,
         'userType' => $userType,
         'currentAccommodations' => (int)$totalAlojamientos,
         'currentPlaces' => (int)$totalPlazas,
