@@ -32,7 +32,7 @@ Todos los recursos ahora usan rutas absolutas (con `/` al inicio):
 - CSS: `/styles.css`
 - Favicon: `/favicon.png`
 - Logo: `/logo_990x1076_verde.png`
-- Enlaces: `/index.html`, `/alojamientos-turisticos.html`, etc.
+- Enlaces: `/`, `/alojamientos-turisticos.html`, etc.
 
 ### 3. ✅ Actualizado `.htaccess`
 Añadidas directivas para asegurar que PHP se procesa correctamente:
