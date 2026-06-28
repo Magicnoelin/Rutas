@@ -227,6 +227,20 @@ ul{list-style:none}
 .hub-hero__sub{font-size:clamp(.95rem,2vw,1.15rem);color:rgba(255,255,255,.88);
   margin-bottom:36px;max-width:600px;font-weight:500;line-height:1.5}
 .hub-container{max-width:var(--max-w);margin:0 auto;padding:0 20px}
+.hub-hero__actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:24px}
+.home-share-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:var(--white);padding:10px 18px;border-radius:25px;text-decoration:none;font-size:1rem;font-weight:600;transition:background .2s ease;cursor:pointer}
+.home-share-btn:hover{background:rgba(255,255,255,.25)}
+.share-modal{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2000;display:flex;align-items:center;justify-content:center}
+.share-modal__overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);backdrop-filter:blur(5px)}
+.share-modal__content{position:relative;background:var(--white);border-radius:var(--radius);padding:24px;width:90%;max-width:400px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.share-modal__close{position:absolute;top:10px;right:10px;background:0 0;border:none;font-size:24px;cursor:pointer;color:#888}
+.share-modal__title{font-size:1.5rem;margin:0 0 8px;color:var(--primary)}
+.share-modal__subtitle{font-size:1rem;margin:0 0 20px;color:var(--text-light)}
+.share-modal__buttons{display:flex;gap:12px;margin-bottom:20px}
+.share-modal__btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:var(--radius-sm);text-decoration:none;font-weight:600;color:var(--white);border:none}.share-modal__btn svg{width:20px;height:20px}.share-modal__btn--whatsapp{background:#25D366}.share-modal__btn--twitter{background:#1DA1F2}
+.share-modal__copy-link{display:flex}
+.share-modal__copy-link input{flex:1;border:1px solid var(--border);border-radius:var(--radius-sm) 0 0 var(--radius-sm);padding:10px;background:var(--bg);color:var(--text)}
+.share-modal__copy-link button{background:var(--primary);color:var(--white);border:none;padding:0 15px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;cursor:pointer;font-weight:600}
 
 /* Placeholder acordeones (evita CLS) */
 .hub-accordion{background:var(--white);border:1px solid var(--border);
@@ -654,6 +668,12 @@ ul{list-style:none}
                 : '0 1px 6px rgba(0,0,0,.06)';
         }, { passive: true });
     }
+
+    // Cargar script de compartir
+    var shareScript = document.createElement('script');
+    shareScript.src = '/js/home-share.js';
+    shareScript.defer = true;
+    document.body.appendChild(shareScript);
 })();
 </script>
 
