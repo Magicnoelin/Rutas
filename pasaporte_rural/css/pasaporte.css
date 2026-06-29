@@ -1388,6 +1388,31 @@ body.pasaporte-body {
     color: #721c24;
     font-weight: 500;
 }
+/* ── Responsive: premium section (ajustes para móviles pequeños) ── */
+@media (max-width: 480px) {
+    /* Convertir tarjeta a layout vertical */
+    .alo-card {
+        flex-direction: column;
+    }
+
+    /* La foto ahora ocupa el ancho completo y tiene una altura fija */
+    .alo-card-foto {
+        flex-basis: 120px; /* Altura de la imagen */
+        width: 100%;
+        height: 120px;
+        border-bottom: 1px solid var(--p-border);
+    }
+
+    /* El cuerpo de la tarjeta ya no necesita justificar el contenido */
+    .alo-card-body {
+        justify-content: flex-start;
+        padding: 0.75rem 0.8rem;
+    }
+
+    .alo-nombre {
+        font-size: 0.95rem; /* Un poco más grande para destacar */
+    }
+}
 
 /* ── Responsive: premium section (SOLO ajustes que no conflictan con las reglas base) ── */
 @media (max-width: 600px) {
