@@ -57,7 +57,8 @@ try {
 
     // --- Accommodations ---
     // Nota: 'status' no existe como columna en accommodations, se omite
-    $accommodationColumns = ['id', 'name', 'slug', 'municipality', 'province', 'accommodation_type', 'price_per_night', 'photo1 AS photo', 'is_active'];
+    // Se incluyen token_publico (para checking) e is_premium (para mostrar enlace de check-in)
+    $accommodationColumns = ['id', 'name', 'slug', 'municipality', 'province', 'accommodation_type', 'price_per_night', 'photo1 AS photo', 'is_active', 'token_publico', 'is_premium'];
     $colsSql = implode(', ', array_map(fn($col) => "a.$col", $accommodationColumns));
     
     $tempAccommodations = [];

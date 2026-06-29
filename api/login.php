@@ -86,7 +86,7 @@ $_SESSION['user_name'] = $user['first_name'] ?? explode('@', $user['email'])[0];
 $_SESSION['user_type'] = $user['user_type'] ?? 'turista';
 
 // Determinar a dónde redirigir al usuario
-$redirectUrl = 'mi-cuenta.html'; // Por defecto
+$redirectUrl = 'user-dashboard.html'; // Por defecto
 if (isset($user['user_type'])) {
     if ($user['user_type'] === 'gestor') {
         $redirectUrl = 'gestor-dashboard.html';

@@ -1837,6 +1837,14 @@
                     const slug = d.slug || '';
                     const id = d.id || '';
                     const isActive = d.is_active == 1;
+                    const isPremium = d.is_premium == 1;
+                    const tokenPublico = d.token_publico || '';
+                    
+                    // Generar badge de premium si aplica
+                    const premiumBadge = isPremium ? '<span style="background: linear-gradient(135deg,#f59e0b,#d97706); color: white; padding: 3px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: 700; margin-right: 5px;"><i class="fas fa-crown"></i> Premium</span>' : '';
+                    
+                    // Generar enlace de checking si es premium y tiene token
+                    const checkingLink = (isPremium && tokenPublico) ? `<a href="/checking_accommodations/checkin.php?token=${tokenPublico}" target="_blank" style="flex:1;text-align:center;background:#10b981;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-clipboard-check"></i> Check-in</a>` : '';
 
                     return `
                     <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
@@ -1847,7 +1855,7 @@
                             </span>
                         </div>
                         <div style="padding: 1.2rem;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${name}</h4>
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${premiumBadge}${name}</h4>
                             <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.9rem;">
                                 <i class="fas fa-map-marker-alt"></i> ${d.municipality || ''}, ${d.province || ''}
                             </p>
@@ -1858,6 +1866,7 @@
                             </div>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                 <a href="/detalle.html?slug=${slug}" target="_blank" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-eye"></i> Ver</a>
+                                ${checkingLink}
                                 <a href="/dashboard/editar-mi-alojamiento.php?id=${id}" target="_blank" style="flex:1;text-align:center;background:#666;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-edit"></i> Editar</a>
                                 <a href="/gestion-fotos-alojamiento.html?slug=${slug}" target="_blank" style="flex:1;text-align:center;background:#e67e22;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-camera"></i> Fotos</a>
                             </div>
