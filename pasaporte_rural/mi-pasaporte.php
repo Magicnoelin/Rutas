@@ -640,18 +640,14 @@ function renderizarTarjetas(alojamientos, descuento) {
         card.className   = 'alo-card';
         card.setAttribute('aria-label', 'Ver ' + alo.name);
 
-        // ── Foto ────────────────────────────────────────────────────────
+        // ── Foto (background-image: nunca desborda, sin problema de aspect-ratio) ──
         const fotoDiv = document.createElement('div');
         fotoDiv.className = 'alo-card-foto';
         if (alo.photo) {
-            const img = document.createElement('img');
-            img.src   = alo.photo;
-            img.alt   = alo.name;
-            img.loading = 'lazy';
-            img.onerror = function() {
-                this.parentNode.innerHTML = '<span class="alo-foto-placeholder">🏡</span>';
-            };
-            fotoDiv.appendChild(img);
+            fotoDiv.style.backgroundImage  = 'url(' + alo.photo + ')';
+            fotoDiv.style.backgroundSize   = 'cover';
+            fotoDiv.style.backgroundPosition = 'center';
+            fotoDiv.style.backgroundRepeat = 'no-repeat';
         } else {
             fotoDiv.innerHTML = '<span class="alo-foto-placeholder">🏡</span>';
         }
