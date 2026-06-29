@@ -835,22 +835,17 @@
 
             <!-- SECCIÓN: RESERVAS -->
             <section id="reservas-section" class="dashboard-section">
-                <div style="text-align: center; padding: 4rem; background: white; border-radius: 15px;">
-                    <i class="fas fa-calendar-times" style="font-size: 4rem; color: #ddd; margin-bottom: 1.5rem;"></i>
-                    <h3 style="color: #666;">No tienes reservas activas</h3>
-                    <p style="color: #888; margin-bottom: 2rem;">Explora nuestros alojamientos y actividades para empezar tu aventura.</p>
+                <div class="empty-state-card">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>No tienes reservas activas</h3>
+                    <p>Explora nuestros alojamientos y actividades para empezar tu aventura.</p>
                     <a href="/index.html" class="btn-primary" style="text-decoration: none;">Explorar Rutas</a>
                 </div>
             </section>
 
             <!-- SECCIÓN: FAVORITOS -->
             <section id="favoritos-section" class="dashboard-section">
-                <div style="text-align: center; padding: 4rem; background: white; border-radius: 15px;">
-                    <i class="fas fa-heart-broken" style="font-size: 4rem; color: #ddd; margin-bottom: 1.5rem;"></i>
-                    <h3 style="color: #666;">Tu lista de favoritos está vacía</h3>
-                    <p style="color: #888; margin-bottom: 2rem;">Guarda los lugares que te enamoren para encontrarlos fácilmente.</p>
-                    <a href="/lugares-interes-paginacion.html" class="btn-primary" style="text-decoration: none;">Descubrir Lugares</a>
-                </div>
+                <div id="favorites-content"></div>
             </section>
 
             <!-- SECCIÓN: MIS ALOJAMIENTOS -->
@@ -2163,12 +2158,6 @@
         // Cargar datos de membresía
         await loadMembershipData();
         
-        // Configurar menú y recursos basándose en los roles ya cargados en loadUserProfile
-        if (window.myRolesList) {
-            const rolesSlugs = window.myRolesList.map(r => r.slug);
-            actualizarMenuPorRoles(rolesSlugs);
-            await loadUserResources();
-        }
         
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -2176,11 +2165,77 @@
             }
         });
 
-        // Cargar conversaciones si estamos en la sección de mensajes
-        if (hash === 'mensajes') {
-            loadConversations();
+        // Configurar menú y recursos basándose en los roles ya cargados en loadUserProfile
+        if (window.myRolesList) {
+            const rolesSlugs = window.myRolesList.map(r => r.slug);
+            actualizarMenuPorRoles(rolesSlugs);
+            await loadUserResources();
         }
+
+        // Sobrescribir showSection para añadir cargas dinámicas
+        const originalShowSectionFunc = window.showSection;
+        window.showSection = function(sectionId) {
+            originalShowSectionFunc(sectionId); // Llama a la función original
+            handleSectionChange(sectionId); // Llama a nuestra nueva lógica
+        };
     });
+
+    // --- FAVORITOS ---
+    async function loadFavorites() {
+        const container = document.getElementById('favorites-content');
+        if (!container) return;
+
+        container.innerHTML = `<div class="empty-state-card"><i class="fas fa-spinner fa-spin"></i><h3>Cargando favoritos...</h3></div>`;
+
+        try {
+            const response = await fetch('api/favorites.php?action=list');
+            const result = await response.json();
+
+            if (result.success && result.data.length > 0) {
+                container.innerHTML = `
+                    <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Mis Favoritos</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                        ${result.data.map(fav => renderFavoriteCard(fav)).join('')}
+                    </div>
+                `;
+            } else {
+                 container.innerHTML = `
+                    <div class="empty-state-card">
+                        <i class="fas fa-heart-broken"></i>
+                        <h3>Tu lista de favoritos está vacía</h3>
+                        <p>Guarda los lugares que te enamoren para encontrarlos fácilmente.</p>
+                        <a href="/lugares-interes-paginacion.html" class="btn-primary" style="text-decoration: none;">Descubrir Lugares</a>
+                    </div>`;
+            }
+        } catch (error) {
+            container.innerHTML = `<div class="empty-state-card error"><i class="fas fa-exclamation-triangle"></i><h3>Error al cargar favoritos</h3></div>`;
+        }
+    }
+
+    function renderFavoriteCard(fav) {
+        const icons = {
+            activity: 'fa-hiking',
+            accommodation: 'fa-bed',
+            place: 'fa-map-marker-alt',
+            event: 'fa-calendar-alt'
+        };
+        const urls = {
+            activity: '/actividad/',
+            accommodation: '/alojamientos/',
+            place: '/lugar/',
+            event: '/evento-detalle.html?slug='
+        };
+        const url = (urls[fav.entity_type] || '/') + fav.entity_slug;
+
+        return `
+            <div class="role-card" style="text-align:left; cursor:default;">
+                 <div class="role-icon" style="margin-bottom:1rem;"><i class="fas ${icons[fav.entity_type] || 'fa-star'}"></i></div>
+                 <h3 style="font-size:1.1rem;">${fav.entity_name || 'Elemento guardado'}</h3>
+                 <p style="font-size:0.85rem; color:#888;">Guardado el ${new Date(fav.created_at).toLocaleDateString()}</p>
+                 <a href="${url}" target="_blank" class="btn-select-role" style="text-decoration:none; margin-top:auto;">Ver Detalle</a>
+            </div>
+        `;
+    }
 
     // ============================================
     // SISTEMA DE MENSAJES
@@ -2731,25 +2786,18 @@
     // INICIALIZACIÓN DEL SISTEMA DE MENSAJES
     // ============================================
 
-    // Sobrescribir showSection para cargar conversaciones cuando se muestra la sección de mensajes
-    const originalShowSection = showSection;
-    showSection = function(sectionId) {
-        originalShowSection(sectionId);
-        
+    // Función que se ejecuta cada vez que cambia la sección
+    function handleSectionChange(sectionId) {
         if (sectionId === 'mensajes') {
             loadConversations();
-            
-            // Limpiar intervalo si cambiamos de sección
-            if (messagePollInterval) {
-                clearInterval(messagePollInterval);
-                messagePollInterval = null;
-            }
+        } else if (sectionId === 'favoritos') {
+            loadFavorites();
         } else if (messagePollInterval) {
-            // Si cambiamos a otra sección, detener polling
+            // Si cambiamos a cualquier otra sección que no sea mensajes, detener el polling
             clearInterval(messagePollInterval);
             messagePollInterval = null;
         }
-    };
+    }
 
     // ==========================================================================
     // PASAPORTE RURAL — mini-stats en el inicio del user-dashboard

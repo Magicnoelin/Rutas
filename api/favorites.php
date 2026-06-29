@@ -1,141 +1,111 @@
 <?php
-/**
- * API de Favoritos
- * GET  /api/favorites.php?entity_type=accommodation&entity_id=123  → comprueba si es favorito
- * POST /api/favorites.php  { entity_type, entity_id, action: 'add'|'remove' }  → añade/quita favorito
- */
 require_once 'config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
     exit;
 }
 
-// Verificar autenticación
-$userId = $_SESSION['user_id'] ?? null;
-if (!$userId) {
-    echo json_encode(['success' => false, 'error' => 'No autenticado', 'code' => 401]);
-    exit;
-}
+$userId = $_SESSION['user_id'];
+$pdo = getDBConnection();
 
+// Auto-crear tabla si no existe
 try {
-    $pdo = getDBConnection();
+    $pdo->exec("CREATE TABLE IF NOT EXISTS favorites (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        entity_type VARCHAR(50) NOT NULL,
+        entity_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY user_entity (user_id, entity_type, entity_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+} catch (PDOException $e) {
+    // No hacer nada si falla, la API devolverá error después
+}
 
-    // ── GET: comprobar si ya es favorito ──────────────────────────────────────
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $entityType = $_GET['entity_type'] ?? '';
-        $entityId   = (int)($_GET['entity_id'] ?? 0);
+$action = $_GET['action'] ?? '';
+
+switch ($action) {
+    case 'list':
+        try {
+            $stmt = $pdo->prepare("
+                SELECT 
+                    f.id, f.entity_type, f.entity_id, f.created_at,
+                    CASE f.entity_type
+                        WHEN 'activity' THEN a.name
+                        WHEN 'accommodation' THEN ac.name
+                        WHEN 'place' THEN p.name
+                        WHEN 'event' THEN e.name
+                        ELSE NULL
+                    END as entity_name,
+                    CASE f.entity_type
+                        WHEN 'activity' THEN a.slug
+                        WHEN 'accommodation' THEN ac.slug
+                        WHEN 'place' THEN p.slug
+                        WHEN 'event' THEN e.slug
+                        ELSE NULL
+                    END as entity_slug
+                FROM favorites f
+                LEFT JOIN tourist_activities a ON f.entity_type = 'activity' AND f.entity_id = a.id
+                LEFT JOIN accommodations ac ON f.entity_type = 'accommodation' AND f.entity_id = ac.id
+                LEFT JOIN places_of_interest p ON f.entity_type = 'place' AND f.entity_id = p.id
+                LEFT JOIN cultural_events e ON f.entity_type = 'event' AND f.entity_id = e.id
+                WHERE f.user_id = ?
+                ORDER BY f.created_at DESC
+            ");
+            $stmt->execute([$userId]);
+            $favorites = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'data' => $favorites]);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
+        }
+        break;
+
+    case 'toggle':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'POST method required']);
+            exit;
+        }
+        $data = json_decode(file_get_contents('php://input'), true);
+        $entityType = $data['entity_type'] ?? null;
+        $entityId = $data['entity_id'] ?? null;
 
         if (!$entityType || !$entityId) {
-            echo json_encode(['success' => false, 'error' => 'Parámetros requeridos']);
+            echo json_encode(['success' => false, 'error' => 'entity_type and entity_id are required']);
             exit;
         }
 
-        $stmt = $pdo->prepare("
-            SELECT id FROM favorites
-            WHERE user_id = :user_id AND entity_type = :entity_type AND entity_id = :entity_id
-            LIMIT 1
-        ");
-        $stmt->execute([
-            ':user_id'     => $userId,
-            ':entity_type' => $entityType,
-            ':entity_id'   => $entityId,
-        ]);
-        $fav = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            // Verificar si ya es favorito
+            $stmt = $pdo->prepare("SELECT id FROM favorites WHERE user_id = ? AND entity_type = ? AND entity_id = ?");
+            $stmt->execute([$userId, $entityType, $entityId]);
+            $isFavorite = $stmt->fetch();
 
-        echo json_encode(['success' => true, 'is_favorite' => (bool)$fav]);
-        exit;
-    }
-
-    // ── POST: añadir o quitar favorito ────────────────────────────────────────
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $input      = json_decode(file_get_contents('php://input'), true) ?? [];
-        $entityType = $input['entity_type'] ?? '';
-        $entityId   = (int)($input['entity_id'] ?? 0);
-        $action     = $input['action'] ?? 'add'; // 'add' | 'remove'
-
-        $validTypes = ['accommodation', 'place', 'activity', 'event'];
-        if (!in_array($entityType, $validTypes) || !$entityId) {
-            echo json_encode(['success' => false, 'error' => 'Parámetros inválidos']);
-            exit;
-        }
-
-        // Mapear entity_type → resource_type para resource_stats
-        $resourceType = $entityType; // son iguales en este sistema
-
-        if ($action === 'add') {
-            // Insertar en favorites (ignorar si ya existe)
-            $stmt = $pdo->prepare("
-                INSERT IGNORE INTO favorites (user_id, entity_type, entity_id)
-                VALUES (:user_id, :entity_type, :entity_id)
-            ");
-            $stmt->execute([
-                ':user_id'     => $userId,
-                ':entity_type' => $entityType,
-                ':entity_id'   => $entityId,
-            ]);
-            $inserted = $stmt->rowCount();
-
-            // Solo incrementar si realmente se insertó (no era duplicado)
-            if ($inserted > 0) {
-                // Asegurar que existe la fila en resource_stats
-                $pdo->prepare("
-                    INSERT IGNORE INTO resource_stats (resource_type, resource_id)
-                    VALUES (:rt, :rid)
-                ")->execute([':rt' => $resourceType, ':rid' => $entityId]);
-
-                // Incrementar favorites_count
-                $pdo->prepare("
-                    UPDATE resource_stats
-                    SET favorites_count = favorites_count + 1
-                    WHERE resource_type = :rt AND resource_id = :rid
-                ")->execute([':rt' => $resourceType, ':rid' => $entityId]);
+            if ($isFavorite) {
+                // Si ya es favorito, eliminarlo
+                $deleteStmt = $pdo->prepare("DELETE FROM favorites WHERE id = ?");
+                $deleteStmt->execute([$isFavorite['id']]);
+                echo json_encode(['success' => true, 'status' => 'removed']);
+            } else {
+                // Si no es favorito, añadirlo
+                $insertStmt = $pdo->prepare("INSERT INTO favorites (user_id, entity_type, entity_id) VALUES (?, ?, ?)");
+                $insertStmt->execute([$userId, $entityType, $entityId]);
+                echo json_encode(['success' => true, 'status' => 'added', 'id' => $pdo->lastInsertId()]);
             }
-
-            echo json_encode(['success' => true, 'action' => 'added', 'is_favorite' => true]);
-
-        } elseif ($action === 'remove') {
-            // Eliminar de favorites
-            $stmt = $pdo->prepare("
-                DELETE FROM favorites
-                WHERE user_id = :user_id AND entity_type = :entity_type AND entity_id = :entity_id
-            ");
-            $stmt->execute([
-                ':user_id'     => $userId,
-                ':entity_type' => $entityType,
-                ':entity_id'   => $entityId,
-            ]);
-            $deleted = $stmt->rowCount();
-
-            // Solo decrementar si realmente se borró
-            if ($deleted > 0) {
-                $pdo->prepare("
-                    UPDATE resource_stats
-                    SET favorites_count = GREATEST(favorites_count - 1, 0)
-                    WHERE resource_type = :rt AND resource_id = :rid
-                ")->execute([':rt' => $resourceType, ':rid' => $entityId]);
-            }
-
-            echo json_encode(['success' => true, 'action' => 'removed', 'is_favorite' => false]);
-
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Acción no válida']);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
         }
-        exit;
-    }
+        break;
 
-    echo json_encode(['success' => false, 'error' => 'Método no permitido']);
-
-} catch (Exception $e) {
-    error_log('favorites.php error: ' . $e->getMessage());
-    echo json_encode(['success' => false, 'error' => 'Error del servidor']);
+    default:
+        echo json_encode(['success' => false, 'error' => 'Invalid action']);
+        break;
 }
+?>
