@@ -123,6 +123,15 @@ $sellos_recientes = $stmt_sellos->fetchAll();
     <!-- QRCode.js — librería open-source para renderizar QR en canvas/img -->
     <!-- Documentación: https://github.com/davidshimjs/qrcodejs -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <!-- Leaflet.js — Mapa interactivo open-source (sin API key) -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="anonymous">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN2GRnU="
+            crossorigin="anonymous"></script>
 </head>
 <body class="pasaporte-body">
 
@@ -261,6 +270,72 @@ $sellos_recientes = $stmt_sellos->fetchAll();
             <i class="fa-solid fa-circle-question me-1"></i> Más información
         </a>
     </div>
+
+    <!-- ── ALOJAMIENTOS PREMIUM CON TU DESCUENTO ─────────────────────────── -->
+    <div class="premium-section" id="seccion-premium">
+
+        <!-- Cabecera de la sección -->
+        <div class="premium-header">
+            <div>
+                <h2 class="premium-titulo">
+                    <i class="fa-solid fa-star me-1"></i> Alojamientos con tu descuento
+                </h2>
+                <p class="premium-subtitulo">
+                    Tu descuento del <strong><?= $descuento ?>%</strong> ya aplicado al precio final
+                </p>
+            </div>
+
+            <!-- Toggle Tarjetas / Mapa -->
+            <div class="premium-toggle" role="group" aria-label="Vista de alojamientos">
+                <button class="toggle-btn active" id="btn-tarjetas"
+                        onclick="mostrarVista('tarjetas')" aria-pressed="true">
+                    <i class="fa-solid fa-grip me-1"></i>Tarjetas
+                </button>
+                <button class="toggle-btn" id="btn-mapa"
+                        onclick="mostrarVista('mapa')" aria-pressed="false">
+                    <i class="fa-solid fa-map-location-dot me-1"></i>Mapa
+                </button>
+            </div>
+        </div>
+
+        <!-- ── VISTA TARJETAS (por defecto) ───────────────────────────── -->
+        <div id="vista-tarjetas">
+            <!-- Skeleton mientras carga -->
+            <div id="alo-skeleton" class="alo-skeleton-wrap">
+                <div class="alo-skeleton-card"></div>
+                <div class="alo-skeleton-card"></div>
+                <div class="alo-skeleton-card"></div>
+            </div>
+
+            <!-- Listado real (se rellena con JS) -->
+            <div id="alo-lista" class="alo-lista" style="display:none;"></div>
+
+            <!-- Error de carga -->
+            <div id="alo-error" class="alo-error" style="display:none;">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                No se pudieron cargar los alojamientos. Inténtalo de nuevo.
+                <button onclick="cargarAlojamientosPremium()" class="btn btn-sm btn-outline-secondary mt-2">
+                    Reintentar
+                </button>
+            </div>
+
+            <!-- Sin resultados -->
+            <div id="alo-vacio" class="alo-vacio" style="display:none;">
+                <span class="alo-vacio-icon">🏡</span>
+                <p>Pronto habrá alojamientos Premium en tu zona.</p>
+            </div>
+        </div>
+
+        <!-- ── VISTA MAPA (oculta por defecto) ────────────────────────── -->
+        <div id="vista-mapa" style="display:none;">
+            <div id="premium-mapa" class="premium-mapa"></div>
+            <p class="mapa-leyenda">
+                <span class="mapa-leyenda-pin">📍</span>
+                Toca un pin para ver el precio con tu descuento aplicado
+            </p>
+        </div>
+
+    </div><!-- /seccion-premium -->
 
     <!-- ── HISTORIAL DE SELLOS ─────────────────────────────────────────────── -->
     <?php if (!empty($sellos_recientes)): ?>
@@ -505,6 +580,336 @@ document.addEventListener('visibilitychange', function () {
         clearInterval(timerInterval);
         rotarQR();
     }
+});
+</script>
+
+<!-- ============================================================================
+     JAVASCRIPT — Alojamientos Premium con descuento + Mapa Leaflet
+     ============================================================================ -->
+<script>
+/**
+ * Pasaporte Rural — Sección de Alojamientos Premium
+ * ──────────────────────────────────────────────────
+ * Responsabilidades:
+ *   1. Llamar a la API de alojamientos premium para obtener los datos.
+ *   2. Renderizar las tarjetas con precio original tachado + precio con descuento.
+ *   3. Toggle entre vista tarjetas y vista mapa.
+ *   4. Inicializar el mapa Leaflet con pines personalizados que muestran el precio.
+ */
+
+'use strict';
+
+// ── URL del endpoint de alojamientos premium ───────────────────────────────────
+const API_PREMIUM_URL = '<?= PASAPORTE_URL ?>/api/alojamientos-premium.php';
+
+// ── Estado global de alojamientos ─────────────────────────────────────────────
+let datosPremium    = null;   // Datos cargados desde la API
+let mapaLeaflet     = null;   // Instancia del mapa Leaflet
+let mapaInicializado = false; // Para no crear el mapa dos veces
+let vistaActual     = 'tarjetas'; // 'tarjetas' | 'mapa'
+
+// ── Elementos DOM ──────────────────────────────────────────────────────────────
+const elSkeleton = document.getElementById('alo-skeleton');
+const elLista    = document.getElementById('alo-lista');
+const elError    = document.getElementById('alo-error');
+const elVacio    = document.getElementById('alo-vacio');
+const elVistaTarjetas = document.getElementById('vista-tarjetas');
+const elVistaMapa     = document.getElementById('vista-mapa');
+const elBtnTarjetas   = document.getElementById('btn-tarjetas');
+const elBtnMapa       = document.getElementById('btn-mapa');
+
+/**
+ * Formatear precio en euros, sin decimales.
+ * Ej: 1234 → "1.234 €"
+ */
+function formatPrecio(precio) {
+    return new Intl.NumberFormat('es-ES', {
+        style: 'currency', currency: 'EUR',
+        minimumFractionDigits: 0, maximumFractionDigits: 0
+    }).format(precio);
+}
+
+/**
+ * Renderizar las tarjetas de alojamientos premium.
+ * @param {Array} alojamientos
+ * @param {number} descuento
+ */
+function renderizarTarjetas(alojamientos, descuento) {
+    elLista.innerHTML = '';
+
+    alojamientos.forEach(function (alo) {
+        const card = document.createElement('a');
+        card.href        = alo.url;
+        card.target      = '_blank';
+        card.rel         = 'noopener noreferrer';
+        card.className   = 'alo-card';
+        card.setAttribute('aria-label', 'Ver ' + alo.name);
+
+        // ── Foto ────────────────────────────────────────────────────────
+        const fotoDiv = document.createElement('div');
+        fotoDiv.className = 'alo-card-foto';
+        if (alo.photo) {
+            const img = document.createElement('img');
+            img.src   = alo.photo;
+            img.alt   = alo.name;
+            img.loading = 'lazy';
+            img.onerror = function() {
+                this.parentNode.innerHTML = '<span class="alo-foto-placeholder">🏡</span>';
+            };
+            fotoDiv.appendChild(img);
+        } else {
+            fotoDiv.innerHTML = '<span class="alo-foto-placeholder">🏡</span>';
+        }
+
+        // ── Badge Premium ────────────────────────────────────────────────
+        const badge = document.createElement('span');
+        badge.className   = 'alo-badge-premium';
+        badge.textContent = '⭐ Premium';
+        fotoDiv.appendChild(badge);
+
+        // ── Contenido ────────────────────────────────────────────────────
+        const body = document.createElement('div');
+        body.className = 'alo-card-body';
+
+        // Nombre
+        const nombre = document.createElement('p');
+        nombre.className   = 'alo-nombre';
+        nombre.textContent = alo.name;
+
+        // Ubicación (municipio · provincia)
+        const ubicacion = document.createElement('p');
+        ubicacion.className = 'alo-ubicacion';
+        const partes = [alo.municipality, alo.province].filter(Boolean);
+        ubicacion.innerHTML = '<i class="fa-solid fa-location-dot me-1"></i>' + partes.join(' · ');
+
+        // Tipo de alojamiento
+        const tipo = document.createElement('p');
+        tipo.className   = 'alo-tipo';
+        tipo.textContent = alo.accommodation_type || 'Alojamiento Rural';
+
+        // Bloque de precios
+        const precioBloque = document.createElement('div');
+        precioBloque.className = 'alo-precio-bloque';
+
+        if (alo.price_per_night && alo.price_per_night > 0 && alo.price_con_descuento) {
+            // Precio original tachado
+            const precioOrig = document.createElement('span');
+            precioOrig.className   = 'alo-precio-original';
+            precioOrig.textContent = formatPrecio(alo.price_per_night);
+
+            // Precio con descuento
+            const precioDtoWrap = document.createElement('div');
+            precioDtoWrap.className = 'alo-precio-dto-wrap';
+
+            const precioDto = document.createElement('span');
+            precioDto.className   = 'alo-precio-dto';
+            precioDto.textContent = formatPrecio(alo.price_con_descuento);
+
+            const porNoche = document.createElement('span');
+            porNoche.className   = 'alo-por-noche';
+            porNoche.textContent = '/noche';
+
+            precioDtoWrap.appendChild(precioDto);
+            precioDtoWrap.appendChild(porNoche);
+
+            // Badge de ahorro
+            const ahorro = document.createElement('span');
+            ahorro.className   = 'alo-ahorro-badge';
+            ahorro.textContent = '-' + descuento + '% tuyo';
+
+            precioBloque.appendChild(precioOrig);
+            precioBloque.appendChild(precioDtoWrap);
+            precioBloque.appendChild(ahorro);
+
+        } else {
+            const sinPrecio = document.createElement('span');
+            sinPrecio.className   = 'alo-sin-precio';
+            sinPrecio.textContent = 'Consultar precio';
+            precioBloque.appendChild(sinPrecio);
+        }
+
+        // CTA
+        const cta = document.createElement('span');
+        cta.className   = 'alo-cta';
+        cta.innerHTML   = 'Ver alojamiento <i class="fa-solid fa-arrow-right ms-1"></i>';
+
+        body.appendChild(nombre);
+        body.appendChild(ubicacion);
+        body.appendChild(tipo);
+        body.appendChild(precioBloque);
+        body.appendChild(cta);
+
+        card.appendChild(fotoDiv);
+        card.appendChild(body);
+        elLista.appendChild(card);
+    });
+}
+
+/**
+ * Inicializar el mapa Leaflet con pines personalizados (precio como etiqueta).
+ * Se llama solo cuando el usuario activa la vista de mapa.
+ * @param {Array} alojamientos
+ * @param {number} descuento
+ */
+function inicializarMapa(alojamientos, descuento) {
+    if (mapaInicializado) {
+        // Si ya existe, solo refrescar el tamaño (el contenedor puede haber cambiado)
+        setTimeout(function () { mapaLeaflet.invalidateSize(); }, 100);
+        return;
+    }
+
+    // Filtrar los que tienen coordenadas
+    const alosConCoordenadas = alojamientos.filter(function (a) {
+        return a.lat && a.lng && !isNaN(a.lat) && !isNaN(a.lng);
+    });
+
+    // Centro por defecto: España
+    const centroEspana = [40.4168, -3.7038];
+    const zoomInicial  = alosConCoordenadas.length > 0 ? 6 : 5;
+
+    mapaLeaflet = L.map('premium-mapa', {
+        center:    centroEspana,
+        zoom:      zoomInicial,
+        scrollWheelZoom: false,   // Mejor UX en móvil
+    });
+
+    // Capa de tiles OpenStreetMap (gratuita, sin API key)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 18,
+    }).addTo(mapaLeaflet);
+
+    // ── Marcadores personalizados con el precio ──────────────────────────
+    const marcadores = [];
+
+    alosConCoordenadas.forEach(function (alo) {
+        // Etiqueta del pin: precio con descuento si existe, si no "Ver"
+        let etiquetaPrecio = 'Ver';
+        if (alo.price_con_descuento && alo.price_con_descuento > 0) {
+            etiquetaPrecio = formatPrecio(alo.price_con_descuento);
+        }
+
+        // Icono personalizado con DivIcon (HTML, CSS)
+        const pinIcon = L.divIcon({
+            className:   '',
+            html: '<div class="mapa-pin-precio">' + etiquetaPrecio + '</div>',
+            iconSize:    [null, null],  // Auto según CSS
+            iconAnchor:  [0, 36],      // Base del pin centrada
+            popupAnchor: [0, -36],
+        });
+
+        const marcador = L.marker([alo.lat, alo.lng], { icon: pinIcon });
+
+        // Popup con información del alojamiento
+        let popupHtml = '<div class="mapa-popup">';
+        if (alo.photo) {
+            popupHtml += '<img src="' + alo.photo + '" alt="' + alo.name + '" class="mapa-popup-foto" loading="lazy">';
+        }
+        popupHtml += '<p class="mapa-popup-nombre">' + alo.name + '</p>';
+        popupHtml += '<p class="mapa-popup-ubicacion">' + [alo.municipality, alo.province].filter(Boolean).join(' · ') + '</p>';
+
+        if (alo.price_per_night && alo.price_per_night > 0) {
+            popupHtml += '<div class="mapa-popup-precios">';
+            popupHtml += '<span class="mapa-popup-orig">' + formatPrecio(alo.price_per_night) + '</span>';
+            popupHtml += '<span class="mapa-popup-dto">' + formatPrecio(alo.price_con_descuento) + '<small>/noche</small></span>';
+            popupHtml += '<span class="mapa-popup-ahorro">Tu descuento -' + descuento + '%</span>';
+            popupHtml += '</div>';
+        }
+
+        popupHtml += '<a href="' + alo.url + '" target="_blank" rel="noopener" class="mapa-popup-btn">Ver alojamiento →</a>';
+        popupHtml += '</div>';
+
+        marcador.bindPopup(popupHtml, { maxWidth: 240 });
+        marcador.addTo(mapaLeaflet);
+        marcadores.push(marcador);
+    });
+
+    // Ajustar zoom para que quepan todos los marcadores
+    if (marcadores.length > 0) {
+        const grupo = L.featureGroup(marcadores);
+        mapaLeaflet.fitBounds(grupo.getBounds().pad(0.15));
+    }
+
+    mapaInicializado = true;
+}
+
+/**
+ * Alternar entre vista tarjetas y vista mapa.
+ * @param {'tarjetas'|'mapa'} vista
+ */
+function mostrarVista(vista) {
+    vistaActual = vista;
+
+    if (vista === 'tarjetas') {
+        elVistaTarjetas.style.display = 'block';
+        elVistaMapa.style.display     = 'none';
+        elBtnTarjetas.classList.add('active');
+        elBtnTarjetas.setAttribute('aria-pressed', 'true');
+        elBtnMapa.classList.remove('active');
+        elBtnMapa.setAttribute('aria-pressed', 'false');
+    } else {
+        elVistaTarjetas.style.display = 'none';
+        elVistaMapa.style.display     = 'block';
+        elBtnTarjetas.classList.remove('active');
+        elBtnTarjetas.setAttribute('aria-pressed', 'false');
+        elBtnMapa.classList.add('active');
+        elBtnMapa.setAttribute('aria-pressed', 'true');
+
+        // Inicializar mapa si hay datos y aún no se ha creado
+        if (datosPremium) {
+            inicializarMapa(datosPremium.alojamientos, datosPremium.descuento);
+        }
+    }
+}
+
+/**
+ * Cargar alojamientos premium desde la API y actualizar la vista.
+ * Se llama al cargar la página (DOMContentLoaded).
+ */
+async function cargarAlojamientosPremium() {
+    // Mostrar skeleton, ocultar resto
+    elSkeleton.style.display = 'flex';
+    elLista.style.display    = 'none';
+    elError.style.display    = 'none';
+    elVacio.style.display    = 'none';
+
+    try {
+        const resp = await fetch(API_PREMIUM_URL, {
+            method:      'GET',
+            credentials: 'same-origin',
+            cache:       'no-store',
+            headers:     { 'X-Requested-With': 'XMLHttpRequest' },
+        });
+
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+        const datos = await resp.json();
+
+        if (!datos.success) throw new Error(datos.error || 'Error del servidor');
+
+        datosPremium = datos;
+
+        elSkeleton.style.display = 'none';
+
+        if (!datos.alojamientos || datos.alojamientos.length === 0) {
+            elVacio.style.display = 'block';
+            return;
+        }
+
+        // Renderizar tarjetas
+        renderizarTarjetas(datos.alojamientos, datos.descuento);
+        elLista.style.display = 'flex';
+
+    } catch (err) {
+        console.error('[PremiumAlos] Error:', err);
+        elSkeleton.style.display = 'none';
+        elError.style.display    = 'block';
+    }
+}
+
+// ── Arranque ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    cargarAlojamientosPremium();
 });
 </script>
 
