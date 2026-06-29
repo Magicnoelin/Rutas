@@ -3,24 +3,27 @@ declare(strict_types=1);
 
 /**
  * =============================================================================
- * PASAPORTE RURAL — API: Alojamientos Premium con precio descontado
+ * PASAPORTE RURAL — Endpoint: Alojamientos Premium con precio descontado
  * =============================================================================
- * Archivo  : pasaporte_rural/api/alojamientos-premium.php
- * Acceso   : Turistas con sesión activa y pasaporte
- * Función  : Devuelve JSON con todos los alojamientos is_premium = 1,
- *            incluyendo el precio con el descuento del huésped ya calculado.
+ * Archivo  : pasaporte_rural/alojamientos-premium.php
+ * Método   : GET (llamada AJAX desde mi-pasaporte.php)
+ * Auth     : Sesión PHP activa con user_id (turista logueado)
+ * Respuesta: JSON
+ *
+ * Devuelve todos los alojamientos is_premium=1 con el precio_con_descuento
+ * calculado para el descuento específico del huésped (5-10%).
  * =============================================================================
  */
 
-// ob_start captura cualquier output accidental (notices, warnings)
+// ob_start captura cualquier output accidental (notices, warnings de PHP)
 // que corrompería el JSON — patrón idéntico a generar_token_qr.php
 ob_start();
 
-// ── Dependencias ────────────────────────────────────────────────────────────
+// ── Dependencias ──────────────────────────────────────────────────────────────
 define('API_NO_HEADERS', true);
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/config.php';
 
-// ── Sesión — igual que generar_token_qr.php (session_start directo) ─────────
+// ── Sesión — igual que generar_token_qr.php ───────────────────────────────────
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -31,12 +34,12 @@ if ($output_previo !== '' && $output_previo !== false) {
     error_log('[PremiumAlos] Output inesperado antes del JSON: ' . substr($output_previo, 0, 500));
 }
 
-// ── Cabeceras JSON ───────────────────────────────────────────────────────────
+// ── Cabeceras JSON ────────────────────────────────────────────────────────────
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: private, max-age=300');
 header('X-Content-Type-Options: nosniff');
 
-// ── Verificar sesión ─────────────────────────────────────────────────────────
+// ── Verificar sesión ──────────────────────────────────────────────────────────
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Sesión no iniciada.'], JSON_UNESCAPED_UNICODE);
@@ -45,7 +48,7 @@ if (empty($_SESSION['user_id'])) {
 
 $user_id = (int) $_SESSION['user_id'];
 
-// ── Conexión BD ──────────────────────────────────────────────────────────────
+// ── Conexión BD ───────────────────────────────────────────────────────────────
 try {
     $pdo = getDBConnection();
 } catch (Exception $e) {
@@ -55,7 +58,7 @@ try {
     exit;
 }
 
-// ── Obtener descuento del turista ────────────────────────────────────────────
+// ── Obtener descuento del turista ─────────────────────────────────────────────
 $stmtPasaporte = $pdo->prepare(
     'SELECT descuento_actual FROM pasaporte_turistas WHERE user_id = ? AND estado = "activo" LIMIT 1'
 );
@@ -64,7 +67,7 @@ $pasaporte = $stmtPasaporte->fetch();
 
 $descuento = $pasaporte ? (int) $pasaporte['descuento_actual'] : DESCUENTO_BASE;
 
-// ── Obtener alojamientos Premium activos ─────────────────────────────────────
+// ── Obtener alojamientos Premium activos ──────────────────────────────────────
 try {
     $stmtAlos = $pdo->prepare(
         'SELECT a.id, a.name, a.slug, a.municipality, a.province,
@@ -125,7 +128,7 @@ foreach ($rows as $row) {
     ];
 }
 
-// ── Respuesta ────────────────────────────────────────────────────────────────
+// ── Respuesta ─────────────────────────────────────────────────────────────────
 echo json_encode([
     'success'      => true,
     'descuento'    => $descuento,

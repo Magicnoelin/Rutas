@@ -595,7 +595,7 @@ document.addEventListener('visibilitychange', function () {
 'use strict';
 
 // ── URL del endpoint de alojamientos premium ───────────────────────────────────
-const API_PREMIUM_URL = '<?= PASAPORTE_URL ?>/api/alojamientos-premium.php';
+const API_PREMIUM_URL = '<?= PASAPORTE_URL ?>/alojamientos-premium.php';
 
 // ── Estado global de alojamientos ─────────────────────────────────────────────
 let datosPremium    = null;   // Datos cargados desde la API
