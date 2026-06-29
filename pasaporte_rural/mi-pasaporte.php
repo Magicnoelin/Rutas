@@ -257,6 +257,9 @@ $sellos_recientes = $stmt_sellos->fetchAll();
             <li>El sistema verifica tu pasaporte al instante.</li>
             <li>Al finalizar tu estancia, recibes el <strong>Sello Rural</strong> y puntos.</li>
         </ol>
+        <a href="/pasaporte_rural/como-funciona.php" class="btn btn-outline-primary btn-sm mt-2">
+            <i class="fa-solid fa-circle-question me-1"></i> Más información
+        </a>
     </div>
 
     <!-- ── HISTORIAL DE SELLOS ─────────────────────────────────────────────── -->
