@@ -321,3 +321,5 @@ function fixExifOrientation($img, string $sourcePath, string $mime)
 
     return $img;
 }
+
+?>

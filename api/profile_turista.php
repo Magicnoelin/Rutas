@@ -34,7 +34,7 @@ try {
 
         $stmt = $pdo->prepare("
             SELECT 
-                pt.*,
+                pt.*, 
                 u.first_name, u.last_name, u.email, u.phone, u.user_type
             FROM profile_turistas pt
             INNER JOIN users u ON u.id = pt.user_id
@@ -60,6 +60,7 @@ try {
             jsonSuccess([
                 'exists'          => false,
                 'user_id'         => $userId,
+                'avatar_url'      => null, // Añadido para consistencia
                 'first_name'      => $user['first_name']  ?? '',
                 'last_name'       => $user['last_name']   ?? '',
                 'email'           => $user['email']        ?? '',
@@ -116,6 +117,7 @@ try {
         }
 
         $campos = [
+            'avatar_url'       => sanitizeInput($input['avatar_url']       ?? ''),
             'intereses_json'   => $interesesJson,
             'presupuesto'      => $presupuesto  ?: null,
             'duracion_viaje'   => $duracion     ?: null,

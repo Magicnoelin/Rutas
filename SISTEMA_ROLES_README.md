@@ -81,6 +81,7 @@ users (existente, sin cambios)
 
 | Campo            | Tipo         | Descripción                                      |
 |-----------------|-------------|--------------------------------------------------|
+| avatar_url      | VARCHAR(500) | URL a la imagen de perfil del usuario            |
 | user_id         | INT FK UNIQUE| Un perfil por usuario                           |
 | intereses_json  | JSON         | Array: ["naturaleza","cultura","aventura",...]  |
 | presupuesto     | ENUM         | bajo / medio / alto / sin_limite               |

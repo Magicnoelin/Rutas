@@ -1187,11 +1187,29 @@
 
             try {
                 const response = await fetch('api/upload_avatar.php', { method: 'POST', body: formData });
-                const result = await response.json();
-                if (result.success) {
-                    avatarDisplay.innerHTML = `<img src="${result.data.url}" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">`;
+                const uploadResult = await response.json();
+
+                if (uploadResult.success) {
+                    const avatarUrl = uploadResult.data.url;
+                    avatarDisplay.innerHTML = `<img src="${avatarUrl}" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    
+                    // Ahora, guardar la URL en el perfil del turista
+                    const saveResponse = await fetch('api/profile_turista.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ avatar_url: avatarUrl })
+                    });
+                    const saveResult = await saveResponse.json();
+
+                    if (saveResult.success) {
+                        // Opcional: mostrar un mensaje de éxito
+                        console.log('Avatar guardado en el perfil.');
+                    } else {
+                        alert('Error al guardar el avatar en tu perfil: ' + (saveResult.error || 'Error desconocido'));
+                    }
+
                 } else {
-                    alert('Error: ' + result.error);
+                    alert('Error al subir la imagen: ' + (uploadResult.error || 'Error desconocido'));
                     avatarDisplay.innerHTML = originalContent;
                 }
             } catch (error) {
@@ -1236,6 +1254,14 @@
                     profileName.textContent = (user.first_name || '') + ' ' + (user.last_name || '');
                 }
                 
+                // Cargar y mostrar el avatar si existe
+                const avatarDisplay = document.getElementById('avatarDisplay');
+                if (avatarDisplay && user.avatar_url) {
+                    avatarDisplay.innerHTML = `<img src="${user.avatar_url}" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">`;
+                } else if (avatarDisplay) {
+                    avatarDisplay.innerHTML = '<i class="fas fa-user"></i>';
+                }
+
                 const profileEmail = document.getElementById('profileEmail');
                 if (profileEmail) {
                     profileEmail.textContent = user.email || '';
