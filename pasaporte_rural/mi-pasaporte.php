@@ -124,14 +124,9 @@ $sellos_recientes = $stmt_sellos->fetchAll();
     <!-- Documentación: https://github.com/davidshimjs/qrcodejs -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
-    <!-- Leaflet.js — Mapa interactivo open-source (sin API key) -->
-    <link rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin="anonymous">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN2GRnU="
-            crossorigin="anonymous"></script>
+    <!-- Leaflet.js — Mapa interactivo open-source (sin API key, sin integrity para evitar bloqueos CSP) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 </head>
 <body class="pasaporte-body">
 

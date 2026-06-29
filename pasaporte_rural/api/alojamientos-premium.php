@@ -1,4 +1,7 @@
 <?php
+// declare DEBE ser la primera sentencia del script (obligatorio PHP)
+declare(strict_types=1);
+
 /**
  * =============================================================================
  * PASAPORTE RURAL — API: Alojamientos Premium con precio descontado
@@ -7,45 +10,27 @@
  * Acceso   : Turistas con sesión activa y pasaporte
  * Función  : Devuelve JSON con todos los alojamientos is_premium = 1,
  *            incluyendo el precio con el descuento del huésped ya calculado.
- *
- * Respuesta JSON:
- *   {
- *     "success": true,
- *     "descuento": 5,
- *     "total": 12,
- *     "alojamientos": [
- *       {
- *         "id": 42,
- *         "name": "Casa El Roble",
- *         "slug": "casa-el-roble",
- *         "municipality": "Vinuesa",
- *         "province": "Soria",
- *         "accommodation_type": "Casa Rural",
- *         "price_per_night": 80,
- *         "price_con_descuento": 76,
- *         "photo": "https://...",
- *         "lat": 41.9,
- *         "lng": -2.7
- *       }, ...
- *     ]
- *   }
  * =============================================================================
  */
 
-declare(strict_types=1);
-
-// ── Cabeceras ─────────────────────────────────────────────────────────────────
-header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: private, max-age=300');   // 5 min caché privada
-header('X-Content-Type-Options: nosniff');
+// ob_start captura cualquier salida accidental (notices, warnings de PHP)
+// que corrompería el JSON y causaría "SyntaxError: Unexpected token '<'"
+ob_start();
 
 // ── Config y utilidades del módulo ────────────────────────────────────────────
 define('API_NO_HEADERS', true);
 require_once __DIR__ . '/../config.php';
 
-// ── Función de error JSON ─────────────────────────────────────────────────────
-function jsonError(int $code, string $msg): never
+// ── Limpiar cualquier output previo y enviar cabeceras JSON ───────────────────
+ob_clean();
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: private, max-age=300');
+header('X-Content-Type-Options: nosniff');
+
+// ── Función de error JSON (compatible PHP 7.4+, sin 'never') ─────────────────
+function jsonError(int $code, string $msg): void
 {
+    ob_clean();
     http_response_code($code);
     echo json_encode(['success' => false, 'error' => $msg], JSON_UNESCAPED_UNICODE);
     exit;
@@ -117,10 +102,10 @@ foreach ($rows as $row) {
         $precio_dto = (int) round($precio_original * (1 - $descuento / 100));
     }
 
-    // URL de la foto
+    // URL de la foto (strpos en vez de str_starts_with para compatibilidad PHP 7.4+)
     $foto = null;
     if (!empty($row['photo1'])) {
-        $foto = (str_starts_with($row['photo1'], 'http'))
+        $foto = (strpos($row['photo1'], 'http') === 0)
             ? $row['photo1']
             : $base_url . '/' . ltrim($row['photo1'], '/');
     }
