@@ -2045,6 +2045,12 @@
             navAlojamientos.style.display = rolesSlugs.includes('alojamiento') ? 'block' : 'none';
         }
         
+        // Mostrar "Gestionar Descuentos" si tiene rol alojamiento
+        const navGestionarDescuentos = document.getElementById('nav-gestionar-descuentos');
+        if (navGestionarDescuentos) {
+            navGestionarDescuentos.style.display = rolesSlugs.includes('alojamiento') ? 'block' : 'none';
+        }
+        
         // Mostrar pestaña de Actividades si tiene rol actividad_cultural O empresa_actividades
         if (navActividades) {
             navActividades.style.display = (rolesSlugs.includes('actividad_cultural') || rolesSlugs.includes('empresa_actividades')) ? 'block' : 'none';
