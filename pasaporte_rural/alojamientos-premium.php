@@ -72,7 +72,7 @@ try {
     $stmtAlos = $pdo->prepare(
         'SELECT a.id, a.name, a.slug, a.municipality, a.province,
                 a.accommodation_type, a.price_per_night,
-                a.photo1, a.latitude, a.longitude
+                a.photo1, a.latitude, a.longitude, a.email
            FROM accommodations a
           WHERE a.is_premium = 1
             AND a.is_active  = 1
@@ -125,6 +125,7 @@ foreach ($rows as $row) {
         'lat'                 => ($row['latitude']  !== null) ? (float) $row['latitude']  : null,
         'lng'                 => ($row['longitude'] !== null) ? (float) $row['longitude'] : null,
         'url'                 => $url_alo,
+        'email'               => !empty($row['email']) ? (string) $row['email'] : null,
     ];
 }
 

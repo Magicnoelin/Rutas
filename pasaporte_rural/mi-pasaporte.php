@@ -594,8 +594,11 @@ document.addEventListener('visibilitychange', function () {
 
 'use strict';
 
-// ── URL del endpoint de alojamientos premium ───────────────────────────────────
-const API_PREMIUM_URL = '<?= PASAPORTE_URL ?>/alojamientos-premium.php';
+// ── URLs de los endpoints ──────────────────────────────────────────────────────
+const API_PREMIUM_URL  = '<?= PASAPORTE_URL ?>/alojamientos-premium.php';
+const API_RESERVA_URL  = '<?= PASAPORTE_URL ?>/solicitar-reserva.php';
+const NOMBRE_TURISTA   = <?= json_encode($nombre) ?>;
+const DESCUENTO_TURISTA = <?= $descuento ?>;
 
 // ── Estado global de alojamientos ─────────────────────────────────────────────
 let datosPremium    = null;   // Datos cargados desde la API
@@ -633,85 +636,71 @@ function renderizarTarjetas(alojamientos, descuento) {
     elLista.innerHTML = '';
 
     alojamientos.forEach(function (alo) {
-        const card = document.createElement('a');
-        card.href        = alo.url;
-        card.target      = '_blank';
-        card.rel         = 'noopener noreferrer';
-        card.className   = 'alo-card';
-        card.setAttribute('aria-label', 'Ver ' + alo.name);
+        // ── Wrapper: div en vez de <a> para poder meter botones ──────────
+        const wrap = document.createElement('div');
+        wrap.className = 'alo-wrap';
 
-        // ── Foto (background-image: nunca desborda, sin problema de aspect-ratio) ──
+        // ── Tarjeta (div, no <a>) ─────────────────────────────────────────
+        const card = document.createElement('div');
+        card.className = 'alo-card';
+
+        // ── Foto: background-image, nunca se desborda ─────────────────────
         const fotoDiv = document.createElement('div');
         fotoDiv.className = 'alo-card-foto';
         if (alo.photo) {
-            fotoDiv.style.backgroundImage  = 'url(' + alo.photo + ')';
-            fotoDiv.style.backgroundSize   = 'cover';
+            fotoDiv.style.backgroundImage    = 'url(' + alo.photo + ')';
+            fotoDiv.style.backgroundSize     = 'cover';
             fotoDiv.style.backgroundPosition = 'center';
-            fotoDiv.style.backgroundRepeat = 'no-repeat';
+            fotoDiv.style.backgroundRepeat   = 'no-repeat';
         } else {
             fotoDiv.innerHTML = '<span class="alo-foto-placeholder">🏡</span>';
         }
-
-        // ── Badge Premium ────────────────────────────────────────────────
         const badge = document.createElement('span');
         badge.className   = 'alo-badge-premium';
         badge.textContent = '⭐ Premium';
         fotoDiv.appendChild(badge);
 
-        // ── Contenido ────────────────────────────────────────────────────
+        // ── Cuerpo ────────────────────────────────────────────────────────
         const body = document.createElement('div');
         body.className = 'alo-card-body';
 
-        // Nombre
         const nombre = document.createElement('p');
         nombre.className   = 'alo-nombre';
         nombre.textContent = alo.name;
 
-        // Ubicación (municipio · provincia)
         const ubicacion = document.createElement('p');
         ubicacion.className = 'alo-ubicacion';
         const partes = [alo.municipality, alo.province].filter(Boolean);
         ubicacion.innerHTML = '<i class="fa-solid fa-location-dot me-1"></i>' + partes.join(' · ');
 
-        // Tipo de alojamiento
         const tipo = document.createElement('p');
         tipo.className   = 'alo-tipo';
         tipo.textContent = alo.accommodation_type || 'Alojamiento Rural';
 
-        // Bloque de precios
+        // Bloque precios
         const precioBloque = document.createElement('div');
         precioBloque.className = 'alo-precio-bloque';
 
         if (alo.price_per_night && alo.price_per_night > 0 && alo.price_con_descuento) {
-            // Precio original tachado
             const precioOrig = document.createElement('span');
             precioOrig.className   = 'alo-precio-original';
             precioOrig.textContent = formatPrecio(alo.price_per_night);
 
-            // Precio con descuento
             const precioDtoWrap = document.createElement('div');
             precioDtoWrap.className = 'alo-precio-dto-wrap';
-
             const precioDto = document.createElement('span');
             precioDto.className   = 'alo-precio-dto';
             precioDto.textContent = formatPrecio(alo.price_con_descuento);
-
             const porNoche = document.createElement('span');
             porNoche.className   = 'alo-por-noche';
             porNoche.textContent = '/noche';
+            precioDtoWrap.append(precioDto, porNoche);
 
-            precioDtoWrap.appendChild(precioDto);
-            precioDtoWrap.appendChild(porNoche);
-
-            // Badge de ahorro
             const ahorro = document.createElement('span');
             ahorro.className   = 'alo-ahorro-badge';
             ahorro.textContent = '-' + descuento + '% tuyo';
 
-            precioBloque.appendChild(precioOrig);
-            precioBloque.appendChild(precioDtoWrap);
-            precioBloque.appendChild(ahorro);
-
+            precioBloque.append(precioOrig, precioDtoWrap, ahorro);
         } else {
             const sinPrecio = document.createElement('span');
             sinPrecio.className   = 'alo-sin-precio';
@@ -719,21 +708,132 @@ function renderizarTarjetas(alojamientos, descuento) {
             precioBloque.appendChild(sinPrecio);
         }
 
-        // CTA
-        const cta = document.createElement('span');
-        cta.className   = 'alo-cta';
-        cta.innerHTML   = 'Ver alojamiento <i class="fa-solid fa-arrow-right ms-1"></i>';
+        // ── Footer: Ver + Solicitar reserva ──────────────────────────────
+        const footer = document.createElement('div');
+        footer.className = 'alo-card-footer';
 
-        body.appendChild(nombre);
-        body.appendChild(ubicacion);
-        body.appendChild(tipo);
-        body.appendChild(precioBloque);
-        body.appendChild(cta);
+        const btnVer = document.createElement('a');
+        btnVer.href      = alo.url;
+        btnVer.target    = '_blank';
+        btnVer.rel       = 'noopener noreferrer';
+        btnVer.className = 'btn-ver-alo';
+        btnVer.innerHTML = 'Ver alojamiento <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>';
 
-        card.appendChild(fotoDiv);
-        card.appendChild(body);
-        elLista.appendChild(card);
+        footer.appendChild(btnVer);
+
+        // Botón reserva solo si hay email de anfitrión
+        if (alo.email) {
+            const btnReserva = document.createElement('button');
+            btnReserva.type      = 'button';
+            btnReserva.className = 'btn-reserva';
+            btnReserva.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Solicitar reserva';
+            btnReserva.dataset.aloId    = alo.id;
+            btnReserva.dataset.aloName  = alo.name;
+            btnReserva.dataset.descuento = descuento;
+            btnReserva.onclick = function () { toggleFormReserva(alo.id, wrap, btnReserva); };
+            footer.appendChild(btnReserva);
+        }
+
+        body.append(nombre, ubicacion, tipo, precioBloque, footer);
+        card.append(fotoDiv, body);
+        wrap.appendChild(card);
+
+        // ── Formulario inline de reserva (oculto hasta pulsar el botón) ──
+        if (alo.email) {
+            const formWrap = document.createElement('div');
+            formWrap.className   = 'reserva-form-wrap';
+            formWrap.id          = 'form-reserva-' + alo.id;
+            formWrap.style.display = 'none';
+
+            formWrap.innerHTML =
+                '<div class="reserva-form">' +
+                '  <p class="reserva-form-titulo">' +
+                '    <i class="fa-solid fa-paper-plane me-1"></i>' +
+                '    Solicitar reserva — <strong>' + alo.name + '</strong>' +
+                '  </p>' +
+                '  <p class="reserva-form-info">' +
+                '    Tu descuento del <strong>' + descuento + '%</strong> se indicará al anfitrión.' +
+                '    Recibirás copia por email.' +
+                '  </p>' +
+                '  <textarea class="reserva-mensaje" id="msg-' + alo.id + '" rows="3" maxlength="600"' +
+                '    placeholder="Mensaje opcional (fechas estimadas, número de personas...)"></textarea>' +
+                '  <div class="reserva-form-btns">' +
+                '    <button type="button" class="btn-enviar-reserva" onclick="enviarReserva(' + alo.id + ', \'' + alo.name.replace(/'/g,'\\\'') + '\')">' +
+                '      <i class="fa-solid fa-paper-plane me-1"></i>Enviar solicitud' +
+                '    </button>' +
+                '    <button type="button" class="btn-cancelar-reserva" onclick="cerrarFormReserva(' + alo.id + ', this)">' +
+                '      Cancelar' +
+                '    </button>' +
+                '  </div>' +
+                '  <div class="reserva-respuesta" id="resp-' + alo.id + '"></div>' +
+                '</div>';
+
+            wrap.appendChild(formWrap);
+        }
+
+        elLista.appendChild(wrap);
     });
+}
+
+/** Abrir/cerrar el formulario inline de reserva */
+function toggleFormReserva(aloId, wrap, btn) {
+    const form = document.getElementById('form-reserva-' + aloId);
+    if (!form) return;
+    const visible = form.style.display !== 'none';
+    form.style.display = visible ? 'none' : 'block';
+    btn.classList.toggle('activo', !visible);
+}
+
+function cerrarFormReserva(aloId, btn) {
+    const form = document.getElementById('form-reserva-' + aloId);
+    if (form) form.style.display = 'none';
+    // quitar clase activo del botón de reserva padre
+    const wrap = form ? form.closest('.alo-wrap') : null;
+    if (wrap) {
+        const btnReserva = wrap.querySelector('.btn-reserva');
+        if (btnReserva) btnReserva.classList.remove('activo');
+    }
+}
+
+/** Enviar la solicitud de reserva al endpoint */
+async function enviarReserva(aloId, aloName) {
+    const msgEl   = document.getElementById('msg-' + aloId);
+    const respEl  = document.getElementById('resp-' + aloId);
+    const btnEnv  = respEl.closest('.reserva-form').querySelector('.btn-enviar-reserva');
+
+    const mensaje = msgEl ? msgEl.value.trim() : '';
+
+    btnEnv.disabled = true;
+    btnEnv.textContent = 'Enviando...';
+    respEl.innerHTML   = '';
+
+    try {
+        const r = await fetch(API_RESERVA_URL, {
+            method:      'POST',
+            credentials: 'same-origin',
+            headers:     { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body:        JSON.stringify({ alojamiento_id: aloId, mensaje: mensaje }),
+        });
+
+        const datos = await r.json();
+
+        if (datos.success) {
+            respEl.innerHTML =
+                '<div class="reserva-ok">' +
+                '  <i class="fa-solid fa-circle-check me-1"></i>' +
+                '  ¡Solicitud enviada! El anfitrión de <strong>' + aloName + '</strong> la recibirá en breve.' +
+                '  <br><small>Recibirás copia por email con tu descuento del ' + DESCUENTO_TURISTA + '%.</small>' +
+                '</div>';
+            btnEnv.style.display = 'none';
+            if (msgEl) msgEl.style.display = 'none';
+        } else {
+            throw new Error(datos.error || 'Error al enviar');
+        }
+    } catch (e) {
+        respEl.innerHTML = '<div class="reserva-error"><i class="fa-solid fa-triangle-exclamation me-1"></i>' + e.message + '</div>';
+        btnEnv.disabled    = false;
+        btnEnv.innerHTML   = '<i class="fa-solid fa-paper-plane me-1"></i>Reintentar';
+    }
 }
 
 /**
