@@ -87,6 +87,13 @@ function renderFaq(array $ruta, array $alojamientos, array $lugares, array $acti
                 'a' => 'Los lugares imprescindibles de ' . $prov . ' que no puedes perderte son: ' . $lugaresDestacados . '. Todos ellos están incluidos en este itinerario y puedes encontrar información detallada de cada uno en rutasrurales.io.',
             ];
         }
+
+        // Añadir FAQ sobre el Pasaporte Rural
+        $faqsRender[] = [
+            'q' => '¿Qué es el Pasaporte Rural y cómo lo consigo?',
+            'a' => 'El Pasaporte Rural es tu carnet digital gratuito para conseguir descuentos de hasta el 10% en alojamientos Premium. Se crea automáticamente al registrarte en Rutas Rurales. ¡<a href="/pasaporte_rural/mi-pasaporte.php" style="font-weight:600; text-decoration:underline;">Accede al tuyo aquí</a> y empieza a sellar experiencias!',
+        ];
+
     }
 
 ?>
@@ -109,8 +116,9 @@ function renderFaq(array $ruta, array $alojamientos, array $lugares, array $acti
                     <span><?= htmlspecialchars($faq['q']) ?></span>
                     <svg class="rt-faq__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                 </summary>
-                <div class="rt-faq__answer">
-                    <p><?= htmlspecialchars($faq['a']) ?></p>
+                <div class="rt-faq__answer" style="line-height: 1.6;">
+                    <!-- Usamos `echo` directamente para permitir el enlace HTML -->
+                    <p><?= $faq['a'] ?></p>
                 </div>
             </details>
             <?php endforeach; ?>

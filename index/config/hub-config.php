@@ -182,7 +182,7 @@ function getTemporadaActual(): string {
  * @param  string $vertical Vertical: 'alojamientos' | 'eventos'
  * @return string URL absoluta
  */
-function hubUrl(string $slug, string $lang, string $vertical = 'alojamientos'): string {
+function hubUrl(string $slug, string $lang, string $vertical = 'alojamientos', bool $isFilterOnly = false): string {
     $base = 'https://rutasrurales.io';
     // Comprobamos si el idioma tiene traducción para esta vertical
     $hasTranslation = in_array($vertical, HUB_LANGS[$lang]['available'] ?? [], true);
@@ -191,6 +191,12 @@ function hubUrl(string $slug, string $lang, string $vertical = 'alojamientos'): 
             ? "{$base}/{$vertical}/{$slug}"
             : "{$base}/{$lang}/{$vertical}/{$slug}";
     }
+
+    // Si es un filtro único, la URL es diferente (apunta a la página de listado con un parámetro)
+    if ($isFilterOnly) {
+        return "{$base}/alojamientos-turisticos.html?feature={$slug}";
+    }
+
     // Fallback elegante: versión española
     return "{$base}/{$vertical}/{$slug}";
 }
