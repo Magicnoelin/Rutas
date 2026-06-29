@@ -150,18 +150,15 @@ if ($token_data['estado'] === 'expirado') {
     exit;
 }
 
-// Doble comprobación del TTL en PHP
-// Usamos UNIX_TIMESTAMP de MySQL para evitar desfases de zona horaria
-$segundos_transcurridos = time() - (int) $token_data['created_unix'];
-if ($segundos_transcurridos > QR_TTL_SEGUNDOS) {
-    $pdo->prepare('UPDATE qr_temporales SET estado = "expirado" WHERE id = ?')
-        ->execute([$token_data['id']]);
-    mostrar_error_sello(
-        'Código caducado (' . $segundos_transcurridos . ' s).',
-        'El código QR superó los ' . QR_TTL_SEGUNDOS . ' segundos de validez. Pide un nuevo QR al turista.'
-    );
-    exit;
-}
+/*
+ * NOTA DE SEGURIDAD: NO comprobamos el TTL de 60s aquí.
+ * El TTL solo es relevante al ESCANEAR el QR (en validar_pasaporte.php),
+ * donde previene capturas de pantalla / QR robados.
+ * Una vez el propietario ha visto la pantalla de validación y rellena
+ * el formulario de puntuación, puede tardar > 60s sin que eso suponga
+ * ningún riesgo. La protección anti-replay ya está garantizada por
+ * el campo estado='usado' que se establece al confirmar el sello.
+ */
 
 if ($token_data['pasaporte_estado'] !== 'activo') {
     mostrar_error_sello('Pasaporte inactivo.', 'El pasaporte de este turista no está activo.');
