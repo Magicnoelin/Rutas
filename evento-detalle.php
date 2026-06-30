@@ -1621,12 +1621,22 @@ if (file_exists($header_path)) {
 
         <!-- CTA Principal: Registro -->
         <div class="cta-card" id="cta-register">
-            <div style="font-size:2rem;margin-bottom:8px;">🌿</div>
-            <h3><?php echo ($t['cta_titulo'] ?? ''); ?></h3>
-            <p><?php echo ($t['cta_desc'] ?? ''); ?> <?php echo htmlspecialchars($evento['province'] ?? ''); ?></p>
+            <div style="font-size:2rem;margin-bottom:8px;">
+                <?php echo ($lang === 'es' ? '🌿' : '✨'); ?>
+            </div>
+            <h3><?php echo ($lang === 'es' ? '¿Te gusta este lugar?' : ($t['cta_titulo'] ?? '')); ?></h3>
+            <p><?php echo ($lang === 'es' ? 'Guárdalo en favoritos y recibe alertas de eventos y actividades cercanas.' : ($t['cta_desc'] ?? '') . ' ' . htmlspecialchars($evento['province'] ?? '')); ?></p>
+            
+            <!-- Botón de Guardar Favorito -->
+            <button class="btn btn-white" onclick="saveEvent()" id="btn-save-event" style="margin-bottom:8px; width:100%;">
+                <i class="fas fa-heart"></i> <?php echo ($t['guardar'] ?? 'Guardar en favoritos'); ?>
+            </button>
+
+            <!-- Botones de Registro/Login -->
             <a href="/login.html?action=register&ref=evento&slug=<?php echo urlencode($slug); ?>" class="btn btn-white">
                 <?php echo ($t['cta_register'] ?? ''); ?>
             </a>
+
             <a href="/login.html?ref=evento&slug=<?php echo urlencode($slug); ?>" class="btn btn-outline-white">
                 <?php echo ($t['cta_login'] ?? ''); ?>
             </a>
@@ -1646,12 +1656,6 @@ if (file_exists($header_path)) {
                         <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;"><span id="like-count">—</span> <?php echo ($t['likes'] ?? ''); ?></div>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="saveEvent()" id="btn-save-event" style="margin-bottom:8px;">
-                    <?php echo ($t['guardar'] ?? ''); ?>
-                </button>
-                <button class="btn btn-accent" onclick="addToRoute()">
-                    <?php echo ($t['anadir_ruta'] ?? ''); ?>
-                </button>
                 <div style="margin-top:12px;display:flex;justify-content:center;gap:12px;">
                     <button onclick="shareEvent('whatsapp')" style="background:none;border:none;cursor:pointer;font-size:1.4rem;" title="Compartir en WhatsApp">💬</button>
                     <button onclick="shareEvent('twitter')" style="background:none;border:none;cursor:pointer;font-size:1.4rem;" title="Compartir en Twitter">🐦</button>

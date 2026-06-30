@@ -29,9 +29,12 @@ $usuarios = $stmt->fetchAll();
                             <th>Usuario</th>
                             <th>Nombre Completo</th>
                             <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>WhatsApp</th>
                             <th>Tipo</th>
                             <th>Suscripción</th>
                             <th>Estado</th>
+                            <th>Notas Privadas</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -44,6 +47,14 @@ $usuarios = $stmt->fetchAll();
                             </td>
                             <td><?= htmlspecialchars(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? '')) ?></td>
                             <td><?= htmlspecialchars($u['email']) ?></td>
+                            <td><?= htmlspecialchars($u['phone'] ?? 'No asignado') ?></td>
+                            <td>
+                                <?php if (!empty($u['whatsapp'])): ?>
+                                    <span class="text-success"><i class="bi bi-whatsapp"></i> <?= htmlspecialchars($u['whatsapp']) ?></span>
+                                <?php else: ?>
+                                    <span class="text-muted">No asignado</span>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <span class="badge bg-info text-dark uppercase small"><?= $u['user_type'] ?></span>
                             </td>
@@ -65,6 +76,11 @@ $usuarios = $stmt->fetchAll();
                                 ?>
                                 <span class="badge <?= $status_class ?>"><?= ucfirst($status) ?></span>
                             </td>
+                            <td>
+                                <small class="text-muted d-inline-block text-truncate" style="max-width: 150px;" title="<?= htmlspecialchars($u['private_notes'] ?? '') ?>">
+                                    <?= htmlspecialchars($u['private_notes'] ?? 'Sin notas') ?>
+                                </small>
+                            </td>
                             <td class="text-center">
                                 <div class="btn-group">
                                     <a href="usuarios_editar.php?id=<?= $u['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar">
@@ -79,7 +95,7 @@ $usuarios = $stmt->fetchAll();
                         <?php endforeach; ?>
                         <?php if (empty($usuarios)): ?>
                         <tr>
-                            <td colspan="8" class="text-center py-4 text-muted">No se encontraron usuarios en la base de datos.</td>
+                            <td colspan="11" class="text-center py-4 text-muted">No se encontraron usuarios en la base de datos.</td>
                         </tr>
                         <?php endif; ?>
                     </tbody>

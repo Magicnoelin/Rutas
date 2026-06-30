@@ -104,6 +104,24 @@ switch ($action) {
         }
         break;
 
+    case 'check':
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            echo json_encode(['success' => false, 'error' => 'GET method required']);
+            exit;
+        }
+        $entityType = $_GET['entity_type'] ?? null;
+        $entityId = $_GET['entity_id'] ?? null;
+
+        if (!$entityType || !$entityId) {
+            echo json_encode(['success' => false, 'error' => 'entity_type and entity_id are required']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT id FROM favorites WHERE user_id = ? AND entity_type = ? AND entity_id = ?");
+        $stmt->execute([$userId, $entityType, $entityId]);
+        echo json_encode(['success' => true, 'is_favorite' => $stmt->fetch() !== false]);
+        break;
+
     default:
         echo json_encode(['success' => false, 'error' => 'Invalid action']);
         break;

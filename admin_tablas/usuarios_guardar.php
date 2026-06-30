@@ -10,13 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return ($v === '') ? null : $v;
         }
 
-        // Se cambió 'username' por 'nickname' que es el nombre real en tu DB
+        // Se añadieron 'whatsapp' y 'private_notes' a la consulta SQL
         $sql = "UPDATE users SET 
                 nickname = ?, 
                 email = ?, 
                 first_name = ?, 
                 last_name = ?, 
                 phone = ?, 
+                whatsapp = ?, 
                 user_type = ?, 
                 business_name = ?, 
                 business_description = ?, 
@@ -27,17 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 email_verified = ?, 
                 verification_token = ?, 
                 terms_accepted = ?, 
-                reset_token = ?
+                reset_token = ?,
+                private_notes = ?
                 WHERE id = ?";
 
         $stmt = $pdo->prepare($sql);
         
+        // El orden de las variables debe ser EXACTAMENTE el mismo que en el SQL de arriba
         $stmt->execute([
-            clean($_POST['nickname']), // Cambiado de username a nickname
+            clean($_POST['nickname']),
             clean($_POST['email']),
             clean($_POST['first_name']),
             clean($_POST['last_name']),
             clean($_POST['phone']),
+            clean($_POST['whatsapp']), // <-- NUEVO
             $_POST['user_type'],
             clean($_POST['business_name']),
             clean($_POST['business_description']),
@@ -49,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             clean($_POST['verification_token']),
             $_POST['terms_accepted'],
             clean($_POST['reset_token']),
+            clean($_POST['private_notes']), // <-- NUEVO
             $id
         ]);
 
@@ -56,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
 
     } catch (PDOException $e) {
-        // Un toque de elegancia: error más descriptivo
         die("Error crítico en la base de datos: " . $e->getMessage());
     }
 }

@@ -823,6 +823,66 @@
             window.currentAccommodation = alojamiento;
         }
 
+        async function checkFavoriteStatus(entityType, entityId, button) {
+            try {
+                const response = await fetch(`/api/favorites.php?action=check&entity_type=${entityType}&entity_id=${entityId}`);
+                if (!response.ok) return;
+
+                const result = await response.json();
+                if (result.success && result.is_favorite) {
+                    button.classList.add('active');
+                    button.innerHTML = '<i class="fas fa-heart" style="color:#e74c3c;"></i> Guardado';
+                    button.style.background = '#fff0f0';
+                    button.style.color = '#e74c3c';
+                    button.style.border = '2px solid #e74c3c';
+                }
+            } catch (e) {
+                // No hacer nada si falla, el botón se queda como "Guardar"
+            }
+        }
+
+        async function toggleFavorite(entityType, entityId, button) {
+            if (!button) return;
+            
+            const originalHTML = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const response = await fetch('/api/favorites.php?action=toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ entity_type: entityType, entity_id: entityId })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.status === 'added') {
+                        button.classList.add('active');
+                        button.innerHTML = '<i class="fas fa-heart" style="color:#e74c3c;"></i> Guardado';
+                        button.style.background = '#fff0f0';
+                        button.style.color = '#e74c3c';
+                        button.style.border = '2px solid #e74c3c';
+                    } else {
+                        button.classList.remove('active');
+                        button.innerHTML = '<i class="fas fa-heart"></i> Guardar';
+                        button.style.background = 'white';
+                        button.style.color = 'var(--primary-color)';
+                        button.style.border = '2px solid var(--primary-color)';
+                    }
+                } else {
+                    alert('Error: ' + (result.error || 'No se pudo guardar. Inicia sesión para guardar favoritos.'));
+                    button.innerHTML = originalHTML;
+                }
+            } catch (e) {
+                alert('Error de conexión. Inicia sesión para guardar favoritos.');
+                button.innerHTML = originalHTML;
+            } finally {
+                button.disabled = false;
+            }
+        }
+
         function loadContenidoAdicional(alojamiento) {
             // Cargar contenido relacionado después del LCP
             if (window.loadContenidoCompleto) {
@@ -1106,6 +1166,14 @@
                         // Trackear la vista del alojamiento
                         const accommodationId = data.data.id || data.data.ID;
                         trackAccommodationView(accommodationId);
+
+            // Activar botón de favoritos
+            const favButton = document.getElementById(`btn-favorito-${accommodationId}`);
+            if (favButton) {
+                favButton.onclick = () => toggleFavorite('accommodation', accommodationId, favButton);
+                // Comprobar estado inicial
+                checkFavoriteStatus('accommodation', accommodationId, favButton);
+            }
                     } else {
                         document.getElementById('content-area').innerHTML = `<div class="error-msg">${data.error || 'Alojamiento no encontrado'}</div>`;
                     }
@@ -1243,8 +1311,7 @@
                             
                             <!-- BOTÓN FAVORITO (CORAZÓN) -->
                             <button id="btn-favorito-${alojamiento.id || alojamiento.ID}" 
-                                onclick="toggleFavorite(${alojamiento.id || alojamiento.ID}, this)"
-                                class="btn-contact ${localStorage.getItem('fav_accommodation_' + (alojamiento.id || alojamiento.ID)) ? 'active' : ''}"
+                                class="btn-contact"
                                 style="background: ${localStorage.getItem('fav_accommodation_' + (alojamiento.id || alojamiento.ID)) ? '#fff0f0' : 'white'}; 
                                        color: ${localStorage.getItem('fav_accommodation_' + (alojamiento.id || alojamiento.ID)) ? '#e74c3c' : 'var(--primary-color)'}; 
                                        border: 2px solid ${localStorage.getItem('fav_accommodation_' + (alojamiento.id || alojamiento.ID)) ? '#e74c3c' : 'var(--primary-color)'}; 
