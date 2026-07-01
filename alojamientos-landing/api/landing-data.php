@@ -25,20 +25,30 @@ const LANDING_PER_PAGE = 12;
 /**
  * Construye y ejecuta la query principal de alojamientos.
  *
- * @param PDO        $pdo
+ * Orden de prioridad (resuelto 100% en BD, cero lógica PHP):
+ *   1º suscripcion_nivel DESC  — Premium siempre arriba
+ *   2º RAND(seed diario)       — rotación equitativa cada 24 h
+ *   3º distancia ASC           — más cercano al centroide de la provincia
+ *
+ * @param PDO         $pdo
  * @param string|null $province_db   Valor exacto de la columna `province` (o null)
- * @param string[]   $sql_conditions Array de strings SQL raw (de LANDING_FILTROS['sql'])
- * @param int        $page           Página actual (1-indexed)
- * @param int        $per_page       Resultados por página
+ * @param string[]    $sql_conditions Array de strings SQL raw (de LANDING_FILTROS['sql'])
+ * @param int         $page           Página actual (1-indexed)
+ * @param int         $per_page       Resultados por página
+ * @param string      $lang
+ * @param float       $prov_lat       Latitud centroide provincia (de LANDING_PROVINCIAS)
+ * @param float       $prov_lng       Longitud centroide provincia
  * @return array{items: array, total: int, pages: int}
  */
 function getLandingAccommodations(
-    PDO    $pdo,
+    PDO     $pdo,
     ?string $province_db,
-    array  $sql_conditions,
-    int    $page     = 1,
-    int    $per_page = LANDING_PER_PAGE,
-    string $lang     = 'es'
+    array   $sql_conditions,
+    int     $page     = 1,
+    int     $per_page = LANDING_PER_PAGE,
+    string  $lang     = 'es',
+    float   $prov_lat = 0.0,
+    float   $prov_lng = 0.0
 ): array {
     $where  = ['a.is_active = 1'];
     $params = [];
@@ -57,8 +67,22 @@ function getLandingAccommodations(
 
     $whereClause = 'WHERE ' . implode(' AND ', $where);
 
+    // ── Semilla diaria: misma rotación para todos, cambia cada 24 h ──────────
+    $daily_seed = (int)date('Y') * 1000 + (int)date('z');
+
+    // ── Haversine: distancia al centroide de la provincia ────────────────────
+    // Si la provincia no tiene coordenadas (lat=0, lng=0) el valor es 0
+    // y el 3er criterio queda neutro sin romper nada.
+    $haversine = ($prov_lat != 0 && $prov_lng != 0)
+        ? "( 6371 * acos( cos( radians(:prov_lat) )
+               * cos( radians( COALESCE(a.latitude,  :prov_lat2) ) )
+               * cos( radians( COALESCE(a.longitude, :prov_lng2) ) - radians(:prov_lng) )
+               + sin( radians(:prov_lat3) )
+               * sin( radians( COALESCE(a.latitude,  :prov_lat4) ) )
+           ) )"
+        : "0";
+
     // Total para paginación
-    // (el count no necesita el parámetro de idioma si se añadiera alguno en el futuro)
     $countSql = "
         SELECT COUNT(DISTINCT a.id)
         FROM accommodations a
@@ -75,12 +99,9 @@ function getLandingAccommodations(
     $offset = ($page - 1) * $per_page;
 
     // Query principal.
-    // Columnas verificadas contra el esquema real de la BD
-    // (ver api/verificar_tabla_accommodations.php y api/get_accommodations_by_province.php):
-    //   NO existen: bedrooms, wifi, check_in_time, check_out_time,
-    //               pet_friendly, suitable_for_children, kitchen_available,
-    //               short_description, amenities
-    //   SÍ existen: las listadas abajo (CREATE TABLE + ALTER TABLE históricos)
+    // Columnas verificadas contra el esquema real de la BD.
+    // Nota: short_description y amenities NO existen en accommodations
+    //   → se generan en PHP desde description.
     $sql = "
         SELECT
             a.id, a.name, a.slug, a.municipality, a.province,
@@ -89,23 +110,37 @@ function getLandingAccommodations(
             a.photo1, a.photo2, a.photo3, a.photo4,
             a.latitude, a.longitude,
             a.accommodation_type,
-            c.name AS category_name
+            a.suscripcion_nivel,
+            c.name AS category_name,
+            $haversine AS distancia
         FROM accommodations a
         LEFT JOIN categories_accommodations c ON a.category_id = c.id
         $whereClause
         ORDER BY
-            CASE WHEN a.price_per_night > 0 THEN 0 ELSE 1 END ASC,
-            a.price_per_night ASC,
+            a.suscripcion_nivel DESC,     -- 1º: Premium (3) antes que Gratuito (1)
+            RAND(:seed),                  -- 2º: rotación diaria equitativa
+            distancia ASC,                -- 3º: más cercano al centro de la provincia
             a.name ASC
         LIMIT :limit OFFSET :offset
     ";
+
+    // Añadir parámetros de Haversine si procede
+    if ($prov_lat != 0 && $prov_lng != 0) {
+        $params[':prov_lat']  = $prov_lat;
+        $params[':prov_lat2'] = $prov_lat;
+        $params[':prov_lat3'] = $prov_lat;
+        $params[':prov_lat4'] = $prov_lat;
+        $params[':prov_lng']  = $prov_lng;
+        $params[':prov_lng2'] = $prov_lng;
+    }
 
     $stmt = $pdo->prepare($sql);
     foreach ($params as $k => $v) {
         $stmt->bindValue($k, $v);
     }
-    $stmt->bindValue(':limit',  $per_page, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', $offset,   PDO::PARAM_INT);
+    $stmt->bindValue(':seed',   $daily_seed, PDO::PARAM_INT);
+    $stmt->bindValue(':limit',  $per_page,   PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset,     PDO::PARAM_INT);
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -126,6 +161,8 @@ function getLandingAccommodations(
         $row['precio_display'] = ($row['price_per_night'] > 0)
             ? number_format((float)$row['price_per_night'], 0, ',', '.') . ' €'
             : null;
+
+        unset($row['distancia']); // no exponer el cálculo interno al template
     }
     unset($row);
 

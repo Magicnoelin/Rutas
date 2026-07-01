@@ -156,7 +156,13 @@ try {
     $stats   = getLandingEventosStats($pdo, $province_db, $sql_conditions);
 
     if (!empty($province_db)) {
-        $semantic = getEventosSemanticCrossing($pdo, $province_db, 6);
+        $semantic = getEventosSemanticCrossing(
+            $pdo,
+            $province_db,
+            3,
+            (float)($province_data['lat'] ?? 0.0),
+            (float)($province_data['lng'] ?? 0.0)
+        );
     }
 } catch (Throwable $e) {
     error_log('[eventos-landing] BD error: ' . $e->getMessage());

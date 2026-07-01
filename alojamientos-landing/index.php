@@ -155,8 +155,17 @@ $events   = [];
 try {
     $pdo = getDBConnection();
 
-    // Resultados paginados
-    $result = getLandingAccommodations($pdo, $province_db, $sql_conditions, $page, LANDING_PER_PAGE, $lang);
+    // Resultados paginados — Premium primero, rotación diaria, más cercanos al centro
+    $result = getLandingAccommodations(
+        $pdo,
+        $province_db,
+        $sql_conditions,
+        $page,
+        LANDING_PER_PAGE,
+        $lang,
+        (float)($province_data['lat'] ?? 0.0),
+        (float)($province_data['lng'] ?? 0.0)
+    );
     $stats  = getLandingStats($pdo, $province_db, $sql_conditions);
 
     // Cruce semántico (solo si hay provincia)

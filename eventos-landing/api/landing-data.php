@@ -218,10 +218,22 @@ function getLandingEventosStats(
  * Muestra alojamientos + lugares de interés de la provincia.
  * Esto diferencia eventos-landing de alojamientos-landing para Google.
  *
+ * Orden de prioridad (resuelto 100% en BD, cero lógica PHP):
+ *   1º suscripcion_nivel DESC  — Premium siempre arriba
+ *   2º RAND(seed diario)       — rotación equitativa cada 24 h
+ *   3º distancia ASC           — más cercano al centroide de la provincia
+ *
+ * @param float $prov_lat  Latitud del centroide de la provincia (de EVENTOS_PROVINCIAS)
+ * @param float $prov_lng  Longitud del centroide de la provincia
  * @return array{accommodations: array, places: array, routes: array}
  */
-function getEventosSemanticCrossing(PDO $pdo, ?string $province_db, int $limit = 6): array
-{
+function getEventosSemanticCrossing(
+    PDO     $pdo,
+    ?string $province_db,
+    int     $limit    = 3,      // fijo: 3 tarjetas en la landing de eventos
+    float   $prov_lat = 0.0,
+    float   $prov_lng = 0.0
+): array {
     $accommodations = [];
     $places         = [];
     $routes         = [];
@@ -230,24 +242,57 @@ function getEventosSemanticCrossing(PDO $pdo, ?string $province_db, int $limit =
         return compact('accommodations', 'places', 'routes');
     }
 
+    // ── Semilla diaria para RAND: cambia una vez al día, igual para todos ─────
+    // YEAR(NOW())*1000 + DAYOFYEAR(NOW()) genera un entero único por día
+    // que MySQL usa como semilla determinista → el orden rota cada 24 h.
+    $daily_seed = (int)date('Y') * 1000 + (int)date('z'); // PHP precomputa la semilla
+
     // 1. Alojamientos de la provincia (cruce inverso — el diferenciador SEO)
     try {
-        $stmtA = $pdo->prepare("
+        // ── Haversine en SELECT para calcular distancia al centroide ──────────
+        // Si la provincia no tiene coordenadas (lat=0, lng=0), distancia = 0
+        // y el tercer criterio queda neutro (no rompe nada).
+        $haversine = ($prov_lat != 0 && $prov_lng != 0)
+            ? "( 6371 * acos( cos( radians(:prov_lat) )
+                   * cos( radians( COALESCE(a.latitude,  :prov_lat2) ) )
+                   * cos( radians( COALESCE(a.longitude, :prov_lng2) ) - radians(:prov_lng) )
+                   + sin( radians(:prov_lat3) )
+                   * sin( radians( COALESCE(a.latitude,  :prov_lat4) ) )
+               ) )"
+            : "0";
+
+        $sql = "
             SELECT a.id, a.name, a.slug, a.short_description,
                    a.municipality, a.province,
                    a.price_per_night, a.capacity,
                    a.photo1, a.accommodation_type,
-                   c.name AS category_name
+                   a.suscripcion_nivel,
+                   c.name AS category_name,
+                   $haversine AS distancia
             FROM accommodations a
             LEFT JOIN categories_accommodations c ON a.category_id = c.id
             WHERE a.province = :province AND a.is_active = 1
             ORDER BY
-                CASE WHEN a.price_per_night > 0 THEN 0 ELSE 1 END ASC,
-                a.price_per_night ASC
+                a.suscripcion_nivel DESC,     -- 1º: Premium (3) antes que Gratuito (1)
+                RAND(:seed),                  -- 2º: rotación diaria equitativa
+                distancia ASC                 -- 3º: más cercano al centro de la provincia
             LIMIT :limit
-        ");
+        ";
+
+        $stmtA = $pdo->prepare($sql);
         $stmtA->bindValue(':province', $province_db);
-        $stmtA->bindValue(':limit',    min($limit, 4), PDO::PARAM_INT);
+        $stmtA->bindValue(':seed',     $daily_seed, PDO::PARAM_INT);
+        $stmtA->bindValue(':limit',    3,            PDO::PARAM_INT);
+
+        if ($prov_lat != 0 && $prov_lng != 0) {
+            $stmtA->bindValue(':prov_lat',  $prov_lat);
+            $stmtA->bindValue(':prov_lat2', $prov_lat);
+            $stmtA->bindValue(':prov_lat3', $prov_lat);
+            $stmtA->bindValue(':prov_lat4', $prov_lat);
+            $stmtA->bindValue(':prov_lng',  $prov_lng);
+            $stmtA->bindValue(':prov_lng2', $prov_lng);
+        }
+
         $stmtA->execute();
         $rawAlo = $stmtA->fetchAll(PDO::FETCH_ASSOC);
 
@@ -260,6 +305,7 @@ function getEventosSemanticCrossing(PDO $pdo, ?string $province_db, int $limit =
             } else {
                 $a['photo_url'] = 'https://rutasrurales.io/' . ltrim($photo, '/');
             }
+            unset($a['distancia']); // no exponer el cálculo interno al template
             $a['url']            = 'https://rutasrurales.io/alojamiento/' . ($a['slug'] ?? '');
             $a['precio_display'] = ($a['price_per_night'] > 0)
                 ? number_format((float)$a['price_per_night'], 0, ',', '.') . ' €'
