@@ -619,6 +619,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // ── Leer URL de redirección tras login (ej: ?redirect=/user-dashboard.html#membresia) ──
+        var _loginRedirect = (function() {
+            try {
+                var r = new URLSearchParams(window.location.search).get('redirect');
+                // Solo aceptar URLs relativas (empieza por /) por seguridad
+                if (r && r.startsWith('/')) return r;
+            } catch(e) {}
+            return null;
+        })();
+
         // Función para mostrar alertas
         window.showAlert = function(message, type) {
             type = type || 'error';
@@ -655,7 +665,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     if (data.success) {
                         showAlert('¡Bienvenido! Redirigiendo...', 'success');
                         setTimeout(function() {
-                            window.location.href = data.data.redirect || 'user-dashboard.html';
+                            window.location.href = _loginRedirect || data.data.redirect || 'user-dashboard.html';
                         }, 1000);
                     } else {
                         showAlert(data.error || 'Error al iniciar sesión con Google', 'error');
@@ -695,7 +705,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     if (data.success) {
                         showAlert('¡Bienvenido! Redirigiendo...', 'success');
                         setTimeout(function() {
-                            window.location.href = data.data.redirect || 'user-dashboard.html';
+                            window.location.href = _loginRedirect || data.data.redirect || 'user-dashboard.html';
                         }, 1000);
                     } else {
                         showAlert(data.error || 'Error al iniciar sesión con Facebook', 'error');
@@ -749,7 +759,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         if (data.success) {
                             showAlert('¡Bienvenido! Redirigiendo...', 'success');
                             setTimeout(function() {
-                                window.location.href = data.data.redirect || 'user-dashboard.html';
+                                window.location.href = _loginRedirect || data.data.redirect || 'user-dashboard.html';
                             }, 1000);
                         } else {
                             showAlert(data.error || 'Error al iniciar sesión', 'error');

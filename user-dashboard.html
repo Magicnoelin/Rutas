@@ -1675,9 +1675,7 @@
                 console.error('Error HTTP:', response.status, errorText);
                 // Si la sesión expiró (401), redirigir al login en vez de mostrar error genérico
                 if (response.status === 401) {
-                    if (confirm('Tu sesión ha expirado. ¿Quieres iniciar sesión de nuevo para continuar con el pago?')) {
-                        window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
-                    }
+                    window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
                 } else {
                     alert('Error del servidor (' + response.status + '). Contacta con soporte en olgamarin@rutasrurales.io');
                 }
@@ -1723,12 +1721,10 @@
                 credentials: 'same-origin'
             });
 
-            // Sesión expirada → redirigir a login
+            // Sesión expirada → redirigir al login automáticamente
             if (response.status === 401) {
                 loadingDiv.remove();
-                if (confirm('Tu sesión ha expirado. ¿Quieres iniciar sesión de nuevo para gestionar tu facturación?')) {
-                    window.location.href = '/login.html?redirect=' + encodeURIComponent('/user-dashboard.html#membresia');
-                }
+                window.location.href = '/login.html?redirect=' + encodeURIComponent('/user-dashboard.html#membresia');
                 return;
             }
 
