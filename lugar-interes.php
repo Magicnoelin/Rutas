@@ -160,10 +160,17 @@ try {
         }
     }
 
-    // Formatear precio
+    // Detectar si el lugar es de tipo gastronómico (restaurante, bodega, etc.)
+    $categoryNameLower = mb_strtolower($lugar['category_name'] ?? '', 'UTF-8');
+    $esGastronomico = false;
+    foreach (['restauran', 'gastronom', 'enotur', 'bodega', 'cafeter', 'restauraci', 'taberna'] as $kw) {
+        if (strpos($categoryNameLower, $kw) !== false) { $esGastronomico = true; break; }
+    }
+
+    // Formatear precio (los restaurantes no muestran "Entrada gratuita" si no hay precio definido)
     $precio = !empty($lugar['entry_fee']) && $lugar['entry_fee'] > 0 
         ? $lugar['entry_fee'] . '€' 
-        : 'Entrada gratuita';
+        : ($esGastronomico ? null : 'Entrada gratuita');
 
     // Canonical URL
     $canonicalUrl = 'https://rutasrurales.io/lugar-interes.html?slug=' . $lugar['slug'];

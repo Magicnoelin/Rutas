@@ -613,6 +613,16 @@ function fixUrl($url) {
     if (!$url) return '';
     return preg_match('/^https?:\/\//', $url) ? $url : '/' . ltrim($url, '/');
 }
+
+// Detecta si un lugar es de tipo gastronómico/restaurante (no tiene "entrada")
+function esLugarGastronomico($categoryName) {
+    if (empty($categoryName)) return false;
+    $lower = mb_strtolower($categoryName, 'UTF-8');
+    foreach (['restauran', 'gastronom', 'enotur', 'bodega', 'cafeter', 'restauraci', 'taberna', 'hosteleria', 'hostelería'] as $kw) {
+        if (strpos($lower, $kw) !== false) return true;
+    }
+    return false;
+}
 ?>
 
 <div class="lug-page">
@@ -670,7 +680,7 @@ function fixUrl($url) {
             <?php endif; ?>
 
             <?php $esGratis = empty($lugar['entry_fee']) || $lugar['entry_fee'] == 0; ?>
-            <?php if ($esGratis && empty($lugar['entry_fee_details'])): ?>
+            <?php if ($esGratis && empty($lugar['entry_fee_details']) && !esLugarGastronomico($lugar['category_name'] ?? '')): ?>
             <span class="lug-hero-free">✅ Entrada gratuita</span>
             <?php elseif (!empty($lugar['entry_fee'])): ?>
             <span class="lug-hero-free" style="background:var(--lug-warm);color:#1a1a1a;">💶 <?php echo esc($lugar['entry_fee']); ?>€<?php if (!empty($lugar['entry_fee_details'])): ?> · <?php echo esc($lugar['entry_fee_details']); ?><?php endif; ?></span>
@@ -758,7 +768,7 @@ function fixUrl($url) {
                     <?php if (!empty($lugar['opening_hours'])): ?>
                     <div class="info-item"><div class="info-icon">🕐</div><div class="info-label">Horario</div><div class="info-value"><?php echo esc($lugar['opening_hours']); ?></div></div>
                     <?php endif; ?>
-                    <?php if (isset($lugar['entry_fee']) || !empty($lugar['entry_fee_details'])): ?>
+                    <?php if (!empty($lugar['entry_fee']) || !empty($lugar['entry_fee_details']) || (!esLugarGastronomico($lugar['category_name'] ?? '') && isset($lugar['entry_fee']))): ?>
                     <div class="info-item"><div class="info-icon">🎫</div><div class="info-label">Entrada</div><div class="info-value"><?php
                         if (!empty($lugar['entry_fee'])) {
                             echo esc($lugar['entry_fee']) . '€';
@@ -902,7 +912,7 @@ function fixUrl($url) {
             <ul class="info-list">
                 <?php if (!empty($lugar['category_name'])): ?><li><span class="li-icon">🏷️</span><span><?php echo esc($lugar['category_name']); ?></span></li><?php endif; ?>
                 <?php if (!empty($lugar['municipality'])): ?><li><span class="li-icon">📍</span><span><?php echo esc($lugar['municipality']); ?><?php if (!empty($lugar['province'])): ?>, <?php echo esc($lugar['province']); ?><?php endif; ?></span></li><?php endif; ?>
-                <?php if (isset($lugar['entry_fee']) || !empty($lugar['entry_fee_details'])): ?><li><span class="li-icon">🎫</span><span><?php
+                <?php if (!empty($lugar['entry_fee']) || !empty($lugar['entry_fee_details']) || (!esLugarGastronomico($lugar['category_name'] ?? '') && isset($lugar['entry_fee']))): ?><li><span class="li-icon">🎫</span><span><?php
                     if (!empty($lugar['entry_fee'])) {
                         echo '💶 ' . esc($lugar['entry_fee']) . '€';
                     } elseif (!empty($lugar['entry_fee_details'])) {
