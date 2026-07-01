@@ -27,13 +27,14 @@ function renderLandingHero(array $ctx): void
     $base_url = 'https://rutasrurales.io';
     $list_url = $lang !== 'es' ? "$base_url/$lang/alojamientos-turisticos" : "$base_url/alojamientos-turisticos";
 
-    // Enlace "ver todos en provincia"
+    // Enlace "ver todos en provincia" — slug solo-provincia (sin filtros)
+    // p.ej. /de/alojamientos/zamora  (no turismo-rural-zamora, que sería la misma página)
     $prov_url = '';
     if (!empty($parsed['province'])) {
         $prov_slug = $parsed['province'];
         $prov_url  = $lang !== 'es'
-            ? "$base_url/$lang/alojamientos/turismo-rural-$prov_slug"
-            : "$base_url/alojamientos/turismo-rural-$prov_slug";
+            ? "$base_url/$lang/alojamientos/$prov_slug"
+            : "$base_url/alojamientos/$prov_slug";
     }
 ?>
 <!-- ══════════════════════════════════════════════════════════ HERO ══ -->
@@ -108,11 +109,11 @@ function renderLandingHero(array $ctx): void
     </dl>
     <?php endif; ?>
 
-    <!-- Enlace rápido a todos los alojamientos de la provincia -->
+    <!-- Enlace rápido a todos los alojamientos de la provincia (sin filtros) -->
     <?php if (!empty($prov_url) && !empty($parsed['filters'])): ?>
     <p class="lnd-hero__sublink">
         <a href="<?= htmlspecialchars($prov_url) ?>">
-            Ver todos los alojamientos en <?= htmlspecialchars($province) ?> →
+            <?= htmlspecialchars(t($t['hero_all_prov'] ?? 'Ver todos los alojamientos en {PROVINCE}', ['PROVINCE' => $province])) ?> →
         </a>
     </p>
     <?php endif; ?>

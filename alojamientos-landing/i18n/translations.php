@@ -82,6 +82,9 @@ const LANDING_I18N = [
         'no_results_p'  => 'No encontramos alojamientos con todos esos filtros en {PROVINCE}. Prueba eliminando alguna característica o explora todos los alojamientos de la zona.',
         'no_results_cta'=> 'Ver todos los alojamientos en {PROVINCE}',
 
+        // Hero — enlace a todos los alojamientos de la provincia (sin filtros)
+        'hero_all_prov' => 'Ver todos los alojamientos en {PROVINCE}',
+
         // Footer CTA
         'cta_title'  => '¿No encuentras lo que buscas?',
         'cta_desc'   => 'Cuéntanos qué necesitas y te ayudamos a encontrar el alojamiento perfecto en {PROVINCE}.',
@@ -157,6 +160,9 @@ const LANDING_I18N = [
         'no_results_p'  => 'We couldn\'t find accommodations with all those filters in {PROVINCE}. Try removing a filter or explore all listings in the area.',
         'no_results_cta'=> 'View all accommodation in {PROVINCE}',
 
+        // Hero — link to all accommodations in province (without filters)
+        'hero_all_prov' => 'View all accommodation in {PROVINCE}',
+
         'cta_title'  => 'Can\'t find what you\'re looking for?',
         'cta_desc'   => 'Tell us what you need and we\'ll help you find the perfect stay in {PROVINCE}.',
         'cta_button' => 'Explore all accommodations',
@@ -229,6 +235,9 @@ const LANDING_I18N = [
         'no_results_h2' => 'Aucun résultat exact',
         'no_results_p'  => 'Nous n\'avons pas trouvé d\'hébergements avec tous ces filtres en {PROVINCE}. Essayez de supprimer un filtre ou explorez tous les hébergements de la région.',
         'no_results_cta'=> 'Voir tous les hébergements en {PROVINCE}',
+
+        // Hero — lien vers tous les hébergements de la province (sans filtres)
+        'hero_all_prov' => 'Voir tous les hébergements en {PROVINCE}',
 
         'cta_title'  => 'Vous ne trouvez pas ce que vous cherchez ?',
         'cta_desc'   => 'Dites-nous ce dont vous avez besoin et nous vous aiderons à trouver l\'hébergement parfait en {PROVINCE}.',
@@ -303,6 +312,9 @@ const LANDING_I18N = [
         'no_results_p'  => 'Wir konnten keine Unterkünfte mit all diesen Filtern in {PROVINCE} finden. Versuchen Sie, einen Filter zu entfernen oder alle Unterkünfte in der Region zu erkunden.',
         'no_results_cta'=> 'Alle Unterkünfte in {PROVINCE} ansehen',
 
+        // Hero — Link zu allen Unterkünften der Provinz (ohne Filter)
+        'hero_all_prov' => 'Alle Unterkünfte in {PROVINCE} ansehen',
+
         'cta_title'  => 'Nicht gefunden, was Sie suchen?',
         'cta_desc'   => 'Teilen Sie uns Ihre Wünsche mit und wir helfen Ihnen, die perfekte Unterkunft in {PROVINCE} zu finden.',
         'cta_button' => 'Alle Unterkünfte erkunden',
@@ -375,6 +387,9 @@ const LANDING_I18N = [
         'no_results_h2' => '无精确匹配',
         'no_results_p'  => '我们在{PROVINCE}未能找到符合所有筛选条件的住宿。请尝试删除某个筛选条件，或浏览该地区所有住宿。',
         'no_results_cta'=> '查看{PROVINCE}所有住宿',
+
+        // Hero — 省份所有住宿链接（不含筛选器）
+        'hero_all_prov' => '查看{PROVINCE}全部住宿',
 
         'cta_title'  => '没找到您想要的？',
         'cta_desc'   => '告诉我们您的需求，我们将帮您在{PROVINCE}找到完美住宿。',

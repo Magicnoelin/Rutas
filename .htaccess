@@ -149,16 +149,16 @@ RewriteRule ^(alojamiento|lugar-interes|actividad)\.html$ /api/external-id-redir
 # Idiomas soportados: en · fr · de · zh  (es = sin prefijo)
 
 # 1. Versión multilingüe con prefijo de idioma
-# Mínimo 2 tokens (ej: accesibles-leon = 2, grandes-grupos-ourense = 3)
+# Permite: solo-provincia (ej: zamora) y multi-token (ej: casas-rurales-con-chimenea-soria)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(en|fr|de|zh)/alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){1,})/?$ alojamientos-landing/index.php?lang=$1&slug=$2 [L,QSA]
+RewriteRule ^(en|fr|de|zh)/alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ alojamientos-landing/index.php?lang=$1&slug=$2 [L,QSA]
 
 # 2. Versión española (sin prefijo de idioma)
-# Mínimo 2 tokens (ej: accesibles-leon = 2, grandes-grupos-ourense = 3)
+# Permite: solo-provincia (ej: zamora) y multi-token (ej: casas-rurales-con-chimenea-soria)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+){1,})/?$ alojamientos-landing/index.php?lang=es&slug=$1 [L,QSA]
+RewriteRule ^alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ alojamientos-landing/index.php?lang=es&slug=$1 [L,QSA]
 
 # ============================================================
 # 5c. LANDINGS LONG-TAIL DE EVENTOS — /eventos/{filtros}-{provincia}
