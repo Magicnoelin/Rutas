@@ -538,6 +538,7 @@ if ($evento) {
             ]
         ],
         'organizer' => ['@type' => 'Organization', 'name' => $evento['organizer'] ?: 'Rutas Rurales'],
+        'performer' => ['@type' => 'Organization', 'name' => $evento['organizer'] ?: 'Rutas Rurales'],
         'isAccessibleForFree' => $evento['is_free'] == 1,
         'url' => $canonical,
     ];

@@ -281,6 +281,8 @@ RewriteRule ^home/?$ / [R=301,L]
 RewriteRule ^8017-2/?$ - [G,L]
 RewriteRule ^alojamiento/8017/?$ - [G,L]
 RewriteRule ^lugar/antik-soria/?$ - [G,L]
+RewriteRule ^lugar/login\.html$ - [G,L]
+RewriteRule ^lugar/agradecimientos\.html$ - [G,L]
 
 RewriteCond %{QUERY_STRING} ^slug=8017$ [NC]
 RewriteRule ^detalle\.html$ - [G,L]
