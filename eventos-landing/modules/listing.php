@@ -244,6 +244,35 @@ function renderEventosLandingListing(array $ctx): void
                 </p>
                 <?php endif; ?>
 
+                <!-- Metadatos Schema.org requeridos (ocultos) -->
+                <?php
+                    $organizerName = htmlspecialchars(!empty($ev['organizer']) ? $ev['organizer'] : 'Rutas Rurales');
+                    $ticketPrice   = isset($ev['ticket_price']) && $ev['ticket_price'] > 0 ? $ev['ticket_price'] : null;
+                ?>
+                <meta itemprop="isAccessibleForFree" content="<?= $isFree ? 'true' : 'false' ?>">
+                <!-- organizer -->
+                <span itemprop="organizer" itemscope itemtype="https://schema.org/Organization" hidden>
+                    <meta itemprop="name" content="<?= $organizerName ?>">
+                    <meta itemprop="url" content="<?= $evUrl ?>">
+                </span>
+                <!-- performer -->
+                <span itemprop="performer" itemscope itemtype="https://schema.org/Organization" hidden>
+                    <meta itemprop="name" content="<?= $organizerName ?>">
+                    <meta itemprop="url" content="<?= $evUrl ?>">
+                </span>
+                <!-- offers -->
+                <span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
+                    <?php if ($isFree): ?>
+                    <meta itemprop="price" content="0">
+                    <meta itemprop="priceCurrency" content="EUR">
+                    <?php elseif ($ticketPrice): ?>
+                    <meta itemprop="price" content="<?= number_format((float)$ticketPrice, 2, '.', '') ?>">
+                    <meta itemprop="priceCurrency" content="EUR">
+                    <?php endif; ?>
+                    <meta itemprop="availability" content="https://schema.org/InStock">
+                    <meta itemprop="url" content="<?= $evUrl ?>">
+                </span>
+
                 <!-- Footer: CTA -->
                 <div class="lnd-card__footer">
                     <a href="<?= $evUrl ?>" class="lnd-btn lnd-btn--primary lnd-card__cta">
@@ -252,9 +281,6 @@ function renderEventosLandingListing(array $ctx): void
                             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                         </svg>
                     </a>
-                    <?php if ($isFree): ?>
-                    <meta itemprop="isAccessibleForFree" content="true">
-                    <?php endif; ?>
                 </div>
 
             </div><!-- /lnd-card__body -->

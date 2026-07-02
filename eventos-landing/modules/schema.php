@@ -115,7 +115,7 @@ function renderEventosLandingSchema(array $ctx): void
             $event['location'] = $location;
         }
 
-        // Precio / oferta
+        // Precio / oferta (siempre requerido por Google)
         if (!empty($ev['is_free']) && $ev['is_free']) {
             $event['isAccessibleForFree'] = true;
             $event['offers'] = [
@@ -129,20 +129,32 @@ function renderEventosLandingSchema(array $ctx): void
             $event['isAccessibleForFree'] = false;
             $event['offers'] = [
                 '@type'         => 'Offer',
-                'price'         => (float)$ev['ticket_price'],
+                'price'         => number_format((float)$ev['ticket_price'], 2, '.', ''),
                 'priceCurrency' => 'EUR',
                 'availability'  => 'https://schema.org/InStock',
                 'url'           => $evCanonical,
             ];
-        }
-
-        // Organizador
-        if (!empty($ev['organizer'])) {
-            $event['organizer'] = [
-                '@type' => 'Organization',
-                'name'  => $ev['organizer'],
+        } else {
+            // Precio a consultar
+            $event['offers'] = [
+                '@type'        => 'Offer',
+                'availability' => 'https://schema.org/InStock',
+                'url'          => $evCanonical,
             ];
         }
+
+        // Organizador (siempre requerido, con fallback y url)
+        $organizerName = !empty($ev['organizer']) ? $ev['organizer'] : 'Rutas Rurales';
+        $event['organizer'] = [
+            '@type' => 'Organization',
+            'name'  => $organizerName,
+            'url'   => $evCanonical,
+        ];
+        $event['performer'] = [
+            '@type' => 'Organization',
+            'name'  => $organizerName,
+            'url'   => $evCanonical,
+        ];
 
         $listElements[] = [
             '@type'    => 'ListItem',

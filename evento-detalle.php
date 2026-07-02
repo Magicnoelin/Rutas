@@ -537,19 +537,36 @@ if ($evento) {
                 'addressCountry' => 'ES'
             ]
         ],
-        'organizer' => ['@type' => 'Organization', 'name' => $evento['organizer'] ?: 'Rutas Rurales'],
-        'performer' => ['@type' => 'Organization', 'name' => $evento['organizer'] ?: 'Rutas Rurales'],
+        'organizer' => ['@type' => 'Organization', 'name' => $evento['organizer'] ?: 'Rutas Rurales', 'url' => $canonical],
+        'performer' => ['@type' => 'Organization', 'name' => $evento['organizer'] ?: 'Rutas Rurales', 'url' => $canonical],
         'isAccessibleForFree' => $evento['is_free'] == 1,
         'url' => $canonical,
     ];
 
-    // Offers (solo si tiene precio)
-    if ($evento['is_free'] != 1 && !empty($evento['ticket_price']) && $evento['ticket_price'] > 0) {
+    // Offers (siempre requerido por Google, incluso para eventos gratuitos)
+    if ($evento['is_free'] == 1) {
+        $jsonld_data['offers'] = [
+            '@type' => 'Offer',
+            'url' => $canonical,
+            'price' => '0',
+            'priceCurrency' => 'EUR',
+            'availability' => 'https://schema.org/InStock',
+            'validFrom' => $evento['start_date'],
+        ];
+    } elseif (!empty($evento['ticket_price']) && $evento['ticket_price'] > 0) {
         $jsonld_data['offers'] = [
             '@type' => 'Offer',
             'url' => $canonical,
             'price' => number_format((float)$evento['ticket_price'], 2, '.', ''),
             'priceCurrency' => 'EUR',
+            'availability' => 'https://schema.org/InStock',
+            'validFrom' => $evento['start_date'],
+        ];
+    } else {
+        // Precio a consultar: se incluye offers sin precio definido
+        $jsonld_data['offers'] = [
+            '@type' => 'Offer',
+            'url' => $canonical,
             'availability' => 'https://schema.org/InStock',
             'validFrom' => $evento['start_date'],
         ];
