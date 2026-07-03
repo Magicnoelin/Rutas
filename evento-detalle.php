@@ -11,6 +11,10 @@
 define('API_NO_HEADERS', true);
 require_once 'api/config.php';
 
+// ── SEO: indicar explícitamente a Bing/Google que indexe Y archive estas páginas
+// Esto elimina el warning "NOARCHIVE" de Bing Webmaster Tools / Copilot
+header('X-Robots-Tag: index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 $lang = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
 $lang = in_array($lang, ['es', 'en', 'fr', 'de', 'zh']) ? $lang : 'es';
@@ -611,6 +615,10 @@ $evento_js = $evento ? json_encode([
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO: indicar a Bing/Google que indexe y archive estas páginas (elimina warning NOARCHIVE de Bing Copilot) -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <title><?php echo htmlspecialchars($page_title); ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
 
     <!-- hreflang: SEO multiidioma — lista COMPLETA de todos los idiomas disponibles -->
