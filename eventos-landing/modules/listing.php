@@ -246,20 +246,16 @@ function renderEventosLandingListing(array $ctx): void
 
                 <!-- Metadatos Schema.org requeridos (ocultos) -->
                 <?php
-                    $organizerName = htmlspecialchars(!empty($ev['organizer']) ? $ev['organizer'] : 'Rutas Rurales');
-                    $ticketPrice   = isset($ev['ticket_price']) && $ev['ticket_price'] > 0 ? $ev['ticket_price'] : null;
+                    $ticketPrice = isset($ev['ticket_price']) && $ev['ticket_price'] > 0 ? $ev['ticket_price'] : null;
                 ?>
                 <meta itemprop="isAccessibleForFree" content="<?= $isFree ? 'true' : 'false' ?>">
-                <!-- organizer -->
+                <!-- organizer: solo si hay datos reales en BD; sin fallback inventado -->
+                <?php if (!empty($ev['organizer'])): ?>
                 <span itemprop="organizer" itemscope itemtype="https://schema.org/Organization" hidden>
-                    <meta itemprop="name" content="<?= $organizerName ?>">
-                    <meta itemprop="url" content="<?= $evUrl ?>">
+                    <meta itemprop="name" content="<?= htmlspecialchars($ev['organizer']) ?>">
                 </span>
-                <!-- performer -->
-                <span itemprop="performer" itemscope itemtype="https://schema.org/Organization" hidden>
-                    <meta itemprop="name" content="<?= $organizerName ?>">
-                    <meta itemprop="url" content="<?= $evUrl ?>">
-                </span>
+                <?php endif; ?>
+                <!-- performer omitido: no equivale al organizador y confunde al Knowledge Graph -->
                 <!-- offers -->
                 <span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
                     <?php if ($isFree): ?>

@@ -103,16 +103,9 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
                     ],
                     'eventStatus'          => 'https://schema.org/EventScheduled',
                     'eventAttendanceMode'  => 'https://schema.org/OfflineEventAttendanceMode',
-                    'organizer' => [
-                        '@type' => 'Organization',
-                        'name'  => !empty($e['organizer']) ? $e['organizer'] : 'Rutas Rurales',
-                        'url'   => $e['url'],
-                    ],
-                    'performer' => [
-                        '@type' => 'Organization',
-                        'name'  => !empty($e['organizer']) ? $e['organizer'] : 'Rutas Rurales',
-                        'url'   => $e['url'],
-                    ],
+                    // organizer: solo si hay dato real; sin fallback que confunda al Knowledge Graph
+                    ...(!empty($e['organizer']) ? ['organizer' => ['@type' => 'Organization', 'name' => $e['organizer']]] : []),
+                    // performer omitido: el organizador ≠ artista/performer
                     'offers' => [
                         '@type'         => 'Offer',
                         'price'         => isset($e['ticket_price']) && $e['ticket_price'] > 0 ? number_format((float)$e['ticket_price'], 2, '.', '') : '0',

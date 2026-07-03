@@ -541,8 +541,8 @@ if ($evento) {
                 'addressCountry' => 'ES'
             ]
         ],
-        'organizer' => ['@type' => 'Organization', 'name' => $evento['organizer'] ?: 'Rutas Rurales', 'url' => $canonical],
-        'performer' => ['@type' => 'Organization', 'name' => $evento['organizer'] ?: 'Rutas Rurales', 'url' => $canonical],
+        // organizer: solo si hay dato real en BD; omitir antes que inventar un fallback
+        ...(!empty($evento['organizer']) ? ['organizer' => ['@type' => 'Organization', 'name' => $evento['organizer']]] : []),
         'isAccessibleForFree' => $evento['is_free'] == 1,
         'url' => $canonical,
     ];
