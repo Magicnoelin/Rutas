@@ -2,7 +2,9 @@
 /**
  * ════════════════════════════════════════════════════════════════════════════
  *  SCHEMA.ORG JSON-LD — Landings de Eventos Culturales
- *  Tipos: CollectionPage + BreadcrumbList + ItemList (con Event por item)
+ *  Tipos: CollectionPage + BreadcrumbList + ItemList (ListItem con name+url)
+ *  NOTA: El schema Event detallado reside SOLO en cada página de detalle
+ *        (/evento/{slug}) para evitar canibalización de intenciones con Google.
  * ════════════════════════════════════════════════════════════════════════════
  *
  *  Llamada: renderEventosLandingSchema($context)
@@ -61,105 +63,18 @@ function renderEventosLandingSchema(array $ctx): void
         ],
     ];
 
-    // ── 3. ItemList con Event embebido ────────────────────────────────────────
+    // ── 3. ItemList con referencias simplificadas (sin Event embebido) ─────────
+    //  Usamos ListItem con name + url para evitar canibalización con las páginas
+    //  de detalle de cada evento, donde reside el schema Event completo.
     $listElements = [];
     foreach ($items as $idx => $ev) {
         $evCanonical = 'https://rutasrurales.io/evento/' . ($ev['slug'] ?? '');
-        $imageUrl    = $ev['photo_url'] ?? 'https://rutasrurales.io/menu_images/turismo_rural.webp';
-
-        $event = [
-            '@type'     => 'Event',
-            '@id'       => $evCanonical . '#event',
-            'name'      => $ev['name'] ?? '',
-            'url'       => $evCanonical,
-            'image'     => $imageUrl,
-            'eventStatus' => 'https://schema.org/EventScheduled',
-            'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
-        ];
-
-        // Fechas
-        if (!empty($ev['start_date'])) {
-            $event['startDate'] = $ev['start_date'];
-        }
-        if (!empty($ev['end_date'])) {
-            $event['endDate'] = $ev['end_date'];
-        }
-
-        // Descripción
-        if (!empty($ev['short_description'])) {
-            $event['description'] = mb_substr(strip_tags($ev['short_description']), 0, 200);
-        }
-
-        // Localización
-        $locationName = $ev['venue_name'] ?? $ev['municipality'] ?? $province;
-        if (!empty($locationName)) {
-            $location = [
-                '@type' => 'Place',
-                'name'  => $locationName,
-            ];
-            if (!empty($ev['municipality'])) {
-                $location['address'] = [
-                    '@type'           => 'PostalAddress',
-                    'addressLocality' => $ev['municipality'],
-                    'addressRegion'   => $ev['province'] ?? $province,
-                    'addressCountry'  => 'ES',
-                ];
-            }
-            if (!empty($ev['latitude']) && !empty($ev['longitude'])) {
-                $location['geo'] = [
-                    '@type'     => 'GeoCoordinates',
-                    'latitude'  => (float)$ev['latitude'],
-                    'longitude' => (float)$ev['longitude'],
-                ];
-            }
-            $event['location'] = $location;
-        }
-
-        // Precio / oferta (siempre requerido por Google)
-        if (!empty($ev['is_free']) && $ev['is_free']) {
-            $event['isAccessibleForFree'] = true;
-            $event['offers'] = [
-                '@type'         => 'Offer',
-                'price'         => '0',
-                'priceCurrency' => 'EUR',
-                'availability'  => 'https://schema.org/InStock',
-                'url'           => $evCanonical,
-            ];
-        } elseif (!empty($ev['ticket_price']) && $ev['ticket_price'] > 0) {
-            $event['isAccessibleForFree'] = false;
-            $event['offers'] = [
-                '@type'         => 'Offer',
-                'price'         => number_format((float)$ev['ticket_price'], 2, '.', ''),
-                'priceCurrency' => 'EUR',
-                'availability'  => 'https://schema.org/InStock',
-                'url'           => $evCanonical,
-            ];
-        } else {
-            // Precio a consultar
-            $event['offers'] = [
-                '@type'        => 'Offer',
-                'availability' => 'https://schema.org/InStock',
-                'url'          => $evCanonical,
-            ];
-        }
-
-        // Organizador (siempre requerido, con fallback y url)
-        $organizerName = !empty($ev['organizer']) ? $ev['organizer'] : 'Rutas Rurales';
-        $event['organizer'] = [
-            '@type' => 'Organization',
-            'name'  => $organizerName,
-            'url'   => $evCanonical,
-        ];
-        $event['performer'] = [
-            '@type' => 'Organization',
-            'name'  => $organizerName,
-            'url'   => $evCanonical,
-        ];
 
         $listElements[] = [
             '@type'    => 'ListItem',
             'position' => $idx + 1,
-            'item'     => $event,
+            'name'     => $ev['name'] ?? '',
+            'url'      => $evCanonical,
         ];
     }
 
