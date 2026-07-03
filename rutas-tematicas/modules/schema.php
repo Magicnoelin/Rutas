@@ -26,6 +26,7 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
             'price'         => 0,
             'priceCurrency' => 'EUR',
             'availability'  => 'https://schema.org/InStock',
+            'url'           => $rutaUrl,
         ],
     ];
 
@@ -100,10 +101,24 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
                             'addressCountry'  => 'ES',
                         ],
                     ],
+                    'eventStatus'          => 'https://schema.org/EventScheduled',
+                    'eventAttendanceMode'  => 'https://schema.org/OfflineEventAttendanceMode',
+                    'organizer' => [
+                        '@type' => 'Organization',
+                        'name'  => !empty($e['organizer']) ? $e['organizer'] : 'Rutas Rurales',
+                        'url'   => $e['url'],
+                    ],
+                    'performer' => [
+                        '@type' => 'Organization',
+                        'name'  => !empty($e['organizer']) ? $e['organizer'] : 'Rutas Rurales',
+                        'url'   => $e['url'],
+                    ],
                     'offers' => [
                         '@type'         => 'Offer',
-                        'price'         => $e['ticket_price'] ?? 0,
+                        'price'         => isset($e['ticket_price']) && $e['ticket_price'] > 0 ? number_format((float)$e['ticket_price'], 2, '.', '') : '0',
                         'priceCurrency' => 'EUR',
+                        'availability'  => 'https://schema.org/InStock',
+                        'url'           => $e['url'],
                     ],
                 ],
             ];

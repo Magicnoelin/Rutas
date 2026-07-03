@@ -1,11 +1,8 @@
-<?php<?php
+<?php
 // Decirle a los bots de Google y otros buscadores que ignoren este endpoint
 header('X-Robots-Tag: noindex, nofollow');
-
-// El resto de tu lógica (cabeceras de CORS, Content-Type: application/json, etc.)
 header('Content-Type: application/json; charset=utf-8');
 
-// ... aquí vendrá tu conexión, tu try/catch y tu consulta ...header('Content-Type: application/json');
 require_once 'config.php';
 try {
     $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASS);
