@@ -19,7 +19,7 @@ const EVENTOS_I18N = [
 
         // Meta
         'meta_title'  => '{FILTER_LABEL} en {PROVINCE} — Agenda Cultural | rutasrurales.io',
-        'meta_desc'   => 'Descubre los mejores {FILTER_LABEL_LOWER} en {PROVINCE}. Agenda cultural actualizada, {FILTER_FEATURE} y eventos únicos del turismo rural. Información completa y gratuita.',
+        'meta_desc'   => 'Descubre la agenda de {FILTER_LABEL_LOWER} de {PROVINCE} más completa. Mercados, música, tradiciones y actividades únicas de turismo rural actualizadas. ¡Entra ya!',
 
         // Encabezados
         'h1_template'   => '{FILTER_LABEL} en {PROVINCE}',
@@ -112,7 +112,7 @@ const EVENTOS_I18N = [
         'dir'         => 'ltr',
 
         'meta_title'  => '{FILTER_LABEL} in {PROVINCE} — Cultural Events | rutasrurales.io',
-        'meta_desc'   => 'Discover the best {FILTER_LABEL_LOWER} in {PROVINCE}, Spain. Updated cultural calendar, {FILTER_FEATURE} and unique rural tourism events. Complete and free information.',
+        'meta_desc'   => 'Discover the most complete {FILTER_LABEL_LOWER} agenda in {PROVINCE}, Spain. Markets, music, traditions and unique rural events, always updated. Plan your visit!',
 
         'h1_template'   => '{FILTER_LABEL} in {PROVINCE}',
         'h1_only_prov'  => 'Cultural events in {PROVINCE}',
@@ -194,7 +194,7 @@ const EVENTOS_I18N = [
         'dir'         => 'ltr',
 
         'meta_title'  => '{FILTER_LABEL} en {PROVINCE} — Agenda culturel | rutasrurales.io',
-        'meta_desc'   => 'Découvrez les meilleurs {FILTER_LABEL_LOWER} en {PROVINCE}, Espagne. Agenda culturel mis à jour, {FILTER_FEATURE} et événements uniques du tourisme rural. Information complète et gratuite.',
+        'meta_desc'   => 'Découvrez l\'agenda de {FILTER_LABEL_LOWER} le plus complet en {PROVINCE}, Espagne. Marchés, musique, traditions et activités uniques de tourisme rural. Entrez !',
 
         'h1_template'   => '{FILTER_LABEL} en {PROVINCE}',
         'h1_only_prov'  => 'Agenda culturel en {PROVINCE}',
@@ -276,7 +276,7 @@ const EVENTOS_I18N = [
         'dir'         => 'ltr',
 
         'meta_title'  => '{FILTER_LABEL} in {PROVINCE} — Kulturveranstaltungen | rutasrurales.io',
-        'meta_desc'   => 'Entdecken Sie die besten {FILTER_LABEL_LOWER} in {PROVINCE}, Spanien. Aktualisierter Kulturkalender, {FILTER_FEATURE} und einzigartige Veranstaltungen des Landtourismus. Vollständige und kostenlose Informationen.',
+        'meta_desc'   => 'Entdecken Sie den vollständigsten {FILTER_LABEL_LOWER}-Kalender in {PROVINCE}. Märkte, Musik, Traditionen und einzigartige Landtourismus-Events, immer aktuell. Jetzt entdecken!',
 
         'h1_template'   => '{FILTER_LABEL} in {PROVINCE}',
         'h1_only_prov'  => 'Kulturveranstaltungen in {PROVINCE}',
@@ -358,7 +358,7 @@ const EVENTOS_I18N = [
         'dir'         => 'ltr',
 
         'meta_title'  => '{PROVINCE}{FILTER_LABEL} — 文化活动 | rutasrurales.io',
-        'meta_desc'   => '发现西班牙{PROVINCE}最精彩的{FILTER_LABEL_LOWER}。更新的文化日历，{FILTER_FEATURE}和独特的乡村旅游活动。完整免费信息。',
+        'meta_desc'   => '探索西班牙{PROVINCE}最完整的{FILTER_LABEL_LOWER}日历。集市、音乐、传统与独特乡村旅游活动，持续更新。立即查看！',
 
         'h1_template'   => '{PROVINCE}的{FILTER_LABEL}',
         'h1_only_prov'  => '{PROVINCE}文化活动',
