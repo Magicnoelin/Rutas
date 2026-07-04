@@ -13,6 +13,7 @@ ini_set('display_errors', '0');
 
 define('API_NO_HEADERS', true);
 require_once '../api/config.php';
+require_once __DIR__ . '/modules/schema.php';
 
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 $lang = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
@@ -414,171 +415,8 @@ if ($alojamiento) {
     $ubicacion_display = implode(', ', $partes);
 }
 
-// JSON-LD Schema.org — Multi-graph (WebPage + BreadcrumbList + LodgingBusiness)
-$jsonld = '';
-if ($alojamiento) {
-
-    // ── Tipo Schema.org más específico según categoría ──
-    $cat_lower   = strtolower($alojamiento['category_name'] ?? $alojamiento['accommodation_type'] ?? '');
-    $schema_type = 'LodgingBusiness';
-    $type_map    = [
-        'hotel'      => 'Hotel',
-        'hostal'     => 'Hostel',
-        'hostel'     => 'Hostel',
-        'albergue'   => 'Hostel',
-        'bed and breakfast' => 'BedAndBreakfast',
-        'b&b'        => 'BedAndBreakfast',
-        'casa de huéspedes' => 'BedAndBreakfast',
-    ];
-    foreach ($type_map as $kw => $stype) {
-        if (strpos($cat_lower, $kw) !== false) { $schema_type = $stype; break; }
-    }
-
-    // ── ImageObject array ──
-    $image_objects = [];
-    foreach ($fotos as $idx => $foto_url) {
-        $full_url = preg_match('/^https?:\/\//', $foto_url) ? $foto_url : 'https://rutasrurales.io' . $foto_url;
-        $image_objects[] = [
-            '@type'       => 'ImageObject',
-            '@id'         => $canonical . '#photo' . ($idx + 1),
-            'url'         => $full_url,
-            'name'        => $alojamiento['name'] . ' — foto ' . ($idx + 1),
-            'description' => $alojamiento['name'] . ' en ' . ($alojamiento['municipality'] ?? ''),
-        ];
-    }
-
-    // ── Amenidades como LocationFeatureSpecification ──
-    $amenity_features = [];
-    if (!empty($alojamiento['amenities'])) {
-        $ams = json_decode($alojamiento['amenities'], true);
-        if (is_array($ams)) {
-            foreach ($ams as $am) {
-                $amenity_features[] = ['@type' => 'LocationFeatureSpecification', 'name' => $am, 'value' => true];
-            }
-        }
-    }
-    if (!empty($alojamiento['pet_friendly'])         && $alojamiento['pet_friendly'] == 1)
-        $amenity_features[] = ['@type' => 'LocationFeatureSpecification', 'name' => 'Admite mascotas', 'value' => true];
-    if (!empty($alojamiento['kitchen_available'])    && $alojamiento['kitchen_available'] == 1)
-        $amenity_features[] = ['@type' => 'LocationFeatureSpecification', 'name' => 'Cocina disponible', 'value' => true];
-    if (!empty($alojamiento['suitable_for_children'])&& $alojamiento['suitable_for_children'] == 1)
-        $amenity_features[] = ['@type' => 'LocationFeatureSpecification', 'name' => 'Apto para niños', 'value' => true];
-    if (!empty($alojamiento['wifi']) && $alojamiento['wifi'] == 1)
-        $amenity_features[] = ['@type' => 'LocationFeatureSpecification', 'name' => 'WiFi gratuito', 'value' => true];
-
-    // ── checkin/checkout en formato ISO 8601 (T15:00) ──
-    $ci_raw = $alojamiento['check_in_time']  ?? '15:00';
-    $co_raw = $alojamiento['check_out_time'] ?? '12:00';
-    $checkin_time  = 'T' . (strlen($ci_raw) <= 5 ? $ci_raw : substr($ci_raw, 0, 5));
-    $checkout_time = 'T' . (strlen($co_raw) <= 5 ? $co_raw : substr($co_raw, 0, 5));
-
-    // ── LodgingBusiness ──
-    $lodging = [
-        '@type'        => $schema_type,
-        '@id'          => $canonical . '#lodging',
-        'name'         => $alojamiento['name'],
-        'description'  => substr(strip_tags($alojamiento['description'] ?? ''), 0, 500),
-        'url'          => $canonical,
-        'image'        => !empty($image_objects) ? $image_objects : $fotos,
-        'address'      => array_filter([
-            '@type'           => 'PostalAddress',
-            'streetAddress'   => $alojamiento['address'] ?? '',
-            'addressLocality' => $alojamiento['municipality'] ?? '',
-            'addressRegion'   => $alojamiento['province'] ?? '',
-            'postalCode'      => $alojamiento['postal_code'] ?? '',
-            'addressCountry'  => 'ES',
-        ]),
-        'checkinTime'  => $checkin_time,
-        'checkoutTime' => $checkout_time,
-    ];
-
-    if (!empty($alojamiento['phone']))   $lodging['telephone']  = $alojamiento['phone'];
-    if (!empty($alojamiento['email']))   $lodging['email']      = $alojamiento['email'];
-    if (!empty($alojamiento['website'])) $lodging['sameAs']     = [$alojamiento['website']];
-
-    if (!empty($alojamiento['price_per_night']) && $alojamiento['price_per_night'] > 0) {
-        $lodging['priceRange'] = number_format($alojamiento['price_per_night'], 0, ',', '.') . '€/noche';
-        $lodging['offers']     = [
-            '@type'         => 'Offer',
-            'name'          => 'Precio por noche en ' . $alojamiento['name'],
-            'price'         => (float)$alojamiento['price_per_night'],
-            'priceCurrency' => 'EUR',
-            'availability'  => 'https://schema.org/InStock',
-            'url'           => $canonical,
-        ];
-    }
-
-    if (!empty($alojamiento['capacity']) && $alojamiento['capacity'] > 0) {
-        $lodging['occupancy'] = [
-            '@type'    => 'QuantitativeValue',
-            'maxValue' => (int)$alojamiento['capacity'],
-            'unitCode' => 'C62',
-        ];
-    }
-
-    if (!empty($alojamiento['bedrooms']) && $alojamiento['bedrooms'] > 0) {
-        $lodging['numberOfRooms'] = (int)$alojamiento['bedrooms'];
-    }
-
-    if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])) {
-        $lodging['geo'] = [
-            '@type'     => 'GeoCoordinates',
-            'latitude'  => (float)$alojamiento['latitude'],
-            'longitude' => (float)$alojamiento['longitude'],
-        ];
-        $lodging['hasMap'] = 'https://www.google.com/maps?q=' . $alojamiento['latitude'] . ',' . $alojamiento['longitude'];
-    }
-
-    if (!empty($amenity_features)) {
-        $lodging['amenityFeature'] = $amenity_features;
-    }
-
-    if (isset($alojamiento['pet_friendly'])) {
-        $lodging['petsAllowed'] = (bool)(int)$alojamiento['pet_friendly'];
-    }
-
-    // ── BreadcrumbList ──
-    $breadcrumb_labels = [
-        'es' => ['Inicio', 'Alojamientos turísticos'],
-        'en' => ['Home', 'Accommodations'],
-        'fr' => ['Accueil', 'Hébergements'],
-        'de' => ['Startseite', 'Unterkünfte'],
-        'zh' => ['首页', '住宿列表'],
-    ];
-    $bl = $breadcrumb_labels[$lang] ?? $breadcrumb_labels['es'];
-    $breadcrumb_name = !empty($alojamiento['name']) ? $alojamiento['name'] : $slug;
-    $breadcrumb = [
-        '@type' => 'BreadcrumbList',
-        '@id'   => $canonical . '#breadcrumb',
-        'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => $bl[0], 'item' => 'https://rutasrurales.io/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => $bl[1], 'item' => 'https://rutasrurales.io/alojamientos-turisticos'],
-            ['@type' => 'ListItem', 'position' => 3, 'name' => $breadcrumb_name, 'item' => $canonical],
-        ],
-    ];
-
-    // ── WebPage ──
-    $webpage = [
-        '@type'       => 'WebPage',
-        '@id'         => $canonical . '#webpage',
-        'url'         => $canonical,
-        'name'        => $page_title,
-        'description' => $page_desc,
-        'inLanguage'  => $lang === 'es' ? 'es-ES' : $lang . '-' . strtoupper($lang),
-        'isPartOf'    => ['@id' => 'https://rutasrurales.io/#website'],
-        'about'       => ['@id' => $canonical . '#lodging'],
-        'breadcrumb'  => ['@id' => $canonical . '#breadcrumb'],
-    ];
-    if (!empty($image_objects)) {
-        $webpage['primaryImageOfPage'] = ['@id' => $canonical . '#photo1'];
-    }
-
-    $jsonld_data = [
-        '@context' => 'https://schema.org',
-        '@graph'   => [$webpage, $breadcrumb, $lodging],
-    ];
-    $jsonld = json_encode($jsonld_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-}
+// ─── JSON-LD: generado por modules/schema.php → renderAlojamientoSchema() ──────
+// (El marcado se inyecta directamente en el <head> via la función del módulo)
 
 // Datos para JavaScript (evitar segunda llamada API)
 $alo_js = $alojamiento ? json_encode([
@@ -1545,10 +1383,8 @@ $alo_js = $alojamiento ? json_encode([
         }
     </style>
 
-    <!-- JSON-LD Schema.org -->
-    <?php if ($jsonld): ?>
-    <script type="application/ld+json"><?php echo $jsonld; ?></script>
-    <?php endif; ?>
+    <!-- Schema.org JSON-LD (LodgingBusiness/Hotel + FAQPage + WebSite + BreadcrumbList) -->
+    <?php if ($alojamiento): renderAlojamientoSchema($alojamiento, $fotos, $canonical, $page_title, $page_desc, $lang); endif; ?>
 
     <!-- Datos para JS -->
     <script>

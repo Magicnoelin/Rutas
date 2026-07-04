@@ -13,6 +13,7 @@ ini_set('display_errors', '0');
 
 define('API_NO_HEADERS', true);
 require_once '../api/config.php';
+require_once __DIR__ . '/modules/schema.php';
 
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 $lang = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
@@ -1494,10 +1495,8 @@ $alo_js = $alojamiento ? json_encode([
         }
     </style>
 
-    <!-- JSON-LD Schema.org -->
-    <?php if ($jsonld): ?>
-    <script type="application/ld+json"><?php echo $jsonld; ?></script>
-    <?php endif; ?>
+    <!-- Schema.org JSON-LD (LodgingBusiness/Hotel + FAQPage + WebSite + BreadcrumbList) -->
+    <?php if ($alojamiento): renderAlojamientoSchema($alojamiento, $fotos, $canonical, $page_title, $page_desc, $lang); endif; ?>
 
     <!-- Datos para JS -->
     <script>
