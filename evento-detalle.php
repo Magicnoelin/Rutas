@@ -526,7 +526,17 @@ if ($evento) {
         '@context' => 'https://schema.org',
         '@type' => 'Event',
         'name' => $evento['titulo'],
-        'description' => strip_tags($evento['short_description'] ?: $evento['description']),
+        'description' => (function() use ($evento, $categoria_nombre, $ubicacion_display) {
+            $desc = trim(strip_tags($evento['short_description'] ?? '') ?: strip_tags($evento['description'] ?? ''));
+            if (!empty($desc)) return $desc;
+            // Fallback: construir descripción mínima desde los datos del evento
+            $parts = array_filter([
+                $categoria_nombre,
+                !empty($ubicacion_display) ? 'en ' . $ubicacion_display : null,
+                !empty($evento['start_date']) ? date('d/m/Y', strtotime($evento['start_date'])) : null,
+            ]);
+            return $evento['titulo'] . (count($parts) ? '. ' . implode(', ', $parts) . '.' : '.');
+        })(),
         'startDate' => $evento['start_date'],
         'endDate' => $evento['end_date'] ?: $evento['start_date'],
         'eventStatus' => 'https://schema.org/EventScheduled',

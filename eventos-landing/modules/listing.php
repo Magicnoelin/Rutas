@@ -247,7 +247,18 @@ function renderEventosLandingListing(array $ctx): void
                 <!-- Metadatos Schema.org requeridos (ocultos) -->
                 <?php
                     $ticketPrice = isset($ev['ticket_price']) && $ev['ticket_price'] > 0 ? $ev['ticket_price'] : null;
+                    // Fallback de description: si no hay texto, Google reporta "falta description"
+                    if (empty($desc)) {
+                        $descFallback = trim(
+                            ($ev['name'] ?? '')
+                            . (!empty($ev['municipality']) ? ' en ' . $ev['municipality'] : '')
+                            . (!empty($ev['start_date'])   ? '. ' . date('d/m/Y', strtotime($ev['start_date'])) : '')
+                        );
+                    }
                 ?>
+                <?php if (empty($desc) && !empty($descFallback)): ?>
+                <meta itemprop="description" content="<?= htmlspecialchars($descFallback) ?>">
+                <?php endif; ?>
                 <meta itemprop="isAccessibleForFree" content="<?= $isFree ? 'true' : 'false' ?>">
                 <!-- organizer: solo si hay datos reales en BD; sin fallback inventado -->
                 <?php if (!empty($ev['organizer'])): ?>

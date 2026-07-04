@@ -218,7 +218,20 @@ function renderCruceSemantico(array $ctx): void
                 }
                 $evFree = empty($ev['precio_display']);
             ?>
+            <?php
+                $evDesc = trim(strip_tags($ev['short_description'] ?? ''));
+                if (empty($evDesc)) {
+                    // Fallback: nombre + municipio + fecha para que Google no reporte "falta description"
+                    $evDesc = ($ev['title'] ?? '')
+                        . (!empty($ev['municipality']) ? ' en ' . $ev['municipality'] : '')
+                        . (!empty($ev['start_date']) ? '. ' . date('d/m/Y', strtotime($ev['start_date'])) : '');
+                    $evDesc = trim($evDesc);
+                }
+            ?>
             <li class="lnd-event-card" itemscope itemtype="https://schema.org/Event">
+                <?php if (!empty($evDesc)): ?>
+                <meta itemprop="description" content="<?= htmlspecialchars($evDesc) ?>">
+                <?php endif; ?>
     <a href="<?= $evUrl ?>" class="lnd-event-card__link">
         <?php if (!empty($ev['photo_url'])): ?>
         <div class="lnd-event-card__img-wrap">
