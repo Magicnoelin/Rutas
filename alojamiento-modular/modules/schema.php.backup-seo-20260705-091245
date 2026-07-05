@@ -35,38 +35,20 @@ function renderAlojamientoSchema(
     // ── 1. Tipo Schema.org más específico según categoría ─────────────────────
     $cat_raw   = strtolower($alojamiento['category_name'] ?? $alojamiento['accommodation_type'] ?? '');
     $typeMap   = [
-        // Hoteles
-        'hotel rural'         => 'Hotel',
         'hotel'               => 'Hotel',
-        // Hostales y albergues
         'hostal'              => 'Hostel',
         'hostel'              => 'Hostel',
         'albergue'            => 'Hostel',
-        // B&B / Casas de huéspedes
         'bed and breakfast'   => 'BedAndBreakfast',
         'b&b'                 => 'BedAndBreakfast',
         'casa de huéspedes'   => 'BedAndBreakfast',
-        'posada'              => 'BedAndBreakfast',
-        // Alquiler vacacional completo (lo más frecuente en turismo rural español)
-        'casa rural'          => 'VacationRental',
-        'casas rurales'       => 'VacationRental',
-        'apartamento rural'   => 'VacationRental',
-        'apartamento turístico'=> 'VacationRental',
-        'apartamento'         => 'VacationRental',
-        'villa'               => 'VacationRental',
-        'cabaña'              => 'VacationRental',
-        'casa de campo'       => 'VacationRental',
-        'chalet'              => 'VacationRental',
-        'masía'               => 'VacationRental',
-        'cortijo'             => 'VacationRental',
-        'finca rural'         => 'VacationRental',
-        'alojamiento rural'   => 'VacationRental',
-        'turismo rural'       => 'VacationRental',
-        // Glamping
-        'glamping'            => 'Campground',
-        'camping'             => 'Campground',
+        'casa rural'          => 'LodgingBusiness',
+        'apartamento'         => 'LodgingBusiness',
+        'apartamento turístico'=> 'LodgingBusiness',
+        'villa'               => 'LodgingBusiness',
+        'cabaña'              => 'LodgingBusiness',
     ];
-    $schemaType = 'VacationRental'; // fallback más apropiado para turismo rural
+    $schemaType = 'LodgingBusiness'; // fallback
     foreach ($typeMap as $kw => $st) {
         if (str_contains($cat_raw, $kw)) { $schemaType = $st; break; }
     }

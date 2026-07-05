@@ -58,52 +58,6 @@ if (!empty($slug)) {
             if (empty($fotos)) {
                 $fotos[] = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=800&fit=crop&auto=format';
             }
-
-            // ─── SSR NEARBY: Alojamientos y Lugares cercanos visibles al crawler ───
-            // Query ultraligera (LIMIT 4, usa la misma conexión PDO ya abierta)
-            // El resultado se renderiza en HTML estático → Google lo indexa sin JS
-            $ssr_nearby_alojamientos = [];
-            $ssr_nearby_lugares = [];
-            $ssr_prov = $alojamiento['province'] ?? '';
-            $ssr_lat  = !empty($alojamiento['latitude'])  ? (float)$alojamiento['latitude']  : null;
-            $ssr_lng  = !empty($alojamiento['longitude']) ? (float)$alojamiento['longitude'] : null;
-
-            if ($ssr_lat && $ssr_lng) {
-                // Alojamientos más cercanos (excluye el actual)
-                $ss = $pdo->prepare("
-                    SELECT name, slug, municipality, price_per_night, photo1,
-                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
-                    FROM accommodations
-                    WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND slug != ?
-                    HAVING dist < 60
-                    ORDER BY dist ASC
-                    LIMIT 4
-                ");
-                $ss->execute([$ssr_lat, $ssr_lng, $ssr_lat, $alojamiento['slug']]);
-                $ssr_nearby_alojamientos = $ss->fetchAll(PDO::FETCH_ASSOC);
-
-                // Lugares de interés más cercanos
-                $ss2 = $pdo->prepare("
-                    SELECT name, slug, municipality, photo1,
-                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
-                    FROM places_of_interest
-                    WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
-                    HAVING dist < 60
-                    ORDER BY dist ASC
-                    LIMIT 4
-                ");
-                $ss2->execute([$ssr_lat, $ssr_lng, $ssr_lat]);
-                $ssr_nearby_lugares = $ss2->fetchAll(PDO::FETCH_ASSOC);
-            } elseif ($ssr_prov) {
-                // Fallback por provincia si no hay coordenadas
-                $ss = $pdo->prepare("SELECT name, slug, municipality, price_per_night, photo1, 0 AS dist FROM accommodations WHERE is_active = 1 AND province = ? AND slug != ? ORDER BY RAND() LIMIT 4");
-                $ss->execute([$ssr_prov, $alojamiento['slug']]);
-                $ssr_nearby_alojamientos = $ss->fetchAll(PDO::FETCH_ASSOC);
-
-                $ss2 = $pdo->prepare("SELECT name, slug, municipality, photo1, 0 AS dist FROM places_of_interest WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
-                $ss2->execute([$ssr_prov]);
-                $ssr_nearby_lugares = $ss2->fetchAll(PDO::FETCH_ASSOC);
-            }
         }
     } catch (Exception $e) {
         error_log('alojamiento-modular/index.php error: ' . $e->getMessage());
@@ -134,76 +88,13 @@ if (empty($alojamiento) && !empty($slug)) {
     exit;
 }
 
-// ─── SEO — Títulos y meta descriptions con keywords long-tail ────────────────
-if ($alojamiento) {
-    // Tipo de alojamiento para incluir en el título
-    $tipo_seo = $alojamiento['category_name'] ?? $alojamiento['accommodation_type'] ?? 'Alojamiento rural';
-
-    // Construir título optimizado (si no hay meta_title manual en BD)
-    if (!empty($alojamiento['meta_title'])) {
-        $page_title = $alojamiento['meta_title'];
-    } else {
-        $title_parts = [$tipo_seo, $alojamiento['name']];
-        $loc_parts   = array_filter([$alojamiento['municipality'] ?? '', $alojamiento['province'] ?? '']);
-        $loc_str     = implode(', ', $loc_parts);
-        if ($loc_str) $title_parts[] = 'en ' . $loc_str;
-        if (!empty($alojamiento['price_per_night']) && $alojamiento['price_per_night'] > 0) {
-            $title_parts[] = 'desde ' . number_format($alojamiento['price_per_night'], 0, ',', '.') . '€/noche';
-        }
-        $title_parts[] = 'Rutas Rurales';
-        $page_title = implode(' · ', $title_parts);
-        // Limitar a ~60 chars para evitar truncamiento en SERPs
-        if (mb_strlen($page_title) > 65) {
-            $page_title = $tipo_seo . ' ' . $alojamiento['name'];
-            if ($loc_str) $page_title .= ' en ' . $loc_str;
-            $page_title .= ' | Rutas Rurales';
-        }
-    }
-
-    // Construir meta description optimizada (si no hay meta_description manual en BD)
-    if (!empty($alojamiento['meta_description'])) {
-        $page_desc = $alojamiento['meta_description'];
-    } else {
-        // Recopilar características destacadas para la descripción
-        $desc_features = [];
-        if (!empty($alojamiento['capacity']) && $alojamiento['capacity'] > 0) {
-            $desc_features[] = 'capacidad para ' . $alojamiento['capacity'] . ' personas';
-        }
-        if (!empty($alojamiento['wifi']) && $alojamiento['wifi'] == 1)           $desc_features[] = 'WiFi';
-        if (!empty($alojamiento['pet_friendly']) && $alojamiento['pet_friendly'] == 1) $desc_features[] = 'admite mascotas';
-        if (!empty($alojamiento['swimming_pool']) && $alojamiento['swimming_pool'] == 1) $desc_features[] = 'piscina';
-        if (!empty($alojamiento['parking']) && $alojamiento['parking'] == 1)    $desc_features[] = 'parking gratuito';
-        if (!empty($alojamiento['kitchen_available']) && $alojamiento['kitchen_available'] == 1) $desc_features[] = 'cocina equipada';
-
-        $loc_parts = array_filter([$alojamiento['municipality'] ?? '', $alojamiento['province'] ?? '']);
-        $loc_str   = implode(', ', $loc_parts);
-
-        $precio_str = (!empty($alojamiento['price_per_night']) && $alojamiento['price_per_night'] > 0)
-            ? 'Desde ' . number_format($alojamiento['price_per_night'], 0, ',', '.') . '€/noche. '
-            : '';
-
-        // Usar descripción de BD si existe (primeros 100 chars)
-        $desc_base = substr(strip_tags($alojamiento['description'] ?? ''), 0, 100);
-        if ($desc_base) $desc_base = rtrim($desc_base, '.,;:') . '. ';
-
-        $features_str = !empty($desc_features) ? implode(', ', array_slice($desc_features, 0, 3)) . '. ' : '';
-
-        $page_desc = trim(
-            $tipo_seo . ($loc_str ? ' en ' . $loc_str : '') . '. '
-            . ($desc_base ?: '')
-            . $features_str
-            . $precio_str
-            . 'Reserva fácil en Rutas Rurales.'
-        );
-        // Limitar a 160 chars
-        if (mb_strlen($page_desc) > 160) {
-            $page_desc = mb_substr($page_desc, 0, 157) . '...';
-        }
-    }
-} else {
-    $page_title = 'Alojamiento | Rutas Rurales';
-    $page_desc  = 'Descubre este alojamiento en Rutas Rurales';
-}
+// ─── SEO ─────────────────────────────────────────────────────────────────────
+$page_title = $alojamiento
+    ? ($alojamiento['meta_title'] ?: $alojamiento['name'] . ' — ' . ($alojamiento['municipality'] ?? '') . ' | Rutas Rurales')
+    : 'Alojamiento | Rutas Rurales';
+$page_desc = $alojamiento
+    ? ($alojamiento['meta_description'] ?: substr(strip_tags($alojamiento['description'] ?? ''), 0, 160) ?: 'Alojamiento turístico en ' . ($alojamiento['municipality'] ?? ''))
+    : 'Descubre este alojamiento en Rutas Rurales';
 $page_description = $page_desc;
 $canonical = 'https://rutasrurales.io/' . ($lang !== 'es' ? $lang . '/' : '') . 'alojamiento/' . $slug;
 $foto_og   = !empty($fotos[0]) ? $fotos[0] : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
@@ -1811,131 +1702,7 @@ if (file_exists($header_path)) {
         </div>
         <?php endif; ?>
 
-        <!-- ══ SSR NEARBY: Visible al crawler de Google (HTML estático) ══════════
-             Los 4 alojamientos y lugares más cercanos se renderizan en PHP,
-             sin JS, para que Google los indexe y siga los enlaces internos.
-             Las secciones JS de abajo siguen cargando los 8 resultados completos.
-        ════════════════════════════════════════════════════════════════════════ -->
-        <?php if (!empty($ssr_nearby_alojamientos)): ?>
-        <div class="alo-card" id="ssr-nearby-alojamientos">
-            <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🏠 Alojamientos rurales cercanos</h2>
-                <div class="nearby-grid">
-                    <?php foreach ($ssr_nearby_alojamientos as $nr_alo): ?>
-                    <?php
-                        $nr_url   = '/alojamiento/' . $nr_alo['slug'];
-                        $nr_name  = htmlspecialchars($nr_alo['name']);
-                        $nr_munic = htmlspecialchars($nr_alo['municipality'] ?? '');
-                        $nr_price = !empty($nr_alo['price_per_night']) && $nr_alo['price_per_night'] > 0
-                            ? number_format($nr_alo['price_per_night'], 0, ',', '.') . '€/noche'
-                            : '';
-                        $nr_img   = !empty($nr_alo['photo1']) ? htmlspecialchars($nr_alo['photo1']) : '';
-                        if ($nr_img && !preg_match('/^https?:\/\//', $nr_img)) $nr_img = '/' . ltrim($nr_img, '/');
-                        $nr_dist  = isset($nr_alo['dist']) && $nr_alo['dist'] > 0 ? round($nr_alo['dist'], 1) . ' km' : '';
-                    ?>
-                    <a href="<?php echo $nr_url; ?>" class="nearby-card" title="<?php echo $nr_name; ?> en <?php echo $nr_munic; ?>">
-                        <div class="nearby-card-img">
-                            <?php if ($nr_img): ?>
-                            <img src="<?php echo $nr_img; ?>" alt="<?php echo $nr_name; ?>" loading="lazy" width="200" height="120">
-                            <?php else: ?>
-                            <div class="nearby-card-img-placeholder">🏠</div>
-                            <?php endif; ?>
-                            <?php if ($nr_dist): ?><span class="nearby-card-dist"><?php echo $nr_dist; ?></span><?php endif; ?>
-                        </div>
-                        <div class="nearby-card-body">
-                            <div class="nearby-card-name"><?php echo $nr_name; ?></div>
-                            <?php if ($nr_munic): ?><div class="nearby-card-meta">📍 <?php echo $nr_munic; ?></div><?php endif; ?>
-                            <?php if ($nr_price): ?><div class="nearby-card-price"><?php echo $nr_price; ?></div><?php endif; ?>
-                        </div>
-                    </a>
-                    <?php endforeach; ?>
-                </div>
-                <?php if (!empty($alojamiento['province'])): ?>
-                <div style="text-align:center;margin-top:16px;">
-                    <a href="/alojamientos/<?php echo strtolower(htmlspecialchars($alojamiento['province'])); ?>"
-                       style="display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid #2F5233;color:#2F5233;padding:8px 20px;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;">
-                        Ver todos los alojamientos en <?php echo htmlspecialchars($alojamiento['province']); ?> →
-                    </a>
-                </div>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <?php if (!empty($ssr_nearby_lugares)): ?>
-        <div class="alo-card" id="ssr-nearby-lugares">
-            <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🏛️ Lugares de interés cercanos</h2>
-                <div class="nearby-grid">
-                    <?php foreach ($ssr_nearby_lugares as $nr_lug): ?>
-                    <?php
-                        $nl_url   = '/lugar/' . $nr_lug['slug'];
-                        $nl_name  = htmlspecialchars($nr_lug['name']);
-                        $nl_munic = htmlspecialchars($nr_lug['municipality'] ?? '');
-                        $nl_img   = !empty($nr_lug['photo1']) ? htmlspecialchars($nr_lug['photo1']) : '';
-                        if ($nl_img && !preg_match('/^https?:\/\//', $nl_img)) $nl_img = '/' . ltrim($nl_img, '/');
-                        $nl_dist  = isset($nr_lug['dist']) && $nr_lug['dist'] > 0 ? round($nr_lug['dist'], 1) . ' km' : '';
-                    ?>
-                    <a href="<?php echo $nl_url; ?>" class="nearby-card" title="<?php echo $nl_name; ?>">
-                        <div class="nearby-card-img">
-                            <?php if ($nl_img): ?>
-                            <img src="<?php echo $nl_img; ?>" alt="<?php echo $nl_name; ?>" loading="lazy" width="200" height="120">
-                            <?php else: ?>
-                            <div class="nearby-card-img-placeholder">🏛️</div>
-                            <?php endif; ?>
-                            <?php if ($nl_dist): ?><span class="nearby-card-dist"><?php echo $nl_dist; ?></span><?php endif; ?>
-                        </div>
-                        <div class="nearby-card-body">
-                            <div class="nearby-card-name"><?php echo $nl_name; ?></div>
-                            <?php if ($nl_munic): ?><div class="nearby-card-meta">📍 <?php echo $nl_munic; ?></div><?php endif; ?>
-                        </div>
-                    </a>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- ══ INTERNAL LINKING: Categorías y páginas relacionadas (SSR) ════════ -->
-        <?php
-        $prov_slug   = !empty($alojamiento['province']) ? strtolower(str_replace(' ', '-', $alojamiento['province'])) : '';
-        $tipo_slug   = '';
-        $cat_lower   = strtolower($alojamiento['category_name'] ?? $alojamiento['accommodation_type'] ?? '');
-        if (str_contains($cat_lower, 'rural') || str_contains($cat_lower, 'casa'))   $tipo_slug = 'casas-rurales';
-        elseif (str_contains($cat_lower, 'apartamento'))                              $tipo_slug = 'apartamentos';
-        elseif (str_contains($cat_lower, 'hotel'))                                   $tipo_slug = 'hoteles-rurales';
-        ?>
-        <?php if ($prov_slug): ?>
-        <div class="alo-card" id="internal-links-section">
-            <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🌿 Más alojamientos en <?php echo htmlspecialchars($alojamiento['province']); ?></h2>
-                <div style="display:flex;flex-wrap:wrap;gap:10px;">
-                    <a href="/alojamientos/<?php echo $prov_slug; ?>"
-                       style="display:inline-flex;align-items:center;gap:6px;background:#e8f5e9;border:1px solid #c8e6c9;color:#2F5233;padding:8px 16px;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;">
-                        🏠 Alojamientos en <?php echo htmlspecialchars($alojamiento['province']); ?>
-                    </a>
-                    <?php if ($tipo_slug && $prov_slug): ?>
-                    <a href="/alojamientos/<?php echo $tipo_slug . '-' . $prov_slug; ?>"
-                       style="display:inline-flex;align-items:center;gap:6px;background:#e8f5e9;border:1px solid #c8e6c9;color:#2F5233;padding:8px 16px;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;">
-                        🏡 <?php echo htmlspecialchars(ucfirst(str_replace('-', ' ', $tipo_slug))); ?> en <?php echo htmlspecialchars($alojamiento['province']); ?>
-                    </a>
-                    <?php endif; ?>
-                    <?php if (!empty($alojamiento['pet_friendly']) && $alojamiento['pet_friendly'] == 1): ?>
-                    <a href="/alojamientos/mascotas-<?php echo $prov_slug; ?>"
-                       style="display:inline-flex;align-items:center;gap:6px;background:#e8f5e9;border:1px solid #c8e6c9;color:#2F5233;padding:8px 16px;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;">
-                        🐾 Alojamientos para mascotas en <?php echo htmlspecialchars($alojamiento['province']); ?>
-                    </a>
-                    <?php endif; ?>
-                    <a href="/alojamientos-turisticos"
-                       style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #ccc;color:#666;padding:8px 16px;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;">
-                        🔍 Ver todos los alojamientos
-                    </a>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- CONTENIDO CERCANO (dinámico JS — carga 8 resultados después) -->
+        <!-- CONTENIDO CERCANO -->
         <div id="nearby-alojamientos-section" class="alo-card" style="display:none;">
             <div class="alo-card-body">
                 <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🏠 Alojamientos cercanos</h2>
