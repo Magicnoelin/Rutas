@@ -130,7 +130,7 @@ function renderAlojamientoSchema(
     $checkinTime  = 'T' . substr($ci, 0, 5);
     $checkoutTime = 'T' . substr($co, 0, 5);
 
-    // ── 5. LodgingBusiness ────────────────────────────────────────────────────
+    // ── 5. LodgingBusiness / VacationRental ───────────────────────────────────
     $descRaw   = strip_tags($alojamiento['description'] ?? '');
     $descShort = mb_substr($descRaw, 0, 500);
 
@@ -145,16 +145,22 @@ function renderAlojamientoSchema(
     // Eliminar claves vacías del address
     $address = array_filter($address, fn($v) => $v !== '');
 
+    // Imágenes consolidadas (mínimo necesario: todas las disponibles)
+    $allImages = !empty($imageObjects) ? $imageObjects : array_map(
+        fn($u) => str_starts_with($u, 'http') ? $u : $baseUrl . $u,
+        $fotos
+    );
+
     $lodging = [
         '@type'         => $schemaType,
         '@id'           => $canonical . '#lodging',
+        // identifier: REQUERIDO por Google para VacationRental
+        // Debe ser un string simple (URL canónica) — PropertyValue no es válido aquí
+        'identifier'    => $canonical,
         'name'          => $alojamiento['name'],
         'description'   => $descShort,
         'url'           => $canonical,
-        'image'         => !empty($imageObjects) ? $imageObjects : array_map(
-            fn($u) => str_starts_with($u, 'http') ? $u : $baseUrl . $u,
-            $fotos
-        ),
+        'image'         => $allImages,
         'address'       => $address,
         'checkinTime'   => $checkinTime,
         'checkoutTime'  => $checkoutTime,
@@ -182,10 +188,11 @@ function renderAlojamientoSchema(
         ];
     }
 
-    // Capacidad
+    // Capacidad — QuantitativeValue requiere 'value' (no solo maxValue)
     if (!empty($alojamiento['capacity']) && (int)$alojamiento['capacity'] > 0) {
         $lodging['occupancy'] = [
             '@type'    => 'QuantitativeValue',
+            'value'    => (int)$alojamiento['capacity'],
             'maxValue' => (int)$alojamiento['capacity'],
             'unitCode' => 'C62', // personas
         ];
@@ -208,6 +215,35 @@ function renderAlojamientoSchema(
         $lodging['geo']    = ['@type' => 'GeoCoordinates', 'latitude' => $lat, 'longitude' => $lng];
         $lodging['hasMap'] = 'https://www.google.com/maps?q=' . $lat . ',' . $lng;
     }
+
+    // containsPlace: REQUERIDO por Google para VacationRental
+    // Describe las unidades de alojamiento que contiene la propiedad
+    // (habitaciones, zonas, etc.)
+    $containsPlaceObj = [
+        '@type' => 'Accommodation',
+        'name'  => 'Alojamiento completo — ' . $alojamiento['name'],
+    ];
+    // numberOfBedrooms (correcto para Accommodation, Google lo requiere)
+    if (!empty($alojamiento['bedrooms']) && (int)$alojamiento['bedrooms'] > 0) {
+        $containsPlaceObj['numberOfBedrooms']    = (int)$alojamiento['bedrooms'];
+        $containsPlaceObj['numberOfRooms']       = (int)$alojamiento['bedrooms']; // alias
+    }
+    // occupancy: QuantitativeValue REQUIERE 'value' (además de maxValue)
+    if (!empty($alojamiento['capacity']) && (int)$alojamiento['capacity'] > 0) {
+        $containsPlaceObj['occupancy'] = [
+            '@type'    => 'QuantitativeValue',
+            'value'    => (int)$alojamiento['capacity'],
+            'maxValue' => (int)$alojamiento['capacity'],
+            'unitCode' => 'C62',
+        ];
+    }
+    if (!empty($alojamiento['bathrooms']) && (int)$alojamiento['bathrooms'] > 0) {
+        $containsPlaceObj['numberOfBathroomsTotal'] = (int)$alojamiento['bathrooms'];
+    }
+    if (!empty($amenityFeatures)) {
+        $containsPlaceObj['amenityFeature'] = $amenityFeatures;
+    }
+    $lodging['containsPlace'] = $containsPlaceObj;
 
     // Amenidades
     if (!empty($amenityFeatures)) {

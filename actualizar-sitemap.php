@@ -22,54 +22,98 @@ try {
 // 2. DEFINICIÓN DE SECCIONES Y TABLAS
 $secciones = [
     'estatico'     => ['tipo' => 'estatico'],
-    'alojamientos' => ['tabla' => 'accommodations',    'prefix' => '/alojamiento/'],
-    'lugares'      => ['tabla' => 'places_of_interest', 'prefix' => '/lugar/'],
-    'actividades'  => ['tabla' => 'tourist_activities', 'prefix' => '/actividad/'],
-    'eventos'      => ['tabla' => 'cultural_events',    'prefix' => '/evento/'],
-    'rutas'        => ['tabla' => 'routes',             'prefix' => '/rutas/']
+    'alojamientos' => ['tabla' => 'accommodations',    'prefix' => '/alojamiento/', 'images' => true],
+    'lugares'      => ['tabla' => 'places_of_interest', 'prefix' => '/lugar/',       'images' => true],
+    'actividades'  => ['tabla' => 'tourist_activities', 'prefix' => '/actividad/',   'images' => false],
+    'eventos'      => ['tabla' => 'cultural_events',    'prefix' => '/evento/',      'images' => false],
+    'rutas'        => ['tabla' => 'routes',             'prefix' => '/rutas/',       'images' => false],
 ];
 
 echo "<h2>🔄 Iniciando actualización de Sitemaps...</h2>";
 
 $archivos_generados = [];
 
+// ── Helper: convierte URL relativa de foto a URL absoluta ─────────────────────
+function absolutePhotoUrl(string $url, string $baseUrl): string {
+    $url = trim($url);
+    if (!$url) return '';
+    if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) return $url;
+    return $baseUrl . '/' . ltrim($url, '/');
+}
+
 // 3. GENERACIÓN DE ARCHIVOS INDIVIDUALES
 foreach ($secciones as $nombre => $conf) {
-    $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-    $contador = 0; 
+    // Namespaces según sección
+    $useImages  = !empty($conf['images']);
+    $useHreflang = ($nombre === 'alojamientos'); // hreflang solo para alojamientos premium
+
+    // Construir namespaces del <urlset> de forma limpia
+    $nsBase  = 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"';
+    $nsXhtml = 'xmlns:xhtml="http://www.w3.org/1999/xhtml"';
+    $nsImage = 'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
+
+    $nsList  = [$nsBase];
+    if ($useHreflang) $nsList[] = $nsXhtml;
+    if ($useImages)   $nsList[] = $nsImage;
+    $xmlns = implode("\n      ", $nsList);
+
+    $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    $xml .= "<!-- sitemap-$nombre.xml — generado: " . date('Y-m-d H:i:s') . " -->\n";
+    $xml .= "<urlset $xmlns>\n";
+    $contador = 0;
 
     if ($nombre == 'estatico') {
         // Páginas fijas e idiomas
         $paginas = [
-            '/', 
-            '/alojamientos-turisticos.html', 
-            '/eventos-culturales.html', 
-            '/rutas-turisticas.html',
-            '/en/index.html',
-            '/fr/index.html',
-            '/zh/index.html',
-            '/de/index.html'
+            ['url' => '/',                            'priority' => '1.0', 'freq' => 'daily'],
+            ['url' => '/alojamientos-turisticos.html','priority' => '0.9', 'freq' => 'daily'],
+            ['url' => '/eventos-culturales.html',     'priority' => '0.9', 'freq' => 'daily'],
+            ['url' => '/rutas-turisticas.html',       'priority' => '0.9', 'freq' => 'weekly'],
+            ['url' => '/en/index.html',               'priority' => '0.7', 'freq' => 'weekly'],
+            ['url' => '/fr/index.html',               'priority' => '0.7', 'freq' => 'weekly'],
+            ['url' => '/zh/index.html',               'priority' => '0.7', 'freq' => 'weekly'],
+            ['url' => '/de/index.html',               'priority' => '0.7', 'freq' => 'weekly'],
         ];
         foreach ($paginas as $p) {
-            $xml .= "  <url><loc>$baseUrl$p</loc><lastmod>".date('Y-m-d')."</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>\n";
-            $contador++; 
+            $xml .= "  <url>"
+                . "<loc>$baseUrl{$p['url']}</loc>"
+                . "<lastmod>" . date('Y-m-d') . "</lastmod>"
+                . "<priority>{$p['priority']}</priority>"
+                . "<changefreq>{$p['freq']}</changefreq>"
+                . "</url>\n";
+            $contador++;
         }
     } else {
         // Consulta a la base de datos
         try {
-            // Rutas temáticas: usan status/is_public en lugar de is_active
             if ($nombre == 'rutas') {
-                $sql = "SELECT slug, updated_at FROM `{$conf['tabla']}`
+                // Rutas temáticas: usan status/is_public en lugar de is_active
+                $sql = "SELECT slug, updated_at, '' AS photo1, '' AS name FROM `{$conf['tabla']}`
                         WHERE status = 'published'
                           AND is_public = 1
-                          AND slug IS NOT NULL
-                          AND slug != ''";
+                          AND slug IS NOT NULL AND slug != ''";
+            } elseif ($nombre == 'alojamientos') {
+                // Alojamientos: incluir fotos (photo1…photo5) y nombre para image:title
+                // is_premium para los hreflang multiidioma
+                $sql = "SELECT slug, updated_at, is_premium,
+                               name, municipality, province,
+                               photo1, photo2, photo3, photo4, photo5
+                        FROM `{$conf['tabla']}`
+                        WHERE is_active = 1 AND slug IS NOT NULL AND slug != ''
+                        ORDER BY updated_at DESC";
+            } elseif ($nombre == 'lugares') {
+                // Lugares de interés: incluir foto principal
+                $sql = "SELECT slug, updated_at,
+                               name, municipality,
+                               photo1, '' AS photo2, '' AS photo3, '' AS photo4, '' AS photo5
+                        FROM `{$conf['tabla']}`
+                        WHERE is_active = 1 AND slug IS NOT NULL AND slug != ''
+                        ORDER BY updated_at DESC";
             } else {
-                // Consulta base para el resto de secciones
-                $sql = "SELECT slug, updated_at FROM `{$conf['tabla']}` WHERE is_active = 1 AND slug IS NOT NULL AND slug != ''";
+                // Resto de secciones (actividades, eventos)
+                $sql = "SELECT slug, updated_at FROM `{$conf['tabla']}`
+                        WHERE is_active = 1 AND slug IS NOT NULL AND slug != ''";
 
-                // Filtro de fechas para eventos (solo eventos futuros/actuales)
                 if ($nombre == 'eventos') {
                     $sql .= " AND (
                         (end_date IS NULL AND start_date >= CURDATE()) OR
@@ -80,29 +124,76 @@ foreach ($secciones as $nombre => $conf) {
 
             $stmt = $pdo->query($sql);
 
-            // Prioridad más alta para rutas (contenido editorial destacado)
-            $priority = ($nombre == 'rutas') ? '0.9' : '0.8';
+            // Prioridad según sección
+            $priorityMap = [
+                'alojamientos' => '0.9',  // Alta — contenido comercial clave
+                'lugares'      => '0.8',
+                'actividades'  => '0.7',
+                'eventos'      => '0.8',
+                'rutas'        => '0.9',
+            ];
+            $priority = $priorityMap[$nombre] ?? '0.8';
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $contador++;
-                $lastmod = !empty($row['updated_at']) ? date('Y-m-d', strtotime($row['updated_at'])) : date('Y-m-d');
+                $lastmod  = !empty($row['updated_at']) ? date('Y-m-d', strtotime($row['updated_at'])) : date('Y-m-d');
+                $pageUrl  = htmlspecialchars($baseUrl . $conf['prefix'] . $row['slug'], ENT_XML1, 'UTF-8');
+                $nameEsc  = htmlspecialchars($row['name'] ?? '', ENT_XML1, 'UTF-8');
+                $municEsc = htmlspecialchars(($row['municipality'] ?? '') ?: ($row['province'] ?? ''), ENT_XML1, 'UTF-8');
+
                 $xml .= "  <url>\n";
-                $xml .= "    <loc>" . htmlspecialchars($baseUrl . $conf['prefix'] . $row['slug']) . "</loc>\n";
+                $xml .= "    <loc>$pageUrl</loc>\n";
                 $xml .= "    <lastmod>$lastmod</lastmod>\n";
                 $xml .= "    <changefreq>weekly</changefreq>\n";
                 $xml .= "    <priority>$priority</priority>\n";
+
+                // ── hreflang SOLO alojamientos premium ────────────────────────
+                if ($nombre === 'alojamientos' && !empty($row['is_premium'])) {
+                    $idiomas = ['es', 'en', 'fr', 'de', 'zh'];
+                    foreach ($idiomas as $idioma) {
+                        $href = htmlspecialchars(
+                            $baseUrl . ($idioma === 'es' ? '' : "/$idioma") . $conf['prefix'] . $row['slug'],
+                            ENT_XML1, 'UTF-8'
+                        );
+                        $hl = $idioma === 'zh' ? 'zh-Hans' : $idioma;
+                        $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"$hl\" href=\"$href\"/>\n";
+                    }
+                    $defHref = htmlspecialchars($baseUrl . $conf['prefix'] . $row['slug'], ENT_XML1, 'UTF-8');
+                    $xml .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"$defHref\"/>\n";
+                }
+
+                // ── image:image tags ──────────────────────────────────────────
+                if ($useImages) {
+                    $photoFields = ['photo1','photo2','photo3','photo4','photo5'];
+                    $imgCount    = 0;
+                    foreach ($photoFields as $pf) {
+                        if (empty($row[$pf])) continue;
+                        $imgUrl = absolutePhotoUrl($row[$pf], $baseUrl);
+                        if (!$imgUrl) continue;
+                        $imgUrl  = htmlspecialchars($imgUrl, ENT_XML1, 'UTF-8');
+                        $caption = $nameEsc . ($municEsc ? " — $municEsc" : '');
+                        $xml .= "    <image:image>\n";
+                        $xml .= "      <image:loc>$imgUrl</image:loc>\n";
+                        if ($caption) $xml .= "      <image:caption>$caption</image:caption>\n";
+                        if ($nameEsc) $xml .= "      <image:title>$nameEsc</image:title>\n";
+                        $xml .= "    </image:image>\n";
+                        $imgCount++;
+                        if ($imgCount >= 5) break; // Máximo 5 imágenes por URL en sitemap
+                    }
+                }
+
                 $xml .= "  </url>\n";
             }
         } catch (Exception $e) {
-            echo "⚠️ Error en tabla <b>{$conf['tabla']}</b>: " . $e->getMessage() . "<br>";
+            echo "⚠️ Error en tabla <b>" . htmlspecialchars($conf['tabla']) . "</b>: " . $e->getMessage() . "<br>";
             continue;
         }
     }
-    
+
     $xml .= '</urlset>';
     $filename = "sitemap-$nombre.xml";
-    
-    if (file_put_contents($filename, $xml)) {
+
+    if (file_put_contents($filename, $xml) !== false) {
         $archivos_generados[] = $filename;
         echo "✅ Archivo <b>$filename</b> actualizado con <b>$contador</b> URLs.<br>";
     } else {
