@@ -45,8 +45,7 @@ function renderHubAlojamientos(array $ctx): void {
             <ul class="hub-chip-grid" role="list" aria-label="Filtros de alojamientos">
                 <?php foreach (HUB_FILTROS_ALO as $filtroKey => $filtroData):
                     // Slug: solo el filtro (sin provincia) → landing filtra por toda España
-                    // Para SEO necesitamos también las provincias principales
-                    $slug = $filtroKey . '-soria'; // Soria como provincia representativa
+                    $slug = $filtroKey;
                     $url  = hubUrl($slug, $lang, 'alojamientos');
                     $label = $filtroData[$lang] ?? $filtroData['es'];
                 ?>
