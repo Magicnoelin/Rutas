@@ -59,11 +59,13 @@ if (!empty($slug)) {
                 $fotos[] = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=800&fit=crop&auto=format';
             }
 
-            // ─── SSR NEARBY: Alojamientos y Lugares cercanos visibles al crawler ───
+            // ─── SSR NEARBY: Alojamientos, Lugares, Actividades y Eventos cercanos visibles al crawler ───
             // Query ultraligera (LIMIT 4, usa la misma conexión PDO ya abierta)
             // El resultado se renderiza en HTML estático → Google lo indexa sin JS
             $ssr_nearby_alojamientos = [];
             $ssr_nearby_lugares = [];
+            $ssr_nearby_actividades = [];
+            $ssr_nearby_eventos = [];
             $ssr_prov = $alojamiento['province'] ?? '';
             $ssr_lat  = !empty($alojamiento['latitude'])  ? (float)$alojamiento['latitude']  : null;
             $ssr_lng  = !empty($alojamiento['longitude']) ? (float)$alojamiento['longitude'] : null;
@@ -94,6 +96,34 @@ if (!empty($slug)) {
                 ");
                 $ss2->execute([$ssr_lat, $ssr_lng, $ssr_lat]);
                 $ssr_nearby_lugares = $ss2->fetchAll(PDO::FETCH_ASSOC);
+
+                // Actividades turísticas más cercanas
+                $ss3 = $pdo->prepare("
+                    SELECT name, slug, municipality, photo1,
+                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
+                    FROM tourist_activities
+                    WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
+                    HAVING dist < 60
+                    ORDER BY dist ASC
+                    LIMIT 4
+                ");
+                $ss3->execute([$ssr_lat, $ssr_lng, $ssr_lat]);
+                $ssr_nearby_actividades = $ss3->fetchAll(PDO::FETCH_ASSOC);
+
+                // Eventos culturales cercanos (solo futuros o en curso)
+                $ss4 = $pdo->prepare("
+                    SELECT name, slug, municipality, photo1, poster_image, start_date, is_free, ticket_price,
+                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
+                    FROM cultural_events
+                    WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
+                        AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()
+                    HAVING dist < 60
+                    ORDER BY dist ASC
+                    LIMIT 4
+                ");
+                $ss4->execute([$ssr_lat, $ssr_lng, $ssr_lat]);
+                $ssr_nearby_eventos = $ss4->fetchAll(PDO::FETCH_ASSOC);
+
             } elseif ($ssr_prov) {
                 // Fallback por provincia si no hay coordenadas
                 $ss = $pdo->prepare("SELECT name, slug, municipality, price_per_night, photo1, 0 AS dist FROM accommodations WHERE is_active = 1 AND province = ? AND slug != ? ORDER BY RAND() LIMIT 4");
@@ -103,6 +133,14 @@ if (!empty($slug)) {
                 $ss2 = $pdo->prepare("SELECT name, slug, municipality, photo1, 0 AS dist FROM places_of_interest WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
                 $ss2->execute([$ssr_prov]);
                 $ssr_nearby_lugares = $ss2->fetchAll(PDO::FETCH_ASSOC);
+
+                $ss3 = $pdo->prepare("SELECT name, slug, municipality, photo1, 0 AS dist FROM tourist_activities WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
+                $ss3->execute([$ssr_prov]);
+                $ssr_nearby_actividades = $ss3->fetchAll(PDO::FETCH_ASSOC);
+
+                $ss4 = $pdo->prepare("SELECT name, slug, municipality, photo1, poster_image, start_date, is_free, ticket_price, 0 AS dist FROM cultural_events WHERE is_active = 1 AND province = ? AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE() ORDER BY start_date ASC LIMIT 4");
+                $ss4->execute([$ssr_prov]);
+                $ssr_nearby_eventos = $ss4->fetchAll(PDO::FETCH_ASSOC);
             }
         }
     } catch (Exception $e) {
@@ -1892,6 +1930,107 @@ if (file_exists($header_path)) {
                     </a>
                     <?php endforeach; ?>
                 </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- ══ SSR: Actividades turísticas cercanas (visible al crawler de Google) ══ -->
+        <?php if (!empty($ssr_nearby_actividades)): ?>
+        <div class="alo-card" id="ssr-nearby-actividades">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🎯 Actividades turísticas cercanas</h2>
+                <div class="nearby-grid">
+                    <?php foreach ($ssr_nearby_actividades as $nr_act): ?>
+                    <?php
+                        $na_url   = '/actividad/' . $nr_act['slug'];
+                        $na_name  = htmlspecialchars($nr_act['name']);
+                        $na_munic = htmlspecialchars($nr_act['municipality'] ?? '');
+                        $na_img   = !empty($nr_act['photo1']) ? htmlspecialchars($nr_act['photo1']) : '';
+                        if ($na_img && !preg_match('/^https?:\/\//', $na_img)) $na_img = '/' . ltrim($na_img, '/');
+                        $na_dist  = isset($nr_act['dist']) && $nr_act['dist'] > 0 ? round($nr_act['dist'], 1) . ' km' : '';
+                    ?>
+                    <a href="<?php echo $na_url; ?>" class="nearby-card" title="<?php echo $na_name; ?>">
+                        <div class="nearby-card-img">
+                            <?php if ($na_img): ?>
+                            <img src="<?php echo $na_img; ?>" alt="<?php echo $na_name; ?>" loading="lazy" width="200" height="120">
+                            <?php else: ?>
+                            <div class="nearby-card-img-placeholder">🎯</div>
+                            <?php endif; ?>
+                            <?php if ($na_dist): ?><span class="nearby-card-dist"><?php echo $na_dist; ?></span><?php endif; ?>
+                        </div>
+                        <div class="nearby-card-body">
+                            <div class="nearby-card-name"><?php echo $na_name; ?></div>
+                            <?php if ($na_munic): ?><div class="nearby-card-meta">📍 <?php echo $na_munic; ?></div><?php endif; ?>
+                        </div>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- ══ SSR: Eventos culturales cercanos (visible al crawler de Google) ══ -->
+        <?php if (!empty($ssr_nearby_eventos)): ?>
+        <div class="alo-card" id="ssr-nearby-eventos">
+            <div class="alo-card-body">
+                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🎭 Eventos culturales cercanos</h2>
+                <div class="nearby-grid">
+                    <?php foreach ($ssr_nearby_eventos as $nr_ev): ?>
+                    <?php
+                        $ne_url   = '/evento/' . $nr_ev['slug'];
+                        $ne_name  = htmlspecialchars($nr_ev['name']);
+                        $ne_munic = htmlspecialchars($nr_ev['municipality'] ?? '');
+                        // Imagen: preferir poster_image, fallback a photo1
+                        $ne_img   = !empty($nr_ev['poster_image']) ? $nr_ev['poster_image'] : ($nr_ev['photo1'] ?? '');
+                        if ($ne_img && !preg_match('/^https?:\/\//', $ne_img)) $ne_img = '/' . ltrim($ne_img, '/');
+                        $ne_img   = htmlspecialchars($ne_img);
+                        $ne_dist  = isset($nr_ev['dist']) && $nr_ev['dist'] > 0 ? round($nr_ev['dist'], 1) . ' km' : '';
+                        // Fecha formateada
+                        $ne_fecha = '';
+                        if (!empty($nr_ev['start_date'])) {
+                            try {
+                                $dt = new DateTime($nr_ev['start_date']);
+                                $ne_fecha = $dt->format('d/m/Y');
+                            } catch (Exception $e) {}
+                        }
+                        // Precio
+                        $ne_precio = '';
+                        if (!empty($nr_ev['is_free']) && $nr_ev['is_free'] == 1) {
+                            $ne_precio = 'gratis';
+                        } elseif (!empty($nr_ev['ticket_price']) && $nr_ev['ticket_price'] > 0) {
+                            $ne_precio = number_format($nr_ev['ticket_price'], 0, ',', '.') . '€';
+                        }
+                    ?>
+                    <a href="<?php echo $ne_url; ?>" class="nearby-card" title="<?php echo $ne_name; ?>">
+                        <div class="nearby-card-img">
+                            <?php if ($ne_img): ?>
+                            <img src="<?php echo $ne_img; ?>" alt="<?php echo $ne_name; ?>" loading="lazy" width="200" height="120">
+                            <?php else: ?>
+                            <div class="nearby-card-img-placeholder">🎭</div>
+                            <?php endif; ?>
+                            <?php if ($ne_dist): ?><span class="nearby-card-dist"><?php echo $ne_dist; ?></span><?php endif; ?>
+                        </div>
+                        <div class="nearby-card-body">
+                            <div class="nearby-card-name"><?php echo $ne_name; ?></div>
+                            <?php if ($ne_munic): ?><div class="nearby-card-meta">📍 <?php echo $ne_munic; ?></div><?php endif; ?>
+                            <?php if ($ne_fecha): ?><div class="nearby-card-meta">📅 <?php echo $ne_fecha; ?></div><?php endif; ?>
+                            <?php if ($ne_precio === 'gratis'): ?>
+                            <span class="nearby-card-free">Gratis</span>
+                            <?php elseif ($ne_precio): ?>
+                            <div class="nearby-card-price"><?php echo htmlspecialchars($ne_precio); ?></div>
+                            <?php endif; ?>
+                        </div>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <?php if (!empty($alojamiento['province'])): ?>
+                <div style="text-align:center;margin-top:16px;">
+                    <a href="/eventos-culturales?provincia=<?php echo urlencode($alojamiento['province']); ?>"
+                       style="display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid #2F5233;color:#2F5233;padding:8px 20px;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;">
+                        Ver todos los eventos en <?php echo htmlspecialchars($alojamiento['province']); ?> →
+                    </a>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>
