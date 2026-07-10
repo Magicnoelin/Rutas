@@ -1967,7 +1967,7 @@
                     const premiumBadge = isPremium ? '<span style="background: linear-gradient(135deg,#f59e0b,#d97706); color: white; padding: 3px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: 700; margin-right: 5px;"><i class="fas fa-crown"></i> Premium</span>' : '';
                     
                     // Generar enlace de checking si es premium y tiene token
-                    const checkingLink = (isPremium && tokenPublico) ? `<a href="/checking_accommodations/checkin.php?token=${tokenPublico}" target="_blank" style="flex:1;text-align:center;background:#10b981;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-clipboard-check"></i> Check-in</a>` : '';
+                    const checkingLink = (isPremium && tokenPublico) ? `<a href="/checking_accommodations/panel.php" target="_blank" style="flex:1;text-align:center;background:#10b981;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-clipboard-check"></i> Checking</a>` : '';
 
                     return `
                     <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
