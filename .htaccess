@@ -3,6 +3,12 @@
 # ============================================================
 
 # ── CACHÉ PARA FUENTES (woff2) ────────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Excluir bots de antivirus del límite de peticiones (Rate Limiting / 429)
+    RewriteCond %{HTTP_USER_AGENT} (VirusTotal|Kaspersky|BitDefender|Sophos|ESET|Fortinet|G-Data) [NC]
+    RewriteRule .* - [E=no-abort:1,E=nokeepalive:1,L]
+</IfModule>
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresByType font/woff2 "access plus 1 year"
@@ -39,6 +45,12 @@
 # Ahora las reglas de reescritura
 RewriteEngine On
 RewriteBase /
+
+# Forzar eliminación del evento conflictivo (Evitar Phishing)
+RewriteRule ^/?evento/viernes-flamencos-zamora-2026-teatro-ramos-carrion/?$ - [G,L]
+
+
+
 
 # ── DirectoryIndex global ─────────────────────────────────────────────────────
 DirectoryIndex index.php index.html

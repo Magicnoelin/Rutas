@@ -86,7 +86,7 @@ function renderAutoridadSeo(array $ctx): void {
                             <span class="hub-quick-link__desc">
                                 <?php if ($lang === 'es'): ?>Festivales, tradiciones y agenda cultural
                                 <?php elseif ($lang === 'en'): ?>Festivals, traditions and cultural calendar
-                                <?php elseif ($lang === 'fr'): ?>Festivals, traditions et agenda culturel
+                                <?php elseif ($lang === 'fr'): ?>Festivals, traditions et événements culturels
                                 <?php elseif ($lang === 'de'): ?>Festivals, Traditionen und Kulturkalender
                                 <?php else: ?>节日、传统和文化日历<?php endif; ?>
                             </span>
