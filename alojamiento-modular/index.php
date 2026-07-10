@@ -246,6 +246,20 @@ $page_description = $page_desc;
 $canonical = 'https://rutasrurales.io/' . ($lang !== 'es' ? $lang . '/' : '') . 'alojamiento/' . $slug;
 $foto_og   = !empty($fotos[0]) ? $fotos[0] : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
+// ─── TEXTO ENRIQUECIDO PARA EL BOTÓN DE COMPARTIR EN X/TWITTER ───────────────
+$twitter_text = '';
+if ($alojamiento) {
+    $twitter_text = $alojamiento['name'];
+    $loc_tw = array_filter([$alojamiento['municipality'] ?? '', $alojamiento['province'] ?? '']);
+    if (!empty($loc_tw)) $twitter_text .= ' en ' . implode(', ', $loc_tw);
+    if (!empty($alojamiento['price_per_night']) && $alojamiento['price_per_night'] > 0) {
+        $twitter_text .= '. Desde ' . number_format($alojamiento['price_per_night'], 0, ',', '.') . '€/noche';
+    }
+    $twitter_text .= '. ¡Reserva tu escapada rural! 🌿';
+} else {
+    $twitter_text = '¡Descubre este alojamiento rural en Rutas Rurales! 🌿';
+}
+
 // ─── TRADUCCIONES DE UI ───────────────────────────────────────────────────────
 $ui = [
     'es' => [
@@ -2595,12 +2609,13 @@ if (file_exists($header_path)) {
 
     // ── Compartir ─────────────────────────────────────────────────────────────
     window.shareAlo = function(platform) {
-        var url   = window.location.href;
-        var title = alo ? alo.name : document.title;
+        var url          = window.location.href;
+        var title        = alo ? alo.name : document.title;
+        var twitterText  = <?php echo json_encode($twitter_text, JSON_UNESCAPED_UNICODE); ?>;
         var links = {
             whatsapp: 'https://wa.me/?text=' + encodeURIComponent(title + ' ' + url),
             facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url),
-            twitter:  'https://twitter.com/intent/tweet?text=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(url),
+            twitter:  'https://x.com/intent/tweet?text=' + encodeURIComponent(twitterText) + '&url=' + encodeURIComponent(url) + '&hashtags=turismorural,escapadarural,rutasrurales',
         };
         if (platform === 'copy') {
             if (navigator.clipboard) {
