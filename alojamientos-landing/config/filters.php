@@ -197,19 +197,9 @@ const LANDING_FILTROS = [
         'icon'   => '🔥', 'order' => 2,
     ],
     'con-piscina' => [
-        // Prioridad: columna booleana swimming_pool (campo dedicado en BD).
-        // Como fallback, amenities/description — excluyendo "piscina natural" /
-        // "piscinas naturales" (pozas de río, no piscinas propias del alojamiento).
-        'sql'    => "(
-            a.swimming_pool = 1
-            OR (a.amenities LIKE '%piscina%' AND a.amenities NOT LIKE '%piscina natural%')
-            OR a.amenities LIKE '%pool%'
-            OR (
-                a.description LIKE '%piscina%'
-                AND a.description NOT LIKE '%piscina natural%'
-                AND a.description NOT LIKE '%piscinas naturales%'
-            )
-        )",
+        // Excluimos "piscina natural"/"piscinas naturales" de description: son pozas de río,
+        // no piscinas propias del alojamiento. amenities no existe en la BD → solo description.
+        'sql'    => "(a.description LIKE '%piscina%' AND a.description NOT LIKE '%piscina natural%' AND a.description NOT LIKE '%piscinas naturales%')",
         'labels' => ['es'=>'con piscina','en'=>'with pool','fr'=>'avec piscine','de'=>'mit Pool','zh'=>'带游泳池'],
         'icon'   => '🏊', 'order' => 2,
     ],

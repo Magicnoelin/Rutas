@@ -86,11 +86,9 @@ function renderLandingListing(array $ctx): void
             if (!empty($alo['pet_friendly']))                                     $badges[] = $t['badge_pet']     ?? '🐾 Mascotas';
             if (!empty($alo['suitable_for_children']))                            $badges[] = $t['badge_kids']    ?? '👶 Niños';
             if (str_contains($amenStr, 'wifi') || str_contains($amenStr, 'wi-fi')) $badges[] = $t['badge_wifi']    ?? '📶 WiFi';
-            // Piscina: campo booleano dedicado (swimming_pool) o en amenities.
-            // Excluimos "piscina natural" / "piscinas naturales" de amenities/descripción:
-            // son pozas de río, no piscinas propias del alojamiento.
-            $hasPiscina = !empty($alo['swimming_pool'])
-                || (str_contains($amenStr, 'piscina')
+            // Piscina: detectada en amenities, excluyendo "piscina natural"/"piscinas naturales"
+            // (pozas de río, no piscinas propias del alojamiento).
+            $hasPiscina = (str_contains($amenStr, 'piscina')
                     && !str_contains($amenStr, 'piscina natural')
                     && !str_contains($amenStr, 'piscinas naturales'))
                 || str_contains($amenStr, 'pool');
