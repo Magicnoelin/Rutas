@@ -5,6 +5,11 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$id]);
 $u = $stmt->fetch();
 if (!$u) die("Usuario no encontrado");
+
+// Procesamos el tipo de usuario por si viene separado por comas (ej: "turista,alojamiento")
+$current_types = isset($u['user_type']) ? explode(',', $u['user_type']) : ['turista'];
+// Limpiamos espacios por si acaso
+$current_types = array_map('trim', $current_types);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -52,7 +57,7 @@ if (!$u) die("Usuario no encontrado");
                     </div>
                     <div class="col-md-4">
                         <label class="fw-bold">Email</label>
-                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($u['email'] ?? '') ?>">
+                        <input type="text" name="email" class="form-control" value="<?= htmlspecialchars($u['email'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="fw-bold text-danger">Password Hash (Solo lectura)</label>
@@ -68,7 +73,7 @@ if (!$u) die("Usuario no encontrado");
                         <input type="text" name="last_name" class="form-control" value="<?= htmlspecialchars($u['last_name'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
-                        </div>
+                    </div>
 
                     <div class="col-md-6">
                         <label class="fw-bold"><i class="bi bi-telephone"></i> Teléfono</label>
@@ -94,13 +99,24 @@ if (!$u) die("Usuario no encontrado");
                         <input type="text" name="business_name" class="form-control" value="<?= htmlspecialchars($u['business_name'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
-                        <label class="fw-bold">Tipo de Usuario</label>
-                        <select name="user_type" class="form-select">
-                            <?php $ut = $u['user_type'] ?? 'turista'; ?>
-                            <option value="turista" <?= $ut === 'turista' ? 'selected' : '' ?>>Turista</option>
-                            <option value="alojamiento" <?= $ut === 'alojamiento' ? 'selected' : '' ?>>Alojamiento</option>
-                            <option value="promotor_eventos" <?= $ut === 'promotor_eventos' ? 'selected' : '' ?>>Promotor Eventos</option>
-                        </select>
+    <label class="fw-bold d-block mb-2">Tipo de Usuario (Múltiple)</label>
+    <?php 
+    // Convertimos el string legacy "turista,alojamiento" en un array para comprobar los checks
+    $current_types = explode(',', $u['user_type'] ?? 'turista'); 
+    ?>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="user_types[]" value="turista" id="type_turista" <?= in_array('turista', $current_types) ? 'checked' : '' ?>>
+        <label class="form-check-label" type="checkbox" for="type_turista">Turista</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="user_types[]" value="alojamiento" id="type_alojamiento" <?= in_array('alojamiento', $current_types) ? 'checked' : '' ?>>
+        <label class="form-check-label" for="type_alojamiento">Alojamiento</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="user_types[]" value="promotor_eventos" id="type_promotor" <?= in_array('promotor_eventos', $current_types) ? 'checked' : '' ?>>
+        <label class="form-check-label" for="type_promotor">Promotor Eventos</label>
+    </div>
+</div>
                     </div>
                     <div class="col-12">
                         <label class="fw-bold">Descripción del Negocio</label>
