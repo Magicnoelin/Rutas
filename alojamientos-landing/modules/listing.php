@@ -80,23 +80,33 @@ function renderLandingListing(array $ctx): void
             $capacity  = (int)($alo['capacity'] ?? 0);
             $precio    = $alo['precio_display'] ?? null;
 
-            // Badges de características (wifi detectado vía amenities — la columna wifi no existe en BD)
-            $amenStr = strtolower($alo['amenities'] ?? '');
+            // amenities es JSON: ["Piscina","Wifi","Chimenea",...] con mayúscula inicial.
+            // Usamos amenities_arr (array ya decodificado) o el string raw para búsqueda case-insensitive.
+            $amenArr = $alo['amenities_arr'] ?? [];
+            $amenStr = strtolower($alo['amenities'] ?? ''); // fallback string raw
+            // Helper: buscar valor en el array JSON (case-insensitive)
+            $inAmenities = function(string ...$terms) use ($amenArr, $amenStr): bool {
+                foreach ($terms as $t2) {
+                    $tl = strtolower($t2);
+                    foreach ($amenArr as $a2) { if (strtolower((string)$a2) === $tl) return true; }
+                    if (str_contains($amenStr, $tl)) return true;
+                }
+                return false;
+            };
+
             $badges = [];
-            if (!empty($alo['pet_friendly']))                                     $badges[] = $t['badge_pet']     ?? '🐾 Mascotas';
-            if (!empty($alo['suitable_for_children']))                            $badges[] = $t['badge_kids']    ?? '👶 Niños';
-            if (str_contains($amenStr, 'wifi') || str_contains($amenStr, 'wi-fi')) $badges[] = $t['badge_wifi']    ?? '📶 WiFi';
-            // Piscina: detectada en amenities, excluyendo "piscina natural"/"piscinas naturales"
-            // (pozas de río, no piscinas propias del alojamiento).
-            $hasPiscina = (str_contains($amenStr, 'piscina')
+            if ($inAmenities('wifi', 'wi-fi', 'WiFi'))               $badges[] = $t['badge_wifi']    ?? '📶 WiFi';
+            // Piscina: excluimos "piscina natural"/"piscinas naturales" (pozas de río)
+            $hasPiscina = $inAmenities('Piscina', 'pool')
+                || (str_contains($amenStr, 'piscina')
                     && !str_contains($amenStr, 'piscina natural')
-                    && !str_contains($amenStr, 'piscinas naturales'))
-                || str_contains($amenStr, 'pool');
+                    && !str_contains($amenStr, 'piscinas naturales'));
             if ($hasPiscina) $badges[] = $t['badge_pool'] ?? '🏊 Piscina';
-            if (str_contains($amenStr, 'chimenea') || str_contains($amenStr, 'fireplace')) $badges[] = $t['badge_chimney'] ?? '🔥 Chimenea';
-            if (str_contains($amenStr, 'jacuzzi'))                                $badges[] = $t['badge_jacuzzi'] ?? '♨️ Jacuzzi';
-            if (str_contains($amenStr, 'terraza'))                                $badges[] = $t['badge_terrace'] ?? '🌅 Terraza';
-            if (str_contains($amenStr, 'barbacoa') || str_contains($amenStr, 'barbecue')) $badges[] = $t['badge_bbq'] ?? '🍖 Barbacoa';
+            if ($inAmenities('Chimenea', 'fireplace'))                $badges[] = $t['badge_chimney'] ?? '🔥 Chimenea';
+            if ($inAmenities('Jacuzzi', 'jacuzzi'))                   $badges[] = $t['badge_jacuzzi'] ?? '♨️ Jacuzzi';
+            if ($inAmenities('Terraza', 'terraza'))                   $badges[] = $t['badge_terrace'] ?? '🌅 Terraza';
+            if ($inAmenities('Barbacoa', 'barbecue'))                 $badges[] = $t['badge_bbq']     ?? '🍖 Barbacoa';
+            if ($inAmenities('Mascotas', 'pet'))                      $badges[] = $t['badge_pet']     ?? '🐾 Mascotas';
             $badges = array_slice($badges, 0, 4); // máx 4 badges visibles
         ?>
         <li class="lnd-card" itemscope itemtype="https://schema.org/LodgingBusiness">

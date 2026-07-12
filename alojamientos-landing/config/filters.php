@@ -192,14 +192,16 @@ const LANDING_FILTROS = [
 
     // ── Características (order=2) ─────────────────────────────────────────────
     'con-chimenea' => [
-        'sql'    => "(a.amenities LIKE '%chimenea%' OR a.amenities LIKE '%fireplace%' OR a.description LIKE '%chimenea%')",
+        // amenities es JSON: ["Chimenea","Wifi",...] — buscar con comillas para mayor precisión
+        'sql'    => "(a.amenities LIKE '%\"Chimenea\"%' OR a.amenities LIKE '%chimenea%' OR a.amenities LIKE '%fireplace%' OR a.description LIKE '%chimenea%')",
         'labels' => ['es'=>'con chimenea','en'=>'with fireplace','fr'=>'avec cheminée','de'=>'mit Kamin','zh'=>'带壁炉'],
         'icon'   => '🔥', 'order' => 2,
     ],
     'con-piscina' => [
-        // Excluimos "piscina natural"/"piscinas naturales" de description: son pozas de río,
-        // no piscinas propias del alojamiento. amenities no existe en la BD → solo description.
-        'sql'    => "(a.description LIKE '%piscina%' AND a.description NOT LIKE '%piscina natural%' AND a.description NOT LIKE '%piscinas naturales%')",
+        // amenities es un campo JSON, ej: ["Piscina","Wifi","Barbacoa"...]
+        // Buscamos el valor exacto "Piscina" en el JSON (LIKE '%"Piscina"%').
+        // En description excluimos "piscina natural"/"piscinas naturales" (pozas de río).
+        'sql'    => "(a.amenities LIKE '%\"Piscina\"%' OR (a.description LIKE '%piscina%' AND a.description NOT LIKE '%piscina natural%' AND a.description NOT LIKE '%piscinas naturales%'))",
         'labels' => ['es'=>'con piscina','en'=>'with pool','fr'=>'avec piscine','de'=>'mit Pool','zh'=>'带游泳池'],
         'icon'   => '🏊', 'order' => 2,
     ],

@@ -106,6 +106,7 @@ function getLandingAccommodations(
         SELECT
             a.id, a.name, a.slug, a.municipality, a.province,
             a.description,
+            a.amenities,
             a.price_per_night, a.capacity,
             a.photo1, a.photo2, a.photo3, a.photo4,
             a.latitude, a.longitude,
@@ -149,10 +150,12 @@ function getLandingAccommodations(
         $row['photo_url'] = _normalizePhoto($row['photo1'] ?? '', $row['slug'] ?? '');
         $row['url']       = 'https://rutasrurales.io/alojamiento/' . ($row['slug'] ?? '');
 
-        // amenities no existe en la tabla accommodations → siempre vacío
-        $row['amenities']     = '';
-        $row['amenities_arr'] = [];
-        // short_description tampoco existe → usar description truncada
+        // amenities es un campo JSON en la BD: ["Piscina","Wifi","Barbacoa"...]
+        // Decodificamos para tener el array, pero mantenemos el string raw para los filtros LIKE
+        $amenRaw = $row['amenities'] ?? '';
+        $row['amenities_arr'] = !empty($amenRaw) ? (json_decode($amenRaw, true) ?? []) : [];
+
+        // short_description no existe como columna → usar description truncada
         $row['short_description'] = !empty($row['description'])
             ? mb_substr(strip_tags($row['description']), 0, 150)
             : '';
