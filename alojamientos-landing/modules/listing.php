@@ -86,7 +86,15 @@ function renderLandingListing(array $ctx): void
             if (!empty($alo['pet_friendly']))                                     $badges[] = $t['badge_pet']     ?? '🐾 Mascotas';
             if (!empty($alo['suitable_for_children']))                            $badges[] = $t['badge_kids']    ?? '👶 Niños';
             if (str_contains($amenStr, 'wifi') || str_contains($amenStr, 'wi-fi')) $badges[] = $t['badge_wifi']    ?? '📶 WiFi';
-            if (str_contains($amenStr, 'piscina') || str_contains($amenStr, 'pool')) $badges[] = $t['badge_pool']  ?? '🏊 Piscina';
+            // Piscina: campo booleano dedicado (swimming_pool) o en amenities.
+            // Excluimos "piscina natural" / "piscinas naturales" de amenities/descripción:
+            // son pozas de río, no piscinas propias del alojamiento.
+            $hasPiscina = !empty($alo['swimming_pool'])
+                || (str_contains($amenStr, 'piscina')
+                    && !str_contains($amenStr, 'piscina natural')
+                    && !str_contains($amenStr, 'piscinas naturales'))
+                || str_contains($amenStr, 'pool');
+            if ($hasPiscina) $badges[] = $t['badge_pool'] ?? '🏊 Piscina';
             if (str_contains($amenStr, 'chimenea') || str_contains($amenStr, 'fireplace')) $badges[] = $t['badge_chimney'] ?? '🔥 Chimenea';
             if (str_contains($amenStr, 'jacuzzi'))                                $badges[] = $t['badge_jacuzzi'] ?? '♨️ Jacuzzi';
             if (str_contains($amenStr, 'terraza'))                                $badges[] = $t['badge_terrace'] ?? '🌅 Terraza';

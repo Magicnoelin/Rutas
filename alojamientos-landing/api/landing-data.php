@@ -111,6 +111,9 @@ function getLandingAccommodations(
             a.latitude, a.longitude,
             a.accommodation_type,
             a.suscripcion_nivel,
+            a.swimming_pool,
+            a.pet_friendly,
+            a.suitable_for_children,
             c.name AS category_name,
             $haversine AS distancia
         FROM accommodations a
