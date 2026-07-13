@@ -1,0 +1,48 @@
+# ==========================================
+# DEPENDENCIAS Y ENTORNOS (¡Imprescindible!)
+# ==========================================
+**/node_modules/
+**/vendor/
+**/.git/
+**/.svn/
+**/.hg/
+
+# ==========================================
+# ARCHIVOS MULTIMEDIA E IMÁGENES
+# (Evita que la IA procese fotos de alojamientos/rutas)
+# ==========================================
+**/images/
+**/img/
+**/assets/img/
+**/assets/images/
+**/uploads/
+**/media/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+*.ico
+*.mp4
+*.webm
+
+# ==========================================
+# BASES DE DATOS Y RESPALDOS
+# ==========================================
+*.sql
+*.sql.gz
+*.sqlite
+*.db
+**/backup/
+**/backups/
+
+# ==========================================
+# ARCHIVOS DE CONFIGURACIÓN CONFIGURADOS/LOGS
+# ==========================================
+**/logs/
+*.log
+**/.npm/
+**/.cache/
+.DS_Store
+Thumbs.db
