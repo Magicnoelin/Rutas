@@ -229,6 +229,9 @@ function renderCruceSemantico(array $ctx): void
                 }
             ?>
             <li class="lnd-event-card" itemscope itemtype="https://schema.org/Event">
+                <!-- eventStatus y eventAttendanceMode: requeridos por Google Search Console -->
+                <meta itemprop="eventStatus" content="https://schema.org/EventScheduled">
+                <meta itemprop="eventAttendanceMode" content="https://schema.org/OfflineEventAttendanceMode">
                 <?php if (!empty($evDesc)): ?>
                 <meta itemprop="description" content="<?= htmlspecialchars($evDesc) ?>">
                 <?php endif; ?>

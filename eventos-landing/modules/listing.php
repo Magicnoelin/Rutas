@@ -245,6 +245,9 @@ function renderEventosLandingListing(array $ctx): void
                 <?php endif; ?>
 
                 <!-- Metadatos Schema.org requeridos (ocultos) -->
+                <!-- eventStatus y eventAttendanceMode: requeridos por Google Search Console -->
+                <meta itemprop="eventStatus" content="https://schema.org/EventScheduled">
+                <meta itemprop="eventAttendanceMode" content="https://schema.org/OfflineEventAttendanceMode">
                 <?php
                     $ticketPrice = isset($ev['ticket_price']) && $ev['ticket_price'] > 0 ? $ev['ticket_price'] : null;
                     // Fallback de description: si no hay texto, Google reporta "falta description"
