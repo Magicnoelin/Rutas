@@ -232,6 +232,28 @@ function renderCruceSemantico(array $ctx): void
                 <?php if (!empty($evDesc)): ?>
                 <meta itemprop="description" content="<?= htmlspecialchars($evDesc) ?>">
                 <?php endif; ?>
+                <!-- performer: recomendado por Google para eventos populares/tradicionales -->
+                <span itemprop="performer" itemscope itemtype="https://schema.org/Organization" hidden>
+                    <meta itemprop="name" content="<?= htmlspecialchars(
+                        !empty($ev['organizer'])
+                            ? $ev['organizer']
+                            : (!empty($ev['municipality'])
+                                ? $ev['municipality']
+                                : ($ev['province'] ?? 'Organización local'))
+                    ) ?>">
+                </span>
+                <!-- offers: requerido por Google, incluso para eventos gratuitos -->
+                <span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
+                    <?php if ($evFree): ?>
+                    <meta itemprop="price" content="0">
+                    <meta itemprop="priceCurrency" content="EUR">
+                    <?php elseif (!empty($ev['ticket_price']) && $ev['ticket_price'] > 0): ?>
+                    <meta itemprop="price" content="<?= number_format((float)$ev['ticket_price'], 2, '.', '') ?>">
+                    <meta itemprop="priceCurrency" content="EUR">
+                    <?php endif; ?>
+                    <meta itemprop="availability" content="https://schema.org/InStock">
+                    <meta itemprop="url" content="<?= $evUrl ?>">
+                </span>
     <a href="<?= $evUrl ?>" class="lnd-event-card__link">
         <?php if (!empty($ev['photo_url'])): ?>
         <div class="lnd-event-card__img-wrap">

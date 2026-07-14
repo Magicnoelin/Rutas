@@ -266,7 +266,17 @@ function renderEventosLandingListing(array $ctx): void
                     <meta itemprop="name" content="<?= htmlspecialchars($ev['organizer']) ?>">
                 </span>
                 <?php endif; ?>
-                <!-- performer omitido: no equivale al organizador y confunde al Knowledge Graph -->
+                <!-- performer: recomendado por Google; para eventos populares/tradicionales
+                     la entidad organizadora actúa también como ejecutora del evento -->
+                <span itemprop="performer" itemscope itemtype="https://schema.org/Organization" hidden>
+                    <meta itemprop="name" content="<?= htmlspecialchars(
+                        !empty($ev['organizer'])
+                            ? $ev['organizer']
+                            : (!empty($ev['municipality'])
+                                ? $ev['municipality']
+                                : ($ev['province'] ?? 'Organización local'))
+                    ) ?>">
+                </span>
                 <!-- offers -->
                 <span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
                     <?php if ($isFree): ?>

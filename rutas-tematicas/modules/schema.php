@@ -105,7 +105,16 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
                     'eventAttendanceMode'  => 'https://schema.org/OfflineEventAttendanceMode',
                     // organizer: solo si hay dato real; sin fallback que confunda al Knowledge Graph
                     ...(!empty($e['organizer']) ? ['organizer' => ['@type' => 'Organization', 'name' => $e['organizer']]] : []),
-                    // performer omitido: el organizador ≠ artista/performer
+                    // performer: recomendado por Google. Para eventos populares/tradicionales,
+                    // la entidad organizadora actúa también como ejecutora del evento.
+                    'performer' => [
+                        '@type' => 'Organization',
+                        'name'  => !empty($e['organizer'])
+                                    ? $e['organizer']
+                                    : (!empty($e['municipality'])
+                                        ? $e['municipality']
+                                        : ($e['province'] ?? 'Organización local')),
+                    ],
                     'offers' => [
                         '@type'         => 'Offer',
                         'price'         => isset($e['ticket_price']) && $e['ticket_price'] > 0 ? number_format((float)$e['ticket_price'], 2, '.', '') : '0',

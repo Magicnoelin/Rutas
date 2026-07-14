@@ -553,6 +553,17 @@ if ($evento) {
         ],
         // organizer: solo si hay dato real en BD; omitir antes que inventar un fallback
         ...(!empty($evento['organizer']) ? ['organizer' => ['@type' => 'Organization', 'name' => $evento['organizer']]] : []),
+        // performer: recomendado por Google. Para eventos populares/tradicionales,
+        // la entidad organizadora (ayuntamiento, asociación) actúa también como ejecutora.
+        // Usamos organizer si existe, si no el municipio/provincia como fallback.
+        'performer' => [
+            '@type' => 'Organization',
+            'name'  => !empty($evento['organizer'])
+                        ? $evento['organizer']
+                        : (!empty($evento['municipality'])
+                            ? $evento['municipality']
+                            : ($evento['province'] ?? 'Organización local')),
+        ],
         'isAccessibleForFree' => $evento['is_free'] == 1,
         'url' => $canonical,
     ];

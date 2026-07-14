@@ -255,7 +255,7 @@ RewriteCond %{THE_REQUEST} \s/+alojamientos-turisticos\.html [NC]
 RewriteRule ^alojamientos-turisticos\.html$ /alojamientos-turisticos [R=301,L]
 
 RewriteCond %{THE_REQUEST} \s/+eventos-culturales\.html [NC]
-RewriteRule ^eventos-culturales\.html$ /eventos-culturales [R=301,L]
+RewriteRule ^eventos-culturales\.html$ /eventos-culturales-paginacion.html [R=301,L]
 
 RewriteCond %{THE_REQUEST} \s/+lugares-interes-paginacion\.html [NC]
 RewriteRule ^lugares-interes-paginacion\.html$ /lugares-de-interes [R=301,L]
@@ -265,7 +265,8 @@ RewriteRule ^actividades-turisticas\.html$ /actividades-turisticas [R=301,L]
 
 # Servir el archivo físico cuando se accede a la URL limpia (sin redirect, interno)
 RewriteRule ^alojamientos-turisticos/?$ alojamientos-turisticos.html [L]
-RewriteRule ^eventos-culturales/?$ eventos-culturales.html [L]
+# /eventos-culturales redirige permanentemente a la versión canónica con paginación
+RewriteRule ^eventos-culturales/?$ /eventos-culturales-paginacion.html [R=301,L]
 RewriteRule ^lugares-de-interes/?$ lugares-interes-paginacion.html [L]
 RewriteRule ^actividades-turisticas/?$ actividades-turisticas.html [L]
 
