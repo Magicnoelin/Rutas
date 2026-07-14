@@ -1596,7 +1596,7 @@ if (file_exists($header_path)) {
         <a href="/" class="logo">🌿 Rutas Rurales</a>
         <nav>
             <a href="/alojamientos-turisticos.html">' . ($t['alojamientos'] ?? 'Alojamientos') . '</a>
-            <a href="/eventos-culturales.html">Eventos</a>
+            <a href="/eventos-culturales-paginacion.html">Eventos</a>
             <a href="/login.html" class="btn-login">' . ($t['acceder_link'] ?? 'Acceder') . '</a>
         </nav>
     </header>';

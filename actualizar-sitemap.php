@@ -67,7 +67,7 @@ foreach ($secciones as $nombre => $conf) {
         $paginas = [
             ['url' => '/',                            'priority' => '1.0', 'freq' => 'daily'],
             ['url' => '/alojamientos-turisticos.html','priority' => '0.9', 'freq' => 'daily'],
-            ['url' => '/eventos-culturales.html',     'priority' => '0.9', 'freq' => 'daily'],
+            ['url' => '/eventos-culturales-paginacion.html',     'priority' => '0.9', 'freq' => 'daily'],
             ['url' => '/rutas-turisticas.html',       'priority' => '0.9', 'freq' => 'weekly'],
             ['url' => '/en/index.html',               'priority' => '0.7', 'freq' => 'weekly'],
             ['url' => '/fr/index.html',               'priority' => '0.7', 'freq' => 'weekly'],

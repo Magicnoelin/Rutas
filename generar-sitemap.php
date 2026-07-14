@@ -22,7 +22,7 @@ echo '      xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
 
 if ($type == 'estatico') {
     // Aquí pones tus URLs fijas (index, contacto, etc.) y las multiidioma
-    $paginas = ['/', '/alojamientos-turisticos.html', '/eventos-culturales.html', '/rutas-turisticas.html'];
+    $paginas = ['/', '/alojamientos-turisticos.html', '/eventos-culturales-paginacion.html', '/rutas-turisticas.html'];
     foreach ($paginas as $p) {
         echo "<url><loc>$baseUrl$p</loc><priority>1.0</priority><changefreq>daily</changefreq></url>\n";
     }
