@@ -347,7 +347,7 @@ $fotos = $alojamiento ? obtenerFotosAlojamiento($alojamiento) : [$imagenPrincipa
                         </ul>
                     </li>
                     <li><a href="rutas-turisticas.html">Rutas Turísticas</a></li>
-                    <li><a href="eventos-culturales.html">Eventos Culturales</a></li>
+                    <li><a href="eventos-culturales-paginacion.html">Eventos Culturales</a></li>
                     <li><a href="compromiso-social.html">Nuestro Compromiso Social</a></li>
                 </ul>
             </div>

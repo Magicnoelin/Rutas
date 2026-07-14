@@ -1356,7 +1356,7 @@ if (file_exists($header_path)) {
     include $header_path;
 } else {
     // Header ligero de fallback
-    $ev_link = $lang !== 'es' ? "/{$lang}/eventos-culturales-paginacion.html" : '/eventos-culturales.html';
+    $ev_link = $lang !== 'es' ? "/{$lang}/eventos-culturales-paginacion.html" : '/eventos-culturales-paginacion.html';
     echo '<header class="site-header" style="display:flex;align-items:center;padding:0 20px;gap:16px;">
         <a href="/" style="font-weight:700;color:var(--primary);font-size:1.1rem;text-decoration:none;">🌿 Rutas Rurales</a>
         <nav style="margin-left:auto;display:flex;gap:16px;font-size:0.9rem;">
@@ -1733,7 +1733,7 @@ if (file_exists($header_path)) {
     <div style="font-size:4rem;margin-bottom:16px;">😕</div>
     <h1 style="color:var(--primary);margin-bottom:12px;"><?php echo ($t['no_encontrado_h1'] ?? ''); ?></h1>
     <p style="color:var(--text-light);margin-bottom:24px;"><?php echo ($t['no_encontrado_p'] ?? ''); ?></p>
-    <a href="/eventos-culturales.html" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo ($t['ver_todos'] ?? ''); ?></a>
+    <a href="/eventos-culturales-paginacion.html" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo ($t['ver_todos'] ?? ''); ?></a>
 </div>
 <?php endif; ?>
 

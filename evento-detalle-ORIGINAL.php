@@ -842,7 +842,7 @@ if (file_exists($header_path)) {
     echo '<header class="site-header" style="display:flex;align-items:center;padding:0 20px;gap:16px;">
         <a href="/" style="font-weight:700;color:var(--primary);font-size:1.1rem;text-decoration:none;">🌿 Rutas Rurales</a>
         <nav style="margin-left:auto;display:flex;gap:16px;font-size:0.9rem;">
-            <a href="/eventos-culturales.html" style="color:var(--text);">Eventos</a>
+            <a href="/eventos-culturales-paginacion.html" style="color:var(--text);">Eventos</a>
             <a href="/alojamientos-turisticos.html" style="color:var(--text);">Alojamientos</a>
             <a href="/login.html" style="color:var(--primary);font-weight:700;">Acceder</a>
         </nav>
@@ -1126,7 +1126,7 @@ if (file_exists($header_path)) {
     <div style="font-size:4rem;margin-bottom:16px;">😕</div>
     <h1 style="color:var(--primary);margin-bottom:12px;">Evento no encontrado</h1>
     <p style="color:var(--text-light);margin-bottom:24px;">El evento que buscas no existe o ya no está disponible.</p>
-    <a href="/eventos-culturales.html" class="btn btn-primary" style="display:inline-flex;width:auto;">Ver todos los eventos</a>
+    <a href="/eventos-culturales-paginacion.html" class="btn btn-primary" style="display:inline-flex;width:auto;">Ver todos los eventos</a>
 </div>
 <?php endif; ?>
 
