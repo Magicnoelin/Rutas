@@ -475,7 +475,7 @@ function resolveHeroImage(
             'alt' => 'Gastronomía, vinos y ferias culinarias',
         ],
         'tradiciones' => [
-            'url' => 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1440&h=500&fit=crop&auto=format&q=80',
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/tradiciones-zamora.webp',
             'alt' => 'Tradiciones, folklore y fiestas populares',
         ],
         'mercados' => [

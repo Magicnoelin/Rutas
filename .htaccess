@@ -40,6 +40,10 @@
     <FilesMatch "\.(php|html?)$">
         Header set Content-Type "text/html; charset=UTF-8"
     </FilesMatch>
+    # Content-Type correcto para sitemaps XML (evita que el navegador los trate como text/html)
+    <FilesMatch "^sitemap.*\.xml$">
+        Header set Content-Type "application/xml; charset=UTF-8"
+    </FilesMatch>
 </IfModule>
 
 # Ahora las reglas de reescritura

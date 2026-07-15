@@ -1,3 +1,9 @@
+
+De momento hay que ir a eventos-landing/Api y cambier manualmente todos los unplash, afecta a toda la categorai e idiomas!!!
+
+Imagenes hero \`webp\` a 1440×500px.
+
+
 \[ Imagen del Evento \] (cultural\_events.hero\_image)
 
 │
@@ -131,13 +137,7 @@ f.write(content)
 
 
 
-¡Por supuesto! He creado un archivo Markdown (\`.md\`) bien estructurado para que puedas guardarlo en tu equipo o en la carpeta de tu proyecto. En él se detalla de forma clara la lógica de herencia (cómo un evento "hereda" la foto de su categoría si se deja en blanco), la estructura de la base de datos y un par de consultas SQL útiles para cuando necesites actualizar los datos.
-
-
-
-
-\#\#\# 📝 Resumen del contenido que incluye el archivo:
-
+¡Por supuesto! He creado un archivo Markdown (\`.md\`) bien estructurado para que puedas 
 
 \* \*\*Esquema visual de herencia:\*\* Muestra cómo el sistema toma la imagen de \`cultural\_events\` y, si es \`NULL\` (vacío), hace el \*fallback\* automático a \`categories\_events\`.
 
