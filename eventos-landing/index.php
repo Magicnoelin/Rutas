@@ -216,6 +216,53 @@ $og_image = !empty($result['items'][0]['photo_url'])
     ? $result['items'][0]['photo_url']
     : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
+// ── 10. Hero Image dinámica ────────────────────────────────────────────────────
+// Lógica de prioridad: evento → categoría → filtro activo → fallback global
+// El category_id no está disponible en el listado (viene del primer evento),
+// pero en las landing pages el filtro temático es la señal clave.
+$hero = resolveHeroImage(
+    null,            // sin evento específico en las landing pages de listado
+    null,            // sin category_id único (la landing puede mezclar categorías)
+    $filter_keys,    // filtros activos del slug: ['musica'], ['tradiciones','verano']…
+    $pdo ?? null     // conexión BD para consultar categories_events si es necesario
+);
+// Construir srcset dinámico: 3 puntos de corte para cargar solo lo necesario
+// La URL base de Unsplash acepta parámetros ?w= dinámicos.
+// Para imágenes propias, se deben generar los 3 tamaños al subir.
+$hero_url_base = $hero['url'];
+// Si es Unsplash, reemplazamos el parámetro w= para cada punto de corte
+$hero_srcset = '';
+$hero_url_480  = $hero_url_base;
+$hero_url_900  = $hero_url_base;
+$hero_url_1440 = $hero_url_base;
+if (str_contains($hero_url_base, 'unsplash.com')) {
+    $hero_url_480  = preg_replace('/w=\d+/', 'w=480',  $hero_url_base);
+    $hero_url_480  = preg_replace('/h=\d+/', 'h=320',  $hero_url_480);
+    $hero_url_900  = preg_replace('/w=\d+/', 'w=900',  $hero_url_base);
+    $hero_url_900  = preg_replace('/h=\d+/', 'h=420',  $hero_url_900);
+    $hero_url_1440 = $hero_url_base; // ya es 1440 de base
+    $hero_srcset   = htmlspecialchars($hero_url_480)  . ' 480w, '
+                   . htmlspecialchars($hero_url_900)  . ' 900w, '
+                   . htmlspecialchars($hero_url_1440) . ' 1440w';
+} else {
+    // Para imágenes propias: un solo src (el srcset se puede ampliar cuando
+    // se generen las variantes de tamaño en servidor)
+    $hero_srcset = htmlspecialchars($hero_url_1440) . ' 1440w';
+}
+// Alt contextualizado: combina el filtro activo con la provincia
+$hero_alt = trim(
+    ($filter_labels[0] ?? 'Eventos culturales')
+    . (!empty($province_label) ? ' en ' . $province_label : ' en España')
+    . (!empty($hero['alt_suffix']) ? ' — ' . $hero['alt_suffix'] : '')
+    . ' · Rutas Rurales'
+);
+// Pasar al contexto de módulos para que hero.php lo renderice
+$ctx['hero_image_url']   = htmlspecialchars($hero_url_1440);
+$ctx['hero_image_srcset']= $hero_srcset;
+$ctx['hero_image_alt']   = htmlspecialchars($hero_alt);
+$ctx['hero_image_480']   = htmlspecialchars($hero_url_480);
+$ctx['hero_image_source']= $hero['source']; // para debug: 'filtro'|'categoria'|'evento'|'fallback'
+
 // ── Paginación: rel prev/next ─────────────────────────────────────────────────
 $rel_prev = ($page > 1)                  ? $canonical . '?p=' . ($page - 1) : null;
 $rel_next = ($page < $result['pages'])   ? $canonical . '?p=' . ($page + 1) : null;
@@ -264,7 +311,23 @@ $rel_next = ($page < $result['pages'])   ? $canonical . '?p=' . ($page + 1) : nu
 <!-- ── Preconnect ─────────────────────────────────────────────────── -->
 <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
 
-<!-- ── Preload LCP image (primera tarjeta) ───────────────────────── -->
+<!-- ═══════════════════════════════════════════════════════════════════
+     PRELOAD HERO IMAGE — LCP crítico
+     Carga la imagen de portada ANTES de que el navegador procese el CSS.
+     - fetchpriority="high" + rel="preload" = máxima prioridad de red
+     - imagesrcset/imagesizes: el navegador descarga solo el tamaño necesario
+     - Sin este preload, la imagen hero aparece DESPUÉS del texto (LCP alto)
+     ═══════════════════════════════════════════════════════════════════ -->
+<?php if (!empty($ctx['hero_image_url'])): ?>
+<link rel="preload"
+      as="image"
+      href="<?= $ctx['hero_image_url'] ?>"
+      imagesrcset="<?= $ctx['hero_image_srcset'] ?>"
+      imagesizes="100vw"
+      fetchpriority="high">
+<?php endif; ?>
+
+<!-- ── Preload primera tarjeta del listing (segundo LCP candidato) ── -->
 <?php if (!empty($result['items'][0]['photo_url'])): ?>
 <link rel="preload" as="image" href="<?= htmlspecialchars($result['items'][0]['photo_url']) ?>">
 <?php endif; ?>
@@ -303,9 +366,11 @@ a{color:var(--primary);text-decoration:none}
 .lnd-navbar__cta{background:var(--primary);color:var(--white)!important;
   padding:8px 18px;border-radius:var(--radius-sm);font-weight:700!important;font-size:.82rem!important}
 
-/* Hero crítico (LCP zone) */
+/* Hero crítico (LCP zone) — el padding y posicionamiento se gestionan en hero.php */
+/* Este bloque solo define variables de color/tipo para evitar FOUC antes de que */
+/* hero.php inyecte su <style> inline. */
 .lnd-hero{background:linear-gradient(135deg,#1a3a5c 0%,#2d5a8e 60%,#3d7abf 100%);
-  padding:48px 20px 52px;color:var(--white);contain:layout style}
+  color:var(--white);min-height:280px}
 .lnd-hero__h1{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:800;line-height:1.15;
   margin:0 0 24px;text-shadow:0 2px 6px rgba(0,0,0,.2)}
 .lnd-breadcrumb ol{display:flex;flex-wrap:wrap;gap:4px;align-items:center;

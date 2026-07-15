@@ -403,3 +403,168 @@ function _normalizeEventPhoto(string $posterImage, string $photo1): string
     // Solo nombre de archivo → asumir directorio estándar
     return 'https://rutasrurales.io/cultural_events_images/' . $img;
 }
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  HERO IMAGE — Sistema de imagen de portada dinámica para las landing pages
+// ═════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Normaliza una URL de imagen hero (absoluta o relativa).
+ *
+ * @param  string $img  Ruta relativa (/hero-images/...) o URL absoluta (https://...)
+ * @return string       URL absoluta lista para usar en <img src> o <link rel="preload">
+ */
+function _normalizeHeroUrl(string $img): string
+{
+    $img = trim($img);
+    if (empty($img)) return '';
+    if (preg_match('/^https?:\/\//', $img)) return $img;
+    return 'https://rutasrurales.io/' . ltrim($img, '/');
+}
+
+/**
+ * Resuelve la imagen hero según lógica de prioridad en cascada:
+ *
+ *   1. Imagen específica del EVENTO  (campo hero_image en cultural_events — máxima prioridad)
+ *   2. Imagen de la CATEGORÍA        (campo hero_image en categories_events — tras ejecutar el SQL)
+ *   3. Imagen del FILTRO ACTIVO      (mapa PHP hardcoded — sin BD, funciona siempre)
+ *   4. FALLBACK global               (/menu_images/turismo_rural.webp)
+ *
+ * Características de rendimiento:
+ *   - La consulta a BD (prioridad 2) solo se lanza si hay $categoryId Y $pdo.
+ *   - Si la tabla categories_events no tiene la columna hero_image todavía,
+ *     el try/catch silencia el error y cae al nivel 3 automáticamente.
+ *   - El mapa $filterHeroMap usa Unsplash con parámetros optimizados (webp, q=75).
+ *     Sustitúyelos por rutas locales cuando tengas tus propias imágenes .webp.
+ *
+ * @param  string|null $eventoHeroImage  $evento['hero_image'] — imagen específica del evento
+ * @param  int|null    $categoryId       $evento['category_id'] — ID de la categoría
+ * @param  string[]    $filterKeys       Filtros activos del slug, ej. ['musica', 'verano']
+ * @param  PDO|null    $pdo              Conexión activa (para consultar categories_events)
+ * @return array{url:string, source:string, alt_suffix:string}
+ *           'url'        → URL absoluta de la imagen elegida
+ *           'source'     → 'evento' | 'categoria' | 'filtro' | 'fallback' (para debug)
+ *           'alt_suffix' → texto descriptivo para el atributo alt del <img>
+ */
+function resolveHeroImage(
+    ?string $eventoHeroImage,
+    ?int    $categoryId,
+    array   $filterKeys,
+    ?PDO    $pdo = null
+): array {
+
+    // ── Mapa filtro → imágenes (placeholder Unsplash mientras no haya propias) ──
+    // Formato: 'filtro' => ['url' => '...', 'alt' => '...']
+    // Unsplash: w=1440&h=500 → tamaño desktop. El srcset adapta el resto.
+    // q=80: calidad óptima sin peso excesivo. auto=format: webp en Chrome, jpg en Safari.
+    $filterHeroMap = [
+        'musica' => [
+            'url' => 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Concierto y eventos de música en vivo',
+        ],
+        'teatro' => [
+            'url' => 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Teatro, danza y artes escénicas',
+        ],
+        'exposiciones' => [
+            'url' => 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Exposiciones de arte y galerías',
+        ],
+        'gastronomia' => [
+            'url' => 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Gastronomía, vinos y ferias culinarias',
+        ],
+        'tradiciones' => [
+            'url' => 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Tradiciones, folklore y fiestas populares',
+        ],
+        'mercados' => [
+            'url' => 'https://images.unsplash.com/photo-1506617420156-8e4536971650?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Mercados tradicionales y artesanía',
+        ],
+        'infantil' => [
+            'url' => 'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Actividades familiares e infantiles',
+        ],
+        'naturaleza' => [
+            'url' => 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Naturaleza, senderismo y rutas al aire libre',
+        ],
+        'gratuitos' => [
+            'url' => 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Eventos culturales gratuitos y para todos',
+        ],
+        'de-pago' => [
+            'url' => 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Espectáculos y eventos con entrada',
+        ],
+        'primavera' => [
+            'url' => 'https://images.unsplash.com/photo-1490750967868-88df5691cc22?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Eventos y festivales de primavera',
+        ],
+        'verano' => [
+            'url' => 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Festivales y eventos de verano al aire libre',
+        ],
+        'otono' => [
+            'url' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Eventos culturales de otoño',
+        ],
+        'invierno' => [
+            'url' => 'https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Eventos y celebraciones de invierno',
+        ],
+        'este-mes' => [
+            'url' => 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1440&h=500&fit=crop&auto=format&q=80',
+            'alt' => 'Eventos culturales este mes',
+        ],
+    ];
+
+    // ── PRIORIDAD 1: imagen específica del evento ─────────────────────────────
+    if (!empty($eventoHeroImage)) {
+        return [
+            'url'        => _normalizeHeroUrl($eventoHeroImage),
+            'source'     => 'evento',
+            'alt_suffix' => '',
+        ];
+    }
+
+    // ── PRIORIDAD 2: imagen de la categoría (requiere ALTER TABLE ejecutado) ──
+    if ($categoryId && $pdo) {
+        try {
+            $stmt = $pdo->prepare(
+                "SELECT hero_image FROM categories_events WHERE id = ? AND hero_image IS NOT NULL AND hero_image != '' LIMIT 1"
+            );
+            $stmt->execute([$categoryId]);
+            $catImg = $stmt->fetchColumn();
+            if (!empty($catImg)) {
+                return [
+                    'url'        => _normalizeHeroUrl($catImg),
+                    'source'     => 'categoria',
+                    'alt_suffix' => '',
+                ];
+            }
+        } catch (Throwable $e) {
+            // Silencioso: si la columna no existe aún, cae al nivel 3
+            // error_log('[resolveHeroImage] categoria query: ' . $e->getMessage());
+        }
+    }
+
+    // ── PRIORIDAD 3: primer filtro activo con imagen definida ─────────────────
+    foreach ($filterKeys as $fk) {
+        if (!empty($filterHeroMap[$fk])) {
+            return [
+                'url'        => $filterHeroMap[$fk]['url'],
+                'source'     => 'filtro',
+                'alt_suffix' => $filterHeroMap[$fk]['alt'],
+            ];
+        }
+    }
+
+    // ── PRIORIDAD 4: fallback global ──────────────────────────────────────────
+    return [
+        'url'        => 'https://rutasrurales.io/menu_images/turismo_rural.webp',
+        'source'     => 'fallback',
+        'alt_suffix' => 'Eventos culturales en la España rural',
+    ];
+}
