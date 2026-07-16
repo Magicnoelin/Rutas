@@ -566,6 +566,26 @@ if ($alojamiento) {
     }
 }
 
+// ─── EFECTO CONTRASTE: Precio estimado en OTA (Booking / Airbnb) ─────────────
+// Se calcula como el precio base + 15% de media de comisiones OTA
+// El redondeo al múltiplo de 5 más cercano simula los precios reales de OTA
+$precio_ota_num        = 0;
+$precio_ota_display    = '';
+$ahorro_pct_ota        = 15; // porcentaje medio de ahorro vs OTA
+$pasaporte_desc_pct    = 5; // descuento Pasaporte Rural mínimo (5% garantizado; usuarios con más puntos pueden obtener hasta el 10%)
+$precio_pasaporte_num  = 0;
+$precio_pasaporte_display = '';
+
+if ($alojamiento && !empty($alojamiento['price_per_night']) && $alojamiento['price_per_night'] > 0) {
+    $base = (float)$alojamiento['price_per_night'];
+    // Precio OTA: base + 15%, redondeado al múltiplo de 5 superior
+    $precio_ota_num     = ceil(($base * 1.15) / 5) * 5;
+    $precio_ota_display = number_format($precio_ota_num, 0, ',', '.') . ' €';
+    // Precio con Pasaporte Rural: base - 10%
+    $precio_pasaporte_num     = round($base * (1 - $pasaporte_desc_pct / 100));
+    $precio_pasaporte_display = number_format($precio_pasaporte_num, 0, ',', '.') . ' €';
+}
+
 $tipo_display      = $alojamiento['category_name'] ?? $alojamiento['accommodation_type'] ?? 'Alojamiento';
 $capacidad_display = ($alojamiento['capacity'] ?? 0) > 0 ? $alojamiento['capacity'] . ' ' . $t['personas'] : '';
 
@@ -1631,6 +1651,165 @@ if (file_exists($header_path)) {
 .site-footer .footer-social a,
 .site-footer .footer-social a:visited { color: rgba(255,255,255,0.75) !important; opacity: 1 !important; }
 .site-footer .footer-social a:hover { color: #81C784 !important; }
+
+/* ══ EFECTO CONTRASTE + PASAPORTE RURAL + GARANTÍA ══════════════════════════ */
+
+/* Tarifa Web Directa badge */
+.price-tarifa-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    color: #2F5233;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #a5d6a7;
+    margin-bottom: 10px;
+}
+
+/* Comparativa OTA */
+.price-ota-compare {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 9px 12px;
+    margin: 8px 0 6px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+.price-ota-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.price-ota-text { color: #5d4037; }
+.price-ota-tachado { color: #b71c1c; font-weight: 600; text-decoration: line-through; }
+.price-ota-ahorro { display: block; color: #e65100; font-size: 0.78rem; margin-top: 2px; }
+
+/* Badge ahorro */
+.price-ahorro-badge {
+    background: linear-gradient(135deg, #ff6f00, #e65100);
+    color: #fff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* Toggle Pasaporte Rural */
+.pasaporte-toggle-wrap {
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border: 1px solid #a5d6a7;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+}
+.pasaporte-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+.pasaporte-icon { font-size: 1.3rem; flex-shrink: 0; }
+.pasaporte-texto { font-size: 0.85rem; font-weight: 700; color: #2F5233; flex: 1; }
+
+/* Switch CSS */
+.pasaporte-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+.pasaporte-input { opacity: 0; width: 0; height: 0; position: absolute; }
+.pasaporte-slider {
+    position: absolute; inset: 0;
+    background: #ccc;
+    border-radius: 24px;
+    transition: background 0.25s;
+    cursor: pointer;
+}
+.pasaporte-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+.pasaporte-input:checked + .pasaporte-slider { background: #2F5233; }
+.pasaporte-input:checked + .pasaporte-slider::before { transform: translateX(20px); }
+
+/* Resultado del descuento */
+.pasaporte-resultado {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #a5d6a7;
+    text-align: center;
+    animation: fadeInDown 0.25s ease;
+}
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.pasaporte-precio-original {
+    font-size: 1rem;
+    color: #999;
+    text-decoration: line-through;
+    margin-bottom: 4px;
+}
+.pasaporte-precio-nuevo {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #2F5233;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+.pasaporte-ahorro-text {
+    font-size: 0.78rem;
+    color: #388e3c;
+    font-weight: 600;
+}
+
+/* Banner Garantía de Trato Directo */
+.garantia-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid #2F5233;
+}
+.garantia-titulo {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #2F5233;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 12px;
+}
+.garantia-items { display: flex; flex-direction: column; gap: 10px; }
+.garantia-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.garantia-item-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+.garantia-item strong {
+    display: block;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.3;
+}
+.garantia-item small {
+    display: block;
+    font-size: 0.75rem;
+    color: #666;
+    line-height: 1.4;
+    margin-top: 1px;
+}
 </style>
 
 <?php if ($alojamiento): ?>
@@ -2153,8 +2332,51 @@ if (file_exists($header_path)) {
         <!-- Precio + Reserva -->
         <div class="price-card">
             <?php if (!empty($alojamiento['price_per_night']) && $alojamiento['price_per_night'] > 0): ?>
-            <div class="price-amount"><?php echo htmlspecialchars($precio_display); ?></div>
+
+            <!-- ── ETIQUETA "TARIFA WEB DIRECTA" ── -->
+            <div class="price-tarifa-badge">🏷️ Tarifa Web Directa</div>
+
+            <div class="price-amount" id="precio-principal"><?php echo htmlspecialchars($precio_display); ?></div>
             <div class="price-label"><?php echo $t['precio_noche']; ?></div>
+
+            <!-- ── EFECTO CONTRASTE: Comparativa con OTA ── -->
+            <?php if ($precio_ota_num > 0): ?>
+            <div class="price-ota-compare">
+                <span class="price-ota-icon">💡</span>
+                <span class="price-ota-text">
+                    En Booking/Airbnb: <s class="price-ota-tachado"><?php echo $precio_ota_display; ?></s>
+                    <strong class="price-ota-ahorro">≈ +<?php echo $ahorro_pct_ota; ?>% con sus comisiones</strong>
+                </span>
+            </div>
+            <div class="price-ahorro-badge">
+                🔥 Aquí un <?php echo $ahorro_pct_ota; ?>% más barato · Trato directo sin intermediarios
+            </div>
+            <?php endif; ?>
+
+            <!-- ── CALCULADORA PASAPORTE RURAL ── -->
+            <?php if ($precio_pasaporte_num > 0): ?>
+            <div class="pasaporte-toggle-wrap">
+                <label class="pasaporte-toggle-label" for="toggle-pasaporte">
+                    <span class="pasaporte-icon">💳</span>
+                    <span class="pasaporte-texto">¿Tienes <a href="https://rutasrurales.io/pasaporte_rural/como-funciona.php" target="_blank" rel="noopener" style="color:#2F5233;font-weight:700;text-decoration:underline;text-decoration-color:rgba(47,82,51,0.4);">Pasaporte Rural</a>?</span>
+                    <span class="pasaporte-switch">
+                        <input type="checkbox" id="toggle-pasaporte" class="pasaporte-input"
+                               data-precio-base="<?php echo (float)$alojamiento['price_per_night']; ?>"
+                               data-precio-pasaporte="<?php echo $precio_pasaporte_num; ?>"
+                               data-precio-pasaporte-display="<?php echo htmlspecialchars($precio_pasaporte_display); ?>"
+                               data-precio-original-display="<?php echo htmlspecialchars($precio_display); ?>"
+                               data-descuento-pct="<?php echo $pasaporte_desc_pct; ?>">
+                        <span class="pasaporte-slider"></span>
+                    </span>
+                </label>
+                <div class="pasaporte-resultado" id="pasaporte-resultado" style="display:none;">
+                    <div class="pasaporte-precio-original" id="pasaporte-precio-original"></div>
+                    <div class="pasaporte-precio-nuevo" id="pasaporte-precio-nuevo"></div>
+                    <div class="pasaporte-ahorro-text">✅ Descuento del <?php echo $pasaporte_desc_pct; ?>% del Pasaporte Rural aplicado</div>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <?php else: ?>
             <div class="price-amount" style="font-size:1.3rem;color:#2F5233;"><?php echo $t['consultar']; ?></div>
             <div class="price-label" style="margin-bottom:14px;"></div>
@@ -2265,6 +2487,34 @@ if (file_exists($header_path)) {
                     🏨 Ver en Booking
                 </a>
                 <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- ── BANNER GARANTÍA DE TRATO DIRECTO ── -->
+        <div class="garantia-card">
+            <div class="garantia-titulo">✅ Por qué reservar aquí</div>
+            <div class="garantia-items">
+                <div class="garantia-item">
+                    <span class="garantia-item-icon">🤝</span>
+                    <div>
+                        <strong>Sin comisiones</strong>
+                        <small>El 100% del precio va al propietario</small>
+                    </div>
+                </div>
+                <div class="garantia-item">
+                    <span class="garantia-item-icon">📞</span>
+                    <div>
+                        <strong>Trato directo</strong>
+                        <small>Habla con quien te aloja, no con una app</small>
+                    </div>
+                </div>
+                <div class="garantia-item">
+                    <span class="garantia-item-icon">💰</span>
+                    <div>
+                        <strong>Mejor precio garantizado</strong>
+                        <small>≈ <?php echo $ahorro_pct_ota; ?>% más barato que en OTA</small>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2716,6 +2966,33 @@ if (file_exists($header_path)) {
             .replace(/&/g, '&amp;').replace(/</g, '&lt;')
             .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
+
+    // ── Toggle Pasaporte Rural ────────────────────────────────────────────────
+    (function() {
+        var toggle = document.getElementById('toggle-pasaporte');
+        if (!toggle) return;
+
+        var resultado   = document.getElementById('pasaporte-resultado');
+        var precioOrig  = document.getElementById('pasaporte-precio-original');
+        var precioNuevo = document.getElementById('pasaporte-precio-nuevo');
+
+        var displayOrig  = toggle.dataset.precioOriginalDisplay  || '';
+        var displayPasp  = toggle.dataset.precioPasaportDisplay  || '';
+        // Fallback: leer el atributo exacto del HTML (con guion)
+        if (!displayPasp) displayPasp = toggle.getAttribute('data-precio-pasaporte-display') || '';
+
+        toggle.addEventListener('change', function() {
+            if (this.checked) {
+                // Activar descuento Pasaporte Rural
+                if (precioOrig)  precioOrig.textContent  = displayOrig + ' / noche';
+                if (precioNuevo) precioNuevo.textContent = displayPasp + ' / noche';
+                if (resultado)   resultado.style.display = 'block';
+            } else {
+                // Desactivar descuento
+                if (resultado) resultado.style.display = 'none';
+            }
+        });
+    })();
 
 })();
 </script>
