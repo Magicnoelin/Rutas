@@ -165,6 +165,10 @@ if ($evento) {
     }
 }
 $foto_og = !empty($fotos[0]) ? $fotos[0] : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
+// Asegurar URL absoluta (og:image requiere URL completa según spec de Open Graph)
+if (!preg_match('/^https?:\/\//', $foto_og)) {
+    $foto_og = 'https://rutasrurales.io' . (str_starts_with($foto_og, '/') ? '' : '/') . $foto_og;
+}
 
 // ─── TRADUCCIONES DE UI ───────────────────────────────────────────────────────
 $ui = ['es' => [
@@ -656,6 +660,10 @@ $evento_js = $evento ? json_encode([
     <meta property="og:title" content="<?php echo htmlspecialchars($page_title); ?>">
     <meta property="og:description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <meta property="og:image" content="<?php echo htmlspecialchars($foto_og); ?>">
+    <meta property="og:image:secure_url" content="<?php echo htmlspecialchars($foto_og); ?>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="<?php echo (preg_match('/\.webp$/i', $foto_og) ? 'image/webp' : (preg_match('/\.png$/i', $foto_og) ? 'image/png' : 'image/jpeg')); ?>">
     <meta property="og:url" content="<?php echo $canonical; ?>">
     <meta property="og:site_name" content="Rutas Rurales">
 
