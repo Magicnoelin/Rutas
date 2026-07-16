@@ -479,6 +479,7 @@ if ($alojamiento) {
     if (!empty($alojamiento['capacity']) && $alojamiento['capacity'] > 0) {
         $lodging['occupancy'] = [
             '@type'    => 'QuantitativeValue',
+            'value'    => (int)$alojamiento['capacity'],
             'maxValue' => (int)$alojamiento['capacity'],
             'unitCode' => 'C62',
         ];

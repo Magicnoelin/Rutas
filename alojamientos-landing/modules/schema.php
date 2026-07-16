@@ -116,7 +116,7 @@ function renderLandingSchema(array $ctx): void
         }
 
         if (!empty($alo['capacity']) && $alo['capacity'] > 0) {
-            $lodging['occupancy'] = ['@type' => 'QuantitativeValue', 'maxValue' => (int)$alo['capacity']];
+            $lodging['occupancy'] = ['@type' => 'QuantitativeValue', 'value' => (int)$alo['capacity'], 'maxValue' => (int)$alo['capacity'], 'unitCode' => 'C62'];
         }
 
         // Amenities desde amenities_arr
