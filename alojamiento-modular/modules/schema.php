@@ -124,11 +124,12 @@ function renderAlojamientoSchema(
         }
     }
 
-    // ── 4. Check-in / Check-out en formato ISO 8601 ───────────────────────────
+    // ── 4. Check-in / Check-out ───────────────────────────────────────────────
+    // schema.org espera formato "HH:MM" simple (sin prefijo T)
     $ci = $alojamiento['check_in_time']  ?? '15:00';
     $co = $alojamiento['check_out_time'] ?? '11:00';
-    $checkinTime  = 'T' . substr($ci, 0, 5);
-    $checkoutTime = 'T' . substr($co, 0, 5);
+    $checkinTime  = substr($ci, 0, 5);   // "15:00"
+    $checkoutTime = substr($co, 0, 5);   // "11:00"
 
     // ── 5. LodgingBusiness / VacationRental ───────────────────────────────────
     $descRaw   = strip_tags($alojamiento['description'] ?? '');
