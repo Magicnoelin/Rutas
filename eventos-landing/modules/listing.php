@@ -268,12 +268,19 @@ function renderEventosLandingListing(array $ctx): void
                 <meta itemprop="description" content="<?= htmlspecialchars($descFallback) ?>">
                 <?php endif; ?>
                 <meta itemprop="isAccessibleForFree" content="<?= $isFree ? 'true' : 'false' ?>">
-                <!-- organizer: solo si hay datos reales en BD; sin fallback inventado -->
-                <?php if (!empty($ev['organizer'])): ?>
+                <!-- organizer: requerido por Google Search Console.
+                     Si hay dato real en BD se usa; si no, fallback al municipio/provincia. -->
                 <span itemprop="organizer" itemscope itemtype="https://schema.org/Organization" hidden>
-                    <meta itemprop="name" content="<?= htmlspecialchars($ev['organizer']) ?>">
+                    <meta itemprop="name" content="<?= htmlspecialchars(
+                        !empty($ev['organizer'])
+                            ? $ev['organizer']
+                            : (!empty($ev['municipality'])
+                                ? 'Ayuntamiento de ' . $ev['municipality']
+                                : (!empty($ev['province'])
+                                    ? 'Ayuntamiento de ' . $ev['province']
+                                    : 'Organización local'))
+                    ) ?>">
                 </span>
-                <?php endif; ?>
                 <!-- performer: recomendado por Google; para eventos populares/tradicionales
                      la entidad organizadora actúa también como ejecutora del evento -->
                 <span itemprop="performer" itemscope itemtype="https://schema.org/Organization" hidden>

@@ -555,11 +555,21 @@ if ($evento) {
                 'addressCountry' => 'ES'
             ]
         ],
-        // organizer: solo si hay dato real en BD; omitir antes que inventar un fallback
-        ...(!empty($evento['organizer']) ? ['organizer' => ['@type' => 'Organization', 'name' => $evento['organizer']]] : []),
+        // organizer: requerido por Google Search Console para eventos.
+        // Si hay dato real en BD se usa; si no, se usa municipio/provincia como fallback
+        // (entidad local organizadora es la convención habitual para eventos populares).
+        'organizer' => [
+            '@type' => 'Organization',
+            'name'  => !empty($evento['organizer'])
+                        ? $evento['organizer']
+                        : (!empty($evento['municipality'])
+                            ? 'Ayuntamiento de ' . $evento['municipality']
+                            : (!empty($evento['province'])
+                                ? 'Ayuntamiento de ' . $evento['province']
+                                : 'Organización local')),
+        ],
         // performer: recomendado por Google. Para eventos populares/tradicionales,
-        // la entidad organizadora (ayuntamiento, asociación) actúa también como ejecutora.
-        // Usamos organizer si existe, si no el municipio/provincia como fallback.
+        // la entidad organizadora actúa también como ejecutora del evento.
         'performer' => [
             '@type' => 'Organization',
             'name'  => !empty($evento['organizer'])

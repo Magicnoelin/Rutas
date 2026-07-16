@@ -101,20 +101,30 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
                             'addressCountry'  => 'ES',
                         ],
                     ],
-                    'eventStatus'          => 'https://schema.org/EventScheduled',
-                    'eventAttendanceMode'  => 'https://schema.org/OfflineEventAttendanceMode',
-                    // organizer: solo si hay dato real; sin fallback que confunda al Knowledge Graph
-                    ...(!empty($e['organizer']) ? ['organizer' => ['@type' => 'Organization', 'name' => $e['organizer']]] : []),
-                    // performer: recomendado por Google. Para eventos populares/tradicionales,
-                    // la entidad organizadora actúa también como ejecutora del evento.
-                    'performer' => [
-                        '@type' => 'Organization',
-                        'name'  => !empty($e['organizer'])
-                                    ? $e['organizer']
-                                    : (!empty($e['municipality'])
-                                        ? $e['municipality']
-                                        : ($e['province'] ?? 'Organización local')),
-                    ],
+                                    'eventStatus'         => 'https://schema.org/EventScheduled',
+                                    'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+                                    // organizer: requerido por Google Search Console.
+                                    // Si hay dato real en BD se usa; si no, fallback al municipio/provincia.
+                                    'organizer'           => [
+                                        '@type' => 'Organization',
+                                        'name'  => !empty($e['organizer'])
+                                                    ? $e['organizer']
+                                                    : (!empty($e['municipality'])
+                                                        ? 'Ayuntamiento de ' . $e['municipality']
+                                                        : (!empty($e['province'])
+                                                            ? 'Ayuntamiento de ' . $e['province']
+                                                            : 'Organización local')),
+                                    ],
+                                    // performer: recomendado por Google. Para eventos populares/tradicionales,
+                                    // la entidad organizadora actúa también como ejecutora del evento.
+                                    'performer'           => [
+                                        '@type' => 'Organization',
+                                        'name'  => !empty($e['organizer'])
+                                                    ? $e['organizer']
+                                                    : (!empty($e['municipality'])
+                                                        ? $e['municipality']
+                                                        : ($e['province'] ?? 'Organización local')),
+                                    ],
                     'offers' => [
                         '@type'         => 'Offer',
                         'price'         => isset($e['ticket_price']) && $e['ticket_price'] > 0 ? number_format((float)$e['ticket_price'], 2, '.', '') : '0',
