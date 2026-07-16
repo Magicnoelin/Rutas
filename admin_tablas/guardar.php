@@ -118,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     is_featured = :is_featured,
                     is_premium = :is_premium,
                     is_verified = :is_verified,
+                    featured_until = :featured_until,
                     suscripcion_nivel = :suscripcion_nivel,
                     created_by = :created_by,";
 
@@ -195,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':is_featured'            => $is_featured,
             ':is_premium'             => $is_premium,
             ':is_verified'            => $is_verified,
+            ':featured_until'         => !empty($_POST['featured_until']) ? $_POST['featured_until'] : null,
             ':suscripcion_nivel'      => !empty($_POST['suscripcion_nivel']) ? (int)$_POST['suscripcion_nivel'] : 1,
             ':created_by'             => !empty($_POST['created_by']) ? (int)$_POST['created_by'] : null,
         ];

@@ -352,13 +352,16 @@ function _renderNearbyAlojamientos() {
     const shown = STATE.nearbyAlojamientos.slice(0, STATE.nearbyShownAloj);
     const hasMore = STATE.nearbyAlojamientos.length > STATE.nearbyShownAloj;
 
-    container.innerHTML = shown.map(a => `
-        <a href="${a.url}" class="nearby-card" style="text-decoration:none;">
-            <div class="nearby-card-img">
+    container.innerHTML = shown.map(a => {
+        const isFeatured = a.is_featured_now == 1 || a.is_featured_now === true || a.is_featured_now === '1';
+        return `
+        <a href="${a.url}" class="nearby-card${isFeatured ? ' nearby-card--featured' : ''}" style="text-decoration:none;">
+            <div class="nearby-card-img" style="position:relative;">
                 ${a.main_image
                     ? `<img src="${a.main_image}" alt="${a.name}" loading="lazy">`
                     : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;">🏠</div>`
                 }
+                ${isFeatured ? `<div style="position:absolute;top:6px;left:6px;background:#F9A825;color:#333;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:0.3px;">⭐ Destacado</div>` : ''}
             </div>
             <div class="nearby-card-body">
                 <div class="nearby-card-name">${a.name}</div>
@@ -367,7 +370,8 @@ function _renderNearbyAlojamientos() {
                 ${a.price_per_night ? `<div class="nearby-card-price">💶 ${formatPrice(a.price_per_night)}/noche</div>` : ''}
             </div>
         </a>
-    `).join('');
+        `;
+    }).join('');
 
     if (moreBtn) moreBtn.style.display = hasMore ? 'block' : 'none';
 }

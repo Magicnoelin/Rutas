@@ -471,6 +471,47 @@ if (!$item) { die("Alojamiento no encontrado."); }
                         </div>
                     </div>
 
+                    <!-- POSICIÓN DESTACADA TEMPORAL (herramienta comercial) -->
+                    <div class="col-12 mt-3">
+                        <div class="p-3 border rounded" style="background:#fff8e1;border-color:#ffe082!important;">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span style="font-size:1.2rem;">⭐</span>
+                                <strong class="text-warning" style="color:#e65100!important;">Posición Destacada en Eventos Cercanos</strong>
+                            </div>
+                            <p class="text-muted small mb-2">
+                                Cuando esté activo y la fecha no haya caducado, este alojamiento aparecerá <strong>primero</strong> en la sección "Alojamientos cercanos" de las páginas de eventos. Se desactiva automáticamente al llegar a la fecha indicada.
+                            </p>
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label fw-bold small" for="featured_until">📅 Destacado hasta (fecha y hora)</label>
+                                    <input type="datetime-local" name="featured_until" id="featured_until" class="form-control"
+                                        value="<?= !empty($item['featured_until']) ? date('Y-m-d\TH:i', strtotime($item['featured_until'])) : '' ?>">
+                                    <div class="form-text">Dejar vacío para desactivar el destacado.</div>
+                                </div>
+                                <div class="col-md-7">
+                                    <?php
+                                    $fu = $item['featured_until'] ?? null;
+                                    if ($fu && strtotime($fu) > time()):
+                                    ?>
+                                    <div class="alert alert-warning py-2 px-3 mb-0" style="font-size:0.82rem;">
+                                        ⭐ <strong>Activo ahora</strong> — Destacado hasta el
+                                        <strong><?= date('d/m/Y H:i', strtotime($fu)) ?></strong>
+                                        (<?= round((strtotime($fu) - time()) / 3600, 1) ?> h restantes)
+                                    </div>
+                                    <?php elseif ($fu): ?>
+                                    <div class="alert alert-secondary py-2 px-3 mb-0" style="font-size:0.82rem;">
+                                        ⏱ <strong>Caducado</strong> — La fecha de destacado ya pasó (<?= date('d/m/Y H:i', strtotime($fu)) ?>). Actualiza la fecha para reactivarlo.
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="alert alert-light py-2 px-3 mb-0" style="font-size:0.82rem;border:1px solid #dee2e6;">
+                                        Sin posición destacada activa.
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-3 mt-3">
                         <label class="form-label small text-muted">Nivel de Suscripción</label>
                         <input type="number" name="suscripcion_nivel" class="form-control" value="<?= $item['suscripcion_nivel'] ?? 1 ?>">

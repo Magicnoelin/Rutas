@@ -601,7 +601,13 @@ if ($evento) {
         ];
     }
 
-    if (!empty($fotos[0])) $jsonld_data['image'] = $fotos[0];
+    // image: siempre presente (Google lo requiere para Rich Results en Eventos)
+    // Usar primera foto si existe, si no la imagen OG (que ya tiene URL absoluta garantizada)
+    $jsonld_image = !empty($fotos[0]) ? $fotos[0] : $foto_og;
+    if (!preg_match('/^https?:\/\//', $jsonld_image)) {
+        $jsonld_image = 'https://rutasrurales.io' . (str_starts_with($jsonld_image, '/') ? '' : '/') . $jsonld_image;
+    }
+    $jsonld_data['image'] = $jsonld_image;
     if ($evento['latitude'] && $evento['longitude']) {
         $jsonld_data['location']['geo'] = [
             '@type' => 'GeoCoordinates',

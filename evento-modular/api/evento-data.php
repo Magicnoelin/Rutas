@@ -42,16 +42,19 @@ try {
         $result = ['alojamientos' => [], 'lugares' => [], 'eventos_similares' => []];
 
         // Alojamientos cercanos: prioridad por coordenadas, fallback por provincia
+        // featured_until: campo que permite destacar manualmente un alojamiento por tiempo limitado
         $alojamientos = [];
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province,
                        price_per_night, photo1 AS main_image, latitude, longitude,
+                       featured_until,
+                       (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM accommodations
                 WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
                 HAVING distance < 100
-                ORDER BY distance ASC
+                ORDER BY is_featured_now DESC, distance ASC
                 LIMIT 8
             ");
             $stmt->execute([$lat, $lng, $lat]);
@@ -66,21 +69,27 @@ try {
                 $placeholders = implode(',', array_map('intval', $existing_ids));
                 $stmt2 = $pdo->prepare("
                     SELECT id, name, slug, municipality, province,
-                           price_per_night, photo1 AS main_image, latitude, longitude, 0 AS distance
+                           price_per_night, photo1 AS main_image, latitude, longitude,
+                           featured_until,
+                           (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
+                           0 AS distance
                     FROM accommodations
                     WHERE is_active = 1 AND province = ?
                       AND id NOT IN ($placeholders)
-                    ORDER BY RAND()
+                    ORDER BY is_featured_now DESC, RAND()
                     LIMIT $needed
                 ");
                 $stmt2->execute([$prov]);
             } else {
                 $stmt2 = $pdo->prepare("
                     SELECT id, name, slug, municipality, province,
-                           price_per_night, photo1 AS main_image, latitude, longitude, 0 AS distance
+                           price_per_night, photo1 AS main_image, latitude, longitude,
+                           featured_until,
+                           (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
+                           0 AS distance
                     FROM accommodations
                     WHERE is_active = 1 AND province = ?
-                    ORDER BY RAND()
+                    ORDER BY is_featured_now DESC, RAND()
                     LIMIT $needed
                 ");
                 $stmt2->execute([$prov]);
