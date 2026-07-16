@@ -212,7 +212,12 @@ function renderEventosLandingListing(array $ctx): void
                         <span itemprop="name"><?= $venue ?></span><?php if ($munic): ?> · <?php endif; ?>
                         <?php endif; ?>
                         <?php if ($munic): ?>
-                        <span itemprop="address"><?= $munic ?></span>
+                        <span><?= $munic ?></span>
+                        <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                            <meta itemprop="addressLocality" content="<?= $munic ?>">
+                            <meta itemprop="addressRegion" content="<?= htmlspecialchars($ev['province'] ?? '') ?>">
+                            <meta itemprop="addressCountry" content="ES">
+                        </span>
                         <?php endif; ?>
                     </span>
                 </p>

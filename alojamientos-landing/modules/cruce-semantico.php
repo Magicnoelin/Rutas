@@ -291,6 +291,11 @@ function renderCruceSemantico(array $ctx): void
                 <?php if ($evMunic): ?>
                 <span class="lnd-event-card__loc" itemprop="location" itemscope itemtype="https://schema.org/Place">
                     📍 <span itemprop="name"><?= $evMunic ?></span>
+                    <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                        <meta itemprop="addressLocality" content="<?= $evMunic ?>">
+                        <meta itemprop="addressRegion" content="<?= htmlspecialchars($ev['province'] ?? '') ?>">
+                        <meta itemprop="addressCountry" content="ES">
+                    </span>
                 </span>
                 <?php endif; ?>
                 <?php if ($evFree): ?>
