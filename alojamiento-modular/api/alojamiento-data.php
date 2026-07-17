@@ -211,7 +211,7 @@ try {
 
     // Construir array de fotos
     $fotos = [];
-    for ($i = 1; $i <= 10; $i++) {
+    for ($i = 1; $i <= 20; $i++) {
         $campo = 'photo' . $i;
         if (!empty($alojamiento[$campo])) {
             $url = $alojamiento[$campo];
