@@ -1088,7 +1088,7 @@
                     <label><i class="fas fa-hotel"></i> ¿A quién quieres contactar?</label>
                     <input type="text" id="search-acc-input" placeholder="Nombre del alojamiento o pueblo..." oninput="doSearchAcc(this.value)">
                     <div id="acc-results" class="search-results-box" style="display:none"></div>
-                    <div id="acc-selected-box" style="display:none; margin-top: 10px; padding: 10px; background: #e8f5e9; border: 1px solid var(--primary-color); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+                    <div id="acc-selected-box" style="display:none; margin-top: 10px; padding: 10px; background: #e8f5e9; border: 1px solid var(--primary-color); border-radius: 8px; align-items: center; justify-content: space-between;">
                         <span id="acc-selected-name" style="font-weight: 600; color: var(--primary-color);"></span>
                         <button onclick="resetAccSelection()" style="background:none; border:none; color: #e74c3c; cursor: pointer;"><i class="fas fa-times"></i></button>
                     </div>
@@ -2706,6 +2706,13 @@
 
     window.closeNewConvModal = () => {
         document.getElementById('modal-new-conv').classList.remove('active');
+        // Resetear botón enviar por si quedó deshabilitado
+        const btn = document.getElementById('btn-submit-chat');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Mensaje';
+        }
+        document.getElementById('modal-chat-alert').innerHTML = '';
     };
 
     window.setChatTemplate = (tpl, el) => {
@@ -2799,6 +2806,18 @@
 
         alertDiv.innerHTML = '';
 
+        // Validar que hay alojamiento seleccionado
+        if (!selAcc) {
+            showAlert('<i class="fas fa-exclamation-triangle"></i> Selecciona un alojamiento de la lista para poder enviar el mensaje.', 'warning');
+            return;
+        }
+
+        // Validar que el alojamiento tiene propietario vinculado
+        if (!selAcc.owner_user_id) {
+            showAlert('<i class="fas fa-info-circle"></i> Este alojamiento aún no está disponible para contacto directo. Prueba con otro alojamiento.', 'warning');
+            return;
+        }
+
         const content = document.getElementById('tpl-preview-text').textContent;
         if (!content || content === 'Completa los datos...') {
             showAlert('<i class="fas fa-exclamation-triangle"></i> Completa los campos del mensaje antes de enviar.', 'warning');
@@ -2809,52 +2828,37 @@
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-        // Determinar si hay un destinatario concreto con owner
-        const targetAcc = (selAcc && selAcc.owner_user_id) ? selAcc : null;
-
         try {
-            if (targetAcc) {
-                // ── Flujo A: Hay alojamiento seleccionado con propietario → chat directo ──
-                const resConv = await fetch('api/chat.php?action=start_conversation', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        recipient_id: targetAcc.owner_user_id,
-                        initiator_role: window.selectedInitiatorRole
-                    })
-                });
-                const dataConv = await resConv.json();
-                if (!dataConv.success) throw new Error(dataConv.error || 'No se pudo iniciar el chat');
-                const convId = dataConv.data.conversation_id;
+            // Flujo único: chat directo con el propietario del alojamiento
+            const resConv = await fetch('api/chat.php?action=start_conversation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    recipient_id: selAcc.owner_user_id,
+                    initiator_role: window.selectedInitiatorRole
+                })
+            });
+            const dataConv = await resConv.json();
+            if (!dataConv.success) throw new Error(dataConv.error || 'No se pudo iniciar el chat');
+            const convId = dataConv.data.conversation_id;
 
-                const resSend = await fetch('api/chat.php?action=send_message', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ conversation_id: convId, content: content })
-                });
-                const dataSend = await resSend.json();
-                if (!dataSend.success) throw new Error(dataSend.error || 'No se pudo enviar el mensaje');
+            const resSend = await fetch('api/chat.php?action=send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conversation_id: convId, content: content })
+            });
+            const dataSend = await resSend.json();
+            if (!dataSend.success) throw new Error(dataSend.error || 'No se pudo enviar el mensaje');
 
-                showAlert('<i class="fas fa-check-circle"></i> ¡Mensaje enviado con éxito!', 'success');
-                setTimeout(() => {
-                    closeNewConvModal();
-                    loadConversations().then(() => selectConversation(convId));
-                }, 1500);
+            showAlert('<i class="fas fa-check-circle"></i> ¡Mensaje enviado con éxito! Ahora puedes ver la conversación.', 'success');
+            setTimeout(async () => {
+                closeNewConvModal();
+                showSection('mensajes');
+                await loadConversations();
+                // Seleccionar la conversación recién creada
+                await selectConversation(convId, selAcc.owner_user_id);
+            }, 1500);
 
-            } else {
-                // ── Flujo B: Sin destinatario específico → consulta general (fire & forget) ──
-                const zone = document.getElementById('f-localidad')?.value || '';
-                // Guardar consulta en API pero NO bloquear si falla
-                fetch('api/submit_inquiry.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: content, zone: zone, template_type: curTpl })
-                }).catch(e => console.warn('Inquiry API error (non-blocking):', e));
-
-                // Siempre mostrar éxito al turista
-                showAlert('<i class="fas fa-check-circle"></i> ¡Consulta enviada! El equipo de Rutas Rurales te responderá pronto.', 'success');
-                setTimeout(() => closeNewConvModal(), 2000);
-            }
         } catch (e) {
             showAlert(`<i class="fas fa-times-circle"></i> ${e.message}`, 'error');
             btn.disabled = false;

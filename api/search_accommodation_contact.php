@@ -37,7 +37,16 @@ try {
     }
 
     // Sin filtro de status para no perder resultados
-    $conditions = ["a.status NOT IN ('deleted', 'spam') OR a.status IS NULL"];
+    // Verificamos si la columna status existe antes de filtrar
+    $hasStatusColumn = false;
+    try {
+        $colCheck = $pdo->query("SHOW COLUMNS FROM accommodations LIKE 'status'");
+        $hasStatusColumn = $colCheck->rowCount() > 0;
+    } catch (Exception $e) { $hasStatusColumn = false; }
+
+    $conditions = $hasStatusColumn
+        ? ["(a.status NOT IN ('deleted', 'spam') OR a.status IS NULL)"]
+        : ["1=1"];
     $params = [];
 
     if (!empty($query)) {
