@@ -3,6 +3,12 @@
 $lang = $lang ?? 'es';
 $lang_prefix = ($lang != 'es') ? '/' . $lang : '';
 
+// ── Guard: si la página llamante ya ha generado su propio <head> completo
+// (define HEADER_NO_HTML_HEAD = true), saltamos todo el bloque HTML hasta
+// el <body>/<header> de navegación para evitar duplicar <title>, <meta
+// description> y <link rel="canonical"> (errores SEO detectados por Bing).
+$_header_skip_head = defined('HEADER_NO_HTML_HEAD') && HEADER_NO_HTML_HEAD;
+
 // Traducciones del header
 $translations = [
     'es' => [
@@ -74,6 +80,8 @@ $translations = [
 
 $t = $translations[$lang] ?? $translations['es'];
 $page_description = $page_description ?? $t['description'];
+
+if (!$_header_skip_head):
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $lang; ?>">
@@ -386,6 +394,7 @@ $page_description = $page_description ?? $t['description'];
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+<?php endif; // HEADER_NO_HTML_HEAD guard ?>
     <header class="header">
         <nav class="navbar">
             <div class="container">

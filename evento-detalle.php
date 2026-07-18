@@ -686,6 +686,10 @@ $evento_js = $evento ? json_encode([
     <!-- Favicon -->
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
 
+    <!-- Estilos globales (normalmente cargados por header.php, aquí incluidos
+         directamente porque header.php omite su <head> en esta página) -->
+    <link rel="stylesheet" href="/styles.css">
+
     <!-- Preconnect solo para recursos críticos -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
@@ -1374,9 +1378,14 @@ $evento_js = $evento ? json_encode([
 
 <!-- ── HEADER (compatible con el existente) ── -->
 <?php
-// Intentar incluir el header existente
+// Intentar incluir el header existente.
+// HEADER_NO_HTML_HEAD le indica a header.php que omita el bloque
+// <!DOCTYPE html>...<head>...</head><body> (ya generado arriba)
+// y solo añada el <header> de navegación, evitando así los duplicados
+// de <title>, <meta description> y <link canonical> que reporta Bing.
 $header_path = __DIR__ . '/header.php';
 if (file_exists($header_path)) {
+    define('HEADER_NO_HTML_HEAD', true);
     include $header_path;
 } else {
     // Header ligero de fallback
