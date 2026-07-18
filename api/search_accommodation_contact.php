@@ -2,14 +2,15 @@
 /**
  * API: Buscar Alojamiento para Contacto
  * Devuelve alojamientos con su owner_user_id para iniciar chat
- * GET /api/search_accommodation_contact.php?query=...&province=...
+ * GET /api/search_accommodation_contact.php?query=...&province=...&limit=...
  */
 
-require_once 'config.php';
-
+// Sesión ANTES de require_once (que ya envía headers de Content-Type)
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+require_once 'config.php';
 
 // Requiere autenticación
 if (!isset($_SESSION['user_id'])) {
@@ -22,57 +23,49 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 $query    = isset($_GET['query'])    ? sanitizeInput($_GET['query'])    : '';
 $province = isset($_GET['province']) ? sanitizeInput($_GET['province']) : '';
+// Limit ya validado como entero — se inserta directamente en el SQL
 $limit    = isset($_GET['limit'])    ? max(1, min(20, (int)$_GET['limit'])) : 10;
 
 try {
     $pdo = getDBConnection();
 
-    // Verificar si la tabla user_resources existe para obtener el owner
+    // ── 1. ¿Existe tabla user_resources? ──────────────────────────────────
     $hasUserResources = false;
     try {
-        $check = $pdo->query("SHOW TABLES LIKE 'user_resources'");
-        $hasUserResources = $check->rowCount() > 0;
-    } catch (Exception $e) {
-        $hasUserResources = false;
-    }
+        $hasUserResources = $pdo->query("SHOW TABLES LIKE 'user_resources'")->rowCount() > 0;
+    } catch (Exception $e) { /* ignorar */ }
 
-    // Sin filtro de status para no perder resultados
-    // Verificamos si la columna status existe antes de filtrar
+    // ── 2. ¿Existe columna status en accommodations? ───────────────────────
     $hasStatusColumn = false;
     try {
-        $colCheck = $pdo->query("SHOW COLUMNS FROM accommodations LIKE 'status'");
-        $hasStatusColumn = $colCheck->rowCount() > 0;
-    } catch (Exception $e) { $hasStatusColumn = false; }
+        $hasStatusColumn = $pdo->query("SHOW COLUMNS FROM accommodations LIKE 'status'")->rowCount() > 0;
+    } catch (Exception $e) { /* ignorar */ }
 
-    $conditions = $hasStatusColumn
-        ? ["(a.status NOT IN ('deleted', 'spam') OR a.status IS NULL)"]
-        : ["1=1"];
-    $params = [];
+    // ── 3. Construir WHERE ─────────────────────────────────────────────────
+    $conditions = [];
+    $params     = [];
 
-    if (!empty($query)) {
+    if ($hasStatusColumn) {
+        $conditions[] = "(a.status NOT IN ('deleted', 'spam') OR a.status IS NULL)";
+    }
+
+    if ($query !== '') {
         $conditions[] = "(a.name LIKE :query OR a.municipality LIKE :query OR a.province LIKE :query OR a.slug LIKE :query)";
         $params[':query'] = '%' . $query . '%';
     }
 
-    if (!empty($province)) {
+    if ($province !== '') {
         $conditions[] = "a.province LIKE :province";
         $params[':province'] = '%' . $province . '%';
     }
 
-    // Filtrar por membresía no gratuita si se solicita
-    $premiumOnly = isset($_GET['premium_only']) && $_GET['premium_only'] === '1';
-    if ($premiumOnly) {
-        // Con user_resources: owner con membresía premium
-        // Sin user_resources: columna owner directa
-        // Se aplica el JOIN con users para filtrar membresía
-    }
+    $whereClause = empty($conditions) ? '1=1' : implode(' AND ', $conditions);
 
-    $whereClause = implode(' AND ', $conditions);
-
+    // ── 4. Elegir SQL según estructura de BD ───────────────────────────────
+    // $limit ya es un entero seguro → se puede incrustar directamente
     if ($hasUserResources) {
-        // Con tabla user_resources para obtener el propietario
         $sql = "
-            SELECT 
+            SELECT
                 a.id,
                 a.name,
                 a.slug,
@@ -82,25 +75,27 @@ try {
                 a.price_per_night,
                 a.max_guests,
                 a.description,
-                ur.user_id AS owner_user_id,
-                u.first_name AS owner_first_name,
-                u.last_name AS owner_last_name
+                ur.user_id        AS owner_user_id,
+                u.first_name      AS owner_first_name,
+                u.last_name       AS owner_last_name
             FROM accommodations a
-            LEFT JOIN user_resources ur ON a.id = ur.resource_id 
-                AND ur.resource_type = 'accommodation' 
-                AND ur.role = 'owner'
+            LEFT JOIN user_resources ur
+                   ON a.id = ur.resource_id
+                  AND ur.resource_type = 'accommodation'
+                  AND ur.role = 'owner'
             LEFT JOIN users u ON ur.user_id = u.id
-            WHERE $whereClause
+            WHERE {$whereClause}
             ORDER BY a.name ASC
-            LIMIT :limit
+            LIMIT {$limit}
         ";
     } else {
-        // Sin user_resources, intentar con columna owner_user_id directa
-        $checkCols = $pdo->query("SHOW COLUMNS FROM accommodations")->fetchAll(PDO::FETCH_COLUMN);
-        
-        if (in_array('owner_user_id', $checkCols)) {
+        // ¿Tiene columna owner_user_id directa?
+        $colsRaw   = $pdo->query("SHOW COLUMNS FROM accommodations")->fetchAll(PDO::FETCH_ASSOC);
+        $colNames  = array_column($colsRaw, 'Field');
+
+        if (in_array('owner_user_id', $colNames)) {
             $sql = "
-                SELECT 
+                SELECT
                     a.id,
                     a.name,
                     a.slug,
@@ -112,17 +107,17 @@ try {
                     a.description,
                     a.owner_user_id,
                     u.first_name AS owner_first_name,
-                    u.last_name AS owner_last_name
+                    u.last_name  AS owner_last_name
                 FROM accommodations a
                 LEFT JOIN users u ON a.owner_user_id = u.id
-                WHERE $whereClause
+                WHERE {$whereClause}
                 ORDER BY a.name ASC
-                LIMIT :limit
+                LIMIT {$limit}
             ";
         } else {
-            // Fallback sin owner
+            // Fallback sin propietario
             $sql = "
-                SELECT 
+                SELECT
                     a.id,
                     a.name,
                     a.slug,
@@ -136,48 +131,52 @@ try {
                     NULL AS owner_first_name,
                     NULL AS owner_last_name
                 FROM accommodations a
-                WHERE $whereClause
+                WHERE {$whereClause}
                 ORDER BY a.name ASC
-                LIMIT :limit
+                LIMIT {$limit}
             ";
         }
     }
 
-    $params[':limit'] = $limit;
+    // ── 5. Ejecutar ────────────────────────────────────────────────────────
     $stmt = $pdo->prepare($sql);
     foreach ($params as $key => $val) {
-        $type = is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR;
-        $stmt->bindValue($key, $val, $type);
+        $stmt->bindValue($key, $val, PDO::PARAM_STR);
     }
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Formatear resultados
-    $formatted = array_map(function($row) {
+    // ── 6. Formatear ───────────────────────────────────────────────────────
+    $formatted = array_map(function ($row) {
         return [
-            'id'                => (int)$row['id'],
-            'name'              => $row['name'],
-            'slug'              => $row['slug'],
-            'municipality'      => $row['municipality'],
-            'province'          => $row['province'],
-            'accommodation_type'=> $row['accommodation_type'],
-            'price_per_night'   => $row['price_per_night'] ? (float)$row['price_per_night'] : null,
-            'max_guests'        => $row['max_guests'] ? (int)$row['max_guests'] : null,
-            'description'       => $row['description'] ? substr($row['description'], 0, 120) . '...' : '',
-            'owner_user_id'     => $row['owner_user_id'] ? (int)$row['owner_user_id'] : null,
-            'owner_name'        => trim(($row['owner_first_name'] ?? '') . ' ' . ($row['owner_last_name'] ?? '')) ?: null,
-            'has_owner'         => !empty($row['owner_user_id']),
+            'id'                 => (int)$row['id'],
+            'name'               => $row['name'],
+            'slug'               => $row['slug'],
+            'municipality'       => $row['municipality'] ?? '',
+            'province'           => $row['province']     ?? '',
+            'accommodation_type' => $row['accommodation_type'] ?? '',
+            'price_per_night'    => !empty($row['price_per_night']) ? (float)$row['price_per_night'] : null,
+            'max_guests'         => !empty($row['max_guests'])      ? (int)$row['max_guests']        : null,
+            'description'        => !empty($row['description'])
+                                        ? mb_substr($row['description'], 0, 120) . '...'
+                                        : '',
+            'owner_user_id'      => !empty($row['owner_user_id']) ? (int)$row['owner_user_id'] : null,
+            'owner_name'         => trim(($row['owner_first_name'] ?? '') . ' ' . ($row['owner_last_name'] ?? '')) ?: null,
+            'has_owner'          => !empty($row['owner_user_id']),
         ];
     }, $results);
 
+    $msg = count($formatted) > 0 ? 'Alojamientos encontrados' : 'Sin resultados';
     jsonSuccess([
         'results' => $formatted,
         'count'   => count($formatted),
-        'query'   => $query
-    ], count($formatted) > 0 ? 'Alojamientos encontrados' : 'Sin resultados');
+        'query'   => $query,
+    ], $msg);
 
 } catch (PDOException $e) {
-    error_log('search_accommodation_contact.php Error: ' . $e->getMessage());
+    error_log('search_accommodation_contact.php PDO Error: ' . $e->getMessage());
     jsonError('Error en la búsqueda: ' . $e->getMessage(), 500);
+} catch (Exception $e) {
+    error_log('search_accommodation_contact.php Error: ' . $e->getMessage());
+    jsonError('Error inesperado: ' . $e->getMessage(), 500);
 }
-?>
