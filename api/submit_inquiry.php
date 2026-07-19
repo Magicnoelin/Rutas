@@ -65,10 +65,9 @@ try {
     $owners = []; // array de ['owner_id' => X, 'acc_id' => Y, 'acc_name' => Z]
 
     if ($urHasRole && $urHasResourceType) {
-        $zoneWhere = $zone !== '' ? "AND (a.province LIKE :zone OR a.municipality LIKE :zone OR a.name LIKE :zone)" : '';
+        $zoneWhere = $zone !== '' ? "AND (a.province LIKE :zone OR a.municipality LIKE :zone)" : '';
         $sql = "
-            SELECT DISTINCT ur.user_id AS owner_id, a.id AS acc_id, a.name AS acc_name,
-                   a.province, a.municipality
+            SELECT DISTINCT ur.user_id AS owner_id
             FROM accommodations a
             JOIN user_resources ur
                 ON a.id = ur.resource_id
@@ -78,23 +77,18 @@ try {
               AND ur.user_id != :tid
               {$statusFilter}
               {$zoneWhere}
-            LIMIT 10
         ";
         $params = [':tid' => $touristId];
         if ($zone !== '') $params[':zone'] = '%' . $zone . '%';
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
-        $owners = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $owners = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         // Si no hay con zona, buscar sin zona
         if (empty($owners) && $zone !== '') {
             $stmt2 = $pdo->prepare("
-                SELECT DISTINCT ur.user_id AS owner_id, a.id AS acc_id, a.name AS acc_name,
-                       a.province, a.municipality
-                FROM accommodations a
-                JOIN user_resources ur ON a.id = ur.resource_id
-                   AND ur.resource_type = 'accommodation'
-                   AND ur.role = 'owner'
+                SELECT DISTINCT ur.user_id AS owner_id
+                FROM user_resources ur
                 WHERE ur.user_id IS NOT NULL AND ur.user_id != :tid {$statusFilter}
                 LIMIT 5
             ");
@@ -105,14 +99,12 @@ try {
 
     // Estrategia 2: owner_user_id directo en accommodations
     if (empty($owners) && $hasOwnerCol) {
-        $zoneWhere = $zone !== '' ? "AND (a.province LIKE :zone OR a.municipality LIKE :zone OR a.name LIKE :zone)" : '';
+        $zoneWhere = $zone !== '' ? "AND (a.province LIKE :zone OR a.municipality LIKE :zone)" : '';
         $sql = "
-            SELECT DISTINCT a.owner_user_id AS owner_id, a.id AS acc_id, a.name AS acc_name,
-                   a.province, a.municipality
+            SELECT DISTINCT a.owner_user_id AS owner_id
             FROM accommodations a
             WHERE a.owner_user_id IS NOT NULL AND a.owner_user_id != :tid
               {$statusFilter} {$zoneWhere}
-            LIMIT 10
         ";
         $params = [':tid' => $touristId];
         if ($zone !== '') $params[':zone'] = '%' . $zone . '%';
@@ -122,8 +114,7 @@ try {
 
         if (empty($owners) && $zone !== '') {
             $stmt2 = $pdo->prepare("
-                SELECT DISTINCT a.owner_user_id AS owner_id, a.id AS acc_id, a.name AS acc_name,
-                       a.province, a.municipality
+                SELECT DISTINCT a.owner_user_id AS owner_id
                 FROM accommodations a
                 WHERE a.owner_user_id IS NOT NULL AND a.owner_user_id != :tid {$statusFilter}
                 LIMIT 5
@@ -168,29 +159,26 @@ try {
     $conversationsCreated = [];
     $errors = [];
 
-    foreach ($owners as $ownerRow) {
-        $ownerId = (int)$ownerRow['owner_id'];
-        $accId   = (int)$ownerRow['acc_id'];
-        $accName = $ownerRow['acc_name'] ?? '';
+    foreach ($owners as $ownerId) {
+        $ownerId = (int)$ownerId;
 
         if ($ownerId <= 0 || $ownerId === $touristId) continue;
 
         try {
-            // ¿Ya existe conversación entre este turista y este propietario sobre este alojamiento?
+            // ¿Ya existe una conversación genérica (sin entity_id) entre este turista y este propietario?
             $checkStmt = $pdo->prepare("
                 SELECT id FROM conversations
                 WHERE user_1_id = ?
                   AND provider_id = ?
-                  AND entity_type = 'accommodation'
-                  AND entity_id = ?
+                  AND entity_type = 'inquiry'
                 LIMIT 1
             ");
-            $checkStmt->execute([$touristId, $ownerId, $accId]);
+            $checkStmt->execute([$touristId, $ownerId]);
             $existingConvId = $checkStmt->fetchColumn();
 
             if ($existingConvId) {
                 $convId = (int)$existingConvId;
-                $pdo->prepare("UPDATE conversations SET last_message_at = NOW(), updated_at = NOW() WHERE id = ?")->execute([$convId]);
+                $pdo->prepare("UPDATE conversations SET last_message_at = NOW(), status = 'open', updated_at = NOW() WHERE id = ?")->execute([$convId]);
             } else {
                 $pdo->prepare("
                     INSERT INTO conversations
@@ -205,11 +193,11 @@ try {
                 INSERT INTO messages (conversation_id, sender_id, {$contentCol}, is_read, created_at)
                 VALUES (?, ?, ?, 0, NOW())
             ")->execute([$convId, $touristId, $message]);
-
-            $conversationsCreated[] = ['conv_id' => $convId, 'acc_name' => $accName];
+            
+            $conversationsCreated[] = ['conv_id' => $convId, 'owner_id' => $ownerId];
 
         } catch (PDOException $ex) {
-            $errors[] = "Owner {$ownerId} / Acc {$accId}: " . $ex->getMessage();
+            $errors[] = "Owner {$ownerId}: " . $ex->getMessage();
             error_log("submit_inquiry owner {$ownerId}: " . $ex->getMessage());
         }
     }
