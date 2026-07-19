@@ -194,8 +194,8 @@ try {
             } else {
                 $pdo->prepare("
                     INSERT INTO conversations
-                        (user_1_id, entity_type, entity_id, provider_id, status, last_message_at, created_at, updated_at)
-                    VALUES (?, 'accommodation', ?, ?, 'open', NOW(), NOW(), NOW())
+                        (user_1_id, entity_type, entity_id, provider_id, status, last_message_at, created_at, updated_at, resource_type, resource_id)
+                    VALUES (?, 'accommodation', ?, ?, 'open', NOW(), NOW(), NOW(), 'accommodation', ?)
                 ")->execute([$touristId, $accId, $ownerId]);
                 $convId = (int)$pdo->lastInsertId();
             }

@@ -80,7 +80,7 @@ try {
                     " . ($hasEntityType ? "c.entity_type," : "'chat' AS entity_type,") . "
                     " . ($hasStatus ? "c.status," : "'open' AS status,") . "
                     (SELECT m.{$contentCol} FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) AS last_message,
-                    (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :userId4) AS unread_count
+                    (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :userId4 AND m.sender_id IS NOT NULL) AS unread_count
                 FROM conversations c
                 LEFT JOIN users u ON ({$otherUserExpr}) = u.id
                 WHERE {$whereClause}
@@ -96,6 +96,19 @@ try {
                 ':userId4' => $userId,
             ]);
             $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Fallback para conversaciones huérfanas (provider_id = NULL)
+            // Si el JOIN con `users` falla, other_user_id puede ser NULL.
+            // Asignamos datos de admin para que se muestre correctamente.
+            foreach ($conversations as &$conv) {
+                if ($conv['other_user_id'] === null) {
+                    $conv['first_name'] = 'Administración';
+                    $conv['last_name'] = 'Rutas Rurales';
+                    $conv['user_type'] = 'admin';
+                    $conv['avatar_url'] = null;
+                }
+            }
+
             jsonSuccess($conversations);
             break;
 
