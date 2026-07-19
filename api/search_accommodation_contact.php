@@ -73,7 +73,7 @@ try {
                 a.province,
                 a.accommodation_type,
                 a.price_per_night,
-                a.max_guests,
+                a.capacity,
                 a.description,
                 ur.user_id        AS owner_user_id,
                 u.first_name      AS owner_first_name,
@@ -94,6 +94,7 @@ try {
         $colNames  = array_column($colsRaw, 'Field');
 
         if (in_array('owner_user_id', $colNames)) {
+            $capacityCol = in_array('capacity', $colNames) ? 'a.capacity' : (in_array('max_guests', $colNames) ? 'a.max_guests' : 'NULL');
             $sql = "
                 SELECT
                     a.id,
@@ -103,7 +104,7 @@ try {
                     a.province,
                     a.accommodation_type,
                     a.price_per_night,
-                    a.max_guests,
+                    {$capacityCol} AS capacity,
                     a.description,
                     a.owner_user_id,
                     u.first_name AS owner_first_name,
@@ -116,6 +117,7 @@ try {
             ";
         } else {
             // Fallback sin propietario
+            $capacityCol = in_array('capacity', $colNames) ? 'a.capacity' : (in_array('max_guests', $colNames) ? 'a.max_guests' : 'NULL');
             $sql = "
                 SELECT
                     a.id,
@@ -125,7 +127,7 @@ try {
                     a.province,
                     a.accommodation_type,
                     a.price_per_night,
-                    a.max_guests,
+                    {$capacityCol} AS capacity,
                     a.description,
                     NULL AS owner_user_id,
                     NULL AS owner_first_name,
@@ -156,7 +158,7 @@ try {
             'province'           => $row['province']     ?? '',
             'accommodation_type' => $row['accommodation_type'] ?? '',
             'price_per_night'    => !empty($row['price_per_night']) ? (float)$row['price_per_night'] : null,
-            'max_guests'         => !empty($row['max_guests'])      ? (int)$row['max_guests']        : null,
+            'capacity'           => !empty($row['capacity'])        ? (int)$row['capacity']          : null,
             'description'        => !empty($row['description'])
                                         ? mb_substr($row['description'], 0, 120) . '...'
                                         : '',
