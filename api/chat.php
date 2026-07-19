@@ -61,10 +61,10 @@ try {
             if (!$user2Col) jsonError('Estructura de tabla conversations no compatible', 500);
 
             // WHERE: el usuario es user_1_id O es el provider_id
-            $whereClause = "c.user_1_id = :me1 OR c.{$user2Col} = :me2";
+            $whereClause = "c.user_1_id = ? OR c.{$user2Col} = ?";
 
             // Calcular other_user_id según estructura
-            $otherUserExpr = "CASE WHEN c.user_1_id = :me3 THEN c.{$user2Col} ELSE c.user_1_id END";
+            $otherUserExpr = "CASE WHEN c.user_1_id = ? THEN c.{$user2Col} ELSE c.user_1_id END";
 
             // Para conversations con provider_id = NULL (consultas pendientes sin destinatario)
             // las incluimos pero mostramos datos del admin o sin nombre
@@ -80,7 +80,7 @@ try {
                     " . ($hasEntityType ? "c.entity_type," : "'chat' AS entity_type,") . "
                     " . ($hasStatus ? "c.status," : "'open' AS status,") . "
                     (SELECT m.{$contentCol} FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) AS last_message,
-                    (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != :me4 AND m.sender_id IS NOT NULL) AS unread_count
+                    (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_id != ? AND m.sender_id IS NOT NULL) AS unread_count
                 FROM conversations c
                 LEFT JOIN users u ON ({$otherUserExpr}) = u.id
                 WHERE {$whereClause}
@@ -89,12 +89,7 @@ try {
             ";
 
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                ':me1' => $userId,
-                ':me2' => $userId,
-                ':me3' => $userId,
-                ':me4' => $userId,
-            ]);
+            $stmt->execute([$userId, $userId, $userId, $userId, $userId]);
             $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Fallback para conversaciones huérfanas (provider_id = NULL)

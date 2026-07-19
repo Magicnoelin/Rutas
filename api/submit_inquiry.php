@@ -93,7 +93,7 @@ try {
                 LIMIT 5
             ");
             $stmt2->execute([':tid' => $touristId]);
-            $owners = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+            $owners = $stmt2->fetchAll(PDO::FETCH_COLUMN);
         }
     }
 
@@ -110,7 +110,7 @@ try {
         if ($zone !== '') $params[':zone'] = '%' . $zone . '%';
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
-        $owners = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $owners = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         if (empty($owners) && $zone !== '') {
             $stmt2 = $pdo->prepare("
@@ -120,7 +120,7 @@ try {
                 LIMIT 5
             ");
             $stmt2->execute([':tid' => $touristId]);
-            $owners = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+            $owners = $stmt2->fetchAll(PDO::FETCH_COLUMN);
         }
     }
 
@@ -182,9 +182,9 @@ try {
             } else {
                 $pdo->prepare("
                     INSERT INTO conversations
-                        (user_1_id, entity_type, entity_id, provider_id, status, last_message_at, created_at, updated_at, resource_type, resource_id)
-                    VALUES (?, 'accommodation', ?, ?, 'open', NOW(), NOW(), NOW(), 'accommodation', ?)
-                ")->execute([$touristId, $accId, $ownerId]);
+                        (user_1_id, entity_type, entity_id, provider_id, status, last_message_at, created_at, updated_at)
+                    VALUES (?, 'inquiry', 0, ?, 'open', NOW(), NOW(), NOW())"
+                )->execute([$touristId, $ownerId]);
                 $convId = (int)$pdo->lastInsertId();
             }
 
