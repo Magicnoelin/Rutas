@@ -140,10 +140,10 @@ try {
         try {
             $pdo->prepare("
                 INSERT INTO conversations
-                    (user_1_id, entity_type, entity_id, provider_id, status, last_message_at, created_at, updated_at)
+                    (user_1_id, entity_type, entity_id, provider_id, status, last_message_at, created_at, updated_at, resource_type, resource_id)
                 VALUES
-                    (:uid, 'inquiry', 0, NULL, 'open', NOW(), NOW(), NOW())
-            ")->execute([':uid' => $touristId]);
+                    ($touristId, 'inquiry', 0, NULL, 'open', NOW(), NOW(), NOW(), 'accommodation', 0)
+            ")->execute();
             $convId = (int)$pdo->lastInsertId();
 
             $pdo->prepare("
