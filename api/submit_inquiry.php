@@ -183,8 +183,8 @@ try {
                 $pdo->prepare("
                     INSERT INTO conversations
                         (user_1_id, entity_type, entity_id, provider_id, status, last_message_at, created_at, updated_at)
-                    VALUES (?, 'inquiry', 0, ?, 'open', NOW(), NOW(), NOW())"
-                )->execute([$touristId, $ownerId]);
+                    VALUES (?, 'inquiry', 0, ?, 'open', NOW(), NOW(), NOW())
+                ")->execute([$touristId, $ownerId]);
                 $convId = (int)$pdo->lastInsertId();
             }
 
