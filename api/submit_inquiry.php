@@ -40,10 +40,6 @@ try {
     $pdo = getDBConnection();
 
     // ── Estructura real detectada del diagnóstico ─────────────────────────
-    // conversations: id, user_1_id, entity_type, entity_id, provider_id,
-    //               status, last_message_at, created_at, updated_at,
-    //               resource_type, resource_id
-    // messages: detectar columnas reales
     $msgCols    = $pdo->query("SHOW COLUMNS FROM messages")->fetchAll(PDO::FETCH_COLUMN);
     $contentCol = in_array('content', $msgCols) ? 'content' :
                   (in_array('message_text', $msgCols) ? 'message_text' : 'content');
@@ -61,9 +57,9 @@ try {
     $statusFilter = $hasStatus ? "AND (a.status NOT IN ('deleted','spam') OR a.status IS NULL)" : '';
 
     // ── Buscar alojamientos con propietario ───────────────────────────────
-    // Estrategia 1: user_resources
-    $owners = []; // array de ['owner_id' => X, 'acc_id' => Y, 'acc_name' => Z]
+    $owners = []; // array de IDs de propietarios
 
+    // Estrategia 1: user_resources
     if ($urHasRole && $urHasResourceType) {
         $zoneWhere = $zone !== '' ? "AND (a.province LIKE :zone OR a.municipality LIKE :zone)" : '';
         $sql = "
@@ -86,12 +82,16 @@ try {
 
         // Si no hay con zona, buscar sin zona
         if (empty($owners) && $zone !== '') {
-            $stmt2 = $pdo->prepare("
+            $sqlFallback = "
                 SELECT DISTINCT ur.user_id AS owner_id
                 FROM user_resources ur
-                WHERE ur.user_id IS NOT NULL AND ur.user_id != :tid {$statusFilter}
+                JOIN accommodations a ON ur.resource_id = a.id
+                WHERE ur.user_id IS NOT NULL AND ur.user_id != :tid
+                  AND ur.resource_type = 'accommodation' AND ur.role = 'owner'
+                  {$statusFilter}
                 LIMIT 5
-            ");
+            ";
+            $stmt2 = $pdo->prepare($sqlFallback);
             $stmt2->execute([':tid' => $touristId]);
             $owners = $stmt2->fetchAll(PDO::FETCH_COLUMN);
         }
@@ -113,12 +113,13 @@ try {
         $owners = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         if (empty($owners) && $zone !== '') {
-            $stmt2 = $pdo->prepare("
+            $sqlFallback = "
                 SELECT DISTINCT a.owner_user_id AS owner_id
                 FROM accommodations a
                 WHERE a.owner_user_id IS NOT NULL AND a.owner_user_id != :tid {$statusFilter}
                 LIMIT 5
-            ");
+            ";
+            $stmt2 = $pdo->prepare($sqlFallback);
             $stmt2->execute([':tid' => $touristId]);
             $owners = $stmt2->fetchAll(PDO::FETCH_COLUMN);
         }
@@ -126,15 +127,13 @@ try {
 
     // ── Sin propietarios: guardar pendiente ───────────────────────────────
     if (empty($owners)) {
-        // Guardar como conversación "sin destinatario" en la tabla conversations
-        // usando provider_id = NULL y entity_type = 'inquiry'
         try {
             $pdo->prepare("
                 INSERT INTO conversations
                     (user_1_id, entity_type, entity_id, provider_id, status, last_message_at, created_at, updated_at, resource_type, resource_id)
                 VALUES
-                    ($touristId, 'inquiry', 0, NULL, 'open', NOW(), NOW(), NOW(), 'accommodation', 0)
-            ")->execute();
+                    (?, 'inquiry', 0, NULL, 'open', NOW(), NOW(), NOW(), 'accommodation', 0)
+            ")->execute([$touristId]);
             $convId = (int)$pdo->lastInsertId();
 
             $pdo->prepare("
@@ -165,7 +164,6 @@ try {
         if ($ownerId <= 0 || $ownerId === $touristId) continue;
 
         try {
-            // ¿Ya existe una conversación genérica (sin entity_id) entre este turista y este propietario?
             $checkStmt = $pdo->prepare("
                 SELECT id FROM conversations
                 WHERE user_1_id = ?
@@ -188,7 +186,6 @@ try {
                 $convId = (int)$pdo->lastInsertId();
             }
 
-            // Insertar mensaje
             $pdo->prepare("
                 INSERT INTO messages (conversation_id, sender_id, {$contentCol}, is_read, created_at)
                 VALUES (?, ?, ?, 0, NOW())
@@ -220,3 +217,4 @@ try {
     error_log('submit_inquiry.php fatal: ' . $e->getMessage());
     jsonError('Error inesperado: ' . $e->getMessage(), 500);
 }
+
