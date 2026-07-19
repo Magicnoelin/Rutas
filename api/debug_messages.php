@@ -38,9 +38,17 @@ try {
         $out['conversations_count'] = (int)$count;
 
         if ($userId) {
-            $mine = $pdo->prepare("SELECT * FROM conversations WHERE user_1_id = ? OR user_2_id = ? ORDER BY last_message_at DESC LIMIT 10");
-            $mine->execute([$userId, $userId]);
-            $out['my_conversations'] = $mine->fetchAll(PDO::FETCH_ASSOC);
+            // Detectar si la tabla usa user_2_id o provider_id
+            $user2Col = in_array('user_2_id', $cols) ? 'user_2_id' : (in_array('provider_id', $cols) ? 'provider_id' : null);
+
+            if ($user2Col) {
+                $sql = "SELECT * FROM conversations WHERE user_1_id = ? OR {$user2Col} = ? ORDER BY last_message_at DESC LIMIT 10";
+                $mine = $pdo->prepare($sql);
+                $mine->execute([$userId, $userId]);
+                $out['my_conversations'] = $mine->fetchAll(PDO::FETCH_ASSOC);
+            } else {
+                $out['my_conversations'] = 'No se pudo determinar la columna de usuario secundario (user_2_id o provider_id).';
+            }
         }
     }
 
