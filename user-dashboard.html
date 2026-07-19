@@ -2663,41 +2663,53 @@
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-        try {
-            // Guardar la consulta libre en la API (sin destinatario específico)
-            const zona    = (document.getElementById('f-localidad')?.value || '').trim();
-            const personas = (document.getElementById('f-personas')?.value || '2').trim();
-            const llegada  = document.getElementById('f-llegada')?.value || '';
-            const salida   = document.getElementById('f-salida')?.value  || '';
-            const extra    = (document.getElementById('f-extra')?.value  || '').trim();
+        const zona     = (document.getElementById('f-localidad')?.value || '').trim();
+        const personas = (document.getElementById('f-personas')?.value  || '2').trim();
+        const llegada  = document.getElementById('f-llegada')?.value || '';
+        const salida   = document.getElementById('f-salida')?.value  || '';
+        const extra    = (document.getElementById('f-extra')?.value   || '').trim();
 
-            await fetch('api/submit_inquiry.php', {
+        try {
+            const res  = await fetch('api/submit_inquiry.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: content,
                     zone: zona,
-                    persons: personas,
-                    check_in: llegada,
+                    persons: parseInt(personas),
+                    check_in:  llegada,
                     check_out: salida,
                     extra: extra,
                     template_type: 'busco_alojamiento'
                 })
-            }).catch(e => console.warn('Inquiry API (non-blocking):', e));
+            });
 
-            showAlert('<i class="fas fa-check-circle"></i> ¡Consulta enviada! El equipo de Rutas Rurales te contactará pronto para ayudarte a encontrar el alojamiento perfecto.', 'success');
+            const data = await res.json();
 
-            // Añadir la consulta al historial de mensajes local
-            const historial = document.getElementById('conversationsList');
-            if (historial && historial.querySelector('[style*="Cargando"]')) {
-                await loadConversations();
+            if (!data.success) {
+                throw new Error(data.error || 'Error desconocido al enviar la consulta');
             }
 
-            setTimeout(() => {
+            const n = data.data?.conversations_created || 0;
+            const pending = data.data?.pending_inquiry || false;
+
+            if (pending) {
+                showAlert(`<i class="fas fa-clock"></i> ${data.data.message}`, 'success');
+            } else if (n === 0) {
+                showAlert('<i class="fas fa-info-circle"></i> Consulta guardada. En esta zona aún no hay alojamientos con propietario vinculado en el sistema.', 'warning');
+            } else {
+                showAlert(
+                    `<i class="fas fa-check-circle"></i> ¡Consulta enviada a ${n} alojamiento${n > 1 ? 's' : ''}! Verás las respuestas en tu historial de mensajes.`,
+                    'success'
+                );
+            }
+
+            // Cerrar modal y mostrar historial actualizado
+            setTimeout(async () => {
                 closeNewConvModal();
                 showSection('mensajes');
-                loadConversations();
-            }, 2500);
+                await loadConversations();
+            }, 1800);
 
         } catch (e) {
             showAlert(`<i class="fas fa-times-circle"></i> Error al enviar: ${e.message}`, 'error');
