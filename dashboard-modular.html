@@ -580,190 +580,363 @@
         </nav>
     </header>
 
-    <!-- Role Context Bar (REQ 1) -->
-    <div class="role-context-bar" id="roleContextBar"></div>
+    <!-- ============================================================
+         BARRA DE CONTEXTO DE ROL (REQ 1)
+         Muestra en qué modo está navegando el usuario y permite cambiar
+         ============================================================ -->
+    <div class="role-context-bar" id="roleContextBar">
+        <!-- Se renderiza dinámicamente por dashboard-role-context.js -->
+    </div>
 
     <div class="dashboard-container">
+
+        <!-- ==================== SIDEBAR ==================== -->
         <aside class="dashboard-sidebar">
+            <!-- Avatar y nombre del usuario -->
             <div style="text-align:center;margin-bottom:2rem">
-                <div class="profile-avatar" id="avatarDisplay" style="margin:0 auto 1rem;width:70px;height:70px;font-size:2rem"><i class="fas fa-user"></i></div>
-                <h3 id="userNameDisplay" style="margin:0;color:#2f5233">Viajero</h3>
+                <div class="profile-avatar" id="avatarDisplay"
+                     style="margin:0 auto 1rem;width:70px;height:70px;font-size:2rem;cursor:pointer"
+                     onclick="showSection('perfil')" title="Haz clic para editar tu perfil">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 id="userNameDisplay" style="margin:0 0 .2rem 0;color:var(--primary-color);font-size:1rem">Cargando...</h3>
+                <p id="userNicknameDisplay" style="margin:0 0 .4rem 0;font-size:.8rem;color:#999;font-style:italic"></p>
                 <span id="membershipBadge" style="background:#6c757d;color:white;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:600">Gratuito</span>
             </div>
+            <!-- Menú de navegación -->
             <ul class="sidebar-menu">
-                <li><a href="#" onclick="showSection('inicio')" class="active"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="#" onclick="showSection('perfil')"><i class="fas fa-user"></i> Mi Perfil</a></li>
-                <li><a href="#" onclick="showSection('mensajes')"><i class="fas fa-envelope"></i> Mensajes</a></li>
-                <li><a href="#" onclick="showSection('favoritos')"><i class="fas fa-heart"></i> Favoritos</a></li>
-                <li><a href="#" onclick="showSection('pasaporte')"><i class="fas fa-passport"></i> Pasaporte Rural</a></li>
-                <li><a href="#" onclick="showSection('membresia')"><i class="fas fa-crown"></i> Mi Membresía</a></li>
-                <li><a href="#" onclick="showSection('mis-alojamientos')"><i class="fas fa-bed"></i> Mis Alojamientos</a></li>
-                <li><a href="#" onclick="showSection('mis-actividades')"><i class="fas fa-hiking"></i> Mis Actividades</a></li>
-                <li><a href="#" onclick="showSection('mis-lugares')"><i class="fas fa-map-marker-alt"></i> Mis Lugares</a></li>
-                <li><a href="#" onclick="showSection('mis-eventos')"><i class="fas fa-calendar-alt"></i> Mis Eventos</a></li>
-                <li><a href="#" onclick="showSection('tablon')"><i class="fas fa-bullhorn"></i> Tablón Solicitudes</a></li>
+                <li><a href="#" onclick="showSection('inicio')" class="active" id="menu-inicio"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#" onclick="showSection('perfil')" id="menu-perfil"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+                <li><a href="#" onclick="showSection('mensajes')" id="menu-mensajes"><i class="fas fa-envelope"></i> Mensajes <span id="sidebar-unread-badge" style="display:none;background:var(--secondary-color);color:white;border-radius:10px;padding:1px 6px;font-size:.7rem;font-weight:700;margin-left:4px"></span></a></li>
+                <li><a href="#" onclick="showSection('favoritos')" id="menu-favoritos"><i class="fas fa-heart"></i> Favoritos</a></li>
+                <li><a href="#" onclick="showSection('pasaporte')" id="menu-pasaporte"><i class="fas fa-stamp"></i> Pasaporte Rural</a></li>
+                <li><a href="#" onclick="showSection('membresia')" id="menu-membresia"><i class="fas fa-crown"></i> Mi Membresía</a></li>
+                <li style="border-top:1px solid #eee;margin-top:.5rem;padding-top:.5rem">
+                    <span style="font-size:.7rem;color:#aaa;padding:4px 15px;display:block;text-transform:uppercase;letter-spacing:.5px">Mis Servicios</span>
+                </li>
+                <li><a href="#" onclick="showSection('mis-alojamientos')" id="menu-mis-alojamientos"><i class="fas fa-bed"></i> Mis Alojamientos</a></li>
+                <li><a href="#" onclick="showSection('mis-actividades')" id="menu-mis-actividades"><i class="fas fa-hiking"></i> Mis Actividades</a></li>
+                <li><a href="#" onclick="showSection('mis-lugares')" id="menu-mis-lugares"><i class="fas fa-map-marker-alt"></i> Mis Lugares</a></li>
+                <li><a href="#" onclick="showSection('mis-eventos')" id="menu-mis-eventos"><i class="fas fa-calendar-alt"></i> Mis Eventos</a></li>
+                <li style="border-top:1px solid #eee;margin-top:.5rem;padding-top:.5rem">
+                    <a href="#" onclick="showSection('tablon')" id="menu-tablon"><i class="fas fa-bullhorn"></i> Tablón Solicitudes</a>
+                </li>
             </ul>
         </aside>
 
+        <!-- ==================== CONTENIDO PRINCIPAL ==================== -->
         <main class="dashboard-content">
-            <!-- INICIO -->
+
+            <!-- ===== INICIO ===== -->
             <section id="inicio-section" class="dashboard-section active">
                 <div class="welcome-header">
-                    <h1>Bienvenido a tu Panel</h1>
-                    <p style="color:#666">Gestiona tu perfil, alojamientos, actividades y mucho más.</p>
+                    <h1 id="welcomeTitle">¡Hola, Viajero! 👋</h1>
+                    <p style="color:#666;font-size:1.05rem">Este es tu espacio personal en Rutas Rurales. Desde aquí puedes gestionar tu perfil, consultar tus conversaciones, ver tus favoritos y mucho más.</p>
                 </div>
+
+                <!-- Badges de roles activos del usuario -->
                 <div id="inicio-roles-badges" style="margin-bottom:1.5rem"></div>
+
+                <!-- Aviso si el usuario no tiene foto de perfil -->
+                <div id="profile-incomplete-alert" style="display:none;background:#fff8e1;border-left:4px solid #f59e0b;padding:1rem 1.2rem;border-radius:8px;margin-bottom:1.5rem">
+                    <strong style="color:#92400e"><i class="fas fa-exclamation-triangle"></i> Completa tu perfil</strong>
+                    <p style="margin:.3rem 0 0;font-size:.9rem;color:#78350f">Añade una foto y un apodo para que otros usuarios te reconozcan fácilmente.
+                    <a href="#" onclick="showSection('perfil')" style="color:#92400e;font-weight:700">Editar perfil →</a></p>
+                </div>
+
+                <!-- Acciones rápidas de proveedor (se muestra si tiene servicios) -->
                 <div id="provider-actions" style="display:none">
-                    <h2 style="color:#2f5233;margin-bottom:1rem">Tus Recursos</h2>
+                    <h2 style="color:var(--primary-color);margin-bottom:1rem;font-size:1.1rem;display:flex;align-items:center;gap:.5rem">
+                        <i class="fas fa-th-large"></i> Gestión de mis servicios
+                    </h2>
                     <div id="provider-actions-grid" class="role-selection-grid"></div>
                 </div>
-                <div class="role-selection-grid" style="margin-top:2rem">
+
+                <!-- Tarjetas de acceso rápido -->
+                <h2 style="color:var(--primary-color);margin:2rem 0 1rem;font-size:1.1rem;display:flex;align-items:center;gap:.5rem">
+                    <i class="fas fa-compass"></i> ¿Qué quieres hacer hoy?
+                </h2>
+                <div class="role-selection-grid">
                     <div class="role-card" onclick="showSection('perfil')">
-                        <div class="role-icon"><i class="fas fa-user-edit"></i></div>
+                        <div class="role-icon"><i class="fas fa-user-circle"></i></div>
                         <h3>Mi Perfil</h3>
-                        <p>Actualiza tus datos personales y foto de perfil.</p>
+                        <p>Actualiza tu nombre, apodo, foto y preferencias de viaje.</p>
                         <span class="btn-select-role">Editar Perfil</span>
                     </div>
                     <div class="role-card" onclick="showSection('mensajes')">
                         <div class="role-icon"><i class="fas fa-comments"></i></div>
                         <h3>Mensajes</h3>
-                        <p>Gestiona tus conversaciones con viajeros y propietarios.</p>
+                        <p>Consulta tus conversaciones con alojamientos y viajeros.</p>
                         <span class="btn-select-role">Ver Mensajes</span>
                     </div>
                     <div class="role-card" onclick="showSection('favoritos')">
                         <div class="role-icon"><i class="fas fa-heart"></i></div>
                         <h3>Favoritos</h3>
-                        <p>Accede a tus alojamientos y actividades favoritas.</p>
+                        <p>Accede rápidamente a los alojamientos y rutas que guardaste.</p>
                         <span class="btn-select-role">Ver Favoritos</span>
+                    </div>
+                    <div class="role-card" onclick="showSection('pasaporte')">
+                        <div class="role-icon"><i class="fas fa-stamp"></i></div>
+                        <h3>Pasaporte Rural</h3>
+                        <p>Registra tus visitas y consigue sellos de los lugares que exploras.</p>
+                        <span class="btn-select-role">Ver Pasaporte</span>
+                    </div>
+                </div>
+
+                <!-- CTA para dar de alta servicio (turistas sin rol proveedor) -->
+                <div id="cta-become-provider" style="display:none;margin-top:2rem;background:linear-gradient(135deg,#f0f7f0,#e8f5e9);border:2px solid var(--primary-color);border-radius:15px;padding:1.5rem 2rem">
+                    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+                        <div style="flex:1;min-width:200px">
+                            <h3 style="color:var(--primary-color);margin:0 0 .4rem 0"><i class="fas fa-store"></i> ¿Tienes un alojamiento o servicio rural?</h3>
+                            <p style="color:#555;margin:0;font-size:.95rem">Regístrate como propietario o profesional y empieza a recibir consultas de viajeros.</p>
+                        </div>
+                        <button onclick="abrirModalRoles()" style="background:var(--primary-color);color:white;border:none;padding:.8rem 1.5rem;border-radius:25px;font-weight:700;cursor:pointer;white-space:nowrap;font-size:.95rem">
+                            <i class="fas fa-plus-circle"></i> Dar de alta mi servicio
+                        </button>
                     </div>
                 </div>
             </section>
 
-            <!-- PERFIL -->
+            <!-- ===== PERFIL ===== -->
             <section id="perfil-section" class="dashboard-section">
-                <h2 style="color:#2f5233;margin-bottom:1.5rem">Mi Perfil</h2>
+                <h2 style="color:var(--primary-color);margin-bottom:.5rem">Mi Perfil</h2>
+                <p style="color:#888;margin-bottom:1.5rem;font-size:.9rem">Tu información personal es privada. Solo tu nombre y foto son visibles para otros usuarios.</p>
                 <div class="profile-card">
+                    <!-- Cabecera con avatar -->
                     <div class="profile-header-info">
-                        <div class="profile-avatar" id="avatarDisplay2" style="width:90px;height:90px;font-size:2.5rem"><i class="fas fa-user"></i></div>
+                        <div style="position:relative;cursor:pointer" onclick="document.getElementById('avatarInput').click()" title="Haz clic para cambiar tu foto">
+                            <div class="profile-avatar" id="avatarDisplay2" style="width:90px;height:90px;font-size:2.5rem"><i class="fas fa-user"></i></div>
+                            <div style="position:absolute;bottom:0;right:0;background:var(--primary-color);color:white;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;border:2px solid white">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
                         <div>
-                            <h3 id="profileName" style="margin:0 0 .3rem 0">Cargando...</h3>
-                            <p id="profileEmail" style="margin:0;color:#888">Cargando...</p>
-                            <p id="profileRole" style="margin:.3rem 0 0;font-size:.9rem;color:#2f5233;font-weight:600">Turista</p>
+                            <h3 id="profileName" style="margin:0 0 .2rem 0">Cargando...</h3>
+                            <p id="profileNickname" style="margin:0 0 .2rem 0;color:#888;font-style:italic;font-size:.9rem"></p>
+                            <p id="profileEmail" style="margin:0;color:#aaa;font-size:.85rem"></p>
+                            <p id="profileRole" style="margin:.3rem 0 0;font-size:.85rem;color:var(--primary-color);font-weight:600"></p>
                             <span id="membershipStatus" style="font-size:.8rem;color:#888"></span>
                         </div>
                     </div>
+
                     <form id="profileForm">
+                        <!-- Datos personales -->
+                        <h4 style="color:var(--primary-color);margin:0 0 1rem;font-size:.9rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #eee;padding-bottom:.5rem">Datos personales</h4>
                         <div class="form-row">
-                            <div class="form-group"><label for="firstName">Nombre</label><input type="text" id="firstName" name="first_name" required></div>
-                            <div class="form-group"><label for="lastName">Apellidos</label><input type="text" id="lastName" name="last_name" required></div>
+                            <div class="form-group"><label for="firstName">Nombre <span style="color:#f88">*</span></label><input type="text" id="firstName" name="first_name" placeholder="Tu nombre" required></div>
+                            <div class="form-group"><label for="lastName">Apellidos <span style="color:#f88">*</span></label><input type="text" id="lastName" name="last_name" placeholder="Tus apellidos" required></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label for="phone">Teléfono</label><input type="tel" id="phone" name="phone"></div>
-                            <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" disabled></div>
+                            <div class="form-group">
+                                <label for="nickname">Apodo / Nickname</label>
+                                <input type="text" id="nickname" name="nickname" placeholder="Ej: MontañeroSoria, CasaRuralPepe...">
+                                <small style="color:#aaa;font-size:.78rem">Cómo quieres que te vean otros usuarios en la plataforma.</small>
+                            </div>
+                            <div class="form-group"><label for="phone">Teléfono de contacto</label><input type="tel" id="phone" name="phone" placeholder="+34 600 000 000"></div>
                         </div>
-                        <div style="margin-bottom:1.5rem">
-                            <label style="display:block;margin-bottom:.5rem;color:#2f5233;font-weight:600;font-size:.9rem">Foto de perfil</label>
-                            <input type="file" id="avatarInput" accept="image/*" style="margin-bottom:.5rem">
-                            <p style="font-size:.8rem;color:#888">Máximo 2MB. Formatos: JPG, PNG, GIF</p>
+                        <div class="form-group" style="margin-bottom:1.5rem">
+                            <label for="email">Email <span style="color:#aaa;font-weight:400">(no editable)</span></label>
+                            <input type="email" id="email" name="email" disabled style="background:#f9f9f9">
+                            <small style="color:#aaa;font-size:.78rem">Para cambiar el email contacta con soporte.</small>
                         </div>
-                        <div style="margin-bottom:1.5rem">
-                            <label style="display:block;margin-bottom:.5rem;color:#2f5233;font-weight:600;font-size:.9rem">Mis Roles</label>
-                            <div id="profile-roles-list"></div>
-                            <button type="button" onclick="abrirModalRoles()" style="margin-top:.5rem;background:none;border:2px solid #2f5233;color:#2f5233;padding:.4rem 1rem;border-radius:20px;cursor:pointer;font-weight:600;font-size:.85rem"><i class="fas fa-edit"></i> Gestionar Roles</button>
+
+                        <!-- Foto de perfil -->
+                        <h4 style="color:var(--primary-color);margin:0 0 1rem;font-size:.9rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #eee;padding-bottom:.5rem">Foto de perfil</h4>
+                        <div style="margin-bottom:1.5rem;background:#f9fdf9;border:2px dashed #c8e6c9;border-radius:10px;padding:1rem;text-align:center">
+                            <i class="fas fa-camera" style="font-size:1.8rem;color:#b8d8ba;margin-bottom:.5rem"></i>
+                            <p style="margin:0 0 .8rem;color:#666;font-size:.9rem">Haz clic en tu avatar de arriba o usa el botón para subir una foto.</p>
+                            <input type="file" id="avatarInput" accept="image/*" style="display:none">
+                            <button type="button" onclick="document.getElementById('avatarInput').click()" style="background:var(--primary-color);color:white;border:none;padding:.5rem 1.2rem;border-radius:20px;cursor:pointer;font-size:.85rem;font-weight:600">
+                                <i class="fas fa-upload"></i> Seleccionar foto
+                            </button>
+                            <p style="margin:.5rem 0 0;font-size:.78rem;color:#aaa">Máx. 2MB · Formatos: JPG, PNG, GIF · Se recortará en círculo</p>
                         </div>
-                        <button type="submit" style="background:#2f5233;color:white;border:none;padding:.8rem 2rem;border-radius:25px;font-size:1rem;font-weight:600;cursor:pointer"><i class="fas fa-save"></i> Guardar Cambios</button>
+
+                        <!-- Roles -->
+                        <h4 style="color:var(--primary-color);margin:0 0 .5rem;font-size:.9rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #eee;padding-bottom:.5rem">Mis Roles en la plataforma</h4>
+                        <p style="color:#888;font-size:.85rem;margin-bottom:.8rem">Los roles determinan qué puedes hacer: como <strong>Turista</strong> buscas y consultas; como <strong>Alojamiento</strong>, <strong>Restaurante</strong> u otro rol de servicio, publicas y recibes reservas.</p>
+                        <div id="profile-roles-list" style="margin-bottom:.8rem"></div>
+                        <button type="button" onclick="abrirModalRoles()" style="background:none;border:2px solid var(--primary-color);color:var(--primary-color);padding:.4rem 1rem;border-radius:20px;cursor:pointer;font-weight:600;font-size:.85rem;margin-bottom:1.5rem">
+                            <i class="fas fa-edit"></i> Gestionar mis roles
+                        </button>
+
+                        <button type="submit" style="background:var(--primary-color);color:white;border:none;padding:.8rem 2rem;border-radius:25px;font-size:1rem;font-weight:600;cursor:pointer;display:block;width:100%">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
                     </form>
                 </div>
             </section>
 
-            <!-- MENSAJES (REQ 2) -->
+            <!-- ===== MENSAJES (REQ 2 — doble rol) ===== -->
             <section id="mensajes-section" class="dashboard-section">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-                    <h2 style="color:#2f5233;margin:0">Mensajes</h2>
-                    <button class="btn-select-role" onclick="showNewConversationModal()" style="border:none;cursor:pointer"><i class="fas fa-plus"></i> Nueva Consulta</button>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+                    <h2 style="color:var(--primary-color);margin:0">Mensajes</h2>
+                    <button class="btn-select-role" onclick="showNewConversationModal()" style="border:none;cursor:pointer">
+                        <i class="fas fa-plus"></i> Nueva Consulta
+                    </button>
                 </div>
+
+                <!-- Explicación del sistema de doble rol -->
+                <div style="background:#f0f7f0;border-left:4px solid var(--primary-color);padding:.8rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.85rem;color:#555">
+                    <i class="fas fa-info-circle" style="color:var(--primary-color)"></i>
+                    <strong>¿Cómo funciona?</strong> Tus mensajes se organizan según con qué rol los envías:
+                    como <strong>Turista</strong> (consultas que haces tú a alojamientos) o como <strong>Anfitrión/Proveedor</strong> (mensajes que recibes de viajeros interesados en tus servicios).
+                    En el futuro podrás tener más roles (Restaurante, Guía, etc.) con su propia bandeja.
+                </div>
+
+                <!-- Tabs de doble rol — cada tab es una "bandeja" independiente -->
                 <div class="chat-tabs">
-                    <button class="chat-tab active" id="chatTabTurista"><i class="fas fa-hiking"></i> Mis Viajes (Como Turista) <span class="badge" id="badgeTurista" style="display:none">0</span></button>
-                    <button class="chat-tab" id="chatTabAnfitrion"><i class="fas fa-bed"></i> Mis Alojamientos (Como Anfitrión) <span class="badge" id="badgeAnfitrion" style="display:none">0</span></button>
+                    <button class="chat-tab active" id="chatTabTurista">
+                        <i class="fas fa-hiking"></i> Como Turista
+                        <span style="font-size:.75rem;color:inherit;opacity:.7;margin-left:4px">(mis consultas)</span>
+                        <span class="badge" id="badgeTurista" style="display:none">0</span>
+                    </button>
+                    <button class="chat-tab" id="chatTabAnfitrion">
+                        <i class="fas fa-bed"></i> Como Anfitrión
+                        <span style="font-size:.75rem;color:inherit;opacity:.7;margin-left:4px">(recibo viajeros)</span>
+                        <span class="badge" id="badgeAnfitrion" style="display:none">0</span>
+                    </button>
                 </div>
-                <div class="chat-container">
+
+                <!-- Indicador del rol activo en el chat -->
+                <div id="chat-role-indicator" style="background:#fafafa;border-bottom:1px solid #eee;padding:.5rem 1.5rem;font-size:.8rem;color:#888">
+                    <i class="fas fa-hiking" style="color:var(--primary-color)"></i>
+                    Estás viendo las conversaciones que iniciaste <strong>como Turista</strong>
+                </div>
+
+                <div class="chat-container" style="border-top:none;border-radius:0 0 15px 15px">
                     <div class="chat-list">
-                        <div class="chat-list-header"><h3>Conversaciones</h3></div>
-                        <div id="chatList"></div>
+                        <div class="chat-list-header" style="display:flex;justify-content:space-between;align-items:center">
+                            <h3>Conversaciones</h3>
+                            <span id="chatListCount" style="font-size:.78rem;color:#aaa"></span>
+                        </div>
+                        <div id="chatList">
+                            <div style="padding:2rem;text-align:center;color:#bbb">
+                                <i class="fas fa-comments" style="font-size:2rem;margin-bottom:.5rem;display:block"></i>
+                                Cargando conversaciones...
+                            </div>
+                        </div>
                     </div>
                     <div class="chat-window" id="chatWindow" style="flex:1;display:none;flex-direction:column">
-                        <div id="messagesContainer" style="flex:1;overflow-y:auto;padding:1.5rem"></div>
-                        <div style="display:flex;gap:.5rem;padding:1rem 1.5rem;border-top:1px solid #eee;background:#fafafa">
-                            <textarea id="messageInput" placeholder="Escribe tu mensaje..." style="flex:1;padding:.8rem;border:2px solid #eee;border-radius:10px;resize:none;font-family:inherit;font-size:.9rem" rows="2"></textarea>
-                            <button id="sendMessageBtn" style="background:#2f5233;color:white;border:none;padding:.8rem 1.5rem;border-radius:10px;cursor:pointer;font-weight:600;align-self:flex-end"><i class="fas fa-paper-plane"></i> Enviar</button>
+                        <!-- Cabecera de la conversación activa -->
+                        <div id="chatWindowHeader" style="padding:1rem 1.5rem;border-bottom:1px solid #eee;background:white;display:flex;align-items:center;gap:1rem">
+                            <div id="chatWindowAvatar" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;flex-shrink:0">?</div>
+                            <div>
+                                <strong id="chatWindowName" style="color:var(--primary-color)">Selecciona una conversación</strong>
+                                <div id="chatWindowRole" style="font-size:.78rem;color:#aaa"></div>
+                            </div>
+                        </div>
+                        <div id="messagesContainer" style="flex:1;overflow-y:auto;padding:1.5rem;background:#f9f9f9"></div>
+                        <!-- Área de escritura -->
+                        <div style="display:flex;gap:.5rem;padding:1rem 1.5rem;border-top:1px solid #eee;background:white;align-items:flex-end">
+                            <div style="flex:1">
+                                <textarea id="messageInput" placeholder="Escribe tu mensaje aquí..." style="width:100%;padding:.8rem;border:2px solid #eee;border-radius:10px;resize:none;font-family:inherit;font-size:.9rem;box-sizing:border-box" rows="2"></textarea>
+                                <div id="sending-as-indicator" style="font-size:.75rem;color:#aaa;margin-top:.2rem">
+                                    <i class="fas fa-hiking"></i> Enviando como <strong>Turista</strong>
+                                </div>
+                            </div>
+                            <button id="sendMessageBtn" style="background:var(--primary-color);color:white;border:none;padding:.8rem 1.5rem;border-radius:10px;cursor:pointer;font-weight:600;flex-shrink:0">
+                                <i class="fas fa-paper-plane"></i> Enviar
+                            </button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- FAVORITOS -->
+            <!-- ===== FAVORITOS ===== -->
             <section id="favoritos-section" class="dashboard-section">
-                <h2 style="color:#2f5233;margin-bottom:1.5rem">Mis Favoritos</h2>
+                <h2 style="color:var(--primary-color);margin-bottom:.5rem">Mis Favoritos</h2>
+                <p style="color:#888;margin-bottom:1.5rem;font-size:.9rem">Alojamientos, rutas y actividades que guardaste para no perderlos. Haz clic en el corazón ❤️ de cualquier ficha para añadir aquí.</p>
                 <div id="favorites-list"></div>
             </section>
 
-            <!-- PASAPORTE -->
+            <!-- ===== PASAPORTE RURAL ===== -->
             <section id="pasaporte-section" class="dashboard-section">
-                <h2 style="color:#2f5233;margin-bottom:1.5rem">Pasaporte Rural</h2>
+                <h2 style="color:var(--primary-color);margin-bottom:.5rem">
+                    <i class="fas fa-stamp"></i> Pasaporte Rural
+                </h2>
+                <p style="color:#888;margin-bottom:1.5rem;font-size:.9rem">
+                    Colecciona sellos digitales de cada lugar que visitas en la España rural. Cuantos más sellos, más insignias desbloqueas.
+                    <a href="/pasaporte-rural.html" target="_blank" style="color:var(--primary-color);font-weight:600">¿Qué es el Pasaporte Rural? →</a>
+                </p>
                 <div id="pasaporte-content"></div>
             </section>
 
-            <!-- MEMBRESÍA -->
+            <!-- ===== MEMBRESÍA ===== -->
             <section id="membresia-section" class="dashboard-section">
-                <h2 style="color:#2f5233;margin-bottom:1.5rem">Mi Membresía</h2>
+                <h2 style="color:var(--primary-color);margin-bottom:.5rem">Mi Membresía</h2>
+                <p style="color:#888;margin-bottom:1.5rem;font-size:.9rem">Elige el plan que mejor se adapta a tus necesidades. Con los planes de pago puedes publicar más servicios, recibir más consultas y aparecer primero en los resultados.</p>
                 <div id="membership-plans" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem"></div>
                 <div style="text-align:center;margin-top:2rem">
-                    <button onclick="openBillingPortal()" style="background:none;border:2px solid #2f5233;color:#2f5233;padding:.6rem 1.5rem;border-radius:25px;cursor:pointer;font-weight:600"><i class="fas fa-credit-card"></i> Gestionar Facturación</button>
+                    <button onclick="openBillingPortal()" style="background:none;border:2px solid var(--primary-color);color:var(--primary-color);padding:.6rem 1.5rem;border-radius:25px;cursor:pointer;font-weight:600">
+                        <i class="fas fa-credit-card"></i> Gestionar Facturación (Stripe)
+                    </button>
+                    <p style="font-size:.8rem;color:#aaa;margin-top:.5rem">Pago seguro gestionado por Stripe. Cancela cuando quieras.</p>
                 </div>
             </section>
 
-            <!-- MIS ALOJAMIENTOS -->
+            <!-- ===== MIS ALOJAMIENTOS ===== -->
             <section id="mis-alojamientos-section" class="dashboard-section">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-                    <h2 style="color:#2f5233;margin:0">Mis Alojamientos</h2>
-                    <a href="/agregar-alojamiento.html" target="_blank" class="btn-select-role" style="text-decoration:none;display:inline-block"><i class="fas fa-plus"></i> Nuevo Alojamiento</a>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem">
+                    <h2 style="color:var(--primary-color);margin:0">Mis Alojamientos</h2>
+                    <a href="/agregar-alojamiento.html" target="_blank" class="btn-select-role" style="text-decoration:none;display:inline-block">
+                        <i class="fas fa-plus"></i> Nuevo Alojamiento
+                    </a>
                 </div>
+                <p style="color:#888;margin-bottom:1.5rem;font-size:.9rem">Gestiona las fichas de tus casas rurales, hoteles o apartamentos. Mantén la información actualizada para recibir más consultas.</p>
                 <div id="mis-alojamientos-list"></div>
             </section>
 
-            <!-- MIS ACTIVIDADES -->
+            <!-- ===== MIS ACTIVIDADES ===== -->
             <section id="mis-actividades-section" class="dashboard-section">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-                    <h2 style="color:#2f5233;margin:0">Mis Actividades</h2>
-                    <a href="/agregar-actividad.html" target="_blank" class="btn-select-role" style="text-decoration:none;display:inline-block"><i class="fas fa-plus"></i> Nueva Actividad</a>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem">
+                    <h2 style="color:var(--primary-color);margin:0">Mis Actividades</h2>
+                    <a href="/agregar-actividad.html" target="_blank" class="btn-select-role" style="text-decoration:none;display:inline-block">
+                        <i class="fas fa-plus"></i> Nueva Actividad
+                    </a>
                 </div>
+                <p style="color:#888;margin-bottom:1.5rem;font-size:.9rem">Rutas de senderismo, talleres, visitas guiadas... todo lo que ofreces a los visitantes.</p>
                 <div id="mis-actividades-list"></div>
             </section>
 
-            <!-- MIS LUGARES -->
+            <!-- ===== MIS LUGARES ===== -->
             <section id="mis-lugares-section" class="dashboard-section">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-                    <h2 style="color:#2f5233;margin:0">Mis Lugares de Interés</h2>
-                    <a href="/agregar-lugar-interes.html" target="_blank" class="btn-select-role" style="text-decoration:none;display:inline-block"><i class="fas fa-plus"></i> Nuevo Lugar</a>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem">
+                    <h2 style="color:var(--primary-color);margin:0">Mis Lugares de Interés</h2>
+                    <a href="/agregar-lugar-interes.html" target="_blank" class="btn-select-role" style="text-decoration:none;display:inline-block">
+                        <i class="fas fa-plus"></i> Nuevo Lugar
+                    </a>
                 </div>
+                <p style="color:#888;margin-bottom:1.5rem;font-size:.9rem">Comparte ermitas, miradores, fuentes, yacimientos o cualquier rincón especial de tu zona.</p>
                 <div id="mis-lugares-list"></div>
             </section>
 
-            <!-- MIS EVENTOS -->
+            <!-- ===== MIS EVENTOS ===== -->
             <section id="mis-eventos-section" class="dashboard-section">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-                    <h2 style="color:#2f5233;margin:0">Mis Eventos</h2>
-                    <a href="/agregar-evento.html" target="_blank" class="btn-select-role" style="text-decoration:none;display:inline-block"><i class="fas fa-plus"></i> Nuevo Evento</a>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem">
+                    <h2 style="color:var(--primary-color);margin:0">Mis Eventos</h2>
+                    <a href="/agregar-evento.html" target="_blank" class="btn-select-role" style="text-decoration:none;display:inline-block">
+                        <i class="fas fa-plus"></i> Nuevo Evento
+                    </a>
                 </div>
+                <p style="color:#888;margin-bottom:1.5rem;font-size:.9rem">Ferias, fiestas patronales, mercados medievales, conciertos... da visibilidad a lo que ocurre en tu municipio.</p>
                 <div id="mis-eventos-list"></div>
             </section>
 
-            <!-- TABLÓN SOLICITUDES (REQ 3) -->
+            <!-- ===== TABLÓN DE SOLICITUDES (REQ 3) ===== -->
             <section id="tablon-section" class="dashboard-section">
-                <h2 style="color:#2f5233;margin-bottom:1.5rem"><i class="fas fa-bullhorn"></i> Tablón de Solicitudes</h2>
-                <p style="color:#666;margin-bottom:1.5rem">Aquí aparecen las consultas de viajeros que no han especificado un destino concreto. Si encajan con tu oferta, ¡responde y abre una conversación!</p>
+                <h2 style="color:var(--primary-color);margin-bottom:.5rem">
+                    <i class="fas fa-bullhorn"></i> Tablón de Solicitudes
+                </h2>
+                <div style="background:#fff8e1;border-left:4px solid #f59e0b;padding:.8rem 1rem;border-radius:8px;margin-bottom:1.5rem;font-size:.85rem;color:#555">
+                    <strong style="color:#92400e"><i class="fas fa-lightbulb"></i> ¿Cómo funciona el Tablón?</strong><br>
+                    Cuando un viajero envía una consulta <em>sin especificar un alojamiento concreto</em>, su petición aparece aquí.
+                    Si encaja con tu oferta, puedes <strong>responder directamente</strong> y se abrirá una conversación privada con ese viajero.
+                    ¡Es la forma más eficiente de captar nuevos clientes!
+                </div>
                 <div id="bulletin-board-list" class="bulletin-board"></div>
             </section>
+
         </main>
     </div>
 

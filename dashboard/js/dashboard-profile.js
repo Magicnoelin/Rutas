@@ -21,16 +21,34 @@ async function loadUserProfile() {
                 currentUserId = user.id;
             }
             
-            // Actualizar nombre en el header
+            // Actualizar nombre en el header del sidebar
             const userNameDisplay = document.getElementById('userNameDisplay');
             if (userNameDisplay) {
                 userNameDisplay.textContent = user.first_name || 'Viajero';
             }
+
+            // Mostrar nickname en el sidebar (si existe)
+            const userNicknameDisplay = document.getElementById('userNicknameDisplay');
+            if (userNicknameDisplay) {
+                userNicknameDisplay.textContent = user.nickname ? `@${user.nickname}` : '';
+            }
+
+            // Actualizar el título de bienvenida
+            const welcomeTitle = document.getElementById('welcomeTitle');
+            if (welcomeTitle) {
+                welcomeTitle.textContent = `¡Hola, ${user.nickname || user.first_name || 'Viajero'}! 👋`;
+            }
             
-            // Actualizar datos del perfil
+            // Actualizar datos del perfil en la cabecera del formulario
             const profileName = document.getElementById('profileName');
             if (profileName) {
                 profileName.textContent = (user.first_name || '') + ' ' + (user.last_name || '');
+            }
+
+            // Mostrar nickname bajo el nombre en la cabecera del perfil
+            const profileNickname = document.getElementById('profileNickname');
+            if (profileNickname) {
+                profileNickname.textContent = user.nickname ? `@${user.nickname}` : 'Sin apodo · Añade uno para que te reconozcan';
             }
             
             // Cargar y mostrar el avatar si existe
@@ -308,10 +326,12 @@ document.addEventListener('DOMContentLoaded', function() {
         profileForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const nicknameEl = document.getElementById('nickname');
             const formData = {
                 first_name: document.getElementById('firstName').value,
                 last_name: document.getElementById('lastName').value,
-                phone: document.getElementById('phone').value
+                phone: document.getElementById('phone').value,
+                nickname: nicknameEl ? nicknameEl.value.trim() : ''
             };
             
             try {
