@@ -244,11 +244,210 @@
             text-decoration: underline;
         }
 
+        /* ── SECCIÓN EJEMPLO REAL ── */
+        .example-section {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px 30px;
+            margin-bottom: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .example-section h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--slate-dark);
+            margin-bottom: 8px;
+        }
+        .example-section .subtitle {
+            font-size: 15px;
+            color: var(--slate-light);
+            margin-bottom: 28px;
+        }
+        .example-preview {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            background: #f0f4f0;
+            border-radius: 12px;
+            padding: 24px;
+            border-left: 4px solid var(--primary);
+        }
+        .example-preview-icon {
+            font-size: 40px;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .example-preview-body {
+            flex: 1;
+        }
+        .example-preview-body strong {
+            display: block;
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        .example-preview-body p {
+            font-size: 13.5px;
+            color: var(--slate-dark);
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+        .example-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .example-tag {
+            background: #e0ece1;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #b8d4ba;
+        }
+        .example-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+        .example-link:hover {
+            background: #1e3a24;
+        }
+        .example-link-arrow {
+            font-size: 16px;
+        }
+        .example-note {
+            margin-top: 18px;
+            font-size: 12.5px;
+            color: var(--slate-light);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* ── SECCIÓN OFERTA ASOCIACIÓN ── */
+        .assoc-section {
+            background: linear-gradient(135deg, #1e3a24 0%, #2c5234 60%, #3a6b44 100%);
+            border-radius: 16px;
+            padding: 44px 36px;
+            margin-bottom: 50px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(44,82,52,0.25);
+        }
+        .assoc-section::before {
+            content: "🤝";
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            font-size: 100px;
+            opacity: 0.06;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .assoc-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 16px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+        }
+        .assoc-section h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .assoc-section > p {
+            font-size: 15px;
+            color: rgba(255,255,255,0.85);
+            max-width: 640px;
+            margin: 0 auto 30px;
+            line-height: 1.7;
+        }
+        .assoc-perks {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+        .assoc-perk {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 10px;
+            padding: 14px 18px;
+            min-width: 175px;
+            max-width: 200px;
+            text-align: center;
+        }
+        .assoc-perk-icon { font-size: 22px; margin-bottom: 6px; }
+        .assoc-perk-label {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.95);
+            line-height: 1.4;
+        }
+        .assoc-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            transition: background 0.2s, transform 0.15s;
+            box-shadow: 0 4px 16px rgba(217,119,6,0.4);
+        }
+        .assoc-cta:hover {
+            background: #b45309;
+            transform: translateY(-2px);
+        }
+        .assoc-note {
+            margin-top: 14px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.55);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .card {
                 max-width: 100%;
                 margin: 15px 0;
+            }
+            .example-preview {
+                flex-direction: column;
+            }
+            .assoc-section {
+                padding: 30px 20px;
+            }
+            .assoc-section h2 {
+                font-size: 21px;
+            }
+            .assoc-perk {
+                min-width: 140px;
             }
         }
     </style>
@@ -338,9 +537,84 @@
 
         </div>
 
+        <!-- ══════════════════════════════════════════════════════
+             SECCIÓN: EJEMPLO REAL — VINUESA
+             ══════════════════════════════════════════════════════ -->
+        <div class="example-section">
+            <h2>🔍 ¿Cómo queda tu pueblo en el portal?</h2>
+            <p class="subtitle">Mira un ejemplo real publicado y activo. Así de bien presentado estará tu municipio ante miles de viajeros rurales.</p>
+
+            <div class="example-preview">
+                <div class="example-preview-icon">🌲</div>
+                <div class="example-preview-body">
+                    <strong>Vinuesa — La Corte de los Pinos · Soria</strong>
+                    <p>
+                        Vinuesa es uno de los municipios con mayor valor paisajístico y arquitectónico de Soria. 
+                        Su ficha en Rutas Rurales incluye galería fotográfica, descripción del patrimonio, 
+                        información práctica de visita, mapa interactivo, alojamientos cercanos y agenda de eventos culturales — 
+                        todo actualizable por el propio ayuntamiento en cualquier momento.
+                    </p>
+                    <div class="example-tags">
+                        <span class="example-tag">📸 Galería de fotos</span>
+                        <span class="example-tag">🗺️ Mapa interactivo</span>
+                        <span class="example-tag">🏠 Alojamientos cercanos</span>
+                        <span class="example-tag">🎭 Agenda de eventos</span>
+                        <span class="example-tag">🎯 Actividades turísticas</span>
+                        <span class="example-tag">ℹ️ Horarios y acceso</span>
+                    </div>
+                    <a href="https://rutasrurales.io/lugar/vinuesa-pueblo" target="_blank" rel="noopener" class="example-link">
+                        <span>Ver ficha real de Vinuesa</span>
+                        <span class="example-link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+            <p class="example-note">✨ Tu municipio tendría exactamente la misma presencia — con tu propio contenido, fotos y eventos actualizados.</p>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             SECCIÓN: OFERTA ESPECIAL PARA ASOCIACIONES / MANCOMUNIDADES
+             ══════════════════════════════════════════════════════ -->
+        <div class="assoc-section">
+            <div class="assoc-badge">🤝 Oferta Especial para Asociaciones</div>
+            <h2>¿Sois varios pueblos o pedanías juntas?</h2>
+            <p>
+                Si tu ayuntamiento agrupa varias pedanías, o si sois una mancomunidad, asociación de municipios 
+                o consorcio comarcal, tenemos una tarifa especial pensada para vosotros. 
+                Más pueblos = más visibilidad = mejor precio por entidad.
+            </p>
+
+            <div class="assoc-perks">
+                <div class="assoc-perk">
+                    <div class="assoc-perk-icon">🏘️</div>
+                    <div class="assoc-perk-label">Ficha independiente para cada pueblo o pedanía</div>
+                </div>
+                <div class="assoc-perk">
+                    <div class="assoc-perk-icon">💰</div>
+                    <div class="assoc-perk-label">Precio reducido por volumen — cuantos más, mejor tarifa</div>
+                </div>
+                <div class="assoc-perk">
+                    <div class="assoc-perk-icon">📅</div>
+                    <div class="assoc-perk-label">Agenda de eventos y actividades compartida o diferenciada</div>
+                </div>
+                <div class="assoc-perk">
+                    <div class="assoc-perk-icon">📊</div>
+                    <div class="assoc-perk-label">Panel de gestión centralizado para toda la asociación</div>
+                </div>
+                <div class="assoc-perk">
+                    <div class="assoc-perk-icon">🗺️</div>
+                    <div class="assoc-perk-label">Mapa comarcal unificado con todos vuestros puntos de interés</div>
+                </div>
+            </div>
+
+            <a href="mailto:olgamarin@rutasrurales.io?subject=Oferta%20Asociación%20de%20Municipios&body=Hola%2C%20somos%20una%20asociación%20de%20municipios%20y%20nos%20interesa%20conocer%20vuestra%20oferta%20especial." class="assoc-cta">
+                ✉️ Preguntar por la oferta de asociación
+            </a>
+            <p class="assoc-note">Sin compromiso · Respuesta en menos de 24h · Presupuesto personalizado</p>
+        </div>
+
         <footer>
             <p>¿Necesitas una tramitación mediante Factura Oficial, REGE o un acuerdo a medida para tu institución?</p>
-            <p><a href="mailto:hola@rutasrurales.io">Contactar directamente con soporte institucional</a></p>
+            <p><a href="mailto:olgamarin@rutasrurales.io">Contactar directamente con soporte institucional</a></p>
         </footer>
 
     </div>
