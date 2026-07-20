@@ -825,9 +825,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             .then(function(result) {
                 if (result.success) {
                     showRecoveryMessage(result.message, 'success');
-                    if (result.data && result.data.debug_reset_link) {
+                    var resetLink = result.data && (result.data.reset_link || result.data.debug_reset_link);
+                    if (resetLink) {
                         setTimeout(function() {
-                            showRecoveryMessage('🔗 Lien de récupération: ' + result.data.debug_reset_link, 'success');
+                            showRecoveryMessage('🔗 Lien de récupération: ' + resetLink, 'success');
                         }, 1000);
                     }
                     setTimeout(function() {

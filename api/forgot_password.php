@@ -8,6 +8,12 @@
 
 require_once 'config.php';
 
+// Cargar PHPMailer si existe (composer)
+$phpmailerAutoload = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($phpmailerAutoload)) {
+    require_once $phpmailerAutoload;
+}
+
 header('Content-Type: application/json; charset=utf-8');
 
 // Only allow POST requests
@@ -62,15 +68,15 @@ try {
     $tokenHash = hash('sha256', $token);
     $expiresAt = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
-    // Store token in database
+    // Invalidate previous tokens for this user
+    $pdo->prepare("UPDATE password_reset_tokens SET is_used = 1 WHERE user_id = ? AND is_used = 0")
+        ->execute([$user['id']]);
+
+    // Store new token in database
     $stmt = $pdo->prepare("
         INSERT INTO password_reset_tokens
         (user_id, token_hash, expires_at, is_used)
         VALUES (?, ?, ?, FALSE)
-        ON DUPLICATE KEY UPDATE
-        token_hash = VALUES(token_hash),
-        expires_at = VALUES(expires_at),
-        is_used = FALSE
     ");
     $stmt->execute([$user['id'], $tokenHash, $expiresAt]);
 
@@ -79,7 +85,10 @@ try {
 
     // Email content
     $subject = "Recuperación de Contraseña - Rutas Rurales";
-    $message = "
+    $firstName = htmlspecialchars($user['first_name']);
+    $year = date('Y');
+
+    $htmlMessage = "
         <html>
         <head>
             <style>
@@ -87,73 +96,147 @@ try {
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
                 .header { background-color: #2F5233; color: white; padding: 20px; text-align: center; }
                 .content { padding: 20px; background-color: #f9f9f9; }
-                .button { display: inline-block; padding: 12px 24px; background-color: #2F5233; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+                .button { display: inline-block; padding: 12px 24px; background-color: #2F5233; color: white !important; text-decoration: none; border-radius: 5px; font-weight: bold; }
                 .footer { margin-top: 20px; font-size: 12px; color: #666; text-align: center; }
             </style>
         </head>
         <body>
             <div class='container'>
                 <div class='header'>
-                    <h2>Recuperación de Contraseña</h2>
+                    <h2>🔑 Recuperación de Contraseña</h2>
                 </div>
                 <div class='content'>
-                    <p>Hola " . htmlspecialchars($user['first_name']) . ",</p>
-                    <p>Hemos recibido una solicitud para restablecer tu contraseña en Rutas Rurales.</p>
-                    <p>Si no has solicitado este cambio, puedes ignorar este correo electrónico.</p>
+                    <p>Hola <strong>$firstName</strong>,</p>
+                    <p>Hemos recibido una solicitud para restablecer tu contraseña en <strong>Rutas Rurales</strong>.</p>
+                    <p>Si no has solicitado este cambio, puedes ignorar este correo electrónico con total seguridad.</p>
                     <p>Para restablecer tu contraseña, haz clic en el siguiente botón:</p>
-                    <p style='text-align: center; margin: 20px 0;'>
-                        <a href='$resetLink' class='button'>Restablecer Contraseña</a>
+                    <p style='text-align: center; margin: 30px 0;'>
+                        <a href='$resetLink' class='button'>🔐 Restablecer Contraseña</a>
                     </p>
                     <p>O copia y pega este enlace en tu navegador:</p>
-                    <p><a href='$resetLink'>$resetLink</a></p>
-                    <p>Este enlace expirará en 1 hora por motivos de seguridad.</p>
+                    <p style='word-break: break-all;'><a href='$resetLink'>$resetLink</a></p>
+                    <p><em>⏱️ Este enlace expirará en <strong>24 horas</strong> por motivos de seguridad.</em></p>
                 </div>
                 <div class='footer'>
-                    <p>© " . date('Y') . " Rutas Rurales. Todos los derechos reservados.</p>
-                    <p>Si tienes problemas, contacta con nuestro soporte: olgamarin@rutasrurales.io</p>
+                    <p>© $year Rutas Rurales. Todos los derechos reservados.</p>
+                    <p>Si tienes problemas, contacta con soporte: <a href='mailto:hola@rutasrurales.io'>hola@rutasrurales.io</a></p>
                 </div>
             </div>
         </body>
         </html>
     ";
 
-    // Send email
-    $headers = "From: Rutas Rurales <noreply@rutasrurales.io>\r\n";
-    $headers .= "Reply-To: soporte@rutasrurales.io\r\n";
-    $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion();
+    $textMessage = "Hola $firstName,\n\n"
+        . "Hemos recibido una solicitud para restablecer tu contraseña en Rutas Rurales.\n\n"
+        . "Para restablecer tu contraseña, visita el siguiente enlace:\n"
+        . "$resetLink\n\n"
+        . "Este enlace expirará en 24 horas.\n\n"
+        . "Si no solicitaste este cambio, ignora este correo.\n\n"
+        . "© $year Rutas Rurales";
 
-    // In production, you would use a proper email service like SendGrid, Mailgun, etc.
-    // For now, we'll use the basic mail() function
-    $mailSent = mail($email, $subject, $message, $headers);
+    // Log the reset link for debugging (server logs)
+    error_log("forgot_password.php: Reset link for $email: $resetLink");
 
-    // For development/testing: log the reset link to error log
-    error_log("Password reset link for $email: $resetLink");
+    // ── Enviar email con PHPMailer + SMTP ──────────────────────
+    $mailSent = false;
+    $mailError = '';
 
+    if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+        try {
+            // Cargar configuración SMTP desde BD (tabla config_smtp)
+            $smtpConfig = null;
+            try {
+                $stmtSmtp = $pdo->query("SELECT * FROM config_smtp WHERE activo = 1 LIMIT 1");
+                $smtpConfig = $stmtSmtp->fetch();
+            } catch (Exception $e) {
+                // Tabla no existe aún, usar valores por defecto de Hostinger
+                error_log("forgot_password.php: config_smtp no disponible, usando defaults: " . $e->getMessage());
+            }
+
+            // Credenciales SMTP: primero BD, luego constantes de config.php
+            $smtpHost     = $smtpConfig['host']       ?? SMTP_HOST;
+            $smtpUser     = $smtpConfig['usuario']    ?? SMTP_USER;
+            $smtpPass     = $smtpConfig['password']   ?? SMTP_PASS;
+            $smtpSec      = $smtpConfig['seguridad']  ?? SMTP_SECURE;
+            $smtpPort     = intval($smtpConfig['puerto'] ?? SMTP_PORT);
+            $fromEmail    = $smtpConfig['email_from']  ?? SMTP_FROM_EMAIL;
+            $fromName     = $smtpConfig['nombre_from'] ?? SMTP_FROM_NAME;
+
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->CharSet   = 'UTF-8';
+            $mail->isSMTP();
+            $mail->Host       = $smtpHost;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $smtpUser;
+            $mail->Password   = $smtpPass;
+            $mail->SMTPSecure = $smtpSec;
+            $mail->Port       = $smtpPort;
+            $mail->SMTPDebug  = 0;
+
+            $mail->setFrom($fromEmail, $fromName);
+            $mail->addAddress($email, $firstName);
+            $mail->addReplyTo('hola@rutasrurales.io', 'Rutas Rurales');
+
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $htmlMessage;
+            $mail->AltBody = $textMessage;
+
+            $mail->send();
+            $mailSent = true;
+            error_log("forgot_password.php: Email enviado vía PHPMailer/SMTP a $email");
+
+        } catch (Exception $e) {
+            $mailError = $e->getMessage();
+            error_log("forgot_password.php: PHPMailer error: $mailError — intentando mail() nativo");
+
+            // Fallback a mail() nativo si SMTP falla
+            $headers  = "From: Rutas Rurales <noreply@rutasrurales.io>\r\n";
+            $headers .= "Reply-To: hola@rutasrurales.io\r\n";
+            $headers .= "Content-type: text/html; charset=UTF-8\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "X-Mailer: PHP/" . phpversion();
+            $mailSent = mail($email, $subject, $htmlMessage, $headers);
+
+            if ($mailSent) {
+                error_log("forgot_password.php: Email enviado vía mail() nativo (fallback) a $email");
+            } else {
+                error_log("forgot_password.php: mail() nativo también falló para $email");
+            }
+        }
+    } else {
+        // PHPMailer no disponible: usar mail() nativo
+        error_log("forgot_password.php: PHPMailer no disponible, usando mail() nativo");
+        $headers  = "From: Rutas Rurales <noreply@rutasrurales.io>\r\n";
+        $headers .= "Reply-To: hola@rutasrurales.io\r\n";
+        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion();
+        $mailSent = mail($email, $subject, $htmlMessage, $headers);
+    }
+
+    // ── Respuesta al cliente ───────────────────────────────────
     if ($mailSent) {
         jsonSuccess([
             'message' => 'Se ha enviado un correo de recuperación a tu dirección de email',
             'next_steps' => [
-                '1. Revisa tu bandeja de entrada (y spam)',
+                '1. Revisa tu bandeja de entrada (y carpeta de spam)',
                 '2. Haz clic en el enlace de recuperación',
                 '3. Establece una nueva contraseña segura'
-            ],
-            // For development: return the token so it can be used directly
-            'debug_token' => $token,
-            'debug_reset_link' => $resetLink
+            ]
         ], 'Correo de recuperación enviado');
     } else {
-        // Even if email fails, don't reveal this to prevent email enumeration
+        // El token fue creado pero el email falló
+        // Devolver el enlace en la respuesta para que el frontend lo muestre (como ya hacía antes)
+        error_log("forgot_password.php: No se pudo enviar el email a $email. Error: $mailError");
         jsonSuccess([
             'message' => 'Si el email está registrado, se ha enviado un correo de recuperación',
-            // For development: return the token so it can be used directly
-            'debug_token' => $token,
-            'debug_reset_link' => $resetLink
+            'reset_link' => $resetLink  // Mostrado en el frontend como fallback
         ], 'Solicitud procesada');
     }
 
 } catch (PDOException $e) {
-    error_log('forgot_password.php Error: ' . $e->getMessage());
+    error_log('forgot_password.php PDO Error: ' . $e->getMessage());
     jsonError('Error al procesar la solicitud', 500);
 } catch (Exception $e) {
     error_log('forgot_password.php Error: ' . $e->getMessage());
