@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Mi Panel - Rutas Rurales</title>
+    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ============================================================
+         CSS MODULAR — Extraído de user-dashboard.html
+         ============================================================ -->
+    <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body data-mode="turista">
+
+    <!-- ============================================================
+         HEADER (login.html)
+         ============================================================ -->
+    <header class="header" id="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <a href="/index.html">
+                        <img src="/menu_images/Logo.png" alt="Rutas Rurales" height="50">
+                    </a>
+                </div>
+                <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-row">
+                        <li><a href="/index.html"><i class="fas fa-home"></i><span>Inicio</span></a></li>
+                        <li><a href="/alojamientos-turisticos.html"><i class="fas fa-bed"></i><span>Alojamientos</span></a></li>
+                        <li><a href="/actividades-turisticas.html"><i class="fas fa-hiking"></i><span>Actividades</span></a></li>
+                        <li><a href="/eventos-culturales.html"><i class="fas fa-calendar-alt"></i><span>Eventos</span></a></li>
+                    </ul>
+                    <ul class="nav-row">
+                        <li><a href="/dashboard.html"><i class="fas fa-columns"></i><span>Dashboard</span></a></li>
+                        <li><a href="/dashboard-modular.html"><i class="fas fa-user"></i><span>Mi Panel</span></a></li>
+                        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ============================================================
+         ROLE CONTEXT BAR (REQ 1)
+         ============================================================ -->
+    <div class="role-context-bar" id="roleContextBar">
+        <!-- Se renderiza dinámicamente desde dashboard-role-context.js -->
+    </div>
+
+    <!-- ============================================================
+         DASHBOARD CONTAINER
+         ============================================================ -->
+    <div class="dashboard-container">
+
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="dashboard-sidebar">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div class="profile-avatar" id="avatarDisplay" style="margin: 0 auto 1rem; width: 70px; height: 70px; font-size: 2rem;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 id="userNameDisplay" style="margin: 0; color: var(--primary-color);">Viajero</h3>
+                <span id="membershipBadge" style="background: #6c757d; color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Gratuito</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" onclick="showSection('inicio')" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#" onclick="showSection('perfil')"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                <li><a href="#" onclick="showSection('mensajes')"><i class="fas fa-envelope"></i> Mensajes</a></li>
+                <li><a href="#" onclick="showSection('favoritos')"><i class="fas fa-heart"></i> Favoritos</a></li>
+                <li><a href="#" onclick="showSection('pasaporte')"><i class="fas fa-passport"></i> Pasaporte Rural</a></li>
+                <li><a href="#" onclick="showSection('membresia')"><i class="fas fa-crown"></i> Mi Membresía</a></li>
+                <li><a href="#" onclick="showSection('mis-alojamientos')"><i class="fas fa-bed"></i> Mis Alojamientos</a></li>
+                <li><a href="#" onclick="showSection('mis-actividades')"><i class="fas fa-hiking"></i> Mis Actividades</a></li>
+                <li><a href="#" onclick="showSection('mis-lugares')"><i class="fas fa-map-marker-alt"></i> Mis Lugares</a></li>
+                <li><a href="#" onclick="showSection('mis-eventos')"><i class="fas fa-calendar-alt"></i> Mis Eventos</a></li>
+                <li><a href="#" onclick="showSection('tablon')"><i class="fas fa-bullhorn"></i> Tablón Solicitudes</a></li>
+            </ul>
+        </aside>
+
+        <!-- ==================== CONTENIDO PRINCIPAL ==================== -->
+        <main class="dashboard-content">
+
+            <!-- ===== SECCIÓN INICIO ===== -->
+            <section id="inicio-section" class="dashboard-section active">
+                <div class="welcome-header">
+                    <h1>Bienvenido a tu Panel</h1>
+                    <p style="color: #666;">Gestiona tu perfil, alojamientos, actividades y mucho más.</p>
+                </div>
+                <div id="inicio-roles-badges" style="margin-bottom: 1.5rem;"></div>
+                <div id="provider-actions" style="display: none;">
+                    <h2 style="color: var(--primary-color); margin-bottom: 1rem;">Tus Recursos</h2>
+                    <div id="provider-actions-grid" class="role-selection-grid"></div>
+                </div>
+                <div class="role-selection-grid" style="margin-top: 2rem;">
+                    <div class="role-card" onclick="showSection('perfil')">
+                        <div class="role-icon"><i class="fas fa-user-edit"></i></div>
+                        <h3>Mi Perfil</h3>
+                        <p>Actualiza tus datos personales y foto de perfil.</p>
+                        <span class="btn-select-role">Editar Perfil</span>
+                    </div>
+                    <div class="role-card" onclick="showSection('mensajes')">
+                        <div class="role-icon"><i class="fas fa-comments"></i></div>
+                        <h3>Mensajes</h3>
+                        <p>Gestiona tus conversaciones con viajeros y propietarios.</p>
+                        <span class="btn-select-role">Ver Mensajes</span>
+                    </div>
+                    <div class="role-card" onclick="showSection('favoritos')">
+                        <div class="role-icon"><i class="fas fa-heart"></i></div>
+                        <h3>Favoritos</h3>
+                        <p>Accede a tus alojamientos y actividades favoritas.</p>
+                        <span class="btn-select-role">Ver Favoritos</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN PERFIL ===== -->
+            <section id="perfil-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Mi Perfil</h2>
+                <div class="profile-card">
+                    <div class="profile-header-info">
+                        <div class="profile-avatar" id="avatarDisplay2" style="width: 90px; height: 90px; font-size: 2.5rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h3 id="profileName" style="margin: 0 0 0.3rem 0;">Cargando...</h3>
+                            <p id="profileEmail" style="margin: 0; color: #888;">Cargando...</p>
+                            <p id="profileRole" style="margin: 0.3rem 0 0; font-size: 0.9rem; color: var(--primary-color); font-weight: 600;">Turista</p>
+                            <span id="membershipStatus" style="font-size: 0.8rem; color: #888;"></span>
+                        </div>
+                    </div>
+                    <form id="profileForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">Nombre</label>
+                                <input type="text" id="firstName" name="first_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Apellidos</label>
+                                <input type="text" id="lastName" name="last_name" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Teléfono</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" disabled>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--primary-color); font-weight: 600; font-size: 0.9rem;">Foto de perfil</label>
+                            <input type="file" id="avatarInput" accept="image/*" style="margin-bottom: 0.5rem;">
+                            <p style="font-size: 0.8rem; color: #888;">Máximo 2MB. Formatos: JPG, PNG, GIF</p>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--primary-color); font-weight: 600; font-size: 0.9rem;">Mis Roles</label>
+                            <div id="profile-roles-list"></div>
+                            <button type="button" onclick="abrirModalRoles()" style="margin-top: 0.5rem; background: none; border: 2px solid var(--primary-color); color: var(--primary-color); padding: 0.4rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                                <i class="fas fa-edit"></i> Gestionar Roles
+                            </button>
+                        </div>
+                        <button type="submit" style="background: var(--primary-color); color: white; border: none; padding: 0.8rem 2rem; border-radius: 25px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN MENSAJES (con doble rol REQ 2) ===== -->
+            <section id="mensajes-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mensajes</h2>
+                    <button class="btn-select-role" onclick="showNewConversationModal()" style="border: none; cursor: pointer;">
+                        <i class="fas fa-plus"></i> Nueva Consulta
+                    </button>
+                </div>
+                <!-- Tabs de doble rol -->
+                <div class="chat-tabs">
+                    <button class="chat-tab active" id="chatTabTurista">
+                        <i class="fas fa-hiking"></i> Mis Viajes (Como Turista)
+                        <span class="badge" id="badgeTurista" style="display: none;">0</span>
+                    </button>
+                    <button class="chat-tab" id="chatTabAnfitrion">
+                        <i class="fas fa-bed"></i> Mis Alojamientos (Como Anfitrión)
+                        <span class="badge" id="badgeAnfitrion" style="display: none;">0</span>
+                    </button>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-list">
+                        <div class="chat-list-header">
+                            <h3>Conversaciones</h3>
+                        </div>
+                        <div id="chatList"></div>
+                    </div>
+                    <div class="chat-window" id="chatWindow" style="flex: 1; display: none; flex-direction: column;">
+                        <div id="messagesContainer" style="flex: 1; overflow-y: auto; padding: 1.5rem;"></div>
+                        <div style="display: flex; gap: 0.5rem; padding: 1rem 1.5rem; border-top: 1px solid #eee; background: #fafafa;">
+                            <textarea id="messageInput" placeholder="Escribe tu mensaje..." style="flex: 1; padding: 0.8rem; border: 2px solid #eee; border-radius: 10px; resize: none; font-family: inherit; font-size: 0.9rem;" rows="2"></textarea>
+                            <button id="sendMessageBtn" style="background: var(--primary-color); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600; align-self: flex-end;">
+                                <i class="fas fa-paper-plane"></i> Enviar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN FAVORITOS ===== -->
+            <section id="favoritos-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Mis Favoritos</h2>
+                <div id="favorites-list"></div>
+            </section>
+
+            <!-- ===== SECCIÓN PASAPORTE RURAL ===== -->
+            <section id="pasaporte-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Pasaporte Rural</h2>
+                <div id="pasaporte-content"></div>
+            </section>
+
+            <!-- ===== SECCIÓN MEMBRESÍA ===== -->
+            <section id="membresia-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Mi Membresía</h2>
+                <div id="membership-plans" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;"></div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button onclick="openBillingPortal()" style="background: none; border: 2px solid var(--primary-color); color: var(--primary-color); padding: 0.6rem 1.5rem; border-radius: 25px; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-credit-card"></i> Gestionar Facturación
+                    </button>
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN MIS ALOJAMIENTOS ===== -->
+            <section id="mis-alojamientos-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mis Alojamientos</h2>
+                    <a href="/agregar-alojamiento.html" target="_blank" class="btn-select-role" style="text-decoration: none; display: inline-block;">
+                        <i class="fas fa-plus"></i> Nuevo Alojamiento
+                    </a>
+                </div>
+                <div id="mis-alojamientos-list"></div>
+            </section>
+
+            <!-- ===== SECCIÓN MIS ACTIVIDADES ===== -->
+            <section id="mis-actividades-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mis Actividades</h2>
+                    <a href="/agregar-actividad.html" target="_blank" class="btn-select-role" style="text-decoration: none; display: inline-block;">
+                        <i class="fas fa-plus"></i> Nueva Actividad
+                    </a>
+                </div>
+                <div id="mis-actividades-list"></div>
+            </section>
+
+            <!-- ===== SECCIÓN MIS LUGARES ===== -->
+            <section id="mis-lugares-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mis Lugares de Interés</h2>
+                    <a href="/agregar-lugar-interes.html" target="_blank" class="btn-select-role" style="text-decoration: none; display: inline-block;">
+                        <i class="fas fa-plus"></i> Nuevo Lugar
+                    </a>
+                </div>
+                <div id="mis-lugares-list"></div>
+            </section>
+
+            <!-- ===== SECCIÓN MIS EVENTOS ===== -->
+            <section id="mis-eventos-section" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="color: var(--primary-color); margin: 0;">Mis Eventos</h2>
+                    <a href="/agregar-evento.html" target="_blank" class="btn-select-role" style="text-decoration: none; display: inline-block;">
+                        <i class="fas fa-plus"></i> Nuevo Evento
+                    </a>
+                </div>
+                <div id="mis-eventos-list"></div>
+            </section>
+
+            <!-- ===== SECCIÓN TABLÓN DE SOLICITUDES (REQ 3) ===== -->
+            <section id="tablon-section" class="dashboard-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">
+                    <i class="fas fa-bullhorn"></i> Tablón de Solicitudes
+                </h2>
+                <p style="color: #666; margin-bottom: 1.5rem;">
+                    Aquí aparecen las consultas de viajeros que no han especificado un destino concreto.
+                    Si encajan con tu oferta, ¡responde y abre una conversación!
+                </p>
+                <div id="bulletin-board-list" class="bulletin-board"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ============================================================
+         MODAL DE ROLES
+         ============================================================ -->
+    <div id="modalRolesUsuario" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-tag"></i> Gestionar Roles</h3>
+                <button class="btn-close-modal" onclick="cerrarModalRoles()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #666; margin-bottom: 1rem;">Selecciona los roles que quieres tener en la plataforma (máx. 2 en plan gratuito):</p>
+                <div id="modal-roles-grid" style="display: grid; gap: 0.8rem;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalRoles()">Cancelar</button>
+                <button onclick="guardarRoles()" style="background: var(--primary-color); color: white; border: none; border-radius: 20px; padding: 0.6rem 1.2rem; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                    <i class="fas fa-check"></i> Guardar Roles
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL DE NUEVA CONSULTA
+         ============================================================ -->
+    <div class="modal-overlay-chat" id="newConversationModal">
+        <div class="modal-chat">
+            <div class="modal-header">
+                <h3><i class="fas fa-paper-plane"></i> Nueva Consulta</h3>
+                <button class="btn-close-modal" onclick="closeNewConversationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newChatForm">
+                    <!-- Plantillas -->
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--primary-color); font-weight: 600;">Tipo de consulta</label>
+                    <div class="template-selector-grid">
+                        <div class="tpl-opt" data-template="informacion" onclick="selectTemplate('informacion')">
+                            <i class="fas fa-info-circle"></i><span>Información</span>
+                        </div>
+                        <div class="tpl-opt" data-template="reserva" onclick="selectTemplate('reserva')">
+                            <i class="fas fa-calendar-check"></i><span>Reserva</span>
+                        </div>
+                        <div class="tpl-opt" data-template="actividades" onclick="selectTemplate('actividades')">
+                            <i class="fas fa-hiking"></i><span>Actividades</span>
+                        </div>
+                        <div class="tpl-opt" data-template="personalizado" onclick="selectTemplate('personalizado')">
+                            <i class="fas fa-pen"></i><span>Personalizado</span>
+                        </div>
+                    </div>
+
+                    <!-- Preview del mensaje -->
+                    <div class="tpl-preview" id="tplPreview">Selecciona una plantilla o escribe tu mensaje...</div>
+
+                    <!-- Mensaje personalizado -->
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="inquiryMessage">Tu mensaje</label>
+                        <textarea id="inquiryMessage" rows="3" style="width: 100%; padding: 0.8rem; border: 2px solid #eee; border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical;" oninput="refreshTplPreview()"></textarea>
+                    </div>
+
+                    <!-- Búsqueda de alojamiento -->
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="searchAccommodation">¿Buscas un alojamiento en concreto? (opcional)</label>
+                        <input type="text" id="searchAccommodation" placeholder="Escribe el nombre del alojamiento..." style="width: 100%; padding: 0.8rem; border: 2px solid #eee; border-radius: 8px; font-size: 0.9rem;">
+                        <div id="searchResults" class="search-results-box"></div>
+                    </div>
+
+                    <!-- Zona / Comunidad Autónoma (REQ 3) -->
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="inquiryZone">Zona / Comunidad Autónoma <span style="color: #f88;">*</span></label>
+                        <input type="text" id="inquiryZone" placeholder="Ej: Soria, Castilla y León, La Rioja..." style="width: 100%; padding: 0.8rem; border: 2px solid #eee; border-radius: 8px; font-size: 0.9rem;" required>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 0.3rem;">Indica la zona para que tu consulta llegue a los alojamientos adecuados.</p>
+                    </div>
+
+                    <!-- Datos adicionales -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="inquiryPersons">Personas</label>
+                            <input type="number" id="inquiryPersons" value="2" min="1" max="20" style="width: 100%; padding: 0.8rem; border: 2px solid #eee; border-radius: 8px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="inquiryCheckIn">Llegada</label>
+                            <input type="date" id="inquiryCheckIn" style="width: 100%; padding: 0.8rem; border: 2px solid #eee; border-radius: 8px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="inquiryCheckOut">Salida</label>
+                            <input type="date" id="inquiryCheckOut" style="width: 100%; padding: 0.8rem; border: 2px solid #eee; border-radius: 8px;">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeNewConversationModal()">Cancelar</button>
+                <button id="submitInquiryBtn" onclick="submitNewChat()" style="background: var(--primary-color); color: white; border: none; border-radius: 20px; padding: 0.6rem 1.2rem; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                    <i class="fas fa-paper-plane"></i> Enviar Consulta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SCRIPTS MODULARES
+         ============================================================ -->
+    <script src="/dashboard/js/dashboard-core.js"></script>
+    <script src="/dashboard/js/dashboard-profile.js"></script>
+    <script src="/dashboard/js/dashboard-favorites.js"></script>
+    <script src="/dashboard/js/dashboard-pasaporte.js"></script>
+    <script src="/dashboard/js/dashboard-membership.js"></script>
+    <script src="/dashboard/js/dashboard-resources.js"></script>
+    <script src="/dashboard/js/dashboard-messages.js"></script>
+    <script src="/dashboard/js/dashboard-inquiry.js"></script>
+    <script src="/dashboard/js/dashboard-role-context.js"></script>
+
+</body>
+</html>

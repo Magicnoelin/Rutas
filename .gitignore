@@ -3,3 +3,4 @@ api/config_secure.php
 api/config_updated.php
 api/stripe_config.php
 api/*.sql
+api/forgot_password.php
