@@ -377,9 +377,11 @@
             overflow: hidden;
         }
         .chat-list {
-            width: 320px;
+            width: 380px;
+            min-width: 280px;
             border-right: 1px solid #eee;
             overflow-y: auto;
+            flex-shrink: 0;
         }
         .chat-list-header {
             padding: 1.5rem;
@@ -432,6 +434,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         .chat-avatar img {
             width: 100%;
@@ -442,6 +445,67 @@
             margin: 0;
             color: #888;
             font-size: 0.9rem;
+        }
+
+        /* Responsive: móvil - la sección de mensajes se apila verticalmente */
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 280px);
+            }
+            .chat-list {
+                width: 100% !important;
+                min-width: unset !important;
+                border-right: none !important;
+                border-bottom: 1px solid #eee;
+                max-height: 45vh;
+                overflow-y: auto;
+            }
+            .chat-list-header {
+                padding: 1rem;
+            }
+            .chat-list-header h3 {
+                font-size: 1rem;
+            }
+            .chat-list-header .btn-primary {
+                font-size: 0.8rem !important;
+                padding: 0.4rem 0.8rem !important;
+            }
+            .chat-item {
+                padding: 0.8rem 1rem;
+                gap: 10px;
+            }
+            .chat-avatar {
+                width: 40px;
+                height: 40px;
+            }
+            .chat-info strong {
+                font-size: 0.85rem;
+            }
+            .chat-info p {
+                font-size: 0.8rem;
+            }
+            .chat-window {
+                min-height: 40vh;
+                max-height: 55vh;
+            }
+            #messagesContainer {
+                max-height: 30vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-list {
+                max-height: 40vh;
+            }
+            .chat-window {
+                min-height: 35vh;
+                max-height: 50vh;
+            }
+            #messagesContainer {
+                max-height: 25vh;
+            }
         }
 
         /* Estilos para el Modal de Nueva Conversación (Plantillas Turista) */
