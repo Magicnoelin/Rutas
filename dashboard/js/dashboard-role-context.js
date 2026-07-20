@@ -31,9 +31,6 @@ async function initRoleContextBar() {
     
     // Renderizar la barra
     renderRoleContextBar(hasProvider);
-    
-    // Mostrar/ocultar CTA de crear servicio
-    showCreateServiceCTA(!hasProvider);
 }
 
 // ============================================================
