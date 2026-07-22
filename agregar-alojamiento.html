@@ -516,27 +516,31 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="container">
-                <div class="logo">
-                    <img src="logo_990x1076_verde.png" alt="Rutas Logo" style="height: 50px; margin-right: 10px;">
-                    <span>Rutas</span>
-                </div>
-                <button class="hamburger" id="hamburger" aria-label="Menú">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="alojamientos.html">Alojamientos</a></li>
-                    <li><a href="index.html#actividades">Actividades</a></li>
-                    <li><a href="index.html#lugares">Lugares de Interés</a></li>
-                </ul>
+    <!-- Topbar Dashboard -->
+    <header style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: #2d5016; box-shadow: 0 2px 8px rgba(0,0,0,0.2); height: 60px; display: flex; align-items: center;">
+        <div style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+            <!-- Logo + Título -->
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+                <img src="logo_990x1076_verde.png" alt="Rutas Logo" style="height: 38px;">
+                <span style="color: white; font-weight: 700; font-size: 1rem; white-space: nowrap;">Añadir Alojamiento</span>
             </div>
-        </nav>
+
+            <!-- Navegación dashboard -->
+            <nav style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="user-dashboard.html" style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.85); text-decoration: none; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-th-large"></i> <span>Mi Panel</span>
+                </a>
+                <a href="user-dashboard.html#mis-alojamientos" style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.85); text-decoration: none; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-bed"></i> <span>Mis Alojamientos</span>
+                </a>
+                <a href="user-dashboard.html#mi-perfil" style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.85); text-decoration: none; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-user"></i> <span>Mi Perfil</span>
+                </a>
+                <a href="api/logout.php" style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.75); text-decoration: none; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.3); transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-sign-out-alt"></i> <span>Salir</span>
+                </a>
+            </nav>
+        </div>
     </header>
 
     <!-- Sección de Agregar Alojamiento -->
@@ -1203,8 +1207,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         // Guardar alojamiento silenciosamente para obtener el slug y el ID
+        // Se guarda como DRAFT para que no cuente como alojamiento creado hasta que el usuario pulse "Guardar"
         async function guardarAlojamientoSilencioso() {
-            // Si ya se guardó silenciosamente antes, reutilizar el mismo ID
+            // Si ya se guardó silenciosamente antes, reutilizar el mismo ID (NO crear duplicado)
             if (uploadState.alojamientoId) {
                 return recopilarDatosParaAPI();
             }
@@ -1218,6 +1223,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const formData = recopilarDatosParaAPI();
             if (!formData) return null;
 
+            // ⚠️ CRÍTICO: guardar como borrador (draft), NO como 'submit'
+            // Así no cuenta en el límite de alojamientos hasta que el usuario lo confirme
+            const formDataDraft = { ...formData, submit_action: 'draft' };
+
             try {
                 const apiUrl = window.CONFIG?.API_BASE_URL 
                     ? `${window.CONFIG.API_BASE_URL}/crear.php`
@@ -1226,7 +1235,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(formDataDraft)
                 });
 
                 const result = await response.json();
@@ -1305,7 +1314,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 Plazas: parseInt(document.getElementById('plazas').value),
                 Telefono1: document.getElementById('telefono').value.trim(),
                 Notaspublicas: document.getElementById('descripcion').value.trim(),
-                submit_action: 'submit'  // Enviar para moderación
+                submit_action: 'submit'  // Valor por defecto; guardarAlojamientoSilencioso lo sobreescribe a 'draft'
             };
 
             const precio = document.getElementById('precio').value;
@@ -1412,36 +1421,66 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         }
 
-        // Actualizar el alojamiento existente (creado silenciosamente) con las fotos y datos completos
+        // Actualizar el alojamiento existente (creado silenciosamente como draft) con datos completos
+        // y cambiar su estado a 'pending' para que entre en moderación
         async function actualizarAlojamientoExistente(formData) {
             try {
                 const apiUrlBase = window.CONFIG?.API_BASE_URL || 'api';
 
-                // 1. Actualizar las fotos en los campos photo1..photo4 de la BD
-                if (uploadState.uploadedPhotos.length > 0) {
-                    const fotosPayload = { accommodation_id: uploadState.alojamientoId };
-                    uploadState.uploadedPhotos.forEach((photo, index) => {
-                        if (index < 4) {
-                            fotosPayload[`Foto${index + 1}`] = photo.url;
-                        }
-                    });
-                    // También incluir URLs manuales
-                    const fotoInputs = document.querySelectorAll('.photo-input-group input');
-                    fotoInputs.forEach((input, index) => {
-                        const url = input.value.trim();
-                        if (url && index < 4 && !fotosPayload[`Foto${index + 1}`]) {
-                            fotosPayload[`Foto${index + 1}`] = url;
-                        }
-                    });
+                // 1. Preparar las fotos (subidas + URLs manuales)
+                const fotosFinales = {};
+                uploadState.uploadedPhotos.forEach((photo, index) => {
+                    if (index < 4) fotosFinales[`photo${index + 1}`] = photo.url;
+                });
+                const fotoInputs = document.querySelectorAll('.photo-input-group input');
+                fotoInputs.forEach((input, index) => {
+                    const url = input.value.trim();
+                    const key = `photo${index + 1}`;
+                    if (url && index < 4 && !fotosFinales[key]) {
+                        fotosFinales[key] = url;
+                    }
+                });
 
-                    await fetch(`${apiUrlBase}/actualizar_fotos_alojamiento.php`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(fotosPayload)
-                    });
+                // 2. Actualizar datos completos del alojamiento (borrador → pendiente)
+                // Usar FormData ya que actualizar_alojamiento.php espera $_POST
+                const updateForm = new FormData();
+                updateForm.append('id', uploadState.alojamientoId);
+                updateForm.append('name', formData.Nombre);
+                updateForm.append('description', formData.Notaspublicas || '');
+                updateForm.append('municipality', formData.Municipality || '');
+                updateForm.append('province', formData.Province || '');
+                updateForm.append('address', formData.Direccion || '');
+                updateForm.append('capacity', formData.Plazas || 0);
+                updateForm.append('price_per_night', formData.Precio || 0);
+                updateForm.append('phone', formData.Telefono1 || '');
+                updateForm.append('website', formData.Web || '');
+                if (fotosFinales.photo1) updateForm.append('photo1', fotosFinales.photo1);
+                if (fotosFinales.photo2) updateForm.append('photo2', fotosFinales.photo2);
+                if (fotosFinales.photo3) updateForm.append('photo3', fotosFinales.photo3);
+                if (fotosFinales.photo4) updateForm.append('photo4', fotosFinales.photo4);
+                updateForm.append('submit_action', 'submit'); // Cambiar de draft a pending
+
+                const updateResp = await fetch(`${apiUrlBase}/actualizar_alojamiento.php`, {
+                    method: 'POST',
+                    body: updateForm
+                });
+                const updateResult = await updateResp.json();
+
+                if (!updateResp.ok || !updateResult.success) {
+                    // Si falla la actualización de datos, al menos actualizar solo las fotos
+                    if (Object.keys(fotosFinales).length > 0) {
+                        const fotosPayload = { accommodation_id: uploadState.alojamientoId, ...Object.fromEntries(
+                            Object.entries(fotosFinales).map(([k,v]) => [`Foto${k.replace('photo','')}`, v])
+                        )};
+                        await fetch(`${apiUrlBase}/actualizar_fotos_alojamiento.php`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(fotosPayload)
+                        });
+                    }
                 }
 
-                // 2. Mostrar resultado de éxito simulado con los datos que ya tenemos
+                // 3. Mostrar resultado de éxito
                 const resultSimulado = {
                     data: {
                         id: uploadState.alojamientoId,
@@ -1449,14 +1488,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         tipo: formData.Tipo,
                         slug: uploadState.alojamientoSlug,
                         auto_linked: true,
-                        link_message: 'Alojamiento vinculado a tu cuenta y fotos guardadas correctamente'
+                        link_message: 'Alojamiento guardado y enviado a moderación'
                     }
                 };
                 mostrarMensajeExito(resultSimulado);
 
             } catch (error) {
                 console.error('Error al actualizar alojamiento existente:', error);
-                mostrarMensajeError('Error al guardar las fotos: ' + error.message);
+                mostrarMensajeError('Error al guardar el alojamiento: ' + error.message);
             }
         }
 

@@ -99,13 +99,14 @@ try {
             
             // Verificar límites según membresía
             if ($membershipType === 'free' || $membershipType === 'basic') {
-                // Contar alojamientos existentes del usuario (solo activos/pendientes, excluir borradores)
+                // Contar alojamientos existentes del usuario (solo pendientes/aprobados, EXCLUIR borradores draft)
                 $stmtCount = $pdo->prepare("
                     SELECT COUNT(*) as total_alojamientos, 
                            COALESCE(SUM(a.capacity), 0) as total_plazas
                     FROM accommodations a
                     INNER JOIN user_resources ur ON ur.resource_id = a.id AND ur.resource_type = 'accommodation'
                     WHERE ur.user_id = ? AND ur.role = 'owner'
+                    AND a.moderation_status != 'draft'
                 ");
                 $stmtCount->execute([$userId]);
                 $counts = $stmtCount->fetch();
