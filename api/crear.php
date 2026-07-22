@@ -222,7 +222,8 @@ try {
         'tipo' => $nuevoAlojamiento['accommodation_type'],
         'estado' => $nuevoAlojamiento['is_active'] ? 'activo' : 'inactivo',
         'moderation_status' => $nuevoAlojamiento['moderation_status'],
-        'recaptcha_score' => $recaptchaResult['score']
+        'recaptcha_score' => $recaptchaResult['score'],
+        'slug' => $slug
     ];
     
     // Registrar en historial de moderación
