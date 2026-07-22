@@ -217,18 +217,47 @@ function renderAlojamientoSchema(
         $lodging['hasMap'] = 'https://www.google.com/maps?q=' . $lat . ',' . $lng;
     }
 
+    // ── additionalType en la entidad principal ────────────────────────────────
+    // Enlace directo a schema.org para ayudar a Google a clasificar el tipo
+    $schemaTypeUrl = 'https://schema.org/' . $schemaType;
+    $lodging['additionalType'] = $schemaTypeUrl;
+
     // containsPlace: REQUERIDO por Google para VacationRental
     // Describe las unidades de alojamiento que contiene la propiedad
-    // (habitaciones, zonas, etc.)
     $containsPlaceObj = [
-        '@type' => 'Accommodation',
-        'name'  => 'Alojamiento completo — ' . $alojamiento['name'],
+        '@type'          => 'Accommodation',
+        'name'           => 'Alojamiento completo — ' . $alojamiento['name'],
+        // additionalType en containsPlace (recomendado por Google)
+        'additionalType' => 'https://schema.org/Accommodation',
     ];
+
     // numberOfBedrooms (correcto para Accommodation, Google lo requiere)
-    if (!empty($alojamiento['bedrooms']) && (int)$alojamiento['bedrooms'] > 0) {
-        $containsPlaceObj['numberOfBedrooms']    = (int)$alojamiento['bedrooms'];
-        $containsPlaceObj['numberOfRooms']       = (int)$alojamiento['bedrooms']; // alias
+    $numBedrooms = !empty($alojamiento['bedrooms']) ? (int)$alojamiento['bedrooms'] : 0;
+    if ($numBedrooms > 0) {
+        $containsPlaceObj['numberOfBedrooms'] = $numBedrooms;
+        $containsPlaceObj['numberOfRooms']    = $numBedrooms; // alias
     }
+
+    // numberOfBathroomsTotal en containsPlace
+    $numBathrooms = !empty($alojamiento['bathrooms']) ? (int)$alojamiento['bathrooms'] : 0;
+    if ($numBathrooms > 0) {
+        $containsPlaceObj['numberOfBathroomsTotal'] = $numBathrooms;
+    }
+
+    // bed: descripción de las camas (recomendado por Google para VacationRental)
+    // Se infiere de numberOfBedrooms; si no hay dato, se omite para no generar errores
+    if ($numBedrooms > 0) {
+        $beds = [];
+        for ($b = 0; $b < $numBedrooms; $b++) {
+            $beds[] = [
+                '@type'     => 'BedDetails',
+                'typeOfBed' => 'Double bed',
+                'numberOfBeds' => 1,
+            ];
+        }
+        $containsPlaceObj['bed'] = count($beds) === 1 ? $beds[0] : $beds;
+    }
+
     // occupancy: QuantitativeValue REQUIERE 'value' (además de maxValue)
     if (!empty($alojamiento['capacity']) && (int)$alojamiento['capacity'] > 0) {
         $containsPlaceObj['occupancy'] = [
@@ -237,9 +266,6 @@ function renderAlojamientoSchema(
             'maxValue' => (int)$alojamiento['capacity'],
             'unitCode' => 'C62',
         ];
-    }
-    if (!empty($alojamiento['bathrooms']) && (int)$alojamiento['bathrooms'] > 0) {
-        $containsPlaceObj['numberOfBathroomsTotal'] = (int)$alojamiento['bathrooms'];
     }
     if (!empty($amenityFeatures)) {
         $containsPlaceObj['amenityFeature'] = $amenityFeatures;
@@ -256,14 +282,38 @@ function renderAlojamientoSchema(
         $lodging['petsAllowed'] = (bool)(int)$alojamiento['pet_friendly'];
     }
 
-    // Rating (si existe en BD)
+    // aggregateRating (recomendado por Google para VacationRental)
     if (!empty($alojamiento['rating_avg']) && !empty($alojamiento['rating_count'])) {
+        $ratingVal   = number_format((float)$alojamiento['rating_avg'], 1, '.', '');
+        $reviewCount = (int)$alojamiento['rating_count'];
         $lodging['aggregateRating'] = [
             '@type'       => 'AggregateRating',
-            'ratingValue' => number_format((float)$alojamiento['rating_avg'], 1, '.', ''),
-            'reviewCount' => (int)$alojamiento['rating_count'],
+            'ratingValue' => $ratingVal,
+            'reviewCount' => $reviewCount,
             'bestRating'  => '5',
             'worstRating' => '1',
+        ];
+        // review: al menos una reseña representativa (recomendado por Google)
+        $lodging['review'] = [
+            '@type'         => 'Review',
+            'reviewRating'  => [
+                '@type'       => 'Rating',
+                'ratingValue' => $ratingVal,
+                'bestRating'  => '5',
+                'worstRating' => '1',
+            ],
+            'author' => [
+                '@type' => 'Organization',
+                'name'  => 'Rutas Rurales',
+                'url'   => $baseUrl,
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name'  => 'Rutas Rurales',
+                'url'   => $baseUrl,
+            ],
+            'reviewBody'  => 'Valoración media de los usuarios de Rutas Rurales para ' . $alojamiento['name'] . '.',
+            'datePublished' => date('Y-m-d'),
         ];
     }
 
