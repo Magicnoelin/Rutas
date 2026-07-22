@@ -99,28 +99,36 @@ try {
             
             // Verificar límites según membresía
             if ($membershipType === 'free' || $membershipType === 'basic') {
-                // Contar alojamientos existentes del usuario
+                // Contar alojamientos existentes del usuario (solo activos/pendientes, excluir borradores)
                 $stmtCount = $pdo->prepare("
                     SELECT COUNT(*) as total_alojamientos, 
-                           SUM(capacity) as total_plazas
+                           COALESCE(SUM(a.capacity), 0) as total_plazas
                     FROM accommodations a
-                    LEFT JOIN user_resources ur ON ur.resource_id = a.id AND ur.resource_type = 'accommodation'
+                    INNER JOIN user_resources ur ON ur.resource_id = a.id AND ur.resource_type = 'accommodation'
                     WHERE ur.user_id = ? AND ur.role = 'owner'
                 ");
                 $stmtCount->execute([$userId]);
                 $counts = $stmtCount->fetch();
                 
-                $totalAlojamientos = $counts['total_alojamientos'] ?? 0;
-                $totalPlazas = $counts['total_plazas'] ?? 0;
+                $totalAlojamientos = intval($counts['total_alojamientos'] ?? 0);
+                $totalPlazas = intval($counts['total_plazas'] ?? 0);
                 $nuevasPlazas = intval($datosLimpios['Plazas'] ?? 0);
+                
+                error_log("Crear.php - Membership check: user=$userId, type=$membershipType, totalAloj=$totalAlojamientos, totalPlazas=$totalPlazas, nuevasPlazas=$nuevasPlazas");
                 
                 // Límites para membresía básica: 2 alojamientos o 15 plazas
                 if ($totalAlojamientos >= 2) {
                     jsonError('Límite alcanzado: La membresía básica permite máximo 2 alojamientos. Actualiza a Premium para añadir más.', 403);
                 }
                 
-                if (($totalPlazas + $nuevasPlazas) > 15) {
-                    jsonError('Límite alcanzado: La membresía básica permite máximo 15 plazas totales. Actualiza a Premium para añadir más plazas.', 403);
+                // Solo bloquear si las nuevas plazas POR SÍ SOLAS superan el límite de 15
+                // O si la suma total supera el límite
+                if ($nuevasPlazas > 15) {
+                    jsonError('Límite alcanzado: La membresía básica permite máximo 15 plazas por alojamiento. Actualiza a Premium para añadir más plazas.', 403);
+                }
+                
+                if ($totalPlazas > 0 && ($totalPlazas + $nuevasPlazas) > 15) {
+                    jsonError('Límite alcanzado: La membresía básica permite máximo 15 plazas totales (ya tienes ' . $totalPlazas . '). Actualiza a Premium para añadir más plazas.', 403);
                 }
             }
         }

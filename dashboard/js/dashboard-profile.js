@@ -190,7 +190,7 @@ async function cargarRolesEnModal() {
             return;
         }
         
-        const rolesDisponibles = datosRoles.data;
+        const rolesDisponibles = datosRoles.data.filter(r => r.slug !== 'admin');
         const misRoles = datosMisRoles.data.map(r => r.slug);
         
         grid.innerHTML = rolesDisponibles.map(rol => {

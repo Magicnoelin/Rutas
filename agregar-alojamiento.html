@@ -1256,10 +1256,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             if (!formData) return;
 
             const jsonString = JSON.stringify(formData, null, 2);
-            document.getElementById('jsonOutput').textContent = jsonString;
+            const jsonOutput = document.getElementById('jsonOutput');
+            jsonOutput.textContent = jsonString;
+            jsonOutput.style.display = 'block';
+            document.querySelector('.copy-btn').style.display = 'flex';
             document.getElementById('previewContainer').classList.add('active');
             generatedJSON = jsonString;
 
+            document.querySelector('.preview-header h3').innerHTML = '<i class="fas fa-eye"></i> Vista Previa';
             document.querySelector('.preview-header p').textContent = 'Revisa los datos antes de guardar';
             document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
         }
