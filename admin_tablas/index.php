@@ -1,9 +1,6 @@
 <?php 
 include 'db.php'; 
-// Si el sidebar causa el bloqueo, asegúrate de que el archivo existe
-if (file_exists('sidebar.php')) {
-    include 'sidebar.php'; 
-}
+// Se ha eliminado la inclusión de sidebar.php para que no aparezca el menú de la izquierda
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -18,7 +15,8 @@ if (file_exists('sidebar.php')) {
         #preloader, .loader, .loading { display: none !important; } 
         .table img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
         .slug-text { font-family: monospace; font-size: 0.85rem; color: #6c757d; }
-        .btn-status { width: 110px; } /* Mantiene los botones de estado alineados */
+        .btn-status { width: 110px; } 
+        .owner-badge { font-size: 0.8rem; }
     </style>
 </head>
 <body class="bg-light">
@@ -47,14 +45,37 @@ if (file_exists('sidebar.php')) {
                             <th>Nombre / URL (Slug)</th>
                             <th>Provincia</th>
                             <th>Capacidad</th>
+                            <th>Propietario</th> 
                             <th>Estado</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        // Consulta optimizada
-                        $stmt = $pdo->query("SELECT id, name, slug, province, capacity, is_active, photo1 FROM accommodations ORDER BY id DESC");
+                        // Consulta incluyendo u.email para poder enviar correos
+                        $query = "
+                            SELECT 
+                                a.id, 
+                                a.name, 
+                                a.slug, 
+                                a.province, 
+                                a.capacity, 
+                                a.is_active, 
+                                a.photo1,
+                                u.id AS owner_id,
+                                u.first_name AS owner_name,
+                                u.email AS owner_email
+                            FROM accommodations a
+                            LEFT JOIN user_resources ur 
+                                ON a.id = ur.resource_id 
+                                AND ur.resource_type = 'accommodation' 
+                                AND ur.role = 'owner'
+                            LEFT JOIN users u 
+                                ON ur.user_id = u.id
+                            ORDER BY a.id DESC
+                        ";
+                        
+                        $stmt = $pdo->query($query);
                         while ($row = $stmt->fetch()): 
                         ?>
                         <tr>
@@ -70,6 +91,29 @@ if (file_exists('sidebar.php')) {
                             </td>
                             <td><?= htmlspecialchars($row['province']) ?></td>
                             <td><?= $row['capacity'] ?> plazas</td>
+                            <td>
+                                <?php if ($row['owner_id']): ?>
+                                    <div class="owner-badge">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-person-fill text-secondary"></i> 
+                                            <strong><?= htmlspecialchars($row['owner_name']) ?></strong> 
+                                            
+                                            <?php if (!empty($row['owner_email'])): ?>
+                                                <a href="mailto:<?= htmlspecialchars($row['owner_email']) ?>?subject=Consulta sobre tu alojamiento: <?= urlencode($row['name']) ?>" 
+                                                   class="btn btn-link p-0 text-decoration-none text-primary" 
+                                                   title="Enviar email a <?= htmlspecialchars($row['owner_email']) ?>">
+                                                    <i class="bi bi-envelope-at-fill"></i>
+                                                </a>
+                                            <?php endif; ?>
+                                        </div>
+                                        <span class="text-muted d-block">(ID: #<?= $row['owner_id'] ?>)</span>
+                                    </div>
+                                <?php else: ?>
+                                    <span class="text-danger-emphasis bg-danger-subtle px-2 py-1 rounded owner-badge">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Sin asignar
+                                    </span>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <?php if ($row['is_active']): ?>
                                     <a href="cambiar_estado_alojamiento.php?id=<?= $row['id'] ?>&status=0" 

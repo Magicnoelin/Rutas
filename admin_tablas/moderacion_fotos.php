@@ -24,29 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     try {
         if ($action === 'approve_photo') {
-            // 1. Obtener datos de la foto
-            $stmtGet = $pdo->prepare("SELECT * FROM entity_photos WHERE id=?");
-            $stmtGet->execute([$id]);
-            $photo = $stmtGet->fetch();
+            // Simplemente aprobar la foto SIN mover ni renombrar nada
+            $stmt = $pdo->prepare("UPDATE entity_photos SET permission_status='approved', status='active' WHERE id=?");
+            $stmt->execute([$id]);
 
-            $moveResult = ['moved' => false, 'new_url' => null];
-
-            if ($photo && !empty($photo['entity_type']) && $photo['entity_id'] > 0) {
-                $moveResult = movePhotoToSeoFolder($pdo, $photo);
-            }
-
-            // 2. Actualizar estado
-            if ($moveResult['moved'] && $moveResult['new_url']) {
-                $stmt = $pdo->prepare("UPDATE entity_photos SET permission_status='approved', status='active', file_url=?, file_path=? WHERE id=?");
-                $stmt->execute([$moveResult['new_url'], $moveResult['new_url'], $id]);
-            } else {
-                $stmt = $pdo->prepare("UPDATE entity_photos SET permission_status='approved', status='active' WHERE id=?");
-                $stmt->execute([$id]);
-            }
-
-            $msg = 'Foto aprobada';
-            if ($moveResult['moved']) $msg .= ' y movida a ' . $moveResult['new_url'];
-            echo json_encode(['success' => true, 'message' => $msg, 'move' => $moveResult]);
+            echo json_encode(['success' => true, 'message' => 'Foto aprobada']);
 
         } elseif ($action === 'reject_photo') {
             $stmt = $pdo->prepare("UPDATE entity_photos SET permission_status='revoked', status='hidden' WHERE id=?");

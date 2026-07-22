@@ -325,6 +325,10 @@
             <a class="quick-link" href="https://rutasrurales.io/admin_tablas/contador-organismos.php">
                 <i class="fas fa-crown"></i><span>Cuenta organismos</span>
             </a>
+            
+            <a class="quick-link" href="https://rutasrurales.io/admin_tablas/leads_index.php">
+                <i class="fas fa-cross"></i><span>Leads</span>
+            </a>
         </div>
     </div>
 </main>
