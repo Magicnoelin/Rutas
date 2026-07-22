@@ -115,12 +115,29 @@ try {
         } catch (Exception $e) { /* ignorar */ }
     }
     
-    // Add dummy stats for now, real stats would come from resource_stats table
+    // Obtener estadísticas reales desde resource_stats para cada alojamiento
     foreach ($tempAccommodations as &$res) {
+        $views = 0; $favorites = 0; $messages = 0;
+        try {
+            $stmtS = $pdo->prepare("
+                SELECT views_count, favorites_count, interests_count, messages_count
+                FROM resource_stats
+                WHERE resource_type = 'accommodation' AND resource_id = ?
+                LIMIT 1
+            ");
+            $stmtS->execute([$res['id']]);
+            $rowS = $stmtS->fetch(PDO::FETCH_ASSOC);
+            if ($rowS) {
+                $views     = (int)($rowS['views_count']     ?? 0);
+                $favorites = (int)($rowS['favorites_count'] ?? 0);
+                // interests_count = emails/consultas recibidas; messages_count = mensajes internos
+                $messages  = (int)($rowS['interests_count'] ?? 0) + (int)($rowS['messages_count'] ?? 0);
+            }
+        } catch (Exception $e) { /* tabla no existe, dejar en 0 */ }
         $res['stats'] = [
-            'views' => rand(100, 1000),
-            'favorites' => rand(5, 50),
-            'messages' => rand(1, 10)
+            'views'     => $views,
+            'favorites' => $favorites,
+            'messages'  => $messages
         ];
     }
     $resources['accommodation'] = $tempAccommodations;
@@ -167,11 +184,28 @@ try {
         } catch (Exception $e) { /* ignorar */ }
     }
     
+    // Obtener estadísticas reales desde resource_stats para cada actividad
     foreach ($tempActivities as &$res) {
+        $views = 0; $favorites = 0; $messages = 0;
+        try {
+            $stmtS = $pdo->prepare("
+                SELECT views_count, favorites_count, interests_count, messages_count
+                FROM resource_stats
+                WHERE resource_type = 'activity' AND resource_id = ?
+                LIMIT 1
+            ");
+            $stmtS->execute([$res['id']]);
+            $rowS = $stmtS->fetch(PDO::FETCH_ASSOC);
+            if ($rowS) {
+                $views     = (int)($rowS['views_count']     ?? 0);
+                $favorites = (int)($rowS['favorites_count'] ?? 0);
+                $messages  = (int)($rowS['interests_count'] ?? 0) + (int)($rowS['messages_count'] ?? 0);
+            }
+        } catch (Exception $e) { /* tabla no existe, dejar en 0 */ }
         $res['stats'] = [
-            'views' => rand(50, 500),
-            'favorites' => rand(2, 20),
-            'messages' => rand(0, 5)
+            'views'     => $views,
+            'favorites' => $favorites,
+            'messages'  => $messages
         ];
     }
     $resources['activity'] = $tempActivities;
@@ -219,11 +253,28 @@ try {
         } catch (Exception $e) { /* ignorar */ }
     }
 
+    // Obtener estadísticas reales desde resource_stats para cada lugar
     foreach ($tempPlaces as &$res) {
+        $views = 0; $favorites = 0; $messages = 0;
+        try {
+            $stmtS = $pdo->prepare("
+                SELECT views_count, favorites_count, interests_count, messages_count
+                FROM resource_stats
+                WHERE resource_type = 'place' AND resource_id = ?
+                LIMIT 1
+            ");
+            $stmtS->execute([$res['id']]);
+            $rowS = $stmtS->fetch(PDO::FETCH_ASSOC);
+            if ($rowS) {
+                $views     = (int)($rowS['views_count']     ?? 0);
+                $favorites = (int)($rowS['favorites_count'] ?? 0);
+                $messages  = (int)($rowS['interests_count'] ?? 0) + (int)($rowS['messages_count'] ?? 0);
+            }
+        } catch (Exception $e) { /* tabla no existe, dejar en 0 */ }
         $res['stats'] = [
-            'views' => rand(200, 2000),
-            'favorites' => rand(10, 100),
-            'messages' => rand(0, 8)
+            'views'     => $views,
+            'favorites' => $favorites,
+            'messages'  => $messages
         ];
     }
     $resources['place'] = $tempPlaces;
@@ -271,11 +322,28 @@ try {
         } catch (Exception $e) { /* ignorar */ }
     }
 
+    // Obtener estadísticas reales desde resource_stats para cada evento
     foreach ($tempEvents as &$res) {
+        $views = 0; $favorites = 0; $messages = 0;
+        try {
+            $stmtS = $pdo->prepare("
+                SELECT views_count, favorites_count, interests_count, messages_count
+                FROM resource_stats
+                WHERE resource_type = 'event' AND resource_id = ?
+                LIMIT 1
+            ");
+            $stmtS->execute([$res['id']]);
+            $rowS = $stmtS->fetch(PDO::FETCH_ASSOC);
+            if ($rowS) {
+                $views     = (int)($rowS['views_count']     ?? 0);
+                $favorites = (int)($rowS['favorites_count'] ?? 0);
+                $messages  = (int)($rowS['interests_count'] ?? 0) + (int)($rowS['messages_count'] ?? 0);
+            }
+        } catch (Exception $e) { /* tabla no existe, dejar en 0 */ }
         $res['stats'] = [
-            'views' => rand(70, 700),
-            'favorites' => rand(3, 30),
-            'messages' => rand(0, 3)
+            'views'     => $views,
+            'favorites' => $favorites,
+            'messages'  => $messages
         ];
     }
     $resources['event'] = $tempEvents;
