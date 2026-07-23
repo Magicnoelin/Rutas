@@ -24,11 +24,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     try {
         if ($action === 'approve_photo') {
-            // Simplemente aprobar la foto SIN mover ni renombrar nada
+            // 1. Obtener datos de la foto
+            $stmtGet = $pdo->prepare("SELECT * FROM entity_photos WHERE id=?");
+            $stmtGet->execute([$id]);
+            $photo = $stmtGet->fetch();
+
+            // 2. Aprobar en entity_photos SIN tocar el archivo ni su nombre
             $stmt = $pdo->prepare("UPDATE entity_photos SET permission_status='approved', status='active' WHERE id=?");
             $stmt->execute([$id]);
 
-            echo json_encode(['success' => true, 'message' => 'Foto aprobada']);
+            // 3. Si es un alojamiento, actualizar el campo photoN libre en accommodations
+            $slotMsg = '';
+            if ($photo && $photo['entity_type'] === 'accommodations' && $photo['entity_id'] > 0 && !empty($photo['file_url'])) {
+                $entityId  = (int)$photo['entity_id'];
+                $fileUrl   = $photo['file_url'];
+
+                // Buscar el primer slot libre (photo1..photo20)
+                $cols = [];
+                for ($i = 1; $i <= 20; $i++) $cols[] = "photo$i";
+                $colList = implode(', ', $cols);
+
+                $stmtSlot = $pdo->prepare("SELECT $colList FROM accommodations WHERE id = ? LIMIT 1");
+                $stmtSlot->execute([$entityId]);
+                $slots = $stmtSlot->fetch(PDO::FETCH_ASSOC);
+
+                $freeCol = null;
+                if ($slots) {
+                    for ($i = 1; $i <= 20; $i++) {
+                        if (empty(trim($slots["photo$i"] ?? ''))) {
+                            $freeCol = "photo$i";
+                            break;
+                        }
+                    }
+                }
+
+                if ($freeCol) {
+                    $stmtUpd = $pdo->prepare("UPDATE accommodations SET `$freeCol` = ? WHERE id = ?");
+                    $stmtUpd->execute([$fileUrl, $entityId]);
+                    $slotMsg = " → guardada en $freeCol";
+                } else {
+                    $slotMsg = " (sin slots libres en accommodations)";
+                }
+            }
+
+            echo json_encode(['success' => true, 'message' => 'Foto aprobada' . $slotMsg]);
 
         } elseif ($action === 'reject_photo') {
             $stmt = $pdo->prepare("UPDATE entity_photos SET permission_status='revoked', status='hidden' WHERE id=?");

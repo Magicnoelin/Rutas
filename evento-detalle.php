@@ -523,109 +523,188 @@ if ($evento) {
     $ubicacion_display = implode(', ', $partes);
 }
 
-// JSON-LD para SEO
+// ─── JSON-LD: Schema.org (Event + WebPage + BreadcrumbList) ──────────────────
+// Se generan múltiples bloques schema para máxima cobertura SEO:
+//   1. Event  → datos del evento (el más importante para Rich Results)
+//   2. WebPage → vincula la URL canónica, descripción e imagen
+//   3. BreadcrumbList → navegación estructurada (mejora snippets)
+// Los tres se emiten en un único <script> como @graph para no repetir @context.
+// Sin consultas adicionales a BD → impacto 0 en velocidad.
 $jsonld = '';
 if ($evento) {
-    $jsonld_data = [
-        '@context' => 'https://schema.org',
-        '@type' => 'Event',
-        'name' => $evento['titulo'],
-        'description' => (function() use ($evento, $categoria_nombre, $ubicacion_display) {
-            $desc = trim(strip_tags($evento['short_description'] ?? '') ?: strip_tags($evento['description'] ?? ''));
-            if (!empty($desc)) return $desc;
-            // Fallback: construir descripción mínima desde los datos del evento
-            $parts = array_filter([
-                $categoria_nombre,
-                !empty($ubicacion_display) ? 'en ' . $ubicacion_display : null,
-                !empty($evento['start_date']) ? date('d/m/Y', strtotime($evento['start_date'])) : null,
-            ]);
-            return $evento['titulo'] . (count($parts) ? '. ' . implode(', ', $parts) . '.' : '.');
-        })(),
-        'startDate' => $evento['start_date'],
-        'endDate' => $evento['end_date'] ?: $evento['start_date'],
-        'eventStatus' => 'https://schema.org/EventScheduled',
-        'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
-        'location' => [
-            '@type' => 'Place',
-            'name' => $evento['localidad'] ?: $evento['municipality'],
-            'address' => [
-                '@type' => 'PostalAddress',
-                'addressLocality' => $evento['municipality'],
-                'addressRegion' => $evento['province'],
-                'addressCountry' => 'ES'
-            ]
-        ],
-        // organizer: requerido por Google Search Console para eventos.
-        // Si hay dato real en BD se usa; si no, se usa municipio/provincia como fallback
-        // (entidad local organizadora es la convención habitual para eventos populares).
-        'organizer' => [
-            '@type' => 'Organization',
-            'name'  => !empty($evento['organizer'])
-                        ? $evento['organizer']
-                        : (!empty($evento['municipality'])
-                            ? 'Ayuntamiento de ' . $evento['municipality']
-                            : (!empty($evento['province'])
-                                ? 'Ayuntamiento de ' . $evento['province']
-                                : 'Organización local')),
-        ],
-        // performer: recomendado por Google. Para eventos populares/tradicionales,
-        // la entidad organizadora actúa también como ejecutora del evento.
-        'performer' => [
-            '@type' => 'Organization',
-            'name'  => !empty($evento['organizer'])
-                        ? $evento['organizer']
-                        : (!empty($evento['municipality'])
-                            ? $evento['municipality']
-                            : ($evento['province'] ?? 'Organización local')),
-        ],
-        'isAccessibleForFree' => $evento['is_free'] == 1,
-        'url' => $canonical,
-    ];
 
-    // Offers (siempre requerido por Google, incluso para eventos gratuitos)
-    if ($evento['is_free'] == 1) {
-        $jsonld_data['offers'] = [
-            '@type' => 'Offer',
-            'url' => $canonical,
-            'price' => '0',
-            'priceCurrency' => 'EUR',
-            'availability' => 'https://schema.org/InStock',
-            'validFrom' => $evento['start_date'],
-        ];
-    } elseif (!empty($evento['ticket_price']) && $evento['ticket_price'] > 0) {
-        $jsonld_data['offers'] = [
-            '@type' => 'Offer',
-            'url' => $canonical,
-            'price' => number_format((float)$evento['ticket_price'], 2, '.', ''),
-            'priceCurrency' => 'EUR',
-            'availability' => 'https://schema.org/InStock',
-            'validFrom' => $evento['start_date'],
-        ];
-    } else {
-        // Precio a consultar: se incluye offers sin precio definido
-        $jsonld_data['offers'] = [
-            '@type' => 'Offer',
-            'url' => $canonical,
-            'availability' => 'https://schema.org/InStock',
-            'validFrom' => $evento['start_date'],
-        ];
-    }
-
-    // image: siempre presente (Google lo requiere para Rich Results en Eventos)
-    // Usar primera foto si existe, si no la imagen OG (que ya tiene URL absoluta garantizada)
+    // ── imagen absoluta ──────────────────────────────────────────────────────
     $jsonld_image = !empty($fotos[0]) ? $fotos[0] : $foto_og;
     if (!preg_match('/^https?:\/\//', $jsonld_image)) {
         $jsonld_image = 'https://rutasrurales.io' . (str_starts_with($jsonld_image, '/') ? '' : '/') . $jsonld_image;
     }
-    $jsonld_data['image'] = $jsonld_image;
-    if ($evento['latitude'] && $evento['longitude']) {
-        $jsonld_data['location']['geo'] = [
-            '@type' => 'GeoCoordinates',
-            'latitude' => $evento['latitude'],
-            'longitude' => $evento['longitude']
+
+    // ── organizer / performer ────────────────────────────────────────────────
+    $org_name = !empty($evento['organizer'])
+        ? $evento['organizer']
+        : (!empty($evento['municipality'])
+            ? 'Ayuntamiento de ' . $evento['municipality']
+            : (!empty($evento['province'])
+                ? 'Ayuntamiento de ' . $evento['province']
+                : 'Organización local'));
+    $perf_name = !empty($evento['organizer'])
+        ? $evento['organizer']
+        : (!empty($evento['municipality'])
+            ? $evento['municipality']
+            : ($evento['province'] ?? 'Organización local'));
+
+    // ── descripción limpia ───────────────────────────────────────────────────
+    $desc_plain = trim(strip_tags($evento['short_description'] ?? '') ?: strip_tags($evento['description'] ?? ''));
+    if (empty($desc_plain)) {
+        $parts = array_filter([
+            $categoria_nombre,
+            !empty($ubicacion_display) ? 'en ' . $ubicacion_display : null,
+            !empty($evento['start_date']) ? date('d/m/Y', strtotime($evento['start_date'])) : null,
+        ]);
+        $desc_plain = $evento['titulo'] . (count($parts) ? '. ' . implode(', ', $parts) . '.' : '.');
+    }
+
+    // ── location ─────────────────────────────────────────────────────────────
+    $location_data = [
+        '@type' => 'Place',
+        'name'  => $evento['localidad'] ?: $evento['municipality'],
+        'address' => [
+            '@type'           => 'PostalAddress',
+            'addressLocality' => $evento['municipality'],
+            'addressRegion'   => $evento['province'],
+            'addressCountry'  => 'ES',
+        ],
+    ];
+    if (!empty($evento['latitude']) && !empty($evento['longitude'])) {
+        $location_data['geo'] = [
+            '@type'     => 'GeoCoordinates',
+            'latitude'  => $evento['latitude'],
+            'longitude' => $evento['longitude'],
         ];
     }
-    $jsonld = json_encode($jsonld_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    // ── offers ───────────────────────────────────────────────────────────────
+    if ($evento['is_free'] == 1) {
+        $offers_data = [
+            '@type'        => 'Offer',
+            'url'          => $canonical,
+            'price'        => '0',
+            'priceCurrency'=> 'EUR',
+            'availability' => 'https://schema.org/InStock',
+            'validFrom'    => $evento['start_date'],
+        ];
+    } elseif (!empty($evento['ticket_price']) && $evento['ticket_price'] > 0) {
+        $offers_data = [
+            '@type'        => 'Offer',
+            'url'          => $canonical,
+            'price'        => number_format((float)$evento['ticket_price'], 2, '.', ''),
+            'priceCurrency'=> 'EUR',
+            'availability' => 'https://schema.org/InStock',
+            'validFrom'    => $evento['start_date'],
+        ];
+    } else {
+        $offers_data = [
+            '@type'        => 'Offer',
+            'url'          => $canonical,
+            'availability' => 'https://schema.org/InStock',
+            'validFrom'    => $evento['start_date'],
+        ];
+    }
+
+    // ── URLs alternativas (para sameAs en Event) ─────────────────────────────
+    // Lista todas las versiones del evento en todos los idiomas disponibles,
+    // incluida la española. Permite a los motores de búsqueda entender que
+    // son el mismo evento en distintos idiomas.
+    $same_as_urls = ['https://rutasrurales.io/evento/' . $evento['slug']];
+    foreach ($todas_trads as $altLang => $altSlug) {
+        $same_as_urls[] = 'https://rutasrurales.io/' . $altLang . '/evento/' . $altSlug;
+    }
+    // Eliminar duplicado si la URL canónica ya está en la lista
+    $same_as_urls = array_unique(array_filter($same_as_urls, fn($u) => $u !== $canonical));
+
+    // ── 1. Nodo Event ────────────────────────────────────────────────────────
+    $node_event = [
+        '@type'               => 'Event',
+        '@id'                 => $canonical . '#event',
+        'name'                => $evento['titulo'],
+        'description'         => $desc_plain,
+        'startDate'           => $evento['start_date'],
+        'endDate'             => $evento['end_date'] ?: $evento['start_date'],
+        'eventStatus'         => 'https://schema.org/EventScheduled',
+        'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+        'location'            => $location_data,
+        'organizer'           => ['@type' => 'Organization', 'name' => $org_name],
+        'performer'           => ['@type' => 'Organization', 'name' => $perf_name],
+        'isAccessibleForFree' => $evento['is_free'] == 1,
+        'url'                 => $canonical,
+        'image'               => $jsonld_image,
+        'offers'              => $offers_data,
+    ];
+    if (!empty($same_as_urls)) {
+        $node_event['sameAs'] = array_values($same_as_urls);
+    }
+
+    // ── 2. Nodo WebPage ──────────────────────────────────────────────────────
+    // inLanguage usa el código de idioma BCP-47 (zh-Hans para chino simplificado)
+    $lang_bcp47 = $lang === 'zh' ? 'zh-Hans' : $lang;
+    $node_webpage = [
+        '@type'       => 'WebPage',
+        '@id'         => $canonical . '#webpage',
+        'url'         => $canonical,
+        'name'        => $page_title,
+        'description' => $page_desc,
+        'inLanguage'  => $lang_bcp47,
+        'isPartOf'    => ['@id' => 'https://rutasrurales.io/#website'],
+        'about'       => ['@id' => $canonical . '#event'],
+        'image'       => $jsonld_image,
+        'publisher'   => [
+            '@type' => 'Organization',
+            'name'  => 'Rutas Rurales',
+            'url'   => 'https://rutasrurales.io',
+            'logo'  => [
+                '@type' => 'ImageObject',
+                'url'   => 'https://rutasrurales.io/menu_images/Logo%20transparente.webp',
+            ],
+        ],
+    ];
+
+    // ── 3. Nodo BreadcrumbList ───────────────────────────────────────────────
+    // Traducciones de la miga de pan según idioma actual
+    $crumb_home   = ['es'=>'Inicio','en'=>'Home','fr'=>'Accueil','de'=>'Startseite','zh'=>'首页'];
+    $crumb_events = ['es'=>'Eventos','en'=>'Events','fr'=>'Événements','de'=>'Veranstaltungen','zh'=>'活动'];
+    $lang_prefix_url = $lang !== 'es' ? $lang . '/' : '';
+
+    $node_breadcrumb = [
+        '@type'           => 'BreadcrumbList',
+        '@id'             => $canonical . '#breadcrumb',
+        'itemListElement' => [
+            [
+                '@type'    => 'ListItem',
+                'position' => 1,
+                'name'     => $crumb_home[$lang] ?? 'Inicio',
+                'item'     => 'https://rutasrurales.io/' . ($lang !== 'es' ? $lang . '/index.html' : 'index.html'),
+            ],
+            [
+                '@type'    => 'ListItem',
+                'position' => 2,
+                'name'     => $crumb_events[$lang] ?? 'Eventos',
+                'item'     => 'https://rutasrurales.io/' . $lang_prefix_url . 'eventos-culturales-paginacion.html',
+            ],
+            [
+                '@type'    => 'ListItem',
+                'position' => 3,
+                'name'     => $evento['titulo'],
+                'item'     => $canonical,
+            ],
+        ],
+    ];
+
+    // ── Emitir como @graph (un único bloque, más limpio y semántico) ─────────
+    $jsonld_graph = [
+        '@context' => 'https://schema.org',
+        '@graph'   => [$node_event, $node_webpage, $node_breadcrumb],
+    ];
+    $jsonld = json_encode($jsonld_graph, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 }
 
 // Datos para JavaScript (evitar segunda llamada API)
@@ -662,11 +741,23 @@ $evento_js = $evento ? json_encode([
     <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
 
-    <!-- hreflang: SEO multiidioma — lista COMPLETA de todos los idiomas disponibles -->
+    <!-- hreflang: SEO multiidioma — declaramos TODOS los idiomas del sitio.
+         Si un idioma no tiene slug traducido en BD, usamos el slug español como
+         fallback para que Google sepa que existe versión en ese idioma (aunque
+         redirecte al contenido español). Esto evita que solo aparezca 1 hreflang. -->
     <?php if ($evento): ?>
-    <link rel="alternate" hreflang="es" href="https://rutasrurales.io/evento/<?php echo htmlspecialchars($evento['slug']); ?>">
-    <?php foreach ($todas_trads as $hLang => $hSlug): ?>
-    <link rel="alternate" hreflang="<?php echo $hLang === 'zh' ? 'zh-Hans' : htmlspecialchars($hLang); ?>" href="https://rutasrurales.io/<?php echo htmlspecialchars($hLang); ?>/evento/<?php echo htmlspecialchars($hSlug); ?>">
+    <?php
+    // Construir mapa completo de hreflang: todos los idiomas del sitio
+    $hreflang_map = [
+        'es'      => 'https://rutasrurales.io/evento/' . $evento['slug'],
+        'en'      => 'https://rutasrurales.io/en/evento/' . ($todas_trads['en'] ?? $evento['slug']),
+        'fr'      => 'https://rutasrurales.io/fr/evento/' . ($todas_trads['fr'] ?? $evento['slug']),
+        'de'      => 'https://rutasrurales.io/de/evento/' . ($todas_trads['de'] ?? $evento['slug']),
+        'zh-Hans' => 'https://rutasrurales.io/zh/evento/' . ($todas_trads['zh'] ?? $evento['slug']),
+    ];
+    ?>
+    <?php foreach ($hreflang_map as $hLang => $hUrl): ?>
+    <link rel="alternate" hreflang="<?php echo htmlspecialchars($hLang); ?>" href="<?php echo htmlspecialchars($hUrl); ?>">
     <?php endforeach; ?>
     <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/evento/<?php echo htmlspecialchars($evento['slug']); ?>">
     <?php endif; ?>
@@ -693,6 +784,184 @@ $evento_js = $evento ? json_encode([
     <!-- Preconnect solo para recursos críticos -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
+    <!-- ── Estilos del navbar (header.php los omite con HEADER_NO_HTML_HEAD) ── -->
+    <!-- Necesarios para que el menú de navegación se vea correctamente.         -->
+    <style>
+        /* RESET GLOBAL navMenu */
+        #navMenu a, #navMenu a:visited, #navMenu a:active {
+            text-decoration: none !important;
+            color: inherit !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* DESKTOP */
+        @media (min-width: 993px) {
+            .hamburger { display: none !important; }
+            .nav-menu {
+                display: flex !important;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+                font-family: 'Montserrat', sans-serif;
+                margin-left: auto;
+            }
+            .nav-row {
+                display: flex !important;
+                list-style: none !important;
+                margin: 0; padding: 0;
+                width: 650px;
+                justify-content: center;
+            }
+            .nav-row li { flex: 1; text-align: center; }
+            .nav-row li a {
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                text-transform: capitalize;
+                color: var(--accent-color, #81C784) !important;
+                font-weight: 600;
+            }
+            .nav-row li a span { color: var(--accent-color, #81C784) !important; }
+            .nav-row li a i  { color: var(--accent-color, #81C784) !important; font-size: 1.1rem; }
+            .nav-row li a:hover,
+            .nav-row li a:hover span,
+            .nav-row li a:hover i { color: #ffffff !important; }
+            .logo-apoyar-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+            .apoyar-mobile-row { display: none !important; }
+        }
+
+        /* MÓVIL */
+        @media (max-width: 992px) {
+            .header, .navbar {
+                height: auto !important;
+                padding: 2px 0 !important;
+                position: fixed !important;
+                top: 0 !important;
+                width: 100% !important;
+                z-index: 9999 !important;
+                background-color: #2F5233 !important;
+            }
+            .navbar .container {
+                flex-direction: row !important;
+                justify-content: flex-start !important;
+                align-items: center !important;
+                gap: 5px !important;
+                padding: 0 5px !important;
+                display: flex !important;
+                width: 100% !important;
+            }
+            .logo { flex-shrink: 0 !important; margin-right: 2px !important; display: block !important; }
+            .logo img { height: 35px !important; width: auto !important; }
+            .logo-text { display: none !important; }
+            .nav-menu {
+                display: flex !important;
+                position: static !important;
+                width: auto !important;
+                height: auto !important;
+                background: transparent !important;
+                flex-direction: column !important;
+                flex: 1 !important;
+                gap: 1px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+            }
+            .nav-row {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 2px !important;
+                width: 100% !important;
+                list-style: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .nav-row li { display: block !important; }
+            .nav-row li a {
+                background: rgba(255,255,255,0.1) !important;
+                min-height: 30px !important;
+                padding: 1px !important;
+                border-radius: 4px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center;
+            }
+            .nav-row li a span {
+                font-size: 0.50rem !important;
+                font-weight: 600 !important;
+                line-height: 1 !important;
+                text-align: center !important;
+                white-space: nowrap !important;
+                color: #d4a574 !important;
+                margin: 0 !important;
+            }
+            .nav-row li a i { font-size: 0.8rem !important; margin-bottom: 0 !important; color: #ffffff !important; }
+            /* Botón Apoyar móvil */
+            .logo-apoyar-wrap { display: flex; align-items: center; gap: 0; flex-shrink: 0 !important; }
+            .btn-apoyar-desktop { display: none !important; }
+            .apoyar-mobile-row {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                width: 100% !important;
+                margin: 0 !important; padding: 0 !important;
+                list-style: none !important; gap: 0 !important;
+            }
+            .apoyar-mobile-row li a {
+                background: rgba(255,143,0,0.15) !important;
+                border: 1px solid rgba(255,143,0,0.35) !important;
+                min-height: 22px !important;
+                padding: 2px 6px !important;
+                border-radius: 4px !important;
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 4px !important;
+                color: #ffd080 !important;
+                font-size: 0.55rem !important;
+                font-weight: 700 !important;
+                white-space: nowrap !important;
+                text-decoration: none !important;
+            }
+            .apoyar-mobile-row li a i { font-size: 0.65rem !important; color: #ffd080 !important; margin-bottom: 0 !important; }
+            /* Avatar asistente en móvil */
+            .asistente-avatar { width: 18px !important; height: 18px !important; margin-bottom: 0; }
+            /* Evitar zoom en inputs */
+            input[type="text"], input[type="number"], input[type="search"], textarea, select { font-size: 16px !important; }
+        }
+
+        /* Avatar asistente (desktop) */
+        .asistente-avatar {
+            width: 26px; height: 26px;
+            border-radius: 50%; object-fit: cover;
+            border: 1.5px solid #ffffff; vertical-align: middle;
+        }
+
+        /* Botón Apoyar (general) */
+        .btn-apoyar {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(255,143,0,0.18);
+            border: 1.5px solid rgba(255,143,0,0.55);
+            color: #ffd080 !important;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem; font-weight: 700;
+            padding: 5px 11px; border-radius: 20px;
+            text-decoration: none !important; white-space: nowrap;
+            transition: background 0.2s, border-color 0.2s, color 0.2s; line-height: 1;
+        }
+        .btn-apoyar:hover {
+            background: rgba(255,143,0,0.38) !important;
+            border-color: #ff8f00 !important; color: #ffffff !important;
+        }
+
+        /* Ajuste hero para compensar la altura variable del navbar en móvil */
+        @media (max-width: 992px) {
+            .event-hero { margin-top: 90px; }
+        }
+    </style>
 
     <!-- Fuentes locales (Montserrat) -->
     <style>
@@ -743,19 +1012,9 @@ $evento_js = $evento ? json_encode([
         a { color: var(--primary); text-decoration: none; }
         a:hover { color: var(--primary-light); }
 
-        /* ── Header (compatible con header.php) ── */
-        .site-header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            background: var(--white);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            height: 70px;
-        }
-
         /* ── Hero ── */
         .event-hero {
-            margin-top: 70px;
+            margin-top: 70px; /* altura del .header/.navbar fijo */
             background: linear-gradient(135deg, var(--primary) 0%, #1a3d1e 100%);
             color: var(--white);
             padding: 50px 20px 70px;
