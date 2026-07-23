@@ -29,42 +29,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmtGet->execute([$id]);
             $photo = $stmtGet->fetch();
 
-            // 2. Aprobar en entity_photos SIN tocar el archivo ni su nombre
+            if (!$photo) {
+                echo json_encode(['success' => false, 'error' => 'Foto no encontrada']);
+                exit;
+            }
+
+            // 2. Aprobar en entity_photos
             $stmt = $pdo->prepare("UPDATE entity_photos SET permission_status='approved', status='active' WHERE id=?");
             $stmt->execute([$id]);
 
-            // 3. Si es un alojamiento, actualizar el campo photoN libre en accommodations
-            $slotMsg = '';
-            if ($photo && $photo['entity_type'] === 'accommodations' && $photo['entity_id'] > 0 && !empty($photo['file_url'])) {
-                $entityId  = (int)$photo['entity_id'];
-                $fileUrl   = $photo['file_url'];
+            // 3. Mover el archivo a carpeta SEO y actualizar la tabla de la entidad
+            $moveResult = movePhotoToSeoFolder($pdo, $photo);
 
-                // Buscar el primer slot libre (photo1..photo20)
-                $cols = [];
-                for ($i = 1; $i <= 20; $i++) $cols[] = "photo$i";
-                $colList = implode(', ', $cols);
-
-                $stmtSlot = $pdo->prepare("SELECT $colList FROM accommodations WHERE id = ? LIMIT 1");
-                $stmtSlot->execute([$entityId]);
-                $slots = $stmtSlot->fetch(PDO::FETCH_ASSOC);
-
-                $freeCol = null;
-                if ($slots) {
-                    for ($i = 1; $i <= 20; $i++) {
-                        if (empty(trim($slots["photo$i"] ?? ''))) {
-                            $freeCol = "photo$i";
-                            break;
-                        }
-                    }
-                }
-
-                if ($freeCol) {
-                    $stmtUpd = $pdo->prepare("UPDATE accommodations SET `$freeCol` = ? WHERE id = ?");
-                    $stmtUpd->execute([$fileUrl, $entityId]);
-                    $slotMsg = " → guardada en $freeCol";
-                } else {
-                    $slotMsg = " (sin slots libres en accommodations)";
-                }
+            if ($moveResult['moved']) {
+                $slotMsg = " → movida a {$moveResult['slot']} ({$moveResult['new_url']})";
+                // Actualizar también file_url en entity_photos con la nueva URL
+                $stmtUpd = $pdo->prepare("UPDATE entity_photos SET file_url=?, file_path=? WHERE id=?");
+                $stmtUpd->execute([$moveResult['new_url'], $moveResult['new_url'], $id]);
+            } else {
+                $slotMsg = " (aviso al mover: {$moveResult['reason']})";
             }
 
             echo json_encode(['success' => true, 'message' => 'Foto aprobada' . $slotMsg]);
@@ -219,6 +202,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->execute([$reason, $id]);
             echo json_encode(['success' => true, 'message' => 'Sugerencia rechazada']);
 
+        } elseif ($action === 'remover_photo') {
+            // Re-procesar una foto ya aprobada que no se movió a su carpeta SEO
+            $stmtGet = $pdo->prepare("SELECT * FROM entity_photos WHERE id=?");
+            $stmtGet->execute([$id]);
+            $photo = $stmtGet->fetch();
+
+            if (!$photo) {
+                echo json_encode(['success' => false, 'error' => 'Foto no encontrada']);
+                exit;
+            }
+
+            $moveResult = movePhotoToSeoFolder($pdo, $photo);
+
+            if ($moveResult['moved']) {
+                $stmtUpd = $pdo->prepare("UPDATE entity_photos SET file_url=?, file_path=? WHERE id=?");
+                $stmtUpd->execute([$moveResult['new_url'], $moveResult['new_url'], $id]);
+                echo json_encode(['success' => true, 'message' => "✅ Foto movida a {$moveResult['slot']} → {$moveResult['new_url']}"]);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'No se pudo mover: ' . $moveResult['reason']]);
+            }
+
         } elseif ($action === 'feature_photo') {
             $stmt = $pdo->prepare("UPDATE entity_photos SET featured = NOT featured WHERE id=?");
             $stmt->execute([$id]);
@@ -368,21 +372,26 @@ function movePhotoToSeoFolder(PDO $pdo, array $photo): array
 
     // Obtener ruta física del archivo origen
     $srcPath = $photo['file_path'] ?? '';
-    // Si file_path es una URL web (empieza por /img/ etc.), convertir a ruta física
-    if (str_starts_with($srcPath, '/')) {
-        $srcPath = $webRoot . $srcPath;
+
+    // file_path puede ser:
+    //   a) Ruta absoluta del servidor: /home/user/public_html/img/entity_photos/...  → usar directamente
+    //   b) Ruta web relativa:          /img/entity_photos/...                        → prepend webRoot
+    // Distinguir: si el path contiene $webRoot ya es absoluto; si no, es ruta web
+    if (!empty($srcPath) && !str_starts_with($srcPath, $webRoot)) {
+        // Es una ruta web (empieza por /img/ etc.) → convertir a ruta física
+        $srcPath = $webRoot . '/' . ltrim($srcPath, '/');
     }
-    // Si file_path es ruta absoluta del servidor, usarla directamente
+
     if (!file_exists($srcPath)) {
-        // Intentar con file_url
+        // Intentar con file_url como fallback
         $altPath = $photo['file_url'] ?? '';
-        if (str_starts_with($altPath, '/')) {
-            $altPath = $webRoot . $altPath;
+        if (!empty($altPath) && !str_starts_with($altPath, $webRoot)) {
+            $altPath = $webRoot . '/' . ltrim($altPath, '/');
         }
-        if (file_exists($altPath)) {
+        if (!empty($altPath) && file_exists($altPath)) {
             $srcPath = $altPath;
         } else {
-            return ['moved' => false, 'reason' => "Archivo origen no encontrado: $srcPath"];
+            return ['moved' => false, 'reason' => "Archivo origen no encontrado. file_path={$photo['file_path']} → $srcPath"];
         }
     }
 
@@ -772,6 +781,7 @@ $typeIcons = [
                                         <?php
                                     }
                                 ?>
+                                <button class="btn" style="background:#20c997;color:white;" onclick="removerFoto(<?= $p['id'] ?>)" title="Mover/re-mover a carpeta SEO y actualizar ficha del evento/entidad"><i class="fas fa-folder-open"></i> Mover</button>
                                 <button class="btn btn-feature" onclick="moderatePhoto(<?= $p['id'] ?>, 'feature_photo')" title="Destacar/Quitar destacado"><i class="fas fa-star"></i></button>
                                 <button class="btn btn-cover"   onclick="moderatePhoto(<?= $p['id'] ?>, 'set_cover')" title="Establecer como portada"><i class="fas fa-image"></i> Portada</button>
                             <?php endif; ?>
@@ -904,6 +914,25 @@ async function moderatePhoto(id, action) {
                 if (card) card.style.opacity = '0.3';
                 setTimeout(() => { if (card) card.remove(); }, 600);
             }
+        } else {
+            showToast('Error: ' + data.error, 'error');
+        }
+    } catch(e) {
+        showToast('Error de conexión', 'error');
+    }
+}
+
+async function removerFoto(id) {
+    try {
+        const fd = new FormData();
+        fd.append('action', 'remover_photo');
+        fd.append('id', id);
+
+        const r = await fetch('', { method: 'POST', body: fd });
+        const data = await r.json();
+
+        if (data.success) {
+            showToast(data.message, 'success');
         } else {
             showToast('Error: ' + data.error, 'error');
         }
