@@ -47,7 +47,7 @@ try {
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province,
-                       price_per_night, photo1 AS main_image, latitude, longitude,
+                       price_per_night, capacity, photo1 AS main_image, latitude, longitude,
                        featured_until,
                        (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
@@ -69,7 +69,7 @@ try {
                 $placeholders = implode(',', array_map('intval', $existing_ids));
                 $stmt2 = $pdo->prepare("
                     SELECT id, name, slug, municipality, province,
-                           price_per_night, photo1 AS main_image, latitude, longitude,
+                           price_per_night, capacity, photo1 AS main_image, latitude, longitude,
                            featured_until,
                            (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
                            0 AS distance
@@ -83,7 +83,7 @@ try {
             } else {
                 $stmt2 = $pdo->prepare("
                     SELECT id, name, slug, municipality, province,
-                           price_per_night, photo1 AS main_image, latitude, longitude,
+                           price_per_night, capacity, photo1 AS main_image, latitude, longitude,
                            featured_until,
                            (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
                            0 AS distance

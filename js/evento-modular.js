@@ -366,7 +366,7 @@ function _renderNearbyAlojamientos() {
                 <div class="nearby-card-name">${a.name}</div>
                 <div class="nearby-card-meta">📍 ${a.municipality || a.province || ''}</div>
                 ${a.distance > 0 ? `<div class="nearby-card-meta">📏 ${a.distance} km</div>` : ''}
-                ${a.price_per_night ? `<div class="nearby-card-price">💶 ${formatPrice(a.price_per_night)}${UI.get('noche', '/noche')}</div>` : ''}
+                ${a.price_per_night ? `<div class="nearby-card-price">💶 ${formatPrice(a.price_per_night)}${UI.get('noche', '/noche')}${a.capacity ? ` · 👥 ${a.capacity}` : ''}</div>` : (a.capacity ? `<div class="nearby-card-price">👥 ${a.capacity}</div>` : '')}
             </div>
         </a>
     `).join('');

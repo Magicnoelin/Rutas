@@ -153,13 +153,31 @@ if ($evento && isset($pdo)) {
     }
 }
 
-// Fotos
+// Fotos — deduplicadas y con poster_image como primera imagen si existe
+// Lógica: poster_image va primero (es la imagen de portada), luego photo1-4.
+// Si poster_image y photo1 son idénticas (o cualquier par), se omite el duplicado.
 $fotos = [];
 if ($evento) {
-    foreach (['photo1','photo2','photo3','photo4','poster_image'] as $campo) {
+    $fotos_raw = [];
+    // poster_image primero (imagen de portada)
+    if (!empty($evento['poster_image'])) {
+        $fotos_raw[] = $evento['poster_image'];
+    }
+    // luego las fotos del evento
+    foreach (['photo1','photo2','photo3','photo4'] as $campo) {
         if (!empty($evento[$campo])) {
-            $url = $evento[$campo];
-            if (!preg_match('/^https?:\/\//', $url)) $url = '/' . ltrim($url, '/');
+            $fotos_raw[] = $evento[$campo];
+        }
+    }
+    // Normalizar y deduplicar (compara solo el nombre de archivo)
+    $seen = [];
+    foreach ($fotos_raw as $raw) {
+        $url = $raw;
+        if (!preg_match('/^https?:\/\//', $url)) $url = '/' . ltrim($url, '/');
+        // Clave de deduplicación: basename sin query string
+        $key = strtolower(basename(parse_url($url, PHP_URL_PATH)));
+        if (!isset($seen[$key])) {
+            $seen[$key] = true;
             $fotos[] = $url;
         }
     }
