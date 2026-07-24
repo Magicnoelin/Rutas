@@ -13,7 +13,8 @@ require_once 'api/config.php';
 
 // ── SEO: indicar explícitamente a Bing/Google que indexe Y archive estas páginas
 // Esto elimina el warning "NOARCHIVE" de Bing Webmaster Tools / Copilot
-header('X-Robots-Tag: index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+// IMPORTANTE: "archive" debe aparecer explícitamente para que Bing no lo omita
+header('X-Robots-Tag: index, follow, archive, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
 
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 $lang = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
@@ -251,6 +252,9 @@ $ui = ['es' => [
         'cultura_fallback' => 'Cultura',
         'dias'             => 'días',
         'al'               => 'al',
+        'share_btn'        => 'Compartir esta página',
+        'share_title'      => '¡Mira este evento!',
+        'share_copy'       => 'Enlace copiado ✓',
     ],
     'en' => [
         'categorias' => [
@@ -314,6 +318,9 @@ $ui = ['es' => [
         'cultura_fallback' => 'Culture',
         'dias'             => 'days',
         'al'               => 'to',
+        'share_btn'        => 'Share this page',
+        'share_title'      => 'Check out this event!',
+        'share_copy'       => 'Link copied ✓',
     ],
     'fr' => [
         'categorias' => [
@@ -377,6 +384,9 @@ $ui = ['es' => [
         'cultura_fallback' => 'Culture',
         'dias'             => 'jours',
         'al'               => 'au',
+        'share_btn'        => 'Partager cette page',
+        'share_title'      => 'Découvrez cet événement !',
+        'share_copy'       => 'Lien copié ✓',
     ],
     'de' => [
         'categorias' => [
@@ -440,6 +450,9 @@ $ui = ['es' => [
         'cultura_fallback' => 'Kultur',
         'dias'             => 'Tage',
         'al'               => 'bis',
+        'share_btn'        => 'Diese Seite teilen',
+        'share_title'      => 'Schau dir diese Veranstaltung an!',
+        'share_copy'       => 'Link kopiert ✓',
     ],
     'zh' => [
         'categorias' => [
@@ -503,6 +516,9 @@ $ui = ['es' => [
         'cultura_fallback' => '文化',
         'dias'             => '天',
         'al'               => '至',
+        'share_btn'        => '分享此页面',
+        'share_title'      => '看看这个活动！',
+        'share_copy'       => '链接已复制 ✓',
     ],
 ];
 
@@ -753,8 +769,10 @@ $evento_js = $evento ? json_encode([
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- SEO: indicar a Bing/Google que indexe y archive estas páginas (elimina warning NOARCHIVE de Bing Copilot) -->
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <!-- SEO: "archive" explícito → elimina el warning NOARCHIVE de Bing Copilot/Grounding.
+         Bing requiere la directiva "archive" de forma expresa; sin ella marca la página
+         como NOARCHIVE aunque no haya una instrucción contraria en el código. -->
+    <meta name="robots" content="index, follow, archive, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <title><?php echo htmlspecialchars($page_title); ?></title>
     <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
@@ -780,8 +798,8 @@ $evento_js = $evento ? json_encode([
     <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/evento/<?php echo htmlspecialchars($evento['slug']); ?>">
     <?php endif; ?>
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
+    <!-- Open Graph — og:type="event" para que Bing/Facebook reconozcan el contenido -->
+    <meta property="og:type" content="event">
     <meta property="og:title" content="<?php echo htmlspecialchars($page_title); ?>">
     <meta property="og:description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <meta property="og:image" content="<?php echo htmlspecialchars($foto_og); ?>">
