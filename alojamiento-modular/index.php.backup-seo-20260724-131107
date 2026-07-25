@@ -2523,15 +2523,14 @@ if (file_exists($header_path)) {
             <div style="font-size:1.8rem;margin-bottom:8px;line-height:1;">🌿</div>
             <h3 style="font-size:1rem;font-weight:700;color:#fff!important;margin-bottom:8px;"><?php echo htmlspecialchars($t['cta_titulo']); ?></h3>
             <p style="font-size:0.8rem;color:rgba(255,255,255,0.85)!important;margin-bottom:14px;line-height:1.5;"><?php echo htmlspecialchars($t['cta_desc']); ?></p>
-            <!-- ✅ REFACTORIZADO: <a href> nativos — Google los sigue, accesibles con teclado -->
-            <a href="/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
-               class="btn-white">
-                ✨ <?php echo $t['cta_register'] ?? 'Registrarme gratis'; ?>
-            </a>
-            <a href="/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
-               class="btn-outline-white">
-                <?php echo $t['cta_login'] ?? 'Ya tengo cuenta'; ?>
-            </a>
+            <div onclick="window.location.href='/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>'"
+               style="display:flex;align-items:center;justify-content:center;background:#ffffff;color:#1a3d1e;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.85rem;margin-bottom:8px;width:100%;box-sizing:border-box;border:2px solid rgba(255,255,255,0.3);cursor:pointer;user-select:none;">
+                ✨ Registrarme gratis
+            </div>
+            <div onclick="window.location.href='/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>'"
+               style="display:flex;align-items:center;justify-content:center;background:#ffffff;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.85rem;width:100%;box-sizing:border-box;border:2px solid rgba(255,255,255,0.3);cursor:pointer;user-select:none;">
+                <span style="color:#1a3d1e!important;font-weight:700!important;font-size:0.85rem!important;">Ya tengo cuenta</span>
+            </div>
         </div>
 
         <!-- Compartir -->

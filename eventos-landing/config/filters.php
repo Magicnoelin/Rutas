@@ -157,7 +157,7 @@ const EVENTOS_PROVINCIAS = [
     'ourense' => [
         'label' => 'Ourense', 'db' => 'Ourense',
         'lat' => 42.336, 'lng' => -7.864,
-        'attractions' => ['Entroido de Ourense (Carnaval Gallego)', 'Festival de Cine de Ourense', 'Ribeira Sacra', 'Termas Ourensanas'],
+        'attractions' => ['Entroido de Ourense (Carnaval Gallego)', 'Festival de Cine de Ourense', 'Ribeira Sacra', 'Las Termas de Ourense'],
         'vibe' => [
             'es' => 'la provincia del Entroido más salvaje de Galicia y de un festival de cine internacional que compite con los mejores de Europa, todo entre viñedos verticales y aguas termales',
             'en' => 'the province of Galicia\'s wildest Carnival and an international film festival that competes with Europe\'s best, all among vertical vineyards and thermal springs',
