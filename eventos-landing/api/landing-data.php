@@ -110,7 +110,7 @@ function getLandingEventos(
             e.is_free, e.ticket_price,
             e.organizer, e.target_audience,
             e.poster_image, e.photo1, e.photo2,
-            e.category_id
+            e.category_id, e.hero_image
         FROM cultural_events e
         $joinTrad
         $whereClause
@@ -132,6 +132,7 @@ function getLandingEventos(
     // Normalizar fotos, URLs y datos de precio
     foreach ($rows as &$row) {
         $row['photo_url'] = _normalizeEventPhoto(
+            $row['hero_image'] ?? '',
             $row['poster_image'] ?? '',
             $row['photo1'] ?? ''
         );
