@@ -144,10 +144,17 @@ try {
 
     foreach ($candidates as $candidate) {
         if (!empty(trim($candidate)) && $isPhotoValid($candidate)) {
-            if (!str_starts_with($candidate, '/') && !str_starts_with($candidate, 'http')) {
-                $candidate = '/' . $candidate;
+            $finalUrl = '';
+            if (str_starts_with($candidate, 'http')) {
+                $finalUrl = $candidate; // Ya es una URL absoluta
+            } elseif (str_starts_with($candidate, '/')) {
+                $finalUrl = 'https://rutasrurales.io' . $candidate; // Es una ruta relativa desde la raíz
+            } else {
+                // Es solo un nombre de archivo, asumir la carpeta por defecto
+                $finalUrl = 'https://rutasrurales.io/cultural_events_images/' . $candidate;
             }
-            if (!in_array($candidate, $fotos)) { $fotos[] = $candidate; }
+
+            if (!in_array($finalUrl, $fotos)) { $fotos[] = $finalUrl; }
         }
     }
 
