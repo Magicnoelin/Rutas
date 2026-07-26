@@ -119,8 +119,11 @@ try {
     $isPhotoValid = function(string $url) use ($webRoot): bool {
         if (empty(trim($url))) return false;
         if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
-            $path = parse_url($url, PHP_URL_PATH);
-            return $path && file_exists($webRoot . $path);
+            // ✅ SOLUCIÓN: Si la URL es de nuestro propio dominio, la damos por válida.
+            if (str_starts_with($url, 'https://rutasrurales.io/')) {
+                return true;
+            }
+            return false; // No permitir URLs externas por seguridad.
         }
         if (str_starts_with($url, '/')) {
             return file_exists($webRoot . $url);
@@ -130,7 +133,11 @@ try {
 
     $fotos = [];
     $candidates = [
-        $evento['photo1'] ?? '', $evento['photo2'] ?? '', $evento['photo3'] ?? '', $evento['photo4'] ?? '',
+        $evento['hero_image'] ?? '', // ✅ 1. Prioridad máxima: la imagen hero específica.
+        $evento['photo1'] ?? '', 
+        $evento['photo2'] ?? '', 
+        $evento['photo3'] ?? '', 
+        $evento['photo4'] ?? '',
         $evento['poster_image'] ?? '',
         '/cultural_events_images/' . $evento['slug'] . '.webp',
     ];

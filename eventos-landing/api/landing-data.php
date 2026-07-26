@@ -384,19 +384,26 @@ function getEventosSemanticCrossing(
 
 /**
  * Normaliza la URL de imagen de un evento.
- * Orden de preferencia: poster_image → photo1 → fallback Unsplash.
+ * Orden de preferencia: hero_image -> poster_image → photo1 → fallback Unsplash.
+ *
+ * @param string|null $heroImage   Imagen de portada específica del evento.
+ * @param string|null $posterImage Cartel del evento.
+ * @param string|null $photo1      Primera foto de la galería.
+ * @return string URL absoluta de la imagen.
  */
-function _normalizeEventPhoto(string $posterImage, string $photo1): string
+function _normalizeEventPhoto(?string $heroImage, ?string $posterImage, ?string $photo1): string
 {
     $fallback = 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&h=400&fit=crop&auto=format&q=75';
 
-    $img = !empty($posterImage) ? $posterImage : $photo1;
+    // Prioridad: hero_image > poster_image > photo1
+    $img = $heroImage ?: $posterImage ?: $photo1;
+
     if (empty($img)) return $fallback;
 
     if (preg_match('/^https?:\/\//', $img)) return $img;
 
     // Ruta relativa con subdirectorio
-    if (str_contains($img, '/')) {
+    if (str_contains($img, '/') || str_starts_with($img, 'uploads/')) {
         return 'https://rutasrurales.io/' . ltrim($img, '/');
     }
 
