@@ -9,6 +9,14 @@
     RewriteCond %{HTTP_USER_AGENT} (VirusTotal|Kaspersky|BitDefender|Sophos|ESET|Fortinet|G-Data) [NC]
     RewriteRule .* - [E=no-abort:1,E=nokeepalive:1,L]
 </IfModule>
+
+# ============================================================
+# 0. WWW → NO-WWW (canónica sin www)
+# ============================================================
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP_HOST} ^www\.rutasrurales\.io$ [NC]
+    RewriteRule ^(.*)$ https://rutasrurales.io/$1 [R=301,L]
+</IfModule>
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresByType font/woff2 "access plus 1 year"
@@ -63,6 +71,13 @@ DirectoryIndex index.php index.html
 # Añadir trailing slash a las raíces de idioma (SEO: evita contenido duplicado)
 RewriteRule ^(en|fr|de|zh)$ /$1/ [R=301,L]
 
+# ── ALOJAMIENTO MULTILINGÜE: /{lang}/alojamiento/{slug} ──────────────────────
+# El sitemap genera hreflang con /zh/alojamiento/, /en/alojamiento/, etc.
+# → Reescribir internamente al mismo motor (no redirect, preserva la URL canónica)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(en|fr|de|zh)/alojamiento/([^/]+)/?$ alojamiento-modular/index.php?lang=$1&slug=$2 [L,QSA]
+
 # Servir el index.php de cada idioma desde su carpeta
 # (Apache lo sirve automáticamente con DirectoryIndex; estas reglas son de seguridad)
 RewriteCond %{REQUEST_FILENAME} -d
@@ -114,6 +129,12 @@ RewriteRule ^alojamiento/alojamiento-rural-el-mirador-del-cid-en-mecerreyes-burg
 RewriteRule ^alojamiento/mansi\%C3\%B3n\%20de\%20la\%20adrada/?$ /alojamiento/mansion-de-la-adrada [R=301,L]
 
 # ============================================================
+# 2b. REDIRECCIONES ESPECÍFICAS DE ALOJAMIENTOS — URL con www (limpieza)
+# ============================================================
+# Bare slugs detectados en GSC que corresponden a alojamientos conocidos
+RewriteRule ^la-pinariega-2/?$ /alojamiento/la-pinariega-2 [R=301,L]
+
+# ============================================================
 # 3. REDIRECCIONES ESPECÍFICAS DE LUGARES
 # ============================================================
 # Redirigir URLs con ñ a su versión con n (para evitar problemas de encoding)
@@ -136,6 +157,38 @@ RewriteRule ^lugar/puente-real/?$ /lugar/puente-real-el-burgo-de-osma [R=301,L]
 RewriteRule ^lugar/taberna-mercedes/?$ /lugar/taberna-mercedes-soria [R=301,L]
 RewriteRule ^lugar/berlanga-duero-pueblo/?$ /lugar/berlanga-de-duero [R=301,L]
 RewriteRule ^lugar/pico-urbion/?$ /lugar/pico-urbion-duruelo-de-la-sierra [R=301,L]
+
+# ============================================================
+# 3b. REDIRECCIONES DE SECCIONES ANTIGUAS → RUTAS ACTUALES
+# ============================================================
+
+# /recintos/{slug} → /lugar/{slug}  (sección de recintos eliminada)
+RewriteRule ^recintos/([^/]+)/?$ /lugar/$1 [R=301,L]
+
+# /categorias/{slug} → /eventos/{slug}  (sección de categorías eliminada)
+RewriteRule ^categorias/([^/]+)/?$ /eventos/$1 [R=301,L]
+
+# /eventos-{ciudad} → /eventos/{ciudad}  (formato antiguo con guion en lugar de barra)
+# Ejemplos: /eventos-granada → /eventos/granada, /eventos-madrid → /eventos/madrid
+# EXCLUYE: /eventos-culturales (tiene su propia regla en sección 6b)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/eventos-culturales(/|$) [NC]
+RewriteRule ^eventos-([a-z][a-z0-9\-]*)/?$ /eventos/$1 [R=301,L]
+
+# Bare slugs sin prefijo (como /asador-el-burgo-de-osma) que corresponden a lugares.
+# Sólo se activa si:
+#   · No es un archivo real
+#   · No es un directorio real
+#   · No empieza por un prefijo conocido ya gestionado
+#   · No tiene extensión (.html, .php, .css…)
+#
+# EXCLUSIONES: páginas estáticas reales en la raíz con URL limpia (sin .html)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/(alojamiento|alojamientos|lugar|lugares-interes|lugares-de-interes|evento|eventos|eventos-culturales|actividad|actividades|actividades-turisticas|alojamientos-turisticos|rutas|rutas-listas-para-disfrutar|rutas-tematicas|nuevo-alojamiento|api|admin_tablas|dashboard|en|fr|de|zh|es|css|fonts|js|menu_images|accommodations_images|cultural_events_images|Alojamientos_Images|alojamiento-modular|lugar-modular|evento-modular|alojamientos-landing|eventos-landing|dev|docs|ayuntamientos|dashboard)(/|$) [NC]
+RewriteCond %{REQUEST_URI} !\.(css|js|php|html|xml|txt|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|webp|mp4|pdf)$ [NC]
+RewriteRule ^([a-z][a-z0-9\-]+)/?$ /lugar/$1 [R=301,L]
 
 # ============================================================
 # 4. PARÁMETROS ANTIGUOS (?slug= o ?id=)
