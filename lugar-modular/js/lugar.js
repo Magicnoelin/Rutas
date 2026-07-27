@@ -9,7 +9,8 @@
     'use strict';
 
     var lug   = window.LUG_DATA;
-    var fotos = (lug && lug.fotos) ? lug.fotos : [];
+    // Compatibilidad: el PHP puede pasar 'photos' o 'fotos'
+    var fotos = (lug && lug.photos) ? lug.photos : ((lug && lug.fotos) ? lug.fotos : []);
     var API   = '/lugar-modular/api/lugar-data.php';
 
     /* ══════════════════════════════════════════════════════
@@ -111,12 +112,18 @@
        ══════════════════════════════════════════════════════ */
     var mapLoaded = false;
 
-    window.initMap = function() {
-        if (mapLoaded || !lug || !lug.latitude || !lug.longitude) return;
+    // initMap acepta parámetros opcionales (compatibilidad con onclick del HTML)
+    // o los lee de window.LUG_DATA si no se pasan
+    window.initMap = function(lat, lng, name) {
+        var mapLat  = lat  || (lug && lug.latitude)  || (lug && lug.lat);
+        var mapLng  = lng  || (lug && lug.longitude) || (lug && lug.lng);
+        var mapName = name || (lug && lug.name) || '';
+        if (mapLoaded || !mapLat || !mapLng) return;
         mapLoaded = true;
 
         var placeholder = document.getElementById('map-placeholder');
-        var mapEl       = document.getElementById('lug-map');
+        var mapEl       = document.getElementById('map');          // ID en descripcion.php
+        if (!mapEl) mapEl = document.getElementById('lug-map');   // fallback alias
         if (!mapEl) return;
 
         if (placeholder) {
@@ -130,7 +137,7 @@
             mapEl.style.display = 'block';
 
             var map = window.L.map(mapEl, { zoomControl: true, scrollWheelZoom: false })
-                .setView([lug.latitude, lug.longitude], 14);
+                .setView([mapLat, mapLng], 14);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -147,12 +154,12 @@
             });
 
             var popup = '<div style="padding:6px 2px;min-width:160px;">'
-                + '<strong style="color:#2F5233;font-size:0.95rem;">' + escHtml(lug.name) + '</strong>'
-                + (lug.address ? '<br><small style="color:#666">' + escHtml(lug.address) + '</small>' : '')
-                + (lug.municipality ? '<br><small style="color:#666">📍 ' + escHtml(lug.municipality) + '</small>' : '')
+                + '<strong style="color:#2F5233;font-size:0.95rem;">' + escHtml(mapName) + '</strong>'
+                + (lug && lug.address    ? '<br><small style="color:#666">' + escHtml(lug.address) + '</small>' : '')
+                + (lug && lug.municipality ? '<br><small style="color:#666">📍 ' + escHtml(lug.municipality) + '</small>' : '')
                 + '</div>';
 
-            L.marker([lug.latitude, lug.longitude], { icon: icon })
+            L.marker([mapLat, mapLng], { icon: icon })
                 .addTo(map)
                 .bindPopup(popup)
                 .openPopup();
@@ -217,11 +224,12 @@
     var nearbyLoaded = false;
     var nearbyAllItems = {};
 
+    // IDs deben coincidir EXACTAMENTE con los del HTML de cercanos.php
     var nearbyConfig = {
-        alojamientos: { section: 'nearby-alojamientos-section', grid: 'nearby-alojamientos', more: 'more-alojamientos', key: 'alojamientos',      emoji: '🏠' },
-        actividades:  { section: 'nearby-actividades-section',  grid: 'nearby-actividades',  more: 'more-actividades',  key: 'actividades',        emoji: '🎯' },
-        eventos:      { section: 'nearby-eventos-section',      grid: 'nearby-eventos',      more: 'more-eventos',      key: 'eventos_similares',  emoji: '🎭' },
-        lugares:      { section: 'nearby-lugares-section',      grid: 'nearby-lugares',      more: 'more-lugares',      key: 'lugares',            emoji: '🏛️' }
+        alojamientos: { section: 'nearby-aloj',          grid: 'nearby-aloj-content',     more: 'nearby-aloj-more',     key: 'alojamientos',     emoji: '🏠' },
+        actividades:  { section: 'nearby-activ',         grid: 'nearby-activ-content',    more: 'nearby-activ-more',    key: 'actividades',      emoji: '🎯' },
+        eventos:      { section: 'nearby-eventos',       grid: 'nearby-eventos-content',  more: 'nearby-eventos-more',  key: 'eventos_similares',emoji: '🎭' },
+        lugares:      { section: 'nearby-lugares',       grid: 'nearby-lugares-content',  more: 'nearby-lugares-more',  key: 'lugares',          emoji: '🏛️' }
     };
 
     function loadNearby() {

@@ -180,14 +180,18 @@ $foto_og = !empty($fotos[0])
     ? (preg_match('/^https?:\/\//', $fotos[0]) ? $fotos[0] : $baseUrl . '/' . ltrim($fotos[0], '/'))
     : $baseUrl . '/menu_images/turismo_rural.webp';
 
-// Datos JS para window.LUG_DATA (expone lat/lng/slug al JS de la página)
+// Datos JS para window.LUG_DATA (expone lat/lng/slug/provincia/municipio al JS de la página)
 $lugar_js = json_encode([
-    'slug'      => $slug,
-    'name'      => $lugar['name']      ?? '',
-    'lat'       => !empty($lugar['latitude'])  ? (float)$lugar['latitude']  : null,
-    'lng'       => !empty($lugar['longitude']) ? (float)$lugar['longitude'] : null,
-    'photos'    => $fotos,
-    'lang'      => $lang,
+    'slug'         => $slug,
+    'name'         => $lugar['name']         ?? '',
+    'lat'          => !empty($lugar['latitude'])   ? (float)$lugar['latitude']  : null,
+    'lng'          => !empty($lugar['longitude'])  ? (float)$lugar['longitude'] : null,
+    'latitude'     => !empty($lugar['latitude'])   ? (float)$lugar['latitude']  : null,
+    'longitude'    => !empty($lugar['longitude'])  ? (float)$lugar['longitude'] : null,
+    'province'     => $lugar['province']     ?? '',
+    'municipality' => $lugar['municipality'] ?? '',
+    'photos'       => $fotos,
+    'lang'         => $lang,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 // ─── CARGAR SCHEMA (debe estar disponible antes de head.php) ─────────────────
