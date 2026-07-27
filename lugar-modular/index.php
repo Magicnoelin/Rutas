@@ -27,10 +27,11 @@ header('Content-Type: text/html; charset=UTF-8');
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 /**
- * Escapa un string para salida HTML segura.
+ * Escapa un valor para salida HTML segura.
+ * Acepta string|null para evitar TypeError en PHP 8 cuando la clave no existe.
  */
-function esc(string $str): string {
-    return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+function esc(?string $str): string {
+    return htmlspecialchars((string)($str ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
 // ─── SEGURIDAD: SLUG ─────────────────────────────────────────────────────────
@@ -171,8 +172,16 @@ $lugar_js = json_encode([
 require_once __DIR__ . '/components/schema.php';
 
 // ─── HEAD (incluye traducciones $ui → $t, CSS, meta, JSON-LD) ────────────────
+// head.php define siempre $t (traducciones) aunque $lugar esté vacío
 require_once __DIR__ . '/components/head.php';
-// Nota: head.php define $t (traducciones del idioma activo) y cierra </head>
+// Garantía de seguridad: si head.php no se ejecutó correctamente, $t puede no existir
+if (!isset($t) || !is_array($t)) {
+    $t = [
+        'no_encontrado_h1' => 'Lugar no encontrado',
+        'no_encontrado_p'  => 'El lugar de interés que buscas no existe o ya no está disponible.',
+        'volver_lista'     => '← Volver a los lugares de interés',
+    ];
+}
 
 // ─── BODY ────────────────────────────────────────────────────────────────────
 ?>
