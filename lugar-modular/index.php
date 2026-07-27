@@ -21,7 +21,10 @@
  * NO modificar la lógica de DB aquí — hacerlo en api/lugar-data.php
  */
 
-declare(strict_types=1);
+// Suprimir warnings en producción (mismo patrón que alojamiento-modular)
+error_reporting(E_ERROR | E_PARSE);
+ini_set('display_errors', '0');
+
 header('Content-Type: text/html; charset=UTF-8');
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -215,9 +218,15 @@ if (!isset($t) || !is_array($t)) {
 
 <?php
 // ─── MENÚ DE NAVEGACIÓN ───────────────────────────────────────────────────────
-// Reutiliza el header/nav global del proyecto (menú responsivo ya existente)
+// Mismo patrón que evento-detalle.php (que funciona):
+// HEADER_NO_HTML_HEAD le indica a header.php que omita el bloque
+// <!DOCTYPE html>...<head>...</head><body> (ya generado por head.php)
+// y solo añada el <header> de navegación.
 $globalHeader = dirname(__DIR__) . '/header.php';
 if (file_exists($globalHeader)) {
+    if (!defined('HEADER_NO_HTML_HEAD')) {
+        define('HEADER_NO_HTML_HEAD', true);
+    }
     include $globalHeader;
 }
 ?>
