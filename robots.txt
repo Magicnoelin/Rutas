@@ -1,7 +1,11 @@
 User-agent: *
-Allow: /
 
-# Bloqueos de seguridad, administración y páginas privadas
+# 1. EXCEPCIONES DE LA API (Deben ir justo antes del Disallow general de la carpeta)
+Allow: /api/?slug=
+Allow: /api/evento-stats.php
+Disallow: /api/
+
+# 2. Bloqueos de seguridad, administración y páginas privadas
 Disallow: /admin_tablas/
 Disallow: /dashboard/
 Disallow: /login/
@@ -12,16 +16,17 @@ Disallow: /shop/
 Disallow: /form/
 Disallow: /tag/
 Disallow: /places/alojamientos/tag/
-Disallow: /api/
 Disallow: */feed/
 Disallow: */comments/feed/
 Disallow: /?elementor_library=*
+# Bloqueo de búsquedas dinámicas por parámetros para evitar Soft 404 (páginas vacías) y ahorrar crawl budget
+Disallow: /rutas.php?*
 
-# URLs específicas antiguas o basura
+# 3. URLs específicas antiguas o basura
 Disallow: /8017-2/
 Disallow: /alojamiento/8017
 Disallow: /detalle.html?slug=8017
 Disallow: /lugar/grumer-catering
 
-# Sitemap
+# Sitemaps
 Sitemap: https://rutasrurales.io/sitemap.xml
