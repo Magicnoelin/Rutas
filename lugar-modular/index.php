@@ -61,49 +61,68 @@ if (!empty($_GET['lang']) && in_array($_GET['lang'], $langAllowed, true)) {
 }
 
 // ─── CARGA DE DATOS (BD) ─────────────────────────────────────────────────────
-// Incluir el helper de conexión y hacer la consulta
-$lugar  = [];
-$fotos  = [];
+$lugar = [];
+$fotos = [];
 
-// Require la conexión a BD (ajustar ruta si difiere en el servidor)
-$dbPath = dirname(__DIR__) . '/api/db.php';
-if (!file_exists($dbPath)) {
-    // Intentar ruta alternativa
-    $dbPath = dirname(__DIR__) . '/includes/db.php';
+// Mismo config que todo el proyecto: api/config.php con getDBConnection()
+// Evitar redefinir la constante si ya fue incluido por otro componente
+if (!defined('API_NO_HEADERS')) {
+    define('API_NO_HEADERS', true);
 }
+require_once dirname(__DIR__) . '/api/config.php';
 
-if (file_exists($dbPath)) {
-    require_once $dbPath;
+try {
+    $pdo = getDBConnection();
 
-    // Consulta con todos los campos necesarios
+    // ── Consulta principal del lugar ──────────────────────────────────────────
+    // Tabla: places_of_interest + categories_places (según lugar-data.php)
     $stmt = $pdo->prepare("
-        SELECT
-            p.*,
-            c.name AS category_name
+        SELECT p.*, c.name AS category_name
         FROM places_of_interest p
-        LEFT JOIN poi_categories c ON p.category_id = c.id
-        WHERE p.slug = :slug
-          AND (p.status IS NULL OR p.status != 'deleted')
+        LEFT JOIN categories_places c ON p.category_id = c.id
+        WHERE p.slug = ? AND p.is_active = 1
         LIMIT 1
     ");
-    $stmt->execute([':slug' => $slug]);
+    $stmt->execute([$slug]);
     $lugar = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-    // Fotos: puede ser JSON array o columna photo_url/main_photo
+    // ── Fotos desde entity_photos (igual que lugar-data.php) ─────────────────
     if (!empty($lugar)) {
-        if (!empty($lugar['photos'])) {
-            $decoded = json_decode($lugar['photos'], true);
-            $fotos   = is_array($decoded) ? $decoded : [$lugar['photos']];
-        } elseif (!empty($lugar['photo_url'])) {
-            $fotos = [$lugar['photo_url']];
-        } elseif (!empty($lugar['main_photo'])) {
-            $fotos = [$lugar['main_photo']];
+        // 1) Tabla entity_photos (fotos aprobadas, ordenadas por portada)
+        try {
+            $stmtF = $pdo->prepare("
+                SELECT file_url
+                FROM entity_photos
+                WHERE entity_type = 'places_of_interest'
+                  AND entity_id = ?
+                  AND permission_status = 'approved'
+                  AND status = 'active'
+                ORDER BY is_cover DESC, featured DESC, uploaded_at DESC
+            ");
+            $stmtF->execute([$lugar['id']]);
+            foreach ($stmtF->fetchAll(PDO::FETCH_ASSOC) as $f) {
+                if (!empty($f['file_url'])) {
+                    $fotos[] = '/' . ltrim(str_replace('\\', '/', $f['file_url']), '/');
+                }
+            }
+        } catch (Exception $e) { /* ignorar — tabla puede no existir en local */ }
+
+        // 2) Fallback a campos legacy photo1..photo4
+        if (empty($fotos)) {
+            foreach (['photo1', 'photo2', 'photo3', 'photo4'] as $campo) {
+                if (!empty($lugar[$campo])) {
+                    $url = $lugar[$campo];
+                    $fotos[] = preg_match('/^https?:\/\//', $url) ? $url : '/' . ltrim($url, '/');
+                }
+            }
         }
+
         $fotos = array_values(array_filter($fotos));
     }
-} else {
-    // Fallback: sin BD (modo desarrollo / preview estático)
-    error_log('[lugar-modular] No se encontró db.php en: ' . $dbPath);
+
+} catch (Exception $e) {
+    error_log('[lugar-modular] Error BD: ' . $e->getMessage());
+    // $lugar permanece [] → se mostrará la página de error 404
 }
 
 // ─── VARIABLES SEO ────────────────────────────────────────────────────────────
@@ -232,14 +251,19 @@ if (file_exists($globalHeader)) {
 <?php else: ?>
 
     <!-- ── ERROR 404 ── -->
-    <?php http_response_code(404); ?>
+    <?php
+    http_response_code(404);
+    // $t está garantizado por head.php (array_merge con 'es' como base)
+    // El fallback extra protege si head.php no pudo ejecutarse
+    $err_h1  = isset($t['no_encontrado_h1']) ? $t['no_encontrado_h1'] : 'Lugar no encontrado';
+    $err_p   = isset($t['no_encontrado_p'])  ? $t['no_encontrado_p']  : 'El lugar de interés que buscas no existe o ya no está disponible.';
+    $err_btn = isset($t['volver_lista'])      ? $t['volver_lista']     : '← Volver a los lugares de interés';
+    ?>
     <div class="error-container">
         <div class="error-icon" aria-hidden="true">😕</div>
-        <h1><?php echo isset($t) ? esc($t['no_encontrado_h1']) : 'Lugar no encontrado'; ?></h1>
-        <p><?php echo isset($t) ? esc($t['no_encontrado_p']) : 'El lugar de interés que buscas no existe o ya no está disponible.'; ?></p>
-        <a href="/lugares-de-interes" class="btn-back">
-            <?php echo isset($t) ? esc($t['volver_lista']) : '← Volver a los lugares de interés'; ?>
-        </a>
+        <h1><?php echo esc($err_h1); ?></h1>
+        <p><?php echo esc($err_p); ?></p>
+        <a href="/lugares-de-interes" class="btn-back"><?php echo esc($err_btn); ?></a>
     </div>
 
 <?php endif; ?>

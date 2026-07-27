@@ -287,7 +287,9 @@ $ui = [
 ];
 
 // Exportar traducciones del idioma activo
-$t = $ui[$lang] ?? $ui['es'];
+// Merge con el array 'es' como base para garantizar que TODAS las claves existen
+// aunque el array del idioma no esté completo
+$t = array_merge($ui['es'], $ui[$lang] ?? []);
 
 // ─── LOCALE OG según idioma ───────────────────────────────────────────────────
 $og_locale_map = [
