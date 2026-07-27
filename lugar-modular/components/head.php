@@ -355,9 +355,8 @@ $og_locale = $og_locale_map[$lang] ?? 'es_ES';
     <link rel="preload" as="image" href="<?php echo htmlspecialchars($foto_hero, ENT_QUOTES, 'UTF-8'); ?>" fetchpriority="high">
     <?php endif; ?>
 
-    <!-- ── CSS externo lugar.css — preload (no render-blocking) ── -->
-    <link rel="preload" href="/lugar-modular/css/lugar.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/lugar-modular/css/lugar.css"></noscript>
+    <!-- ── CSS externo lugar.css — carga directa (render-blocking intencionado para evitar FOUC) ── -->
+    <link rel="stylesheet" href="/lugar-modular/css/lugar.css">
 
     <!-- ── Fuentes locales Montserrat (font-face, font-display:swap) ── -->
     <style>

@@ -3,24 +3,31 @@
  * galeria.php — Galería de fotos con miniaturas y lightbox
  * Variables requeridas: $lugar, $fotos, $t
  */
-if (empty($lugar) || empty($fotos)) return;
+if (empty($lugar)) return;
+if (!isset($fotos) || !is_array($fotos) || empty($fotos)) return;
 
-function fixUrl(string $url): string {
-    if (!$url) return '';
-    return preg_match('/^https?:\/\//', $url) ? $url : '/' . ltrim($url, '/');
+if (!function_exists('fixUrl')) {
+    function fixUrl(string $url): string {
+        if (!$url) return '';
+        return preg_match('/^https?:\/\//', $url) ? $url : '/' . ltrim($url, '/');
+    }
 }
+
+$_t_fotos    = isset($t['fotos'])    ? $t['fotos']    : '📸 Galería de fotos';
+$_t_vertodas = isset($t['ver_todas']) ? $t['ver_todas'] : '🔍 Ver todas';
+$_nombre     = isset($lugar['name']) ? $lugar['name'] : '';
 ?>
 
 <!-- ▸ GALERÍA -->
 <div class="lug-card">
     <div class="lug-card-body">
-        <h2 class="lug-card-title"><?php echo htmlspecialchars($t['fotos'], ENT_QUOTES, 'UTF-8'); ?></h2>
+        <h2 class="lug-card-title"><?php echo htmlspecialchars($_t_fotos, ENT_QUOTES, 'UTF-8'); ?></h2>
 
         <!-- Imagen principal con onclick para lightbox -->
         <div class="gallery-main" id="gallery-main" onclick="openLightbox(currentGalleryIdx)">
             <img id="gallery-main-img"
                  src="<?php echo htmlspecialchars(fixUrl($fotos[0]), ENT_QUOTES, 'UTF-8'); ?>"
-                 alt="<?php echo htmlspecialchars($lugar['name'], ENT_QUOTES, 'UTF-8'); ?>"
+                 alt="<?php echo htmlspecialchars($_nombre, ENT_QUOTES, 'UTF-8'); ?>"
                  class="gallery-main-img"
                  loading="eager"
                  width="800" height="380">
@@ -30,8 +37,8 @@ function fixUrl(string $url): string {
             <button class="gallery-expand-btn"
                     onclick="event.stopPropagation();openLightbox(currentGalleryIdx)"
                     type="button"
-                    aria-label="<?php echo htmlspecialchars($t['ver_todas'], ENT_QUOTES, 'UTF-8'); ?>">
-                <?php echo htmlspecialchars($t['ver_todas'], ENT_QUOTES, 'UTF-8'); ?>
+                    aria-label="<?php echo htmlspecialchars($_t_vertodas, ENT_QUOTES, 'UTF-8'); ?>">
+                <?php echo htmlspecialchars($_t_vertodas, ENT_QUOTES, 'UTF-8'); ?>
             </button>
             <?php endif; ?>
         </div>
@@ -45,9 +52,9 @@ function fixUrl(string $url): string {
                  onclick="setGalleryPhoto(<?php echo $i; ?>)"
                  role="button"
                  tabindex="0"
-                 aria-label="<?php echo htmlspecialchars($lugar['name'], ENT_QUOTES, 'UTF-8'); ?> — foto <?php echo $i + 1; ?>">
+                 aria-label="<?php echo htmlspecialchars($_nombre, ENT_QUOTES, 'UTF-8'); ?> — foto <?php echo $i + 1; ?>">
                 <img src="<?php echo htmlspecialchars(fixUrl($foto), ENT_QUOTES, 'UTF-8'); ?>"
-                     alt="<?php echo htmlspecialchars($lugar['name'], ENT_QUOTES, 'UTF-8'); ?> — foto <?php echo $i + 1; ?>"
+                     alt="<?php echo htmlspecialchars($_nombre, ENT_QUOTES, 'UTF-8'); ?> — foto <?php echo $i + 1; ?>"
                      loading="<?php echo $i < 3 ? 'eager' : 'lazy'; ?>">
             </div>
             <?php endforeach; ?>

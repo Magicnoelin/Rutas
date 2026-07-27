@@ -1,215 +1,182 @@
 <?php
 /**
- * descripcion.php — Descripción, información práctica, contacto y mapa
+ * descripcion.php — Descripción, info práctica, contacto y mapa
  * Variables requeridas: $lugar, $t
  */
 if (empty($lugar)) return;
 
-if (!function_exists('esLugarGastronomico')) {
-    function esLugarGastronomico(string $categoryName): bool {
-        if (empty($categoryName)) return false;
-        $lower = mb_strtolower($categoryName, 'UTF-8');
-        foreach (['restauran','gastronom','enotur','bodega','cafeter','restauraci','taberna','hosteleria','hostelería'] as $kw) {
-            if (strpos($lower, $kw) !== false) return true;
-        }
-        return false;
-    }
+// Acceso seguro a claves de $t con fallback
+$_t = [
+    'descripcion'   => isset($t['descripcion'])   ? $t['descripcion']   : '📋 Descripción',
+    'info_practica' => isset($t['info_practica']) ? $t['info_practica'] : 'ℹ️ Información práctica',
+    'contacto'      => isset($t['contacto'])      ? $t['contacto']      : '📞 Contacto y acceso',
+    'horario'       => isset($t['horario'])       ? $t['horario']       : 'Horario',
+    'entrada'       => isset($t['entrada'])       ? $t['entrada']       : 'Entrada',
+    'accesibilidad' => isset($t['accesibilidad']) ? $t['accesibilidad'] : 'Accesibilidad',
+    'instalaciones' => isset($t['instalaciones']) ? $t['instalaciones'] : 'Instalaciones',
+    'llamar'        => isset($t['llamar'])        ? $t['llamar']        : '📞 Llamar',
+    'whatsapp'      => isset($t['whatsapp'])      ? $t['whatsapp']      : '💬 WhatsApp',
+    'email'         => isset($t['email'])         ? $t['email']         : '✉️ Email',
+    'web_oficial'   => isset($t['web_oficial'])   ? $t['web_oficial']   : '🌐 Web oficial',
+    'ver_mapa'      => isset($t['ver_mapa'])      ? $t['ver_mapa']      : 'Ver en el mapa',
+    'click_mapa'    => isset($t['click_mapa'])    ? $t['click_mapa']    : 'Haz clic para cargar el mapa interactivo',
+    'leer_mas'      => isset($t['leer_mas'])      ? $t['leer_mas']      : '↓ Leer más',
+    'leer_menos'    => isset($t['leer_menos'])    ? $t['leer_menos']    : '↑ Leer menos',
+];
+
+// Elegir campo de descripción (prioridad: description_linked > description)
+$descripcionRaw = '';
+if (!empty($lugar['description_linked'])) {
+    $descripcionRaw = $lugar['description_linked'];
+} elseif (!empty($lugar['description'])) {
+    $descripcionRaw = $lugar['description'];
 }
-$esGastronomico = esLugarGastronomico($lugar['category_name'] ?? '');
+
+// Sanitizar descripción: permitir solo HTML seguro (sin scripts)
+$descHtml = '';
+if ($descripcionRaw) {
+    // Permite etiquetas de formato y enlaces pero elimina scripts
+    $descHtml = strip_tags($descripcionRaw, '<p><br><a><strong><em><ul><ol><li><h2><h3><h4><blockquote><span>');
+}
+
+$hayInfoPractica = !empty($lugar['opening_hours'])
+    || !empty($lugar['visit_duration'])
+    || !empty($lugar['accessibility'])
+    || !empty($lugar['facilities'])
+    || !empty($lugar['best_season']);
+
+$hayContacto = !empty($lugar['phone'])
+    || !empty($lugar['email'])
+    || !empty($lugar['website'])
+    || (!empty($lugar['latitude']) && !empty($lugar['longitude']));
 ?>
 
 <!-- ▸ DESCRIPCIÓN -->
+<?php if (!empty($descHtml)): ?>
 <div class="lug-card">
     <div class="lug-card-body">
-        <h2 class="lug-card-title"><?php echo htmlspecialchars($t['descripcion'], ENT_QUOTES, 'UTF-8'); ?></h2>
-        <?php if (!empty($lugar['description'])): ?>
-        <?php
-        // Usar description_linked (pre-generado con inbound links internos) si está disponible
-        // IMPORTANTE: description_linked ya es HTML seguro (generado internamente)
-        $desc_raw = !empty($lugar['description_linked']) ? $lugar['description_linked'] : $lugar['description'];
-        $desc     = strip_tags($desc_raw, '<strong><b><em><i><u><p><br><ul><ol><li><a><h2><h3><h4>');
-        $long     = strlen(strip_tags($desc)) > 350;
-        ?>
-        <div class="desc-text <?php echo $long ? 'collapsed' : ''; ?>" id="desc-text">
-            <?php echo nl2br($desc); ?>
+        <h2 class="lug-card-title"><?php echo htmlspecialchars($_t['descripcion'], ENT_QUOTES, 'UTF-8'); ?></h2>
+        <div class="desc-text" id="desc-text">
+            <?php echo $descHtml; ?>
         </div>
-        <?php if ($long): ?>
-        <button class="desc-expand-btn" id="desc-expand-btn" onclick="expandDesc()" type="button">
-            <?php echo htmlspecialchars($t['leer_mas'], ENT_QUOTES, 'UTF-8'); ?>
+        <button class="desc-toggle" id="desc-toggle"
+                onclick="toggleDesc()"
+                aria-expanded="false">
+            <?php echo htmlspecialchars($_t['leer_mas'], ENT_QUOTES, 'UTF-8'); ?>
         </button>
-        <?php endif; ?>
-        <?php else: ?>
-        <p style="color:var(--lug-text-l);font-style:italic;">Descripción no disponible.</p>
-        <?php endif; ?>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- ▸ INFORMACIÓN PRÁCTICA -->
-<?php
-$hayInfo = !empty($lugar['opening_hours']) || !empty($lugar['entry_fee']) || !empty($lugar['entry_fee_details'])
-        || !empty($lugar['visit_duration']) || !empty($lugar['best_season']) || !empty($lugar['accessibility'])
-        || !empty($lugar['pet_friendly']) || !empty($lugar['suitable_for_children']);
-if ($hayInfo):
-?>
+<?php if ($hayInfoPractica): ?>
 <div class="lug-card">
     <div class="lug-card-body">
-        <h2 class="lug-card-title"><?php echo htmlspecialchars($t['info_practica'], ENT_QUOTES, 'UTF-8'); ?></h2>
-        <div class="info-grid">
+        <h2 class="lug-card-title"><?php echo htmlspecialchars($_t['info_practica'], ENT_QUOTES, 'UTF-8'); ?></h2>
+        <dl class="info-dl">
 
             <?php if (!empty($lugar['opening_hours'])): ?>
-            <div class="info-item">
-                <div class="info-icon" aria-hidden="true">🕐</div>
-                <div class="info-label"><?php echo htmlspecialchars($t['horario'], ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="info-value"><?php echo htmlspecialchars($lugar['opening_hours'], ENT_QUOTES, 'UTF-8'); ?></div>
+            <div class="info-dl-row">
+                <dt><?php echo htmlspecialchars($_t['horario'], ENT_QUOTES, 'UTF-8'); ?></dt>
+                <dd><?php echo htmlspecialchars($lugar['opening_hours'], ENT_QUOTES, 'UTF-8'); ?></dd>
             </div>
             <?php endif; ?>
 
-            <?php if (!empty($lugar['entry_fee']) || !empty($lugar['entry_fee_details']) || (!$esGastronomico && isset($lugar['entry_fee']))): ?>
-            <div class="info-item">
-                <div class="info-icon" aria-hidden="true">🎫</div>
-                <div class="info-label"><?php echo htmlspecialchars($t['entrada'], ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="info-value"><?php
-                    if (!empty($lugar['entry_fee'])) {
-                        echo htmlspecialchars($lugar['entry_fee'], ENT_QUOTES, 'UTF-8') . '€';
-                    } elseif (!empty($lugar['entry_fee_details'])) {
-                        echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8');
-                    } else {
-                        echo htmlspecialchars($t['entrada_gratuita'], ENT_QUOTES, 'UTF-8');
-                    }
-                    if (!empty($lugar['entry_fee']) && !empty($lugar['entry_fee_details'])):
-                ?><br><small style="color:var(--lug-text-l);font-weight:400;"><?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?></small><?php endif; ?>
-                </div>
+            <?php if (!empty($lugar['entry_fee']) || !empty($lugar['entry_fee_details'])): ?>
+            <div class="info-dl-row">
+                <dt><?php echo htmlspecialchars($_t['entrada'], ENT_QUOTES, 'UTF-8'); ?></dt>
+                <dd>
+                    <?php if (!empty($lugar['entry_fee'])): ?>
+                        <?php echo htmlspecialchars($lugar['entry_fee'], ENT_QUOTES, 'UTF-8'); ?>€
+                    <?php endif; ?>
+                    <?php if (!empty($lugar['entry_fee_details'])): ?>
+                        <?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?>
+                    <?php endif; ?>
+                </dd>
             </div>
             <?php endif; ?>
 
             <?php if (!empty($lugar['visit_duration'])): ?>
-            <div class="info-item">
-                <div class="info-icon" aria-hidden="true">⏱️</div>
-                <div class="info-label"><?php echo htmlspecialchars($t['duracion_visita'], ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="info-value"><?php echo htmlspecialchars($lugar['visit_duration'], ENT_QUOTES, 'UTF-8'); ?></div>
+            <div class="info-dl-row">
+                <dt>⏱️ Duración</dt>
+                <dd><?php echo htmlspecialchars($lugar['visit_duration'], ENT_QUOTES, 'UTF-8'); ?></dd>
             </div>
             <?php endif; ?>
 
             <?php if (!empty($lugar['best_season'])): ?>
-            <div class="info-item">
-                <div class="info-icon" aria-hidden="true">🌸</div>
-                <div class="info-label"><?php echo htmlspecialchars($t['mejor_epoca'], ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="info-value"><?php echo htmlspecialchars($lugar['best_season'], ENT_QUOTES, 'UTF-8'); ?></div>
+            <div class="info-dl-row">
+                <dt>🌸 Mejor época</dt>
+                <dd><?php echo htmlspecialchars($lugar['best_season'], ENT_QUOTES, 'UTF-8'); ?></dd>
             </div>
             <?php endif; ?>
 
             <?php if (!empty($lugar['accessibility'])): ?>
-            <div class="info-item">
-                <div class="info-icon" aria-hidden="true">♿</div>
-                <div class="info-label"><?php echo htmlspecialchars($t['accesibilidad'], ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="info-value"><?php echo htmlspecialchars($lugar['accessibility'], ENT_QUOTES, 'UTF-8'); ?></div>
+            <div class="info-dl-row">
+                <dt><?php echo htmlspecialchars($_t['accesibilidad'], ENT_QUOTES, 'UTF-8'); ?></dt>
+                <dd><?php echo htmlspecialchars($lugar['accessibility'], ENT_QUOTES, 'UTF-8'); ?></dd>
             </div>
             <?php endif; ?>
 
-            <?php if (!empty($lugar['pet_friendly'])): ?>
-            <div class="info-item">
-                <div class="info-icon" aria-hidden="true">🐾</div>
-                <div class="info-label"><?php echo htmlspecialchars($t['mascotas'], ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="info-value"><?php echo htmlspecialchars($t['admite_mascotas'], ENT_QUOTES, 'UTF-8'); ?></div>
+            <?php if (!empty($lugar['facilities'])): ?>
+            <div class="info-dl-row">
+                <dt><?php echo htmlspecialchars($_t['instalaciones'], ENT_QUOTES, 'UTF-8'); ?></dt>
+                <dd><?php echo htmlspecialchars($lugar['facilities'], ENT_QUOTES, 'UTF-8'); ?></dd>
             </div>
             <?php endif; ?>
 
-            <?php if (!empty($lugar['suitable_for_children'])): ?>
-            <div class="info-item">
-                <div class="info-icon" aria-hidden="true">👶</div>
-                <div class="info-label"><?php echo htmlspecialchars($t['ninos'], ENT_QUOTES, 'UTF-8'); ?></div>
-                <div class="info-value"><?php echo htmlspecialchars($t['apto_ninos'], ENT_QUOTES, 'UTF-8'); ?></div>
-            </div>
-            <?php endif; ?>
-
-        </div><!-- /.info-grid -->
-
-        <?php
-        $facilities = [];
-        if (!empty($lugar['facilities'])) {
-            $dec = json_decode($lugar['facilities'], true);
-            if (is_array($dec)) $facilities = $dec;
-        }
-        if (!empty($facilities)):
-        ?>
-        <div style="margin-top:20px;">
-            <div style="font-size:0.82rem;font-weight:700;color:var(--lug-text-l);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">
-                <?php echo htmlspecialchars($t['instalaciones'], ENT_QUOTES, 'UTF-8'); ?>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                <?php foreach ($facilities as $f): ?>
-                <span style="background:#e8f5e9;color:#2F5233;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid #c8e6c9;">
-                    ✓ <?php echo htmlspecialchars((string)$f, ENT_QUOTES, 'UTF-8'); ?>
-                </span>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <?php endif; ?>
-
-    </div><!-- /.lug-card-body -->
-</div><!-- /.lug-card (info práctica) -->
+        </dl>
+    </div>
+</div>
 <?php endif; ?>
 
-<!-- ▸ CONTACTO -->
-<?php if (!empty($lugar['phone']) || !empty($lugar['email']) || !empty($lugar['website'])): ?>
+<!-- ▸ CONTACTO Y MAPA -->
+<?php if ($hayContacto): ?>
 <div class="lug-card">
     <div class="lug-card-body">
-        <h2 class="lug-card-title"><?php echo htmlspecialchars($t['contacto'], ENT_QUOTES, 'UTF-8'); ?></h2>
+        <h2 class="lug-card-title"><?php echo htmlspecialchars($_t['contacto'], ENT_QUOTES, 'UTF-8'); ?></h2>
+
         <div class="contact-btns">
             <?php if (!empty($lugar['phone'])): ?>
-            <a href="tel:<?php echo htmlspecialchars($lugar['phone'], ENT_QUOTES, 'UTF-8'); ?>"
-               class="btn-contact btn-phone">
-                <?php echo htmlspecialchars($t['llamar'], ENT_QUOTES, 'UTF-8'); ?>
+            <a href="tel:<?php echo htmlspecialchars($lugar['phone'], ENT_QUOTES, 'UTF-8'); ?>" class="contact-btn contact-phone">
+                <?php echo htmlspecialchars($_t['llamar'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
-            <a href="https://wa.me/34<?php echo preg_replace('/[^0-9]/', '', $lugar['phone']); ?>"
+            <a href="https://api.whatsapp.com/send?phone=<?php echo urlencode(preg_replace('/\D/','',$lugar['phone'])); ?>"
                target="_blank" rel="noopener noreferrer"
-               class="btn-contact btn-whatsapp">
-                <?php echo htmlspecialchars($t['whatsapp'], ENT_QUOTES, 'UTF-8'); ?>
+               class="contact-btn contact-whatsapp">
+                <?php echo htmlspecialchars($_t['whatsapp'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
             <?php endif; ?>
 
             <?php if (!empty($lugar['email'])): ?>
-            <a href="mailto:<?php echo htmlspecialchars($lugar['email'], ENT_QUOTES, 'UTF-8'); ?>"
-               class="btn-contact btn-email">
-                <?php echo htmlspecialchars($t['email'], ENT_QUOTES, 'UTF-8'); ?>
+            <a href="mailto:<?php echo htmlspecialchars($lugar['email'], ENT_QUOTES, 'UTF-8'); ?>" class="contact-btn contact-email">
+                <?php echo htmlspecialchars($_t['email'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
             <?php endif; ?>
 
             <?php if (!empty($lugar['website'])): ?>
             <a href="<?php echo htmlspecialchars($lugar['website'], ENT_QUOTES, 'UTF-8'); ?>"
                target="_blank" rel="noopener noreferrer"
-               class="btn-contact btn-website">
-                <?php echo htmlspecialchars($t['web_oficial'], ENT_QUOTES, 'UTF-8'); ?>
+               class="contact-btn contact-web">
+                <?php echo htmlspecialchars($_t['web_oficial'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
             <?php endif; ?>
         </div>
 
-        <?php if (!empty($lugar['address'])): ?>
-        <div class="contact-addr">
-            <span aria-hidden="true">📍</span>
-            <span>
-                <?php echo htmlspecialchars($lugar['address'], ENT_QUOTES, 'UTF-8'); ?>
-                <?php if (!empty($lugar['municipality'])): ?>, <?php echo htmlspecialchars($lugar['municipality'], ENT_QUOTES, 'UTF-8'); ?><?php endif; ?>
-                <?php if (!empty($lugar['province'])): ?> (<?php echo htmlspecialchars($lugar['province'], ENT_QUOTES, 'UTF-8'); ?>)<?php endif; ?>
-                <?php if (!empty($lugar['postal_code'])): ?> · CP: <?php echo htmlspecialchars($lugar['postal_code'], ENT_QUOTES, 'UTF-8'); ?><?php endif; ?>
-            </span>
+        <?php if (!empty($lugar['latitude']) && !empty($lugar['longitude'])): ?>
+        <!-- Mapa Leaflet cargado bajo demanda -->
+        <div class="map-wrapper">
+            <div class="map-placeholder" id="map-placeholder"
+                 onclick="initMap(<?php echo (float)$lugar['latitude']; ?>, <?php echo (float)$lugar['longitude']; ?>, <?php echo htmlspecialchars(json_encode($lugar['name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>)"
+                 role="button" tabindex="0"
+                 aria-label="<?php echo htmlspecialchars($_t['ver_mapa'], ENT_QUOTES, 'UTF-8'); ?>">
+                <div class="map-placeholder-text">
+                    🗺️ <?php echo htmlspecialchars($_t['click_mapa'], ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+            </div>
+            <div id="map" style="display:none;" aria-label="Mapa interactivo"></div>
         </div>
         <?php endif; ?>
-    </div>
-</div><!-- /.lug-card (contacto) -->
-<?php endif; ?>
 
-<!-- ▸ MAPA diferido (IntersectionObserver en lugar.js) -->
-<?php if (!empty($lugar['latitude']) && !empty($lugar['longitude'])): ?>
-<div id="lug-map-container" class="lug-card">
-    <div id="map-placeholder" class="map-placeholder" onclick="initMap()">
-        <div style="font-size:3rem" aria-hidden="true">🗺️</div>
-        <strong style="font-size:1rem;"><?php echo htmlspecialchars($t['ver_mapa'], ENT_QUOTES, 'UTF-8'); ?></strong>
-        <p style="font-size:0.9rem;color:var(--lug-text-l);">
-            <?php echo htmlspecialchars(implode(', ', array_filter([$lugar['municipality'] ?? '', $lugar['province'] ?? ''])), ENT_QUOTES, 'UTF-8'); ?>
-        </p>
-        <span class="map-ph-hint"><?php echo htmlspecialchars($t['click_mapa'], ENT_QUOTES, 'UTF-8'); ?></span>
     </div>
-    <div id="lug-map" aria-label="Mapa interactivo de <?php echo htmlspecialchars($lugar['name'], ENT_QUOTES, 'UTF-8'); ?>"></div>
 </div>
 <?php endif; ?>

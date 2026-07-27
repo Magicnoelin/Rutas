@@ -1,105 +1,114 @@
 <?php
 /**
- * hero.php — Hero de la ficha de lugar de interés
- * Variables requeridas: $lugar, $fotos, $t, $slug
+ * hero.php — Cabecera hero: imagen LCP, H1, breadcrumb y badges
+ * Variables requeridas: $lugar, $fotos, $t, $lang
  */
 if (empty($lugar)) return;
 
-// Detecta si un lugar es de tipo gastronómico/restaurante (no tiene "entrada")
-function esLugarGastronomico(string $categoryName): bool {
-    if (empty($categoryName)) return false;
-    $lower = mb_strtolower($categoryName, 'UTF-8');
-    foreach (['restauran', 'gastronom', 'enotur', 'bodega', 'cafeter', 'restauraci', 'taberna', 'hosteleria', 'hostelería'] as $kw) {
-        if (strpos($lower, $kw) !== false) return true;
+if (!function_exists('fixUrlHero')) {
+    function fixUrlHero(string $url): string {
+        return preg_match('/^https?:\/\//', $url) ? $url : '/' . ltrim($url, '/');
     }
-    return false;
 }
 
-$foto_hero    = !empty($fotos[0]) ? (preg_match('/^https?:\/\//', $fotos[0]) ? $fotos[0] : '/' . ltrim($fotos[0], '/')) : '';
-$esGratis     = empty($lugar['entry_fee']) || $lugar['entry_fee'] == 0;
-$esGastronomico = esLugarGastronomico($lugar['category_name'] ?? '');
-$ubicacion    = implode(', ', array_filter([$lugar['municipality'] ?? '', $lugar['province'] ?? '']));
+// Acceso seguro a claves de $t con fallback
+$_t = [
+    'inicio'  => isset($t['inicio'])  ? $t['inicio']  : 'Inicio',
+    'lugares' => isset($t['lugares']) ? $t['lugares'] : 'Lugares de interés',
+];
+
+$fotoHero    = !empty($fotos[0]) ? fixUrlHero($fotos[0]) : '/menu_images/turismo_rural.webp';
+$nombreLugar = isset($lugar['name']) ? $lugar['name'] : '';
+$municipio   = isset($lugar['municipality']) ? $lugar['municipality'] : '';
+$provincia   = isset($lugar['province']) ? $lugar['province'] : '';
+$categoria   = isset($lugar['category_name']) ? $lugar['category_name'] : '';
+$stars       = isset($lugar['quality_score']) ? (int)$lugar['quality_score'] : 0;
+$entryFee    = isset($lugar['entry_fee']) ? $lugar['entry_fee'] : null;
+$entryDet    = isset($lugar['entry_fee_details']) ? $lugar['entry_fee_details'] : '';
+$isGratuito  = (empty($entryFee) || (float)$entryFee === 0.0);
+$entradaInfo = '';
+if (!empty($entryFee) && (float)$entryFee > 0) {
+    $entradaInfo = '💶 ' . number_format((float)$entryFee, 2, '.', '') . '€';
+    if (!empty($entryDet)) $entradaInfo .= ' · ' . htmlspecialchars($entryDet, ENT_QUOTES, 'UTF-8');
+} elseif ($isGratuito && !empty($entryDet)) {
+    $entradaInfo = '🟢 0.00€ · ' . htmlspecialchars($entryDet, ENT_QUOTES, 'UTF-8');
+}
+
+// Prefijo de idioma para breadcrumb
+$langPrefix = ($lang !== 'es') ? '/' . $lang : '';
 ?>
 
-<!-- ══════════════════════════════════════════════════════
-     HERO — SSR, visible inmediatamente (LCP)
-     ══════════════════════════════════════════════════════ -->
-<section class="lug-hero" id="lug-hero">
+<!-- ══ HERO ══════════════════════════════════════════════ -->
+<section class="lug-hero" role="banner" aria-label="<?php echo htmlspecialchars($nombreLugar, ENT_QUOTES, 'UTF-8'); ?>">
 
-    <?php if ($foto_hero): ?>
-    <img id="heroBg"
-         class="lug-hero-bg-img"
-         src="<?php echo htmlspecialchars($foto_hero, ENT_QUOTES, 'UTF-8'); ?>"
-         alt="<?php echo htmlspecialchars($lugar['name'], ENT_QUOTES, 'UTF-8'); ?> — imagen principal"
+    <!-- Imagen hero (LCP) — fetchpriority high, no lazy -->
+    <img class="lug-hero-bg-img"
+         src="<?php echo htmlspecialchars($fotoHero, ENT_QUOTES, 'UTF-8'); ?>"
+         alt="<?php echo htmlspecialchars($nombreLugar, ENT_QUOTES, 'UTF-8'); ?>"
+         width="1200" height="500"
          fetchpriority="high"
-         loading="eager"
-         decoding="async"
-         width="1200" height="440">
-    <?php endif; ?>
+         decoding="sync"
+         loading="eager">
 
-    <div class="lug-hero-overlay"></div>
-
-    <!-- Botones flotantes: compartir y guardar -->
-    <div class="lug-hero-actions">
-        <button class="lug-hero-btn" id="btn-share" title="<?php echo htmlspecialchars($t['compartir'], ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars($t['compartir'], ENT_QUOTES, 'UTF-8'); ?>">🔗</button>
-        <button class="lug-hero-btn" id="btn-fav"   title="Guardar" aria-label="Guardar en favoritos">🤍</button>
-    </div>
+    <div class="lug-hero-overlay" aria-hidden="true"></div>
 
     <div class="lug-hero-content">
 
-        <!-- Breadcrumb (semántico para SEO + Schema BreadcrumbList) -->
-        <nav class="lug-breadcrumb" aria-label="breadcrumb">
-            <a href="/"><?php echo htmlspecialchars($t['inicio'], ENT_QUOTES, 'UTF-8'); ?></a>
-            <span aria-hidden="true">/</span>
-            <a href="/lugares-de-interes"><?php echo htmlspecialchars($t['lugares'], ENT_QUOTES, 'UTF-8'); ?></a>
-            <?php if (!empty($lugar['province'])): ?>
-            <span aria-hidden="true">/</span>
-            <a href="/lugares-de-interes?provincia=<?php echo urlencode($lugar['province']); ?>"><?php echo htmlspecialchars($lugar['province'], ENT_QUOTES, 'UTF-8'); ?></a>
-            <?php endif; ?>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page"><?php echo htmlspecialchars($lugar['name'], ENT_QUOTES, 'UTF-8'); ?></span>
+        <!-- Breadcrumb semántico (Schema.org BreadcrumbList inline) -->
+        <nav class="lug-breadcrumb" aria-label="Ruta de navegación">
+            <ol>
+                <li><a href="<?php echo $langPrefix; ?>/">🏠 <?php echo htmlspecialchars($_t['inicio'], ENT_QUOTES, 'UTF-8'); ?></a></li>
+                <li><a href="<?php echo $langPrefix; ?>/lugares-de-interes"><?php echo htmlspecialchars($_t['lugares'], ENT_QUOTES, 'UTF-8'); ?></a></li>
+                <?php if (!empty($municipio)): ?>
+                <li><a href="<?php echo $langPrefix; ?>/lugares-de-interes?municipio=<?php echo urlencode($municipio); ?>"><?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?></a></li>
+                <?php endif; ?>
+                <li aria-current="page"><?php echo htmlspecialchars($nombreLugar, ENT_QUOTES, 'UTF-8'); ?></li>
+            </ol>
         </nav>
 
-        <!-- Badge de categoría -->
-        <?php if (!empty($lugar['category_name'])): ?>
-        <div class="lug-hero-badge"><?php echo htmlspecialchars($lugar['category_name'], ENT_QUOTES, 'UTF-8'); ?></div>
+        <!-- H1 -->
+        <h1><?php echo htmlspecialchars($nombreLugar, ENT_QUOTES, 'UTF-8'); ?></h1>
+
+        <!-- Localización -->
+        <?php if (!empty($municipio)): ?>
+        <p class="lug-hero-location" aria-label="Localización">
+            📍 <?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?>
+            <?php if (!empty($provincia)): ?>, <?php echo htmlspecialchars($provincia, ENT_QUOTES, 'UTF-8'); ?><?php endif; ?>
+
+            <?php if ($stars > 0): ?>
+            <span class="lug-stars" aria-label="<?php echo $stars; ?> estrellas de calidad">
+                <?php for ($i = 0; $i < min($stars, 5); $i++) echo '⭐'; ?>
+            </span>
+            <?php endif; ?>
+        </p>
         <?php endif; ?>
 
-        <!-- H1 — palabra clave principal -->
-        <h1><?php echo htmlspecialchars($lugar['name'], ENT_QUOTES, 'UTF-8'); ?></h1>
-
-        <!-- Meta: ubicación, duración, época y precio entrada -->
-        <div class="lug-hero-meta">
-
-            <?php if (!empty($ubicacion)): ?>
-            <span>📍 <?php echo htmlspecialchars($ubicacion, ENT_QUOTES, 'UTF-8'); ?></span>
+        <!-- Badges -->
+        <div class="lug-badges" aria-label="Características del lugar">
+            <?php if (!empty($categoria)): ?>
+            <span class="lug-badge lug-badge-cat"><?php echo htmlspecialchars($categoria, ENT_QUOTES, 'UTF-8'); ?></span>
             <?php endif; ?>
 
-            <?php if (!empty($lugar['visit_duration'])): ?>
-            <span>⏱️ <?php echo htmlspecialchars($lugar['visit_duration'], ENT_QUOTES, 'UTF-8'); ?></span>
+            <?php if ($isGratuito && empty($entradaInfo)): ?>
+            <span class="lug-badge lug-badge-free">✅ Gratis</span>
             <?php endif; ?>
 
-            <?php if (!empty($lugar['best_season'])): ?>
-            <span>🌸 <?php echo htmlspecialchars($lugar['best_season'], ENT_QUOTES, 'UTF-8'); ?></span>
+            <?php if (!empty($lugar['pet_friendly'])): ?>
+            <span class="lug-badge lug-badge-pet">🐾 Mascotas</span>
             <?php endif; ?>
 
-            <?php if ($esGratis && empty($lugar['entry_fee_details']) && !$esGastronomico): ?>
-            <span class="lug-hero-free"><?php echo htmlspecialchars($t['entrada_gratuita'], ENT_QUOTES, 'UTF-8'); ?></span>
-
-            <?php elseif (!empty($lugar['entry_fee'])): ?>
-            <span class="lug-hero-free" style="background:var(--lug-warm);color:#1a1a1a;">
-                💶 <?php echo htmlspecialchars($lugar['entry_fee'], ENT_QUOTES, 'UTF-8'); ?>€<?php
-                if (!empty($lugar['entry_fee_details'])): ?> · <?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?><?php endif; ?>
-            </span>
-
-            <?php elseif (!empty($lugar['entry_fee_details'])): ?>
-            <span class="lug-hero-free" style="background:var(--lug-warm);color:#1a1a1a;">
-                💶 <?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?>
-            </span>
+            <?php if (!empty($lugar['suitable_for_children'])): ?>
+            <span class="lug-badge lug-badge-kids">👶 Familias</span>
             <?php endif; ?>
+        </div>
 
-        </div><!-- /.lug-hero-meta -->
+        <!-- Precio / detalle entrada -->
+        <?php if (!empty($entradaInfo)): ?>
+        <div class="lug-entry-badge" aria-label="Precio de entrada">
+            <?php echo $entradaInfo; ?>
+        </div>
+        <?php endif; ?>
 
     </div><!-- /.lug-hero-content -->
 
-</section><!-- /.lug-hero -->
+</section>
