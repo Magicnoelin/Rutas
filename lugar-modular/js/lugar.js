@@ -130,12 +130,21 @@
             placeholder.innerHTML = '<div style="font-size:2rem">⏳</div><p style="margin-top:8px;font-size:0.85rem;color:#2F5233;">Cargando mapa…</p>';
         }
 
+        // Mostrar el div del mapa ANTES de cargar Leaflet para que tenga dimensiones
+        if (placeholder) placeholder.style.display = 'none';
+        mapEl.style.cssText = 'display:block!important;height:280px!important;width:100%!important;border-radius:12px!important;';
+
+        // Cargar CSS de Leaflet si no está ya cargado
+        if (!document.querySelector('link[href*="leaflet"]')) {
+            var leafletCSS = document.createElement('link');
+            leafletCSS.rel  = 'stylesheet';
+            leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+            document.head.appendChild(leafletCSS);
+        }
+
         var script  = document.createElement('script');
         script.src  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
         script.onload = function() {
-            if (placeholder) placeholder.style.display = 'none';
-            mapEl.style.display = 'block';
-
             var map = window.L.map(mapEl, { zoomControl: true, scrollWheelZoom: false })
                 .setView([mapLat, mapLng], 14);
 
@@ -282,13 +291,18 @@
             return;
         }
 
-        section.style.display = 'block';
+        section.style.display = '';
+        // Limpiar contenedor y añadir un wrapper con clase nearby-grid
         grid.innerHTML = '';
+        var gridWrapper = document.createElement('div');
+        gridWrapper.className = 'nearby-grid';
+        gridWrapper.style.cssText = 'display:grid!important;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))!important;gap:12px!important;';
 
         var shown = items.slice(0, 4);
         shown.forEach(function(item) {
-            grid.appendChild(createNearbyCard(item, type, cfg.emoji));
+            gridWrapper.appendChild(createNearbyCard(item, type, cfg.emoji));
         });
+        grid.appendChild(gridWrapper);
 
         if (items.length > 4 && moreBtn) {
             moreBtn.style.display = 'block';
@@ -301,8 +315,10 @@
         var moreBtn = document.getElementById(cfg.more);
         var items   = nearbyAllItems[type] || [];
         if (!grid) return;
+        // Añadir al mismo wrapper grid que ya existe
+        var wrapper = grid.querySelector('.nearby-grid') || grid;
         items.slice(4).forEach(function(item) {
-            grid.appendChild(createNearbyCard(item, type, cfg.emoji));
+            wrapper.appendChild(createNearbyCard(item, type, cfg.emoji));
         });
         if (moreBtn) moreBtn.style.display = 'none';
     };
@@ -311,27 +327,32 @@
         var card = document.createElement('a');
         card.className = 'nearby-card';
         card.href      = item.url || '#';
+        // Estilos inline como garantía absoluta ante cualquier CSS global
+        card.style.cssText = 'display:block!important;border-radius:8px!important;overflow:hidden!important;border:1px solid #eee!important;background:#fff!important;text-decoration:none!important;color:#333!important;transition:box-shadow .2s,transform .2s!important;';
 
         // Imagen
         var imgWrap = document.createElement('div');
         imgWrap.className = 'nearby-card-img';
+        imgWrap.style.cssText = 'height:120px!important;overflow:hidden!important;position:relative!important;display:block!important;background:#e8f0e8!important;';
 
         if (item.main_image) {
             var img = document.createElement('img');
             img.src     = fixUrl(item.main_image.trim ? item.main_image.trim() : item.main_image);
             img.alt     = item.name || '';
             img.loading = 'lazy';
+            img.style.cssText = 'width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;';
             img.onerror = function() {
-                imgWrap.innerHTML = '<div class="nearby-card-img-ph">' + emoji + '</div>';
+                imgWrap.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:linear-gradient(135deg,#e8f0e8,#d0e4d0);">' + emoji + '</div>';
             };
             imgWrap.appendChild(img);
         } else {
-            imgWrap.innerHTML = '<div class="nearby-card-img-ph">' + emoji + '</div>';
+            imgWrap.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:linear-gradient(135deg,#e8f0e8,#d0e4d0);">' + emoji + '</div>';
         }
 
         if (item.distance > 0) {
             var dist = document.createElement('span');
             dist.className   = 'nearby-card-dist';
+            dist.style.cssText = 'position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,.55);color:#fff;font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:10px;';
             dist.textContent = item.distance + ' km';
             imgWrap.appendChild(dist);
         }
@@ -339,15 +360,18 @@
         // Cuerpo
         var body = document.createElement('div');
         body.className = 'nearby-card-body';
+        body.style.cssText = 'padding:10px 12px!important;display:block!important;';
 
         var name = document.createElement('div');
         name.className   = 'nearby-card-name';
+        name.style.cssText = 'font-size:.85rem!important;font-weight:700!important;color:#333!important;margin-bottom:4px!important;overflow:hidden!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;';
         name.textContent = item.name || '';
         body.appendChild(name);
 
         if (item.municipality) {
             var meta = document.createElement('div');
             meta.className   = 'nearby-card-meta';
+            meta.style.cssText = 'font-size:.75rem!important;color:#666!important;margin-bottom:4px!important;display:block!important;';
             meta.textContent = '📍 ' + item.municipality;
             body.appendChild(meta);
         }
