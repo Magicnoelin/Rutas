@@ -34,7 +34,7 @@ if (!empty($slug)) {
                        e.short_description,
                        e.meta_title, e.meta_description, e.start_date, e.end_date,
                        e.venue_name AS localidad, e.venue_address, e.municipality, e.province,
-                       e.latitude, e.longitude, e.is_free, e.ticket_price, e.organizer,
+                       e.latitude, e.longitude, e.is_free, e.ticket_price, e.organizer, e.hero_image,
                        e.photo1, e.photo2, e.photo3, e.photo4, e.poster_image,
                        e.category_id, e.is_active, e.status,
                        e.program, e.target_audience, e.accessibility
@@ -59,7 +59,7 @@ if (!empty($slug)) {
                 $stmt = $pdo->prepare("
                     SELECT e.id, e.name AS titulo, e.slug, e.description, e.short_description,
                            e.meta_title, e.meta_description, e.start_date, e.end_date,
-                           e.venue_name AS localidad, e.venue_address, e.municipality, e.province,
+                           e.venue_name AS localidad, e.venue_address, e.municipality, e.province, e.hero_image,
                            e.latitude, e.longitude, e.is_free, e.ticket_price, e.organizer,
                            e.photo1, e.photo2, e.photo3, e.photo4, e.poster_image,
                            e.category_id, e.is_active, e.status
@@ -70,7 +70,7 @@ if (!empty($slug)) {
                 $stmt = $pdo->prepare("
                     SELECT e.id, e.name AS titulo, e.slug, e.description, e.short_description,
                            e.meta_title, e.meta_description, e.start_date, e.end_date,
-                           e.venue_name AS localidad, e.venue_address, e.municipality, e.province,
+                           e.venue_name AS localidad, e.venue_address, e.municipality, e.province, e.hero_image,
                            e.latitude, e.longitude, e.is_free, e.ticket_price, e.organizer,
                            e.photo1, e.photo2, e.photo3, e.photo4, e.poster_image,
                            e.category_id, e.is_active, e.status
@@ -154,11 +154,18 @@ if ($evento && isset($pdo)) {
     }
 }
 
-// Fotos — deduplicadas y con poster_image como primera imagen si existe
-// Lógica: poster_image va primero (es la imagen de portada), luego photo1-4.
-// Si poster_image y photo1 son idénticas (o cualquier par), se omite el duplicado.
+// Fotos — deduplicadas. hero_image se usa SOLO como fondo del hero, NO va a la galería.
+// Lógica: poster_image primero (portada), luego photo1-4.
 $fotos = [];
+$hero_bg_url = ''; // URL para el fondo del .event-hero
 if ($evento) {
+    // hero_image: solo para el fondo del hero (cabecera visual)
+    if (!empty($evento['hero_image'])) {
+        $hi = $evento['hero_image'];
+        if (!preg_match('/^https?:\/\//', $hi)) $hi = '/' . ltrim($hi, '/');
+        $hero_bg_url = $hi;
+    }
+
     $fotos_raw = [];
     // poster_image primero (imagen de portada)
     if (!empty($evento['poster_image'])) {
@@ -1058,6 +1065,26 @@ $evento_js = $evento ? json_encode([
             position: relative;
             overflow: hidden;
         }
+        /* Hero con foto de portada: overlay oscuro encima de la imagen */
+        .event-hero.has-hero-img {
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+        }
+        .event-hero.has-hero-img::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(0,0,0,0.45) 0%,
+                rgba(15,40,18,0.72) 60%,
+                rgba(15,40,18,0.85) 100%
+            );
+            z-index: 0;
+        }
+        /* Todo el contenido del hero queda por encima del overlay */
+        .event-hero.has-hero-img > * { position: relative; z-index: 1; }
         .event-hero::before {
             content: '';
             position: absolute;
@@ -1584,9 +1611,146 @@ $evento_js = $evento ? json_encode([
             .event-hero { padding: 40px 16px 60px; }
             .event-hero h1 { font-size: 1.5rem; }
             .event-hero-meta { gap: 10px; font-size: 0.85rem; }
-            .card-body { padding: 20px; }
-            .meta-grid { grid-template-columns: 1fr 1fr; }
+            .card-body { padding: 16px; }
             .similar-events-grid { grid-template-columns: 1fr; }
+
+            /* ── Meta-grid compacta en móvil ── */
+            .meta-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+                border: 1px solid #e8e8e8;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            .meta-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 14px;
+                border-left: none;
+                border-bottom: 1px solid #f0f0f0;
+                border-radius: 0;
+                background: var(--white);
+            }
+            .meta-item:last-child { border-bottom: none; }
+            .meta-item:nth-child(even) { background: #fafafa; }
+            .meta-icon {
+                font-size: 1rem;
+                flex-shrink: 0;
+                width: 22px;
+                text-align: center;
+            }
+            .meta-item-text { flex: 1; display: flex; flex-direction: row; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+            .meta-label {
+                font-size: 0.7rem;
+                color: var(--text-light);
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                font-weight: 600;
+                white-space: nowrap;
+                margin-bottom: 0;
+            }
+            .meta-value {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--text);
+            }
+        }
+
+        /* ── CTA barra fija móvil ── */
+        #cta-mobile-bar {
+            display: none; /* oculta en desktop */
+        }
+        @media (max-width: 900px) {
+            /* Ocultar el CTA del sidebar en móvil (va abajo de todo el scroll) */
+            #cta-register { display: none !important; }
+
+            /* Mostrar barra fija inferior */
+            #cta-mobile-bar {
+                display: flex;
+                position: fixed;
+                bottom: 0; left: 0; right: 0;
+                z-index: 500;
+                background: linear-gradient(90deg, #1e4d22 0%, #2F5233 100%);
+                padding: 10px 16px;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 -3px 16px rgba(0,0,0,0.25);
+                /* Dejar espacio al navbar inferior si lo hubiera */
+                padding-bottom: max(10px, env(safe-area-inset-bottom));
+            }
+            #cta-mobile-bar .cmb-text {
+                flex: 1;
+                color: #F9A825;
+                font-size: 0.8rem;
+                line-height: 1.2;
+            }
+            #cta-mobile-bar .cmb-text strong { display: block; font-size: 0.85rem; color: #F9A825; }
+            #cta-mobile-bar .cmb-btn {
+                background: #F9A825;
+                color: #1a2e1a;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 18px;
+                font-weight: 700;
+                font-size: 0.88rem;
+                cursor: pointer;
+                white-space: nowrap;
+                font-family: inherit;
+                flex-shrink: 0;
+            }
+            #cta-mobile-bar .cmb-close {
+                background: none;
+                border: none;
+                color: rgba(255,255,255,0.6);
+                font-size: 1.2rem;
+                cursor: pointer;
+                padding: 4px;
+                line-height: 1;
+                flex-shrink: 0;
+            }
+
+            /* Mini-overlay del formulario CTA en móvil */
+            #cta-mobile-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 600;
+                background: rgba(0,0,0,0.55);
+                align-items: flex-end;
+            }
+            #cta-mobile-overlay.open {
+                display: flex;
+            }
+            #cta-mobile-overlay .cmo-box {
+                width: 100%;
+                background: linear-gradient(160deg, #1e4d22 0%, #2F5233 100%);
+                border-radius: 16px 16px 0 0;
+                padding: 20px 20px max(20px, env(safe-area-inset-bottom));
+                color: #fff;
+            }
+            #cta-mobile-overlay .cmo-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 14px;
+            }
+            #cta-mobile-overlay .cmo-title {
+                font-size: 1rem;
+                font-weight: 700;
+            }
+            #cta-mobile-overlay .cmo-close {
+                background: none;
+                border: none;
+                color: rgba(255,255,255,0.7);
+                font-size: 1.4rem;
+                cursor: pointer;
+                line-height: 1;
+                padding: 4px;
+            }
+
+            /* Espacio al final del contenido para que la barra no tape nada */
+            .site-footer { padding-bottom: 72px; }
         }
     </style>
 
@@ -1698,7 +1862,7 @@ if (file_exists($header_path)) {
 
 <!-- ── HERO ── -->
 <?php if ($evento): ?>
-<section class="event-hero">
+<section class="event-hero<?php echo $hero_bg_url ? ' has-hero-img' : ''; ?>"<?php echo $hero_bg_url ? ' style="background-image:url(\'' . htmlspecialchars($hero_bg_url, ENT_QUOTES) . '\')"' : ''; ?>>
     <div class="event-hero-badge"><?php echo htmlspecialchars($categoria_nombre); ?></div>
     <h1><?php echo htmlspecialchars($evento['titulo']); ?></h1>
     <div class="event-hero-meta">
@@ -1994,28 +2158,212 @@ if (file_exists($header_path)) {
     <!-- ── SIDEBAR ── -->
     <aside class="event-sidebar">
 
-        <!-- CTA Principal: Registro -->
-        <div class="cta-card" id="cta-register">
-            <div style="font-size:2rem;margin-bottom:8px;">
-                <?php echo ($lang === 'es' ? '🌿' : '✨'); ?>
+        <!-- CTA Principal: Captura de turistas -->
+        <?php
+        // Textos multiidioma del CTA de conversión
+        $cta_i18n = [
+            'es' => [
+                'titulo'    => '🔔 Avísame cuando sea el evento',
+                'subtitulo' => 'Recibe recordatorios y eventos similares en',
+                'social'    => 'Prueba social:',
+                'placeholder'=> 'tu@email.com',
+                'btn_email' => 'Me apunto →',
+                'ya_cuenta' => 'Ya tengo cuenta →',
+                'divider'   => 'o regístrate completo',
+                'btn_reg'   => '✨ Crear cuenta gratis',
+                'ok_title'  => '¡Apuntado! 🎉',
+                'ok_msg'    => 'Te avisamos antes del evento y cuando haya eventos similares.',
+                'visitas_txt'=> 'personas han visto este evento',
+            ],
+            'en' => [
+                'titulo'    => '🔔 Remind me about this event',
+                'subtitulo' => 'Get reminders and similar events in',
+                'social'    => 'Social proof:',
+                'placeholder'=> 'your@email.com',
+                'btn_email' => 'Notify me →',
+                'ya_cuenta' => 'I already have an account →',
+                'divider'   => 'or create full account',
+                'btn_reg'   => '✨ Sign up free',
+                'ok_title'  => 'You\'re in! 🎉',
+                'ok_msg'    => 'We\'ll remind you before the event and notify you of similar ones.',
+                'visitas_txt'=> 'people have viewed this event',
+            ],
+            'fr' => [
+                'titulo'    => '🔔 Me rappeler cet événement',
+                'subtitulo' => 'Recevez des rappels et événements similaires à',
+                'social'    => 'Preuve sociale :',
+                'placeholder'=> 'vous@email.com',
+                'btn_email' => 'M\'inscrire →',
+                'ya_cuenta' => 'J\'ai déjà un compte →',
+                'divider'   => 'ou créer un compte complet',
+                'btn_reg'   => '✨ Inscription gratuite',
+                'ok_title'  => 'C\'est noté ! 🎉',
+                'ok_msg'    => 'Nous vous rappellerons cet événement et vous informerons des similaires.',
+                'visitas_txt'=> 'personnes ont consulté cet événement',
+            ],
+            'de' => [
+                'titulo'    => '🔔 Erinnerung für dieses Event',
+                'subtitulo' => 'Erhalte Erinnerungen und ähnliche Events in',
+                'social'    => 'Soziale Bestätigung:',
+                'placeholder'=> 'ihre@email.com',
+                'btn_email' => 'Benachrichtigen →',
+                'ya_cuenta' => 'Ich habe bereits ein Konto →',
+                'divider'   => 'oder vollständig registrieren',
+                'btn_reg'   => '✨ Kostenlos registrieren',
+                'ok_title'  => 'Eingetragen! 🎉',
+                'ok_msg'    => 'Wir erinnern Sie vor dem Event und informieren über ähnliche.',
+                'visitas_txt'=> 'Personen haben dieses Event angesehen',
+            ],
+            'zh' => [
+                'titulo'    => '🔔 提醒我参加此活动',
+                'subtitulo' => '接收提醒和类似活动，地区：',
+                'social'    => '社交证明：',
+                'placeholder'=> '您的@邮箱.com',
+                'btn_email' => '提醒我 →',
+                'ya_cuenta' => '已有账户 →',
+                'divider'   => '或完整注册',
+                'btn_reg'   => '✨ 免费注册',
+                'ok_title'  => '已登记！🎉',
+                'ok_msg'    => '我们将在活动前提醒您，并通知您类似活动。',
+                'visitas_txt'=> '人查看了此活动',
+            ],
+        ];
+        $c = $cta_i18n[$lang] ?? $cta_i18n['es'];
+        $lang_prefix_cta = $lang !== 'es' ? '/' . $lang : '';
+        ?>
+        <div id="cta-register" style="
+            background: linear-gradient(145deg, #1e4d22 0%, #2F5233 60%, #3a6b3f 100%);
+            border-radius: var(--radius);
+            padding: 22px 20px 18px;
+            margin-bottom: 16px;
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(47,82,51,0.35);
+        ">
+            <!-- Encabezado con urgencia -->
+            <div style="font-size:1rem;font-weight:700;margin-bottom:6px;line-height:1.3;">
+                <?php echo $c['titulo']; ?>
             </div>
-            <h3><?php echo ($lang === 'es' ? '¿Te gusta este lugar?' : ($t['cta_titulo'] ?? '')); ?></h3>
-            <p><?php echo ($lang === 'es' ? 'Guárdalo en favoritos y recibe alertas de eventos y actividades cercanas.' : ($t['cta_desc'] ?? '') . ' ' . htmlspecialchars($evento['province'] ?? '')); ?></p>
-            
-            <!-- Botón de Guardar Favorito -->
-            <button class="btn btn-white" onclick="saveEvent()" id="btn-save-event" style="margin-bottom:8px; width:100%;">
-                <i class="fas fa-heart"></i> <?php echo ($t['guardar'] ?? 'Guardar en favoritos'); ?>
-            </button>
+            <div style="font-size:0.8rem;opacity:0.82;margin-bottom:14px;">
+                <?php echo $c['subtitulo']; ?> <strong><?php echo htmlspecialchars($evento['province'] ?? ''); ?></strong>
+            </div>
 
-            <!-- Botones de Registro/Login -->
-            <a href="/login.html?action=register&ref=evento&slug=<?php echo urlencode($slug); ?>" class="btn btn-white">
-                <?php echo ($t['cta_register'] ?? ''); ?>
-            </a>
+            <!-- Prueba social dinámica -->
+            <div id="cta-social-proof" style="
+                font-size:0.75rem;background:rgba(255,255,255,0.1);
+                border-radius:6px;padding:6px 10px;margin-bottom:14px;
+                display:flex;align-items:center;gap:6px;
+            ">
+                <span style="font-size:1rem;">👀</span>
+                <span id="cta-view-count" style="font-weight:700;">—</span>
+                <span style="opacity:0.8;"><?php echo $c['visitas_txt']; ?></span>
+            </div>
 
-            <a href="/login.html?ref=evento&slug=<?php echo urlencode($slug); ?>" class="btn btn-outline-white">
-                <?php echo ($t['cta_login'] ?? ''); ?>
-            </a>
+            <!-- Formulario inline: solo email -->
+            <div id="cta-form-wrap">
+                <form id="cta-quick-form" onsubmit="ctaQuickRegister(event)" style="display:flex;gap:6px;margin-bottom:10px;">
+                    <input type="email" id="cta-email" placeholder="<?php echo htmlspecialchars($c['placeholder']); ?>"
+                        required
+                        style="flex:1;padding:10px 12px;border:none;border-radius:7px;font-size:0.88rem;
+                               outline:none;font-family:inherit;background:#fff;color:#333;min-width:0;">
+                    <button type="submit" style="
+                        background:#F9A825;color:#1a2e1a;border:none;border-radius:7px;
+                        padding:10px 14px;font-weight:700;font-size:0.85rem;cursor:pointer;
+                        white-space:nowrap;transition:background 0.2s;font-family:inherit;
+                    "><?php echo $c['btn_email']; ?></button>
+                </form>
+
+                <!-- Separador -->
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;opacity:0.6;">
+                    <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
+                    <span style="font-size:0.7rem;white-space:nowrap;"><?php echo $c['divider']; ?></span>
+                    <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
+                </div>
+
+                <!-- Botón registro completo -->
+                <a href="<?php echo $lang_prefix_cta; ?>/register.html?ref=evento&slug=<?php echo urlencode($slug); ?>"
+                   style="display:block;text-align:center;background:rgba(255,255,255,0.12);
+                          border:1.5px solid rgba(255,255,255,0.35);color:#fff;border-radius:7px;
+                          padding:9px;font-size:0.83rem;font-weight:600;text-decoration:none;
+                          transition:background 0.2s;margin-bottom:6px;"
+                   onmouseover="this.style.background='rgba(255,255,255,0.2)'"
+                   onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+                    <?php echo $c['btn_reg']; ?>
+                </a>
+
+                <!-- Ya tengo cuenta -->
+                <a href="<?php echo $lang_prefix_cta; ?>/login.html?ref=evento&slug=<?php echo urlencode($slug); ?>"
+                   style="display:block;text-align:center;color:rgba(255,255,255,0.65);
+                          font-size:0.78rem;text-decoration:none;padding:4px;">
+                    <?php echo $c['ya_cuenta']; ?>
+                </a>
+            </div>
+
+            <!-- Estado: confirmación tras envío -->
+            <div id="cta-ok" style="display:none;text-align:center;padding:8px 0;">
+                <div style="font-size:1.6rem;margin-bottom:6px;">🎉</div>
+                <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px;"><?php echo $c['ok_title']; ?></div>
+                <div style="font-size:0.8rem;opacity:0.85;"><?php echo $c['ok_msg']; ?></div>
+            </div>
         </div>
+
+        <style>
+        #cta-email:focus { box-shadow: 0 0 0 3px rgba(249,168,37,0.5); }
+        #cta-quick-form button:hover { background: #e69800 !important; }
+        </style>
+
+        <script>
+        // ── Función compartida: guarda email en event_newsletter_subscribers ──
+        function ctaSaveEmail(email, formEl, wrapId, okId) {
+            var btn = formEl.querySelector('button[type="submit"]');
+            if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+            fetch('/api/subscribe-events.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: email,
+                    categoria: <?php echo json_encode($categoria_nombre); ?>,
+                    province: <?php echo json_encode($evento['province'] ?? ''); ?>,
+                    source_slug: <?php echo json_encode($slug); ?>,
+                    source_event_id: <?php echo json_encode((int)($evento['id'] ?? 0)); ?>
+                })
+            })
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+                // Mostrar confirmación en el mismo sitio
+                var wrap = document.getElementById(wrapId);
+                var ok   = document.getElementById(okId);
+                if (wrap) wrap.style.display = 'none';
+                if (ok)   ok.style.display   = 'block';
+            })
+            .catch(function(){
+                // Si falla la red, mostrar igual la confirmación (UX primero)
+                var wrap = document.getElementById(wrapId);
+                var ok   = document.getElementById(okId);
+                if (wrap) wrap.style.display = 'none';
+                if (ok)   ok.style.display   = 'block';
+            });
+        }
+
+        function ctaQuickRegister(e) {
+            e.preventDefault();
+            var email = document.getElementById('cta-email').value.trim();
+            if (!email) return;
+            ctaSaveEmail(email, e.target.closest('form') || e.target, 'cta-form-wrap', 'cta-ok');
+        }
+
+        // Sincronizar contador de visitas con el del sidebar principal
+        document.addEventListener('DOMContentLoaded', function() {
+            var vc = document.getElementById('view-count');
+            var ctaVc = document.getElementById('cta-view-count');
+            if (vc && ctaVc) {
+                var obs = new MutationObserver(function() {
+                    if (vc.textContent && vc.textContent !== '—') ctaVc.textContent = vc.textContent;
+                });
+                obs.observe(vc, {childList:true, characterData:true, subtree:true});
+                if (vc.textContent && vc.textContent !== '—') ctaVc.textContent = vc.textContent;
+            }
+        });
+        </script>
 
         <!-- Visitas y Likes -->
         <div class="card" style="margin-bottom:16px;">
@@ -2075,6 +2423,131 @@ if (file_exists($header_path)) {
 
 <!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
+
+<!-- ── CTA MÓVIL: barra fija inferior + overlay ── -->
+<?php if ($evento): ?>
+
+<!-- Barra fija que aparece en la parte inferior en móvil -->
+<div id="cta-mobile-bar" role="complementary" aria-label="Registro evento">
+    <div class="cmb-text">
+        <strong>🔔 <?php echo $c['titulo']; ?></strong>
+        <?php echo $c['subtitulo']; ?> <strong><?php echo htmlspecialchars($evento['province'] ?? ''); ?></strong>
+    </div>
+    <button class="cmb-btn" onclick="document.getElementById('cta-mobile-overlay').classList.add('open');document.body.style.overflow='hidden';">
+        <?php echo $c['btn_email']; ?>
+    </button>
+    <button class="cmb-close" onclick="document.getElementById('cta-mobile-bar').style.display='none';" aria-label="Cerrar">✕</button>
+</div>
+
+<!-- Mini-overlay (bottom sheet) con el formulario completo -->
+<div id="cta-mobile-overlay" role="dialog" aria-modal="true" aria-label="Formulario de registro"
+     onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow='';}">
+    <div class="cmo-box">
+        <div class="cmo-header">
+            <span class="cmo-title"><?php echo $c['titulo']; ?></span>
+            <button class="cmo-close" onclick="document.getElementById('cta-mobile-overlay').classList.remove('open');document.body.style.overflow='';" aria-label="Cerrar">✕</button>
+        </div>
+        <div style="font-size:0.8rem;opacity:0.8;margin-bottom:14px;">
+            <?php echo $c['subtitulo']; ?> <strong><?php echo htmlspecialchars($evento['province'] ?? ''); ?></strong>
+        </div>
+        <!-- Formulario email -->
+        <form onsubmit="ctaQuickRegisterMobile(event)" style="display:flex;gap:6px;margin-bottom:12px;">
+            <input type="email" id="cta-email-mobile"
+                placeholder="<?php echo htmlspecialchars($c['placeholder']); ?>"
+                required autocomplete="email"
+                style="flex:1;padding:12px 14px;border:none;border-radius:8px;font-size:1rem;
+                       outline:none;font-family:inherit;background:#fff;color:#333;min-width:0;">
+            <button type="submit"
+                style="background:#F9A825;color:#1a2e1a;border:none;border-radius:8px;
+                       padding:12px 16px;font-weight:700;font-size:0.88rem;cursor:pointer;
+                       white-space:nowrap;font-family:inherit;">
+                <?php echo $c['btn_email']; ?>
+            </button>
+        </form>
+        <!-- Separador -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;opacity:0.55;">
+            <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
+            <span style="font-size:0.7rem;white-space:nowrap;"><?php echo $c['divider']; ?></span>
+            <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
+        </div>
+        <!-- Registro completo -->
+        <a href="<?php echo $lang_prefix_cta; ?>/register.html?ref=evento&slug=<?php echo urlencode($slug); ?>"
+           style="display:block;text-align:center;background:rgba(255,255,255,0.12);
+                  border:1.5px solid rgba(255,255,255,0.35);color:#fff;border-radius:8px;
+                  padding:12px;font-size:0.88rem;font-weight:600;text-decoration:none;margin-bottom:8px;">
+            <?php echo $c['btn_reg']; ?>
+        </a>
+        <!-- Ya tengo cuenta -->
+        <a href="<?php echo $lang_prefix_cta; ?>/login.html?ref=evento&slug=<?php echo urlencode($slug); ?>"
+           style="display:block;text-align:center;color:rgba(255,255,255,0.6);
+                  font-size:0.8rem;text-decoration:none;padding:6px;">
+            <?php echo $c['ya_cuenta']; ?>
+        </a>
+    </div>
+</div>
+
+<script>
+function ctaQuickRegisterMobile(e) {
+    e.preventDefault();
+    var email = document.getElementById('cta-email-mobile').value.trim();
+    if (!email) return;
+    var form = e.target;
+    var btn = form.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+    fetch('/api/subscribe-events.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            email: email,
+            categoria: <?php echo json_encode($categoria_nombre); ?>,
+            province: <?php echo json_encode($evento['province'] ?? ''); ?>,
+            source_slug: <?php echo json_encode($slug); ?>,
+            source_event_id: <?php echo json_encode((int)($evento['id'] ?? 0)); ?>
+        })
+    })
+    .then(function(r){ return r.json(); })
+    .catch(function(){return {};})
+    .then(function(){
+        // Reemplazar el overlay por pantalla de gracias
+        var box = document.querySelector('#cta-mobile-overlay .cmo-box');
+        if (box) {
+            box.innerHTML = '<div style="text-align:center;padding:20px 0;">'
+                + '<div style="font-size:2.5rem;margin-bottom:10px;">🎉</div>'
+                + '<div style="font-weight:700;font-size:1.1rem;margin-bottom:8px;"><?php echo addslashes($c['ok_title']); ?></div>'
+                + '<div style="font-size:0.85rem;opacity:0.85;"><?php echo addslashes($c['ok_msg']); ?></div>'
+                + '</div>';
+        }
+        // Ocultar la barra inferior también
+        var bar = document.getElementById('cta-mobile-bar');
+        if (bar) bar.style.display = 'none';
+        // Cerrar overlay tras 2.5s
+        setTimeout(function(){
+            var ov = document.getElementById('cta-mobile-overlay');
+            if (ov) { ov.classList.remove('open'); document.body.style.overflow = ''; }
+        }, 2500);
+    });
+}
+// También necesita el div en móvil para añadir la clase meta-item-text al DOM existente
+// (los meta-items fueron generados como SSR sin ese wrapper — los envolvemos via JS en móvil)
+if (window.innerWidth <= 600) {
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.meta-item').forEach(function(item) {
+            var icon = item.querySelector('.meta-icon');
+            var label = item.querySelector('.meta-label');
+            var value = item.querySelector('.meta-value');
+            if (icon && label && value && !item.querySelector('.meta-item-text')) {
+                var wrap = document.createElement('div');
+                wrap.className = 'meta-item-text';
+                item.appendChild(wrap);
+                wrap.appendChild(label);
+                wrap.appendChild(value);
+            }
+        });
+    });
+}
+</script>
+
+<?php endif; ?>
 
 <!-- ── FOOTER ── -->
 <footer class="site-footer">
