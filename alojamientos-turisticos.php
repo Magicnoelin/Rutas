@@ -89,13 +89,14 @@ function render_accommodation_card($alojamiento) {
     // if (!empty($alojamiento['website'])) { $botonesHTML .= '<a href="' . htmlspecialchars($alojamiento['website']) . '" target="_blank" class="btn-secondary" style="margin-right: 0.5rem;"><i class="fas fa-globe"></i> Web</a>'; }
     // if (!empty($alojamiento['phone'])) { $botonesHTML .= '<a href="tel:' . htmlspecialchars($alojamiento['phone']) . '" class="btn-secondary"><i class="fas fa-phone"></i> Llamar</a>'; }
 
+    $registroHTML = $registration_number ? '<p style="margin: 0.5rem 0; color: var(--primary-color); font-weight: 500;">Nº Registro: ' . $registration_number . '</p>' : '';
 
     return <<<HTML
     <div class="card" data-id="{$id}">
         {$carouselHTML}
         <div class="card-content">
             <h3>{$name}</h3>
-            {$registration_number ? '<p style="margin: 0.5rem 0; color: var(--primary-color); font-weight: 500;">Nº Registro: ' . $registration_number . '</p>' : ''}
+            {$registroHTML}
             <p class="location"><i class="fas fa-map-marker-alt"></i> {$municipality}, {$province}</p>
             <div class="card-features">
                 <span><i class="fas fa-users"></i> {$capacity} plazas</span>

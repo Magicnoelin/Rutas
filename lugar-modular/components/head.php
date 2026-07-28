@@ -801,15 +801,17 @@ $og_locale = $og_locale_map[$lang] ?? 'es_ES';
         .lug-cta-btn-login:hover{ color:#fff;border-color:rgba(255,255,255,0.5); }
 
         /* ── BARRA FIJA MÓVIL CTA TURISTA ── */
-        #lug-mob-bar{ display:none; } /* oculta en desktop */
+        /* Siempre oculta en desktop — solo visible en móvil real */
+        #lug-mob-bar{ display:none !important; }
+        #lug-mob-overlay{ display:none; }
 
-        @media(max-width:900px){
+        @media(max-width:768px){
             /* Ocultar CTA sidebar en móvil — va en la barra fija */
             #lug-cta-sidebar{ display:none !important; }
 
             /* Mostrar barra fija inferior */
             #lug-mob-bar{
-                display:flex;position:fixed;bottom:0;left:0;right:0;
+                display:flex !important;position:fixed;bottom:0;left:0;right:0;
                 z-index:500;background:linear-gradient(90deg,#1b4d22 0%,#2F5233 100%);
                 padding:10px 16px;align-items:center;gap:10px;
                 box-shadow:0 -3px 16px rgba(0,0,0,0.28);
