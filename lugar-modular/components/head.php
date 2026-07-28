@@ -713,6 +713,148 @@ $og_locale = $og_locale_map[$lang] ?? 'es_ES';
             .nearby-grid{grid-template-columns:1fr 1fr;}
         }
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+
+        /* ── CONTACT ROW (botones en fila, uno al lado del otro) ── */
+        .contact-row{
+            display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;
+        }
+        .contact-row .contact-btn{ flex:1;min-width:130px;justify-content:center; }
+        /* Teléfono: mejor contraste — fondo verde oscuro con texto blanco y mayor peso */
+        .contact-phone{
+            background:#1b4d22 !important;color:#fff !important;
+            font-weight:800 !important;
+            border:2px solid #2F5233;
+            letter-spacing:0.3px;
+        }
+        .contact-phone:hover{ background:#143c1a !important; }
+        /* WhatsApp verde más saturado */
+        .contact-whatsapp{ background:#128C44 !important;color:#fff !important; }
+        .contact-whatsapp:hover{ background:#0e6e36 !important; }
+        /* Email con mejor contraste (fondo ámbar + texto oscuro) */
+        .contact-email{ background:#E65100 !important;color:#fff !important; }
+        .contact-email:hover{ background:#bf4000 !important; }
+        /* Web oficial — color acento con texto muy oscuro */
+        .contact-web{ background:#2e7d32 !important;color:#fff !important; }
+        .contact-web:hover{ background:#1b5e20 !important; }
+
+        /* ── CTA TURISTA SIDEBAR ── */
+        .lug-cta-turista{
+            background:linear-gradient(145deg,#1b4d22 0%,#2F5233 55%,#3a6b3f 100%);
+            border-radius:var(--lug-r);padding:22px 20px 18px;
+            margin-bottom:16px;color:#fff;
+            box-shadow:0 6px 24px rgba(47,82,51,0.35);
+        }
+        .lug-cta-icon{ font-size:1.8rem;margin-bottom:6px;line-height:1; }
+        .lug-cta-titulo{ font-size:1rem;font-weight:700;margin-bottom:6px;line-height:1.3;color:#fff; }
+        .lug-cta-sub{ font-size:0.78rem;opacity:0.85;margin-bottom:14px;line-height:1.4; }
+
+        /* Formulario de fechas */
+        .lug-cta-form{}
+        .lug-cta-fields{
+            display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;
+        }
+        .lug-cta-field--per{ grid-column:1/-1; }
+        .lug-cta-field label{
+            display:block;font-size:0.68rem;font-weight:700;
+            text-transform:uppercase;letter-spacing:0.3px;
+            opacity:0.8;margin-bottom:3px;
+        }
+        .lug-cta-field input,.lug-cta-field select{
+            width:100%;padding:8px 10px;border:none;border-radius:7px;
+            font-size:0.9rem;background:#fff;color:#333;
+            font-family:inherit;box-sizing:border-box;
+        }
+        .lug-cta-field input:focus,.lug-cta-field select:focus{
+            outline:none;box-shadow:0 0 0 3px rgba(249,168,37,0.5);
+        }
+        .lug-cta-btn-main{
+            width:100%;padding:11px 16px;background:#F9A825;color:#1a2e1a;
+            border:none;border-radius:8px;font-weight:800;font-size:0.9rem;
+            cursor:pointer;font-family:inherit;transition:background 0.2s;
+            letter-spacing:0.2px;
+        }
+        .lug-cta-btn-main:hover{ background:#e69800; }
+
+        /* Separador y botones auth */
+        .lug-cta-divider{
+            display:flex;align-items:center;gap:8px;margin:12px 0 10px;opacity:0.65;
+        }
+        .lug-cta-divider::before,.lug-cta-divider::after{
+            content:'';flex:1;height:1px;background:rgba(255,255,255,0.3);
+        }
+        .lug-cta-divider span{ font-size:0.7rem;white-space:nowrap;color:#fff; }
+        .lug-cta-btns-row{ display:flex;gap:8px; }
+        .lug-cta-btn-reg{
+            flex:1;text-align:center;background:rgba(255,255,255,0.12);
+            border:1.5px solid rgba(255,255,255,0.35);color:#fff;
+            padding:9px 8px;border-radius:8px;font-size:0.78rem;
+            font-weight:700;text-decoration:none;transition:background 0.2s;
+        }
+        .lug-cta-btn-reg:hover{ background:rgba(255,255,255,0.22);color:#fff; }
+        .lug-cta-btn-login{
+            flex:1;text-align:center;color:rgba(255,255,255,0.65);
+            padding:9px 8px;border-radius:8px;font-size:0.78rem;
+            font-weight:600;text-decoration:none;
+            border:1.5px solid rgba(255,255,255,0.2);
+            transition:color 0.2s,border-color 0.2s;
+        }
+        .lug-cta-btn-login:hover{ color:#fff;border-color:rgba(255,255,255,0.5); }
+
+        /* ── BARRA FIJA MÓVIL CTA TURISTA ── */
+        #lug-mob-bar{ display:none; } /* oculta en desktop */
+
+        @media(max-width:900px){
+            /* Ocultar CTA sidebar en móvil — va en la barra fija */
+            #lug-cta-sidebar{ display:none !important; }
+
+            /* Mostrar barra fija inferior */
+            #lug-mob-bar{
+                display:flex;position:fixed;bottom:0;left:0;right:0;
+                z-index:500;background:linear-gradient(90deg,#1b4d22 0%,#2F5233 100%);
+                padding:10px 16px;align-items:center;gap:10px;
+                box-shadow:0 -3px 16px rgba(0,0,0,0.28);
+                padding-bottom:max(10px,env(safe-area-inset-bottom));
+            }
+            .lmb-text{
+                flex:1;color:#F9A825;font-size:0.78rem;line-height:1.2;
+            }
+            .lmb-text strong{ display:block;font-size:0.83rem;color:#F9A825; }
+            .lmb-text span{ font-size:0.72rem;opacity:0.85;color:#fff; }
+            .lmb-btn{
+                background:#F9A825;color:#1a2e1a;border:none;border-radius:8px;
+                padding:10px 16px;font-weight:800;font-size:0.85rem;
+                cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0;
+            }
+            .lmb-close{
+                background:none;border:none;color:rgba(255,255,255,0.55);
+                font-size:1.2rem;cursor:pointer;padding:4px;line-height:1;flex-shrink:0;
+            }
+
+            /* Overlay bottom sheet */
+            #lug-mob-overlay{
+                display:none;position:fixed;inset:0;z-index:600;
+                background:rgba(0,0,0,0.55);align-items:flex-end;
+            }
+            #lug-mob-overlay.open{ display:flex; }
+            .lmo-box{
+                width:100%;background:linear-gradient(160deg,#1b4d22 0%,#2F5233 100%);
+                border-radius:16px 16px 0 0;
+                padding:20px 20px max(20px,env(safe-area-inset-bottom));
+                color:#fff;
+            }
+            .lmo-header{
+                display:flex;align-items:center;justify-content:space-between;
+                margin-bottom:14px;
+            }
+            .lmo-title{ font-size:1rem;font-weight:700; }
+            .lmo-close{
+                background:none;border:none;color:rgba(255,255,255,0.7);
+                font-size:1.4rem;cursor:pointer;line-height:1;padding:4px;
+            }
+
+            /* Espacio al final del contenido para que la barra no tape nada */
+            body{ padding-bottom:72px; }
+        }
     </style>
 
     <!-- ── Schema.org JSON-LD ── -->

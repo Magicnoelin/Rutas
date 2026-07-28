@@ -130,29 +130,36 @@ $hayContacto = !empty($lugar['phone'])
 <?php endif; ?>
 
 <!-- ▸ CONTACTO Y MAPA -->
-<?php if ($hayContacto): ?>
+<?php
+// Solo mostramos este bloque si hay teléfono, email, web O coordenadas de mapa
+$hayContactoBloq = !empty($lugar['phone']) || !empty($lugar['email']) || !empty($lugar['website'])
+    || (!empty($lugar['latitude']) && !empty($lugar['longitude']));
+?>
+<?php if ($hayContactoBloq): ?>
 <div class="lug-card">
     <div class="lug-card-body">
         <h2 class="lug-card-title"><?php echo htmlspecialchars($_t['contacto'], ENT_QUOTES, 'UTF-8'); ?></h2>
 
-        <div class="contact-btns">
+        <!-- Botones de contacto en fila (flex-wrap) — segunda aparición: evita duplicar con sidebar -->
+        <?php if (!empty($lugar['phone']) || !empty($lugar['email']) || !empty($lugar['website'])): ?>
+        <div class="contact-row">
             <?php if (!empty($lugar['phone'])): ?>
-            <a href="tel:<?php echo htmlspecialchars($lugar['phone'], ENT_QUOTES, 'UTF-8'); ?>" class="contact-btn contact-phone">
-                <?php echo htmlspecialchars($_t['llamar'], ENT_QUOTES, 'UTF-8'); ?>
+            <a href="tel:<?php echo htmlspecialchars($lugar['phone'], ENT_QUOTES, 'UTF-8'); ?>"
+               class="contact-btn contact-phone">
+                📞 <?php echo htmlspecialchars($lugar['phone'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
-            <a href="https://api.whatsapp.com/send?phone=<?php echo urlencode(preg_replace('/\D/','',$lugar['phone'])); ?>"
+            <a href="https://api.whatsapp.com/send?phone=<?php echo urlencode(preg_replace('/\D/', '', $lugar['phone'])); ?>"
                target="_blank" rel="noopener noreferrer"
                class="contact-btn contact-whatsapp">
                 <?php echo htmlspecialchars($_t['whatsapp'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
             <?php endif; ?>
-
             <?php if (!empty($lugar['email'])): ?>
-            <a href="mailto:<?php echo htmlspecialchars($lugar['email'], ENT_QUOTES, 'UTF-8'); ?>" class="contact-btn contact-email">
+            <a href="mailto:<?php echo htmlspecialchars($lugar['email'], ENT_QUOTES, 'UTF-8'); ?>"
+               class="contact-btn contact-email">
                 <?php echo htmlspecialchars($_t['email'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
             <?php endif; ?>
-
             <?php if (!empty($lugar['website'])): ?>
             <a href="<?php echo htmlspecialchars($lugar['website'], ENT_QUOTES, 'UTF-8'); ?>"
                target="_blank" rel="noopener noreferrer"
@@ -161,6 +168,7 @@ $hayContacto = !empty($lugar['phone'])
             </a>
             <?php endif; ?>
         </div>
+        <?php endif; ?>
 
         <?php if (!empty($lugar['latitude']) && !empty($lugar['longitude'])): ?>
         <!-- Mapa Leaflet cargado bajo demanda -->

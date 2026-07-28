@@ -147,17 +147,122 @@ $_t = [
 
     </div><!-- /.info-card -->
 
-    <!-- ── CTA ── -->
-    <div class="cta-card">
-        <div style="font-size:1.8rem;margin-bottom:8px;line-height:1;" aria-hidden="true">🌿</div>
-        <h3><?php echo htmlspecialchars($_t['te_gusta'], ENT_QUOTES, 'UTF-8'); ?></h3>
-        <p><?php echo htmlspecialchars($_t['cta_desc'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <a href="/login.html?action=register&amp;ref=lugar&amp;slug=<?php echo urlencode($slug ?? ''); ?>" class="btn-cta-primary">
-            <?php echo htmlspecialchars($_t['registrarme'], ENT_QUOTES, 'UTF-8'); ?>
-        </a>
-        <a href="/login.html?ref=lugar&amp;slug=<?php echo urlencode($slug ?? ''); ?>" class="btn-cta-secondary">
-            <?php echo htmlspecialchars($_t['ya_cuenta'], ENT_QUOTES, 'UTF-8'); ?>
-        </a>
+    <!-- ── CTA TURÍSTICO ── -->
+    <?php
+    $lugName  = htmlspecialchars($lugar['name'] ?? '', ENT_QUOTES, 'UTF-8');
+    $lugProv  = htmlspecialchars($lugar['province'] ?? '', ENT_QUOTES, 'UTF-8');
+    // Textos multiidioma del CTA de turista
+    $ctaLang = $lang ?? 'es';
+    $ctaTxt = [
+        'es' => [
+            'titulo'   => '🏕️ ¿Quieres visitar este lugar?',
+            'subtitulo'=> 'Dinos tus fechas y cuántos sois — te buscamos alojamiento cerca',
+            'lbl_lleg' => 'Llegada',
+            'lbl_sal'  => 'Salida',
+            'lbl_per'  => 'Personas',
+            'btn'      => '🔍 Ver alojamientos cerca',
+            'oferta'   => '¿Tienes cuenta? Guárdalo en favoritos',
+            'ya_cuenta'=> 'Acceder →',
+            'register' => '✨ Registrarme gratis',
+        ],
+        'en' => [
+            'titulo'   => '🏕️ Want to visit this place?',
+            'subtitulo'=> 'Tell us your dates and group size — we find accommodation nearby',
+            'lbl_lleg' => 'Check-in',
+            'lbl_sal'  => 'Check-out',
+            'lbl_per'  => 'Guests',
+            'btn'      => '🔍 See nearby stays',
+            'oferta'   => 'Have an account? Save to favourites',
+            'ya_cuenta'=> 'Log in →',
+            'register' => '✨ Sign up free',
+        ],
+        'fr' => [
+            'titulo'   => '🏕️ Vous voulez visiter ce lieu ?',
+            'subtitulo'=> 'Indiquez vos dates et le nombre de voyageurs — on trouve un hébergement près',
+            'lbl_lleg' => 'Arrivée',
+            'lbl_sal'  => 'Départ',
+            'lbl_per'  => 'Voyageurs',
+            'btn'      => '🔍 Voir les hébergements proches',
+            'oferta'   => 'Vous avez un compte ? Sauvegardez-le',
+            'ya_cuenta'=> 'Se connecter →',
+            'register' => '✨ Inscription gratuite',
+        ],
+        'de' => [
+            'titulo'   => '🏕️ Möchten Sie diesen Ort besuchen?',
+            'subtitulo'=> 'Nennen Sie uns Ihre Daten und Personenzahl — wir finden eine Unterkunft',
+            'lbl_lleg' => 'Anreise',
+            'lbl_sal'  => 'Abreise',
+            'lbl_per'  => 'Personen',
+            'btn'      => '🔍 Unterkünfte in der Nähe',
+            'oferta'   => 'Haben Sie ein Konto? Speichern',
+            'ya_cuenta'=> 'Anmelden →',
+            'register' => '✨ Kostenlos registrieren',
+        ],
+        'zh' => [
+            'titulo'   => '🏕️ 想参观此地？',
+            'subtitulo'=> '告诉我们您的日期和人数——我们为您找附近住宿',
+            'lbl_lleg' => '入住',
+            'lbl_sal'  => '退房',
+            'lbl_per'  => '人数',
+            'btn'      => '🔍 查看附近住宿',
+            'oferta'   => '已有账户？收藏此地',
+            'ya_cuenta'=> '登录 →',
+            'register' => '✨ 免费注册',
+        ],
+    ];
+    $c = $ctaTxt[$ctaLang] ?? $ctaTxt['es'];
+    $langPfx = ($ctaLang !== 'es') ? '/' . $ctaLang : '';
+    ?>
+    <div class="lug-cta-turista" id="lug-cta-sidebar">
+        <div class="lug-cta-icon" aria-hidden="true">🗺️</div>
+        <h3 class="lug-cta-titulo"><?php echo $c['titulo']; ?></h3>
+        <p class="lug-cta-sub"><?php echo $c['subtitulo']; ?></p>
+
+        <!-- Mini formulario de búsqueda de alojamiento -->
+        <form class="lug-cta-form" id="lug-cta-form-sidebar"
+              onsubmit="lugBuscarAloj(event,'sidebar')" novalidate>
+            <div class="lug-cta-fields">
+                <div class="lug-cta-field">
+                    <label><?php echo $c['lbl_lleg']; ?></label>
+                    <input type="date" id="lug-llegada-sb" name="llegada"
+                           min="<?php echo date('Y-m-d'); ?>" required>
+                </div>
+                <div class="lug-cta-field">
+                    <label><?php echo $c['lbl_sal']; ?></label>
+                    <input type="date" id="lug-salida-sb" name="salida"
+                           min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                </div>
+                <div class="lug-cta-field lug-cta-field--per">
+                    <label><?php echo $c['lbl_per']; ?></label>
+                    <select id="lug-personas-sb" name="personas">
+                        <?php for ($i=1; $i<=8; $i++): ?>
+                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php endfor; ?>
+                        <option value="9">9+</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="lug-cta-btn-main">
+                <?php echo $c['btn']; ?>
+            </button>
+        </form>
+
+        <!-- Separador -->
+        <div class="lug-cta-divider">
+            <span><?php echo htmlspecialchars($c['oferta'], ENT_QUOTES, 'UTF-8'); ?></span>
+        </div>
+
+        <!-- Botones registro / login -->
+        <div class="lug-cta-btns-row">
+            <a href="<?php echo $langPfx; ?>/register.html?ref=lugar&amp;slug=<?php echo urlencode($slug ?? ''); ?>"
+               class="lug-cta-btn-reg">
+                <?php echo $c['register']; ?>
+            </a>
+            <a href="<?php echo $langPfx; ?>/login.html?ref=lugar&amp;slug=<?php echo urlencode($slug ?? ''); ?>"
+               class="lug-cta-btn-login">
+                <?php echo $c['ya_cuenta']; ?>
+            </a>
+        </div>
     </div>
 
     <!-- ── Compartir ── -->

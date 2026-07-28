@@ -15,6 +15,44 @@
     var API   = '/lugar-modular/api/lugar-data.php';
 
     /* ══════════════════════════════════════════════════════
+       CTA TURISTA — Búsqueda de alojamiento cerca
+       ══════════════════════════════════════════════════════ */
+    window.lugBuscarAloj = function(event, source) {
+        event.preventDefault();
+        var llegada, salida, personas;
+        if (source === 'mobile') {
+            llegada  = document.getElementById('lug-llegada-mob');
+            salida   = document.getElementById('lug-salida-mob');
+            personas = document.getElementById('lug-personas-mob');
+        } else {
+            llegada  = document.getElementById('lug-llegada-sb');
+            salida   = document.getElementById('lug-salida-sb');
+            personas = document.getElementById('lug-personas-sb');
+        }
+        if (!llegada || !llegada.value) { llegada && llegada.focus(); return; }
+        if (!salida  || !salida.value)  { salida  && salida.focus();  return; }
+
+        var prov = (lug && lug.province) ? encodeURIComponent(lug.province) : '';
+        var muni = (lug && lug.municipality) ? encodeURIComponent(lug.municipality) : '';
+        var per  = (personas && personas.value) ? personas.value : '2';
+        var ll   = encodeURIComponent(llegada.value);
+        var sal  = encodeURIComponent(salida.value);
+
+        // Construir URL hacia el listado de alojamientos filtrando por zona
+        var base = '/alojamientos-turisticos.html';
+        var query = '?desde=' + ll + '&hasta=' + sal + '&personas=' + per;
+        if (prov)  query += '&provincia=' + prov;
+        if (muni)  query += '&municipio=' + muni;
+        query += '&ref=lugar-cta';
+
+        // Cerrar bottom-sheet si aplica
+        var overlay = document.getElementById('lug-mob-overlay');
+        if (overlay) { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+
+        window.location.href = base + query;
+    };
+
+    /* ══════════════════════════════════════════════════════
        GALERÍA
        ══════════════════════════════════════════════════════ */
     window.currentGalleryIdx = 0;
@@ -107,6 +145,42 @@
         if (text) text.classList.remove('collapsed');
         if (btn)  btn.remove();
     };
+
+    // toggleDesc: usado por descripcion.php (btn con aria-expanded)
+    window.toggleDesc = function() {
+        var text    = document.getElementById('desc-text');
+        var btn     = document.getElementById('desc-toggle');
+        if (!text || !btn) return;
+        var isCollapsed = text.classList.contains('collapsed');
+        if (isCollapsed) {
+            text.classList.remove('collapsed');
+            btn.setAttribute('aria-expanded', 'true');
+            // El texto del botón viene de las traducciones PHP; lo alternamos manualmente
+            btn.dataset.txtMore = btn.dataset.txtMore || btn.textContent;
+            if (btn.dataset.txtLess) btn.textContent = btn.dataset.txtLess;
+        } else {
+            text.classList.add('collapsed');
+            btn.setAttribute('aria-expanded', 'false');
+            if (btn.dataset.txtMore) btn.textContent = btn.dataset.txtMore;
+        }
+    };
+
+    // Inicializar: colapsar descripción si es larga
+    (function initDescToggle() {
+        var text = document.getElementById('desc-text');
+        var btn  = document.getElementById('desc-toggle');
+        if (!text || !btn) return;
+        if (text.scrollHeight > 160) {
+            text.classList.add('collapsed');
+            // Guardar etiqueta "leer menos" del data-txt-less si existe, o fallback
+            btn.dataset.txtMore = btn.textContent;
+            btn.dataset.txtLess = btn.dataset.txtLess || '↑ Leer menos';
+            btn.style.display = '';
+        } else {
+            // Si la descripción es corta no necesitamos el botón
+            btn.style.display = 'none';
+        }
+    })();
 
     /* ══════════════════════════════════════════════════════
        MAPA DIFERIDO (Leaflet — carga al clic o al ser visible)

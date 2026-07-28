@@ -19,7 +19,7 @@ $_nombre     = isset($lugar['name']) ? $lugar['name'] : '';
 ?>
 
 <!-- ▸ GALERÍA -->
-<div class="lug-card">
+<div class="lug-card" style="margin-top:20px;">
     <div class="lug-card-body">
         <h2 class="lug-card-title"><?php echo htmlspecialchars($_t_fotos, ENT_QUOTES, 'UTF-8'); ?></h2>
 
