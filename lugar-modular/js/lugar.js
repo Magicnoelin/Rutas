@@ -38,10 +38,39 @@
         var ll   = encodeURIComponent(llegada.value);
         var sal  = encodeURIComponent(salida.value);
 
-        // Construir URL hacia el listado de alojamientos filtrando por zona
-        var base = '/alojamientos-turisticos.html';
+        // Capturar email si lo ha escrito el usuario
+        var emailEl = document.getElementById(source === 'mobile' ? 'lug-email-mob' : 'lug-email-sb');
+        var email   = emailEl && emailEl.value.trim() ? emailEl.value.trim() : '';
+
+        // Guardar email en localStorage para re-usarlo y enviarlo a la API
+        if (email) {
+            localStorage.setItem('cta_email', email);
+            // Envío silencioso a la API para captura de lead
+            try {
+                fetch('/api/cta-lead.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email:    email,
+                        provincia: decodeURIComponent(prov),
+                        municipio: decodeURIComponent(muni),
+                        lugar:     lug ? lug.name : '',
+                        llegada:   llegada.value,
+                        salida:    salida.value,
+                        personas:  per,
+                        ref:       'lugar-cta'
+                    })
+                }).catch(function(){});
+            } catch(e){}
+        }
+
+        // Construir URL hacia el landing de alojamientos de la provincia
+        // Formato: /alojamientos/{provincia-slug}  → alojamientos-landing/index.php
+        var provSlug = decodeURIComponent(prov).toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar tildes
+            .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        var base  = '/alojamientos/' + (provSlug || 'soria');
         var query = '?desde=' + ll + '&hasta=' + sal + '&personas=' + per;
-        if (prov)  query += '&provincia=' + prov;
         if (muni)  query += '&municipio=' + muni;
         query += '&ref=lugar-cta';
 

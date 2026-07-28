@@ -153,13 +153,15 @@ $_t = [
     $lugProv  = htmlspecialchars($lugar['province'] ?? '', ENT_QUOTES, 'UTF-8');
     // Textos multiidioma del CTA de turista
     $ctaLang = $lang ?? 'es';
-    $ctaTxt = [
+        $ctaTxt = [
         'es' => [
             'titulo'   => '🏕️ ¿Quieres visitar este lugar?',
             'subtitulo'=> 'Dinos tus fechas y cuántos sois — te buscamos alojamiento cerca',
             'lbl_lleg' => 'Llegada',
             'lbl_sal'  => 'Salida',
             'lbl_per'  => 'Personas',
+            'lbl_email'=> '📩 Déjanos tu email',
+            'email_ph' => 'Te enviamos ofertas de alojamiento directas',
             'btn'      => '🔍 Ver alojamientos cerca',
             'oferta'   => '¿Tienes cuenta? Guárdalo en favoritos',
             'ya_cuenta'=> 'Acceder →',
@@ -171,6 +173,8 @@ $_t = [
             'lbl_lleg' => 'Check-in',
             'lbl_sal'  => 'Check-out',
             'lbl_per'  => 'Guests',
+            'lbl_email'=> 'Your email (optional)',
+            'email_ph' => 'to receive accommodation offers',
             'btn'      => '🔍 See nearby stays',
             'oferta'   => 'Have an account? Save to favourites',
             'ya_cuenta'=> 'Log in →',
@@ -182,6 +186,8 @@ $_t = [
             'lbl_lleg' => 'Arrivée',
             'lbl_sal'  => 'Départ',
             'lbl_per'  => 'Voyageurs',
+            'lbl_email'=> 'Votre e-mail (facultatif)',
+            'email_ph' => 'pour recevoir des offres d\'hébergement',
             'btn'      => '🔍 Voir les hébergements proches',
             'oferta'   => 'Vous avez un compte ? Sauvegardez-le',
             'ya_cuenta'=> 'Se connecter →',
@@ -193,6 +199,8 @@ $_t = [
             'lbl_lleg' => 'Anreise',
             'lbl_sal'  => 'Abreise',
             'lbl_per'  => 'Personen',
+            'lbl_email'=> 'Ihre E-Mail (optional)',
+            'email_ph' => 'für Unterkunftsangebote',
             'btn'      => '🔍 Unterkünfte in der Nähe',
             'oferta'   => 'Haben Sie ein Konto? Speichern',
             'ya_cuenta'=> 'Anmelden →',
@@ -204,6 +212,8 @@ $_t = [
             'lbl_lleg' => '入住',
             'lbl_sal'  => '退房',
             'lbl_per'  => '人数',
+            'lbl_email'=> '您的邮箱（可选）',
+            'email_ph' => '接收住宿优惠',
             'btn'      => '🔍 查看附近住宿',
             'oferta'   => '已有账户？收藏此地',
             'ya_cuenta'=> '登录 →',
@@ -240,6 +250,12 @@ $_t = [
                         <?php endfor; ?>
                         <option value="9">9+</option>
                     </select>
+                </div>
+                <div class="lug-cta-field lug-cta-field--email">
+                    <label for="lug-email-sb"><?php echo htmlspecialchars($c['lbl_email'], ENT_QUOTES, 'UTF-8'); ?></label>
+                    <input type="email" id="lug-email-sb" name="email"
+                           placeholder="<?php echo htmlspecialchars($c['email_ph'], ENT_QUOTES, 'UTF-8'); ?>"
+                           autocomplete="email">
                 </div>
             </div>
             <button type="submit" class="lug-cta-btn-main">

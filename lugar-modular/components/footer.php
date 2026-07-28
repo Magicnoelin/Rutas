@@ -122,16 +122,24 @@ $_mob_lpfx = ($_cta_mob_lang !== 'es') ? '/' . $_cta_mob_lang : '';
 <?php endif; ?>
 
 <!-- ══════════════════════════════════════════════════════
+     FOOTER SIMPLE
+     ══════════════════════════════════════════════════════ -->
+<footer class="site-footer" style="background:#1a2e1a;color:rgba(255,255,255,0.7);text-align:center;padding:28px 16px;">
+    <div style="display:flex;justify-content:center;gap:16px;margin-bottom:12px;">
+        <a href="https://www.instagram.com/rutas_rurales/" target="_blank" rel="noopener" aria-label="Instagram"
+           style="color:rgba(255,255,255,0.7);font-size:1.3rem;text-decoration:none;">📸</a>
+    </div>
+    <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px;">
+        <a href="/aviso-legal.html" style="color:rgba(255,255,255,0.6);font-size:0.82rem;text-decoration:none;">Aviso Legal</a>
+        <a href="/politica-cookies.html" style="color:rgba(255,255,255,0.6);font-size:0.82rem;text-decoration:none;">Cookies</a>
+    </div>
+    <p style="color:rgba(255,255,255,0.4);font-size:0.78rem;margin:0;">© 2026 rutasrurales.io · Todos los derechos reservados</p>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════
      JS PRINCIPAL — lugar.js (defer para no bloquear render)
      ══════════════════════════════════════════════════════ -->
 <script src="/lugar-modular/js/lugar.js" defer></script>
-
-<!-- GTM noscript (debe ir justo al abrir body; se incluye aquí como fallback) -->
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-            height="1" width="1" style="display:none;visibility:hidden"
-            title="Google Tag Manager"></iframe>
-</noscript>
 
 </body>
 </html>
