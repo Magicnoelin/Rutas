@@ -206,6 +206,10 @@ if (!isset($t) || !is_array($t)) {
         'no_encontrado_h1' => 'Lugar no encontrado',
         'no_encontrado_p'  => 'El lugar de interés que buscas no existe o ya no está disponible.',
         'volver_lista'     => '← Volver a los lugares de interés',
+        'ubicacion'        => 'Ubicación',
+        'click_mapa'       => 'Haz clic para cargar el mapa interactivo',
+        'mapa_hint'        => 'Se mostrarán alojamientos, lugares, actividades y eventos cercanos.',
+        'actividades'      => 'Actividades',
     ];
 }
 

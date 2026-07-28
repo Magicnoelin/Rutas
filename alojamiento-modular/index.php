@@ -906,7 +906,7 @@ $alo_js = $alojamiento ? json_encode([
         /* ── Layout principal ── */
         .alo-layout {
             max-width: 1100px;
-            margin: -40px auto 60px;
+            margin: 0 auto 60px;
             padding: 0 16px;
             display: grid;
             grid-template-columns: 1fr 340px;
@@ -914,7 +914,7 @@ $alo_js = $alojamiento ? json_encode([
             align-items: start;
         }
         @media (max-width: 900px) {
-            .alo-layout { grid-template-columns: 1fr; margin-top: -30px; }
+            .alo-layout { grid-template-columns: 1fr; margin-top: 0; }
         }
 
         /* ── Card base ── */
@@ -1979,47 +1979,6 @@ if (file_exists($header_path)) {
             </div>
         </div>
 
-        <!-- Contacto -->
-        <?php if (!empty($alojamiento['phone']) || !empty($alojamiento['email']) || !empty($alojamiento['website'])): ?>
-        <div class="alo-card">
-            <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">📞 Contacto</h2>
-                <div class="contact-btns">
-                    <?php if (!empty($alojamiento['phone'])): ?>
-                    <a href="tel:<?php echo htmlspecialchars($alojamiento['phone']); ?>" class="btn-contact btn-phone">
-                        📞 <?php echo $t['llamar']; ?>
-                    </a>
-                    <a href="https://wa.me/34<?php echo preg_replace('/[^0-9]/', '', $alojamiento['phone']); ?>"
-                       target="_blank" rel="noopener" class="btn-contact btn-whatsapp">
-                        💬 <?php echo $t['whatsapp']; ?>
-                    </a>
-                    <?php endif; ?>
-                    <?php if (!empty($alojamiento['email'])): ?>
-                    <a href="mailto:<?php echo htmlspecialchars($alojamiento['email']); ?>" class="btn-contact btn-email">
-                        ✉️ <?php echo $t['email']; ?>
-                    </a>
-                    <?php endif; ?>
-                    <?php if (!empty($alojamiento['website'])): ?>
-                    <a href="<?php echo htmlspecialchars($alojamiento['website']); ?>"
-                       target="_blank" rel="noopener" class="btn-contact btn-website">
-                        🌐 <?php echo $t['web']; ?>
-                    </a>
-                    <?php endif; ?>
-                </div>
-                <?php if (!empty($alojamiento['address'])): ?>
-                <div class="contact-address">
-                    <span>📍</span>
-                    <span><?php
-                        echo htmlspecialchars($alojamiento['address']);
-                        if (!empty($alojamiento['municipality'])) echo ', ' . htmlspecialchars($alojamiento['municipality']);
-                        if (!empty($alojamiento['province'])) echo ' (' . htmlspecialchars($alojamiento['province']) . ')';
-                    ?></span>
-                </div>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php endif; ?>
-
         <!-- Card de ubicación con enlace a rutas.php -->
         <?php if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])): 
             $rutas_url = 'https://rutasrurales.io/rutas.php'
@@ -2267,63 +2226,6 @@ if (file_exists($header_path)) {
         </div>
         <?php endif; ?>
 
-        <!-- CONTENIDO CERCANO (dinámico JS — carga 8 resultados después) -->
-        <div id="nearby-alojamientos-section" class="alo-card" style="display:none;">
-            <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🏠 Alojamientos cercanos</h2>
-                <div id="nearby-alojamientos" class="nearby-grid">
-                    <div class="skeleton skeleton-card"></div>
-                    <div class="skeleton skeleton-card"></div>
-                    <div class="skeleton skeleton-card"></div>
-                </div>
-                <div class="nearby-show-more" id="more-alojamientos" style="display:none;">
-                    <button onclick="showMoreNearby('alojamientos')"><?php echo $t['ver_mas_aloj']; ?></button>
-                </div>
-            </div>
-        </div>
-
-        <div id="nearby-lugares-section" class="alo-card" style="display:none;">
-            <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🏛️ Lugares de interés cercanos</h2>
-                <div id="nearby-lugares" class="nearby-grid">
-                    <div class="skeleton skeleton-card"></div>
-                    <div class="skeleton skeleton-card"></div>
-                    <div class="skeleton skeleton-card"></div>
-                </div>
-                <div class="nearby-show-more" id="more-lugares" style="display:none;">
-                    <button onclick="showMoreNearby('lugares')"><?php echo $t['ver_mas_lugares']; ?></button>
-                </div>
-            </div>
-        </div>
-
-        <div id="nearby-actividades-section" class="alo-card" style="display:none;">
-            <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🎯 Actividades turísticas cercanas</h2>
-                <div id="nearby-actividades" class="nearby-grid">
-                    <div class="skeleton skeleton-card"></div>
-                    <div class="skeleton skeleton-card"></div>
-                    <div class="skeleton skeleton-card"></div>
-                </div>
-                <div class="nearby-show-more" id="more-actividades" style="display:none;">
-                    <button onclick="showMoreNearby('actividades')"><?php echo $t['ver_mas_activ']; ?></button>
-                </div>
-            </div>
-        </div>
-
-        <div id="nearby-eventos-section" class="alo-card" style="display:none;">
-            <div class="alo-card-body">
-                <h2 class="alo-card-title" style="font-size:1.1rem;font-weight:700;color:#2F5233;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #81C784;display:flex;align-items:center;gap:8px;">🎭 Eventos culturales cercanos</h2>
-                <div id="nearby-eventos" class="nearby-grid">
-                    <div class="skeleton skeleton-card"></div>
-                    <div class="skeleton skeleton-card"></div>
-                    <div class="skeleton skeleton-card"></div>
-                </div>
-                <div class="nearby-show-more" id="more-eventos" style="display:none;">
-                    <button onclick="showMoreNearby('eventos')"><?php echo $t['ver_mas_eventos']; ?></button>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <!-- ── SIDEBAR ── -->
@@ -2518,22 +2420,6 @@ if (file_exists($header_path)) {
             </div>
         </div>
 
-        <!-- CTA Registro -->
-        <div class="cta-card">
-            <div style="font-size:1.8rem;margin-bottom:8px;line-height:1;">🌿</div>
-            <h3 style="font-size:1rem;font-weight:700;color:#fff!important;margin-bottom:8px;"><?php echo htmlspecialchars($t['cta_titulo']); ?></h3>
-            <p style="font-size:0.8rem;color:rgba(255,255,255,0.85)!important;margin-bottom:14px;line-height:1.5;"><?php echo htmlspecialchars($t['cta_desc']); ?></p>
-            <!-- ✅ REFACTORIZADO: <a href> nativos — Google los sigue, accesibles con teclado -->
-            <a href="/login.html?action=register&ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
-               class="btn-white">
-                ✨ <?php echo $t['cta_register'] ?? 'Registrarme gratis'; ?>
-            </a>
-            <a href="/login.html?ref=alojamiento&slug=<?php echo urlencode($slug); ?>"
-               class="btn-outline-white">
-                <?php echo $t['cta_login'] ?? 'Ya tengo cuenta'; ?>
-            </a>
-        </div>
-
         <!-- Compartir -->
         <div style="background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);padding:18px;text-align:center;">
             <p style="font-size:0.82rem;color:#666;margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Compartir</p>
@@ -2692,171 +2578,6 @@ if (file_exists($header_path)) {
     };
 
     // ── Mapa eliminado — ahora se usa enlace a rutas.php ──────────────────────
-
-    // ── Contenido cercano ─────────────────────────────────────────────────────
-    var nearbyData   = null;
-    var nearbyLoaded = false;
-
-    var nearbyConfig = {
-        alojamientos: { section: 'nearby-alojamientos-section', grid: 'nearby-alojamientos', more: 'more-alojamientos', key: 'alojamientos',      emoji: '🏠' },
-        lugares:      { section: 'nearby-lugares-section',      grid: 'nearby-lugares',      more: 'more-lugares',      key: 'lugares',            emoji: '🏛️' },
-        actividades:  { section: 'nearby-actividades-section',  grid: 'nearby-actividades',  more: 'more-actividades',  key: 'actividades',        emoji: '🎯' },
-        eventos:      { section: 'nearby-eventos-section',      grid: 'nearby-eventos',      more: 'more-eventos',      key: 'eventos_similares',  emoji: '🎭' }
-    };
-
-    var nearbyAllItems = {};
-
-    function loadNearby() {
-        if (nearbyLoaded || !alo || !alo.latitude || !alo.longitude) return;
-        nearbyLoaded = true;
-
-        var url = '/alojamiento-modular/api/alojamiento-data.php'
-            + '?slug=' + encodeURIComponent(alo.slug)
-            + '&lat='  + alo.latitude
-            + '&lng='  + alo.longitude
-            + '&radius=50'
-            + '&mode=nearby';
-
-        fetch(url)
-            .then(function(r) { return r.json(); })
-            .then(function(resp) {
-                if (!resp.success || !resp.data) return;
-                nearbyData = resp.data;
-                window._nearbyData = nearbyData;
-
-                // Renderizar secciones
-                Object.keys(nearbyConfig).forEach(function(type) {
-                    var cfg   = nearbyConfig[type];
-                    var items = nearbyData[cfg.key] || [];
-                    nearbyAllItems[type] = items;
-                    renderNearbySection(type, items);
-                });
-            })
-            .catch(function(err) {
-                console.error('Error cargando contenido cercano:', err);
-            });
-    }
-
-    function renderNearbySection(type, items) {
-        var cfg     = nearbyConfig[type];
-        var section = document.getElementById(cfg.section);
-        var grid    = document.getElementById(cfg.grid);
-        var moreBtn = document.getElementById(cfg.more);
-        if (!section || !grid) return;
-
-        if (!items || items.length === 0) {
-            // No mostrar sección si no hay resultados
-            return;
-        }
-
-        section.style.display = 'block';
-        grid.innerHTML = '';
-
-        var shown = items.slice(0, 4);
-        shown.forEach(function(item) {
-            grid.appendChild(createNearbyCard(item, type, cfg.emoji));
-        });
-
-        if (items.length > 4 && moreBtn) {
-            moreBtn.style.display = 'block';
-        }
-    }
-
-    window.showMoreNearby = function(type) {
-        var cfg     = nearbyConfig[type];
-        var grid    = document.getElementById(cfg.grid);
-        var moreBtn = document.getElementById(cfg.more);
-        var items   = nearbyAllItems[type] || [];
-        if (!grid) return;
-        items.slice(4).forEach(function(item) {
-            grid.appendChild(createNearbyCard(item, type, cfg.emoji));
-        });
-        if (moreBtn) moreBtn.style.display = 'none';
-    };
-
-    function createNearbyCard(item, type, emoji) {
-        var card = document.createElement('a');
-        card.className = 'nearby-card';
-        card.href = item.url || '#';
-
-        // Imagen
-        var imgWrap = document.createElement('div');
-        imgWrap.className = 'nearby-card-img';
-
-        if (item.main_image) {
-            var img = document.createElement('img');
-            img.src     = fixUrl(item.main_image);
-            img.alt     = item.name || '';
-            img.loading = 'lazy';
-            img.onerror = function() {
-                imgWrap.innerHTML = '<div class="nearby-card-img-placeholder">' + emoji + '</div>';
-            };
-            imgWrap.appendChild(img);
-        } else {
-            imgWrap.innerHTML = '<div class="nearby-card-img-placeholder">' + emoji + '</div>';
-        }
-
-        if (item.distance > 0) {
-            var dist = document.createElement('span');
-            dist.className   = 'nearby-card-dist';
-            dist.textContent = item.distance + ' ' + (T.km || 'km');
-            imgWrap.appendChild(dist);
-        }
-
-        // Cuerpo
-        var body = document.createElement('div');
-        body.className = 'nearby-card-body';
-
-        var name = document.createElement('div');
-        name.className   = 'nearby-card-name';
-        name.textContent = item.name || '';
-        body.appendChild(name);
-
-        if (item.municipality) {
-            var meta = document.createElement('div');
-            meta.className   = 'nearby-card-meta';
-            meta.textContent = '📍 ' + item.municipality;
-            body.appendChild(meta);
-        }
-
-        // Precio / info extra
-        if (type === 'alojamientos' && item.price_per_night > 0) {
-            var p = document.createElement('div');
-            p.className   = 'nearby-card-price';
-            p.textContent = item.price_per_night + '€ / ' + (T.noche || 'noche');
-            body.appendChild(p);
-        } else if (type === 'actividades' && item.price > 0) {
-            var p2 = document.createElement('div');
-            p2.className   = 'nearby-card-price';
-            p2.textContent = (T.desde || 'desde') + ' ' + item.price + '€';
-            body.appendChild(p2);
-        } else if (type === 'eventos') {
-            if (item.is_free == 1) {
-                var fr = document.createElement('span');
-                fr.className   = 'nearby-card-free';
-                fr.textContent = T.gratis || 'Gratis';
-                body.appendChild(fr);
-            } else if (item.ticket_price > 0) {
-                var tp = document.createElement('div');
-                tp.className   = 'nearby-card-price';
-                tp.textContent = item.ticket_price + '€';
-                body.appendChild(tp);
-            }
-            if (item.start_date) {
-                var dt = document.createElement('div');
-                dt.className   = 'nearby-card-meta';
-                dt.textContent = '📅 ' + fmtDate(item.start_date);
-                body.appendChild(dt);
-            }
-        }
-
-        card.appendChild(imgWrap);
-        card.appendChild(body);
-        return card;
-    }
-
-    // Cargar nearby automáticamente tras 1.5s (sin esperar scroll)
-    setTimeout(loadNearby, 1500);
 
     // ── Compartir ─────────────────────────────────────────────────────────────
     window.shareAlo = function(platform) {

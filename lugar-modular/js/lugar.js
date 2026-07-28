@@ -10,6 +10,7 @@
 
     var lug   = window.LUG_DATA;
     // Compatibilidad: el PHP puede pasar 'photos' o 'fotos'
+    var T     = window.LUG_T || {}; // Translations for JS
     var fotos = (lug && lug.photos) ? lug.photos : ((lug && lug.fotos) ? lug.fotos : []);
     var API   = '/lugar-modular/api/lugar-data.php';
 
@@ -111,6 +112,13 @@
        MAPA DIFERIDO (Leaflet — carga al clic o al ser visible)
        ══════════════════════════════════════════════════════ */
     var mapLoaded = false;
+    var leafletMap = null;
+    var nearbyLayers = {
+        alojamientos: null,
+        lugares: null,
+        actividades: null,
+        eventos: null,
+    };
 
     // initMap acepta parámetros opcionales (compatibilidad con onclick del HTML)
     // o los lee de window.LUG_DATA si no se pasan
@@ -144,9 +152,18 @@
 
         var script  = document.createElement('script');
         script.src  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/4K9+sNF0Ncn5BlYETcCc=';
+        script.crossOrigin = '';
         script.onload = function() {
-            var map = window.L.map(mapEl, { zoomControl: true, scrollWheelZoom: false })
+            // Initialize map and store it
+            leafletMap = window.L.map(mapEl, { zoomControl: true, scrollWheelZoom: false })
                 .setView([mapLat, mapLng], 14);
+
+            // Initialize layer groups
+            nearbyLayers.alojamientos = L.layerGroup().addTo(leafletMap);
+            nearbyLayers.lugares      = L.layerGroup().addTo(leafletMap);
+            nearbyLayers.actividades  = L.layerGroup().addTo(leafletMap);
+            nearbyLayers.eventos      = L.layerGroup().addTo(leafletMap);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -173,28 +190,60 @@
                 .bindPopup(popup)
                 .openPopup();
 
-            // Si ya tenemos datos cercanos, añadir marcadores
-            if (window._nearbyDataLug) addNearbyMarkers(map, window._nearbyDataLug);
-            window._nearbyMapLug = map;
+            // Show map controls
+            var mapControls = document.getElementById('map-controls');
+            if (mapControls) mapControls.style.display = 'block';
+
+            // Add event listeners for toggle buttons
+            document.querySelectorAll('.map-toggle-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var layerType = this.dataset.layer;
+                    toggleLayer(layerType, this);
+                });
+            });
+
+            // If nearby data is already loaded, add markers to layers
+            if (window._nearbyDataLug) {
+                addNearbyMarkersToLayers(window._nearbyDataLug);
+            }
+            window._nearbyMapLug = leafletMap; // Store map instance for nearby data loading later
         };
         script.onerror = function() {
             mapLoaded = false;
             if (placeholder) {
                 placeholder.style.display = 'flex';
-                placeholder.innerHTML = '<div class="map-ph-icon">🗺️</div><strong>Error al cargar el mapa</strong><span class="map-ph-hint" style="cursor:pointer;" onclick="initMap()">Haz clic para reintentar</span>';
+                placeholder.innerHTML = '<div class="map-ph-icon">🗺️</div><strong>Error al cargar el mapa</strong><span class="map-ph-hint" style="cursor:pointer;" onclick="initMap()">Haz clic para reintentar</span>'; // Use T for translations here
             }
         };
         document.head.appendChild(script);
     };
 
-    function addNearbyMarkers(map, data) {
+    function toggleLayer(layerType, button) {
+        if (!leafletMap || !nearbyLayers[layerType]) return;
+
+        if (leafletMap.hasLayer(nearbyLayers[layerType])) {
+            leafletMap.removeLayer(nearbyLayers[layerType]);
+            if (button) button.classList.remove('active');
+        } else {
+            leafletMap.addLayer(nearbyLayers[layerType]);
+            if (button) button.classList.add('active');
+        }
+    }
+
+    function addNearbyMarkersToLayers(data) {
+        if (!leafletMap) return; // Map not initialized yet
+
         var configs = [
-            { items: (data.alojamientos || []).slice(0, 5),      emoji: '🏠', color: '#2F5233' },
-            { items: (data.lugares || []).slice(0, 5),           emoji: '🏛️', color: '#1565C0' },
-            { items: (data.actividades || []).slice(0, 4),       emoji: '🎯', color: '#E65100' },
-            { items: (data.eventos_similares || []).slice(0, 4), emoji: '🎭', color: '#6A1B9A' }
+            { type: 'alojamientos', items: data.alojamientos || [],      emoji: '🏠', color: '#2F5233' },
+            { type: 'lugares',      items: data.lugares || [],           emoji: '🏛️', color: '#1565C0' },
+            { type: 'actividades',  items: data.actividades || [],       emoji: '🎯', color: '#E65100' },
+            { type: 'eventos',      items: data.eventos_similares || [], emoji: '🎭', color: '#6A1B9A' }
         ];
+
         configs.forEach(function(cfg) {
+            if (!nearbyLayers[cfg.type]) {
+                nearbyLayers[cfg.type] = L.layerGroup().addTo(leafletMap);
+            }
             cfg.items.forEach(function(item) {
                 if (!item.latitude || !item.longitude) return;
                 var ic = L.divIcon({
@@ -204,7 +253,7 @@
                 });
                 var dist = item.distance > 0 ? ' · ' + item.distance + ' km' : '';
                 L.marker([item.latitude, item.longitude], { icon: ic })
-                    .addTo(map)
+                    .addTo(nearbyLayers[cfg.type])
                     .bindPopup('<b>' + escHtml(item.name) + '</b><br><small>' + escHtml(item.municipality || '') + dist + '</small>');
             });
         });
@@ -263,7 +312,7 @@
                 window._nearbyDataLug = nearbyData;
 
                 // Añadir marcadores si el mapa ya está listo
-                if (window._nearbyMapLug) addNearbyMarkers(window._nearbyMapLug, nearbyData);
+                if (window._nearbyMapLug) addNearbyMarkersToLayers(nearbyData);
 
                 // Renderizar cada sección
                 Object.keys(nearbyConfig).forEach(function(type) {
@@ -352,7 +401,7 @@
         if (item.distance > 0) {
             var dist = document.createElement('span');
             dist.className   = 'nearby-card-dist';
-            dist.style.cssText = 'position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,.55);color:#fff;font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:10px;';
+            dist.style.cssText = 'position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,.55);color:#fff;font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:10px;z-index:10;';
             dist.textContent = item.distance + ' km';
             imgWrap.appendChild(dist);
         }
@@ -390,7 +439,7 @@
         } else if (type === 'eventos') {
             if (item.is_free == 1) {
                 var fr = document.createElement('span');
-                fr.className   = 'nearby-card-free';
+                fr.className   = 'nearby-card-free'; // Rely on CSS for styling
                 fr.textContent = 'Gratis';
                 body.appendChild(fr);
             } else if (item.ticket_price > 0) {
