@@ -2259,17 +2259,11 @@ if (file_exists($header_path)) {
             </div>
 
             <!-- Formulario inline: solo email -->
-            <div id="cta-form-wrap">
-                <form id="cta-quick-form" onsubmit="ctaQuickRegister(event)" style="display:flex;gap:6px;margin-bottom:10px;">
+            <div id="cta-form-wrap" class="cta-form-container">
+                <form id="cta-quick-form" onsubmit="ctaQuickRegister(event)" class="cta-quick-form-inner">
                     <input type="email" id="cta-email" placeholder="<?php echo htmlspecialchars($c['placeholder']); ?>"
-                        required
-                        style="flex:1;padding:10px 12px;border:none;border-radius:7px;font-size:0.88rem;
-                               outline:none;font-family:inherit;background:#fff;color:#333;min-width:0;">
-                    <button type="submit" style="
-                        background:#F9A825;color:#1a2e1a;border:none;border-radius:7px;
-                        padding:10px 14px;font-weight:700;font-size:0.85rem;cursor:pointer;
-                        white-space:nowrap;transition:background 0.2s;font-family:inherit;
-                    "><?php echo $c['btn_email']; ?></button>
+                        required class="cta-email-input">
+                    <button type="submit" class="cta-submit-btn"><?php echo $c['btn_email']; ?></button>
                 </form>
 
                 <!-- Separador -->
@@ -2307,8 +2301,23 @@ if (file_exists($header_path)) {
         </div>
 
         <style>
+        /* Estilos base del formulario para desacoplar de inline */
+        .cta-quick-form-inner { display: flex; gap: 6px; margin-bottom: 10px; }
+        .cta-email-input { flex: 1; padding: 10px 12px; border: none; border-radius: 7px; font-size: 0.88rem; outline: none; font-family: inherit; background: #fff; color: #333; min-width: 0; }
+        .cta-submit-btn { background: #F9A825; color: #1a2e1a; border: none; border-radius: 7px; padding: 10px 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: background 0.2s; font-family: inherit; }
+        
+        /* Estilos de :focus y :hover */
         #cta-email:focus { box-shadow: 0 0 0 3px rgba(249,168,37,0.5); }
-        #cta-quick-form button:hover { background: #e69800 !important; }
+        .cta-submit-btn:hover { background: #e69800 !important; }
+        </style>
+        
+        <!-- FIX DEFINITIVO: Ajuste del formulario de email en PC para que no se descuadre -->
+        <style>
+        @media (min-width: 900px) {
+            .cta-quick-form-inner { flex-wrap: wrap; }
+            .cta-email-input { flex-basis: 100%; margin-bottom: 8px; }
+            .cta-submit-btn { flex-grow: 1; }
+        }
         </style>
 
         <script>
