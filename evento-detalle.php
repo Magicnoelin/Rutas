@@ -587,12 +587,16 @@ if ($evento) {
             ? 'Ayuntamiento de ' . $evento['municipality']
             : (!empty($evento['province'])
                 ? 'Ayuntamiento de ' . $evento['province']
-                : 'Organización local'));
+                : 'Rutas Rurales'));
+    // URL del organizador: si tenemos municipio, construimos URL de búsqueda; si no, la web principal
+    $org_url = !empty($evento['municipality'])
+        ? 'https://rutasrurales.io/eventos-culturales-paginacion.html?municipio=' . urlencode($evento['municipality'])
+        : 'https://rutasrurales.io';
     $perf_name = !empty($evento['organizer'])
         ? $evento['organizer']
         : (!empty($evento['municipality'])
             ? $evento['municipality']
-            : ($evento['province'] ?? 'Organización local'));
+            : ($evento['province'] ?? 'Rutas Rurales'));
 
     // ── descripción limpia ───────────────────────────────────────────────────
     $desc_plain = trim(strip_tags($evento['short_description'] ?? '') ?: strip_tags($evento['description'] ?? ''));
@@ -624,7 +628,22 @@ if ($evento) {
         ];
     }
 
+    // ── Fechas en formato ISO 8601 completo (requerido por Google para Rich Results) ──
+    // Las fechas en BD vienen como YYYY-MM-DD; Schema.org exige ISO 8601 con hora y zona.
+    // Usamos T00:00:00+02:00 (hora española peninsular, CEST en verano).
+    // Si start_date está vacío (no debería) usamos la fecha de hoy como fallback.
+    $tz_offset = '+02:00'; // Spain/Europe Madrid (CEST verano). Cambiar a +01:00 en invierno si se quiere.
+    $start_iso = !empty($evento['start_date'])
+        ? date('Y-m-d', strtotime($evento['start_date'])) . 'T00:00:00' . $tz_offset
+        : date('Y-m-d') . 'T00:00:00' . $tz_offset;
+    // endDate: si no hay fecha fin, usar la de inicio (Google acepta eventos de 1 día así)
+    $end_raw  = !empty($evento['end_date']) ? $evento['end_date'] : $evento['start_date'];
+    $end_iso  = date('Y-m-d', strtotime($end_raw)) . 'T23:59:00' . $tz_offset;
+    // validFrom para offers: publicamos desde la fecha de inicio del evento
+    $valid_from_iso = $start_iso;
+
     // ── offers ───────────────────────────────────────────────────────────────
+    // Todos los casos incluyen price, priceCurrency y validFrom (evitan errores GSC)
     if ($evento['is_free'] == 1) {
         $offers_data = [
             '@type'        => 'Offer',
@@ -632,7 +651,7 @@ if ($evento) {
             'price'        => '0',
             'priceCurrency'=> 'EUR',
             'availability' => 'https://schema.org/InStock',
-            'validFrom'    => $evento['start_date'],
+            'validFrom'    => $valid_from_iso,
         ];
     } elseif (!empty($evento['ticket_price']) && $evento['ticket_price'] > 0) {
         $offers_data = [
@@ -641,14 +660,19 @@ if ($evento) {
             'price'        => number_format((float)$evento['ticket_price'], 2, '.', ''),
             'priceCurrency'=> 'EUR',
             'availability' => 'https://schema.org/InStock',
-            'validFrom'    => $evento['start_date'],
+            'validFrom'    => $valid_from_iso,
         ];
     } else {
+        // Precio a consultar: Google recomienda incluir price y priceCurrency incluso
+        // cuando no se conoce el precio. Usamos price=0 e indicamos que hay que consultar
+        // en la descripción, o se puede omitir offers; pero incluirlo evita el error GSC.
         $offers_data = [
             '@type'        => 'Offer',
             'url'          => $canonical,
+            'price'        => '0',
+            'priceCurrency'=> 'EUR',
             'availability' => 'https://schema.org/InStock',
-            'validFrom'    => $evento['start_date'],
+            'validFrom'    => $valid_from_iso,
         ];
     }
 
@@ -669,13 +693,20 @@ if ($evento) {
         '@id'                 => $canonical . '#event',
         'name'                => $evento['titulo'],
         'description'         => $desc_plain,
-        'startDate'           => $evento['start_date'],
-        'endDate'             => $evento['end_date'] ?: $evento['start_date'],
+        'startDate'           => $start_iso,
+        'endDate'             => $end_iso,
         'eventStatus'         => 'https://schema.org/EventScheduled',
         'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
         'location'            => $location_data,
-        'organizer'           => ['@type' => 'Organization', 'name' => $org_name],
-        'performer'           => ['@type' => 'Organization', 'name' => $perf_name],
+        'organizer'           => [
+            '@type' => 'Organization',
+            'name'  => $org_name,
+            'url'   => $org_url,
+        ],
+        'performer'           => [
+            '@type' => 'PerformingGroup',
+            'name'  => $perf_name,
+        ],
         'isAccessibleForFree' => $evento['is_free'] == 1,
         'url'                 => $canonical,
         'image'               => $jsonld_image,

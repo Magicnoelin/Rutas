@@ -193,6 +193,11 @@ RewriteRule ^([a-z][a-z0-9\-]+)/?$ /lugar/$1 [R=301,L]
 # ============================================================
 # 4. PARÁMETROS ANTIGUOS (?slug= o ?id=)
 # ============================================================
+
+# Intercepta el parámetro antiguo y lo manda directamente al slug definitivo
+RewriteCond %{QUERY_STRING} ^slug=casa-trabancos$ [NC]
+RewriteRule ^detalle\.html$ /alojamiento/casa-trabancos-valladolid? [R=301,L]
+
 RewriteCond %{THE_REQUEST} \s/+lugar-interes\.html\?slug=([^\s&]+) [NC]
 RewriteRule ^ /lugar/%1? [R=301,L]
 

@@ -145,26 +145,37 @@ function renderEventosLandingListing(array $ctx): void
             $diaStart    = '';
             $mesStart    = '';
             $dateIso     = '';
+            $dateIsoFull = ''; // ISO 8601 completo para itemprop (requerido por Google)
+            $tz_offset   = '+02:00'; // Spain/Europe Madrid (CEST verano)
             if (!empty($ev['start_date'])) {
                 $dt = DateTime::createFromFormat('Y-m-d', $ev['start_date']);
                 if ($dt) {
-                    $diaStart = $dt->format('d');
-                    $mesStart = $mesLabels[(int)$dt->format('n')] ?? '';
-                    $fechaStart = $dt->format($lang === 'en' ? 'd M Y' : 'd/m/Y');
-                    $dateIso  = $ev['start_date'];
+                    $diaStart    = $dt->format('d');
+                    $mesStart    = $mesLabels[(int)$dt->format('n')] ?? '';
+                    $fechaStart  = $dt->format($lang === 'en' ? 'd M Y' : 'd/m/Y');
+                    $dateIso     = $ev['start_date']; // solo fecha (para datetime="" del <time>)
+                    $dateIsoFull = $ev['start_date'] . 'T00:00:00' . $tz_offset; // ISO 8601 completo para itemprop
                 }
             }
 
             // Fecha fin (si existe y es diferente)
-            $fechaEnd = '';
-            $dateIsoEnd = '';
+            $fechaEnd       = '';
+            $dateIsoEnd     = '';
+            $dateIsoEndFull = ''; // ISO 8601 completo para itemprop endDate
             if (!empty($ev['fecha_fin'])) {
                 $dtEnd = DateTime::createFromFormat('Y-m-d', $ev['fecha_fin']);
                 if ($dtEnd) {
-                    $fechaEnd   = $dtEnd->format($lang === 'en' ? 'd M Y' : 'd/m/Y');
-                    $dateIsoEnd = $ev['fecha_fin'];
+                    $fechaEnd       = $dtEnd->format($lang === 'en' ? 'd M Y' : 'd/m/Y');
+                    $dateIsoEnd     = $ev['fecha_fin'];
+                    $dateIsoEndFull = $ev['fecha_fin'] . 'T23:59:00' . $tz_offset;
                 }
             }
+            // Si no hay fecha fin, usar la fecha inicio con hora final del día
+            if (empty($dateIsoEndFull) && !empty($dateIsoFull)) {
+                $dateIsoEndFull = (!empty($ev['start_date']) ? $ev['start_date'] : date('Y-m-d')) . 'T23:59:00' . $tz_offset;
+            }
+            // validFrom para offers: ISO 8601 completo desde el inicio del evento
+            $validFromIso = $dateIsoFull ?: (date('Y-m-d') . 'T00:00:00' . $tz_offset);
         ?>
         <li class="lnd-card lnd-card--evento" itemscope itemtype="https://schema.org/Event">
 
@@ -231,15 +242,25 @@ function renderEventosLandingListing(array $ctx): void
                 <!-- Fecha(s) -->
                 <?php if ($fechaStart): ?>
                 <div class="lnd-card__dates">
-                    <time class="lnd-card__date-text" datetime="<?= htmlspecialchars($dateIso) ?>" itemprop="startDate">
+                    <!-- itemprop="startDate" con ISO 8601 completo (requerido por Google Rich Results) -->
+                    <time class="lnd-card__date-text" datetime="<?= htmlspecialchars($dateIsoFull) ?>" itemprop="startDate">
                         📅 <?= htmlspecialchars($fechaStart) ?>
                     </time>
                     <?php if ($fechaEnd): ?>
-                    <time class="lnd-card__date-text lnd-card__date-text--end" datetime="<?= htmlspecialchars($dateIsoEnd) ?>" itemprop="endDate">
+                    <time class="lnd-card__date-text lnd-card__date-text--end" datetime="<?= htmlspecialchars($dateIsoEndFull) ?>" itemprop="endDate">
                         → <?= htmlspecialchars($fechaEnd) ?>
                     </time>
+                    <?php else: ?>
+                    <!-- endDate requerido: si no hay fecha fin, repetir inicio con T23:59 -->
+                    <meta itemprop="endDate" content="<?= htmlspecialchars($dateIsoEndFull) ?>">
                     <?php endif; ?>
                 </div>
+                <?php else: ?>
+                <!-- Fechas en meta oculto si no hay visualización -->
+                <?php if (!empty($dateIsoFull)): ?>
+                <meta itemprop="startDate" content="<?= htmlspecialchars($dateIsoFull) ?>">
+                <meta itemprop="endDate" content="<?= htmlspecialchars($dateIsoEndFull) ?>">
+                <?php endif; ?>
                 <?php endif; ?>
 
                 <!-- Descripción corta -->
@@ -268,31 +289,33 @@ function renderEventosLandingListing(array $ctx): void
                 <meta itemprop="description" content="<?= htmlspecialchars($descFallback) ?>">
                 <?php endif; ?>
                 <meta itemprop="isAccessibleForFree" content="<?= $isFree ? 'true' : 'false' ?>">
-                <!-- organizer: requerido por Google Search Console.
-                     Si hay dato real en BD se usa; si no, fallback al municipio/provincia. -->
+                <!-- organizer: requerido por Google Search Console (name + url obligatorios) -->
+                <?php
+                $orgName = !empty($ev['organizer'])
+                    ? $ev['organizer']
+                    : (!empty($ev['municipality'])
+                        ? 'Ayuntamiento de ' . $ev['municipality']
+                        : (!empty($ev['province'])
+                            ? 'Ayuntamiento de ' . $ev['province']
+                            : 'Rutas Rurales'));
+                $orgUrl = !empty($ev['municipality'])
+                    ? 'https://rutasrurales.io/eventos-culturales-paginacion.html?municipio=' . urlencode($ev['municipality'])
+                    : 'https://rutasrurales.io';
+                $perfName = !empty($ev['organizer'])
+                    ? $ev['organizer']
+                    : (!empty($ev['municipality'])
+                        ? $ev['municipality']
+                        : ($ev['province'] ?? 'Rutas Rurales'));
+                ?>
                 <span itemprop="organizer" itemscope itemtype="https://schema.org/Organization" hidden>
-                    <meta itemprop="name" content="<?= htmlspecialchars(
-                        !empty($ev['organizer'])
-                            ? $ev['organizer']
-                            : (!empty($ev['municipality'])
-                                ? 'Ayuntamiento de ' . $ev['municipality']
-                                : (!empty($ev['province'])
-                                    ? 'Ayuntamiento de ' . $ev['province']
-                                    : 'Organización local'))
-                    ) ?>">
+                    <meta itemprop="name" content="<?= htmlspecialchars($orgName) ?>">
+                    <meta itemprop="url" content="<?= htmlspecialchars($orgUrl) ?>">
                 </span>
-                <!-- performer: recomendado por Google; para eventos populares/tradicionales
-                     la entidad organizadora actúa también como ejecutora del evento -->
-                <span itemprop="performer" itemscope itemtype="https://schema.org/Organization" hidden>
-                    <meta itemprop="name" content="<?= htmlspecialchars(
-                        !empty($ev['organizer'])
-                            ? $ev['organizer']
-                            : (!empty($ev['municipality'])
-                                ? $ev['municipality']
-                                : ($ev['province'] ?? 'Organización local'))
-                    ) ?>">
+                <!-- performer: PerformingGroup es más preciso para eventos culturales -->
+                <span itemprop="performer" itemscope itemtype="https://schema.org/PerformingGroup" hidden>
+                    <meta itemprop="name" content="<?= htmlspecialchars($perfName) ?>">
                 </span>
-                <!-- offers -->
+                <!-- offers: todos los campos requeridos (price, priceCurrency, validFrom) siempre presentes -->
                 <span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
                     <?php if ($isFree): ?>
                     <meta itemprop="price" content="0">
@@ -300,9 +323,15 @@ function renderEventosLandingListing(array $ctx): void
                     <?php elseif ($ticketPrice): ?>
                     <meta itemprop="price" content="<?= number_format((float)$ticketPrice, 2, '.', '') ?>">
                     <meta itemprop="priceCurrency" content="EUR">
+                    <?php else: ?>
+                    <!-- Precio desconocido: price=0 como valor neutro (evita error GSC "falta price") -->
+                    <meta itemprop="price" content="0">
+                    <meta itemprop="priceCurrency" content="EUR">
                     <?php endif; ?>
                     <meta itemprop="availability" content="https://schema.org/InStock">
                     <meta itemprop="url" content="<?= $evUrl ?>">
+                    <!-- validFrom en ISO 8601 completo (evita error GSC "falta validFrom") -->
+                    <meta itemprop="validFrom" content="<?= htmlspecialchars($validFromIso) ?>">
                 </span>
 
                 <!-- Footer: CTA -->
