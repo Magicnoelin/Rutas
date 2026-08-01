@@ -246,6 +246,11 @@ function renderCruceSemantico(array $ctx): void
                     ) ?>">
                 </span>
                 <!-- offers: requerido por Google, incluso para eventos gratuitos -->
+                <?php
+                $evValidFrom = !empty($ev['start_date'])
+                    ? date('Y-m-d', strtotime($ev['start_date'])) . 'T00:00:00+02:00'
+                    : date('Y-m-d') . 'T00:00:00+02:00';
+                ?>
                 <span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
                     <?php if ($evFree): ?>
                     <meta itemprop="price" content="0">
@@ -253,9 +258,14 @@ function renderCruceSemantico(array $ctx): void
                     <?php elseif (!empty($ev['ticket_price']) && $ev['ticket_price'] > 0): ?>
                     <meta itemprop="price" content="<?= number_format((float)$ev['ticket_price'], 2, '.', '') ?>">
                     <meta itemprop="priceCurrency" content="EUR">
+                    <?php else: ?>
+                    <meta itemprop="price" content="0">
+                    <meta itemprop="priceCurrency" content="EUR">
                     <?php endif; ?>
                     <meta itemprop="availability" content="https://schema.org/InStock">
                     <meta itemprop="url" content="<?= $evUrl ?>">
+                    <!-- validFrom en ISO 8601 completo (evita error GSC "falta validFrom") -->
+                    <meta itemprop="validFrom" content="<?= htmlspecialchars($evValidFrom) ?>">
                 </span>
     <a href="<?= $evUrl ?>" class="lnd-event-card__link">
         <?php if (!empty($ev['photo_url'])): ?>

@@ -77,19 +77,13 @@ function crearTarjetaAlojamiento(alojamiento) {
     const url = `/alojamiento/${slug}`;
 
     // Recopilar todas las fotos disponibles
-    let fotos = [];
-    if (alojamiento.main_image) {
-        fotos.push(alojamiento.main_image);
+    let fotos = alojamiento.Fotos || [];
+    if (fotos.length === 0) {
+        // Fallback a campos antiguos si `Fotos` está vacío
+        for (let i = 1; i <= 4; i++) {
+            if (alojamiento['photo' + i]) fotos.push(alojamiento['photo' + i]);
+        }
     }
-    // Si tu API devuelve un array de fotos, lo procesarías aquí
-    // if (alojamiento.photos && Array.isArray(alojamiento.photos) && alojamiento.photos.length > 0) {
-    //     fotos = alojamiento.photos;
-    // } else if (alojamiento.Foto1) { // Fallback para estructura antigua
-    //     if (alojamiento.Foto1) fotos.push(alojamiento.Foto1);
-    //     if (alojamiento.Foto2) fotos.push(alojamiento.Foto2);
-    //     if (alojamiento.Foto3) fotos.push(alojamiento.Foto3);
-    //     if (alojamiento.Foto4) fotos.push(alojamiento.Foto4);
-    // }
 
     if (fotos.length === 0) {
         fotos = ['/menu_images/image_not_found.webp'];

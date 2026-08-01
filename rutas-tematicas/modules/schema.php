@@ -27,6 +27,7 @@ function renderSchema(array $ruta, array $alojamientos, array $lugares, array $a
             'priceCurrency' => 'EUR',
             'availability'  => 'https://schema.org/InStock',
             'url'           => $rutaUrl,
+            'validFrom'     => date('Y-m-d') . 'T00:00:00+02:00',
         ],
     ];
 

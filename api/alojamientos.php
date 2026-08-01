@@ -144,65 +144,34 @@ try {
                                 // Si ya es una URL completa (https://...), usarla directamente
                                 if (preg_match('/^https?:\/\//', $fotoUrl)) {
                                     $fotos[] = $fotoUrl;
+                                } elseif (str_starts_with(trim($fotoUrl), '/')) {
+                                    // Si ya es una ruta relativa, usarla directamente
+                                    $fotos[] = trim($fotoUrl);
                                 } else {
-                                    // Es solo el nombre del archivo - buscar en TODAS las carpetas
-                                    $fotoFilename = basename($fotoUrl);
-                                    
-                                    // Rutas posibles:
-                                    // 1. /img/alojamientos/{slug}/ (carpeta correcta)
-                                    
-                                    $ruta1 = 'https://rutasrurales.io/img/alojamientos/' . $slug . '/' . $fotoFilename;
-                                    
-                                    // Añadir la ruta correcta como principal
-                                    $fotos[] = $ruta1;
-                                    
-                                    // Guardar alternativas para fallback
-                                    if (!isset($alojamiento['FotosAlternativos'])) {
-                                        $alojamiento['FotosAlternativos'] = [];
-                                    }
-                                    $alojamiento['FotosAlternativos'][] = $ruta1;
+                                    // Es solo el nombre del archivo, construir ruta relativa
+                                    $fotos[] = '/img/alojamientos/' . $slug . '/' . basename($fotoUrl);
                                 }
                             }
                         }
                     } else {
                         // URL única - limpiar espacios en blanco
                         $fotoValue = trim($fotoValue);
-                        
+
                         // Si ya es una URL completa (https://...), usarla directamente
                         if (preg_match('/^https?:\/\//', $fotoValue)) {
                             $fotos[] = $fotoValue;
+                        } elseif (str_starts_with($fotoValue, '/')) {
+                            // Si ya es una ruta relativa, usarla directamente
+                            $fotos[] = $fotoValue;
                         } else {
-                            // Es solo el nombre del archivo - buscar en TODAS las carpetas
+                            // Es solo el nombre del archivo, construir ruta relativa
                             $fotoFilename = basename($fotoValue);
-                            
-                            // Rutas posibles:
-                            // 1. /img/alojamientos/{slug}/ (carpeta correcta)
-                            // 2. /accommodations_images/{slug}/ (sistema nuevo)
-                            // 3. /Alojamientos_Images/ (sistema antiguo)
-                            
-                            $ruta1 = 'https://rutasrurales.io/img/alojamientos/' . $slug . '/' . $fotoFilename;
-                            $ruta2 = 'https://rutasrurales.io/accommodations_images/' . $slug . '/' . $fotoFilename;
-                            $ruta3 = 'https://rutasrurales.io/Alojamientos_Images/' . $fotoFilename;
-                            
-                            // Añadir la ruta correcta como principal
-                            $fotos[] = $ruta1;
-                            
-                            // Guardar alternativas para fallback
-                            if (!isset($alojamiento['FotosAlternativos'])) {
-                                $alojamiento['FotosAlternativos'] = [];
-                            }
-                            $alojamiento['FotosAlternativos'][] = $ruta2;
-                            $alojamiento['FotosAlternativos'][] = $ruta3;
+                            $fotos[] = '/img/alojamientos/' . $slug . '/' . $fotoFilename;
                         }
                     }
                 }
             }
-            
-            // Si no hay fotos, usar las alternativas
-            if (count($fotos) === 0 && !empty($alojamiento['FotosAlternativos'])) {
-                $fotos = $alojamiento['FotosAlternativos'];
-            }
-            
+
             $alojamiento['Fotos'] = $fotos;
 
             // Usar campos municipality y province directamente de la base de datos

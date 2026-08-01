@@ -121,7 +121,7 @@ function renderLandingListing(array $ctx): void
                     decoding="<?= $imgDecode ?>"
                     class="lnd-card__img"
                     itemprop="image"
-                    onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&auto=format&q=60'"
+                    onerror="this.src='https://rutasrurales.io/img/eventos-landing-hero/turismo_rural2.webp'"
                 >
                 <?php if (!empty($tipo)): ?>
                 <span class="lnd-card__type-badge"><?= $tipo ?></span>
