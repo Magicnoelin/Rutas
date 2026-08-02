@@ -240,15 +240,46 @@
 #lug-map-container { border-radius: var(--lug-r); overflow: hidden; box-shadow: var(--lug-shadow); margin-bottom: 24px; }
 #lug-map { height: 380px; width: 100%; background: #e8f0e8; display: none; }
 .map-placeholder {
-    height: 380px; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
+    height: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(135deg, #e8f0e8, #d4e8d4);
-    color: var(--lug-primary); gap: 12px; cursor: pointer;
+    color: var(--lug-primary);
+    gap: 12px;
+    cursor: pointer;
 }
+.map-placeholder .map-icon { font-size: 3rem; }
+.map-placeholder p { font-size: 0.9rem; color: var(--lug-text-l); }
 .map-ph-hint {
     background: var(--lug-primary); color: #fff;
     padding: 8px 20px; border-radius: 20px;
     font-size: 0.82rem; font-weight: 600;
+}
+.map-controls {
+    background: var(--lug-white);
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-top: 1px solid #eee;
+}
+.map-toggle-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: var(--lug-white);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    font-family: inherit;
+}
+.map-toggle-btn.active {
+    background: var(--lug-primary);
+    color: var(--lug-white);
+    border-color: var(--lug-primary);
 }
 
 /* ── CONTENIDO CERCANO ── */

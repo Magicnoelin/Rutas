@@ -243,7 +243,7 @@
 
         // Mostrar el div del mapa ANTES de cargar Leaflet para que tenga dimensiones
         if (placeholder) placeholder.style.display = 'none';
-        mapEl.style.cssText = 'display:block!important;height:280px!important;width:100%!important;border-radius:12px!important;';
+        mapEl.style.cssText = 'display:block!important;height:380px!important;width:100%!important;';
 
         // Cargar CSS de Leaflet si no está ya cargado
         if (!document.querySelector('link[href*="leaflet"]')) {
@@ -271,7 +271,7 @@
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 maxZoom: 18
-            }).addTo(map);
+            }).addTo(leafletMap);
 
             // Marcador principal del lugar
             var icon = L.divIcon({
@@ -289,7 +289,7 @@
                 + '</div>';
 
             L.marker([mapLat, mapLng], { icon: icon })
-                .addTo(map)
+                .addTo(leafletMap)
                 .bindPopup(popup)
                 .openPopup();
 

@@ -122,18 +122,23 @@ $_mob_lpfx = ($_cta_mob_lang !== 'es') ? '/' . $_cta_mob_lang : '';
 <?php endif; ?>
 
 <!-- ══════════════════════════════════════════════════════
-     FOOTER SIMPLE
+     FOOTER
      ══════════════════════════════════════════════════════ -->
-<footer class="site-footer" style="background:#1a2e1a;color:rgba(255,255,255,0.7);text-align:center;padding:28px 16px;">
-    <div style="display:flex;justify-content:center;gap:16px;margin-bottom:12px;">
+<footer class="site-footer" style="background:#1a2e1a;color:rgba(255,255,255,0.8);text-align:center;padding:32px 20px;font-size:0.85rem;">
+    <div style="display:flex;justify-content:center;gap:16px;margin-bottom:16px;">
         <a href="https://www.instagram.com/rutas_rurales/" target="_blank" rel="noopener" aria-label="Instagram"
-           style="color:rgba(255,255,255,0.7);font-size:1.3rem;text-decoration:none;">📸</a>
+           style="color:rgba(255,255,255,0.7);font-size:1.2rem;text-decoration:none;">📸</a>
+        <a href="#" aria-label="Facebook"
+           style="color:rgba(255,255,255,0.7);font-size:1.2rem;text-decoration:none;">📘</a>
+        <a href="#" aria-label="Twitter"
+           style="color:rgba(255,255,255,0.7);font-size:1.2rem;text-decoration:none;">🐦</a>
     </div>
-    <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px;">
-        <a href="/aviso-legal.html" style="color:rgba(255,255,255,0.6);font-size:0.82rem;text-decoration:none;">Aviso Legal</a>
-        <a href="/politica-cookies.html" style="color:rgba(255,255,255,0.6);font-size:0.82rem;text-decoration:none;">Cookies</a>
+    <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:12px;">
+        <a href="/aviso-legal.html" style="color:rgba(255,255,255,0.7);text-decoration:none;">Aviso Legal</a>
+        <a href="/politica-cookies.html" style="color:rgba(255,255,255,0.7);text-decoration:none;">Cookies</a>
+        <a href="/agradecimientos.html" style="color:rgba(255,255,255,0.7);text-decoration:none;">Agradecimientos</a>
     </div>
-    <p style="color:rgba(255,255,255,0.4);font-size:0.78rem;margin:0;">© 2026 rutasrurales.io · Todos los derechos reservados</p>
+    <p style="color:rgba(255,255,255,0.5);font-size:0.8rem;margin:0;">© 2026 rutasrurales.io · Todos los derechos reservados</p>
 </footer>
 
 <!-- ══════════════════════════════════════════════════════
