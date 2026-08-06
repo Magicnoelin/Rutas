@@ -68,7 +68,7 @@ const LANDING_I18N = [
 
         // Intro texto SEO
         'intro_p1' => 'Si buscas {FILTER_LABEL_LOWER} en {PROVINCE}, has llegado al lugar adecuado. {PROVINCE_VIBE}.',
-        'intro_p2' => 'A diferencia de las grandes plataformas de reservas, en rutasrurales.io encontrarás alojamientos verificados con contacto directo con el propietario, sin comisiones y con un profundo conocimiento del territorio. Cada alojamiento está a pocos minutos de {ATTRACTIONS_LIST}.',
+        'intro_p2' => 'A diferencia de las grandes plataformas, te ofrecemos alojamientos verificados con contacto directo y sin comisiones. Explora opciones en {INTERLINKING_LIST}.',
         'intro_tip' => '💡 <strong>Consejo local:</strong> La mayoría de propietarios ofrecen descuentos para estancias superiores a 3 noches. Contáctales directamente.',
 
         // Paginación
@@ -148,7 +148,7 @@ const LANDING_I18N = [
         'entry_fee_free'   => 'Free entry',
 
         'intro_p1' => 'If you are looking for {FILTER_LABEL_LOWER} in {PROVINCE}, you have come to the right place. {PROVINCE_VIBE}.',
-        'intro_p2' => 'Unlike large booking platforms, at rutasrurales.io you will find verified accommodations with direct contact with the owner, no commissions and deep local knowledge. Each property is just minutes from {ATTRACTIONS_LIST}.',
+        'intro_p2' => 'Unlike large platforms, we offer verified accommodations with direct owner contact and no commissions. Explore options in {INTERLINKING_LIST}.',
         'intro_tip' => '💡 <strong>Local tip:</strong> Most owners offer discounts for stays longer than 3 nights. Contact them directly.',
 
         'page_prev'     => '← Previous',
@@ -224,7 +224,7 @@ const LANDING_I18N = [
         'entry_fee_free'   => 'Entrée gratuite',
 
         'intro_p1' => 'Si vous cherchez des {FILTER_LABEL_LOWER} en {PROVINCE}, vous êtes au bon endroit. {PROVINCE_VIBE}.',
-        'intro_p2' => 'Contrairement aux grandes plateformes de réservation, rutasrurales.io propose des hébergements vérifiés avec contact direct avec le propriétaire, sans commission et avec une connaissance approfondie du territoire. Chaque propriété est à quelques minutes de {ATTRACTIONS_LIST}.',
+        'intro_p2' => 'Contrairement aux grandes plateformes, nous proposons des hébergements vérifiés avec contact direct du propriétaire et sans commissions. Découvrez des options en {INTERLINKING_LIST}.',
         'intro_tip' => '💡 <strong>Conseil local :</strong> La plupart des propriétaires offrent des réductions pour les séjours de plus de 3 nuits. Contactez-les directement.',
 
         'page_prev'     => '← Précédent',
@@ -300,7 +300,7 @@ const LANDING_I18N = [
         'entry_fee_free'   => 'Freier Eintritt',
 
         'intro_p1' => 'Wenn Sie {FILTER_LABEL_LOWER} in {PROVINCE} suchen, sind Sie hier genau richtig. {PROVINCE_VIBE}.',
-        'intro_p2' => 'Im Gegensatz zu großen Buchungsplattformen bietet rutasrurales.io verifizierte Unterkünfte mit direktem Kontakt zum Eigentümer, ohne Provisionen und mit tiefem Ortskenntnissen. Jede Unterkunft liegt nur Minuten entfernt von {ATTRACTIONS_LIST}.',
+        'intro_p2' => 'Im Gegensatz zu großen Plattformen bieten wir verifizierte Unterkünfte mit direktem Kontakt zum Eigentümer und ohne Provisionen. Entdecken Sie Optionen in {INTERLINKING_LIST}.',
         'intro_tip' => '💡 <strong>Lokaler Tipp:</strong> Die meisten Eigentümer bieten Rabatte für Aufenthalte über 3 Nächte. Kontaktieren Sie sie direkt.',
 
         'page_prev'     => '← Zurück',
@@ -376,7 +376,7 @@ const LANDING_I18N = [
         'entry_fee_free'   => '免费入场',
 
         'intro_p1' => '如果您正在寻找{PROVINCE}的{FILTER_LABEL_LOWER}，您来对地方了。{PROVINCE_VIBE}。',
-        'intro_p2' => '与大型预订平台不同，rutasrurales.io提供经过验证的住宿，可直接与业主联系，无佣金，并具有深厚的当地知识。每处住宿距{ATTRACTIONS_LIST}仅需数分钟。',
+        'intro_p2' => '与大型平台不同，我们提供经过验证的住宿，可直接与业主联系，无佣金。探索{INTERLINKING_LIST}的选项。',
         'intro_tip' => '💡 <strong>本地贴士：</strong>大多数业主为3晚以上住宿提供折扣，直接联系他们即可。',
 
         'page_prev'     => '← 上一页',

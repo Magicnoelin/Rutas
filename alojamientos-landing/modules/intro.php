@@ -37,19 +37,23 @@ function renderLandingIntro(array $ctx): void
     // Etiqueta del filtro principal en minúsculas (para insertar en texto)
     $filter_label_lower = !empty($filter_labels) ? mb_strtolower($filter_labels[0]) : ($lang === 'es' ? 'alojamientos rurales' : 'rural accommodation');
 
-    // Atractivos como lista legible
-    $attractions = $prov_data['attractions'] ?? [];
-    $attractions_str = '';
-    if (!empty($attractions)) {
-        if ($lang === 'zh') {
-            $attractions_str = implode('、', $attractions);
-        } else {
-            $last = array_pop($attractions);
-            $sep  = ['es'=>' y ', 'en'=>' and ', 'fr'=>' et ', 'de'=>' und ', 'zh'=>'和'][$lang] ?? ' y ';
-            $attractions_str = empty($attractions)
-                ? $last
-                : implode(', ', $attractions) . $sep . $last;
+    // Si hay provincia, usa la lista de atractivos. Si no, una lista de provincias para interlinking.
+    $interlinking_list_str = '';
+    if (!empty($province)) {
+        $attractions = $prov_data['attractions'] ?? [];
+        $interlinking_list_str = implode(', ', $attractions);
+    } else {
+        // Si no hay provincia, creamos una lista de provincias para interlinking
+        $all_provinces = LANDING_PROVINCIAS ?? [];
+        $province_links = [];
+        $base_path = ($lang === 'es') ? '/alojamientos/turismo-rural-' : "/{$lang}/alojamientos/turismo-rural-";
+
+        foreach ($all_provinces as $key => $p_data) {
+            $url = $base_path . $key;
+            $province_links[] = '<a href="' . htmlspecialchars($url) . '">' . htmlspecialchars($p_data['label']) . '</a>';
         }
+        // Unimos los enlaces con comas
+        $interlinking_list_str = implode(', ', $province_links);
     }
 
     // Interpolar variables en las cadenas
@@ -57,7 +61,7 @@ function renderLandingIntro(array $ctx): void
         'FILTER_LABEL_LOWER' => $filter_label_lower,
         'PROVINCE'           => $province,
         'PROVINCE_VIBE'      => $vibe,
-        'ATTRACTIONS_LIST'   => $attractions_str ?: $province,
+        'INTERLINKING_LIST'  => $interlinking_list_str ?: ($lang === 'es' ? 'Castilla y León' : 'Castile and León'),
         'FILTER_FEATURE'     => !empty($filter_labels[1]) ? mb_strtolower($filter_labels[1]) : ($lang === 'es' ? 'entorno natural único' : 'unique natural setting'),
         'FILTER_LABEL'       => !empty($filter_labels[0]) ? $filter_labels[0] : ($lang === 'es' ? 'Alojamientos rurales' : 'Rural accommodation'),
     ];
@@ -70,7 +74,7 @@ function renderLandingIntro(array $ctx): void
     // ── Inbound links: enriquecer párrafos con links internos ────────────
     if ($pdo !== null) {
         $p1  = procesarInboundLinks($p1,  $pdo);
-        $p2  = procesarInboundLinks($p2,  $pdo);
+        // No procesamos p2 para mantener los nuevos enlaces intactos
         $tip = procesarInboundLinks($tip, $pdo);
     }
 ?>
@@ -83,7 +87,7 @@ function renderLandingIntro(array $ctx): void
 
         <!-- Párrafo 1: provincia + vibe -->
         <?php if (!empty($p1)): ?>
-        <p class="lnd-intro__p"><?= $p1 ?></p>
+        <p class="lnd-intro__p"><?= $p1 // Permite HTML de procesarInboundLinks ?></p>
         <?php endif; ?>
 
         <!-- Párrafo 2: diferenciador rutasrurales.io -->
