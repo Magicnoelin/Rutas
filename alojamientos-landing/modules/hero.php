@@ -30,7 +30,7 @@ function renderLandingHero(array $ctx): void
     $has_hero_img = !empty($hero_image_url);
 
     $base_url = 'https://rutasrurales.io';
-    $list_url = $lang !== 'es' ? "$base_url/$lang/alojamientos-turisticos" : "$base_url/alojamientos-turisticos";
+    $list_url = $lang !== 'es' ? "$base_url/$lang/alojamientos/turismo-rural" : "$base_url/alojamientos/turismo-rural";
 
     // Enlace "ver todos en provincia" — slug solo-provincia (sin filtros)
     // p.ej. /de/alojamientos/zamora  (no turismo-rural-zamora, que sería la misma página)

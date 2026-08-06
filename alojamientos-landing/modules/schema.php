@@ -60,9 +60,9 @@ function renderLandingSchema(array $ctx): void
     $breadcrumb = [
         '@type' => 'BreadcrumbList',
         '@id'   => $canonical . '#breadcrumb',
-        'itemListElement' => [
+        'itemListElement' => [ 
             ['@type' => 'ListItem', 'position' => 1, 'name' => $bcLabel[0],   'item' => 'https://rutasrurales.io' . $langPrefix . '/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcLabel[1],   'item' => 'https://rutasrurales.io' . $langPrefix . '/alojamientos-turisticos'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcLabel[1],   'item' => 'https://rutasrurales.io' . $langPrefix . '/alojamientos/turismo-rural'],
             ['@type' => 'ListItem', 'position' => 3, 'name' => $filter_label . (!empty($province) ? ' · ' . $province : ''), 'item' => $canonical],
         ],
     ];

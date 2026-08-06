@@ -239,6 +239,10 @@ $ctx['hero_image_alt'] = $h1;
 $rel_prev = ($page > 1)                  ? $canonical . '?p=' . ($page - 1) : null;
 $rel_next = ($page < $result['pages'])   ? $canonical . '?p=' . ($page + 1) : null;
 
+// Define the general listings URL as requested
+$general_listings_url = $lang === 'es'
+    ? "$base_domain/alojamientos/turismo-rural"
+    : "$base_domain/$lang/alojamientos/turismo-rural";
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($lang) ?>" dir="<?= $t['dir'] ?? 'ltr' ?>">
@@ -420,7 +424,7 @@ a{color:var(--primary);text-decoration:none}
         <span>Rutas Rurales</span>
     </a>
     <nav class="lnd-navbar__nav" aria-label="Menú principal">
-        <a href="https://rutasrurales.io/alojamientos-turisticos">
+            <a href="<?= htmlspecialchars($general_listings_url) ?>">
             <?= htmlspecialchars($t['footer_listings']) ?>
         </a>
         <a href="https://rutasrurales.io/lugares-de-interes">
@@ -493,7 +497,7 @@ a{color:var(--primary);text-decoration:none}
     <div class="lnd-footer__inner">
         <nav class="lnd-footer__links" aria-label="Links de pie de página">
             <a href="https://rutasrurales.io/"><?= htmlspecialchars($t['footer_home']) ?></a>
-            <a href="https://rutasrurales.io/alojamientos-turisticos"><?= htmlspecialchars($t['footer_listings']) ?></a>
+            <a href="<?= htmlspecialchars($general_listings_url) ?>"><?= htmlspecialchars($t['footer_listings']) ?></a>
             <a href="https://rutasrurales.io/lugares-de-interes"><?= htmlspecialchars($t['footer_places']) ?></a>
             <a href="https://rutasrurales.io/eventos-culturales-paginacion.html"><?= htmlspecialchars($t['footer_events']) ?></a>
             <a href="https://rutasrurales.io/aviso-legal.html"><?= htmlspecialchars($t['footer_legal']) ?></a>
