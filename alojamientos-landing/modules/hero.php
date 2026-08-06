@@ -24,6 +24,11 @@ function renderLandingHero(array $ctx): void
     $filter_icons = $ctx['filter_icons']  ?? [];
     $filter_labs  = $ctx['filter_labels'] ?? [];
 
+    // Imagen Hero
+    $hero_image_url = $ctx['hero_image_url'] ?? '';
+    $hero_image_alt = $ctx['hero_image_alt'] ?? htmlspecialchars($h1);
+    $has_hero_img = !empty($hero_image_url);
+
     $base_url = 'https://rutasrurales.io';
     $list_url = $lang !== 'es' ? "$base_url/$lang/alojamientos-turisticos" : "$base_url/alojamientos-turisticos";
 
@@ -38,8 +43,25 @@ function renderLandingHero(array $ctx): void
     }
 ?>
 <!-- ══════════════════════════════════════════════════════════ HERO ══ -->
-<section class="lnd-hero" aria-label="Cabecera de búsqueda">
+<section class="lnd-hero<?= $has_hero_img ? ' has-hero-img' : '' ?>" aria-label="Cabecera de búsqueda">
 
+    <?php if ($has_hero_img): ?>
+    <div class="lnd-hero__bg-wrap" aria-hidden="true">
+        <img
+            src="<?= htmlspecialchars($hero_image_url) ?>"
+            alt="<?= htmlspecialchars($hero_image_alt) ?>"
+            width="1440"
+            height="500"
+            fetchpriority="high"
+            decoding="sync"
+            class="lnd-hero__bg-img"
+        >
+    </div>
+    <?php endif; ?>
+
+    <div class="lnd-hero__content">
+
+    
     <!-- Breadcrumb semántico (también en Schema, esto es para usuarios) -->
     <nav class="lnd-breadcrumb" aria-label="Breadcrumb">
         <ol itemscope itemtype="https://schema.org/BreadcrumbList">
@@ -117,6 +139,8 @@ function renderLandingHero(array $ctx): void
         </a>
     </p>
     <?php endif; ?>
+
+    </div><!-- /.lnd-hero__content -->
 
 </section>
 <!-- ════════════════════════════════════════════════════════ /HERO ══ -->

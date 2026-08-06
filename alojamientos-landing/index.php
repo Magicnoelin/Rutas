@@ -226,6 +226,15 @@ $og_image = !empty($result['items'][0]['photo_url'])
     ? $result['items'][0]['photo_url']
     : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
+// ── 9b. Imagen Hero ──────────────────────────────────────────────────────────
+$hero_image_url = 'https://rutasrurales.io/img/eventos-landing-hero/turismo_rural2.webp'; // Default
+if ($slug === 'turismo-rural') {
+    $hero_image_url = '/img/eventos-landing-hero/turismo_rural3.webp';
+}
+$ctx['hero_image_url'] = $hero_image_url;
+$ctx['hero_image_alt'] = $h1;
+
+
 // ── Paginación: rel prev/next ─────────────────────────────────────────────────
 $rel_prev = ($page > 1)                  ? $canonical . '?p=' . ($page - 1) : null;
 $rel_next = ($page < $result['pages'])   ? $canonical . '?p=' . ($page + 1) : null;
@@ -314,8 +323,36 @@ a{color:var(--primary);text-decoration:none}
   padding:8px 18px;border-radius:var(--radius-sm);font-weight:700!important;font-size:.82rem!important}
 
 /* Hero crítico (LCP zone) */
-.lnd-hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,var(--primary-light) 100%);
-  padding:48px 20px 52px;color:var(--white);contain:layout style}
+.lnd-hero{
+  position: relative;
+  overflow: hidden;
+  background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,var(--primary-light) 100%);
+  padding:0;
+  color:var(--white);
+  contain:layout style;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 320px;
+}
+.lnd-hero__bg-wrap { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.lnd-hero__bg-img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
+.lnd-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, rgba(10, 25, 47, 0.55) 0%, rgba(10, 25, 47, 0.30) 40%, rgba(10, 25, 47, 0.75) 100%);
+    pointer-events: none;
+}
+.lnd-hero__content {
+    position: relative;
+    z-index: 2;
+    padding: 48px 20px 52px;
+    width: 100%;
+    max-width: var(--max-w, 1200px);
+    margin: 0 auto;
+}
 .lnd-hero__h1{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:800;line-height:1.15;
   margin:0 0 24px;text-shadow:0 2px 6px rgba(0,0,0,.2)}
 .lnd-breadcrumb ol{display:flex;flex-wrap:wrap;gap:4px;align-items:center;
