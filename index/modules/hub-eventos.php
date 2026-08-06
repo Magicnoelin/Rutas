@@ -94,8 +94,8 @@ function renderHubEventos(array $ctx): void {
         <div class="hub-accordion__body">
             <ul class="hub-chip-grid" role="list" aria-label="Categorías de eventos culturales">
                 <?php foreach (HUB_FILTROS_EVT as $filtroKey => $filtroData):
-                    // Vinculamos el filtro con la primera provincia disponible para SEO
-                    $slug  = $filtroKey . '-soria';
+                    // Enlace solo-filtro (sin provincia) → todos los eventos de España
+                    $slug  = $filtroKey;
                     $url   = hubUrl($slug, $lang, 'eventos');
                     $label = $filtroData[$lang] ?? $filtroData['es'];
                 ?>

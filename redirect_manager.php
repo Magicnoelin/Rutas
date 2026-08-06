@@ -13,6 +13,12 @@ $slug = $_GET['slug'] ?? '';
 $type = $_GET['type'] ?? 'lugar'; // Por defecto 'lugar'
 $tryOriginal = $_GET['try_original'] ?? false; // Si true, intentará buscar sin -2
 
+// Redirección 301 específica para 'la-cabana-del-risco'
+if ($type === 'alojamiento' && $slug === 'la-cabana-del-risco') {
+    header("Location: /alojamientos/sierra-de-gredos", true, 301);
+    exit;
+}
+
 // 2. Definir redirecciones por tipo (Slug Antiguo => Slug Nuevo)
 $redirects = [
     'lugar' => [

@@ -329,7 +329,16 @@
             <a class="quick-link" href="https://rutasrurales.io/admin_tablas/leads_index.php">
                 <i class="fas fa-cross"></i><span>Leads</span>
             </a>
-        </div>
+            <a class="quick-link" href="https://rutasrurales.io/admin_tablas/event_newsletter_subscribers.php">
+                <i class="fas fa-envelope"></i><span>subscriptores</span>
+            </a>
+            
+            </a>
+            <a class="quick-link" href="https://rutasrurales.io/admin_tablas/user_resources.php">
+                <i class="fas fa-flag"></i><span>user_resources</span>
+            </a>
+  
+           </div>
     </div>
 </main>
 
