@@ -159,11 +159,27 @@ if ($evento && isset($pdo)) {
 $fotos = [];
 $hero_bg_url = ''; // URL para el fondo del .event-hero
 if ($evento) {
-    // hero_image: solo para el fondo del hero (cabecera visual)
+    // hero_image: prioridad 1 = imagen específica del evento.
+    // Prioridad 2 (fallback) = imagen de la categoría en categories_events.
     if (!empty($evento['hero_image'])) {
         $hi = $evento['hero_image'];
         if (!preg_match('/^https?:\/\//', $hi)) $hi = '/' . ltrim($hi, '/');
         $hero_bg_url = $hi;
+    } elseif (!empty($evento['category_id']) && isset($pdo)) {
+        // Fallback: imagen hero de la categoría del evento
+        try {
+            $stmtCat = $pdo->prepare(
+                "SELECT hero_image FROM categories_events WHERE id = ? AND hero_image IS NOT NULL AND hero_image != '' LIMIT 1"
+            );
+            $stmtCat->execute([$evento['category_id']]);
+            $catHero = $stmtCat->fetchColumn();
+            if (!empty($catHero)) {
+                if (!preg_match('/^https?:\/\//', $catHero)) $catHero = 'https://rutasrurales.io/' . ltrim($catHero, '/');
+                $hero_bg_url = $catHero;
+            }
+        } catch (Throwable $e) {
+            // Silencioso: si la consulta falla, el hero queda sin imagen de fondo
+        }
     }
 
     $fotos_raw = [];
