@@ -110,7 +110,7 @@ function renderAlojamientos(array $alojamientos, array $ruta): void
 
         <!-- CTA ver todos -->
         <div class="rt-section__cta">
-            <a href="https://rutasrurales.io/alojamientos-turisticos.html?provincia=<?= urlencode($provincia) ?>" class="rt-btn rt-btn--outline">
+            <a href="https://rutasrurales.io/alojamientos/turismo-rural-<?= strtolower(str_replace([' ','á','é','í','ó','ú','ñ'],['-','a','e','i','o','u','n'],$provincia)) ?>" class="rt-btn rt-btn--outline">
                 Ver todos los alojamientos en <?= $provincia ?>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>

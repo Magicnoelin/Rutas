@@ -588,7 +588,7 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 Ver alojamientos disponibles
             </a>
-            <a href="https://rutasrurales.io/alojamientos-turisticos.html" class="rt-btn rt-btn--secondary">
+            <a href="https://rutasrurales.io/alojamientos/turismo-rural" class="rt-btn rt-btn--secondary">
                 Explorar todos los alojamientos
             </a>
         </div>
@@ -602,7 +602,7 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
     <div class="rt-container">
         <div class="rt-footer__links">
             <a href="https://rutasrurales.io/">Inicio</a>
-            <a href="https://rutasrurales.io/alojamientos-turisticos.html">Alojamientos</a>
+            <a href="https://rutasrurales.io/alojamientos/turismo-rural">Alojamientos</a>
             <a href="https://rutasrurales.io/lugares-interes-paginacion.html">Lugares de interés</a>
             <a href="https://rutasrurales.io/eventos-culturales-paginacion.html">Eventos</a>
             <a href="https://rutasrurales.io/aviso-legal.html">Aviso Legal</a>

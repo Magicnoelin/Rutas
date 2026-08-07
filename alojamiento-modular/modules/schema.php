@@ -356,7 +356,7 @@ function renderAlojamientoSchema(
         'zh' => ['首页', '住宿列表'],
     ];
     $bl            = $bcLabels[$lang] ?? $bcLabels['es'];
-    $listingUrl    = $baseUrl . ($lang !== 'es' ? "/$lang" : '') . '/alojamientos-turisticos';
+    $listingUrl    = $baseUrl . ($lang !== 'es' ? "/$lang" : '') . '/alojamientos/turismo-rural';
     $breadcrumb    = [
         '@type'           => 'BreadcrumbList',
         '@id'             => $canonical . '#breadcrumb',
@@ -415,7 +415,7 @@ function renderAlojamientoSchema(
             '@type'       => 'SearchAction',
             'target'      => [
                 '@type'       => 'EntryPoint',
-                'urlTemplate' => $baseUrl . '/alojamientos-turisticos?q={search_term_string}',
+                'urlTemplate' => $baseUrl . '/alojamientos/turismo-rural?q={search_term_string}',
             ],
             'query-input' => 'required name=search_term_string',
         ],

@@ -59,7 +59,7 @@ if (!$parsed['valid'] && !empty($slug)) {
 
 // Si es completamente inválido (slug vacío), redirigir al listado
 if (empty($slug)) {
-    header('Location: https://rutasrurales.io/alojamientos-turisticos', true, 301);
+    header('Location: https://rutasrurales.io/alojamientos/turismo-rural', true, 301);
     exit;
 }
 
@@ -478,7 +478,7 @@ a{color:var(--primary);text-decoration:none}
             <p class="lnd-intro__p">
                 <?= htmlspecialchars(str_replace('{PROVINCE}', $province_label ?: 'España', $t['cta_desc'] ?? '')) ?>
             </p>
-            <a href="https://rutasrurales.io/alojamientos-turisticos"
+            <a href="https://rutasrurales.io/alojamientos/turismo-rural"
                class="lnd-btn lnd-btn--primary"
                style="display:inline-flex;margin-top:12px;">
                 <?= htmlspecialchars($t['cta_button'] ?? 'Explorar todos los alojamientos') ?>

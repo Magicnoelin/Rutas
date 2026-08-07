@@ -19,7 +19,7 @@ function renderHubHero(array $ctx): void {
     $langPfx  = ($lang !== 'es') ? "/$lang" : '';
 
     // URLs de las verticales con soporte multilingüe
-    $url_stays  = $base . $langPfx . '/alojamientos-turisticos';
+    $url_stays  = $base . $langPfx . '/alojamientos/turismo-rural';
     $url_events = $base . $langPfx . '/eventos-culturales-paginacion.html';
     $url_places = $base . '/lugares-de-interes'; // Solo ES por ahora
     $url_activ  = $base . '/actividades-turisticas'; // Solo ES por ahora

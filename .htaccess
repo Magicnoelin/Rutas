@@ -314,7 +314,7 @@ RewriteCond %{THE_REQUEST} \s/index\.html [NC]
 RewriteRule ^index\.html$ / [R=301,L]
 
 RewriteCond %{THE_REQUEST} \s/+alojamientos-turisticos\.html [NC]
-RewriteRule ^alojamientos-turisticos\.html$ /alojamientos-turisticos [R=301,L,NE]
+RewriteRule ^alojamientos-turisticos\.html$ /alojamientos/turismo-rural [R=301,L,NE]
 
 RewriteCond %{THE_REQUEST} \s/+eventos-culturales\.html [NC]
 RewriteRule ^eventos-culturales\.html$ /eventos-culturales-paginacion.html [R=301,L]
@@ -325,8 +325,8 @@ RewriteRule ^lugares-interes-paginacion\.html$ /lugares-de-interes [R=301,L]
 RewriteCond %{THE_REQUEST} \s/+actividades-turisticas\.html [NC]
 RewriteRule ^actividades-turisticas\.html$ /actividades-turisticas [R=301,L]
 
-# Servir el archivo PHP cuando se accede a la URL limpia (sin redirect, interno)
-RewriteRule ^alojamientos-turisticos/?$ alojamientos-turisticos.php [L]
+# Redirigir /alojamientos-turisticos a la nueva URL canónica
+RewriteRule ^alojamientos-turisticos/?$ /alojamientos/turismo-rural [R=301,L]
 # /eventos-culturales redirige permanentemente a la versión canónica con paginación
 RewriteRule ^eventos-culturales/?$ /eventos-culturales-paginacion.html [R=301,L]
 RewriteRule ^lugares-de-interes/?$ lugares-interes-paginacion.html [L]

@@ -329,7 +329,7 @@ ul{list-style:none}
 
     <!-- Navegación desktop -->
     <nav class="hub-navbar__nav" aria-label="Menú principal">
-        <a href="<?= $base_domain . $langPfx ?>/alojamientos-turisticos">
+        <a href="<?= $base_domain . $langPfx ?>/alojamientos/turismo-rural">
             <?= htmlspecialchars($t['nav_stays']) ?>
         </a>
         <a href="<?= $base_domain ?>/eventos-culturales">
@@ -394,7 +394,7 @@ ul{list-style:none}
 
 <!-- Menú móvil -->
 <nav class="hub-navbar__mobile-menu" id="hubMobileMenu" aria-label="Menú móvil" aria-hidden="true">
-    <a href="<?= $base_domain . $langPfx ?>/alojamientos-turisticos">
+    <a href="<?= $base_domain . $langPfx ?>/alojamientos/turismo-rural">
         <span class="hub-cta__icon">🏡</span>
         <?= htmlspecialchars($t['nav_stays']) ?>
     </a>
@@ -515,7 +515,7 @@ ul{list-style:none}
                     <?php else: ?>探索<?php endif; ?>
                 </p>
                 <nav class="hub-footer__links" aria-label="Secciones principales">
-                    <a href="<?= $base_domain ?>/alojamientos-turisticos">
+                    <a href="<?= $base_domain ?>/alojamientos/turismo-rural">
                         <?= htmlspecialchars($t['footer_nav_stays']) ?>
                     </a>
                     <a href="<?= $base_domain ?>/eventos-culturales">

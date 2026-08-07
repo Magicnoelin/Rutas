@@ -168,7 +168,7 @@ if (empty($alojamiento) && !empty($slug)) {
     }
     // Si no se pudo parsear como landing, redirigir al listado general
     header('HTTP/1.1 301 Moved Permanently');
-    header('Location: https://rutasrurales.io/alojamientos-turisticos');
+    header('Location: https://rutasrurales.io/alojamientos/turismo-rural');
     exit;
 }
 
@@ -1615,7 +1615,7 @@ if (file_exists($header_path)) {
     echo '<header class="site-header">
         <a href="/" class="logo">🌿 Rutas Rurales</a>
         <nav>
-            <a href="/alojamientos-turisticos.html">' . ($t['alojamientos'] ?? 'Alojamientos') . '</a>
+            <a href="/alojamientos/turismo-rural">' . ($t['alojamientos'] ?? 'Alojamientos') . '</a>
             <a href="/eventos-culturales-paginacion.html">Eventos</a>
             <a href="/login.html" class="btn-login">' . ($t['acceder_link'] ?? 'Acceder') . '</a>
         </nav>
@@ -1834,7 +1834,7 @@ if (file_exists($header_path)) {
         <nav class="alo-breadcrumb" aria-label="breadcrumb">
             <a href="/">🏠 Inicio</a>
             <span>/</span>
-            <a href="/alojamientos-turisticos"><?php echo $t['alojamientos']; ?></a>
+            <a href="/alojamientos/turismo-rural"><?php echo $t['alojamientos']; ?></a>
             <span>/</span>
             <span><?php echo htmlspecialchars($alojamiento['name']); ?></span>
         </nav>
@@ -2217,7 +2217,7 @@ if (file_exists($header_path)) {
                         🐾 Alojamientos para mascotas en <?php echo htmlspecialchars($alojamiento['province']); ?>
                     </a>
                     <?php endif; ?>
-                    <a href="/alojamientos-turisticos"
+                    <a href="/alojamientos/turismo-rural"
                        style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #ccc;color:#666;padding:8px 16px;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;">
                         🔍 Ver todos los alojamientos
                     </a>
@@ -2441,7 +2441,7 @@ if (file_exists($header_path)) {
     <div class="error-icon">😕</div>
     <h1><?php echo $t['no_encontrado_h1']; ?></h1>
     <p><?php echo $t['no_encontrado_p']; ?></p>
-    <a href="/alojamientos-turisticos" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo $t['volver_lista']; ?></a>
+    <a href="/alojamientos/turismo-rural" class="btn btn-primary" style="display:inline-flex;width:auto;"><?php echo $t['volver_lista']; ?></a>
 </div>
 <?php endif; ?>
 

@@ -6,7 +6,7 @@ if (isset($alojamiento) && $alojamiento && isset($t) && isset($tipo_display) && 
     <div class="hero-breadcrumb">
         <nav class="breadcrumb-nav">
             <a href="/index.html"><?php echo isset($t['alojamiento']) ? $t['alojamiento'] : 'Alojamiento'; ?></a> / 
-            <a href="/alojamientos-turisticos.html"><?php echo isset($t['alojamiento']) ? $t['alojamiento'] . 's' : 'Alojamientos'; ?></a> / 
+            <a href="/alojamientos/turismo-rural"><?php echo isset($t['alojamiento']) ? $t['alojamiento'] . 's' : 'Alojamientos'; ?></a> /
             <span><?php echo htmlspecialchars($alojamiento['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></span>
         </nav>
     </div>

@@ -152,7 +152,7 @@ function renderHubAlojamientos(array $ctx): void {
 
     <!-- ── CTA Ver todos + Mapa ────────────────────────────────────────────────── -->
     <div class="hub-section__cta">
-        <a href="<?= $base ?>/alojamientos-turisticos"
+        <a href="<?= $base ?>/alojamientos/turismo-rural"
            class="hub-btn hub-btn--outline">
             <?= htmlspecialchars($t['hub_alo_all']) ?>
         </a>
