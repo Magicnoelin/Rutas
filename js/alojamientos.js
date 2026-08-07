@@ -2,7 +2,7 @@ let todosLosAlojamientos = [];
 let alojamientosFiltrados = [];
 let categoriaActual = ''; // Mantener si se usa en otras partes, aunque no en este flujo principal
 let currentPage = 1; // Para paginación, si se implementa
-const itemsPerPage = 20; // Para paginación, si se implementa
+const itemsPerPage = 200; // Aumentado para mostrar más alojamientos inicialmente, si se espera ver todos en una página.
 
 // Función para cambiar la foto del carrusel (copiada del HTML original)
 function cambiarFoto(carouselId, direction) {
@@ -478,15 +478,19 @@ async function aplicarFiltros() {
 }
 
 function inicializarFiltrosAutomaticos() {
-    document.getElementById('filterProvincia')?.addEventListener('change', async function(e) {
+    document.getElementById('filterProvincia')?.addEventListener('change', async function (e) {
         const provinciaSeleccionada = e.target.value;
         await actualizarMunicipiosPorProvincia(provinciaSeleccionada);
-        document.getElementById('filterLocalidad').value = ''; // Resetea la localidad
-        await aplicarFiltros();
-    });
-    document.getElementById('filterLocalidad').addEventListener('change', aplicarFiltros);
-    document.getElementById('filterTipo').addEventListener('change', aplicarFiltros);
 
+        const filterLocalidadEl = document.getElementById('filterLocalidad');
+        if (filterLocalidadEl) {
+            filterLocalidadEl.value = ''; // Resetea la localidad
+            // Dispara el evento 'change' para que el listener de filterLocalidad aplique los filtros
+            filterLocalidadEl.dispatchEvent(new Event('change'));
+        }
+    });
+    document.getElementById('filterLocalidad')?.addEventListener('change', aplicarFiltros);
+    document.getElementById('filterTipo')?.addEventListener('change', aplicarFiltros);
     let plazasTimeout;
     document.getElementById('filterPlazas').addEventListener('input', function() {
         clearTimeout(plazasTimeout);
