@@ -261,6 +261,12 @@ async function actualizarMunicipiosPorProvincia(provincia) {
         return;
     }
 
+    // Si `todosLosAlojamientos` está vacío, es un problema. Intentemos cargarlos.
+    if (todosLosAlojamientos.length === 0) {
+        console.warn("`todosLosAlojamientos` está vacío. Intentando recargar desde la API.");
+        await cargarAlojamientosDesdeAPI(false); // Cargar sin mostrar loading para no ser intrusivo
+    }
+
     // Filtrar alojamientos por provincia para obtener las localidades disponibles
     const alojamientosDeProvincia = todosLosAlojamientos.filter(alojamiento => {
         const alojProvincia = alojamiento.province || alojamiento.Provincia || alojamiento.provincia || alojamiento.Province;
@@ -368,7 +374,7 @@ async function initialLoad() {
 }
 
 // Función para cargar alojamientos si no hay SSR (o como fallback)
-async function cargarAlojamientosDesdeAPI() {
+async function cargarAlojamientosDesdeAPI(mostrarLoading = true) {
     document.getElementById('loading').style.display = 'block';
     document.getElementById('alojamientosGrid').style.display = 'none';
 
@@ -428,22 +434,24 @@ async function cargarAlojamientosDesdeAPI() {
 
     llenarFiltroProvincias();
     await aplicarFiltros(); // Esto mostrará los alojamientos y actualizará las estadísticas
-    document.getElementById('loading').style.display = 'none';
+    if (mostrarLoading) {
+        document.getElementById('loading').style.display = 'none';
+    }
     document.getElementById('alojamientosGrid').style.display = 'grid';
 }
 
 
 async function aplicarFiltros() {
-    const provincia = document.getElementById('filterProvincia').value;
-    const selectLocalidad = document.getElementById('filterLocalidad');
-    const localidad = selectLocalidad.value;
-    const tipo = document.getElementById('filterTipo').value;
-    const plazasMin = parseInt(document.getElementById('filterPlazas').value) || 1;
+    const provincia = document.getElementById('filterProvincia')?.value;
+    const localidad = document.getElementById('filterLocalidad')?.value;
+    const tipo = document.getElementById('filterTipo')?.value;
+    const plazasMin = parseInt(document.getElementById('filterPlazas')?.value) || 1;
 
     console.log('Aplicando filtros:', { provincia, localidad, tipo, plazasMin });
 
-    // Primero actualizar las localidades disponibles según la provincia seleccionada
-    await actualizarMunicipiosPorProvincia(provincia);
+    if (!todosLosAlojamientos) {
+        return;
+    }
 
     // Filtrar alojamientos
     alojamientosFiltrados = todosLosAlojamientos.filter(alojamiento => {
@@ -470,12 +478,12 @@ async function aplicarFiltros() {
 }
 
 function inicializarFiltrosAutomaticos() {
-    document.getElementById('filterProvincia').addEventListener('change', async function(e) {
-        // Resetear el filtro de localidad cuando cambia la provincia
-        document.getElementById('filterLocalidad').value = '';
+    document.getElementById('filterProvincia')?.addEventListener('change', async function(e) {
+        const provinciaSeleccionada = e.target.value;
+        await actualizarMunicipiosPorProvincia(provinciaSeleccionada);
+        document.getElementById('filterLocalidad').value = ''; // Resetea la localidad
         await aplicarFiltros();
     });
-
     document.getElementById('filterLocalidad').addEventListener('change', aplicarFiltros);
     document.getElementById('filterTipo').addEventListener('change', aplicarFiltros);
 
