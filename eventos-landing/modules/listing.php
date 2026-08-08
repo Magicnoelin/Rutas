@@ -62,6 +62,15 @@ function renderEventosLandingListing(array $ctx): void
     <!-- ── CTA: ¿Tu municipio también tiene agenda? ─────────────────── -->
     <?php if (!empty($province)): ?>
     <style>
+    /* ── Fecha "en curso" → texto ámbar para distinguirlo del inicio normal ── */
+    .lnd-card__dates--ongoing{margin-top:4px}
+    .lnd-card__date-text--until{color:#e67e00;font-weight:600;font-size:.82rem}
+    /* Pill "EN CURSO" en el badge de calendario → reemplaza el mes con etiqueta */
+    .lnd-card__date-badge--ongoing .lnd-card__date-mes{
+      font-size:.55rem;letter-spacing:.02em;background:#e67e00;color:#fff;
+      border-radius:3px;padding:1px 3px;line-height:1.3}
+    </style>
+    <style>
     .lnd-munic-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;
       background:linear-gradient(135deg,#fff8e1 0%,#fffde7 100%);
       border:1px solid #ffe082;border-left:4px solid #F9A825;border-radius:12px;
@@ -140,50 +149,98 @@ function renderEventosLandingListing(array $ctx): void
                 ? procesarInboundLinks(htmlspecialchars($desc), $pdo)
                 : htmlspecialchars($desc);
 
-            // Fecha inicio formateada
+            // ── FECHAS ────────────────────────────────────────────────────────
+            // Lógica de display adaptativa:
+            //   · Evento YA INICIADO + tiene fecha_fin → mostrar end_date ("Hasta el...")
+            //   · Evento no iniciado o sin fecha_fin   → mostrar start_date normal
+            // Schema.org startDate/endDate siempre usan las fechas reales.
+            $tz_offset   = '+02:00'; // Spain/Europe Madrid (CEST verano)
+            $today       = new DateTime('today');
+
+            // Fecha inicio (siempre necesaria para Schema.org)
             $fechaStart  = '';
             $diaStart    = '';
             $mesStart    = '';
-            $dateIso     = '';
-            $dateIsoFull = ''; // ISO 8601 completo para itemprop (requerido por Google)
-            $tz_offset   = '+02:00'; // Spain/Europe Madrid (CEST verano)
+            $dateIsoFull = '';
             if (!empty($ev['start_date'])) {
                 $dt = DateTime::createFromFormat('Y-m-d', $ev['start_date']);
                 if ($dt) {
-                    $diaStart    = $dt->format('d');
-                    $mesStart    = $mesLabels[(int)$dt->format('n')] ?? '';
                     $fechaStart  = $dt->format($lang === 'en' ? 'd M Y' : 'd/m/Y');
-                    $dateIso     = $ev['start_date']; // solo fecha (para datetime="" del <time>)
-                    $dateIsoFull = $ev['start_date'] . 'T00:00:00' . $tz_offset; // ISO 8601 completo para itemprop
+                    $dateIsoFull = $ev['start_date'] . 'T00:00:00' . $tz_offset;
                 }
             }
 
-            // Fecha fin (si existe y es diferente)
+            // Fecha fin
             $fechaEnd       = '';
-            $dateIsoEnd     = '';
-            $dateIsoEndFull = ''; // ISO 8601 completo para itemprop endDate
+            $dateIsoEndFull = '';
+            $dtEnd          = null;
             if (!empty($ev['fecha_fin'])) {
                 $dtEnd = DateTime::createFromFormat('Y-m-d', $ev['fecha_fin']);
                 if ($dtEnd) {
                     $fechaEnd       = $dtEnd->format($lang === 'en' ? 'd M Y' : 'd/m/Y');
-                    $dateIsoEnd     = $ev['fecha_fin'];
                     $dateIsoEndFull = $ev['fecha_fin'] . 'T23:59:00' . $tz_offset;
                 }
             }
-            // Si no hay fecha fin, usar la fecha inicio con hora final del día
             if (empty($dateIsoEndFull) && !empty($dateIsoFull)) {
                 $dateIsoEndFull = (!empty($ev['start_date']) ? $ev['start_date'] : date('Y-m-d')) . 'T23:59:00' . $tz_offset;
             }
-            // validFrom para offers: ISO 8601 completo desde el inicio del evento
+
+            // ── Display: ¿evento ya iniciado y en curso? ──────────────────────
+            // Si start_date < hoy Y hay end_date → el badge y la fecha principal
+            // muestran la fecha fin ("Hasta el...") para no parecer desfasado.
+            $isOngoing = false;
+            if (!empty($ev['start_date']) && $dtEnd !== null) {
+                $dtStart   = DateTime::createFromFormat('Y-m-d', $ev['start_date']);
+                $isOngoing = ($dtStart && $dtStart < $today && $dtEnd >= $today);
+            }
+
+            if ($isOngoing && $dtEnd) {
+                // Badge del calendario → end_date
+                $diaStart = $dtEnd->format('d');
+                $mesStart = $mesLabels[(int)$dtEnd->format('n')] ?? '';
+            } elseif (!empty($ev['start_date'])) {
+                $dt = DateTime::createFromFormat('Y-m-d', $ev['start_date']);
+                if ($dt) {
+                    $diaStart = $dt->format('d');
+                    $mesStart = $mesLabels[(int)$dt->format('n')] ?? '';
+                }
+            }
+
+            // validFrom para offers
             $validFromIso = $dateIsoFull ?: (date('Y-m-d') . 'T00:00:00' . $tz_offset);
+
+            // Labels de fecha para el texto visible
+            $labelHasta = [
+                'es' => 'Hasta el',
+                'en' => 'Until',
+                'fr' => "Jusqu'au",
+                'de' => 'Bis zum',
+                'zh' => '截至',
+            ][$lang] ?? 'Hasta el';
+            $labelDel = [
+                'es' => 'Del',
+                'en' => 'From',
+                'fr' => 'Du',
+                'de' => 'Vom',
+                'zh' => '从',
+            ][$lang] ?? 'Del';
+            $labelAl = [
+                'es' => 'al',
+                'en' => 'to',
+                'fr' => 'au',
+                'de' => 'bis',
+                'zh' => '至',
+            ][$lang] ?? 'al';
         ?>
         <li class="lnd-card lnd-card--evento" itemscope itemtype="https://schema.org/Event">
 
             <!-- Bloque de fecha visual (calendario) -->
             <?php if ($diaStart): ?>
-            <div class="lnd-card__date-badge" aria-hidden="true">
+            <div class="lnd-card__date-badge<?= $isOngoing ? ' lnd-card__date-badge--ongoing' : '' ?>" aria-hidden="true">
                 <span class="lnd-card__date-dia"><?= $diaStart ?></span>
-                <span class="lnd-card__date-mes"><?= $mesStart ?></span>
+                <span class="lnd-card__date-mes"><?= $isOngoing
+                    ? (['es'=>'EN CURSO','en'=>'ONGOING','fr'=>'EN COURS','de'=>'LÄUFT','zh'=>'进行中'][$lang] ?? 'EN CURSO')
+                    : $mesStart ?></span>
             </div>
             <?php endif; ?>
 
@@ -239,28 +296,34 @@ function renderEventosLandingListing(array $ctx): void
                     <a href="<?= $evUrl ?>" itemprop="url"><?= $name ?></a>
                 </h3>
 
-                <!-- Fecha(s) -->
-                <?php if ($fechaStart): ?>
-                <div class="lnd-card__dates">
-                    <!-- itemprop="startDate" con ISO 8601 completo (requerido por Google Rich Results) -->
-                    <time class="lnd-card__date-text" datetime="<?= htmlspecialchars($dateIsoFull) ?>" itemprop="startDate">
-                        📅 <?= htmlspecialchars($fechaStart) ?>
-                    </time>
-                    <?php if ($fechaEnd): ?>
-                    <time class="lnd-card__date-text lnd-card__date-text--end" datetime="<?= htmlspecialchars($dateIsoEndFull) ?>" itemprop="endDate">
-                        → <?= htmlspecialchars($fechaEnd) ?>
-                    </time>
-                    <?php else: ?>
-                    <!-- endDate requerido: si no hay fecha fin, repetir inicio con T23:59 -->
-                    <meta itemprop="endDate" content="<?= htmlspecialchars($dateIsoEndFull) ?>">
-                    <?php endif; ?>
-                </div>
-                <?php else: ?>
-                <!-- Fechas en meta oculto si no hay visualización -->
-                <?php if (!empty($dateIsoFull)): ?>
+                <!-- Fecha(s) — siempre con Schema.org invisible + texto legible adaptativo -->
+                <!-- itemprop startDate/endDate: siempre usan fechas reales (nunca cambian) -->
                 <meta itemprop="startDate" content="<?= htmlspecialchars($dateIsoFull) ?>">
                 <meta itemprop="endDate" content="<?= htmlspecialchars($dateIsoEndFull) ?>">
-                <?php endif; ?>
+
+                <?php if ($isOngoing && $fechaEnd): ?>
+                <!-- EVENTO EN CURSO: mostrar "Hasta el DD/MM/YYYY" → no parece desfasado -->
+                <div class="lnd-card__dates lnd-card__dates--ongoing">
+                    <time class="lnd-card__date-text lnd-card__date-text--until" datetime="<?= htmlspecialchars($dateIsoEndFull) ?>">
+                        ⏳ <?= htmlspecialchars($labelHasta) ?> <?= htmlspecialchars($fechaEnd) ?>
+                    </time>
+                </div>
+
+                <?php elseif ($fechaStart && $fechaEnd): ?>
+                <!-- EVENTO FUTURO MULTI-DÍA: "Del DD/MM al DD/MM/YYYY" -->
+                <div class="lnd-card__dates">
+                    <time class="lnd-card__date-text" datetime="<?= htmlspecialchars($dateIsoFull) ?>">
+                        📅 <?= htmlspecialchars($labelDel) ?> <?= htmlspecialchars($fechaStart) ?> <?= htmlspecialchars($labelAl) ?> <?= htmlspecialchars($fechaEnd) ?>
+                    </time>
+                </div>
+
+                <?php elseif ($fechaStart): ?>
+                <!-- EVENTO DE UN SOLO DÍA: solo fecha inicio -->
+                <div class="lnd-card__dates">
+                    <time class="lnd-card__date-text" datetime="<?= htmlspecialchars($dateIsoFull) ?>">
+                        📅 <?= htmlspecialchars($fechaStart) ?>
+                    </time>
+                </div>
                 <?php endif; ?>
 
                 <!-- Descripción corta -->
