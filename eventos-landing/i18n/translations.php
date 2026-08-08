@@ -24,7 +24,7 @@ const EVENTOS_I18N = [
         // Encabezados
         'h1_template'   => '{FILTER_LABEL} en {PROVINCE}',
         'h1_only_prov'  => 'Agenda cultural en {PROVINCE}',
-        'h2_listing'    => 'Eventos disponibles en {PROVINCE}',
+        'h2_listing'    => 'Próximos eventos en {PROVINCE}',
         'h2_semantico'  => 'Alojamientos y lugares de interés cerca de los eventos en {PROVINCE}',
         'h2_rutas'      => 'Rutas temáticas en {PROVINCE}',
         'h2_porque'     => '¿Por qué visitar {PROVINCE} para sus eventos culturales?',
@@ -116,7 +116,7 @@ const EVENTOS_I18N = [
 
         'h1_template'   => '{FILTER_LABEL} in {PROVINCE}',
         'h1_only_prov'  => 'Cultural events in {PROVINCE}',
-        'h2_listing'    => 'Events in {PROVINCE}',
+        'h2_listing'    => 'Upcoming events in {PROVINCE}',
         'h2_semantico'  => 'Accommodation & places of interest near events in {PROVINCE}',
         'h2_rutas'      => 'Themed routes in {PROVINCE}',
         'h2_porque'     => 'Why visit {PROVINCE} for its cultural events?',
@@ -198,7 +198,7 @@ const EVENTOS_I18N = [
 
         'h1_template'   => '{FILTER_LABEL} en {PROVINCE}',
         'h1_only_prov'  => 'Agenda culturel en {PROVINCE}',
-        'h2_listing'    => 'Événements disponibles en {PROVINCE}',
+        'h2_listing'    => 'Prochains événements en {PROVINCE}',
         'h2_semantico'  => 'Hébergements et lieux d\'intérêt près des événements en {PROVINCE}',
         'h2_rutas'      => 'Itinéraires thématiques en {PROVINCE}',
         'h2_porque'     => 'Pourquoi visiter {PROVINCE} pour ses événements culturels ?',
@@ -280,7 +280,7 @@ const EVENTOS_I18N = [
 
         'h1_template'   => '{FILTER_LABEL} in {PROVINCE}',
         'h1_only_prov'  => 'Kulturveranstaltungen in {PROVINCE}',
-        'h2_listing'    => 'Verfügbare Veranstaltungen in {PROVINCE}',
+        'h2_listing'    => 'Bevorstehende Veranstaltungen in {PROVINCE}',
         'h2_semantico'  => 'Unterkünfte und Sehenswürdigkeiten in der Nähe von Veranstaltungen in {PROVINCE}',
         'h2_rutas'      => 'Thematische Routen in {PROVINCE}',
         'h2_porque'     => 'Warum {PROVINCE} für seine Kulturveranstaltungen besuchen?',
@@ -362,7 +362,7 @@ const EVENTOS_I18N = [
 
         'h1_template'   => '{PROVINCE}的{FILTER_LABEL}',
         'h1_only_prov'  => '{PROVINCE}文化活动',
-        'h2_listing'    => '{PROVINCE}活动',
+        'h2_listing'    => '{PROVINCE}即将举行的活动',
         'h2_semantico'  => '{PROVINCE}活动附近的住宿和景点',
         'h2_rutas'      => '{PROVINCE}主题路线',
         'h2_porque'     => '为什么到{PROVINCE}参加文化活动？',

@@ -42,8 +42,11 @@ function getLandingEventos(
     $where  = ['e.is_active = 1', "e.moderation_status = 'approved'"];
     $params = [];
 
-    // Solo eventos futuros o en curso
-    $where[] = 'COALESCE(e.end_date, e.start_date) >= CURDATE()';
+    // Solo eventos futuros o en curso:
+    // · e.start_date >= CURDATE()  → evento aún no ha comenzado
+    // · e.end_date >= CURDATE()    → evento ya comenzó pero aún no ha terminado (multi-día)
+    // NULLIF evita que el valor '0000-00-00' (fecha cero de MySQL) se trate como fecha válida
+    $where[] = "(e.start_date >= CURDATE() OR (e.end_date IS NOT NULL AND e.end_date != '0000-00-00' AND e.end_date >= CURDATE()))";
 
     if (!empty($province_db)) {
         $where[]             = 'e.province = :province';
@@ -180,7 +183,8 @@ function getLandingEventosStats(
     $where  = ['e.is_active = 1', "e.moderation_status = 'approved'"];
     $params = [];
 
-    $where[] = 'COALESCE(e.end_date, e.start_date) >= CURDATE()';
+    // Mismo criterio de fecha que getLandingEventos: solo futuros o en curso
+    $where[] = "(e.start_date >= CURDATE() OR (e.end_date IS NOT NULL AND e.end_date != '0000-00-00' AND e.end_date >= CURDATE()))";
 
     if (!empty($province_db)) {
         $where[]           = 'e.province = :province';

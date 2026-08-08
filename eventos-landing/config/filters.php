@@ -264,28 +264,32 @@ const EVENTOS_FILTROS = [
     ],
 
     // ── TEMPORADA (group='temporada') ─────────────────────────────────────────
+    // Los filtros de temporada usan BOTH start_date Y end_date para capturar
+    // eventos que empiezan en la temporada O que la abarcan (multi-semana).
+    // La condición >= CURDATE() ya está en getLandingEventos/Stats, aquí solo
+    // filtramos por mes/temporada.
     'primavera' => [
-        'sql'    => "MONTH(e.start_date) IN (3, 4, 5)",
+        'sql'    => "(MONTH(e.start_date) IN (3, 4, 5) OR (e.end_date IS NOT NULL AND e.end_date != '0000-00-00' AND MONTH(e.end_date) IN (3, 4, 5)))",
         'labels' => ['es'=>'Eventos de primavera','en'=>'Spring events','fr'=>'Événements de printemps','de'=>'Frühlingsveranstaltungen','zh'=>'春季活动'],
         'icon'   => '🌸', 'group' => 'temporada',
     ],
     'verano' => [
-        'sql'    => "MONTH(e.start_date) IN (6, 7, 8)",
+        'sql'    => "(MONTH(e.start_date) IN (6, 7, 8) OR (e.end_date IS NOT NULL AND e.end_date != '0000-00-00' AND MONTH(e.end_date) IN (6, 7, 8)))",
         'labels' => ['es'=>'Eventos de verano','en'=>'Summer events','fr'=>'Événements d\'été','de'=>'Sommerveranstaltungen','zh'=>'夏季活动'],
         'icon'   => '☀️', 'group' => 'temporada',
     ],
     'otono' => [
-        'sql'    => "MONTH(e.start_date) IN (9, 10, 11)",
+        'sql'    => "(MONTH(e.start_date) IN (9, 10, 11) OR (e.end_date IS NOT NULL AND e.end_date != '0000-00-00' AND MONTH(e.end_date) IN (9, 10, 11)))",
         'labels' => ['es'=>'Eventos de otoño','en'=>'Autumn events','fr'=>'Événements d\'automne','de'=>'Herbstveranstaltungen','zh'=>'秋季活动'],
         'icon'   => '🍂', 'group' => 'temporada',
     ],
     'invierno' => [
-        'sql'    => "MONTH(e.start_date) IN (12, 1, 2)",
+        'sql'    => "(MONTH(e.start_date) IN (12, 1, 2) OR (e.end_date IS NOT NULL AND e.end_date != '0000-00-00' AND MONTH(e.end_date) IN (12, 1, 2)))",
         'labels' => ['es'=>'Eventos de invierno','en'=>'Winter events','fr'=>'Événements d\'hiver','de'=>'Winterveranstaltungen','zh'=>'冬季活动'],
         'icon'   => '❄️', 'group' => 'temporada',
     ],
     'este-mes' => [
-        'sql'    => "MONTH(e.start_date) = MONTH(CURDATE()) AND YEAR(e.start_date) = YEAR(CURDATE())",
+        'sql'    => "(MONTH(e.start_date) = MONTH(CURDATE()) AND YEAR(e.start_date) = YEAR(CURDATE()))",
         'labels' => ['es'=>'Este mes','en'=>'This month','fr'=>'Ce mois-ci','de'=>'Diesen Monat','zh'=>'本月'],
         'icon'   => '📅', 'group' => 'temporada',
         'sitemap'=> false, // Excluido del sitemap: contenido varía constantemente
