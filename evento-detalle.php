@@ -2444,17 +2444,6 @@ if (file_exists($header_path)) {
             </div>
         </div>
 
-        <!-- Suscripción a eventos similares -->
-        <div class="subscribe-card" id="subscribe-card">
-            <div style="font-size:1.8rem;margin-bottom:8px;">🔔</div>
-            <h3><?php echo ($t['suscripcion_titulo'] ?? ''); ?></h3>
-            <p><?php echo ($t['suscripcion_desc'] ?? ''); ?> <strong><?php echo htmlspecialchars($categoria_nombre); ?></strong> <?php echo ($t['suscripcion_en'] ?? ''); ?> <?php echo htmlspecialchars($evento['province'] ?? ''); ?></p>
-            <form class="subscribe-form" onsubmit="subscribeEvents(event)">
-                <input type="email" placeholder="tu@email.com" required id="subscribe-email">
-                <button type="submit" class="btn btn-accent"><?php echo ($t['suscripcion_btn'] ?? ''); ?></button>
-            </form>
-        </div>
-
     </aside>
 
 </div><!-- /.event-layout -->

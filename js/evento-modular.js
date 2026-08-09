@@ -440,10 +440,32 @@ function _renderSimilarEvents(eventos) {
 
     container.innerHTML = eventos.map(e => {
         const precio = e.is_free == 1 ? `🆓 ${UI.get('gratis', 'Gratis')}` : (e.ticket_price > 0 ? `💶 ${formatPrice(e.ticket_price)}` : '');
-        const fecha = formatDate(e.start_date);
         const img = e.imagen
             ? `<img src="${e.imagen}" alt="${e.name}" loading="lazy">`
             : '<div style="height:100%;background:linear-gradient(135deg,#e8f0e8,#c8dcc8);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🎭</div>';
+
+        // Lógica de fecha adaptativa:
+        // · Evento EN CURSO (start < hoy, end >= hoy) → "⏳ Hasta el DD/MM/YYYY"
+        // · Evento futuro multi-día → "Del DD/MM al DD/MM/YYYY"
+        // · Evento futuro un día → "📅 DD/MM/YYYY"
+        const today = new Date(); today.setHours(0,0,0,0);
+        let fechaHtml = '';
+        if (e.start_date) {
+            const startDt = new Date(e.start_date + 'T00:00:00');
+            const endDt   = e.end_date ? new Date(e.end_date + 'T00:00:00') : null;
+            const isOngoing = endDt && startDt < today && endDt >= today;
+
+            if (isOngoing) {
+                const labelHasta = {es:'Hasta el',en:'Until',fr:"Jusqu'au",de:'Bis zum',zh:'截至'}[STATE.lang] || 'Hasta el';
+                fechaHtml = `<span style="color:#e67e00;font-weight:600;">⏳ ${labelHasta} ${formatDate(e.end_date)}</span>`;
+            } else if (endDt && e.end_date !== e.start_date) {
+                const labelDel = {es:'Del',en:'From',fr:'Du',de:'Vom',zh:'从'}[STATE.lang] || 'Del';
+                const labelAl  = {es:'al',en:'to',fr:'au',de:'bis',zh:'至'}[STATE.lang] || 'al';
+                fechaHtml = `<span>📅 ${labelDel} ${formatDate(e.start_date)} ${labelAl} ${formatDate(e.end_date)}</span>`;
+            } else {
+                fechaHtml = `<span>📅 ${formatDate(e.start_date)}</span>`;
+            }
+        }
 
         return `
             <a href="${e.url}" class="similar-event-card" style="text-decoration:none;color:inherit;">
@@ -454,7 +476,7 @@ function _renderSimilarEvents(eventos) {
                 <div class="similar-event-body">
                     <div class="similar-event-name">${e.name}</div>
                     <div class="similar-event-meta">
-                        ${fecha ? `<span>📅 ${fecha}</span>` : ''}
+                        ${fechaHtml}
                         <span>📍 ${e.municipality || e.province || ''}</span>
                     </div>
                 </div>

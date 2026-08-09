@@ -433,15 +433,26 @@ function _renderSimilarEvents() {
 
     container.innerHTML = eventosFuturos.map(e => {
         const precio = e.is_free == 1 ? '🆓 Gratis' : (e.ticket_price > 0 ? `💶 ${formatPrice(e.ticket_price)}` : '');
-        // Mostrar rango de fechas si start_date y end_date son diferentes
+        // Lógica de fecha adaptativa:
+        // · Evento EN CURSO (start < hoy, end >= hoy) → "⏳ Hasta el DD/MM/YYYY"
+        // · Evento futuro multi-día → "Del DD/MM al DD/MM/YYYY"
+        // · Evento futuro un día → "📅 DD/MM/YYYY"
         let fechaHtml = '';
         if (e.start_date) {
-            const start = formatDate(e.start_date);
-            if (e.end_date && e.end_date !== e.start_date) {
-                const end = formatDate(e.end_date);
-                fechaHtml = `<span>📅 ${start} → ${end}</span>`;
+            const today = new Date(); today.setHours(0,0,0,0);
+            const startDt = new Date(e.start_date + 'T00:00:00');
+            const endDt   = e.end_date ? new Date(e.end_date + 'T00:00:00') : null;
+            const isOngoing = endDt && startDt < today && endDt >= today;
+
+            if (isOngoing) {
+                const labelHasta = {es:'Hasta el',en:'Until',fr:"Jusqu'au",de:'Bis zum',zh:'截至'}[STATE.lang] || 'Hasta el';
+                fechaHtml = `<span style="color:#e67e00;font-weight:600;">⏳ ${labelHasta} ${formatDate(e.end_date)}</span>`;
+            } else if (endDt && e.end_date !== e.start_date) {
+                const labelDel = {es:'Del',en:'From',fr:'Du',de:'Vom',zh:'从'}[STATE.lang] || 'Del';
+                const labelAl  = {es:'al',en:'to',fr:'au',de:'bis',zh:'至'}[STATE.lang] || 'al';
+                fechaHtml = `<span>📅 ${labelDel} ${formatDate(e.start_date)} ${labelAl} ${formatDate(e.end_date)}</span>`;
             } else {
-                fechaHtml = `<span>📅 ${start}</span>`;
+                fechaHtml = `<span>📅 ${formatDate(e.start_date)}</span>`;
             }
         }
         return `
