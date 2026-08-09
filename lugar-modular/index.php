@@ -265,6 +265,28 @@ if (file_exists($globalHeader)) {
 
     </div><!-- /.lug-layout -->
 
+    <style>
+        .map-placeholder {
+            background: linear-gradient(135deg, #f0f4f1, #e8f0e8);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background .2s, border-color .2s;
+            margin-bottom: 24px;
+        }
+        .map-placeholder:hover {
+            background: #e8f0e8;
+            border-color: var(--accent);
+        }
+        .map-placeholder .map-icon { font-size: 3rem; margin-bottom: 12px; }
+        .map-placeholder strong { color: var(--primary); font-size: 1.1rem; }
+        .map-placeholder p { color: var(--text-light); margin: 4px 0 8px; }
+        .map-placeholder small { color: #999; font-size: 0.8rem; }
+    </style>
+
+
 <?php else: ?>
 
     <!-- ── ERROR 404 ── -->
