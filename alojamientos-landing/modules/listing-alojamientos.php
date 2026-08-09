@@ -50,6 +50,8 @@ function renderAlojamientosLandingListing(array $ctx): void
 
     <ul class="lnd-grid" role="list">
         <?php foreach ($items as $i => $aloj):
+            // Cargar solo las primeras 3 imágenes inmediatamente
+            $shouldLoadImage = ($i < 3);
             $isFirst   = ($i === 0);
             $imgLoad   = $isFirst ? 'eager' : 'lazy';
             $imgDecode = $isFirst ? 'sync'  : 'async';
@@ -60,17 +62,35 @@ function renderAlojamientosLandingListing(array $ctx): void
             $name      = htmlspecialchars($aloj['name'] ?? $aloj['titulo'] ?? '');
             $munic     = htmlspecialchars($aloj['municipality'] ?? $aloj['municipio'] ?? '');
             $precio    = $aloj['precio_display'] ?? $aloj['precio_min'] ?? null;
+            
+            // Placeholder para imágenes que no se cargan inicialmente
+            $placeholderSrc = 'data:image/svg+xml;base64,' . base64_encode('
+                <svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="600" height="400" fill="#f1f3f4"/>
+                    <circle cx="300" cy="160" r="24" fill="#dadce0"/>
+                    <rect x="268" y="200" width="64" height="8" rx="4" fill="#dadce0"/>
+                    <rect x="250" y="220" width="100" height="6" rx="3" fill="#e8eaed"/>
+                </svg>'
+            );
         ?>
         <li class="lnd-card" itemscope itemtype="https://schema.org/Accommodation">
 
             <a href="<?= $alojUrl ?>" class="lnd-card__img-wrap" tabindex="-1" aria-hidden="true">
                 <img
+                    <?php if ($shouldLoadImage): ?>
                     src="<?= $photoUrl ?>"
+                    <?php else: ?>
+                    src="<?= $placeholderSrc ?>"
+                    data-src="<?= $photoUrl ?>"
+                    class="lnd-card__img lnd-card__img--lazy"
+                    <?php endif; ?>
                     alt="<?= $name ?><?= $munic ? ' en ' . $munic : '' ?>"
                     width="600" height="400"
+                    <?php if ($shouldLoadImage): ?>
                     loading="<?= $imgLoad ?>"
                     decoding="<?= $imgDecode ?>"
                     class="lnd-card__img"
+                    <?php endif; ?>
                     itemprop="image"
                     onerror="this.src='https://images.unsplash.com/photo-1546548970-71785318a17b?w=600&h=400&fit=crop&auto=format&q=60'"
                 >

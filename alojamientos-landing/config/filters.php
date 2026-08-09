@@ -35,7 +35,7 @@ const LANDING_PROVINCIAS = [
     ],
     'zamora' => [
         'label' => 'Zamora', 'db' => 'Zamora',
-        'attractions' => ['Lago de Sanabria', 'Arribes del Duero', 'Catedral de Zamora', 'Sierra de la Culebra'],
+        'attractions' => ['Lago de Sanabria', 'Arribes del Duero', 'Castillo de Zamora', 'Sierra de la Culebra'],
         'vibe' => [
             'es' => 'tierra de contrastes donde el Duero forma arribes imponentes, el lago de Sanabria refresca los veranos y el románico medieval florece en cada pueblo',
             'en' => 'a land of contrasts where the Duero carves imposing gorges, Lake Sanabria cools summer days, and medieval Romanesque art blooms in every village',

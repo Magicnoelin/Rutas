@@ -377,7 +377,10 @@ a{color:var(--primary);text-decoration:none}
 .lnd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
 .lnd-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 .lnd-card__img-wrap{aspect-ratio:3/2;background:#e8eaed;overflow:hidden}
-.lnd-card__img{width:100%;height:100%;object-fit:cover}
+.lnd-card__img{width:100%;height:100%;object-fit:cover;transition:opacity 0.3s ease}
+.lnd-card__img--lazy{opacity:0.7}
+.lnd-card__img--loading{opacity:0.4}
+.lnd-card__img--loaded{opacity:1}
 .lnd-card__body{padding:16px}
 </style>
 
@@ -533,6 +536,9 @@ a{color:var(--primary);text-decoration:none}
 .lnd-lang-link:hover{color:#fff}
 .lnd-lang-link--active{color:#fff;font-weight:700;pointer-events:none}
 </style>
+
+<!-- ── Sistema de Lazy Loading Inteligente ────────────────────────── -->
+<script src="/alojamientos-landing/js/lazy-loading.js" defer></script>
 
 </body>
 </html>
