@@ -110,7 +110,13 @@ function renderLandingIntro(array $ctx): void
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
                 </svg>
-                <?= htmlspecialchars($attraction) ?>
+                <?php
+                // Procesar inbound links en el atractivo (ej: "Arribes del Duero")
+                $attraction_linked = ($pdo !== null)
+                    ? procesarInboundLinks($attraction, $pdo)
+                    : $attraction;
+                echo $attraction_linked; // Permite HTML del enlace
+                ?>
             </span>
             <?php endforeach; ?>
         </div>
