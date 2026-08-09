@@ -437,10 +437,10 @@ if (!$_header_skip_head):
                             <i class="fas fa-route"></i>
                             <span><?php echo $t['routes']; ?></span>
                         </a></li>
-                        <li><a href="<?php echo $lang_prefix; ?>/login.html">
-                            <i class="fas fa-user-circle"></i>
-                            <span><?php echo $t['login']; ?></span>
-                        </a></li>
+<li><a href="<?php echo $lang_prefix; ?>/login.html" rel="nofollow">
+    <i class="fas fa-user-circle"></i>
+    <span><?php echo $t['login']; ?></span>
+</a></li>
                         <li><a href="<?php echo $lang_prefix; ?>/index.html#asistente">
                             <img src="/antonio.jpg" alt="Antonio" class="asistente-avatar">
                             <span><?php echo $t['antonio']; ?></span>
