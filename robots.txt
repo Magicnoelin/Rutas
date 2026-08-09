@@ -9,7 +9,7 @@ Disallow: /api/
 Disallow: /admin_tablas/
 Disallow: /dashboard/
 Disallow: /login/
-Disallow: /login.html*
+Disallow: /login.html
 Disallow: /registro/
 Disallow: /checkout/
 Disallow: /shop/

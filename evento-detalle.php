@@ -1527,42 +1527,6 @@ $evento_js = $evento ? json_encode([
             gap: 3px;
         }
 
-        /* ── Suscripción ── */
-        .subscribe-card {
-            background: linear-gradient(135deg, #fff8e1, #fff3cd);
-            border: 1px solid #ffe082;
-            border-radius: var(--radius);
-            padding: 24px;
-            text-align: center;
-        }
-        .subscribe-card h3 {
-            color: #e65100;
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-        .subscribe-card p {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-bottom: 16px;
-        }
-        .subscribe-form {
-            display: flex;
-            gap: 8px;
-            flex-direction: column;
-        }
-        .subscribe-form input {
-            padding: 10px 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            width: 100%;
-        }
-        .subscribe-form input:focus {
-            outline: none;
-            border-color: var(--accent-warm);
-            box-shadow: 0 0 0 3px rgba(249,168,37,0.15);
-        }
-
         /* ── Skeleton loading ── */
         .skeleton {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
