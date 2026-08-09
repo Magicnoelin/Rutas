@@ -526,7 +526,7 @@
                         <span class="badge badge-${item.tipo}">${item.tipo}</span>
                         ${item.tipo === 'evento' && item.fecha ? `<span style="font-size: 0.7rem; color: #8e44ad; font-weight: 700; background: #f3e5f5; padding: 2px 6px; border-radius: 4px; margin-left: 5px; border: 1px solid #e1bee7;"><i class="far fa-calendar-alt"></i> ${new Date(item.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</span>` : ''}<br>
                         <small>${item.localidad}</small><br>
-                        <a href="${getUrlForItem(item)}" target="_blank" style="display: block; margin-top: 8px; color: var(--primary-color); font-weight: bold; text-decoration: none;">Ver detalles →</a>
+                        <a href="${getUrlForItem(item)}" target="_blank" rel="nofollow" style="display: block; margin-top: 8px; color: var(--primary-color); font-weight: bold; text-decoration: none;">Ver detalles →</a>
                     </div>
                 `);
 
@@ -536,7 +536,7 @@
                 const card = document.createElement('div');
                 card.className = 'result-card';
                 card.onclick = function() {
-                    window.open(getUrlForItem(item), '_blank');
+                    window.open(getUrlForItem(item), '_blank', 'noreferrer noopener');
                 };
                 
                 // Hover effect on map
@@ -650,11 +650,11 @@
     // Obtener URL para item
     function getUrlForItem(item) {
         switch (item.tipo) {
-            case 'alojamiento': return `/alojamiento/${item.slug}`;
-            case 'lugar': return `/lugar/${item.slug}`;
-            case 'actividad': return `/actividad/${item.slug}`;
-            case 'evento': return `/evento/${item.slug}`;
-            default: return '/';
+            case 'alojamiento': return `https://rutasrurales.io/alojamiento/${item.slug}`;
+            case 'lugar': return `https://rutasrurales.io/lugar/${item.slug}`;
+            case 'actividad': return `https://rutasrurales.io/actividad/${item.slug}`;
+            case 'evento': return `https://rutasrurales.io/evento/${item.slug}`;
+            default: return 'https://rutasrurales.io/';
         }
     }
 
