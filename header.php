@@ -94,6 +94,23 @@ if (!$_header_skip_head):
     })(window,document,'script','dataLayer','GTM-MBP57VQM');</script>
     <!-- End Google Tag Manager -->
     
+    <!-- Sistema Unificado de Analytics - Sincronizado con Google Search Console -->
+    <script src="/js/unified-analytics.js" defer></script>
+    <script>
+        // Configuración Global de Analytics
+        window.addEventListener('DOMContentLoaded', function() {
+            // Configurar dimensiones personalizadas para Google Analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('config', 'G-X990K5GE42', {
+                    'custom_map': {
+                        'custom_parameter_1': 'dimension1',
+                        'custom_parameter_2': 'dimension2'
+                    }
+                });
+            }
+        });
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     
