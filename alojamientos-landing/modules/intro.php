@@ -74,7 +74,7 @@ function renderLandingIntro(array $ctx): void
     // ── Inbound links: enriquecer párrafos con links internos ────────────
     if ($pdo !== null) {
         $p1  = procesarInboundLinks($p1,  $pdo);
-        // No procesamos p2 para mantener los nuevos enlaces intactos
+        $p2  = procesarInboundLinks($p2,  $pdo);
         $tip = procesarInboundLinks($tip, $pdo);
     }
 ?>
