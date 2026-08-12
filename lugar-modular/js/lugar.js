@@ -223,103 +223,227 @@
         eventos: null,
     };
 
-    // initMap acepta parámetros opcionales (compatibilidad con onclick del HTML)
-    // o los lee de window.LUG_DATA si no se pasan
-    window.initMap = function(lat, lng, name) {
-        var mapLat  = lat  || (lug && lug.latitude)  || (lug && lug.lat);
-        var mapLng  = lng  || (lug && lug.longitude) || (lug && lug.lng);
-        var mapName = name || (lug && lug.name) || '';
-        if (mapLoaded || !mapLat || !mapLng) return;
-        mapLoaded = true;
+    // initMap usando la misma estructura que evento-modular (IDs: event-map-container, event-map, etc.)
+    window.initMap = function() {
+        if (mapLoaded || !lug || !lug.latitude || !lug.longitude) return;
 
         var placeholder = document.getElementById('map-placeholder');
-        var mapEl       = document.getElementById('map');          // ID en descripcion.php
-        if (!mapEl) mapEl = document.getElementById('lug-map');   // fallback alias
+        var mapEl = document.getElementById('event-map');
+        var controls = document.getElementById('map-controls');
+
         if (!mapEl) return;
 
+        mapLoaded = true;
+
+        // Mostrar loading
         if (placeholder) {
-            placeholder.innerHTML = '<div style="font-size:2rem">⏳</div><p style="margin-top:8px;font-size:0.85rem;color:#2F5233;">Cargando mapa…</p>';
+            placeholder.innerHTML = '<div style="font-size:2rem;">⏳</div><p>Cargando mapa...</p>';
         }
 
-        // Mostrar el div del mapa ANTES de cargar Leaflet para que tenga dimensiones
-        if (placeholder) placeholder.style.display = 'none';
-        mapEl.style.cssText = 'display:block!important;height:380px!important;width:100%!important;';
-
-        // Cargar CSS de Leaflet si no está ya cargado
-        if (!document.querySelector('link[href*="leaflet"]')) {
-            var leafletCSS = document.createElement('link');
-            leafletCSS.rel  = 'stylesheet';
-            leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-            document.head.appendChild(leafletCSS);
+        // Cargar Leaflet JS si no está cargado
+        if (typeof L === 'undefined') {
+            var script = document.createElement('script');
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            script.onload = function() { _renderMap(placeholder, mapEl, controls); };
+            document.head.appendChild(script);
+        } else {
+            _renderMap(placeholder, mapEl, controls);
         }
-
-        var script  = document.createElement('script');
-        script.src  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-        script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/4K9+sNF0Ncn5BlYETcCc=';
-        script.crossOrigin = '';
-        script.onload = function() {
-            // Initialize map and store it
-            leafletMap = window.L.map(mapEl, { zoomControl: true, scrollWheelZoom: false })
-                .setView([mapLat, mapLng], 14);
-
-            // Initialize layer groups
-            nearbyLayers.alojamientos = L.layerGroup().addTo(leafletMap);
-            nearbyLayers.lugares      = L.layerGroup().addTo(leafletMap);
-            nearbyLayers.actividades  = L.layerGroup().addTo(leafletMap);
-            nearbyLayers.eventos      = L.layerGroup().addTo(leafletMap);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                maxZoom: 18
-            }).addTo(leafletMap);
-
-            // Marcador principal del lugar
-            var icon = L.divIcon({
-                className: '',
-                html: '<div style="background:#2F5233;color:#fff;border-radius:50% 50% 50% 0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,0.3);border:2px solid #fff;"><span style="transform:rotate(45deg)">🏛️</span></div>',
-                iconSize: [36, 36],
-                iconAnchor: [18, 36],
-                popupAnchor: [0, -36]
-            });
-
-            var popup = '<div style="padding:6px 2px;min-width:160px;">'
-                + '<strong style="color:#2F5233;font-size:0.95rem;">' + escHtml(mapName) + '</strong>'
-                + (lug && lug.address    ? '<br><small style="color:#666">' + escHtml(lug.address) + '</small>' : '')
-                + (lug && lug.municipality ? '<br><small style="color:#666">📍 ' + escHtml(lug.municipality) + '</small>' : '')
-                + '</div>';
-
-            L.marker([mapLat, mapLng], { icon: icon })
-                .addTo(leafletMap)
-                .bindPopup(popup)
-                .openPopup();
-
-            // Show map controls
-            var mapControls = document.getElementById('map-controls');
-            if (mapControls) mapControls.style.display = 'block';
-
-            // Add event listeners for toggle buttons
-            document.querySelectorAll('.map-toggle-btn').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    var layerType = this.dataset.layer;
-                    toggleLayer(layerType, this);
-                });
-            });
-
-            // If nearby data is already loaded, add markers to layers
-            if (window._nearbyDataLug) {
-                addNearbyMarkersToLayers(window._nearbyDataLug);
-            }
-            window._nearbyMapLug = leafletMap; // Store map instance for nearby data loading later
-        };
-        script.onerror = function() {
-            mapLoaded = false;
-            if (placeholder) {
-                placeholder.style.display = 'flex';
-                placeholder.innerHTML = '<div class="map-ph-icon">🗺️</div><strong>Error al cargar el mapa</strong><span class="map-ph-hint" style="cursor:pointer;" onclick="initMap()">Haz clic para reintentar</span>'; // Use T for translations here
-            }
-        };
-        document.head.appendChild(script);
     };
+
+    function _renderMap(placeholder, mapEl, controls) {
+        var lat = parseFloat(lug.latitude);
+        var lng = parseFloat(lug.longitude);
+
+        // Ocultar placeholder, mostrar mapa
+        if (placeholder) placeholder.style.display = 'none';
+        mapEl.style.display = 'block';
+        if (controls) controls.style.display = 'flex';
+
+        // Inicializar mapa Leaflet
+        leafletMap = L.map(mapEl, {
+            center: [lat, lng],
+            zoom: 14,
+            zoomControl: true,
+            scrollWheelZoom: false,
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 18,
+        }).addTo(leafletMap);
+
+        // Icono personalizado para el lugar
+        var lugarIcon = L.divIcon({
+            html: '<div style="background:#2F5233;color:white;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.3);">🏛️</div>',
+            className: '',
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+            popupAnchor: [0, -20],
+        });
+
+        // Marcador del lugar
+        var marker = L.marker([lat, lng], { icon: lugarIcon })
+            .addTo(leafletMap)
+            .bindPopup(`
+                <div style="min-width:180px;">
+                    <strong style="color:#2F5233;">${lug.name}</strong><br>
+                    <small>📍 ${lug.municipality || lug.province || ''}</small>
+                </div>
+            `, { maxWidth: 250 })
+            .openPopup();
+
+        nearbyLayers.lugar = L.layerGroup([marker]);
+
+        // Inicializar otras capas vacías
+        nearbyLayers.alojamientos = L.layerGroup();
+        nearbyLayers.lugares = L.layerGroup();
+        nearbyLayers.actividades = L.layerGroup();
+
+        // Cargar datos cercanos para el mapa si no están cargados
+        if (!nearbyLoaded) {
+            loadNearby().then(function() {
+                // Los datos ya están disponibles para el mapa
+            });
+        }
+    }
+
+    // Añadir función toggleMapLayer como en evento-modular
+    window.toggleMapLayer = function(type) {
+        var btn = document.getElementById('btn-' + type);
+        if (!btn) return;
+
+        if (type === 'lugar') return; // El lugar siempre visible
+
+        var isActive = btn.classList.contains('active');
+
+        // Si el mapa NO está cargado aún, cargarlo primero y luego añadir la capa
+        if (!leafletMap) {
+            btn.textContent = btn.textContent + ' ⏳';
+            _initMapAndThen(function() {
+                btn.textContent = btn.textContent.replace(' ⏳', '');
+                btn.classList.add('active');
+                _ensureNearbyAndAddLayer(type);
+            });
+            return;
+        }
+
+        if (isActive) {
+            if (nearbyLayers[type]) {
+                leafletMap.removeLayer(nearbyLayers[type]);
+            }
+            btn.classList.remove('active');
+        } else {
+            btn.classList.add('active');
+            _ensureNearbyAndAddLayer(type);
+        }
+    };
+
+    // Carga el mapa y ejecuta callback cuando esté listo
+    function _initMapAndThen(callback) {
+        if (leafletMap) { callback(); return; }
+        var checkInterval = setInterval(function() {
+            if (leafletMap) {
+                clearInterval(checkInterval);
+                callback();
+            }
+        }, 100);
+        initMap();
+        setTimeout(function() { clearInterval(checkInterval); }, 5000);
+    }
+
+    // Asegura que los datos nearby estén cargados y añade la capa
+    function _ensureNearbyAndAddLayer(type) {
+        if (!nearbyLoaded) {
+            var btn = document.getElementById('btn-' + type);
+            if (btn && !btn.textContent.includes('⏳')) btn.textContent = btn.textContent + ' ⏳';
+            loadNearby().then(function() {
+                if (btn) btn.textContent = btn.textContent.replace(' ⏳', '');
+                _addMapLayer(type);
+            });
+        } else {
+            _addMapLayer(type);
+        }
+    }
+
+    function _addMapLayer(type) {
+        if (!leafletMap || !nearbyData) return;
+
+        var items, icon;
+        if (type === 'alojamientos') {
+            items = nearbyData.alojamientos || [];
+            icon = _createMapIcon('🏠', '#1565C0');
+        } else if (type === 'lugares') {
+            items = nearbyData.lugares || [];
+            icon = _createMapIcon('🏛️', '#6A1B9A');
+        } else if (type === 'actividades') {
+            items = nearbyData.actividades || [];
+            icon = _createMapIcon('🎯', '#E65100');
+        } else {
+            return;
+        }
+
+        if (!items.length) {
+            showToast('No hay ' + type + ' cercanos disponibles');
+            document.getElementById('btn-' + type).classList.remove('active');
+            return;
+        }
+
+        var markers = items.map(function(item) {
+            var lat = parseFloat(item.latitude);
+            var lng = parseFloat(item.longitude);
+            if (!lat || !lng || isNaN(lat) || isNaN(lng)) return null;
+
+            var extraInfo = '';
+            if (type === 'alojamientos' && item.price_per_night) {
+                extraInfo = '<br><small>💶 ' + formatPrice(item.price_per_night) + '/noche</small>';
+            } else if (type === 'actividades' && item.price) {
+                extraInfo = '<br><small>💶 ' + formatPrice(item.price) + '/persona</small>';
+            }
+            var dist = item.distance > 0 ? '<br><small>📏 ' + item.distance + ' km</small>' : '';
+
+            return L.marker([lat, lng], { icon: icon })
+                .bindPopup(`
+                    <div style="min-width:160px;">
+                        <strong style="color:#2F5233;">${item.name}</strong>
+                        <br><small>📍 ${item.municipality || ''}</small>
+                        ${extraInfo}${dist}
+                        <br><a href="${item.url}" style="color:#2F5233;font-size:0.8rem;">Ver más →</a>
+                    </div>
+                `, { maxWidth: 220 });
+        }).filter(Boolean);
+
+        if (!markers.length) {
+            showToast('No hay ' + type + ' con coordenadas disponibles');
+            document.getElementById('btn-' + type).classList.remove('active');
+            return;
+        }
+
+        if (!nearbyLayers[type]) {
+            nearbyLayers[type] = L.layerGroup();
+        }
+        nearbyLayers[type].clearLayers();
+        markers.forEach(function(marker) {
+            nearbyLayers[type].addLayer(marker);
+        });
+        nearbyLayers[type].addTo(leafletMap);
+    }
+
+    // Iconos para el mapa
+    function _createMapIcon(emoji, color) {
+        return L.divIcon({
+            html: '<div style="background:' + color + ';color:white;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 2px 6px rgba(0,0,0,0.25);">' + emoji + '</div>',
+            className: '',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+            popupAnchor: [0, -18],
+        });
+    }
+
+    function formatPrice(price) {
+        if (!price || price <= 0) return 'Consultar';
+        return parseFloat(price).toFixed(2).replace('.', ',') + '€';
+    }
 
     function toggleLayer(layerType, button) {
         if (!leafletMap || !nearbyLayers[layerType]) return;

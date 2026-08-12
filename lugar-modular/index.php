@@ -269,7 +269,15 @@ if (file_exists($globalHeader)) {
     </div><!-- /.lug-layout -->
 
     <style>
+        /* ── Estilos del Mapa (mismo que evento-modular) ── */
+        #event-map-container {
+            border-radius: var(--radius);
+        }
+        #event-map {
+            height: 380px;
+        }
         .map-placeholder {
+            height: 380px;
             background: linear-gradient(135deg, #f0f4f1, #e8f0e8);
             border: 2px dashed var(--border);
             border-radius: var(--radius);
@@ -278,6 +286,10 @@ if (file_exists($globalHeader)) {
             cursor: pointer;
             transition: background .2s, border-color .2s;
             margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .map-placeholder:hover {
             background: #e8f0e8;
@@ -285,8 +297,41 @@ if (file_exists($globalHeader)) {
         }
         .map-placeholder .map-icon { font-size: 3rem; margin-bottom: 12px; }
         .map-placeholder strong { color: var(--primary); font-size: 1.1rem; }
-        .map-placeholder p { color: var(--text-light); margin: 4px 0 8px; }
+        .map-placeholder p { color: var(--text-light); margin: 4px 0 8px; font-size: 0.9rem; }
         .map-placeholder small { color: #999; font-size: 0.8rem; }
+        
+        .map-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 12px;
+            background: var(--white);
+            border-top: 1px solid #eee;
+        }
+        
+        .map-toggle-btn {
+            padding: 6px 14px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            color: #666;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .map-toggle-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .map-toggle-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
     </style>
 
 

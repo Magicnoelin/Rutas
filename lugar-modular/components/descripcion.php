@@ -169,17 +169,20 @@ $hayContactoBloq = !empty($lugar['phone']) || !empty($lugar['email']) || !empty(
         <?php endif; ?>
 
         <?php if (!empty($lugar['latitude']) && !empty($lugar['longitude'])): ?>
-        <!-- Mapa Leaflet cargado bajo demanda -->
-        <div class="map-wrapper">
-            <div class="map-placeholder" id="map-placeholder"
-                 onclick="initMap(<?php echo (float)$lugar['latitude']; ?>, <?php echo (float)$lugar['longitude']; ?>, <?php echo htmlspecialchars(json_encode($lugar['name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>)"
-                 role="button" tabindex="0"
-                 aria-label="<?php echo htmlspecialchars($_t['ver_mapa'], ENT_QUOTES, 'UTF-8'); ?>">
-                <div class="map-placeholder-text">
-                    🗺️ <?php echo htmlspecialchars($_t['click_mapa'], ENT_QUOTES, 'UTF-8'); ?>
-                </div>
+        <!-- Mapa Leaflet - Misma estructura que evento-modular -->
+        <div id="event-map-container" class="card" style="margin-bottom:24px;">
+            <div id="map-placeholder" class="map-placeholder" onclick="initMap()">
+                <div class="map-icon">🗺️</div>
+                <strong style="font-size:1rem;"><?php echo htmlspecialchars($_t['ver_mapa'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                <p><?php echo htmlspecialchars($_t['click_mapa'], ENT_QUOTES, 'UTF-8'); ?></p>
             </div>
-            <div id="map" style="display:none;" aria-label="Mapa interactivo"></div>
+            <div id="event-map" style="display:none;"></div>
+            <div class="map-controls" id="map-controls" style="display:none;">
+                <button class="map-toggle-btn active" id="btn-lugar" onclick="toggleMapLayer('lugar')"><?php echo isset($_t['btn_lugar']) ? $_t['btn_lugar'] : '📍 Lugar'; ?></button>
+                <button class="map-toggle-btn" id="btn-alojamientos" onclick="toggleMapLayer('alojamientos')"><?php echo isset($_t['btn_alojamientos']) ? $_t['btn_alojamientos'] : '🏠 Alojamientos'; ?></button>
+                <button class="map-toggle-btn" id="btn-lugares" onclick="toggleMapLayer('lugares')"><?php echo isset($_t['btn_lugares']) ? $_t['btn_lugares'] : '🏛️ Lugares'; ?></button>
+                <button class="map-toggle-btn" id="btn-actividades" onclick="toggleMapLayer('actividades')"><?php echo isset($_t['btn_actividades']) ? $_t['btn_actividades'] : '🎯 Actividades'; ?></button>
+            </div>
         </div>
         <?php endif; ?>
 
