@@ -312,13 +312,5 @@ if (file_exists($globalHeader)) {
 
 </div><!-- /.lug-page -->
 
-<!-- ── FOOTER COMPARTIDO ── -->
-<?php
-$globalFooter = dirname(__DIR__) . '/footer.php';
-if (file_exists($globalFooter)) {
-    include $globalFooter;
-}
-?>
-
 <!-- ── COMPONENTES FINALES: lightbox, toast, scripts ── -->
 <?php require __DIR__ . '/components/footer.php'; ?>
