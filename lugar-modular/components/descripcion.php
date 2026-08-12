@@ -24,12 +24,12 @@ $_t = [
     'leer_menos'    => isset($t['leer_menos'])    ? $t['leer_menos']    : '↑ Leer menos',
 ];
 
-// Elegir campo de descripción (prioridad: description_linked > description)
+// Elegir campo de descripción (prioridad: description > description_linked)
 $descripcionRaw = '';
-if (!empty($lugar['description_linked'])) {
-    $descripcionRaw = $lugar['description_linked'];
-} elseif (!empty($lugar['description'])) {
+if (!empty($lugar['description'])) {
     $descripcionRaw = $lugar['description'];
+} elseif (!empty($lugar['description_linked'])) {
+    $descripcionRaw = $lugar['description_linked'];
 }
 
 // Sanitizar descripción: permitir solo HTML seguro (sin scripts)

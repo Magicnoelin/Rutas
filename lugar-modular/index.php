@@ -164,8 +164,11 @@ if ($lang === 'es') {
 
 // Descripción SEO
 $descSeo = '';
-if (!empty($lugar['description'])) {
-    $descSeo = mb_substr(strip_tags($lugar['description']), 0, 160);
+if (!empty($lugar['short_description'])) {
+    $descSeo = mb_substr(strip_tags($lugar['short_description']), 0, 160);
+} elseif (!empty($lugar['description'])) {
+    // Fallback a la descripción larga si no hay corta
+    $descSeo = mb_substr(strip_tags($lugar['description']), 0, 160); 
 }
 if (empty($descSeo)) {
     $descSeo = 'Descubre ' . $nombreLugar

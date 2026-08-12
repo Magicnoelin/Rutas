@@ -62,7 +62,7 @@ function renderLugarSchema(
     }
 
     // ── 2. TouristAttraction ──────────────────────────────────────────────────
-    $descRaw   = strip_tags($lugar['description'] ?? '');
+    $descRaw   = strip_tags($lugar['short_description'] ?? $lugar['description'] ?? '');
     $descShort = mb_substr($descRaw, 0, 500);
 
     $address = array_filter([
