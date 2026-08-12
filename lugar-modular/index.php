@@ -7,21 +7,9 @@
  * el renderizado a los componentes de /components/.
  *
  * URL: /lugar/{slug}  →  servida por .htaccess o router PHP
- *
- * Componentes:
- *   components/schema.php      — JSON-LD (TouristAttraction, FAQPage, BreadcrumbList, WebPage)
- *   components/head.php        — <head> SEO, OG, hreflang, CSS, JS globals, traducciones $ui
- *   components/hero.php        — Hero imagen + H1 + breadcrumb + badges
- *   components/galeria.php     — Galería de fotos + miniaturas
- *   components/descripcion.php — Descripción + info práctica + contacto + mapa
- *   components/sidebar.php     — Info rápida + CTA + compartir
- *   components/cercanos.php    — Skeleton screens nearby (AJAX via lugar.js)
- *   components/footer.php      — Lightbox + Toast + Leaflet CSS + lugar.js
- *
- * NO modificar la lógica de DB aquí — hacerlo en api/lugar-data.php
  */
 
-// Suprimir warnings en producción (mismo patrón que alojamiento-modular)
+// Suprimir warnings en producción
 error_reporting(E_ERROR | E_PARSE);
 ini_set('display_errors', '0');
 
@@ -31,17 +19,17 @@ header('Content-Type: text/html; charset=UTF-8');
 
 /**
  * Escapa un valor para salida HTML segura.
- * Acepta string|null para evitar TypeError en PHP 8 cuando la clave no existe.
  */
 function esc(?string $str): string {
     return htmlspecialchars((string)($str ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+// Cargar el helper de FAQs
+require_once __DIR__ . '/../includes/faq-helper.php';
+
 // ─── SEGURIDAD: SLUG ─────────────────────────────────────────────────────────
 
 $slug = trim($_GET['slug'] ?? '');
-
-// Limpiar slug: solo letras, números, guiones y puntos
 $slug = preg_replace('/[^a-z0-9\-\.\_]/i', '', $slug);
 
 if (empty($slug)) {
@@ -50,14 +38,12 @@ if (empty($slug)) {
 }
 
 // ─── IDIOMA ───────────────────────────────────────────────────────────────────
-// Detecta lang desde: 1) ?lang=xx  2) prefijo de URL  3) Accept-Language  4) es
 $lang = 'es';
 $langAllowed = ['es', 'en', 'fr', 'de', 'zh'];
 
 if (!empty($_GET['lang']) && in_array($_GET['lang'], $langAllowed, true)) {
     $lang = $_GET['lang'];
 } elseif (!empty($_SERVER['REQUEST_URI'])) {
-    // Soporta URLs: /en/lugar/xxx, /fr/lugar/xxx ...
     if (preg_match('#^/(' . implode('|', $langAllowed) . ')/#', $_SERVER['REQUEST_URI'], $m)) {
         $lang = $m[1];
     }
@@ -66,9 +52,8 @@ if (!empty($_GET['lang']) && in_array($_GET['lang'], $langAllowed, true)) {
 // ─── CARGA DE DATOS (BD) ─────────────────────────────────────────────────────
 $lugar = [];
 $fotos = [];
+$faqs  = [];
 
-// Mismo config que todo el proyecto: api/config.php con getDBConnection()
-// Evitar redefinir la constante si ya fue incluido por otro componente
 if (!defined('API_NO_HEADERS')) {
     define('API_NO_HEADERS', true);
 }
@@ -77,8 +62,7 @@ require_once dirname(__DIR__) . '/api/config.php';
 try {
     $pdo = getDBConnection();
 
-    // ── Consulta principal del lugar ──────────────────────────────────────────
-    // Tabla: places_of_interest + categories_places (según lugar-data.php)
+    // 1) Consulta principal del lugar
     $stmt = $pdo->prepare("
         SELECT p.*, c.name AS category_name
         FROM places_of_interest p
@@ -89,9 +73,13 @@ try {
     $stmt->execute([$slug]);
     $lugar = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-    // ── Fotos desde entity_photos (igual que lugar-data.php) ─────────────────
     if (!empty($lugar)) {
-        // 1) Tabla entity_photos (fotos aprobadas, ordenadas por portada)
+        // 2) Cargar las FAQs de la BD ahora que tenemos la ID real del lugar ($lugar['id'])
+        if (function_exists('getFaqs')) {
+            $faqs = getFaqs($pdo, 'place', (int)$lugar['id'], $lang);
+        }
+
+        // 3) Fotos desde entity_photos
         try {
             $stmtF = $pdo->prepare("
                 SELECT file_url
@@ -108,9 +96,9 @@ try {
                     $fotos[] = '/' . ltrim(str_replace('\\', '/', $f['file_url']), '/');
                 }
             }
-        } catch (Exception $e) { /* ignorar — tabla puede no existir en local */ }
+        } catch (Exception $e) { /* ignorar */ }
 
-        // 2) Fallback a campos legacy photo1..photo4
+        // Fallback a campos legacy photo1..photo4
         if (empty($fotos)) {
             foreach (['photo1', 'photo2', 'photo3', 'photo4'] as $campo) {
                 if (!empty($lugar[$campo])) {
@@ -125,7 +113,6 @@ try {
 
 } catch (Exception $e) {
     error_log('[lugar-modular] Error BD: ' . $e->getMessage());
-    // $lugar permanece [] → se mostrará la página de error 404
 }
 
 // ─── VARIABLES SEO ────────────────────────────────────────────────────────────
@@ -135,11 +122,10 @@ $canonical = $lang === 'es'
     ? $baseUrl . '/lugar/' . $slug
     : $baseUrl . '/' . $lang . '/lugar/' . $slug;
 
-// Título SEO dinámico
-$municipio   = $lugar['municipality'] ?? '';
-$provincia   = $lugar['province']     ?? '';
+$municipio    = $lugar['municipality'] ?? '';
+$provincia    = $lugar['province']     ?? '';
 $categoryName = $lugar['category_name'] ?? '';
-$nombreLugar  = $lugar['name'] ?? ucwords(str_replace('-', ' ', $slug));
+$nombreLugar  = $lugar['name']          ?? ucwords(str_replace('-', ' ', $slug));
 
 if ($lang === 'es') {
     $page_title = $nombreLugar
@@ -162,12 +148,10 @@ if ($lang === 'es') {
     $page_title = $nombreLugar . ' — Rutas Rurales';
 }
 
-// Descripción SEO
 $descSeo = '';
 if (!empty($lugar['short_description'])) {
     $descSeo = mb_substr(strip_tags($lugar['short_description']), 0, 160);
 } elseif (!empty($lugar['description'])) {
-    // Fallback a la descripción larga si no hay corta
     $descSeo = mb_substr(strip_tags($lugar['description']), 0, 160); 
 }
 if (empty($descSeo)) {
@@ -178,12 +162,10 @@ if (empty($descSeo)) {
 }
 $page_description = $descSeo;
 
-// Foto OG (primera foto o genérica)
 $foto_og = !empty($fotos[0])
     ? (preg_match('/^https?:\/\//', $fotos[0]) ? $fotos[0] : $baseUrl . '/' . ltrim($fotos[0], '/'))
     : $baseUrl . '/menu_images/turismo_rural.webp';
 
-// Datos JS para window.LUG_DATA (expone lat/lng/slug/provincia/municipio al JS de la página)
 $lugar_js = json_encode([
     'slug'         => $slug,
     'name'         => $lugar['name']         ?? '',
@@ -200,10 +182,9 @@ $lugar_js = json_encode([
 // ─── CARGAR SCHEMA (debe estar disponible antes de head.php) ─────────────────
 require_once __DIR__ . '/components/schema.php';
 
-// ─── HEAD (incluye traducciones $ui → $t, CSS, meta, JSON-LD) ────────────────
-// head.php define siempre $t (traducciones) aunque $lugar esté vacío
+// ─── HEAD ────────────────────────────────────────────────────────────────────
 require_once __DIR__ . '/components/head.php';
-// Garantía de seguridad: si head.php no se ejecutó correctamente, $t puede no existir
+
 if (!isset($t) || !is_array($t)) {
     $t = [
         'no_encontrado_h1' => 'Lugar no encontrado',
@@ -216,11 +197,9 @@ if (!isset($t) || !is_array($t)) {
     ];
 }
 
-// ─── BODY ────────────────────────────────────────────────────────────────────
 ?>
 <body>
 
-<?php // GTM noscript — justo al abrir <body> ?>
 <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
             height="1" width="1" style="display:none;visibility:hidden"
@@ -228,11 +207,6 @@ if (!isset($t) || !is_array($t)) {
 </noscript>
 
 <?php
-// ─── MENÚ DE NAVEGACIÓN ───────────────────────────────────────────────────────
-// Mismo patrón que evento-detalle.php (que funciona):
-// HEADER_NO_HTML_HEAD le indica a header.php que omita el bloque
-// <!DOCTYPE html>...<head>...</head><body> (ya generado por head.php)
-// y solo añada el <header> de navegación.
 $globalHeader = dirname(__DIR__) . '/header.php';
 if (file_exists($globalHeader)) {
     if (!defined('HEADER_NO_HTML_HEAD')) {
@@ -242,9 +216,6 @@ if (file_exists($globalHeader)) {
 }
 ?>
 
-<!-- ══════════════════════════════════════════════════════
-     CONTENIDO PRINCIPAL
-     ══════════════════════════════════════════════════════ -->
 <div class="lug-page">
 
 <?php if (!empty($lugar)): ?>
@@ -259,23 +230,26 @@ if (file_exists($globalHeader)) {
 
             <?php require __DIR__ . '/components/galeria.php'; ?>
             <?php require __DIR__ . '/components/descripcion.php'; ?>
+            
+            <?php 
+            // Renderizar el acordeón visual de preguntas frecuentes en la columna principal
+            if (file_exists(__DIR__ . '/../components/faq-accordion.php')) {
+                include __DIR__ . '/../components/faq-accordion.php';
+            }
+            ?>
+
             <?php require __DIR__ . '/components/cercanos.php'; ?>
 
-        </main><!-- /#main-content -->
+        </main>
 
         <!-- ── SIDEBAR ── -->
         <?php require __DIR__ . '/components/sidebar.php'; ?>
 
-    </div><!-- /.lug-layout -->
+    </div>
 
     <style>
-        /* ── Estilos del Mapa (mismo que evento-modular) ── */
-        #event-map-container {
-            border-radius: var(--radius);
-        }
-        #event-map {
-            height: 380px;
-        }
+        #event-map-container { border-radius: var(--radius); }
+        #event-map { height: 380px; }
         .map-placeholder {
             height: 380px;
             background: linear-gradient(135deg, #f0f4f1, #e8f0e8);
@@ -291,10 +265,7 @@ if (file_exists($globalHeader)) {
             align-items: center;
             justify-content: center;
         }
-        .map-placeholder:hover {
-            background: #e8f0e8;
-            border-color: var(--accent);
-        }
+        .map-placeholder:hover { background: #e8f0e8; border-color: var(--accent); }
         .map-placeholder .map-icon { font-size: 3rem; margin-bottom: 12px; }
         .map-placeholder strong { color: var(--primary); font-size: 1.1rem; }
         .map-placeholder p { color: var(--text-light); margin: 4px 0 8px; font-size: 0.9rem; }
@@ -308,7 +279,6 @@ if (file_exists($globalHeader)) {
             background: var(--white);
             border-top: 1px solid #eee;
         }
-        
         .map-toggle-btn {
             padding: 6px 14px;
             border: 1px solid #ddd;
@@ -321,12 +291,7 @@ if (file_exists($globalHeader)) {
             transition: all 0.2s;
             white-space: nowrap;
         }
-        
-        .map-toggle-btn:hover {
-            background: #e9ecef;
-            border-color: #adb5bd;
-        }
-        
+        .map-toggle-btn:hover { background: #e9ecef; border-color: #adb5bd; }
         .map-toggle-btn.active {
             background: var(--primary);
             color: var(--white);
@@ -334,17 +299,14 @@ if (file_exists($globalHeader)) {
         }
     </style>
 
-
 <?php else: ?>
 
     <!-- ── ERROR 404 ── -->
     <?php
     http_response_code(404);
-    // $t está garantizado por head.php (array_merge con 'es' como base)
-    // El fallback extra protege si head.php no pudo ejecutarse
-    $err_h1  = isset($t['no_encontrado_h1']) ? $t['no_encontrado_h1'] : 'Lugar no encontrado';
-    $err_p   = isset($t['no_encontrado_p'])  ? $t['no_encontrado_p']  : 'El lugar de interés que buscas no existe o ya no está disponible.';
-    $err_btn = isset($t['volver_lista'])      ? $t['volver_lista']     : '← Volver a los lugares de interés';
+    $err_h1  = $t['no_encontrado_h1'] ?? 'Lugar no encontrado';
+    $err_p   = $t['no_encontrado_p']  ?? 'El lugar de interés que buscas no existe o ya no está disponible.';
+    $err_btn = $t['volver_lista']     ?? '← Volver a los lugares de interés';
     ?>
     <div class="error-container">
         <div class="error-icon" aria-hidden="true">😕</div>
@@ -355,7 +317,14 @@ if (file_exists($globalHeader)) {
 
 <?php endif; ?>
 
-</div><!-- /.lug-page -->
+</div>
 
-<!-- ── COMPONENTES FINALES: lightbox, toast, scripts ── -->
+<?php 
+// Impresión del JSON-LD Schema
+if (!empty($lugar) && function_exists('renderLugarSchema')) {
+    renderLugarSchema($lugar, $fotos, $canonical, $page_title, $page_description, $lang, $faqs);
+}
+?>
+
+<!-- ── COMPONENTES FINALES ── -->
 <?php require __DIR__ . '/components/footer.php'; ?>

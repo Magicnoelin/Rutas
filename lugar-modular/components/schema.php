@@ -7,18 +7,19 @@
  *   2. WebPage   (con primaryImageOfPage + breadcrumb + speakable)
  *   3. BreadcrumbList
  *   4. TouristAttraction (con GeoCoordinates, OpeningHours, isAccessibleForFree)
- *   5. FAQPage   (preguntas frecuentes dinámicas)
+ *   5. FAQPage   (prioridad BD, fallback autogenerado)
  *
  * Uso:
  *   require_once __DIR__ . '/components/schema.php';
- *   renderLugarSchema($lugar, $fotos, $canonical, $page_title, $page_desc, $lang);
+ *   renderLugarSchema($lugar, $fotos, $canonical, $page_title, $page_desc, $lang, $faqs);
  *
  * @param array  $lugar       Fila completa de la BD (places_of_interest)
  * @param array  $fotos       URLs de las fotos (relativas o absolutas)
  * @param string $canonical   URL canónica de la página
- * @param string $page_title  Título SEO
+ * @param string $page_title Título SEO
  * @param string $page_desc   Descripción SEO
  * @param string $lang        Código de idioma (es|en|fr|de|zh)
+ * @param array  $faqs        Array de FAQs obtenido de la BD con getFaqs()
  */
 
 function renderLugarSchema(
@@ -27,7 +28,8 @@ function renderLugarSchema(
     string $canonical,
     string $page_title,
     string $page_desc,
-    string $lang = 'es'
+    string $lang = 'es',
+    array  $faqs = [] // <-- Nuevo parámetro opcional con las FAQs de la BD
 ): void {
 
     $baseUrl    = 'https://rutasrurales.io';
@@ -223,101 +225,115 @@ function renderLugarSchema(
         ],
     ];
 
-    // ── 6. FAQPage dinámico ───────────────────────────────────────────────────
-    $nombre    = $lugar['name'];
-    $municipio = $lugar['municipality'] ?? 'España';
-    $provincia = $lugar['province']     ?? 'España';
-    $esGratisStr = $esGratis
-        ? 'La entrada es gratuita.'
-        : 'El precio de entrada es de ' . ($lugar['entry_fee'] ?? '') . '€.' . (!empty($lugar['entry_fee_details']) ? ' ' . $lugar['entry_fee_details'] . '.' : '');
+    // ── 6. FAQPage dinámico (Prioridad: BD -> Fallback: Autogeneradas) ────────
+    $faqItems = [];
 
-    $faqItems = [
-        [
-            '@type'          => 'Question',
-            'name'           => '¿Dónde está ' . $nombre . '?',
-            'acceptedAnswer' => [
-                '@type' => 'Answer',
-                'text'  => $nombre . ' se encuentra en ' . $municipio . ', provincia de ' . $provincia . '.'
-                    . (!empty($lugar['address']) ? ' La dirección es ' . $lugar['address'] . '.' : '')
-                    . (!empty($lugar['latitude']) && !empty($lugar['longitude'])
-                        ? ' Puedes ver su ubicación exacta en Google Maps.'
-                        : ''),
-            ],
-        ],
-        [
-            '@type'          => 'Question',
-            'name'           => '¿Cuánto cuesta visitar ' . $nombre . '?',
-            'acceptedAnswer' => [
-                '@type' => 'Answer',
-                'text'  => $esGratisStr . ' Consulta la información actualizada antes de tu visita.',
-            ],
-        ],
-        [
-            '@type'          => 'Question',
-            'name'           => '¿Cuál es el horario de ' . $nombre . '?',
-            'acceptedAnswer' => [
-                '@type' => 'Answer',
-                'text'  => !empty($lugar['opening_hours'])
-                    ? 'El horario de ' . $nombre . ' es: ' . $lugar['opening_hours'] . '. Te recomendamos confirmar el horario antes de tu visita.'
-                    : 'El horario de ' . $nombre . ' puede variar según la temporada. Te recomendamos contactar directamente o consultar su web oficial para obtener información actualizada.',
-            ],
-        ],
-        [
-            '@type'          => 'Question',
-            'name'           => '¿Cuánto tiempo se tarda en visitar ' . $nombre . '?',
-            'acceptedAnswer' => [
-                '@type' => 'Answer',
-                'text'  => !empty($lugar['visit_duration'])
-                    ? 'La duración aproximada de la visita a ' . $nombre . ' es de ' . $lugar['visit_duration'] . '.'
-                    : 'La duración de la visita a ' . $nombre . ' depende del ritmo de cada visitante. Generalmente se recomienda reservar entre 1 y 2 horas para disfrutarlo con tranquilidad.',
-            ],
-        ],
-        [
-            '@type'          => 'Question',
-            'name'           => '¿Qué se puede hacer cerca de ' . $nombre . '?',
-            'acceptedAnswer' => [
-                '@type' => 'Answer',
-                'text'  => $municipio . ', en la provincia de ' . $provincia . ', ofrece numerosas actividades y atractivos turísticos. '
-                    . 'Puedes explorar rutas de senderismo, monumentos históricos, gastronomía local y festividades tradicionales. '
-                    . 'Consulta Rutas Rurales para descubrir alojamientos, lugares de interés, actividades y eventos cercanos a ' . $nombre . '.',
-            ],
-        ],
-    ];
+    if (!empty($faqs)) {
+        // A) Si existen preguntas guardadas en BD para esta ficha
+        foreach ($faqs as $faq) {
+            $faqItems[] = [
+                '@type'          => 'Question',
+                'name'           => strip_tags($faq['question']),
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => strip_tags($faq['answer'])
+                ]
+            ];
+        }
+    } else {
+        // B) FALLBACK: Si NO hay preguntas en BD, generamos las preguntas por defecto
+        $nombre      = $lugar['name'];
+        $municipio   = $lugar['municipality'] ?? 'España';
+        $provincia   = $lugar['province']     ?? 'España';
+        $esGratisStr = $esGratis
+            ? 'La entrada es gratuita.'
+            : 'El precio de entrada es de ' . ($lugar['entry_fee'] ?? '') . '€.' . (!empty($lugar['entry_fee_details']) ? ' ' . $lugar['entry_fee_details'] . '.' : '');
 
-    // FAQ: mejor época
-    if (!empty($lugar['best_season'])) {
-        $faqItems[] = [
-            '@type'          => 'Question',
-            'name'           => '¿Cuándo es la mejor época para visitar ' . $nombre . '?',
-            'acceptedAnswer' => [
-                '@type' => 'Answer',
-                'text'  => 'La mejor época para visitar ' . $nombre . ' es ' . $lugar['best_season'] . '.',
+        $faqItems = [
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Dónde está ' . $nombre . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $nombre . ' se encuentra en ' . $municipio . ', provincia de ' . $provincia . '.'
+                        . (!empty($lugar['address']) ? ' La dirección es ' . $lugar['address'] . '.' : '')
+                        . (!empty($lugar['latitude']) && !empty($lugar['longitude'])
+                            ? ' Puedes ver su ubicación exacta en Google Maps.'
+                            : ''),
+                ],
+            ],
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Cuánto cuesta visitar ' . $nombre . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $esGratisStr . ' Consulta la información actualizada antes de tu visita.',
+                ],
+            ],
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Cuál es el horario de ' . $nombre . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => !empty($lugar['opening_hours'])
+                        ? 'El horario de ' . $nombre . ' es: ' . $lugar['opening_hours'] . '. Te recomendamos confirmar el horario antes de tu visita.'
+                        : 'El horario de ' . $nombre . ' puede variar según la temporada. Te recomendamos contactar directamente o consultar su web oficial para obtener información actualizada.',
+                ],
+            ],
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Cuánto tiempo se tarda en visitar ' . $nombre . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => !empty($lugar['visit_duration'])
+                        ? 'La duración aproximada de la visita a ' . $nombre . ' es de ' . $lugar['visit_duration'] . '.'
+                        : 'La duración de la visita a ' . $nombre . ' depende del ritmo de cada visitante. Generalmente se recomienda reservar entre 1 y 2 horas para disfrutarlo con tranquilidad.',
+                ],
+            ],
+            [
+                '@type'          => 'Question',
+                'name'           => '¿Qué se puede hacer cerca de ' . $nombre . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $municipio . ', en la provincia de ' . $provincia . ', ofrece numerosas actividades y atractivos turísticos. '
+                        . 'Puedes explorar rutas de senderismo, monumentos históricos, gastronomía local y festividades tradicionales. '
+                        . 'Consulta Rutas Rurales para descubrir alojamientos, lugares de interés, actividades y eventos cercanos a ' . $nombre . '.',
+                ],
             ],
         ];
-    }
 
-    // FAQ: mascotas
-    if (!empty($lugar['pet_friendly'])) {
-        $faqItems[] = [
-            '@type'          => 'Question',
-            'name'           => '¿Se pueden llevar mascotas a ' . $nombre . '?',
-            'acceptedAnswer' => [
-                '@type' => 'Answer',
-                'text'  => $nombre . ' admite mascotas. Es un lugar pet-friendly ideal para visitar con tu animal de compañía.',
-            ],
-        ];
-    }
+        if (!empty($lugar['best_season'])) {
+            $faqItems[] = [
+                '@type'          => 'Question',
+                'name'           => '¿Cuándo es la mejor época para visitar ' . $nombre . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => 'La mejor época para visitar ' . $nombre . ' es ' . $lugar['best_season'] . '.',
+                ],
+            ];
+        }
 
-    // FAQ: niños
-    if (!empty($lugar['suitable_for_children'])) {
-        $faqItems[] = [
-            '@type'          => 'Question',
-            'name'           => '¿Es ' . $nombre . ' apto para niños?',
-            'acceptedAnswer' => [
-                '@type' => 'Answer',
-                'text'  => $nombre . ' está indicado para familias con niños. Es una visita perfecta para disfrutar del turismo rural en ' . $municipio . '.',
-            ],
-        ];
+        if (!empty($lugar['pet_friendly'])) {
+            $faqItems[] = [
+                '@type'          => 'Question',
+                'name'           => '¿Se pueden llevar mascotas a ' . $nombre . '?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $nombre . ' admite mascotas. Es un lugar pet-friendly ideal para visitar con tu animal de compañía.',
+                ],
+            ];
+        }
+
+        if (!empty($lugar['suitable_for_children'])) {
+            $faqItems[] = [
+                '@type'          => 'Question',
+                'name'           => '¿Es ' . $nombre . ' apto para niños?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $nombre . ' está indicado para familias con niños. Es una visita perfecta para disfrutar del turismo rural en ' . $municipio . '.',
+                ],
+            ];
+        }
     }
 
     $faqPage = [
