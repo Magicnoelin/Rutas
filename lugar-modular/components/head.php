@@ -861,7 +861,7 @@ $og_locale = $og_locale_map[$lang] ?? 'es_ES';
 
     <!-- ── Schema.org JSON-LD ── -->
     <?php if (!empty($lugar)): ?>
-    <?php renderLugarSchema($lugar, $fotos, $canonical, $page_title, $page_description, $lang); ?>
+    <?php renderLugarSchema($lugar, $fotos, $canonical, $page_title, $page_description, $lang, $faqs ?? []); ?>
     <?php endif; ?>
 
     <!-- ── Datos JS globales (evita segunda llamada API) ── -->

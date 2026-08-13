@@ -53,25 +53,57 @@ if (!function_exists('getFaqs')) {
             }
         }
 
-        // 3. Consulta a Base de Datos
+        // 3. Consulta a Base de Datos (tolerante a variaciones)
         try {
+            // Primero, intento consulta exacta
             $sql = "SELECT question, answer 
                     FROM faqs 
-                    WHERE entity_type = :entity_type 
+                    WHERE entity_type IN (:entity_type, :entity_type_alt) 
                       AND entity_id = :entity_id 
-                      AND lang = :lang 
-                      AND is_active = 1 
-                    ORDER BY sort_order ASC 
+                      AND (lang = :lang OR (lang IS NULL OR lang = '') OR lang = 'es')
+                      AND (is_active = 1 OR is_active IS NULL)
+                    ORDER BY 
+                        CASE WHEN lang = :lang THEN 1 ELSE 2 END,
+                        sort_order ASC 
                     LIMIT 20";
 
             $stmt = $pdo->prepare($sql);
+            
+            // Mapeo alternativo para entity_type (por si se guardó el nombre completo)
+            $entityTypeAlt = $entityType === 'place' ? 'places_of_interest' : $entityType;
+            if ($entityType === 'places_of_interest') {
+                $entityTypeAlt = 'place';
+            }
+            
             $stmt->execute([
-                ':entity_type' => $entityType,
-                ':entity_id'   => (int)$entityId,
-                ':lang'        => $lang
+                ':entity_type'     => $entityType,
+                ':entity_type_alt' => $entityTypeAlt,
+                ':entity_id'       => (int)$entityId,
+                ':lang'            => $lang
             ]);
 
             $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Si no se encuentran resultados y el idioma no es 'es', reintentar solo en español
+            if (empty($faqs) && $lang !== 'es') {
+                $sql = "SELECT question, answer 
+                        FROM faqs 
+                        WHERE entity_type IN (:entity_type, :entity_type_alt) 
+                          AND entity_id = :entity_id 
+                          AND (lang = 'es' OR lang IS NULL OR lang = '')
+                          AND (is_active = 1 OR is_active IS NULL)
+                        ORDER BY sort_order ASC 
+                        LIMIT 20";
+                
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    ':entity_type'     => $entityType,
+                    ':entity_type_alt' => $entityTypeAlt,
+                    ':entity_id'       => (int)$entityId
+                ]);
+                
+                $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
 
             // Guardar en caché estático
             $staticCache[$cacheKey] = $faqs;
