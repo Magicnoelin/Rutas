@@ -1,5 +1,6 @@
 <?php
 include 'db.php';
+require_once __DIR__ . '/../api/inbound_links_helper.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -7,6 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // NUEVO: Si viene de una sugerencia, transferir fotos automáticamente
         $suggestedId = isset($_POST['from_suggested_id']) ? (int)$_POST['from_suggested_id'] : 0;
+
+        // Asegurar que la columna description_linked existe en places_of_interest
+        try {
+            $pdo->exec("ALTER TABLE places_of_interest ADD COLUMN IF NOT EXISTS description_linked LONGTEXT NULL AFTER description");
+        } catch (Exception $e) {
+            // La columna ya existe o hay otro error, continuar
+        }
 
         // Función para limpiar y manejar NULLs
         function clean($val) {
@@ -46,9 +54,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $currentPlace = $stmtCurrent->fetch();
         $isActive = $currentPlace['is_active']; // Mantener el estado actual (público o borrador)
 
+        // ─── INBOUND LINKS: generar description_linked ───────────────────────
+        $description_raw = $_POST['description'] ?? '';
+        $description_linked = procesarInboundLinks($description_raw, $pdo);
+        // ─────────────────────────────────────────────────────────────────────
+
         $sql = "UPDATE places_of_interest SET 
                 name = ?, slug = ?, category_id = ?, subcategory_id = ?, 
-                description = ?, short_description = ?, address = ?, 
+                description = ?, description_linked = ?, short_description = ?, address = ?, 
                 municipality = ?, province = ?, postal_code = ?, 
                 latitude = ?, longitude = ?, phone = ?, email = ?, 
                 website = ?, meta_title = ?, meta_description = ?, 
@@ -64,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             clean($_POST['category_id']),
             clean($_POST['subcategory_id']),
             clean($_POST['description']),
+            $description_linked, // ← NUEVO: inbound links pre-procesados
             clean($_POST['short_description']),
             clean($_POST['address']),
             clean($_POST['municipality']),

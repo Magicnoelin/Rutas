@@ -24,17 +24,35 @@ $_t = [
     'leer_menos'    => isset($t['leer_menos'])    ? $t['leer_menos']    : '↑ Leer menos',
 ];
 
-// Usar solo el campo description (descripción general)
+// Usar description_linked (con inbound links pre-generados) si existe
+// Si está vacío, generar los links al vuelo con fallback a description
 $descripcionRaw = '';
-if (!empty($lugar['description'])) {
+$descHtml = '';
+
+if (!empty($lugar['description_linked'])) {
+    // Ya tiene inbound links procesados (modo óptimo)
+    $descripcionRaw = $lugar['description_linked'];
+} elseif (!empty($lugar['description'])) {
+    // Fallback: procesar inbound links al vuelo
     $descripcionRaw = $lugar['description'];
+    
+    // Aplicar inbound links dinámicamente
+    if (isset($pdo) && $pdo !== null) {
+        require_once dirname(__DIR__) . '/api/inbound_links_helper.php';
+        $descripcionRaw = procesarInboundLinks($descripcionRaw, $pdo);
+    }
 }
 
 // Sanitizar descripción: permitir solo HTML seguro (sin scripts)
-$descHtml = '';
 if ($descripcionRaw) {
     // Permite etiquetas de formato y enlaces pero elimina scripts
     $descHtml = strip_tags($descripcionRaw, '<p><br><a><strong><em><ul><ol><li><h2><h3><h4><blockquote><span>');
+    
+    // EVITAR AUTO-ENLACE: Remover enlaces que apunten al propio lugar (Google lo penaliza)
+    if (!empty($lugar['slug'])) {
+        $selfUrl = '/lugar/' . $lugar['slug'];
+        $descHtml = preg_replace('/<a[^>]+href="' . preg_quote($selfUrl, '/') . '"[^>]*>(.*?)<\/a>/i', '$1', $descHtml);
+    }
 }
 
 $hayInfoPractica = !empty($lugar['opening_hours'])
