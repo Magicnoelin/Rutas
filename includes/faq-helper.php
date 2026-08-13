@@ -55,54 +55,68 @@ if (!function_exists('getFaqs')) {
 
         // 3. Consulta a Base de Datos (tolerante a variaciones)
         try {
-            // Primero, intento consulta exacta
+            // Primero: consulta exacta por idioma
             $sql = "SELECT question, answer 
                     FROM faqs 
-                    WHERE entity_type IN (:entity_type, :entity_type_alt) 
+                    WHERE entity_type = :entity_type 
                       AND entity_id = :entity_id 
-                      AND (lang = :lang OR (lang IS NULL OR lang = '') OR lang = 'es')
-                      AND (is_active = 1 OR is_active IS NULL)
-                    ORDER BY 
-                        CASE WHEN lang = :lang THEN 1 ELSE 2 END,
-                        sort_order ASC 
+                      AND lang = :lang 
+                      AND is_active = 1
+                    ORDER BY sort_order ASC 
                     LIMIT 20";
 
             $stmt = $pdo->prepare($sql);
-            
-            // Mapeo alternativo para entity_type (por si se guardó el nombre completo)
-            $entityTypeAlt = $entityType === 'place' ? 'places_of_interest' : $entityType;
-            if ($entityType === 'places_of_interest') {
-                $entityTypeAlt = 'place';
-            }
-            
             $stmt->execute([
-                ':entity_type'     => $entityType,
-                ':entity_type_alt' => $entityTypeAlt,
-                ':entity_id'       => (int)$entityId,
-                ':lang'            => $lang
+                ':entity_type' => $entityType,
+                ':entity_id'   => (int)$entityId,
+                ':lang'        => $lang
             ]);
 
             $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // Si no se encuentran resultados y el idioma no es 'es', reintentar solo en español
-            if (empty($faqs) && $lang !== 'es') {
-                $sql = "SELECT question, answer 
-                        FROM faqs 
-                        WHERE entity_type IN (:entity_type, :entity_type_alt) 
-                          AND entity_id = :entity_id 
-                          AND (lang = 'es' OR lang IS NULL OR lang = '')
-                          AND (is_active = 1 OR is_active IS NULL)
-                        ORDER BY sort_order ASC 
-                        LIMIT 20";
-                
+            // Si no encuentra y entityType es 'place', probar con 'places_of_interest'
+            if (empty($faqs) && $entityType === 'place') {
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
-                    ':entity_type'     => $entityType,
-                    ':entity_type_alt' => $entityTypeAlt,
-                    ':entity_id'       => (int)$entityId
+                    ':entity_type' => 'places_of_interest',
+                    ':entity_id'   => (int)$entityId,
+                    ':lang'        => $lang
                 ]);
-                
                 $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            
+            // Si no encuentra y entityType es 'places_of_interest', probar con 'place'
+            if (empty($faqs) && $entityType === 'places_of_interest') {
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    ':entity_type' => 'place',
+                    ':entity_id'   => (int)$entityId,
+                    ':lang'        => $lang
+                ]);
+                $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            
+            // Si no hay resultados y el idioma no es 'es', reintentar en español
+            if (empty($faqs) && $lang !== 'es') {
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    ':entity_type' => $entityType,
+                    ':entity_id'   => (int)$entityId,
+                    ':lang'        => 'es'
+                ]);
+                $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Si aún no encuentra, probar entity_type alternativo en español
+                if (empty($faqs)) {
+                    $altType = $entityType === 'place' ? 'places_of_interest' : 'place';
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([
+                        ':entity_type' => $altType,
+                        ':entity_id'   => (int)$entityId,
+                        ':lang'        => 'es'
+                    ]);
+                    $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                }
             }
 
             // Guardar en caché estático
