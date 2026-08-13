@@ -319,12 +319,6 @@ if (file_exists($globalHeader)) {
 
 </div>
 
-<?php 
-// Impresión del JSON-LD Schema
-if (!empty($lugar) && function_exists('renderLugarSchema')) {
-    renderLugarSchema($lugar, $fotos, $canonical, $page_title, $page_description, $lang, $faqs);
-}
-?>
 
 <!-- ── COMPONENTES FINALES ── -->
 <?php require __DIR__ . '/components/footer.php'; ?>
