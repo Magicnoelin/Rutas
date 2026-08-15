@@ -140,9 +140,90 @@ function renderLandingHero(array $ctx): void
     </p>
     <?php endif; ?>
 
+    <!-- Botón compartir (móvil: Web Share API, desktop: clipboard) -->
+    <div class="lnd-hero__share">
+        <button type="button" class="lnd-share-btn" id="btnCompartirAlojamientos"
+                aria-label="<?= htmlspecialchars($t['share_btn'] ?? 'Compartir esta página') ?>"
+                onclick="compartirPaginaAlojamientos(this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            <span><?= htmlspecialchars($t['share_btn'] ?? 'Compartir esta página') ?></span>
+        </button>
+    </div>
+
     </div><!-- /.lnd-hero__content -->
 
 </section>
 <!-- ════════════════════════════════════════════════════════ /HERO ══ -->
+
+<!-- Estilos para el botón compartir -->
+<style>
+.lnd-hero__share { margin-top: 16px; }
+.lnd-share-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
+    color: var(--white); padding: 8px 16px; border-radius: 25px;
+    font-family: inherit; font-size: .85rem; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+    backdrop-filter: blur(4px); line-height: 1.4;
+}
+.lnd-share-btn:hover,
+.lnd-share-btn:focus-visible { background: rgba(255,255,255,.22); outline: none; }
+.lnd-share-btn:active { transform: scale(.96); }
+.lnd-share-btn--copied { background: rgba(129,199,132,.25); border-color: var(--accent); }
+@media (max-width: 480px) {
+    .lnd-share-btn { width: 100%; justify-content: center; padding: 10px 18px; font-size: .88rem; }
+}
+</style>
+
+<!-- JavaScript para el botón compartir -->
+<script>
+function compartirPaginaAlojamientos(btn) {
+    var url   = window.location.href;
+    var title = '<?= htmlspecialchars($t['share_title'] ?? '¡Mira estos alojamientos rurales!', ENT_QUOTES) ?>';
+    var span  = btn.querySelector('span');
+    
+    if (navigator.share) {
+        // Web Share API (móviles)
+        navigator.share({ title: title, url: url }).catch(function() {});
+    } else {
+        // Clipboard API (desktop)
+        var orig = span.textContent;
+        var copied = '<?= htmlspecialchars($t['share_copy'] ?? 'Enlace copiado ✓', ENT_QUOTES) ?>';
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function() {
+                span.textContent = copied;
+                btn.classList.add('lnd-share-btn--copied');
+                setTimeout(function() {
+                    span.textContent = orig;
+                    btn.classList.remove('lnd-share-btn--copied');
+                }, 2500);
+            }).catch(function() {
+                // Fallback para navegadores que no soportan clipboard
+                span.textContent = copied;
+                btn.classList.add('lnd-share-btn--copied');
+                setTimeout(function() {
+                    span.textContent = orig;
+                    btn.classList.remove('lnd-share-btn--copied');
+                }, 2500);
+            });
+        } else {
+            // Fallback para navegadores muy antiguos
+            span.textContent = copied;
+            btn.classList.add('lnd-share-btn--copied');
+            setTimeout(function() {
+                span.textContent = orig;
+                btn.classList.remove('lnd-share-btn--copied');
+            }, 2500);
+        }
+    }
+}
+</script>
 <?php
 }

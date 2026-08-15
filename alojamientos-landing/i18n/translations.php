@@ -90,6 +90,11 @@ const LANDING_I18N = [
         'cta_desc'   => 'Cuéntanos qué necesitas y te ayudamos a encontrar el alojamiento perfecto en {PROVINCE}.',
         'cta_button' => 'Explorar todos los alojamientos',
 
+        // Botón compartir
+        'share_btn'   => 'Compartir esta página',
+        'share_copy'  => 'Enlace copiado ✓',
+        'share_title' => '¡Mira estos alojamientos rurales!',
+
         // Footer links
         'footer_home'     => 'Inicio',
         'footer_listings' => 'Alojamientos',
@@ -167,6 +172,11 @@ const LANDING_I18N = [
         'cta_desc'   => 'Tell us what you need and we\'ll help you find the perfect stay in {PROVINCE}.',
         'cta_button' => 'Explore all accommodations',
 
+        // Botón compartir
+        'share_btn'   => 'Share this page',
+        'share_copy'  => 'Link copied ✓',
+        'share_title' => 'Check out these rural accommodations!',
+
         'footer_home'     => 'Home',
         'footer_listings' => 'Accommodations',
         'footer_places'   => 'Places of interest',
@@ -242,6 +252,11 @@ const LANDING_I18N = [
         'cta_title'  => 'Vous ne trouvez pas ce que vous cherchez ?',
         'cta_desc'   => 'Dites-nous ce dont vous avez besoin et nous vous aiderons à trouver l\'hébergement parfait en {PROVINCE}.',
         'cta_button' => 'Explorer tous les hébergements',
+
+        // Botón compartir
+        'share_btn'   => 'Partager cette page',
+        'share_copy'  => 'Lien copié ✓',
+        'share_title' => 'Découvrez ces hébergements ruraux !',
 
         'footer_home'     => 'Accueil',
         'footer_listings' => 'Hébergements',
@@ -319,6 +334,11 @@ const LANDING_I18N = [
         'cta_desc'   => 'Teilen Sie uns Ihre Wünsche mit und wir helfen Ihnen, die perfekte Unterkunft in {PROVINCE} zu finden.',
         'cta_button' => 'Alle Unterkünfte erkunden',
 
+        // Botón compartir
+        'share_btn'   => 'Diese Seite teilen',
+        'share_copy'  => 'Link kopiert ✓',
+        'share_title' => 'Schau dir diese ländlichen Unterkünfte an!',
+
         'footer_home'     => 'Startseite',
         'footer_listings' => 'Unterkünfte',
         'footer_places'   => 'Sehenswürdigkeiten',
@@ -394,6 +414,11 @@ const LANDING_I18N = [
         'cta_title'  => '没找到您想要的？',
         'cta_desc'   => '告诉我们您的需求，我们将帮您在{PROVINCE}找到完美住宿。',
         'cta_button' => '浏览所有住宿',
+
+        // Botón compartir
+        'share_btn'   => '分享此页面',
+        'share_copy'  => '链接已复制 ✓',
+        'share_title' => '看看这些乡村住宿！',
 
         'footer_home'     => '首页',
         'footer_listings' => '住宿',
