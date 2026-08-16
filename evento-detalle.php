@@ -2277,24 +2277,6 @@ if (file_exists($header_path)) {
                     <button type="submit" class="cta-submit-btn"><?php echo $c['btn_email']; ?></button>
                 </form>
 
-                <!-- Separador -->
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;opacity:0.6;">
-                    <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
-                    <span style="font-size:0.7rem;white-space:nowrap;"><?php echo $c['divider']; ?></span>
-                    <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
-                </div>
-
-                <!-- Botón registro completo -->
-                <a href="<?php echo $lang_prefix_cta; ?>/register.html?ref=evento&slug=<?php echo urlencode($slug); ?>"
-                   style="display:block;text-align:center;background:rgba(255,255,255,0.12);
-                          border:1.5px solid rgba(255,255,255,0.35);color:#fff;border-radius:7px;
-                          padding:9px;font-size:0.83rem;font-weight:600;text-decoration:none;
-                          transition:background 0.2s;margin-bottom:6px;"
-                   onmouseover="this.style.background='rgba(255,255,255,0.2)'"
-                   onmouseout="this.style.background='rgba(255,255,255,0.12)'">
-                    <?php echo $c['btn_reg']; ?>
-                </a>
-
                 <!-- Ya tengo cuenta -->
                 <a href="<?php echo $lang_prefix_cta; ?>/login.html?ref=evento&slug=<?php echo urlencode($slug); ?>"
                    style="display:block;text-align:center;color:rgba(255,255,255,0.65);
@@ -2312,7 +2294,7 @@ if (file_exists($header_path)) {
         </div>
 
         <style>
-        /* Estilos base del formulario para desacoplar de inline */
+        /* Estilos base del formulario CTA - Consolidado */
         .cta-quick-form-inner { display: flex; gap: 6px; margin-bottom: 10px; }
         .cta-email-input { flex: 1; padding: 10px 12px; border: none; border-radius: 7px; font-size: 0.88rem; outline: none; font-family: inherit; background: #fff; color: #333; min-width: 0; }
         .cta-submit-btn { background: #F9A825; color: #1a2e1a; border: none; border-radius: 7px; padding: 10px 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: background 0.2s; font-family: inherit; }
@@ -2320,10 +2302,8 @@ if (file_exists($header_path)) {
         /* Estilos de :focus y :hover */
         #cta-email:focus { box-shadow: 0 0 0 3px rgba(249,168,37,0.5); }
         .cta-submit-btn:hover { background: #e69800 !important; }
-        </style>
         
-        <!-- FIX DEFINITIVO: Ajuste del formulario de email en PC para que no se descuadre -->
-        <style>
+        /* Ajuste responsive para desktop */
         @media (min-width: 900px) {
             .cta-quick-form-inner { flex-wrap: wrap; }
             .cta-email-input { flex-basis: 100%; margin-bottom: 8px; }
@@ -2473,25 +2453,6 @@ if (file_exists($header_path)) {
                 <?php echo $c['btn_email']; ?>
             </button>
         </form>
-        <!-- Separador -->
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;opacity:0.55;">
-            <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
-            <span style="font-size:0.7rem;white-space:nowrap;"><?php echo $c['divider']; ?></span>
-            <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
-        </div>
-        <!-- Registro completo -->
-        <a href="<?php echo $lang_prefix_cta; ?>/register.html?ref=evento&slug=<?php echo urlencode($slug); ?>"
-           style="display:block;text-align:center;background:rgba(255,255,255,0.12);
-                  border:1.5px solid rgba(255,255,255,0.35);color:#fff;border-radius:8px;
-                  padding:12px;font-size:0.88rem;font-weight:600;text-decoration:none;margin-bottom:8px;">
-            <?php echo $c['btn_reg']; ?>
-        </a>
-        <!-- Ya tengo cuenta -->
-        <a href="<?php echo $lang_prefix_cta; ?>/login.html?ref=evento&slug=<?php echo urlencode($slug); ?>"
-           style="display:block;text-align:center;color:rgba(255,255,255,0.6);
-                  font-size:0.8rem;text-decoration:none;padding:6px;">
-            <?php echo $c['ya_cuenta']; ?>
-        </a>
     </div>
 </div>
 
