@@ -2047,14 +2047,28 @@ if (file_exists($header_path)) {
                         <div class="meta-label"><?php echo ($t['fecha_inicio'] ?? ''); ?></div>
                         <div class="meta-value"><?php echo date('d/m/Y', strtotime($evento['start_date'])); ?></div>
                     </div>
-                    <?php if (!empty($evento['end_date']) && $evento['end_date'] !== $evento['start_date']): ?>
-                    <div class="meta-item">
-                        <div class="meta-icon">🏁</div>
-                        <div class="meta-label"><?php echo ($t['fecha_fin'] ?? ''); ?></div>
-                        <div class="meta-value"><?php echo date('d/m/Y', strtotime($evento['end_date'])); ?></div>
-                    </div>
-                    <?php endif; ?>
-                    <?php if ($ubicacion_display): ?>
+<?php
+$fecha_fin_raw = $evento['fecha_fin'] ?? $evento['end_date'] ?? null;
+$fecha_ini_raw = $evento['fecha_inicio'] ?? $evento['start_date'] ?? null;
+
+$ts_fin = !empty($fecha_fin_raw) ? strtotime($fecha_fin_raw) : 0;
+$ts_ini = !empty($fecha_ini_raw) ? strtotime($fecha_ini_raw) : 0;
+
+$mostrar_fecha_fin = !empty($fecha_fin_raw) && 
+                    $fecha_fin_raw !== '0000-00-00' && 
+                    $fecha_fin_raw !== '0000-00-00 00:00:00' && 
+                    $ts_fin > 0 && 
+                    $ts_fin !== $ts_ini;
+
+if ($mostrar_fecha_fin): 
+?>
+    <div class="meta-item">
+        <div class="meta-icon">📌</div>
+        <div class="meta-label"><?php echo ($t['fecha_fin'] ?? ''); ?></div>
+        <div class="meta-value"><?php echo date('d/m/Y', $ts_fin); ?></div>
+    </div>
+    <?php endif; ?>                    
+    <?php if ($ubicacion_display): ?>
                     <div class="meta-item">
                         <div class="meta-icon">📍</div>
                         <div class="meta-label"><?php echo ($t['ubicacion'] ?? ''); ?></div>
@@ -2414,8 +2428,15 @@ if (file_exists($header_path)) {
 <div class="toast" id="toast"></div>
 
 <!-- ── CTA MÓVIL: barra fija inferior + overlay ── -->
-<?php if ($evento): ?>
+<?php
+// ── Solución definitiva al CTA duplicado en desktop ──
+// Renderizar el bloque del CTA móvil SOLO si el User-Agent es de un dispositivo móvil.
+// Esto evita que el HTML se envíe al navegador en escritorio, eliminando cualquier
+// posibilidad de que se muestre por error debido a CSS o JavaScript.
+$isMobile = preg_match('/(android|iphone|ipad|ipod|webos|opera mini|blackberry)/i', $_SERVER['HTTP_USER_AGENT'] ?? '');
 
+if ($evento && $isMobile):
+?>
 <!-- Barra fija que aparece en la parte inferior en móvil -->
 <div id="cta-mobile-bar" role="complementary" aria-label="Registro evento">
     <div class="cmb-text">
