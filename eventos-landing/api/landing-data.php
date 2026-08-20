@@ -471,7 +471,7 @@ function resolveHeroImage(
     // q=80: calidad óptima sin peso excesivo. auto=format: webp en Chrome, jpg en Safari.
     $filterHeroMap = [
         'musica' => [
-            'url' => 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1440&h=500&fit=crop&auto=format&q=80',
+            'url' => 'https://rutasrurales.io/img/categories_events/musica_en_vivo.webp',
             'alt' => 'Concierto y eventos de música en vivo',
         ],
         'teatro' => [
@@ -491,7 +491,7 @@ function resolveHeroImage(
             'alt' => 'Tradiciones, folklore y fiestas populares',
         ],
         'mercados' => [
-            'url' => 'https://images.unsplash.com/photo-1506617420156-8e4536971650?w=1440&h=500&fit=crop&auto=format&q=80',
+            'url' => 'https://rutasrurales.io/img/categories_events/mercados_tradicionales_y_artesania.webp',
             'alt' => 'Mercados tradicionales y artesanía',
         ],
         'infantil' => [
@@ -511,7 +511,7 @@ function resolveHeroImage(
             'alt' => 'Espectáculos y eventos con entrada',
         ],
         'primavera' => [
-            'url' => 'https://images.unsplash.com/photo-1490750967868-88df5691cc22?w=1440&h=500&fit=crop&auto=format&q=80',
+            'url' => 'https://rutasrurales.io/img/categories_events/conciertos_musicales.webp',
             'alt' => 'Eventos y festivales de primavera',
         ],
         'verano' => [
@@ -519,15 +519,15 @@ function resolveHeroImage(
             'alt' => 'Festivales y eventos de verano al aire libre',
         ],
         'otono' => [
-            'url' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1440&h=500&fit=crop&auto=format&q=80',
-            'alt' => 'Eventos culturales de otoño',
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/otono-palencia.webp',
+            'alt' => 'https://rutasrurales.io/img/categories_events/Otono.webp',
         ],
         'invierno' => [
             'url' => 'https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=1440&h=500&fit=crop&auto=format&q=80',
             'alt' => 'Eventos y celebraciones de invierno',
         ],
         'este-mes' => [
-            'url' => 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1440&h=500&fit=crop&auto=format&q=80',
+            'url' => 'https://rutasrurales.io/img/categories_events/eventos_culturales_este_mes.webp',
             'alt' => 'Eventos culturales este mes',
         ],
     ];

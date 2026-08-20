@@ -109,7 +109,7 @@ const EVENTOS_PROVINCIAS = [
     'segovia' => [
         'label' => 'Segovia', 'db' => 'Segovia',
         'lat' => 40.943, 'lng' => -4.118,
-        'attractions' => ['Titirimundi (Festival Internacional de Títeres)', 'Hay Festival Segovia', 'Acueducto Romano', 'Pedraza'],
+        'attractions' => ['Titirimundi (Festival Internacional de Títeres)', 'Hay Festival Segovia', 'Acueducto de Segovia', 'Pedraza'],
         'vibe' => [
             'es' => 'una provincia que desafía el tiempo, sede del Titirimundi —uno de los festivales de títeres más importantes del mundo— y del Hay Festival, que convierte cada verano en una fiesta del pensamiento',
             'en' => 'a province that defies time, home to Titirimundi —one of the world\'s most important puppet festivals— and the Hay Festival, which turns every summer into a celebration of ideas',
