@@ -39,7 +39,7 @@ $langPrefix = ($lang !== 'es') ? '/' . $lang : '';
 ?>
 
 <!-- ══ HERO ══════════════════════════════════════════════ -->
-<section class="lug-hero" role="banner" aria-label="<?php echo htmlspecialchars($nombreLugar, ENT_QUOTES, 'UTF-8'); ?>">
+<section class="lug-hero" role="banner" aria-label="<?php echo htmlspecialchars($nombreLugar, ENT_QUOTES, 'UTF-8'); ?>" itemscope itemtype="https://schema.org/TouristAttraction">
 
     <!-- Imagen hero (LCP) — fetchpriority high, no lazy -->
     <img class="lug-hero-bg-img"
@@ -67,7 +67,7 @@ $langPrefix = ($lang !== 'es') ? '/' . $lang : '';
         </nav>
 
         <!-- H1 -->
-        <h1><?php echo htmlspecialchars($nombreLugar, ENT_QUOTES, 'UTF-8'); ?></h1>
+        <h1 itemprop="name"><?php echo htmlspecialchars($nombreLugar, ENT_QUOTES, 'UTF-8'); ?></h1>
 
         <!-- Localización -->
         <?php if (!empty($municipio)): ?>
@@ -76,7 +76,9 @@ $langPrefix = ($lang !== 'es') ? '/' . $lang : '';
             <?php if (!empty($provincia)): ?>, <?php echo htmlspecialchars($provincia, ENT_QUOTES, 'UTF-8'); ?><?php endif; ?>
 
             <?php if ($stars > 0): ?>
-            <span class="lug-stars" aria-label="<?php echo $stars; ?> estrellas de calidad">
+            <span class="lug-stars" aria-label="<?php echo $stars; ?> estrellas de calidad" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+                <meta itemprop="ratingValue" content="<?php echo $stars; ?>">
+                <meta itemprop="bestRating" content="5">
                 <?php for ($i = 0; $i < min($stars, 5); $i++) echo '⭐'; ?>
             </span>
             <?php endif; ?>
