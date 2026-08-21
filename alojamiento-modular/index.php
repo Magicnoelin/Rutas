@@ -2727,11 +2727,11 @@ if (file_exists($header_path)) {
                     var trackingData = {
                         resource_type: 'accommodation',
                         resource_id: accommodationData.id,
-                        action: 'view'
+                        stat_type: 'view'
                     };
                     
-                    // Usar la API unificada de analytics
-                    fetch('/api/unified-analytics.php', {
+                    // Usar la API de tracking de recursos
+                    fetch('/api/track_resource_stat.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

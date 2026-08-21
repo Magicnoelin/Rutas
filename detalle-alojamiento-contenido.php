@@ -186,5 +186,58 @@ $descripcionTexto = $alojamiento ? htmlspecialchars($alojamiento['description'] 
 <div class="footer-copyright"><p>2025 rutasrurales.io</p></div>
 </div>
 </footer>
+
+<!-- ── TRACKING DE VISTAS DEL ALOJAMIENTO ── -->
+<script>
+(function() {
+    'use strict';
+    
+    <?php if ($alojamiento && !empty($alojamiento['id'])): ?>
+    var accommodationId = <?php echo (int)$alojamiento['id']; ?>;
+    
+    // Función para trackear vista del alojamiento
+    function trackAccommodationView() {
+        try {
+            var trackingData = {
+                resource_type: 'accommodation',
+                resource_id: accommodationId,
+                stat_type: 'view'
+            };
+            
+            // Usar la API de tracking de recursos
+            fetch('/api/track_resource_stat.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(trackingData)
+            }).then(function(response) {
+                if (response.ok) {
+                    console.log('✅ Vista registrada para alojamiento ID:', accommodationId);
+                }
+            }).catch(function(error) {
+                console.warn('⚠️ Error al trackear vista:', error);
+            });
+        } catch (error) {
+            console.warn('⚠️ Error en trackAccommodationView:', error);
+        }
+    }
+    
+    // Trackear vista después de 3 segundos (indica interés real)
+    setTimeout(trackAccommodationView, 3000);
+    
+    // También trackear al hacer scroll hasta la mitad de la página
+    var scrollTracked = false;
+    window.addEventListener('scroll', function() {
+        if (!scrollTracked && window.scrollY > window.innerHeight / 2) {
+            scrollTracked = true;
+            trackAccommodationView();
+        }
+    }, { passive: true });
+    
+    <?php endif; ?>
+})();
+</script>
+
 </body>
 </html>
