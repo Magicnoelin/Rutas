@@ -2716,6 +2716,53 @@ if (file_exists($header_path)) {
         });
     })();
 
+    // ── TRACKING DE VISTAS DEL ALOJAMIENTO ──────────────────────────────────────
+    (function() {
+        var accommodationData = <?php echo $alo_js; ?>;
+        
+        if (accommodationData && accommodationData.id) {
+            // Función para trackear vista del alojamiento
+            function trackAccommodationView() {
+                try {
+                    var trackingData = {
+                        resource_type: 'accommodation',
+                        resource_id: accommodationData.id,
+                        action: 'view'
+                    };
+                    
+                    // Usar la API unificada de analytics
+                    fetch('/api/unified-analytics.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(trackingData)
+                    }).then(function(response) {
+                        if (response.ok) {
+                            console.log('✅ Vista registrada para alojamiento ID:', accommodationData.id);
+                        }
+                    }).catch(function(error) {
+                        console.warn('⚠️ Error al trackear vista:', error);
+                    });
+                } catch (error) {
+                    console.warn('⚠️ Error en trackAccommodationView:', error);
+                }
+            }
+            
+            // Trackear vista después de 3 segundos (indica interés real)
+            setTimeout(trackAccommodationView, 3000);
+            
+            // También trackear al hacer scroll hasta la mitad de la página
+            var scrollTracked = false;
+            window.addEventListener('scroll', function() {
+                if (!scrollTracked && window.scrollY > window.innerHeight / 2) {
+                    scrollTracked = true;
+                    trackAccommodationView();
+                }
+            }, { passive: true });
+        }
+    })();
+
 })();
 </script>
 
