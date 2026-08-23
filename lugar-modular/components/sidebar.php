@@ -63,22 +63,31 @@ $_t = [
             </li>
             <?php endif; ?>
 
-            <?php if (!empty($lugar['entry_fee']) || !empty($lugar['entry_fee_details']) || (!$esGastronomico && isset($lugar['entry_fee']))): ?>
-            <li>
-                <span class="li-icon" aria-hidden="true">🎫</span>
-                <span>
-                    <?php if (!empty($lugar['entry_fee'])): ?>
-                        💶 <?php echo htmlspecialchars($lugar['entry_fee'], ENT_QUOTES, 'UTF-8'); ?>€
-                    <?php elseif (!empty($lugar['entry_fee_details'])): ?>
-                        💶 <?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?>
-                    <?php else: ?>
-                        <?php echo htmlspecialchars($_t['entrada_gratuita'], ENT_QUOTES, 'UTF-8'); ?>
-                    <?php endif; ?>
-                    <?php if (!empty($lugar['entry_fee']) && !empty($lugar['entry_fee_details'])): ?>
-                        <br><small style="color:var(--lug-text-l);font-weight:400;"><?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?></small>
-                    <?php endif; ?>
-                </span>
-            </li>
+            <?php if ($esGastronomico): ?>
+                <?php if (!empty($lugar['entry_fee_details'])): ?>
+                <li>
+                    <span class="li-icon" aria-hidden="true">💶</span>
+                    <span>Rango de precios: <?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?></span>
+                </li>
+                <?php endif; ?>
+            <?php else: ?>
+                <?php if (!empty($lugar['entry_fee']) || !empty($lugar['entry_fee_details']) || isset($lugar['entry_fee'])): ?>
+                <li>
+                    <span class="li-icon" aria-hidden="true">🎫</span>
+                    <span>
+                        <?php if (!empty($lugar['entry_fee']) && $lugar['entry_fee'] > 0): ?>
+                            💶 <?php echo htmlspecialchars($lugar['entry_fee'], ENT_QUOTES, 'UTF-8'); ?>€
+                        <?php elseif (!empty($lugar['entry_fee_details'])): ?>
+                            💶 <?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?>
+                        <?php else: ?>
+                            <?php echo htmlspecialchars($_t['entrada_gratuita'], ENT_QUOTES, 'UTF-8'); ?>
+                        <?php endif; ?>
+                        <?php if (!empty($lugar['entry_fee']) && $lugar['entry_fee'] > 0 && !empty($lugar['entry_fee_details'])): ?>
+                            <br><small style="color:var(--lug-text-l);font-weight:400;"><?php echo htmlspecialchars($lugar['entry_fee_details'], ENT_QUOTES, 'UTF-8'); ?></small>
+                        <?php endif; ?>
+                    </span>
+                </li>
+                <?php endif; ?>
             <?php endif; ?>
 
             <?php if (!empty($lugar['opening_hours'])): ?>

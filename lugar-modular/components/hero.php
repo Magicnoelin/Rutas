@@ -11,6 +11,17 @@ if (!function_exists('fixUrlHero')) {
     }
 }
 
+if (!function_exists('esLugarGastronomicoHero')) {
+    function esLugarGastronomicoHero(string $categoryName): bool {
+        if (empty($categoryName)) return false;
+        $lower = mb_strtolower($categoryName, 'UTF-8');
+        foreach (['restauran','gastronom','enotur','bodega','cafeter','restauraci','taberna','hosteleria','hostelería'] as $kw) {
+            if (strpos($lower, $kw) !== false) return true;
+        }
+        return false;
+    }
+}
+
 // Acceso seguro a claves de $t con fallback
 $_t = [
     'inicio'  => isset($t['inicio'])  ? $t['inicio']  : 'Inicio',
@@ -25,9 +36,19 @@ $categoria   = isset($lugar['category_name']) ? $lugar['category_name'] : '';
 $stars       = isset($lugar['quality_score']) ? (int)$lugar['quality_score'] : 0;
 $entryFee    = isset($lugar['entry_fee']) ? $lugar['entry_fee'] : null;
 $entryDet    = isset($lugar['entry_fee_details']) ? $lugar['entry_fee_details'] : '';
+
+// Check if it's a gastronomic place
+$esGastronomico = esLugarGastronomicoHero($categoria);
+
+// For restaurants: don't show fee/gratis, show price range instead
 $isGratuito  = (empty($entryFee) || (float)$entryFee === 0.0);
 $entradaInfo = '';
-if (!empty($entryFee) && (float)$entryFee > 0) {
+if ($esGastronomico) {
+    // For restaurants: show price range if available
+    if (!empty($entryDet)) {
+        $entradaInfo = '💶 ' . htmlspecialchars($entryDet, ENT_QUOTES, 'UTF-8');
+    }
+} elseif (!empty($entryFee) && (float)$entryFee > 0) {
     $entradaInfo = '💶 ' . number_format((float)$entryFee, 2, '.', '') . '€';
     if (!empty($entryDet)) $entradaInfo .= ' · ' . htmlspecialchars($entryDet, ENT_QUOTES, 'UTF-8');
 } elseif ($isGratuito && !empty($entryDet)) {
@@ -91,7 +112,7 @@ $langPrefix = ($lang !== 'es') ? '/' . $lang : '';
             <span class="lug-badge lug-badge-cat"><?php echo htmlspecialchars($categoria, ENT_QUOTES, 'UTF-8'); ?></span>
             <?php endif; ?>
 
-            <?php if ($isGratuito && empty($entradaInfo)): ?>
+            <?php if (!$esGastronomico && $isGratuito && empty($entradaInfo)): ?>
             <span class="lug-badge lug-badge-free">✅ Gratis</span>
             <?php endif; ?>
 

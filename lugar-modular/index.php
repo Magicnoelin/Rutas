@@ -26,6 +26,8 @@ function esc(?string $str): string {
 
 // Cargar el helper de FAQs
 require_once __DIR__ . '/../includes/faq-helper.php';
+// Cargar el helper de viator-section
+require_once __DIR__ . '/components/viator-section.php';
 
 // ─── SEGURIDAD: SLUG ─────────────────────────────────────────────────────────
 
@@ -74,7 +76,7 @@ try {
     $lugar = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
     if (!empty($lugar)) {
-        // 2) Cargar las FAQs de la BD ahora que tenemos la ID real del lugar ($lugar['id'])
+        // 2) Cargar las FAQs de la BD
         if (function_exists('getFaqs')) {
             $faqs = getFaqs($pdo, 'place', (int)$lugar['id'], $lang);
         }
@@ -179,7 +181,7 @@ $lugar_js = json_encode([
     'lang'         => $lang,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-// ─── CARGAR SCHEMA (debe estar disponible antes de head.php) ─────────────────
+// ─── CARGAR SCHEMA ──────────────────────────────────────────────────────────
 require_once __DIR__ . '/components/schema.php';
 
 // ─── HEAD ────────────────────────────────────────────────────────────────────
@@ -232,13 +234,22 @@ if (file_exists($globalHeader)) {
             <?php require __DIR__ . '/components/descripcion.php'; ?>
             
             <?php 
-            // Renderizar el acordeón visual de preguntas frecuentes en la columna principal
+            // Renderizar el acordeón visual de preguntas frecuentes
             if (file_exists(__DIR__ . '/../components/faq-accordion.php')) {
                 include __DIR__ . '/../components/faq-accordion.php';
             }
             ?>
 
             <?php require __DIR__ . '/components/cercanos.php'; ?>
+
+            <!-- ── SECCIÓN DINÁMICA DE VIATOR ── -->
+            <?php 
+            if (function_exists('mostrar_actividades_viator')) {
+                // Selecciona dinámicamente la provincia del lugar activo
+                $provincia_actual = $lugar['province'] ?? $provincia ?? '';
+                mostrar_actividades_viator($provincia_actual, 3); 
+            }
+            ?>
 
         </main>
 
@@ -318,7 +329,6 @@ if (file_exists($globalHeader)) {
 <?php endif; ?>
 
 </div>
-
 
 <!-- ── COMPONENTES FINALES ── -->
 <?php require __DIR__ . '/components/footer.php'; ?>

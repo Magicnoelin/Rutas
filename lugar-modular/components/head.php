@@ -304,12 +304,12 @@ $og_locale = $og_locale_map[$lang] ?? 'es_ES';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ── SEO ── -->
+<!-- ── SEO ── -->
     <title><?php echo htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8'); ?></title>
     <meta name="description" content="<?php echo htmlspecialchars($page_description, ENT_QUOTES, 'UTF-8'); ?>">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="<?php echo htmlspecialchars($canonical, ENT_QUOTES, 'UTF-8'); ?>">
-
+    <link rel="canonical" href="<?php echo htmlspecialchars(rtrim($canonical, '/'), ENT_QUOTES, 'UTF-8'); ?>">
+    
     <!-- ── hreflang — todos los idiomas (contenido editorial, sin restricción de membresía) ── -->
     <link rel="alternate" hreflang="es"        href="https://rutasrurales.io/lugar/<?php echo htmlspecialchars($slug, ENT_QUOTES, 'UTF-8'); ?>">
     <link rel="alternate" hreflang="en"        href="https://rutasrurales.io/en/lugar/<?php echo htmlspecialchars($slug, ENT_QUOTES, 'UTF-8'); ?>">

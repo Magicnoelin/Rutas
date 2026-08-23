@@ -1,0 +1,2295 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   INDEX HUB CSS — rutasrurales.io
+   CSS no-crítico (carga asíncrona). El CSS crítico va inline en el <head>.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── VARIABLES (deben coincidir con el inline crítico) ─────────────────────── */
+:root {
+  --primary:        #2F5233;
+  --primary-dark:   #1a3d1e;
+  --primary-light:  #3d6b42;
+  --accent:         #81C784;
+  --accent-warm:    #F9A825;
+  --accent-blue:    #1a3a5c;
+  --white:          #fff;
+  --bg:             #f8f9fa;
+  --bg-alt:         #f0f4f1;
+  --text:           #2d3436;
+  --text-light:     #636e72;
+  --border:         #e8eaed;
+  --radius:         14px;
+  --radius-sm:      8px;
+  --radius-xl:      24px;
+  --shadow:         0 2px 12px rgba(0,0,0,.07);
+  --shadow-md:      0 4px 20px rgba(0,0,0,.10);
+  --shadow-lg:      0 8px 32px rgba(0,0,0,.14);
+  --max-w:          1200px;
+  --transition:     .18s ease;
+}
+
+/* ── RESET ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--primary); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--primary-dark); }
+ul { list-style: none; }
+
+/* ── CONTENEDOR ────────────────────────────────────────────────────────────── */
+.hub-container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   NAVBAR
+   ══════════════════════════════════════════════════════════════════════════════ */
+.hub-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  contain: layout style;
+}
+.hub-navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 1rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.hub-navbar__logo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.hub-navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: .82rem;
+}
+.hub-navbar__nav a {
+  color: var(--text);
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+.hub-navbar__nav a:hover {
+  background: var(--bg-alt);
+  color: var(--primary);
+}
+.hub-navbar__cta {
+  background: var(--primary) !important;
+  color: var(--white) !important;
+  padding: 8px 16px !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 700 !important;
+}
+.hub-navbar__cta:hover {
+  background: var(--primary-dark) !important;
+}
+
+/* Selector de idioma */
+.hub-lang-selector {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+.hub-lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+.hub-lang-btn:hover {
+  border-color: var(--primary);
+  background: var(--bg-alt);
+}
+.hub-lang-btn img { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; }
+.hub-lang-chevron { transition: transform var(--transition); }
+.hub-lang-selector.open .hub-lang-chevron { transform: rotate(180deg); }
+
+.hub-lang-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  min-width: 160px;
+  z-index: 999;
+  overflow: hidden;
+}
+.hub-lang-selector.open .hub-lang-dropdown { display: block; }
+.hub-lang-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+}
+.hub-lang-dropdown a:last-child { border-bottom: none; }
+.hub-lang-dropdown a:hover { background: var(--bg-alt); }
+.hub-lang-dropdown a.active { color: var(--primary); background: var(--bg-alt); }
+.hub-lang-dropdown img { width: 22px; height: 22px; border-radius: 50%; }
+
+/* Hamburguesa móvil */
+.hub-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: auto;
+}
+.hub-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all .2s ease;
+}
+
+/* Menú móvil */
+.hub-navbar__mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 64px 0 0 0;
+  background: var(--white);
+  z-index: 850;
+  padding: 24px 20px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+.hub-navbar__mobile-menu.open { display: block; }
+.hub-navbar__mobile-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.hub-navbar__mobile-menu a .hub-cta__icon { font-size: 1.4rem; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════════════════════════════════════ */
+.hub-hero {
+  position: relative;
+  min-height: 540px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  contain: layout;
+}
+.hub-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hub-hero__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+.hub-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(26,61,30,.88) 0%,
+    rgba(47,82,51,.75) 50%,
+    rgba(26,61,30,.55) 100%
+  );
+}
+.hub-hero__inner {
+  position: relative;
+  z-index: 1;
+  padding: 60px 20px 56px;
+  width: 100%;
+}
+.hub-hero__h1 {
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 8px rgba(0,0,0,.25);
+  max-width: 700px;
+}
+.hub-hero__sub {
+  font-size: clamp(.95rem, 2vw, 1.15rem);
+  color: rgba(255,255,255,.88);
+  margin-bottom: 36px;
+  max-width: 600px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* CTAs del hero */
+.hub-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+.hub-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: .9rem;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  white-space: nowrap;
+}
+.hub-cta:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.hub-cta--primary {
+  background: var(--accent-warm);
+  color: #1a1a1a;
+}
+.hub-cta--primary:hover { background: #e0961f; color: #1a1a1a; }
+.hub-cta--secondary {
+  background: rgba(255,255,255,.15);
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,.35);
+  backdrop-filter: blur(4px);
+}
+.hub-cta--secondary:hover {
+  background: rgba(255,255,255,.25);
+  color: var(--white);
+}
+.hub-cta__icon { font-size: 1.1rem; }
+
+/* Estadísticas del hero */
+.hub-hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+.hub-stat { display: flex; flex-direction: column; gap: 2px; }
+.hub-stat__value {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  text-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.hub-stat__label {
+  font-size: .8rem;
+  color: rgba(255,255,255,.8);
+  font-weight: 500;
+}
+
+/* Botón Antonio */
+.hub-antonio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.3);
+  color: var(--white);
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+.hub-antonio-btn:hover {
+  background: rgba(255,255,255,.22);
+  transform: translateY(-2px);
+  color: var(--white);
+}
+.hub-antonio-btn__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,.5);
+  flex-shrink: 0;
+}
+.hub-antonio-btn__arrow { flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SECCIONES HUB
+   ══════════════════════════════════════════════════════════════════════════════ */
+.hub-section {
+  padding: 72px 0;
+}
+.hub-section--alt {
+  background: var(--bg-alt);
+}
+.hub-section__header {
+  margin-bottom: 36px;
+}
+.hub-section__h2 {
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  font-weight: 800;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.hub-section__icon { font-size: 1.6rem; flex-shrink: 0; }
+.hub-section__intro {
+  font-size: .95rem;
+  color: var(--text-light);
+  max-width: 600px;
+  font-weight: 500;
+}
+.hub-section__cta {
+  margin-top: 32px;
+  text-align: center;
+}
+
+/* ── ACORDEONES ────────────────────────────────────────────────────────────── */
+.hub-accordion {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.hub-accordion[open] { box-shadow: var(--shadow-md); }
+.hub-accordion__summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px;
+  font-weight: 700;
+  font-size: .95rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  color: var(--text);
+  transition: background var(--transition);
+}
+.hub-accordion__summary::-webkit-details-marker { display: none; }
+.hub-accordion__summary:hover { background: var(--bg-alt); }
+.hub-accordion__icon { font-size: 1.2rem; flex-shrink: 0; }
+.hub-accordion__chevron {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--text-light);
+  transition: transform var(--transition);
+}
+.hub-accordion[open] .hub-accordion__chevron { transform: rotate(180deg); }
+.hub-accordion__body {
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--border);
+  animation: fadeIn .18s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(-4px) } to { opacity:1; transform:translateY(0) } }
+
+/* ── CHIPS (filtros rápidos) ───────────────────────────────────────────────── */
+.hub-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hub-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.hub-chip:hover {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.hub-chip--events:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+/* ── GRID DE PROVINCIAS ────────────────────────────────────────────────────── */
+.hub-prov-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+.hub-prov-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 12px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all var(--transition);
+  gap: 4px;
+}
+.hub-prov-card:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.hub-prov-card:hover .hub-prov-card__label,
+.hub-prov-card:hover .hub-prov-card__region {
+  color: rgba(255,255,255,.9);
+}
+.hub-prov-card--events:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+.hub-prov-card__emoji { font-size: 1.6rem; }
+.hub-prov-card__label {
+  font-size: .87rem;
+  font-weight: 700;
+  color: var(--text);
+  transition: color var(--transition);
+}
+.hub-prov-card__region {
+  font-size: .72rem;
+  color: var(--text-light);
+  transition: color var(--transition);
+}
+
+/* ── GRID DE LINKS (combinaciones) ────────────────────────────────────────── */
+.hub-link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+.hub-link-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: .83rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: all var(--transition);
+}
+.hub-link-item:hover {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  transform: translateX(3px);
+}
+.hub-link-item--events:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+.hub-link-item__icon { flex-shrink: 0; font-size: 1rem; }
+
+/* ── BOTONES ───────────────────────────────────────────────────────────────── */
+.hub-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: .9rem;
+  transition: all var(--transition);
+  cursor: pointer;
+  text-decoration: none;
+}
+.hub-btn--outline {
+  background: none;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+.hub-btn--outline:hover {
+  background: var(--primary);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.hub-btn--events.hub-btn--outline {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+.hub-btn--events.hub-btn--outline:hover {
+  background: var(--accent-blue);
+  color: var(--white);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   BLOQUE ESTACIONAL (eventos de temporada)
+   ══════════════════════════════════════════════════════════════════════════════ */
+.hub-season-block { margin-bottom: 28px; }
+.hub-season-block__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-blue);
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+.hub-season-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+.hub-season-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 10px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  gap: 5px;
+  transition: all var(--transition);
+  box-shadow: var(--shadow);
+}
+.hub-season-card:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.hub-season-card:hover .hub-season-card__prov,
+.hub-season-card:hover .hub-season-card__cat {
+  color: var(--white);
+}
+.hub-season-card__emoji { font-size: 1.7rem; }
+.hub-season-card__prov {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--text);
+  transition: color var(--transition);
+}
+.hub-season-card__cat {
+  font-size: .72rem;
+  color: var(--text-light);
+  transition: color var(--transition);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SECCIÓN AUTORIDAD SEO
+   ══════════════════════════════════════════════════════════════════════════════ */
+.hub-authority {
+  background: var(--white);
+  border-top: 4px solid var(--primary);
+}
+.hub-authority__inner {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 48px;
+  align-items: start;
+}
+.hub-authority__h2 {
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin-bottom: 20px;
+  line-height: 1.25;
+}
+.hub-authority__p {
+  font-size: .95rem;
+  color: var(--text);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.hub-authority__p strong { color: var(--primary-dark); }
+.hub-authority__p a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(47,82,51,.3);
+}
+.hub-authority__p a:hover {
+  text-decoration-color: var(--primary);
+}
+.hub-authority__keywords {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: var(--bg-alt);
+  border-radius: var(--radius-sm);
+  color: var(--text-light);
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+/* Quick links sidebar */
+.hub-quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hub-quick-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  transition: all var(--transition);
+}
+.hub-quick-link:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+.hub-quick-link:hover .hub-quick-link__title,
+.hub-quick-link:hover .hub-quick-link__desc,
+.hub-quick-link:hover svg { color: var(--white); }
+.hub-quick-link__icon { font-size: 1.4rem; flex-shrink: 0; }
+.hub-quick-link div { flex: 1; min-width: 0; }
+.hub-quick-link__title {
+  display: block;
+  font-size: .87rem;
+  font-weight: 700;
+  color: var(--text);
+  transition: color var(--transition);
+}
+.hub-quick-link__desc {
+  display: block;
+  font-size: .75rem;
+  color: var(--text-light);
+  margin-top: 2px;
+  transition: color var(--transition);
+}
+.hub-quick-link svg {
+  flex-shrink: 0;
+  color: var(--text-light);
+  transition: color var(--transition);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════════════════════ */
+.hub-footer {
+  background: var(--primary-dark);
+  color: rgba(255,255,255,.75);
+  padding: 48px 0 24px;
+}
+.hub-footer__inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.hub-footer__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 36px;
+}
+.hub-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.hub-footer__brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.hub-footer__tagline {
+  font-size: .82rem;
+  line-height: 1.55;
+  max-width: 240px;
+}
+.hub-footer__col-title {
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.hub-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hub-footer__links a {
+  font-size: .85rem;
+  color: rgba(255,255,255,.65);
+  transition: color var(--transition);
+}
+.hub-footer__links a:hover { color: var(--white); }
+
+/* Selector de idioma en el footer */
+.hub-footer__langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.hub-footer-lang {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.6);
+  border: 1px solid rgba(255,255,255,.15);
+  transition: all var(--transition);
+}
+.hub-footer-lang:hover,
+.hub-footer-lang--active {
+  color: var(--white);
+  border-color: rgba(255,255,255,.4);
+  background: rgba(255,255,255,.1);
+}
+.hub-footer-lang img { width: 18px; height: 18px; border-radius: 50%; }
+.hub-footer-lang--active { pointer-events: none; }
+
+.hub-footer__bottom {
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+}
+.hub-footer__copy {
+  font-size: .8rem;
+  color: rgba(255,255,255,.45);
+}
+.hub-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.hub-footer__legal a {
+  font-size: .8rem;
+  color: rgba(255,255,255,.45);
+  transition: color var(--transition);
+}
+.hub-footer__legal a:hover { color: rgba(255,255,255,.8); }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE FIRST
+   ══════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .hub-navbar__nav { display: none; }
+  .hub-lang-selector { display: none; }
+  .hub-hamburger { display: flex; margin-left: auto; }
+
+  .hub-authority__inner {
+    grid-template-columns: 1fr;
+  }
+  .hub-authority__sidebar {
+    order: -1;
+  }
+  .hub-quick-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hub-footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .hub-hero { min-height: 480px; }
+  .hub-hero__inner { padding: 48px 16px 44px; }
+  .hub-hero__ctas { gap: 8px; }
+  .hub-cta { padding: 10px 16px; font-size: .82rem; }
+  .hub-hero__stats { gap: 20px; }
+  .hub-stat__value { font-size: 1.5rem; }
+
+  .hub-section { padding: 52px 0; }
+
+  .hub-prov-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  .hub-season-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .hub-link-grid { grid-template-columns: 1fr; }
+
+  .hub-footer__grid { grid-template-columns: 1fr; }
+  .hub-footer__bottom { flex-direction: column; align-items: flex-start; }
+  .hub-quick-links { grid-template-columns: 1fr; }
+}
+
+/* ── Print / accesibilidad ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+@media print {
+  .hub-navbar, .hub-antonio-btn, .hub-hamburger { display: none; }
+  .hub-hero { min-height: auto; padding: 20px 0; }
+  .hub-hero__bg { display: none; }
+  .hub-hero__h1, .hub-hero__sub { color: #000; }
+}
+
+/* ── Skip link ─────────────────────────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: var(--primary);
+  color: var(--white);
+  padding: 8px 16px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  font-weight: 700;
+  z-index: 9999;
+  transition: top .15s ease;
+}
+.skip-link:focus { top: 0; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MAPA INTERACTIVO — botón 🗺️ en tarjetas y CTAs
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Wrapper que agrupa tarjeta de provincia + botón de mapa */
+.hub-prov-item { position: relative; display: flex; flex-direction: column; }
+
+/* Icono 🗺️ en tarjetas de provincia */
+.hub-prov-map-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  align-self: center;
+  margin-top: 4px;
+  text-decoration: none;
+  line-height: 1;
+}
+.hub-prov-map-btn:hover {
+  background: var(--bg-alt);
+  transform: scale(1.15);
+  box-shadow: 0 3px 10px rgba(0,0,0,.12);
+}
+
+/* Tarjetas estacionales de eventos con botón de mapa */
+.hub-season-item { display: flex; flex-direction: column; align-items: center; }
+.hub-season-item .hub-prov-map-btn { margin-top: 6px; }
+
+/* Botón CTA "Ver en el mapa" */
+.hub-btn--map {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-sm);
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform var(--transition);
+  text-decoration: none;
+}
+.hub-btn--map:hover {
+  background: var(--primary);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(47,82,51,.25);
+}
+
+/* Múltiples CTAs en la misma fila */
+.hub-section__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 36px;
+}
+<?php
+/**
+ * ════════════════════════════════════════════════════════════════════════════
+ *  TRADUCCIONES DEL INDEX HUB — 5 idiomas
+ *  es · en · fr · de · zh
+ * ════════════════════════════════════════════════════════════════════════════
+ */
+
+const HUB_I18N = [
+
+    // ── ESPAÑOL ──────────────────────────────────────────────────────────────
+    'es' => [
+        'dir'         => 'ltr',
+        'lang_locale' => 'es-ES',
+
+        // <head>
+        'meta_title'  => 'Turismo Rural en España | Casas Rurales, Eventos y Experiencias Auténticas | Rutas',
+        'meta_desc'   => 'Descubre el turismo rural auténtico en España. Reserva casas rurales con encanto, consulta la agenda cultural de eventos y planifica tus escapadas rurales con Rutas Rurales.',
+        'og_title'    => 'Turismo Rural en España — Rutas Rurales',
+
+        // Navbar
+        'nav_stays'       => 'Alojamientos',
+        'nav_events'      => 'Eventos',
+        'nav_places'      => 'Lugares',
+        'nav_activities'  => 'Actividades',
+        'nav_login'       => 'Acceder',
+        'nav_language'    => 'Idioma',
+
+        // Hero
+        'hero_h1'         => 'Turismo Rural Auténtico en España',
+        'hero_sub'        => 'Casas rurales con encanto, eventos culturales y experiencias únicas en Castilla, Galicia y más',
+        'hero_cta_stays'  => 'Ver alojamientos',
+        'hero_cta_events' => 'Agenda cultural',
+        'hero_cta_places' => 'Lugares de interés',
+        'hero_cta_activ'  => 'Actividades',
+        'hero_stat_stays' => 'alojamientos',
+        'hero_stat_events'=> 'eventos culturales',
+        'hero_stat_prov'  => 'provincias',
+        'hero_chat'       => 'Hablar con Antonio',
+
+        // Hub Alojamientos
+        'hub_alo_h2'        => 'Alojamientos Rurales por Características y Provincia',
+        'hub_alo_intro'     => 'Encuentra tu casa rural perfecta combinando características y destino.',
+        'hub_alo_by_feat'   => 'Por características',
+        'hub_alo_by_prov'   => 'Por provincia',
+        'hub_alo_combis'    => 'Combinaciones más buscadas',
+        'hub_alo_all'       => 'Ver todos los alojamientos →',
+        'hub_alo_see'       => 'Ver en',
+
+        // Hub Eventos
+        'hub_evt_h2'        => 'Agenda Cultural y Eventos por Temporada',
+        'hub_evt_intro'     => 'Descubre la agenda cultural de cada provincia: música, gastronomía, tradiciones y mucho más.',
+        'hub_evt_by_cat'    => 'Por categoría',
+        'hub_evt_by_prov'   => 'Por provincia',
+        'hub_evt_season'    => 'Esta temporada',
+        'hub_evt_all'       => 'Ver toda la agenda cultural →',
+        'hub_evt_season_label' => [
+            'primavera' => '🌸 Eventos de Primavera',
+            'verano'    => '☀️ Eventos de Verano',
+            'otono'     => '🍂 Eventos de Otoño',
+            'invierno'  => '❄️ Eventos de Invierno',
+        ],
+
+        // Sección Autoridad SEO
+        'auth_h2'     => 'Turismo Rural en España: Naturaleza, Patrimonio y Gastronomía',
+        'auth_p1'     => 'España esconde algunos de los paisajes más auténticos y espectaculares de Europa en sus provincias del interior. <strong>Castilla y León</strong>, con sus nueve provincias, concentra el mayor patrimonio histórico del continente: castillos medievales, catedrales románicas, yacimientos arqueológicos como <a href="/lugar/yacimiento-de-numancia-garray">Numancia</a> y parques naturales de altura como el <a href="/lugar/reserva-natural-de-las-lagunas-de-urbion-vinuesa">Pico de Urbión</a> y el <a href="/lugar/canon-del-rio-lobos">Cañón del Río Lobos</a>.',
+        'auth_p2'     => 'El <strong>enoturismo</strong> en la Ribera del Duero y Rueda, la <strong>gastronomía tradicional</strong> —lechazo asado, caldereta, migas, setas de temporada— y los <strong>festivales culturales</strong> de Zamora, Burgos, Salamanca y Segovia convierten cada escapada rural en una experiencia multisensorial que ninguna ciudad puede ofrecer.',
+        'auth_p3'     => 'En <strong>Rutas Rurales</strong> conectamos viajeros con los mejores <strong>alojamientos rurales con encanto</strong>: casas rurales con chimenea para el invierno, fincas con piscina para el verano y posadas medievales para los amantes del patrimonio. Todo verificado, actualizado y sin comisiones ocultas.',
+        'auth_keywords'=> '→ Turismo rural Soria · Casas rurales Zamora · Enoturismo Valladolid · Gastronomía Burgos · Senderismo León · Patrimonio Salamanca · Naturaleza Palencia · Arte Segovia',
+
+        // Verticales futuras (placeholder)
+        'coming_soon' => 'Próximamente',
+        'places_h2'   => 'Lugares de Interés Destacados',
+        'activ_h2'    => 'Actividades Turísticas',
+
+        // Footer
+        'footer_copy'      => '© {YEAR} rutasrurales.io — Turismo Rural Auténtico en España',
+        'footer_legal'     => 'Aviso legal',
+        'footer_cookies'   => 'Política de cookies',
+        'footer_contact'   => 'Contacto',
+        'footer_thanks'    => 'Agradecimientos',
+        'footer_social'    => 'Compromiso social',
+        'footer_nav_stays' => 'Alojamientos rurales',
+        'footer_nav_events'=> 'Eventos culturales',
+        'footer_nav_places'=> 'Lugares de interés',
+        'footer_nav_activ' => 'Actividades turísticas',
+    ],
+
+    // ── ENGLISH ───────────────────────────────────────────────────────────────
+    'en' => [
+        'dir'         => 'ltr',
+        'lang_locale' => 'en-GB',
+
+        'meta_title'  => 'Rural Tourism in Spain | Cottages, Cultural Events & Authentic Experiences | Rutas',
+        'meta_desc'   => 'Discover authentic rural tourism in Spain. Book charming rural cottages, browse the cultural events calendar and plan your rural getaways with Rutas Rurales.',
+        'og_title'    => 'Rural Tourism in Spain — Rutas Rurales',
+
+        'nav_stays'       => 'Accommodation',
+        'nav_events'      => 'Events',
+        'nav_places'      => 'Places',
+        'nav_activities'  => 'Activities',
+        'nav_login'       => 'Sign in',
+        'nav_language'    => 'Language',
+
+        'hero_h1'         => 'Authentic Rural Tourism in Spain',
+        'hero_sub'        => 'Charming rural cottages, cultural events and unique experiences in Castile, Galicia and beyond',
+        'hero_cta_stays'  => 'Find accommodation',
+        'hero_cta_events' => 'Cultural calendar',
+        'hero_cta_places' => 'Places of interest',
+        'hero_cta_activ'  => 'Activities',
+        'hero_stat_stays' => 'accommodation',
+        'hero_stat_events'=> 'cultural events',
+        'hero_stat_prov'  => 'provinces',
+        'hero_chat'       => 'Chat with Antonio',
+
+        'hub_alo_h2'        => 'Rural Accommodation by Feature & Province',
+        'hub_alo_intro'     => 'Find your perfect rural retreat by combining features and destination.',
+        'hub_alo_by_feat'   => 'By feature',
+        'hub_alo_by_prov'   => 'By province',
+        'hub_alo_combis'    => 'Most popular combinations',
+        'hub_alo_all'       => 'View all accommodation →',
+        'hub_alo_see'       => 'View in',
+
+        'hub_evt_h2'        => 'Cultural Events & Calendar by Season',
+        'hub_evt_intro'     => 'Discover the cultural calendar of each province: music, gastronomy, traditions and more.',
+        'hub_evt_by_cat'    => 'By category',
+        'hub_evt_by_prov'   => 'By province',
+        'hub_evt_season'    => 'This season',
+        'hub_evt_all'       => 'View full cultural calendar →',
+        'hub_evt_season_label' => [
+            'primavera' => '🌸 Spring Events',
+            'verano'    => '☀️ Summer Events',
+            'otono'     => '🍂 Autumn Events',
+            'invierno'  => '❄️ Winter Events',
+        ],
+
+        'auth_h2'     => 'Rural Tourism in Spain: Nature, Heritage & Gastronomy',
+        'auth_p1'     => 'Spain hides some of Europe\'s most authentic and spectacular landscapes in its inland provinces. <strong>Castile and León</strong>, with its nine provinces, holds the continent\'s greatest historical heritage: medieval castles, Romanesque cathedrals, archaeological sites like <a href="/lugar/yacimiento-de-numancia-garray">Numancia</a> and high-altitude natural parks like the <a href="/lugar/reserva-natural-de-las-lagunas-de-urbion-vinuesa">Picos de Urbión</a> and the <a href="/lugar/canon-del-rio-lobos">Cañón del Río Lobos</a>.',
+        'auth_p2'     => '<strong>Wine tourism</strong> in Ribera del Duero and Rueda, the <strong>traditional gastronomy</strong>—roast suckling lamb, stew, migas, seasonal mushrooms—and the <strong>cultural festivals</strong> of Zamora, Burgos, Salamanca and Segovia turn every rural escape into a multisensory experience no city can match.',
+        'auth_p3'     => 'At <strong>Rutas Rurales</strong> we connect travellers with the finest <strong>charming rural accommodation</strong>: cottages with fireplaces for winter, estates with pools for summer and medieval inns for heritage lovers. All verified, updated and with no hidden fees.',
+        'auth_keywords'=> '→ Rural tourism Soria · Rural cottages Zamora · Wine tourism Valladolid · Gastronomy Burgos · Hiking León · Heritage Salamanca · Nature Palencia · Art Segovia',
+
+        'coming_soon' => 'Coming soon',
+        'places_h2'   => 'Featured Places of Interest',
+        'activ_h2'    => 'Tourist Activities',
+
+        'footer_copy'      => '© {YEAR} rutasrurales.io — Authentic Rural Tourism in Spain',
+        'footer_legal'     => 'Legal notice',
+        'footer_cookies'   => 'Cookie policy',
+        'footer_contact'   => 'Contact',
+        'footer_thanks'    => 'Acknowledgements',
+        'footer_social'    => 'Social commitment',
+        'footer_nav_stays' => 'Rural accommodation',
+        'footer_nav_events'=> 'Cultural events',
+        'footer_nav_places'=> 'Places of interest',
+        'footer_nav_activ' => 'Tourist activities',
+    ],
+
+    // ── FRANÇAIS ──────────────────────────────────────────────────────────────
+    'fr' => [
+        'dir'         => 'ltr',
+        'lang_locale' => 'fr-FR',
+
+        'meta_title'  => 'Tourisme Rural en Espagne | Gîtes, Événements Culturels et Expériences | Rutas',
+        'meta_desc'   => 'Découvrez le tourisme rural authentique en Espagne. Réservez des gîtes de charme, consultez le calendrier culturel et planifiez vos escapades rurales avec Rutas Rurales.',
+        'og_title'    => 'Tourisme Rural en Espagne — Rutas Rurales',
+
+        'nav_stays'       => 'Hébergements',
+        'nav_events'      => 'Événements',
+        'nav_places'      => 'Lieux',
+        'nav_activities'  => 'Activités',
+        'nav_login'       => 'Connexion',
+        'nav_language'    => 'Langue',
+
+        'hero_h1'         => 'Tourisme Rural Authentique en Espagne',
+        'hero_sub'        => 'Gîtes de charme, événements culturels et expériences uniques en Castille, Galice et au-delà',
+        'hero_cta_stays'  => 'Voir les hébergements',
+        'hero_cta_events' => 'Agenda culturel',
+        'hero_cta_places' => 'Lieux d\'intérêt',
+        'hero_cta_activ'  => 'Activités',
+        'hero_stat_stays' => 'hébergements',
+        'hero_stat_events'=> 'événements culturels',
+        'hero_stat_prov'  => 'provinces',
+        'hero_chat'       => 'Parler avec Antonio',
+
+        'hub_alo_h2'        => 'Hébergements Ruraux par Caractéristique et Province',
+        'hub_alo_intro'     => 'Trouvez votre retraite rurale parfaite en combinant caractéristiques et destination.',
+        'hub_alo_by_feat'   => 'Par caractéristique',
+        'hub_alo_by_prov'   => 'Par province',
+        'hub_alo_combis'    => 'Combinaisons les plus recherchées',
+        'hub_alo_all'       => 'Voir tous les hébergements →',
+        'hub_alo_see'       => 'Voir à',
+
+        'hub_evt_h2'        => 'Événements Culturels et Agenda par Saison',
+        'hub_evt_intro'     => 'Découvrez l\'agenda culturel de chaque province : musique, gastronomie, traditions et bien plus.',
+        'hub_evt_by_cat'    => 'Par catégorie',
+        'hub_evt_by_prov'   => 'Par province',
+        'hub_evt_season'    => 'Cette saison',
+        'hub_evt_all'       => 'Voir tout l\'agenda culturel →',
+        'hub_evt_season_label' => [
+            'primavera' => '🌸 Événements de Printemps',
+            'verano'    => '☀️ Événements d\'Été',
+            'otono'     => '🍂 Événements d\'Automne',
+            'invierno'  => '❄️ Événements d\'Hiver',
+        ],
+
+        'auth_h2'     => 'Tourisme Rural en Espagne : Nature, Patrimoine et Gastronomie',
+        'auth_p1'     => 'L\'Espagne cache certains des paysages les plus authentiques et spectaculaires d\'Europe dans ses provinces intérieures. La <strong>Castille-et-León</strong>, avec ses neuf provinces, concentre le plus grand patrimoine historique du continent.',
+        'auth_p2'     => 'L\'<strong>œnotourisme</strong> en Ribera del Duero, la <strong>gastronomie traditionnelle</strong> et les <strong>festivals culturels</strong> de Zamora, Burgos, Salamanque et Ségovie font de chaque escapade rurale une expérience multisensorielle.',
+        'auth_p3'     => 'Chez <strong>Rutas Rurales</strong>, nous connectons les voyageurs avec les meilleurs <strong>hébergements ruraux de charme</strong> : vérifiés, mis à jour et sans frais cachés.',
+        'auth_keywords'=> '→ Tourisme rural Soria · Gîtes Zamora · Œnotourisme Valladolid · Gastronomie Burgos · Randonnée León · Patrimoine Salamanque',
+
+        'coming_soon' => 'Bientôt disponible',
+        'places_h2'   => 'Lieux d\'Intérêt à la Une',
+        'activ_h2'    => 'Activités Touristiques',
+
+        'footer_copy'      => '© {YEAR} rutasrurales.io — Tourisme Rural Authentique en Espagne',
+        'footer_legal'     => 'Mentions légales',
+        'footer_cookies'   => 'Politique cookies',
+        'footer_contact'   => 'Contact',
+        'footer_thanks'    => 'Remerciements',
+        'footer_social'    => 'Engagement social',
+        'footer_nav_stays' => 'Hébergements ruraux',
+        'footer_nav_events'=> 'Événements culturels',
+        'footer_nav_places'=> 'Lieux d\'intérêt',
+        'footer_nav_activ' => 'Activités touristiques',
+    ],
+
+    // ── DEUTSCH ───────────────────────────────────────────────────────────────
+    'de' => [
+        'dir'         => 'ltr',
+        'lang_locale' => 'de-DE',
+
+        'meta_title'  => 'Landurlaub in Spanien | Ferienhäuser, Kulturveranstaltungen & Erlebnisse | Rutas',
+        'meta_desc'   => 'Entdecken Sie authentischen Landurlaub in Spanien. Buchen Sie charmante Ferienhäuser, stöbern Sie im Kulturkalender und planen Sie Ihren Landurlaub mit Rutas Rurales.',
+        'og_title'    => 'Landurlaub in Spanien — Rutas Rurales',
+
+        'nav_stays'       => 'Unterkünfte',
+        'nav_events'      => 'Veranstaltungen',
+        'nav_places'      => 'Sehenswürdigkeiten',
+        'nav_activities'  => 'Aktivitäten',
+        'nav_login'       => 'Anmelden',
+        'nav_language'    => 'Sprache',
+
+        'hero_h1'         => 'Authentischer Landurlaub in Spanien',
+        'hero_sub'        => 'Charmante Ferienhäuser, Kulturveranstaltungen und einzigartige Erlebnisse in Kastilien, Galicien und mehr',
+        'hero_cta_stays'  => 'Unterkünfte finden',
+        'hero_cta_events' => 'Kulturkalender',
+        'hero_cta_places' => 'Sehenswürdigkeiten',
+        'hero_cta_activ'  => 'Aktivitäten',
+        'hero_stat_stays' => 'Unterkünfte',
+        'hero_stat_events'=> 'Kulturveranstaltungen',
+        'hero_stat_prov'  => 'Provinzen',
+        'hero_chat'       => 'Mit Antonio chatten',
+
+        'hub_alo_h2'        => 'Ländliche Unterkünfte nach Ausstattung und Provinz',
+        'hub_alo_intro'     => 'Finden Sie Ihre perfekte Landunterkunft durch Kombination von Ausstattung und Ziel.',
+        'hub_alo_by_feat'   => 'Nach Ausstattung',
+        'hub_alo_by_prov'   => 'Nach Provinz',
+        'hub_alo_combis'    => 'Beliebteste Kombinationen',
+        'hub_alo_all'       => 'Alle Unterkünfte ansehen →',
+        'hub_alo_see'       => 'Ansehen in',
+
+        'hub_evt_h2'        => 'Kulturveranstaltungen und Kalender nach Saison',
+        'hub_evt_intro'     => 'Entdecken Sie den Kulturkalender jeder Provinz: Musik, Gastronomie, Traditionen und mehr.',
+        'hub_evt_by_cat'    => 'Nach Kategorie',
+        'hub_evt_by_prov'   => 'Nach Provinz',
+        'hub_evt_season'    => 'Diese Saison',
+        'hub_evt_all'       => 'Vollständigen Kulturkalender ansehen →',
+        'hub_evt_season_label' => [
+            'primavera' => '🌸 Frühlingsveranstaltungen',
+            'verano'    => '☀️ Sommerveranstaltungen',
+            'otono'     => '🍂 Herbstveranstaltungen',
+            'invierno'  => '❄️ Winterveranstaltungen',
+        ],
+
+        'auth_h2'     => 'Landurlaub in Spanien: Natur, Kulturerbe und Gastronomie',
+        'auth_p1'     => 'Spanien verbirgt einige der authentischsten und spektakulärsten Landschaften Europas in seinen Binnenprovinzen. <strong>Kastilien und León</strong> konzentriert das größte historische Erbe des Kontinents.',
+        'auth_p2'     => '<strong>Weintourismus</strong> in der Ribera del Duero, die <strong>traditionelle Gastronomie</strong> und die <strong>Kulturfestivals</strong> machen jeden Landurlaub zu einem multisensorischen Erlebnis.',
+        'auth_p3'     => 'Bei <strong>Rutas Rurales</strong> verbinden wir Reisende mit den schönsten <strong>charmanten Landunterkünften</strong>: verifiziert, aktuell und ohne versteckte Gebühren.',
+        'auth_keywords'=> '→ Landurlaub Soria · Ferienhäuser Zamora · Weintourismus Valladolid · Gastronomie Burgos · Wandern León · Kulturerbe Salamanca',
+
+        'coming_soon' => 'Demnächst verfügbar',
+        'places_h2'   => 'Ausgewählte Sehenswürdigkeiten',
+        'activ_h2'    => 'Touristische Aktivitäten',
+
+        'footer_copy'      => '© {YEAR} rutasrurales.io — Authentischer Landurlaub in Spanien',
+        'footer_legal'     => 'Impressum',
+        'footer_cookies'   => 'Cookie-Richtlinie',
+        'footer_contact'   => 'Kontakt',
+        'footer_thanks'    => 'Danksagungen',
+        'footer_social'    => 'Soziales Engagement',
+        'footer_nav_stays' => 'Ländliche Unterkünfte',
+        'footer_nav_events'=> 'Kulturveranstaltungen',
+        'footer_nav_places'=> 'Sehenswürdigkeiten',
+        'footer_nav_activ' => 'Touristische Aktivitäten',
+    ],
+
+    // ── 中文 ──────────────────────────────────────────────────────────────────
+    'zh' => [
+        'dir'         => 'ltr',
+        'lang_locale' => 'zh-CN',
+
+        'meta_title'  => '西班牙乡村旅游 | 民宿、文化活动与真实体验 | Rutas',
+        'meta_desc'   => '探索西班牙正宗乡村旅游。预订迷人民宿，查看文化活动日历，与Rutas Rurales一起规划您的乡村度假。',
+        'og_title'    => '西班牙乡村旅游 — Rutas Rurales',
+
+        'nav_stays'       => '住宿',
+        'nav_events'      => '活动',
+        'nav_places'      => '景点',
+        'nav_activities'  => '体验',
+        'nav_login'       => '登录',
+        'nav_language'    => '语言',
+
+        'hero_h1'         => '西班牙正宗乡村旅游',
+        'hero_sub'        => '迷人民宿、文化活动和卡斯蒂利亚、加利西亚等地的独特体验',
+        'hero_cta_stays'  => '查找住宿',
+        'hero_cta_events' => '文化日历',
+        'hero_cta_places' => '景点',
+        'hero_cta_activ'  => '体验活动',
+        'hero_stat_stays' => '处住宿',
+        'hero_stat_events'=> '项文化活动',
+        'hero_stat_prov'  => '个省份',
+        'hero_chat'       => '与Antonio对话',
+
+        'hub_alo_h2'        => '按特色和省份搜索乡村住宿',
+        'hub_alo_intro'     => '结合特色和目的地，找到您完美的乡村住所。',
+        'hub_alo_by_feat'   => '按特色',
+        'hub_alo_by_prov'   => '按省份',
+        'hub_alo_combis'    => '最热门组合',
+        'hub_alo_all'       => '查看所有住宿 →',
+        'hub_alo_see'       => '查看',
+
+        'hub_evt_h2'        => '文化活动与季节日历',
+        'hub_evt_intro'     => '发现各省的文化日历：音乐、美食、传统等。',
+        'hub_evt_by_cat'    => '按类别',
+        'hub_evt_by_prov'   => '按省份',
+        'hub_evt_season'    => '本季活动',
+        'hub_evt_all'       => '查看完整文化日历 →',
+        'hub_evt_season_label' => [
+            'primavera' => '🌸 春季活动',
+            'verano'    => '☀️ 夏季活动',
+            'otono'     => '🍂 秋季活动',
+            'invierno'  => '❄️ 冬季活动',
+        ],
+
+        'auth_h2'     => '西班牙乡村旅游：自然、遗产与美食',
+        'auth_p1'     => '西班牙内陆省份隐藏着欧洲最真实、最壮观的风景。<strong>卡斯蒂利亚-莱昂</strong>拥有欧洲大陆最丰富的历史遗产。',
+        'auth_p2'     => '杜罗河岸的<strong>葡萄酒旅游</strong>、<strong>传统美食</strong>和扎莫拉、布尔戈斯、萨拉曼卡、塞戈维亚的<strong>文化节日</strong>让每次乡村逃离都成为多感官体验。',
+        'auth_p3'     => '在<strong>Rutas Rurales</strong>，我们将旅行者与最美的<strong>迷人乡村住宿</strong>连接：全部经过核实、持续更新、无隐性费用。',
+        'auth_keywords'=> '→ 索里亚乡村旅游 · 萨莫拉民宿 · 巴利亚多利德葡萄酒之旅 · 布尔戈斯美食 · 莱昂徒步 · 萨拉曼卡遗产',
+
+        'coming_soon' => '即将推出',
+        'places_h2'   => '精选景点',
+        'activ_h2'    => '旅游活动',
+
+        'footer_copy'      => '© {YEAR} rutasrurales.io — 西班牙正宗乡村旅游',
+        'footer_legal'     => '法律声明',
+        'footer_cookies'   => 'Cookie政策',
+        'footer_contact'   => '联系我们',
+        'footer_thanks'    => '致谢',
+        'footer_social'    => '社会承诺',
+        'footer_nav_stays' => '乡村住宿',
+        'footer_nav_events'=> '文化活动',
+        'footer_nav_places'=> '景点',
+        'footer_nav_activ' => '旅游活动',
+    ],
+];
+
+/**
+ * Carga las traducciones para el idioma solicitado (fallback: español).
+ */
+function getHubTranslations(string $lang): array {
+    return HUB_I18N[$lang] ?? HUB_I18N['es'];
+}
+<?php
+/**
+ * ════════════════════════════════════════════════════════════════════════════
+ *  AUTORIDAD-SEO.PHP — Sección de texto semántico para autoridad temática
+ *
+ *  Propósito SEO:
+ *    - Señalizar a Google las entidades semánticas clave del dominio
+ *    - Incluir enlaces internos a páginas de lugares y verticales
+ *    - Texto optimizado para las queries informacionales de turismo rural
+ *    - Keywords de long-tail: enoturismo, gastronomía, escapadas, Castilla
+ * ════════════════════════════════════════════════════════════════════════════
+ *
+ * @param array $ctx  [lang, t]
+ */
+function renderAutoridadSeo(array $ctx): void {
+    $lang = $ctx['lang'];
+    $t    = $ctx['t'];
+    $base = 'https://rutasrurales.io';
+    ?>
+<!-- ══════════════════════════════════ SECCIÓN AUTORIDAD ═════════════════════ -->
+<section class="hub-section hub-authority" id="sobre-turismo-rural" aria-labelledby="auth-heading">
+<div class="hub-container">
+
+    <div class="hub-authority__inner">
+
+        <!-- Columna principal: texto SEO -->
+        <div class="hub-authority__text">
+            <h2 class="hub-authority__h2" id="auth-heading">
+                <?= htmlspecialchars($t['auth_h2']) ?>
+            </h2>
+
+            <p class="hub-authority__p">
+                <?= $t['auth_p1'] /* HTML seguro: definido en translations.php */ ?>
+            </p>
+
+            <p class="hub-authority__p">
+                <?= $t['auth_p2'] ?>
+            </p>
+
+            <p class="hub-authority__p">
+                <?= $t['auth_p3'] ?>
+            </p>
+
+            <!-- Keywords semánticas visibles (no spam: son útiles para el usuario) -->
+            <p class="hub-authority__keywords" aria-label="Destinos y temáticas">
+                <small><?= htmlspecialchars($t['auth_keywords']) ?></small>
+            </p>
+        </div>
+
+        <!-- Columna lateral: tarjetas de acceso rápido a verticales -->
+        <aside class="hub-authority__sidebar" aria-label="Acceso rápido a secciones">
+            <ul class="hub-quick-links" role="list">
+                <li>
+                    <a href="<?= $base ?>/alojamientos-turisticos"
+                       class="hub-quick-link"
+                       aria-label="<?= htmlspecialchars($t['footer_nav_stays']) ?>">
+                        <span class="hub-quick-link__icon" aria-hidden="true">🏡</span>
+                        <div>
+                            <strong class="hub-quick-link__title">
+                                <?= htmlspecialchars($t['footer_nav_stays']) ?>
+                            </strong>
+                            <span class="hub-quick-link__desc">
+                                <?php if ($lang === 'es'): ?>Casas, apartamentos y hoteles rurales con encanto
+                                <?php elseif ($lang === 'en'): ?>Cottages, apartments and charming rural hotels
+                                <?php elseif ($lang === 'fr'): ?>Maisons, appartements et hôtels ruraux de charme
+                                <?php elseif ($lang === 'de'): ?>Häuser, Apartments und charmante Landhotels
+                                <?php else: ?>民宿、公寓和迷人乡村酒店<?php endif; ?>
+                            </span>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= $base ?>/eventos-culturales-paginacion.html"
+                       class="hub-quick-link"
+                       aria-label="<?= htmlspecialchars($t['footer_nav_events']) ?>">
+                        <span class="hub-quick-link__icon" aria-hidden="true">🎭</span>
+                        <div>
+                            <strong class="hub-quick-link__title">
+                                <?= htmlspecialchars($t['footer_nav_events']) ?>
+                            </strong>
+                            <span class="hub-quick-link__desc">
+                                <?php if ($lang === 'es'): ?>Festivales, tradiciones y agenda cultural
+                                <?php elseif ($lang === 'en'): ?>Festivals, traditions and cultural calendar
+                                <?php elseif ($lang === 'fr'): ?>Festivals, traditions et événements culturels
+                                <?php elseif ($lang === 'de'): ?>Festivals, Traditionen und Kulturkalender
+                                <?php else: ?>节日、传统和文化日历<?php endif; ?>
+                            </span>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= $base ?>/lugares-de-interes"
+                       class="hub-quick-link"
+                       aria-label="<?= htmlspecialchars($t['footer_nav_places']) ?>">
+                        <span class="hub-quick-link__icon" aria-hidden="true">🏛️</span>
+                        <div>
+                            <strong class="hub-quick-link__title">
+                                <?= htmlspecialchars($t['footer_nav_places']) ?>
+                            </strong>
+                            <span class="hub-quick-link__desc">
+                                <?php if ($lang === 'es'): ?>Patrimonio, naturaleza y monumentos
+                                <?php elseif ($lang === 'en'): ?>Heritage, nature and monuments
+                                <?php elseif ($lang === 'fr'): ?>Patrimoine, nature et monuments
+                                <?php elseif ($lang === 'de'): ?>Kulturerbe, Natur und Denkmäler
+                                <?php else: ?>遗产、自然和纪念碑<?php endif; ?>
+                            </span>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= $base ?>/actividades-turisticas"
+                       class="hub-quick-link"
+                       aria-label="<?= htmlspecialchars($t['footer_nav_activ']) ?>">
+                        <span class="hub-quick-link__icon" aria-hidden="true">🥾</span>
+                        <div>
+                            <strong class="hub-quick-link__title">
+                                <?= htmlspecialchars($t['footer_nav_activ']) ?>
+                            </strong>
+                            <span class="hub-quick-link__desc">
+                                <?php if ($lang === 'es'): ?>Senderismo, rutas y experiencias al aire libre
+                                <?php elseif ($lang === 'en'): ?>Hiking, trails and outdoor experiences
+                                <?php elseif ($lang === 'fr'): ?>Randonnée, itinéraires et expériences en plein air
+                                <?php elseif ($lang === 'de'): ?>Wandern, Routen und Outdoor-Erlebnisse
+                                <?php else: ?>徒步、路线和户外体验<?php endif; ?>
+                            </span>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= $base ?>/rutas/"
+                       class="hub-quick-link"
+                       aria-label="Rutas temáticas">
+                        <span class="hub-quick-link__icon" aria-hidden="true">🗺️</span>
+                        <div>
+                            <strong class="hub-quick-link__title">
+                                <?php if ($lang === 'es'): ?>Rutas Temáticas
+                                <?php elseif ($lang === 'en'): ?>Themed Routes
+                                <?php elseif ($lang === 'fr'): ?>Itinéraires Thématiques
+                                <?php elseif ($lang === 'de'): ?>Themenrouten
+                                <?php else: ?>主题路线<?php endif; ?>
+                            </strong>
+                            <span class="hub-quick-link__desc">
+                                <?php if ($lang === 'es'): ?>Del Románico, del Vino, del Cid y más
+                                <?php elseif ($lang === 'en'): ?>Romanesque, Wine, El Cid routes and more
+                                <?php elseif ($lang === 'fr'): ?>Roman, du Vin, du Cid et plus encore
+                                <?php elseif ($lang === 'de'): ?>Romanik, Wein, El Cid und mehr
+                                <?php else: ?>罗马式、葡萄酒、熙德路线等<?php endif; ?>
+                            </span>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+    </div><!-- /.hub-authority__inner -->
+</div><!-- /.hub-container -->
+</section>
+    <?php
+}
+<?php
+/**
+ * ════════════════════════════════════════════════════════════════════════════
+ *  HUB-EVENTOS.PHP — Módulo de enlazado interno para Eventos Culturales
+ *
+ *  Arquitectura SEO:
+ *    - Grid estacional dinámico (detecta la temporada actual)
+ *    - <details>/<summary> semánticos para acordeones
+ *    - Sección 1: Temporada actual destacada (visual con cards)
+ *    - Sección 2: Por categoría (música, gastronomía, tradiciones...)
+ *    - Sección 3: Por provincia (agenda completa de cada provincia)
+ *    - Sección 4: Combinaciones estrella (categoría×provincia)
+ * ════════════════════════════════════════════════════════════════════════════
+ *
+ * @param array $ctx  [lang, t, temporada]
+ */
+function renderHubEventos(array $ctx): void {
+    $lang      = $ctx['lang'];
+    $t         = $ctx['t'];
+    $temporada = $ctx['temporada'] ?? getTemporadaActual();
+    $base      = 'https://rutasrurales.io';
+
+    // Filtros de la temporada actual para mostrar en el bloque destacado
+    $filtroTemp = match($temporada) {
+        'primavera' => 'primavera',
+        'verano'    => 'verano',
+        'otono'     => 'otono',
+        'invierno'  => 'invierno',
+        default     => 'verano',
+    };
+
+    // Label de la temporada actual en el idioma activo
+    $seasonLabels = $t['hub_evt_season_label'] ?? [];
+    $seasonLabel  = $seasonLabels[$temporada] ?? ucfirst($temporada);
+
+    // Provincias destacadas para el bloque estacional (las 6 más activas)
+    $provDestacadas = ['soria', 'zamora', 'burgos', 'salamanca', 'valladolid', 'leon',
+                       'palencia', 'segovia', 'avila'];
+    ?>
+<!-- ══════════════════════════════════ HUB EVENTOS ═══════════════════════════ -->
+<section class="hub-section hub-section--events hub-section--alt" id="eventos" aria-labelledby="hub-evt-heading">
+<div class="hub-container">
+
+    <header class="hub-section__header">
+        <h2 class="hub-section__h2" id="hub-evt-heading">
+            <span class="hub-section__icon" aria-hidden="true">🎭</span>
+            <?= htmlspecialchars($t['hub_evt_h2']) ?>
+        </h2>
+        <p class="hub-section__intro"><?= htmlspecialchars($t['hub_evt_intro']) ?></p>
+    </header>
+
+    <!-- ── BLOQUE TEMPORADA ACTUAL (siempre visible, visual destacado) ───────── -->
+    <div class="hub-season-block">
+        <h3 class="hub-season-block__title">
+            <?= htmlspecialchars($seasonLabel) ?>
+        </h3>
+        <ul class="hub-season-grid" role="list" aria-label="Eventos de temporada por provincia">
+            <?php foreach ($provDestacadas as $provKey):
+                if (!isset(HUB_PROVINCIAS[$provKey])) continue;
+                $provData = HUB_PROVINCIAS[$provKey];
+                $slug = $filtroTemp . '-' . $provKey;
+                $url  = hubUrl($slug, $lang, 'eventos');
+                $labelEvt = HUB_FILTROS_EVT[$filtroTemp][$lang] ?? HUB_FILTROS_EVT[$filtroTemp]['es'];
+            ?>
+            <li class="hub-season-item">
+                <a href="<?= htmlspecialchars($url) ?>"
+                   class="hub-season-card"
+                   title="<?= htmlspecialchars($labelEvt . ' en ' . $provData['label']) ?>">
+                    <span class="hub-season-card__emoji" aria-hidden="true"><?= $provData['emoji'] ?></span>
+                    <span class="hub-season-card__prov"><?= htmlspecialchars($provData['label']) ?></span>
+                    <span class="hub-season-card__cat"><?= htmlspecialchars($labelEvt) ?></span>
+                </a>
+                <a href="<?= $base ?>/rutas.php?provincia=<?= urlencode($provData['label']) ?>&alojamientos=0&lugares=0&actividades=0&eventos=1"
+                   class="hub-prov-map-btn"
+                   title="Ver eventos en <?= htmlspecialchars($provData['label']) ?> en el mapa"
+                   aria-label="Mapa de eventos en <?= htmlspecialchars($provData['label']) ?>">
+                    🗺️
+                </a>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <!-- ── ACORDEÓN 1: Por categoría ─────────────────────────────────────────── -->
+    <details class="hub-accordion">
+        <summary class="hub-accordion__summary">
+            <span class="hub-accordion__icon" aria-hidden="true">🗂️</span>
+            <?= htmlspecialchars($t['hub_evt_by_cat']) ?>
+            <svg class="hub-accordion__chevron" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </summary>
+        <div class="hub-accordion__body">
+            <ul class="hub-chip-grid" role="list" aria-label="Categorías de eventos culturales">
+                <?php foreach (HUB_FILTROS_EVT as $filtroKey => $filtroData):
+                    // Enlace solo-filtro (sin provincia) → todos los eventos de España
+                    $slug  = $filtroKey;
+                    $url   = hubUrl($slug, $lang, 'eventos');
+                    $label = $filtroData[$lang] ?? $filtroData['es'];
+                ?>
+                <li>
+                    <a href="<?= htmlspecialchars($url) ?>"
+                       class="hub-chip hub-chip--events"
+                       title="<?= htmlspecialchars($label . ' en España') ?>">
+                        <span aria-hidden="true"><?= $filtroData['icon'] ?></span>
+                        <?= htmlspecialchars($label) ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </details>
+
+    <!-- ── ACORDEÓN 2: Por provincia (agenda completa) ────────────────────────── -->
+    <details class="hub-accordion">
+        <summary class="hub-accordion__summary">
+            <span class="hub-accordion__icon" aria-hidden="true">📍</span>
+            <?= htmlspecialchars($t['hub_evt_by_prov']) ?>
+            <svg class="hub-accordion__chevron" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </summary>
+        <div class="hub-accordion__body">
+            <ul class="hub-prov-grid" role="list" aria-label="Provincias con agenda cultural">
+                <?php foreach (HUB_PROVINCIAS as $provKey => $provData):
+                    // Slug: solo la provincia → agenda completa de esa provincia
+                    $url = hubUrl($provKey, $lang, 'eventos');
+                ?>
+                <li>
+                    <a href="<?= htmlspecialchars($url) ?>"
+                       class="hub-prov-card hub-prov-card--events"
+                       title="<?= htmlspecialchars('Agenda cultural en ' . $provData['label']) ?>">
+                        <span class="hub-prov-card__emoji" aria-hidden="true"><?= $provData['emoji'] ?></span>
+                        <span class="hub-prov-card__label"><?= htmlspecialchars($provData['label']) ?></span>
+                        <span class="hub-prov-card__region"><?= htmlspecialchars($provData['region']) ?></span>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </details>
+
+    <!-- ── ACORDEÓN 3: Combinaciones estrella (categoría×provincia) ───────────── -->
+    <details class="hub-accordion">
+        <summary class="hub-accordion__summary">
+            <span class="hub-accordion__icon" aria-hidden="true">⭐</span>
+            <?= htmlspecialchars($t['hub_alo_combis'] ?? 'Combinaciones destacadas') ?>
+            <svg class="hub-accordion__chevron" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </summary>
+        <div class="hub-accordion__body">
+            <ul class="hub-link-grid" role="list" aria-label="Combinaciones destacadas de eventos">
+                <?php foreach (HUB_COMBIS_EVT as $combi):
+                    [$filtroKey, $provKey] = $combi;
+                    if (!isset(HUB_FILTROS_EVT[$filtroKey], HUB_PROVINCIAS[$provKey])) continue;
+                    $slug  = $filtroKey . '-' . $provKey;
+                    $url   = hubUrl($slug, $lang, 'eventos');
+                    $fLabel = HUB_FILTROS_EVT[$filtroKey][$lang] ?? HUB_FILTROS_EVT[$filtroKey]['es'];
+                    $pLabel = HUB_PROVINCIAS[$provKey]['label'];
+                    $label  = $fLabel . ' · ' . $pLabel;
+                    $icon   = HUB_FILTROS_EVT[$filtroKey]['icon'];
+                ?>
+                <li>
+                    <a href="<?= htmlspecialchars($url) ?>"
+                       class="hub-link-item hub-link-item--events"
+                       title="<?= htmlspecialchars($label) ?>">
+                        <span class="hub-link-item__icon" aria-hidden="true"><?= $icon ?></span>
+                        <?= htmlspecialchars($label) ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </details>
+
+    <!-- ── CTA Ver agenda completa + Mapa ────────────────────────────────────── -->
+    <div class="hub-section__cta">
+        <a href="<?= $base ?>/eventos-culturales-paginacion.html"
+           class="hub-btn hub-btn--outline hub-btn--events">
+            <?= htmlspecialchars($t['hub_evt_all']) ?>
+        </a>
+        <a href="<?= $base ?>/rutas.php?alojamientos=0&lugares=0&actividades=0&eventos=1"
+           class="hub-btn hub-btn--map">
+            🗺️ <?= $lang === 'es' ? 'Ver en el mapa' : ($lang === 'en' ? 'View on map' : ($lang === 'fr' ? 'Voir sur la carte' : ($lang === 'de' ? 'Auf der Karte' : '在地图上查看'))) ?>
+        </a>
+    </div>
+
+</div><!-- /.hub-container -->
+</section>
+    <?php
+}
+<?php
+/**
+ * ════════════════════════════════════════════════════════════════════════════
+ *  SCHEMA.PHP — JSON-LD estructurado para el Index Hub
+ *  Incluye: WebSite (SearchAction), Organization, BreadcrumbList
+ * ════════════════════════════════════════════════════════════════════════════
+ *
+ * @param array $ctx  Contexto del Index (lang, t, stats)
+ */
+function renderHubSchema(array $ctx): void {
+    $lang   = $ctx['lang'];
+    $base   = 'https://rutasrurales.io';
+    $canon  = $lang === 'es' ? $base . '/' : $base . '/' . $lang . '/';
+
+    // ── WebSite + SearchAction (Sitelinks Search Box) ─────────────────────────
+    $website = [
+        '@context'        => 'https://schema.org',
+        '@type'           => 'WebSite',
+        'name'            => 'Rutas Rurales',
+        'alternateName'   => 'rutasrurales.io',
+        'url'             => $base . '/',
+        'description'     => $ctx['t']['meta_desc'] ?? '',
+        'inLanguage'      => $ctx['t']['lang_locale'] ?? 'es-ES',
+        'potentialAction' => [
+            '@type'       => 'SearchAction',
+            'target'      => [
+                '@type'       => 'EntryPoint',
+                'urlTemplate' => $base . '/alojamientos-turisticos?q={search_term_string}',
+            ],
+            'query-input' => 'required name=search_term_string',
+        ],
+    ];
+
+    // ── Organization ─────────────────────────────────────────────────────────
+    $organization = [
+        '@context'       => 'https://schema.org',
+        '@type'          => 'Organization',
+        'name'           => 'Rutas Rurales',
+        'url'            => $base . '/',
+        'logo'           => [
+            '@type' => 'ImageObject',
+            'url'   => $base . '/menu_images/Logo%20transparente.webp',
+            'width' => 512,
+            'height'=> 512,
+        ],
+        'sameAs' => [
+            'https://twitter.com/rutas_rurales',
+        ],
+        'contactPoint' => [
+            '@type'             => 'ContactPoint',
+            'telephone'         => '+34-605-249-696',
+            'contactType'       => 'customer support',
+            'availableLanguage' => ['Spanish', 'English'],
+        ],
+    ];
+
+    // ── TouristDestination (entidad principal) ────────────────────────────────
+    $destination = [
+        '@context'    => 'https://schema.org',
+        '@type'       => 'TouristDestination',
+        'name'        => 'Castilla y León, España',
+        'url'         => $base . '/',
+        'description' => 'Región de turismo rural auténtico con castillos medievales, naturaleza virgen y gastronomía tradicional.',
+        'geo'         => [
+            '@type'     => 'GeoCoordinates',
+            'latitude'  => 41.6528,
+            'longitude' => -4.7239,
+        ],
+        'touristType' => [
+            'Rural tourism',
+            'Cultural tourism',
+            'Gastronomy tourism',
+            'Wine tourism',
+        ],
+    ];
+
+    echo '<script type="application/ld+json">' . "\n";
+    echo json_encode($website, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    echo "\n</script>\n";
+
+    echo '<script type="application/ld+json">' . "\n";
+    echo json_encode($organization, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    echo "\n</script>\n";
+
+    echo '<script type="application/ld+json">' . "\n";
+    echo json_encode($destination, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    echo "\n</script>\n";
+}
+<?php
+/**
+ * ════════════════════════════════════════════════════════════════════════════
+ *  HERO.PHP — Hero Section del Index Hub
+ *  - H1 semántico con propuesta de valor
+ *  - 4 CTAs principales (verticales)
+ *  - Estadísticas dinámicas (desde BD o cache)
+ *  - Buscador visual que enlaza a las verticales
+ *  - Botón Antonio
+ * ════════════════════════════════════════════════════════════════════════════
+ *
+ * @param array $ctx  [lang, t, stats, base_url]
+ */
+function renderHubHero(array $ctx): void {
+    $lang     = $ctx['lang'];
+    $t        = $ctx['t'];
+    $stats    = $ctx['stats'] ?? [];
+    $base     = 'https://rutasrurales.io';
+    $langPfx  = ($lang !== 'es') ? "/$lang" : '';
+
+    // URLs de las verticales con soporte multilingüe
+    $url_stays  = $base . $langPfx . '/alojamientos/turismo-rural';
+    $url_events = $base . $langPfx . '/eventos-culturales-paginacion.html';
+    $url_places = $base . '/lugares-de-interes'; // Solo ES por ahora
+    $url_activ  = $base . '/actividades-turisticas'; // Solo ES por ahora
+
+    // Estadísticas (fallback a valores ilustrativos si BD no disponible)
+    $total_stays  = $stats['total_stays']  ?? '+500';
+    $total_events = $stats['total_events'] ?? '+1.200';
+    $total_prov   = $stats['total_prov']   ?? '12';
+    ?>
+<section class="hub-hero" id="inicio" aria-label="Inicio">
+
+    <!-- Imagen de fondo optimizada para LCP -->
+    <div class="hub-hero__bg" aria-hidden="true">
+        <img
+            src="/menu_images/hero_main.webp"
+            alt=""
+            class="hub-hero__bg-img"
+            width="1200" height="600"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async">
+        <div class="hub-hero__overlay" aria-hidden="true"></div>
+    </div>
+
+    <div class="hub-container hub-hero__inner">
+
+        <!-- H1 principal -->
+        <h1 class="hub-hero__h1">
+            <?= htmlspecialchars($t['hero_h1']) ?>
+        </h1>
+        <p class="hub-hero__sub">
+            <?= htmlspecialchars($t['hero_sub']) ?>
+        </p>
+
+        <!-- 4 CTAs de verticales -->
+        <nav class="hub-hero__ctas" aria-label="Secciones principales">
+            <a href="<?= $url_stays ?>"
+               class="hub-cta hub-cta--primary"
+               aria-label="<?= htmlspecialchars($t['hero_cta_stays']) ?>">
+                <span class="hub-cta__icon" aria-hidden="true">🏡</span>
+                <span class="hub-cta__text"><?= htmlspecialchars($t['hero_cta_stays']) ?></span>
+            </a>
+            <a href="<?= $url_events ?>"
+               class="hub-cta hub-cta--secondary"
+               aria-label="<?= htmlspecialchars($t['hero_cta_events']) ?>">
+                <span class="hub-cta__icon" aria-hidden="true">🎭</span>
+                <span class="hub-cta__text"><?= htmlspecialchars($t['hero_cta_events']) ?></span>
+            </a>
+            <a href="<?= $url_places ?>"
+               class="hub-cta hub-cta--secondary"
+               aria-label="<?= htmlspecialchars($t['hero_cta_places']) ?>">
+                <span class="hub-cta__icon" aria-hidden="true">🏛️</span>
+                <span class="hub-cta__text"><?= htmlspecialchars($t['hero_cta_places']) ?></span>
+            </a>
+            <a href="<?= $url_activ ?>"
+               class="hub-cta hub-cta--secondary"
+               aria-label="<?= htmlspecialchars($t['hero_cta_activ']) ?>">
+                <span class="hub-cta__icon" aria-hidden="true">🥾</span>
+                <span class="hub-cta__text"><?= htmlspecialchars($t['hero_cta_activ']) ?></span>
+            </a>
+        </nav>
+
+        <!-- Estadísticas dinámicas -->
+        <div class="hub-hero__stats" aria-label="Estadísticas de la plataforma">
+            <div class="hub-stat">
+                <span class="hub-stat__value"><?= htmlspecialchars((string)$total_stays) ?></span>
+                <span class="hub-stat__label"><?= htmlspecialchars($t['hero_stat_stays']) ?></span>
+            </div>
+            <div class="hub-stat">
+                <span class="hub-stat__value"><?= htmlspecialchars((string)$total_events) ?></span>
+                <span class="hub-stat__label"><?= htmlspecialchars($t['hero_stat_events']) ?></span>
+            </div>
+            <div class="hub-stat">
+                <span class="hub-stat__value"><?= htmlspecialchars((string)$total_prov) ?></span>
+                <span class="hub-stat__label"><?= htmlspecialchars($t['hero_stat_prov']) ?></span>
+            </div>
+        </div>
+
+    </div><!-- /.hub-hero__inner -->
+</section>
+    <?php
+}
+<?php
+/**
+ * ════════════════════════════════════════════════════════════════════════════
+ *  HUB-ALOJAMIENTOS.PHP — Módulo de enlazado interno para Alojamientos
+ *
+ *  Arquitectura SEO:
+ *    - <details>/<summary> semánticos: visibles al crawler de Google,
+ *      colapsados visualmente para no saturar al usuario
+ *    - Sección 1: Grid de características (filtros rápidos)
+ *    - Sección 2: Grid de provincias (enlace directo a cada provincia)
+ *    - Sección 3: Acordeón "Combinaciones más buscadas" (filtro×provincia)
+ *    - Total enlaces: ~150 URLs distribuidas de forma orgánica
+ * ════════════════════════════════════════════════════════════════════════════
+ *
+ * @param array $ctx  [lang, t]
+ */
+function renderHubAlojamientos(array $ctx): void {
+    $lang = $ctx['lang'];
+    $t    = $ctx['t'];
+    $base = 'https://rutasrurales.io';
+    ?>
+<!-- ══════════════════════════════════ HUB ALOJAMIENTOS ══════════════════════ -->
+<section class="hub-section hub-section--stays" id="alojamientos" aria-labelledby="hub-alo-heading">
+<div class="hub-container">
+
+    <header class="hub-section__header">
+        <h2 class="hub-section__h2" id="hub-alo-heading">
+            <span class="hub-section__icon" aria-hidden="true">🏡</span>
+            <?= htmlspecialchars($t['hub_alo_h2']) ?>
+        </h2>
+        <p class="hub-section__intro"><?= htmlspecialchars($t['hub_alo_intro']) ?></p>
+    </header>
+
+    <!-- ── ACORDEÓN 1: Por características ──────────────────────────────────── -->
+    <details class="hub-accordion" open>
+        <summary class="hub-accordion__summary">
+            <span class="hub-accordion__icon" aria-hidden="true">✨</span>
+            <?= htmlspecialchars($t['hub_alo_by_feat']) ?>
+            <svg class="hub-accordion__chevron" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </summary>
+        <div class="hub-accordion__body">
+            <ul class="hub-chip-grid" role="list" aria-label="Filtros de alojamientos">
+                <?php foreach (HUB_FILTROS_ALO as $filtroKey => $filtroData):
+                    // Slug: solo el filtro (sin provincia) → landing filtra por toda España
+                    $slug = $filtroKey;
+                    $url  = hubUrl($slug, $lang, 'alojamientos');
+                    $label = $filtroData[$lang] ?? $filtroData['es'];
+                ?>
+                <li>
+                    <a href="<?= htmlspecialchars($url) ?>"
+                       class="hub-chip"
+                       title="<?= htmlspecialchars($label . ' en España') ?>">
+                        <span aria-hidden="true"><?= $filtroData['icon'] ?></span>
+                        <?= htmlspecialchars($label) ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </details>
+
+    <!-- ── ACORDEÓN 2: Por provincia ─────────────────────────────────────────── -->
+    <details class="hub-accordion">
+        <summary class="hub-accordion__summary">
+            <span class="hub-accordion__icon" aria-hidden="true">📍</span>
+            <?= htmlspecialchars($t['hub_alo_by_prov']) ?>
+            <svg class="hub-accordion__chevron" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </summary>
+        <div class="hub-accordion__body">
+            <ul class="hub-prov-grid" role="list" aria-label="Provincias con alojamientos">
+                <?php foreach (HUB_PROVINCIAS as $provKey => $provData):
+                    // Slug: solo la provincia → todos los alojamientos de esa provincia
+                    $slug = 'turismo-rural-' . $provKey;
+                    $url  = hubUrl($slug, $lang, 'alojamientos');
+                ?>
+                <li class="hub-prov-item">
+                    <a href="<?= htmlspecialchars($url) ?>"
+                       class="hub-prov-card"
+                       title="<?= htmlspecialchars('Alojamientos en ' . $provData['label']) ?>">
+                        <span class="hub-prov-card__emoji" aria-hidden="true"><?= $provData['emoji'] ?></span>
+                        <span class="hub-prov-card__label"><?= htmlspecialchars($provData['label']) ?></span>
+                        <span class="hub-prov-card__region"><?= htmlspecialchars($provData['region']) ?></span>
+                    </a>
+                    <a href="<?= $base ?>/rutas.php?provincia=<?= urlencode($provData['label']) ?>&alojamientos=1&lugares=0&actividades=0&eventos=0"
+                       class="hub-prov-map-btn"
+                       title="Ver alojamientos en <?= htmlspecialchars($provData['label']) ?> en el mapa"
+                       aria-label="Mapa de <?= htmlspecialchars($provData['label']) ?>">
+                        🗺️
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </details>
+
+    <!-- ── ACORDEÓN 3: Combinaciones más buscadas (link juice concentrado) ────── -->
+    <details class="hub-accordion">
+        <summary class="hub-accordion__summary">
+            <span class="hub-accordion__icon" aria-hidden="true">🔥</span>
+            <?= htmlspecialchars($t['hub_alo_combis']) ?>
+            <svg class="hub-accordion__chevron" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </summary>
+        <div class="hub-accordion__body">
+            <ul class="hub-link-grid" role="list" aria-label="Combinaciones populares de alojamientos">
+                <?php foreach (HUB_COMBIS_ALO as $combi):
+                    $slug  = buildAloSlug($combi);
+                    $url   = hubUrl($slug, $lang, 'alojamientos');
+                    // Construir label legible
+                    $parts = [];
+                    foreach ($combi as $part) {
+                        if (isset(HUB_FILTROS_ALO[$part])) {
+                            $parts[] = HUB_FILTROS_ALO[$part][$lang] ?? HUB_FILTROS_ALO[$part]['es'];
+                        } elseif (isset(HUB_PROVINCIAS[$part])) {
+                            $parts[] = HUB_PROVINCIAS[$part]['label'];
+                        } else {
+                            $parts[] = ucfirst(str_replace('-', ' ', $part));
+                        }
+                    }
+                    $label = implode(' · ', $parts);
+                    // Icono del primer filtro
+                    $icon = '';
+                    foreach ($combi as $part) {
+                        if (isset(HUB_FILTROS_ALO[$part])) {
+                            $icon = HUB_FILTROS_ALO[$part]['icon'];
+                            break;
+                        }
+                    }
+                ?>
+                <li>
+                    <a href="<?= htmlspecialchars($url) ?>"
+                       class="hub-link-item"
+                       title="<?= htmlspecialchars($label) ?>">
+                        <?php if ($icon): ?>
+                        <span class="hub-link-item__icon" aria-hidden="true"><?= $icon ?></span>
+                        <?php endif; ?>
+                        <?= htmlspecialchars($label) ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </details>
+
+    <!-- ── CTA Ver todos + Mapa ────────────────────────────────────────────────── -->
+    <div class="hub-section__cta">
+        <a href="<?= $base ?>/alojamientos/turismo-rural"
+           class="hub-btn hub-btn--outline">
+            <?= htmlspecialchars($t['hub_alo_all']) ?>
+        </a>
+        <a href="<?= $base ?>/rutas.php?alojamientos=1&lugares=0&actividades=0&eventos=0"
+           class="hub-btn hub-btn--map">
+            🗺️ <?= $lang === 'es' ? 'Ver en el mapa' : ($lang === 'en' ? 'View on map' : ($lang === 'fr' ? 'Voir sur la carte' : ($lang === 'de' ? 'Auf der Karte' : '在地图上查看'))) ?>
+        </a>
+    </div>
+
+</div><!-- /.hub-container -->
+</section>
+    <?php
+}
+<?php
+/**
+ * ════════════════════════════════════════════════════════════════════════════
+ *  HUB-CONFIG.PHP — Configuración centralizada del Index Hub de Autoridad
+ *  rutasrurales.io/
+ *
+ *  Contiene:
+ *    - Mapa de idiomas y disponibilidad de traducciones por vertical
+ *    - Provincias para el hub (subconjunto curado del mapa completo)
+ *    - Combinaciones de alojamientos destacadas (filtro × provincia)
+ *    - Combinaciones de eventos destacadas (filtro × provincia)
+ *    - Temporadas para el hub de eventos
+ * ════════════════════════════════════════════════════════════════════════════
+ */
+
+// ── IDIOMAS SOPORTADOS ────────────────────────────────────────────────────────
+// 'available' indica qué verticales tienen traducción completa en ese idioma
+// Esto controla el comportamiento de fallback en los hubs
+const HUB_LANGS = [
+    'es' => [
+        'label'    => 'Español',
+        'flag'     => '🇪🇸',
+        'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/es.svg',
+        'locale'   => 'es-ES',
+        'dir'      => 'ltr',
+        'available' => ['alojamientos', 'eventos', 'lugares', 'actividades'],
+    ],
+    'en' => [
+        'label'    => 'English',
+        'flag'     => '🇬🇧',
+        'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/gb.svg',
+        'locale'   => 'en-GB',
+        'dir'      => 'ltr',
+        'available' => ['alojamientos', 'eventos'],
+    ],
+    'fr' => [
+        'label'    => 'Français',
+        'flag'     => '🇫🇷',
+        'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/fr.svg',
+        'locale'   => 'fr-FR',
+        'dir'      => 'ltr',
+        'available' => ['alojamientos', 'eventos'],
+    ],
+    'de' => [
+        'label'    => 'Deutsch',
+        'flag'     => '🇩🇪',
+        'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/de.svg',
+        'locale'   => 'de-DE',
+        'dir'      => 'ltr',
+        'available' => ['alojamientos', 'eventos'],
+    ],
+    'zh' => [
+        'label'    => '中文',
+        'flag'     => '🇨🇳',
+        'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/cn.svg',
+        'locale'   => 'zh-CN',
+        'dir'      => 'ltr',
+        'available' => ['alojamientos', 'eventos'],
+    ],
+];
+
+// ── PROVINCIAS HUB (curadas con icono e imagen representativa) ────────────────
+const HUB_PROVINCIAS = [
+    'soria'       => ['label'=>'Soria',       'emoji'=>'🌲', 'region'=>'Castilla y León'],
+    'zamora'      => ['label'=>'Zamora',      'emoji'=>'🦌', 'region'=>'Castilla y León'],
+    'leon'        => ['label'=>'León',        'emoji'=>'🏔️', 'region'=>'Castilla y León'],
+    'burgos'      => ['label'=>'Burgos',      'emoji'=>'⚔️', 'region'=>'Castilla y León'],
+    'valladolid'  => ['label'=>'Valladolid',  'emoji'=>'🍷', 'region'=>'Castilla y León'],
+    'salamanca'   => ['label'=>'Salamanca',   'emoji'=>'🏛️', 'region'=>'Castilla y León'],
+    'palencia'    => ['label'=>'Palencia',    'emoji'=>'🌊', 'region'=>'Castilla y León'],
+    'segovia'     => ['label'=>'Segovia',     'emoji'=>'🏰', 'region'=>'Castilla y León'],
+    'avila'       => ['label'=>'Ávila',       'emoji'=>'🧱', 'region'=>'Castilla y León'],
+    'guadalajara' => ['label'=>'Guadalajara', 'emoji'=>'🌳', 'region'=>'Castilla-La Mancha'],
+    'cuenca'      => ['label'=>'Cuenca',      'emoji'=>'🪨', 'region'=>'Castilla-La Mancha'],
+    'ourense'     => ['label'=>'Ourense',     'emoji'=>'♨️', 'region'=>'Galicia'],
+];
+
+// ── FILTROS ALOJAMIENTOS DESTACADOS (para el hub visual) ────────────────────
+// Ordenados por popularidad SEO
+const HUB_FILTROS_ALO = [
+    'casas-rurales'        => ['icon'=>'🏡', 'es'=>'Casas rurales',         'en'=>'Rural houses',     'fr'=>'Maisons rurales',       'de'=>'Landhäuser',          'zh'=>'乡村民宿'],
+    'con-chimenea'         => ['icon'=>'🔥', 'es'=>'Con chimenea',          'en'=>'With fireplace',   'fr'=>'Avec cheminée',         'de'=>'Mit Kamin',           'zh'=>'带壁炉'],
+    'con-piscina'          => ['icon'=>'🏊', 'es'=>'Con piscina',           'en'=>'With pool',        'fr'=>'Avec piscine',          'de'=>'Mit Pool',            'zh'=>'带游泳池'],
+    'con-mascotas'         => ['icon'=>'🐾', 'es'=>'Para mascotas',         'en'=>'Pet-friendly',     'fr'=>'Pour animaux',          'de'=>'Haustierfreundlich',  'zh'=>'宠物友好'],
+    'romantico'            => ['icon'=>'💑', 'es'=>'Románticos',            'en'=>'Romantic',         'fr'=>'Romantiques',           'de'=>'Romantisch',          'zh'=>'浪漫'],
+    'con-jacuzzi'          => ['icon'=>'♨️', 'es'=>'Con jacuzzi',          'en'=>'With jacuzzi',     'fr'=>'Avec jacuzzi',          'de'=>'Mit Jacuzzi',         'zh'=>'带按摩浴缸'],
+    'grandes-grupos'       => ['icon'=>'👥', 'es'=>'Grupos grandes',        'en'=>'Large groups',     'fr'=>'Grands groupes',        'de'=>'Für Gruppen',         'zh'=>'大团体适用'],
+    'con-cocina'           => ['icon'=>'🍳', 'es'=>'Con cocina equipada',   'en'=>'Full kitchen',     'fr'=>'Cuisine équipée',       'de'=>'Mit Küche',           'zh'=>'含厨房'],
+    'turismo-rural'        => ['icon'=>'🌿', 'es'=>'Turismo rural',         'en'=>'Rural tourism',    'fr'=>'Tourisme rural',        'de'=>'Landurlaub',          'zh'=>'乡村旅游'],
+    'baratos'              => ['icon'=>'💰', 'es'=>'Económicos',            'en'=>'Budget-friendly',  'fr'=>'Économiques',           'de'=>'Günstig',             'zh'=>'经济实惠'],
+    'apartamentos-rurales' => ['icon'=>'🏠', 'es'=>'Apartamentos rurales',  'en'=>'Rural apartments', 'fr'=>'Appts ruraux',          'de'=>'Landapartments',      'zh'=>'乡村公寓'],
+    'para-ninos'           => ['icon'=>'👨‍👩‍👧', 'es'=>'Para niños',    'en'=>'Child-friendly',   'fr'=>'Pour enfants',          'de'=>'Kinderfreundlich',    'zh'=>'亲子友好'],
+];
+
+// ── COMBINACIONES ESTRELLA (alojamientos) — las 20 más buscadas ──────────────
+// Formato: [filtro, provincia] → genera /alojamientos/{filtro}-{provincia}
+const HUB_COMBIS_ALO = [
+    ['casas-rurales', 'con-chimenea', 'soria'],
+    ['casas-rurales', 'con-chimenea', 'zamora'],
+    ['casas-rurales', 'con-chimenea', 'leon'],
+    ['casas-rurales', 'con-piscina',  'soria'],
+    ['casas-rurales', 'con-piscina',  'zamora'],
+    ['turismo-rural', 'con-mascotas', 'soria'],
+    ['turismo-rural', 'con-mascotas', 'burgos'],
+    ['turismo-rural', 'con-mascotas', 'leon'],
+    ['casas-rurales', 'romantico',    'valladolid'],
+    ['casas-rurales', 'romantico',    'salamanca'],
+    ['casas-rurales', 'grandes-grupos', 'soria'],
+    ['casas-rurales', 'grandes-grupos', 'burgos'],
+    ['turismo-rural', 'baratos',      'soria'],
+    ['turismo-rural', 'baratos',      'zamora'],
+    ['casas-rurales', 'para-ninos',   'leon'],
+    ['casas-rurales', 'para-ninos',   'soria'],
+    ['turismo-rural', 'con-jacuzzi',  'salamanca'],
+    ['turismo-rural', 'con-jacuzzi',  'segovia'],
+    ['casas-rurales', 'con-cocina',   'valladolid'],
+    ['turismo-rural', 'con-chimenea', 'avila'],
+];
+
+// ── FILTROS EVENTOS DESTACADOS ────────────────────────────────────────────────
+const HUB_FILTROS_EVT = [
+    'musica'       => ['icon'=>'🎵', 'es'=>'Música',                 'en'=>'Music',            'fr'=>'Musique',              'de'=>'Musik',                'zh'=>'音乐'],
+    'gastronomia'  => ['icon'=>'🍷', 'es'=>'Gastronomía',            'en'=>'Food & wine',      'fr'=>'Gastronomie',          'de'=>'Gastronomie',          'zh'=>'美食'],
+    'tradiciones'  => ['icon'=>'🎪', 'es'=>'Tradiciones',            'en'=>'Traditions',       'fr'=>'Traditions',           'de'=>'Traditionen',          'zh'=>'传统'],
+    'teatro'       => ['icon'=>'🎭', 'es'=>'Teatro y danza',         'en'=>'Theatre & dance',  'fr'=>'Théâtre et danse',     'de'=>'Theater & Tanz',       'zh'=>'戏剧'],
+    'exposiciones' => ['icon'=>'🎨', 'es'=>'Exposiciones y arte',    'en'=>'Art & exhibitions','fr'=>'Art et expositions',   'de'=>'Kunst',                'zh'=>'艺术展览'],
+    'gratuitos'    => ['icon'=>'🎁', 'es'=>'Eventos gratuitos',      'en'=>'Free events',      'fr'=>'Gratuits',             'de'=>'Kostenlos',            'zh'=>'免费活动'],
+    'mercados'     => ['icon'=>'🛖', 'es'=>'Mercados medievales',    'en'=>'Medieval markets', 'fr'=>'Marchés médiévaux',    'de'=>'Mittelaltermärkte',    'zh'=>'中世纪集市'],
+    'infantil'     => ['icon'=>'👨‍👩‍👧', 'es'=>'Familiar',     'en'=>'Family',           'fr'=>'Famille',              'de'=>'Familie',              'zh'=>'家庭活动'],
+    'verano'       => ['icon'=>'☀️', 'es'=>'Verano',                 'en'=>'Summer',           'fr'=>'Été',                  'de'=>'Sommer',               'zh'=>'夏季'],
+    'otono'        => ['icon'=>'🍂', 'es'=>'Otoño',                  'en'=>'Autumn',           'fr'=>'Automne',              'de'=>'Herbst',               'zh'=>'秋季'],
+];
+
+// ── COMBINACIONES ESTRELLA (eventos) — las más relevantes ────────────────────
+const HUB_COMBIS_EVT = [
+    ['musica',      'soria'],
+    ['musica',      'burgos'],
+    ['musica',      'salamanca'],
+    ['gastronomia', 'valladolid'],
+    ['gastronomia', 'soria'],
+    ['gastronomia', 'zamora'],
+    ['tradiciones', 'zamora'],
+    ['tradiciones', 'burgos'],
+    ['tradiciones', 'avila'],
+    ['teatro',      'salamanca'],
+    ['teatro',      'valladolid'],
+    ['exposiciones','segovia'],
+    ['exposiciones','salamanca'],
+    ['gratuitos',   'soria'],
+    ['gratuitos',   'leon'],
+    ['mercados',    'segovia'],
+    ['mercados',    'palencia'],
+    ['infantil',    'burgos'],
+    ['verano',      'soria'],
+    ['verano',      'salamanca'],
+];
+
+// ── MESES POR TEMPORADA (para título dinámico del hub de eventos) ─────────────
+const HUB_TEMPORADAS = [
+    'invierno'  => [12, 1, 2],
+    'primavera' => [3, 4, 5],
+    'verano'    => [6, 7, 8],
+    'otono'     => [9, 10, 11],
+];
+
+/**
+ * Devuelve la temporada actual basada en el mes del servidor.
+ */
+function getTemporadaActual(): string {
+    $mes = (int)date('n');
+    foreach (HUB_TEMPORADAS as $t => $meses) {
+        if (in_array($mes, $meses, true)) return $t;
+    }
+    return 'primavera';
+}
+
+/**
+ * Construye la URL de una landing de alojamiento con soporte multilingüe y fallback.
+ *
+ * @param  string $slug  Slug de la landing (ej: casas-rurales-con-chimenea-soria)
+ * @param  string $lang  Idioma activo
+ * @param  string $vertical Vertical: 'alojamientos' | 'eventos'
+ * @return string URL absoluta
+ */
+function hubUrl(string $slug, string $lang, string $vertical = 'alojamientos', bool $isFilterOnly = false): string {
+    $base = 'https://rutasrurales.io';
+    // Comprobamos si el idioma tiene traducción para esta vertical
+    $hasTranslation = in_array($vertical, HUB_LANGS[$lang]['available'] ?? [], true);
+    if ($lang === 'es' || $hasTranslation) {
+        return $lang === 'es'
+            ? "{$base}/{$vertical}/{$slug}"
+            : "{$base}/{$lang}/{$vertical}/{$slug}";
+    }
+
+    // Si es un filtro único, la URL es diferente (apunta a la página de listado con un parámetro)
+    if ($isFilterOnly) {
+        return "{$base}/alojamientos-turisticos.html?feature={$slug}";
+    }
+
+    // Fallback elegante: versión española
+    return "{$base}/{$vertical}/{$slug}";
+}
+
+/**
+ * Construye el slug de una combinación de alojamiento [filtro1, filtro2?, provincia].
+ */
+function buildAloSlug(array $parts): string {
+    return implode('-', $parts);
+}
