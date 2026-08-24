@@ -143,8 +143,10 @@ function renderAlojamientoSchema(
         'postalCode'      => $alojamiento['postal_code'] ?? '',
         'addressCountry'  => 'ES',
     ];
-    // Eliminar claves vacías del address
-    $address = array_filter($address, fn($v) => $v !== '');
+    // NO usar array_filter aquí - Google requiere streetAddress y postalCode presentes
+    // aunque estén vacíos, para evitar el warning en Search Console
+    // Solo eliminamos valores vacíos que no sean streetAddress ni postalCode
+    $address = array_filter($address, fn($v, $k) => $v !== '' || in_array($k, ['streetAddress', 'postalCode', '@type', 'addressCountry']), ARRAY_FILTER_USE_BOTH);
 
     // Imágenes consolidadas — Google recomienda mínimo 8 para VacationRental
     // Si hay menos fotos reales, se rellena con la imagen genérica del sitio
