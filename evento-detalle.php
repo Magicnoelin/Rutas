@@ -597,17 +597,31 @@ if ($evento) {
     }
 
     // ── organizer / performer ────────────────────────────────────────────────
-    $org_name = !empty($evento['organizer'])
-        ? $evento['organizer']
-        : (!empty($evento['municipality'])
+    // El campo "organizer" es REQUERIDO por Google para eventos
+    // Siempre debe tener un valor válido con name y url
+    $has_organizer_data = !empty($evento['organizer']) && strlen(trim($evento['organizer'])) > 0;
+    
+    if ($has_organizer_data) {
+        // Usar el organizador de la base de datos
+        $org_name = trim($evento['organizer']);
+        // Si el organizador tiene website en la BD, usarlo; si no, construir URL de búsqueda
+        $org_url = !empty($evento['website']) 
+            ? $evento['website'] 
+            : 'https://rutasrurales.io/eventos-culturales-paginacion.html?organizador=' . urlencode($org_name);
+    } else {
+        // Fallback: usar ayuntamiento del municipio/provincia
+        $org_name = !empty($evento['municipality'])
             ? 'Ayuntamiento de ' . $evento['municipality']
             : (!empty($evento['province'])
                 ? 'Ayuntamiento de ' . $evento['province']
-                : 'Rutas Rurales'));
-    // URL del organizador: si tenemos municipio, construimos URL de búsqueda; si no, la web principal
-    $org_url = !empty($evento['municipality'])
-        ? 'https://rutasrurales.io/eventos-culturales-paginacion.html?municipio=' . urlencode($evento['municipality'])
-        : 'https://rutasrurales.io';
+                : 'Rutas Rurales');
+        // URL del organizador: si tenemos municipio, construimos URL de búsqueda
+        $org_url = !empty($evento['municipality'])
+            ? 'https://rutasrurales.io/eventos-culturales-paginacion.html?municipio=' . urlencode($evento['municipality'])
+            : 'https://rutasrurales.io';
+    }
+    
+    // Performer: puede ser el mismo que organizer o el lugar
     $perf_name = !empty($evento['organizer'])
         ? $evento['organizer']
         : (!empty($evento['municipality'])
