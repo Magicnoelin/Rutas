@@ -251,5 +251,21 @@ if ('serviceWorker' in navigator) {
   });
 </script>
 
+<!-- PWA - Tracking de instalación -->
+<script>
+  // Detectar cuando el usuario instala la PWA con éxito
+  window.addEventListener('appinstalled', () => {
+    console.log('¡PWA instalada con éxito!');
+    
+    // Si usas Google Analytics (gtag.js)
+    if (typeof gtag === 'function') {
+      gtag('event', 'pwa_installed', {
+        'event_category': 'PWA',
+        'event_label': 'App Instalada en Móvil/PC'
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
