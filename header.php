@@ -119,6 +119,19 @@ if (!$_header_skip_head):
     <link rel="canonical" href="<?php echo $page_canonical ?? 'https://rutasrurales.io' . $_SERVER['REQUEST_URI']; ?>">
     
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    
+    <!-- PWA - Enlace al manifisto -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- PWA - Color de la barra en móviles -->
+    <meta name="theme-color" content="#2c3e50">
+    
+    <!-- PWA - Soporte para iOS (iPhone / iPad) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="RutasRurales">
+    <link rel="apple-touch-icon" href="/img/icon-192.png">
+    
     <link rel="stylesheet" href="/styles.css">
     <?php if (empty($defer_fontawesome)): ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

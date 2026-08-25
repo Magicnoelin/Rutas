@@ -161,6 +161,18 @@ $langPfx = ($lang !== 'es') ? '/' . $lang : '';
 <link rel="icon"             href="/menu_images/Favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/menu_images/Favicon.png">
 
+<!-- PWA - Enlace al manifisto -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- PWA - Color de la barra en móviles -->
+<meta name="theme-color" content="#2c3e50">
+
+<!-- PWA - Soporte para iOS (iPhone / iPad) -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="RutasRurales">
+<link rel="apple-touch-icon" href="/img/icon-192.png">
+
 <!-- ── Preconnect ───────────────────────────────────────────────────────── -->
 <link rel="preconnect" href="https://hatscripts.github.io" crossorigin>
 
@@ -675,6 +687,21 @@ ul{list-style:none}
     shareScript.defer = true;
     document.body.appendChild(shareScript);
 })();
+</script>
+
+<!-- PWA - Registro del Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+                console.log('Service Worker registrado con éxito:', registration.scope);
+            })
+            .catch(function(error) {
+                console.log('Error al registrar el Service Worker:', error);
+            });
+    });
+}
 </script>
 
 </body>
