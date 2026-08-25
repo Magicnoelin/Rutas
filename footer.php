@@ -212,5 +212,44 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+<!-- PWA - Banner de instalación -->
+<div id="pwa-install-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: #2c3e50; color: #fff; padding: 12px 16px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: space-between;">
+  <span style="font-size: 14px; font-weight: 500;">Instala nuestra App para acceder más rápido</span>
+  <div style="display: flex; gap: 8px;">
+    <button id="pwa-install-btn" style="background: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">Instalar</button>
+    <button id="pwa-close-btn" style="background: transparent; color: #ccc; border: none; font-size: 16px; cursor: pointer;">✕</button>
+  </div>
+</div>
+
+<script>
+  let deferredPrompt;
+  const banner = document.getElementById('pwa-install-banner');
+  const installBtn = document.getElementById('pwa-install-btn');
+  const closeBtn = document.getElementById('pwa-close-btn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Mostrar banner solo si no se ha descartado previamente en la sesión
+    if (!sessionStorage.getItem('pwa_banner_dismissed')) {
+      banner.style.display = 'flex';
+    }
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      banner.style.display = 'none';
+    }
+  });
+
+  closeBtn.addEventListener('click', () => {
+    banner.style.display = 'none';
+    sessionStorage.setItem('pwa_banner_dismissed', 'true');
+  });
+</script>
+
 </body>
 </html>
