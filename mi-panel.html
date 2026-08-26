@@ -1284,14 +1284,14 @@
             navActividades.style.display = rolesSlugs.includes('actividad_cultural') ? 'block' : 'none';
         }
         
-        // Mostrar pestaña de Lugares si tiene rol guia_turistico
+        // Mostrar pestaña de Lugares si tiene rol guia_turistico o colaborador
         if (navLugares) {
-            navLugares.style.display = rolesSlugs.includes('guia_turistico') ? 'block' : 'none';
+            navLugares.style.display = (rolesSlugs.includes('guia_turistico') || rolesSlugs.includes('colaborador')) ? 'block' : 'none';
         }
         
-        // Mostrar pestaña de Eventos si tiene rol promotor_eventos
+        // Mostrar pestaña de Eventos si tiene rol organizador_eventos o colaborador
         if (navEventos) {
-            navEventos.style.display = rolesSlugs.includes('promotor_eventos') ? 'block' : 'none';
+            navEventos.style.display = (rolesSlugs.includes('organizador_eventos') || rolesSlugs.includes('colaborador')) ? 'block' : 'none';
         }
         
         // Mostrar "Preferencias" solo si tiene rol turista

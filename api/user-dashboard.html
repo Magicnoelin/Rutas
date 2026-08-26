@@ -838,30 +838,55 @@
             const rolesData = await rolesResp.json();
 
             if (rolesData.success && rolesData.data) {
-                const misRoles = rolesData.data; // Array de strings: ['Restaurante', 'Turista']
+                const misRoles = rolesData.data; // Array de objetos: [{nombre: 'Turista', slug: 'turista'}, ...]
+                const misRolesNombres = misRoles.map(r => r.nombre);
+                const misRolesSlugs = misRoles.map(r => r.slug);
+                
+                // DEBUG: Mostrar roles en consola y alert
+                console.log('Roles del usuario:', misRoles);
+                console.log('Nombres:', misRolesNombres);
+                console.log('Slugs:', misRolesSlugs);
+                
+                // Alert visible para debug
+                alert('DEBUG - Roles: ' + JSON.stringify(misRoles));
 
                 // 3. Activamos solo lo que corresponde
                 misRoles.forEach(rol => {
-                    if (rol === 'Propietario de Alojamiento') {
+                    const nombreRol = rol.nombre;
+                    const slugRol = rol.slug;
+                    const nombreRolLower = nombreRol ? nombreRol.toLowerCase() : '';
+                    const slugRolLower = slugRol ? slugRol.toLowerCase() : '';
+                    
+                    console.log('Procesando rol:', nombreRol, slugRol);
+                    
+                    if (nombreRol === 'Propietario de Alojamiento') {
                         document.getElementById('nav-mis-alojamientos').style.display = 'block';
                     }
-                    if (rol === 'Restaurante') {
+                    if (nombreRol === 'Restaurante') {
                         // Para Restaurantes, mostramos "Mis Negocios" o "Mis Lugares"
                         document.getElementById('nav-mis-negocios').style.display = 'block';
                     }
-                    if (rol === 'Guía' || rol === 'Empresa de Actividades') {
+                    if (nombreRol === 'Guía' || nombreRol === 'Empresa de Actividades') {
                         document.getElementById('nav-mis-actividades').style.display = 'block';
                     }
-                    if (rol === 'Promotor de Lugares') {
+                    if (nombreRol === 'Promotor de Lugares' || nombreRolLower === 'colaborador' || slugRolLower === 'colaborador') {
+                        console.log('>>> Mostrando Mis Lugares para rol:', nombreRol, slugRol);
                         document.getElementById('nav-mis-lugares').style.display = 'block';
                     }
-                    if (rol === 'Organizador de Eventos') {
+                    if (nombreRol === 'Organizador de Eventos' || nombreRolLower === 'colaborador' || slugRolLower === 'colaborador') {
+                        console.log('>>> Mostrando Mis Eventos para rol:', nombreRol, slugRol);
                         document.getElementById('nav-mis-eventos').style.display = 'block';
                     }
                 });
+                
+                // DEBUG: Verificar estado final
+                setTimeout(() => {
+                    console.log('Estado nav-mis-lugares:', document.getElementById('nav-mis-lugares').style.display);
+                    console.log('Estado nav-mis-eventos:', document.getElementById('nav-mis-eventos').style.display);
+                }, 1000);
 
                 // También actualizamos las tarjetas de la sección Inicio
-                renderQuickActions(misRoles);
+                renderQuickActions(misRolesNombres);
             }
         }
     } catch (error) {
@@ -2756,7 +2781,8 @@
                 'Propietario de Alojamiento': { title: 'Alojamientos', icon: 'fa-bed', link: 'mis-alojamientos' },
                 'Restaurante': { title: 'Mi Restaurante', icon: 'fa-utensils', link: 'mis-lugares' }, // Apunta a mis-lugares
                 'Empresa de Actividades': { title: 'Actividades', icon: 'fa-hiking', link: 'mis-actividades' },
-                'Promotor de Lugares': { title: 'Lugares', icon: 'fa-map-marker-alt', link: 'mis-lugares' }
+                'Promotor de Lugares': { title: 'Lugares', icon: 'fa-map-marker-alt', link: 'mis-lugares' },
+                'Colaborador': { title: 'Mis Contribuciones', icon: 'fa-handshake', link: 'mis-lugares' }
             };
 
             roles.forEach(rol => {
