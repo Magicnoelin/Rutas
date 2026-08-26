@@ -56,7 +56,7 @@ $lang = in_array($lang, ['es', 'en', 'fr', 'de', 'zh'], true) ? $lang : 'es';
 $t = getHubTranslations($lang);
 
 // ── 3. TEMPORADA ACTUAL (para el hub de eventos) ──────────────────────────────
-$temporada = getTemporadaActual();
+$temporada = 'otono';
 
 // ── 4. ESTADÍSTICAS DESDE BD (con fallback graceful) ─────────────────────────
 $stats = ['total_stays' => null, 'total_events' => null, 'total_prov' => 12];

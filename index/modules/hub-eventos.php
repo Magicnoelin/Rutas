@@ -26,7 +26,7 @@ function renderHubEventos(array $ctx): void {
         'verano'    => 'verano',
         'otono'     => 'otono',
         'invierno'  => 'invierno',
-        default     => 'verano',
+        default     => 'otono',
     };
 
     // Label de la temporada actual en el idioma activo
