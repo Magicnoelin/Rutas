@@ -806,6 +806,9 @@
     <script src="/script.js"></script>
 
     <script>
+        // Debug: confirm script is loaded
+        console.log('mi-panel.html script loaded');
+        
         // 4.1 Subir Avatar
         document.getElementById('avatarInput').addEventListener('change', async function(e) {
             const file = e.target.files[0];
@@ -1262,51 +1265,7 @@
         `;
     }
 
-    // Roles de negocio que muestran "Mi Negocio"
-    const BUSINESS_ROLES = ['panaderia', 'bar', 'cafeteria', 'restaurante', 'bodega', 'comercio_local'];
-    
-    // --- MOSTRAR/PERGAMINA SEGÚN ROLES ---
-    function actualizarMenuPorRoles(rolesSlugs) {
-        const navAlojamientos = document.getElementById('nav-mis-alojamientos');
-        const navActividades = document.getElementById('nav-mis-actividades');
-        const navLugares = document.getElementById('nav-mis-lugares');
-        const navEventos = document.getElementById('nav-mis-eventos');
-        const navPreferencias = document.getElementById('nav-preferences');
-        const navMiNegocio = document.getElementById('nav-mi-negocio');
-        
-        // Mostrar pestaña de Alojamientos si tiene rol alojamiento
-        if (navAlojamientos) {
-            navAlojamientos.style.display = rolesSlugs.includes('alojamiento') ? 'block' : 'none';
-        }
-        
-        // Mostrar pestaña de Actividades si tiene rol actividad_cultural
-        if (navActividades) {
-            navActividades.style.display = rolesSlugs.includes('actividad_cultural') ? 'block' : 'none';
-        }
-        
-        // Mostrar pestaña de Lugares si tiene rol guia_turistico o colaborador
-        if (navLugares) {
-            navLugares.style.display = (rolesSlugs.includes('guia_turistico') || rolesSlugs.includes('colaborador')) ? 'block' : 'none';
-        }
-        
-        // Mostrar pestaña de Eventos si tiene rol organizador_eventos o colaborador
-        if (navEventos) {
-            navEventos.style.display = (rolesSlugs.includes('organizador_eventos') || rolesSlugs.includes('colaborador')) ? 'block' : 'none';
-        }
-        
-        // Mostrar "Preferencias" solo si tiene rol turista
-        if (navPreferencias) {
-            navPreferencias.style.display = rolesSlugs.includes('turista') ? 'block' : 'none';
-        }
-        
-        // Mostrar "Mi Negocio" si tiene rol de negocio (panaderia, bar, cafeteria, restaurante, bodega, comercio_local)
-        if (navMiNegocio) {
-            const hasBusinessRole = rolesSlugs.some(role => BUSINESS_ROLES.includes(role));
-            navMiNegocio.style.display = hasBusinessRole ? 'block' : 'none';
-        }
-        
-        console.log('Menú actualizado según roles:', rolesSlugs);
-    }
+    // La función actualizarMenuPorRoles ya no se usa, ahora se usa loadUserRolesAndUpdateMenu
 
     // --- LOGOUT ---
     document.getElementById('logoutBtn').addEventListener('click', async function(e) {
@@ -1354,6 +1313,96 @@
         }
     }
 
+    /**
+     * Función para cargar los roles del usuario y gestionar la visibilidad del menú
+     * según los roles asignados. El rol 'colaborador' tiene acceso global a lugares y eventos.
+     */
+    async function loadUserRolesAndUpdateMenu() {
+        try {
+            // 1. Realizar fetch a la API de roles
+            const response = await fetch('api/roles.php?action=mis_roles');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (!data.success || !data.data || data.data.length === 0) {
+                console.log('No se encontraron roles para el usuario');
+                return;
+            }
+            
+            // 2. Normalizar los roles a minúsculas para evitar problemas de mayúsculas/minúsculas
+            const roles = data.data.map(rol => ({
+                nombre: rol.nombre,
+                slug: rol.slug ? rol.slug.toLowerCase() : ''
+            }));
+            
+            const roleSlugs = roles.map(r => r.slug);
+            
+            console.log('Roles normalizados:', roleSlugs);
+            
+            // 3. Obtener referencias a los elementos del menú
+            const navMisLugares = document.getElementById('nav-mis-lugares');
+            const navMisEventos = document.getElementById('nav-mis-eventos');
+            const providerActions = document.getElementById('provider-actions');
+            const providerActionsGrid = document.getElementById('provider-actions-grid');
+            
+            // 4. Determinar qué menús mostrar según los roles
+            // El rol 'colaborador' tiene acceso a ambos: lugares y eventos
+            const tieneRolLugares = roleSlugs.includes('lugares') || roleSlugs.includes('guia_turistico') || roleSlugs.includes('colaborador');
+            const tieneRolEventos = roleSlugs.includes('eventos') || roleSlugs.includes('organizador_eventos') || roleSlugs.includes('promotor_eventos') || roleSlugs.includes('colaborador');
+            
+            // Mostrar/ocultar elementos del menú lateral
+            if (navMisLugares) {
+                navMisLugares.style.display = tieneRolLugares ? 'block' : 'none';
+            }
+            
+            if (navMisEventos) {
+                navMisEventos.style.display = tieneRolEventos ? 'block' : 'none';
+            }
+            
+            // 5. Generar las tarjetas dinámicamente
+            let cardsHTML = '';
+            
+            if (tieneRolLugares) {
+                cardsHTML += `
+                    <div class="role-card" onclick="showSection('mis-lugares')">
+                        <div class="role-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <h3>Mis Lugares de Interés</h3>
+                        <p>Gestiona los lugares de interés que has creado o contribuir.</p>
+                        <span class="btn-select-role">Entrar</span>
+                    </div>
+                `;
+            }
+            
+            if (tieneRolEventos) {
+                cardsHTML += `
+                    <div class="role-card" onclick="showSection('mis-eventos')">
+                        <div class="role-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <h3>Mis Eventos Culturales</h3>
+                        <p>Gestiona los eventos culturales que has creado o contribuir.</p>
+                        <span class="btn-select-role">Entrar</span>
+                    </div>
+                `;
+            }
+            
+            // 6. Insertar las tarjetas y mostrar/ocultar la sección contenedor
+            if (providerActionsGrid) {
+                providerActionsGrid.innerHTML = cardsHTML;
+            }
+            
+            if (providerActions) {
+                providerActions.style.display = (cardsHTML.length > 0) ? 'block' : 'none';
+            }
+            
+            console.log('Menú actualizado correctamente');
+            
+        } catch (error) {
+            console.error('Error al cargar roles:', error);
+        }
+    }
+
     // --- CARGA INICIAL ---
     document.addEventListener('DOMContentLoaded', async () => {
         const hash = window.location.hash.substring(1) || 'inicio';
@@ -1362,21 +1411,13 @@
         // Cargar datos del usuario
         await loadUserProfile();
         
-        // Obtener roles y actualizar menú
-        try {
-            const respRoles = await fetch('api/roles.php?action=mis_roles');
-            const datosRoles = await respRoles.json();
-            if (datosRoles.success && datosRoles.data) {
-                const rolesSlugs = datosRoles.data.map(r => r.slug);
-                actualizarMenuPorRoles(rolesSlugs);
-                
-                // Cargar recursos del usuario (alojamientos, actividades, etc.)
-                await loadUserResources();
-            }
-        } catch (error) {
-            console.error('Error cargando roles para menú:', error);
-        }
+        // Cargar roles y actualizar menú
+        await loadUserRolesAndUpdateMenu();
         
+        // Cargar recursos del usuario (alojamientos, actividades, etc.)
+        await loadUserResources();
+        
+        // Cerrar modal con tecla Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 cerrarModalRoles();
