@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
         $description = trim($_POST['description'] ?? '');
         $start_date = trim($_POST['start_date'] ?? '');
         $end_date = !empty($_POST['end_date']) ? trim($_POST['end_date']) : null;
-        $category = trim($_POST['category'] ?? '');
+        $category_id = !empty($_POST['category']) ? intval($_POST['category']) : null;
         $location = trim($_POST['location'] ?? '');
         $organizer = trim($_POST['organizer'] ?? '');
         $entry_fee = trim($_POST['entry_fee'] ?? '');
@@ -43,11 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
                 description = ?, 
                 start_date = ?, 
                 end_date = ?, 
-                category = ?, 
-                location = ?, 
+                category_id = ?, 
+                venue_name = ?, 
                 organizer = ?, 
                 entry_fee = ?, 
-                contact_phone = ?, 
+                phone = ?, 
                 website = ?, 
                 poster_image = ?, 
                 updated_at = NOW() 
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
             $description,
             $start_date,
             $end_date,
-            $category,
+            $category_id,
             $location,
             $organizer,
             $entry_fee,
@@ -234,26 +234,16 @@ if (!$item) {
                     </div>
 
                     <div class="form-group">
-                        <label for="category">Categoría*</label>
-                        <select id="category" name="category" required>
-                            <option value="">Seleccionar categoría...</option>
-                            <option value="festival" <?= $item['category'] == 'festival' ? 'selected' : '' ?>>Festival</option>
-                            <option value="feria" <?= $item['category'] == 'feria' ? 'selected' : '' ?>>Feria</option>
-                            <option value="mercado" <?= $item['category'] == 'mercado' ? 'selected' : '' ?>>Mercado</option>
-                            <option value="concierto" <?= $item['category'] == 'concierto' ? 'selected' : '' ?>>Concierto</option>
-                            <option value="exposicion" <?= $item['category'] == 'exposicion' ? 'selected' : '' ?>>Exposición</option>
-                            <option value="teatro" <?= $item['category'] == 'teatro' ? 'selected' : '' ?>>Teatro</option>
-                            <option value="gastronomia" <?= $item['category'] == 'gastronomia' ? 'selected' : '' ?>>Gastronomía</option>
-                            <option value="deportivo" <?= $item['category'] == 'deportivo' ? 'selected' : '' ?>>Deportivo</option>
-                            <option value="religioso" <?= $item['category'] == 'religioso' ? 'selected' : '' ?>>Religioso</option>
-                            <option value="cultural" <?= $item['category'] == 'cultural' ? 'selected' : '' ?>>Cultural</option>
-                            <option value="otro" <?= $item['category'] == 'otro' ? 'selected' : '' ?>>Otro</option>
-                        </select>
+                        <label for="category">ID de Categoría</label>
+                        <input type="number" id="category" name="category" value="<?= htmlspecialchars($item['category_id'] ?? '') ?>" placeholder="Número de categoría (ej: 1, 2, 3...)">
+                        <small style="color: #666; display: block; margin-top: 0.3rem;">
+                            <i class="fas fa-info-circle"></i> Ingresa el ID numérico de la categoría del evento
+                        </small>
                     </div>
 
                     <div class="form-group">
                         <label for="location">Ubicación/Lugar del Evento</label>
-                        <input type="text" id="location" name="location" value="<?= htmlspecialchars($item['location'] ?? '') ?>" placeholder="Ej: Plaza Mayor, Centro Cultural...">
+                        <input type="text" id="location" name="location" value="<?= htmlspecialchars($item['venue_name'] ?? $item['location'] ?? '') ?>" placeholder="Ej: Plaza Mayor, Centro Cultural...">
                     </div>
 
                     <div class="form-group">
@@ -268,7 +258,7 @@ if (!$item) {
                         </div>
                         <div class="form-group">
                             <label for="contact_phone">Teléfono de Contacto</label>
-                            <input type="tel" id="contact_phone" name="contact_phone" value="<?= htmlspecialchars($item['contact_phone'] ?? '') ?>" placeholder="+34 600 000 000">
+                            <input type="tel" id="contact_phone" name="contact_phone" value="<?= htmlspecialchars($item['phone'] ?? $item['contact_phone'] ?? '') ?>" placeholder="+34 600 000 000">
                         </div>
                     </div>
 
