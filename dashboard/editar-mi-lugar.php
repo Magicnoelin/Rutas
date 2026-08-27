@@ -15,26 +15,62 @@ if (!$id) {
 
 // PROCESAR GUARDADO
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
-    $campos = [
-        'name', 'municipality', 'province', 'description', 'category',
-        'subcategory', 'latitude', 'longitude', 'accessibility',
-        'opening_hours', 'entry_fee', 'visit_duration', 'photo1'
-    ];
-
-    $setPart = [];
-    $values = [];
-    
-    foreach ($campos as $campo) {
-        $setPart[] = "$campo = ?";
-        $values[] = $_POST[$campo] ?? '';
-    }
-
-    $values[] = $id;
-
     try {
-        $sql = "UPDATE places_of_interest SET " . implode(', ', $setPart) . ", updated_at = NOW() WHERE id = ?";
+        // Preparar valores sanitizados
+        $name = trim($_POST['name'] ?? '');
+        $municipality = trim($_POST['municipality'] ?? '');
+        $province = trim($_POST['province'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $category_id = !empty($_POST['category']) ? intval($_POST['category']) : null;
+        $subcategory_id = !empty($_POST['subcategory']) ? intval($_POST['subcategory']) : null;
+        $latitude = !empty($_POST['latitude']) ? floatval($_POST['latitude']) : null;
+        $longitude = !empty($_POST['longitude']) ? floatval($_POST['longitude']) : null;
+        $accessibility = trim($_POST['accessibility'] ?? '');
+        $opening_hours = trim($_POST['opening_hours'] ?? '');
+        $entry_fee = trim($_POST['entry_fee'] ?? '');
+        $visit_duration = trim($_POST['visit_duration'] ?? '');
+        $photo1 = trim($_POST['photo1'] ?? '');
+
+        // Validar campos obligatorios
+        if (empty($name) || empty($municipality) || empty($province) || empty($description)) {
+            throw new Exception("Los campos nombre, municipio, provincia y descripción son obligatorios.");
+        }
+
+        $sql = "UPDATE places_of_interest SET 
+                name = ?, 
+                municipality = ?, 
+                province = ?, 
+                description = ?, 
+                category_id = ?, 
+                subcategory_id = ?, 
+                latitude = ?, 
+                longitude = ?, 
+                accessibility = ?, 
+                opening_hours = ?, 
+                entry_fee_details = ?, 
+                visit_duration = ?, 
+                photo1 = ?, 
+                updated_at = NOW() 
+                WHERE id = ?";
+        
         $stmt = $pdo->prepare($sql);
-        $stmt->execute($values);
+        $stmt->execute([
+            $name,
+            $municipality,
+            $province,
+            $description,
+            $category_id,
+            $subcategory_id,
+            $latitude,
+            $longitude,
+            $accessibility,
+            $opening_hours,
+            $entry_fee,
+            $visit_duration,
+            $photo1,
+            $id
+        ]);
+        
         $mensaje = "<div class='alert alert-success shadow'>✅ Cambios guardados correctamente.</div>";
         
         // Recargar datos
@@ -55,6 +91,16 @@ if (!isset($item)) {
 
 if (!$item) { 
     die("Lugar no encontrado."); 
+}
+
+// CONSULTAR CATEGORÍAS DISPONIBLES
+try {
+    $stmt = $pdo->query("SELECT id, name FROM categories_places WHERE id IS NOT NULL ORDER BY name");
+    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    // Si falla, registrar error pero continuar
+    error_log("Error al cargar categorías: " . $e->getMessage());
+    $categories = [];
 }
 ?>
 <!DOCTYPE html>
@@ -190,19 +236,32 @@ if (!$item) {
                         <div class="form-group">
                             <label for="category">Categoría</label>
                             <select id="category" name="category">
-                                <option value="">Seleccionar...</option>
-                                <option value="monument" <?= $item['category'] == 'monument' ? 'selected' : '' ?>>Monumento</option>
-                                <option value="natural" <?= $item['category'] == 'natural' ? 'selected' : '' ?>>Natural</option>
-                                <option value="museum" <?= $item['category'] == 'museum' ? 'selected' : '' ?>>Museo</option>
-                                <option value="church" <?= $item['category'] == 'church' ? 'selected' : '' ?>>Iglesia</option>
-                                <option value="castle" <?= $item['category'] == 'castle' ? 'selected' : '' ?>>Castillo</option>
-                                <option value="viewpoint" <?= $item['category'] == 'viewpoint' ? 'selected' : '' ?>>Mirador</option>
-                                <option value="other" <?= $item['category'] == 'other' ? 'selected' : '' ?>>Otro</option>
+                                <option value="">Sin categoría</option>
+                                <?php 
+                                if (count($categories) > 0) {
+                                    foreach ($categories as $cat): 
+                                        if (!empty($cat['id']) && !empty($cat['name'])):
+                                ?>
+                                    <option value="<?= htmlspecialchars($cat['id']) ?>" <?= $item['category_id'] == $cat['id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($cat['name']) ?>
+                                    </option>
+                                <?php 
+                                        endif;
+                                    endforeach;
+                                } else {
+                                    echo '<option value="" disabled>No hay categorías disponibles</option>';
+                                }
+                                ?>
                             </select>
+                            <?php if (count($categories) === 0): ?>
+                                <small style="color: #666; display: block; margin-top: 0.3rem;">
+                                    <i class="fas fa-info-circle"></i> No se encontraron categorías en la base de datos
+                                </small>
+                            <?php endif; ?>
                         </div>
                         <div class="form-group">
-                            <label for="subcategory">Subcategoría</label>
-                            <input type="text" id="subcategory" name="subcategory" value="<?= htmlspecialchars($item['subcategory'] ?? '') ?>">
+                            <label for="subcategory">ID Subcategoría</label>
+                            <input type="number" id="subcategory" name="subcategory" value="<?= htmlspecialchars($item['subcategory_id'] ?? '') ?>" placeholder="Número de subcategoría (opcional)">
                         </div>
                     </div>
 
@@ -241,7 +300,7 @@ if (!$item) {
 
                     <div class="form-group">
                         <label for="photo1">URL de la Foto Principal</label>
-                        <input type="url" id="photo1" name="photo1" value="<?= htmlspecialchars($item['photo1'] ?? '') ?>">
+                        <input type="text" id="photo1" name="photo1" value="<?= htmlspecialchars($item['photo1'] ?? '') ?>" placeholder="https://ejemplo.com/imagen.jpg">
                         <?php if (!empty($item['photo1'])): ?>
                             <img src="<?= htmlspecialchars($item['photo1']) ?>" alt="Preview" style="max-width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-top: 0.5rem; border: 1px solid #ddd;">
                         <?php endif; ?>

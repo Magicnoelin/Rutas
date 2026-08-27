@@ -15,26 +15,62 @@ if (!$id) {
 
 // PROCESAR GUARDADO
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
-    $campos = [
-        'name', 'municipality', 'province', 'description', 'start_date', 'end_date',
-        'category', 'location', 'organizer', 'entry_fee', 'contact_phone',
-        'website', 'photo1'
-    ];
-
-    $setPart = [];
-    $values = [];
-    
-    foreach ($campos as $campo) {
-        $setPart[] = "$campo = ?";
-        $values[] = $_POST[$campo] ?? '';
-    }
-
-    $values[] = $id;
-
     try {
-        $sql = "UPDATE cultural_events SET " . implode(', ', $setPart) . ", updated_at = NOW() WHERE id = ?";
+        // Preparar valores sanitizados
+        $name = trim($_POST['name'] ?? '');
+        $municipality = trim($_POST['municipality'] ?? '');
+        $province = trim($_POST['province'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $start_date = trim($_POST['start_date'] ?? '');
+        $end_date = !empty($_POST['end_date']) ? trim($_POST['end_date']) : null;
+        $category = trim($_POST['category'] ?? '');
+        $location = trim($_POST['location'] ?? '');
+        $organizer = trim($_POST['organizer'] ?? '');
+        $entry_fee = trim($_POST['entry_fee'] ?? '');
+        $contact_phone = trim($_POST['contact_phone'] ?? '');
+        $website = trim($_POST['website'] ?? '');
+        $photo1 = trim($_POST['photo1'] ?? '');
+
+        // Validar campos obligatorios
+        if (empty($name) || empty($municipality) || empty($province) || empty($description) || empty($start_date)) {
+            throw new Exception("Los campos nombre, municipio, provincia, descripción y fecha de inicio son obligatorios.");
+        }
+
+        $sql = "UPDATE cultural_events SET 
+                name = ?, 
+                municipality = ?, 
+                province = ?, 
+                description = ?, 
+                start_date = ?, 
+                end_date = ?, 
+                category = ?, 
+                location = ?, 
+                organizer = ?, 
+                entry_fee = ?, 
+                contact_phone = ?, 
+                website = ?, 
+                poster_image = ?, 
+                updated_at = NOW() 
+                WHERE id = ?";
+        
         $stmt = $pdo->prepare($sql);
-        $stmt->execute($values);
+        $stmt->execute([
+            $name,
+            $municipality,
+            $province,
+            $description,
+            $start_date,
+            $end_date,
+            $category,
+            $location,
+            $organizer,
+            $entry_fee,
+            $contact_phone,
+            $website,
+            $photo1,
+            $id
+        ]);
+        
         $mensaje = "<div class='alert alert-success shadow'>✅ Cambios guardados correctamente.</div>";
         
         // Recargar datos
@@ -243,9 +279,12 @@ if (!$item) {
 
                     <div class="form-group">
                         <label for="photo1">URL de la Foto Principal</label>
-                        <input type="url" id="photo1" name="photo1" value="<?= htmlspecialchars($item['photo1'] ?? '') ?>">
-                        <?php if (!empty($item['photo1'])): ?>
-                            <img src="<?= htmlspecialchars($item['photo1']) ?>" alt="Preview" style="max-width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-top: 0.5rem; border: 1px solid #ddd;">
+                        <input type="text" id="photo1" name="photo1" value="<?= htmlspecialchars($item['poster_image'] ?? $item['photo1'] ?? '') ?>" placeholder="https://ejemplo.com/imagen.jpg">
+                        <?php 
+                        $photoUrl = $item['poster_image'] ?? $item['photo1'] ?? '';
+                        if (!empty($photoUrl)): 
+                        ?>
+                            <img src="<?= htmlspecialchars($photoUrl) ?>" alt="Preview" style="max-width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-top: 0.5rem; border: 1px solid #ddd;">
                         <?php endif; ?>
                     </div>
 
