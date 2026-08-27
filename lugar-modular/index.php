@@ -289,31 +289,23 @@ if (file_exists($globalHeader)) {
         .map-placeholder p { color: var(--text-light); margin: 4px 0 8px; font-size: 0.9rem; }
         .map-placeholder small { color: #999; font-size: 0.8rem; }
         
-        .map-controls {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 12px;
-            background: var(--white);
-            border-top: 1px solid #eee;
-        }
-        .map-toggle-btn {
-            padding: 6px 14px;
-            border: 1px solid #ddd;
-            background: #f8f9fa;
-            color: #666;
-            border-radius: 20px;
+        /* Estilos para los nuevos botones de enlace del mapa */
+        .map-link-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 8px 15px;
+            background: var(--lug-primary);
+            color: #fff;
+            border-radius: 8px;
             font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.2s;
             white-space: nowrap;
         }
-        .map-toggle-btn:hover { background: #e9ecef; border-color: #adb5bd; }
-        .map-toggle-btn.active {
-            background: var(--primary);
-            color: var(--white);
-            border-color: var(--primary);
+        .map-link-btn:hover {
+            background: var(--lug-primary-l);
+            transform: translateY(-1px);
+            color: #fff; /* Asegurar que el color del texto no cambie en hover */
         }
     </style>
 
