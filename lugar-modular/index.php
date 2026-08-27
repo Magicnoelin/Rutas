@@ -81,7 +81,18 @@ try {
             $faqs = getFaqs($pdo, 'place', (int)$lugar['id'], $lang);
         }
 
-        // 3) Fotos desde entity_photos
+        // 1) Primero: fotos legacy (photo1, photo2, photo3, photo4) - siempre en orden
+        $fotosLegacy = [];
+        for ($i = 1; $i <= 4; $i++) {
+            $campo = 'photo' . $i;
+            if (!empty($lugar[$campo])) {
+                $url = $lugar[$campo];
+                $fotosLegacy[] = preg_match('/^https?:\/\//', $url) ? $url : '/' . ltrim($url, '/');
+            }
+        }
+
+        // 2) Segundo: fotos de entity_photos (aportadas por usuarios)
+        $fotosEntity = [];
         try {
             $stmtF = $pdo->prepare("
                 SELECT file_url
@@ -95,21 +106,17 @@ try {
             $stmtF->execute([$lugar['id']]);
             foreach ($stmtF->fetchAll(PDO::FETCH_ASSOC) as $f) {
                 if (!empty($f['file_url'])) {
-                    $fotos[] = '/' . ltrim(str_replace('\\', '/', $f['file_url']), '/');
+                    // Excluir fotos que ya estén en legacy para evitar duplicados
+                    $url = '/' . ltrim(str_replace('\\', '/', $f['file_url']), '/');
+                    if (!in_array($url, $fotosLegacy)) {
+                        $fotosEntity[] = $url;
+                    }
                 }
             }
         } catch (Exception $e) { /* ignorar */ }
 
-        // Fallback a campos legacy photo1..photo4
-        if (empty($fotos)) {
-            foreach (['photo1', 'photo2', 'photo3', 'photo4'] as $campo) {
-                if (!empty($lugar[$campo])) {
-                    $url = $lugar[$campo];
-                    $fotos[] = preg_match('/^https?:\/\//', $url) ? $url : '/' . ltrim($url, '/');
-                }
-            }
-        }
-
+        // Combinar: primero legacy, luego entity_photos
+        $fotos = array_merge($fotosLegacy, $fotosEntity);
         $fotos = array_values(array_filter($fotos));
     }
 

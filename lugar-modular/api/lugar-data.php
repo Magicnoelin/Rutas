@@ -227,9 +227,19 @@ try {
     }
 
     // ── Construir array de fotos ──────────────────────────────────────────────
-    $fotos = [];
+    // 1) Primero: fotos legacy (photo1, photo2, photo3, photo4) - siempre en orden
+    $fotosLegacy = [];
+    for ($i = 1; $i <= 4; $i++) {
+        $campo = 'photo' . $i;
+        if (!empty($lugar[$campo])) {
+            $url = $lugar[$campo];
+            if (!preg_match('/^https?:\/\//', $url)) $url = '/' . ltrim($url, '/');
+            $fotosLegacy[] = $url;
+        }
+    }
 
-    // Intentar fotos desde entity_photos
+    // 2) Segundo: fotos de entity_photos (aportadas por usuarios)
+    $fotosEntity = [];
     try {
         $stmtF = $pdo->prepare("
             SELECT file_url, author_name, author_instagram
@@ -241,28 +251,20 @@ try {
             ORDER BY is_cover DESC, featured DESC, uploaded_at DESC
         ");
         $stmtF->execute([$lugar['id']]);
-        $fotosEntity = $stmtF->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($fotosEntity as $f) {
+        $fotosEntityRows = $stmtF->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($fotosEntityRows as $f) {
             if (!empty($f['file_url'])) {
-                $fotos[] = '/' . ltrim(str_replace('\\', '/', $f['file_url']), '/');
+                // Excluir fotos que ya estén en legacy para evitar duplicados
+                $url = '/' . ltrim(str_replace('\\', '/', $f['file_url']), '/');
+                if (!in_array($url, $fotosLegacy)) {
+                    $fotosEntity[] = $url;
+                }
             }
         }
     } catch (Exception $e) { /* ignorar */ }
 
-    // Fallback a campos legacy
-    if (empty($fotos)) {
-        foreach (['photo1','photo2','photo3','photo4'] as $campo) {
-            if (!empty($lugar[$campo])) {
-                $url = $lugar[$campo];
-                if (!preg_match('/^https?:\/\//', $url)) $url = '/' . ltrim($url, '/');
-                $fotos[] = $url;
-            }
-        }
-        if (!empty($lugar['gallery'])) {
-            $gallery = json_decode($lugar['gallery'], true);
-            if (is_array($gallery)) $fotos = array_merge($fotos, $gallery);
-        }
-    }
+    // Combinar: primero legacy, luego entity_photos
+    $fotos = array_merge($fotosLegacy, $fotosEntity);
 
     if (empty($fotos)) {
         $fotos[] = '/interest_places_images/Patrocinio.webp';
