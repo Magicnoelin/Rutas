@@ -2117,15 +2117,17 @@
                                 ${d.is_active == 1 ? 'Activo' : 'Inactivo'}
                             </span>
                         </div>
-                        <div style="padding: 1.2rem;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${d.name || 'Sin nombre'}</h4>
-                            <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.9rem;">
-                                <i class="fas fa-map-marker-alt"></i> ${d.municipality || ''}, ${d.province || ''}
-                            </p>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <a href="/lugar-interes.html?slug=${d.slug || ''}" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.9rem;">Ver</a>
+                            <div style="padding: 1.2rem;">
+                                <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem;">${d.name || 'Sin nombre'}</h4>
+                                <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.9rem;">
+                                    <i class="fas fa-map-marker-alt"></i> ${d.municipality || ''}, ${d.province || ''}
+                                </p>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <a href="/lugar-interes.html?slug=${d.slug || ''}" target="_blank" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-eye"></i> Ver</a>
+                                    <a href="/dashboard/editar-mi-lugar.php?id=${d.id || ''}" target="_blank" style="flex:1;text-align:center;background:#666;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-edit"></i> Editar</a>
+                                    <a href="/gestion-fotos-universal.html?type=places_of_interest&slug=${d.slug || ''}" target="_blank" style="flex:1;text-align:center;background:#e67e22;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-camera"></i> Fotos</a>
+                                </div>
                             </div>
-                        </div>
                     </div>
                 `}).join('')}
             </div>
@@ -2166,8 +2168,10 @@
                             <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.9rem;">
                                 <i class="fas fa-map-marker-alt"></i> ${d.municipality || ''}, ${d.province || ''}
                             </p>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <a href="/evento-detalle.html?slug=${d.slug || ''}" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.9rem;">Ver</a>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <a href="/evento-detalle.html?slug=${d.slug || ''}" target="_blank" style="flex:1;text-align:center;background:var(--primary-color);color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-eye"></i> Ver</a>
+                                <a href="/dashboard/editar-mi-evento.php?id=${d.id || ''}" target="_blank" style="flex:1;text-align:center;background:#666;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-edit"></i> Editar</a>
+                                <a href="/gestion-fotos-universal.html?type=cultural_events&slug=${d.slug || ''}" target="_blank" style="flex:1;text-align:center;background:#e67e22;color:white;padding:0.6rem;border-radius:8px;text-decoration:none;font-size:0.85rem;cursor:pointer;min-width:80px;"><i class="fas fa-camera"></i> Fotos</a>
                             </div>
                         </div>
                     </div>
