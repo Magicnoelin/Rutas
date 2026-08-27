@@ -331,3 +331,16 @@ if (file_exists($globalHeader)) {
 
 <!-- ── COMPONENTES FINALES ── -->
 <?php require __DIR__ . '/components/footer.php'; ?>
+
+<!-- Script para desregistrar Service Workers problemáticos -->
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for (let registration of registrations) {
+                registration.unregister().then(function(boolean) {
+                    console.log('Service Worker unregistered: ', boolean);
+                });
+            }
+        });
+    }
+</script>

@@ -12,16 +12,25 @@
     var map = null;
     var markers = {};
 
+    console.log('lugar.js loaded. LUG_DATA:', lug);
+
     // ─── GALERÍA ─────────────────────────────────────────────────────────────
 
     function initGallery() {
-        if (!fotos || fotos.length < 2) return;
+        console.log('initGallery called.');
+        if (!fotos || fotos.length < 2) {
+            console.log('Not enough photos for gallery or fotos is null.', fotos);
+            return;
+        }
 
         var mainImg = document.getElementById('gallery-main-img');
         var thumbs  = document.querySelectorAll('.gallery-thumb');
         var counter = document.getElementById('gallery-counter');
 
-        if (!mainImg) return;
+        if (!mainImg) {
+            console.log('gallery-main-img not found.');
+            return;
+        }
 
         // Click en thumbnails
         thumbs.forEach(function(thumb, idx) {
@@ -159,10 +168,14 @@
     };
 
     function initDescToggle() {
+        console.log('initDescToggle called.');
         var text = document.getElementById('desc-text');
         var btn = document.getElementById('desc-toggle');
         
-        if (!text || !btn) return;
+        if (!text || !btn) {
+            console.log('desc-text or desc-toggle not found.');
+            return;
+        }
         
         // Guardar textos de los botones
         btn.dataset.more = btn.textContent || '↓ Leer más';
@@ -180,35 +193,44 @@
     // ─── MAPA LEAFLET ────────────────────────────────────────────────────────
 
     window.initMap = function() {
-        if (!lug || !lug.latitude || !lug.longitude) return;
+        console.log('initMap called. LUG_DATA:', lug);
+        if (!lug || !lug.latitude || !lug.longitude) {
+            console.log('LUG_DATA, latitude or longitude missing for map.');
+            return;
+        }
 
         var placeholder = document.getElementById('map-placeholder');
-        var mapEl = document.getElementById('event-map');
-        var controls = document.getElementById('map-controls');
+        var mapEl = document.getElementById('map'); // Changed from event-map to map
 
         if (placeholder) placeholder.style.display = 'none';
         if (mapEl) mapEl.style.display = 'block';
-        if (controls) controls.style.display = 'flex';
 
         // Cargar Leaflet dinámicamente
         if (!window.L) {
+            console.log('Leaflet not loaded, loading dynamically.');
             loadCSS('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
             loadJS('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', function() {
+                console.log('Leaflet JS loaded, creating map.');
                 createMap();
             });
         } else {
+            console.log('Leaflet already loaded, creating map.');
             createMap();
         }
     };
 
     function createMap() {
-        if (map) return; // Ya existe
+        console.log('createMap called.');
+        if (map) {
+            console.log('Map already exists.');
+            return; // Ya existe
+        }
 
         var lat = parseFloat(lug.latitude);
         var lng = parseFloat(lug.longitude);
 
         try {
-            map = L.map('event-map').setView([lat, lng], 13);
+            map = L.map('map').setView([lat, lng], 13); // Changed from event-map to map
 
             // Tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -218,103 +240,29 @@
 
             // Marcador del lugar
             markers.lugar = L.marker([lat, lng]).addTo(map)
-                .bindPopup('<strong>' + (lug.name || 'Lugar de interés') + '</strong>');
+                .bindPopup('<strong>' + (lug.name || 'Lugar de interés') + '</strong>').openPopup();
 
-            // Cargar datos cercanos
-            loadNearbyData();
+            // No cargar datos cercanos en el mapa, solo enlaces
+            // loadNearbyData(); // Removed
 
         } catch (e) {
             console.error('Error creating map:', e);
         }
     }
 
+    // Removed loadNearbyData function as it's no longer needed for map markers
+    /*
     function loadNearbyData() {
-        if (!lug.latitude || !lug.longitude) return;
-
-        // Cargar alojamientos cercanos
-        fetch('/api/nearby-content.php?type=alojamientos&lat=' + lug.latitude + '&lng=' + lug.longitude + '&radius=25')
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success && data.data) {
-                    markers.alojamientos = [];
-                    data.data.forEach(function(item) {
-                        if (item.latitude && item.longitude) {
-                            var marker = L.marker([item.latitude, item.longitude])
-                                .bindPopup('<strong>' + item.name + '</strong><br><a href="/alojamiento/' + item.slug + '">Ver más</a>');
-                            markers.alojamientos.push(marker);
-                        }
-                    });
-                }
-            })
-            .catch(function(e) { console.log('Error loading alojamientos:', e); });
-
-        // Cargar otros lugares cercanos
-        fetch('/api/nearby-content.php?type=lugares&lat=' + lug.latitude + '&lng=' + lug.longitude + '&radius=25')
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success && data.data) {
-                    markers.lugares = [];
-                    data.data.forEach(function(item) {
-                        if (item.latitude && item.longitude && item.slug !== lug.slug) {
-                            var marker = L.marker([item.latitude, item.longitude])
-                                .bindPopup('<strong>' + item.name + '</strong><br><a href="/lugar/' + item.slug + '">Ver más</a>');
-                            markers.lugares.push(marker);
-                        }
-                    });
-                }
-            })
-            .catch(function(e) { console.log('Error loading lugares:', e); });
-
-        // Cargar actividades cercanas
-        fetch('/api/nearby-content.php?type=actividades&lat=' + lug.latitude + '&lng=' + lug.longitude + '&radius=25')
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success && data.data) {
-                    markers.actividades = [];
-                    data.data.forEach(function(item) {
-                        if (item.latitude && item.longitude) {
-                            var marker = L.marker([item.latitude, item.longitude])
-                                .bindPopup('<strong>' + item.name + '</strong><br><a href="/actividad/' + item.slug + '">Ver más</a>');
-                            markers.actividades.push(marker);
-                        }
-                    });
-                }
-            })
-            .catch(function(e) { console.log('Error loading actividades:', e); });
+        // ... (removed content)
     }
+    */
 
+    // Removed toggleMapLayer function as it's no longer needed
+    /*
     window.toggleMapLayer = function(layer) {
-        if (!map) return;
-
-        var btn = document.getElementById('btn-' + layer);
-        var isActive = btn && btn.classList.contains('active');
-
-        if (isActive) {
-            // Ocultar capa
-            btn.classList.remove('active');
-            if (markers[layer]) {
-                if (Array.isArray(markers[layer])) {
-                    markers[layer].forEach(function(marker) {
-                        map.removeLayer(marker);
-                    });
-                } else {
-                    map.removeLayer(markers[layer]);
-                }
-            }
-        } else {
-            // Mostrar capa
-            btn.classList.add('active');
-            if (markers[layer]) {
-                if (Array.isArray(markers[layer])) {
-                    markers[layer].forEach(function(marker) {
-                        marker.addTo(map);
-                    });
-                } else {
-                    markers[layer].addTo(map);
-                }
-            }
-        }
+        // ... (removed content)
     };
+    */
 
     // ─── UTILIDADES ──────────────────────────────────────────────────────────
 
@@ -357,6 +305,7 @@
     // ─── INICIALIZACIÓN ──────────────────────────────────────────────────────
 
     function init() {
+        console.log('init called.');
         initGallery();
         initDescToggle();
     }
