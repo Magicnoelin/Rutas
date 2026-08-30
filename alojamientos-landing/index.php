@@ -227,10 +227,20 @@ $og_image = !empty($result['items'][0]['photo_url'])
     : 'https://rutasrurales.io/menu_images/turismo_rural.webp';
 
 // ── 9b. Imagen Hero ──────────────────────────────────────────────────────────
-$hero_image_url = 'https://rutasrurales.io/img/eventos-landing-hero/turismo_rural2.webp'; // Default
+$province_hero_images = [
+    'soria'   => '/img/eventos-landing-hero/soria-hero.webp',
+    'zamora'  => '/img/eventos-landing-hero/zamora-hero.webp',
+    'burgos'  => '/img/eventos-landing-hero/burgos-hero.webp',
+    // Añade más provincias y sus imágenes aquí
+];
+
+$hero_image_url = $province_hero_images[$province_key] ?? 'https://rutasrurales.io/img/eventos-landing-hero/turismo_rural2.webp'; // Default
+
+// Override for generic "turismo-rural" slug if needed
 if ($slug === 'turismo-rural') {
     $hero_image_url = '/img/eventos-landing-hero/turismo_rural3.webp';
 }
+
 $ctx['hero_image_url'] = $hero_image_url;
 $ctx['hero_image_alt'] = $h1;
 
