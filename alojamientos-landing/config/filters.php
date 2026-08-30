@@ -243,7 +243,7 @@ const LANDING_PROVINCIAS = [
     'cordoba' => [
         'label' => 'Córdoba', 'db' => 'Cordoba',
         'region' => 'Andalucía',
-        'attractions' => ['Mezquita-Catedral', 'Medina Azahara', 'Patios de Córdoba', 'Sierra de Hornachuelos'],
+        'attractions' => ['Mezquita-Catedral de Córdoba', 'Medina Azahara', 'Patios de Córdoba', 'Sierra de Hornachuelos'],
         'vibe' => [
             'es' => 'la provincia de la Mezquita infinita, donde el patrimonio andalusí se mezcla con flores de geranio en los patios interiores y la Sierra de Hornachuelos ofrece naturaleza salvaje',
             'en' => 'the province of the infinite Mosque, where Andalusian heritage mixes with geranium flowers in inner courtyards and the Sierra de Hornachuelos offers wild nature',

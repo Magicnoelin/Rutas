@@ -127,6 +127,7 @@ RewriteRule ^alojamiento/apartamento-el-patio-de-miren-confort-y-terraza-privada
 RewriteRule ^alojamiento/canada-real-sigueruelo-turismo-rural-en-la-sierra-de-segovia/?$ /alojamiento/canada-real [R=301,L]
 RewriteRule ^alojamiento/alojamiento-rural-el-mirador-del-cid-en-mecerreyes-burgos/?$ /alojamiento/alojamiento-el-mirador-del-cid [R=301,L]
 RewriteRule ^alojamiento/mansi\%C3\%B3n\%20de\%20la\%20adrada/?$ /alojamiento/mansion-de-la-adrada [R=301,L]
+RewriteRule ^alojamiento/la-galiana-loft-nature-casarejos/?$ /alojamiento/la-galiana-loft-nature-casarejos-soria [R=301,L]
 
 # ============================================================
 # 2b. REDIRECCIONES ESPECÍFICAS DE ALOJAMIENTOS — URL con www (limpieza)
