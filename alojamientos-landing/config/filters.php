@@ -283,7 +283,7 @@ const LANDING_PROVINCIAS = [
     'toledo' => [
         'label' => 'Toledo', 'db' => 'Toledo',
         'region' => 'Castilla-La Mancha',
-        'attractions' => ['Catedral de Toledo', 'Alcázar', 'Casco Antiguo', 'Yacimiento de Carranque'],
+        'attractions' => ['Catedral Primada de Toledo', 'Alcázar de Toledo', 'Casco histórico de Toledo', 'Yacimiento de Carranque'],
         'vibe' => [
             'es' => 'la ciudad de las tres culturas donde el cristianismo, el islam y el judaísmo dejaron huella imborrable en calles empedradas y monumentos que son Tesoro Nacional',
             'en' => 'the city of three cultures where Christianity, Islam and Judaism left an indelible mark on cobblestone streets and monuments that are National Treasure',
