@@ -155,7 +155,7 @@ const LANDING_PROVINCIAS = [
     'lugo' => [
         'label' => 'Lugo', 'db' => 'Lugo',
         'region' => 'Galicia',
-        'attractions' => ['Muralla Romana de Lugo', 'Las Termas de Augustóbriga', 'Parque Natural dos Ancares', 'Ribeira Sacra'],
+        'attractions' => ['Muralla de Lugo', 'Domus do Mitreo', 'Parque Natural dos Ancares', 'Ribeira Sacra'],
         'vibe' => [
             'es' => 'la provincia de la única muralla romana walkable del mundo, donde las termas romana siguen manando agua curativa y los Ancares esconden los paisajes más salvajes de Galicia',
             'en' => 'the province of the only walkable Roman wall in the world, where Roman thermal baths still flow with healing waters and the Ancares hide Galicia\'s wildest landscapes',
@@ -179,7 +179,7 @@ const LANDING_PROVINCIAS = [
     'pontevedra' => [
         'label' => 'Pontevedra', 'db' => 'Pontevedra',
         'region' => 'Galicia',
-        'attractions' => ['Islas Cíes', 'Ría de Arousa', 'Ribeira Sacra', 'Pontevedra Old Town'],
+        'attractions' => ['Islas Cíes', 'Ría de Arousa', 'Ribeira Sacra', 'Casco Histórico de Pontevedra'],
         'vibe' => [
             'es' => 'la provincia de las rías más bellas de Galicia, las islas Cíes con sus playas de bandera azul y un casco antiguo pedestrianizado que es museo al aire libre',
             'en' => 'the province of Galicia\'s most beautiful rías, the Cías Islands with their blue flag beaches and a pedestrianized old town that is an open-air museum',
@@ -195,7 +195,7 @@ const LANDING_PROVINCIAS = [
     'asturias' => [
         'label' => 'Asturias', 'db' => 'Asturias',
         'region' => 'Asturias',
-        'attractions' => ['Picos de Europa', 'Cueva de Altamira', 'Bufones de Arenillas', 'Gijón'],
+        'attractions' => ['Picos de Europa', 'Lagos de Covadonga', 'Bufones de Arenillas', 'Gijón'],
         'vibe' => [
             'es' => 'el paraíso verde de España, donde los Picos de Europa rozan las nubes, los bufones escupen agua salada al cielo y la sidra se sirve en tabla tradicional',
             'en' => 'Spain\'s green paradise, where the Picos de Europa touch the clouds, the bufones spout saltwater into the sky and cider is served on traditional wooden boards',
@@ -211,7 +211,7 @@ const LANDING_PROVINCIAS = [
     'cantabria' => [
         'label' => 'Cantabria', 'db' => 'Cantabria',
         'region' => 'Cantabria',
-        'attractions' => ['Cueva de Altamira', 'Parque Natural de los Picos de Europa', 'Santander', 'Cabo Mayor'],
+        'attractions' => ['Cueva de Altamira', 'Parque Natural de los Picos de Europa', 'Santander', 'Faro de Cabo Mayor'],
         'vibe' => [
             'es' => 'la provincia de las cuevas prehistóricas más importantes del mundo, donde el arte rupestre de Altamira revela secretos de hace 35.000 años y los Picos de Europa muestran su cara norte',
             'en' => 'the province of the world\'s most important prehistoric caves, where Altamira\'s cave art reveals secrets from 35,000 years ago and the Picos de Europa show their northern face',
@@ -259,7 +259,7 @@ const LANDING_PROVINCIAS = [
     'cuenca' => [
         'label' => 'Cuenca', 'db' => 'Cuenca',
         'region' => 'Castilla-La Mancha',
-        'attractions' => ['Ciudad Encantada', 'Serranía de Cuenca', 'Casas Colgadas', 'Nacimiento del Río Cuervo'],
+        'attractions' => ['Ciudad Encantada', 'Serranía de Cuenca', 'Casas Colgadas de Cuenca', 'Nacimiento del Río Cuervo'],
         'vibe' => [
             'es' => 'tierra de paisajes imposibles, donde las casas colgantes desafían la gravedad sobre el Júcar, la Ciudad Encantada forma figuras de piedra y el río Cuervo nace entre helechos',
             'en' => 'a land of impossible landscapes where hanging houses defy gravity over the Júcar, the Enchanted City forms stone figures and the Cuervo river springs among ferns',
@@ -271,9 +271,9 @@ const LANDING_PROVINCIAS = [
     'guadalajara' => [
         'label' => 'Guadalajara', 'db' => 'Guadalajara',
         'region' => 'Castilla-La Mancha',
-        'attractions' => ['Serranía de Cuenca (Guadalajara)', 'Sigüenza', 'Hayedo de Tejera Negra', 'Alto Tajo'],
+        'attractions' => ['Alcarria)', 'Sigüenza', 'Hayedo de Tejera Negra', 'Parque Natural del Alto Tajo'],
         'vibe' => [
-            'es' => 'el secreto mejor guardado de la Meseta, con el hayedo de Tejera Negra (el más grande de España), el Alto Tajo Parque Natural y la ciudad medieval de Sigüenza',
+            'es' => 'el secreto mejor guardado de la Meseta, con el hayedo de Tejera Negra (el más grande de España), el Parque Natural del Alto Tajo y la ciudad medieval de Sigüenza',
             'en' => 'the Meseta\'s best kept secret, with Spain\'s largest beech forest, the Alto Tajo Natural Park and the medieval city of Sigüenza',
             'fr' => 'le mieux gardé secret de la Meseta, avec la plus grande hêtraie d\'Espagne, le Parc Naturel de l\'Alto Tajo et la ville médiévale de Sigüenza',
             'de' => 'das bestgehütete Geheimnis der Meseta, mit Spaniens größtem Buchenwald, dem Naturpark Alto Tajo und der mittelalterlichen Stadt Sigüenza',

@@ -11,7 +11,7 @@
  *    /de/alojamientos/landhaeuser-mit-kamin-leon
  *
  *  Flujo:
- *    1. Validar slug → si no es válido, 301 a /alojamiento/{slug} (compat)
+- *    1. Validar slug → si no es válido, 301 a /alojamiento/{slug} (compat)
  *    2. Detectar idioma
  *    3. Cargar config, i18n y capa de datos
  *    4. Ejecutar queries en BD
@@ -228,9 +228,29 @@ $og_image = !empty($result['items'][0]['photo_url'])
 
 // ── 9b. Imagen Hero ──────────────────────────────────────────────────────────
 $province_hero_images = [
-    'soria'   => '/img/eventos-landing-hero/soria-hero.webp',
-    'zamora'  => '/img/eventos-landing-hero/zamora-hero.webp',
-    'burgos'  => '/img/eventos-landing-hero/burgos-hero.webp',
+    'soria'  => '/img/alojamientos-landing-hero/alojamientos_soria.webp',
+    'zamora'  => '/img/alojamientos-landing-hero/alojamientos_zamora.webp',
+    'burgos'  => '/img/alojamientos-landing-hero/alojamientos_burgos.webp',
+    'leon'  => '/img/alojamientos-landing-hero/alojamientos_leon.webp',
+    'cordoba'  => '/img/alojamientos-landing-hero/alojamientos_cordoba.webp',
+    'avila'  => '/img/alojamientos-landing-hero/alojamientos_avila.webp',
+    'palencia'  => '/img/alojamientos-landing-hero/alojamientos_palencia.webp',
+    'salamanca'  => '/img/alojamientos-landing-hero/alojamientos_salamanca.webp',
+    'segovia'  => '/img/alojamientos-landing-hero/alojamientos_segovia.webp',
+    'valladolid'  => '/img/alojamientos-landing-hero/alojamientos_valladolid.webp',
+    'a-coruna'  => '/img/alojamientos-landing-hero/alojamientos_acoruna.webp',
+    'lugo'  => '/img/alojamientos-landing-hero/alojamientos_lugo.webp',
+    'ourense'  => '/img/alojamientos-landing-hero/alojamientos_ourense.webp',
+    'pontevedra'  => '/img/alojamientos-landing-hero/alojamientos_pontevedra.webp',
+    'asturias'  => '/img/alojamientos-landing-hero/alojamientos_asturias.webp',
+    'cantabria'  => '/img/alojamientos-landing-hero/alojamientos_cantabria.webp',
+    'barcelona'  => '/img/alojamientos-landing-hero/alojamientos_barcelona.webp',
+    'cuenca'  => '/img/alojamientos-landing-hero/alojamientos_cuenca.webp',
+    'guadalajara'  => '/img/alojamientos-landing-hero/alojamientos_guadalajara.webp',
+    'toledo'  => '/img/alojamientos-landing-hero/alojamientos_toledo.webp',
+    'valencia'  => '/img/alojamientos-landing-hero/alojamientos_valencia.webp',
+
+
     // Añade más provincias y sus imágenes aquí
 ];
 

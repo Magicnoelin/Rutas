@@ -59,7 +59,7 @@ function renderLandingIntro(array $ctx): void
     // Interpolar variables en las cadenas
     $vars = [
         'FILTER_LABEL_LOWER' => $filter_label_lower,
-        'PROVINCE'           => $province,
+        'PROVINCE'           => !empty($province) ? $province : ($lang === 'es' ? 'España' : 'Spain'),
         'PROVINCE_VIBE'      => $vibe,
         'INTERLINKING_LIST'  => $interlinking_list_str ?: ($lang === 'es' ? 'Castilla y León' : 'Castile and León'),
         'FILTER_FEATURE'     => !empty($filter_labels[1]) ? mb_strtolower($filter_labels[1]) : ($lang === 'es' ? 'entorno natural único' : 'unique natural setting'),
