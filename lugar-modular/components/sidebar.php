@@ -147,7 +147,7 @@ $_t = [
         </ul>
 
         <?php if (!empty($lugar['latitude']) && !empty($lugar['longitude'])): ?>
-        <a href="https://www.google.com/maps?q=<?php echo htmlspecialchars($lugar['latitude'], ENT_QUOTES, 'UTF-8'); ?>,<?php echo htmlspecialchars($lugar['longitude'], ENT_QUOTES, 'UTF-8'); ?>"
+        <a href="/rutas.php?lat=<?php echo htmlspecialchars($lugar['latitude'], ENT_QUOTES, 'UTF-8'); ?>&lng=<?php echo htmlspecialchars($lugar['longitude'], ENT_QUOTES, 'UTF-8'); ?>&provincia=<?php echo urlencode($lugar['province'] ?? ''); ?>"
            target="_blank" rel="noopener noreferrer"
            style="display:flex;align-items:center;justify-content:center;gap:8px;background:#2F5233;color:#fff;padding:10px 16px;border-radius:8px;font-weight:700;font-size:0.88rem;text-decoration:none;margin-top:16px;width:100%;">
             <?php echo htmlspecialchars($_t['como_llegar'], ENT_QUOTES, 'UTF-8'); ?>

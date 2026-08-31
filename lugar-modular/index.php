@@ -188,6 +188,90 @@ $lugar_js = json_encode([
     'lang'         => $lang,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
+// ─── SSR NEARBY: Alojamientos, Lugares, Actividades y Eventos cercanos visibles al crawler ───
+// Query ultraligera (LIMIT 4, usa la misma conexión PDO ya abierta)
+// El resultado se renderiza en HTML estático → Google lo indexa sin JS
+$ssr_nearby_alojamientos = [];
+$ssr_nearby_lugares = [];
+$ssr_nearby_actividades = [];
+$ssr_nearby_eventos = [];
+$ssr_prov = $lugar['province'] ?? '';
+$ssr_lat  = !empty($lugar['latitude'])  ? (float)$lugar['latitude']  : null;
+$ssr_lng  = !empty($lugar['longitude']) ? (float)$lugar['longitude'] : null;
+
+if ($ssr_lat && $ssr_lng) {
+    // Alojamientos más cercanos
+    $ss = $pdo->prepare("
+        SELECT name, slug, municipality, price_per_night, photo1,
+            (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
+        FROM accommodations
+        WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
+        HAVING dist < 60
+        ORDER BY dist ASC
+        LIMIT 4
+    ");
+    $ss->execute([$ssr_lat, $ssr_lng, $ssr_lat]);
+    $ssr_nearby_alojamientos = $ss->fetchAll(PDO::FETCH_ASSOC);
+
+    // Lugares de interés más cercanos (excluye el actual)
+    $ss2 = $pdo->prepare("
+        SELECT name, slug, municipality, photo1,
+            (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
+        FROM places_of_interest
+        WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND slug != ?
+        HAVING dist < 60
+        ORDER BY dist ASC
+        LIMIT 4
+    ");
+    $ss2->execute([$ssr_lat, $ssr_lng, $ssr_lat, $lugar['slug']]);
+    $ssr_nearby_lugares = $ss2->fetchAll(PDO::FETCH_ASSOC);
+
+    // Actividades turísticas más cercanas
+    $ss3 = $pdo->prepare("
+        SELECT name, slug, municipality, photo1,
+            (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
+        FROM tourist_activities
+        WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
+        HAVING dist < 60
+        ORDER BY dist ASC
+        LIMIT 4
+    ");
+    $ss3->execute([$ssr_lat, $ssr_lng, $ssr_lat]);
+    $ssr_nearby_actividades = $ss3->fetchAll(PDO::FETCH_ASSOC);
+
+    // Eventos culturales cercanos (solo futuros o en curso)
+    $ss4 = $pdo->prepare("
+        SELECT name, slug, municipality, photo1, poster_image, start_date, is_free, ticket_price,
+            (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
+        FROM cultural_events
+        WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
+            AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()
+        HAVING dist < 60
+        ORDER BY dist ASC
+        LIMIT 4
+    ");
+    $ss4->execute([$ssr_lat, $ssr_lng, $ssr_lat]);
+    $ssr_nearby_eventos = $ss4->fetchAll(PDO::FETCH_ASSOC);
+
+} elseif ($ssr_prov) {
+    // Fallback por provincia si no hay coordenadas
+    $ss = $pdo->prepare("SELECT name, slug, municipality, price_per_night, photo1, 0 AS dist FROM accommodations WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
+    $ss->execute([$ssr_prov]);
+    $ssr_nearby_alojamientos = $ss->fetchAll(PDO::FETCH_ASSOC);
+
+    $ss2 = $pdo->prepare("SELECT name, slug, municipality, photo1, 0 AS dist FROM places_of_interest WHERE is_active = 1 AND province = ? AND slug != ? ORDER BY RAND() LIMIT 4");
+    $ss2->execute([$ssr_prov, $lugar['slug']]);
+    $ssr_nearby_lugares = $ss2->fetchAll(PDO::FETCH_ASSOC);
+
+    $ss3 = $pdo->prepare("SELECT name, slug, municipality, photo1, 0 AS dist FROM tourist_activities WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
+    $ss3->execute([$ssr_prov]);
+    $ssr_nearby_actividades = $ss3->fetchAll(PDO::FETCH_ASSOC);
+
+    $ss4 = $pdo->prepare("SELECT name, slug, municipality, photo1, poster_image, start_date, is_free, ticket_price, 0 AS dist FROM cultural_events WHERE is_active = 1 AND province = ? AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE() ORDER BY start_date ASC LIMIT 4");
+    $ss4->execute([$ssr_prov]);
+    $ssr_nearby_eventos = $ss4->fetchAll(PDO::FETCH_ASSOC);
+}
+
 // ─── CARGAR SCHEMA ──────────────────────────────────────────────────────────
 require_once __DIR__ . '/components/schema.php';
 
@@ -203,6 +287,15 @@ if (!isset($t) || !is_array($t)) {
         'click_mapa'       => 'Haz clic para cargar el mapa interactivo',
         'mapa_hint'        => 'Se mostrarán alojamientos, lugares, actividades y eventos cercanos.',
         'actividades'      => 'Actividades',
+        'dormir_cerca'     => '🏠 ¿Dónde dormir cerca?',
+        'dormir_desc'      => 'Alojamientos rurales a pocos kilómetros',
+        'activ_cercanas'   => '🎯 Actividades turísticas cercanas',
+        'eventos_cercanos' => '🎭 Eventos culturales próximos',
+        'lugares_cercanos' => '🏛️ Otros lugares de interés cerca',
+        'ver_mas_aloj'     => 'Ver más alojamientos',
+        'ver_mas_activ'    => 'Ver más actividades',
+        'ver_mas_eventos'  => 'Ver más eventos',
+        'ver_mas_lugares'  => 'Ver más lugares',
     ];
 }
 

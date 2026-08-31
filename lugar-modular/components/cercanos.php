@@ -45,11 +45,25 @@ function skeletonCards(int $n = 4): string {
     <div class="lug-card-body">
         <h2 class="lug-card-title"><?php echo htmlspecialchars($_t['dormir_cerca'], ENT_QUOTES, 'UTF-8'); ?></h2>
         <p class="nearby-subtitle"><?php echo htmlspecialchars($_t['dormir_desc'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <div id="nearby-aloj-content" data-loaded="false">
-            <?php echo skeletonCards(4); ?>
+        <div id="nearby-aloj-content" data-loaded="true">
+            <?php if (!empty($ssr_nearby_alojamientos)): ?>
+                <div class="nearby-grid">
+                    <?php foreach ($ssr_nearby_alojamientos as $item): ?>
+                        <a href="/alojamiento/<?php echo esc($item['slug']); ?>" class="nearby-card">
+                            <img src="<?php echo esc($item['photo1'] ?? '/menu_images/turismo_rural.webp'); ?>" alt="<?php echo esc($item['name']); ?>" loading="lazy" class="nearby-card-img">
+                            <div class="nearby-card-body">
+                                <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
+                                <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="no-nearby-results">No se encontraron alojamientos cercanos.</p>
+            <?php endif; ?>
         </div>
-        <div id="nearby-aloj-more" style="display:none;text-align:center;margin-top:16px;">
-            <a href="/alojamientos?provincia=<?php echo urlencode($prov); ?>"
+        <div id="nearby-aloj-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_alojamientos) ? 'display:none;' : ''; ?>">
+            <a href="/rutas.php?provincia=<?php echo urlencode($prov); ?>&alojamientos=1&lat=<?php echo esc($lugar['latitude']); ?>&lng=<?php echo esc($lugar['longitude']); ?>"
                class="nearby-ver-mas">
                 <?php echo htmlspecialchars($_t['ver_mas_aloj'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
@@ -61,11 +75,25 @@ function skeletonCards(int $n = 4): string {
 <section class="lug-card nearby-section" id="nearby-activ" aria-label="<?php echo htmlspecialchars($_t['activ_cercanas'], ENT_QUOTES, 'UTF-8'); ?>">
     <div class="lug-card-body">
         <h2 class="lug-card-title"><?php echo htmlspecialchars($_t['activ_cercanas'], ENT_QUOTES, 'UTF-8'); ?></h2>
-        <div id="nearby-activ-content" data-loaded="false">
-            <?php echo skeletonCards(4); ?>
+        <div id="nearby-activ-content" data-loaded="true">
+            <?php if (!empty($ssr_nearby_actividades)): ?>
+                <div class="nearby-grid">
+                    <?php foreach ($ssr_nearby_actividades as $item): ?>
+                        <a href="/actividad/<?php echo esc($item['slug']); ?>" class="nearby-card">
+                            <img src="<?php echo esc($item['photo1'] ?? '/tourist_activities_images/Patrocinio.webp'); ?>" alt="<?php echo esc($item['name']); ?>" loading="lazy" class="nearby-card-img">
+                            <div class="nearby-card-body">
+                                <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
+                                <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="no-nearby-results">No se encontraron actividades cercanas.</p>
+            <?php endif; ?>
         </div>
-        <div id="nearby-activ-more" style="display:none;text-align:center;margin-top:16px;">
-            <a href="/actividades?provincia=<?php echo urlencode($prov); ?>"
+        <div id="nearby-activ-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_actividades) ? 'display:none;' : ''; ?>">
+            <a href="/rutas.php?provincia=<?php echo urlencode($prov); ?>&actividades=1&lat=<?php echo esc($lugar['latitude']); ?>&lng=<?php echo esc($lugar['longitude']); ?>"
                class="nearby-ver-mas">
                 <?php echo htmlspecialchars($_t['ver_mas_activ'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
@@ -77,11 +105,25 @@ function skeletonCards(int $n = 4): string {
 <section class="lug-card nearby-section" id="nearby-eventos" aria-label="<?php echo htmlspecialchars($_t['eventos_cercanos'], ENT_QUOTES, 'UTF-8'); ?>">
     <div class="lug-card-body">
         <h2 class="lug-card-title"><?php echo htmlspecialchars($_t['eventos_cercanos'], ENT_QUOTES, 'UTF-8'); ?></h2>
-        <div id="nearby-eventos-content" data-loaded="false">
-            <?php echo skeletonCards(4); ?>
+        <div id="nearby-eventos-content" data-loaded="true">
+            <?php if (!empty($ssr_nearby_eventos)): ?>
+                <div class="nearby-grid">
+                    <?php foreach ($ssr_nearby_eventos as $item): ?>
+                        <a href="/evento/<?php echo esc($item['slug']); ?>" class="nearby-card">
+                            <img src="<?php echo esc($item['photo1'] ?? $item['poster_image'] ?? '/cultural_events_images/evento_default.webp'); ?>" alt="<?php echo esc($item['name']); ?>" loading="lazy" class="nearby-card-img">
+                            <div class="nearby-card-body">
+                                <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
+                                <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="no-nearby-results">No se encontraron eventos cercanos.</p>
+            <?php endif; ?>
         </div>
-        <div id="nearby-eventos-more" style="display:none;text-align:center;margin-top:16px;">
-            <a href="/eventos-culturales?provincia=<?php echo urlencode($prov); ?>"
+        <div id="nearby-eventos-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_eventos) ? 'display:none;' : ''; ?>">
+            <a href="/rutas.php?provincia=<?php echo urlencode($prov); ?>&eventos=1&lat=<?php echo esc($lugar['latitude']); ?>&lng=<?php echo esc($lugar['longitude']); ?>"
                class="nearby-ver-mas">
                 <?php echo htmlspecialchars($_t['ver_mas_eventos'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
@@ -93,11 +135,25 @@ function skeletonCards(int $n = 4): string {
 <section class="lug-card nearby-section" id="nearby-lugares" aria-label="<?php echo htmlspecialchars($_t['lugares_cercanos'], ENT_QUOTES, 'UTF-8'); ?>">
     <div class="lug-card-body">
         <h2 class="lug-card-title"><?php echo htmlspecialchars($_t['lugares_cercanos'], ENT_QUOTES, 'UTF-8'); ?></h2>
-        <div id="nearby-lugares-content" data-loaded="false">
-            <?php echo skeletonCards(4); ?>
+        <div id="nearby-lugares-content" data-loaded="true">
+            <?php if (!empty($ssr_nearby_lugares)): ?>
+                <div class="nearby-grid">
+                    <?php foreach ($ssr_nearby_lugares as $item): ?>
+                        <a href="/lugar/<?php echo esc($item['slug']); ?>" class="nearby-card">
+                            <img src="<?php echo esc($item['photo1'] ?? '/menu_images/turismo_rural.webp'); ?>" alt="<?php echo esc($item['name']); ?>" loading="lazy" class="nearby-card-img">
+                            <div class="nearby-card-body">
+                                <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
+                                <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="no-nearby-results">No se encontraron lugares de interés cercanos.</p>
+            <?php endif; ?>
         </div>
-        <div id="nearby-lugares-more" style="display:none;text-align:center;margin-top:16px;">
-            <a href="/lugares-de-interes?provincia=<?php echo urlencode($prov); ?>"
+        <div id="nearby-lugares-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_lugares) ? 'display:none;' : ''; ?>">
+            <a href="/rutas.php?provincia=<?php echo urlencode($prov); ?>&lugares=1&lat=<?php echo esc($lugar['latitude']); ?>&lng=<?php echo esc($lugar['longitude']); ?>"
                class="nearby-ver-mas">
                 <?php echo htmlspecialchars($_t['ver_mas_lugares'], ENT_QUOTES, 'UTF-8'); ?>
             </a>
