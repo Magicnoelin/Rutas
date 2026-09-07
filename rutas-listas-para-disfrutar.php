@@ -103,7 +103,7 @@ function getDifficultyBadge($level) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&h=1080&fit=crop') center/cover;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.4)), url('https://rutasrurales.io/img/rutas-hero/rutas.webp') center/cover;
             margin-top: 70px;
         }
         .section {

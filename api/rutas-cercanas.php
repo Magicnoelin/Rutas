@@ -1,140 +1,235 @@
 <?php
-header('Content-Type: application/json; charset=UTF-8');
-
-// Suprimir warnings en producción
-error_reporting(E_ERROR | E_PARSE);
-ini_set('display_errors', '0');
-
-define('API_NO_HEADERS', true);
-require_once dirname(__DIR__) . '/api/config.php';
-
-$response = ['success' => false, 'message' => ''];
+header('Content-Type: application/json');
+require_once 'config.php';
 
 try {
-    $pdo = getDBConnection();
+    // Obtener parámetros de la solicitud
+    $latitud = isset($_GET['lat']) ? floatval($_GET['lat']) : null;
+    $longitud = isset($_GET['lng']) ? floatval($_GET['lng']) : null;
+    $radio = isset($_GET['radius']) ? floatval($_GET['radius']) : 100; // Radio en km, default 100km
+    $categorias = isset($_GET['categories']) ? explode(',', $_GET['categories']) : ['alojamientos', 'lugares', 'actividades', 'eventos'];
+    $provincia_filter = isset($_GET['provincia']) ? trim($_GET['provincia']) : '';
 
-    $lat = isset($_GET['lat']) ? (float)$_GET['lat'] : null;
-    $lng = isset($_GET['lng']) ? (float)$_GET['lng'] : null;
-    $radius = isset($_GET['radius']) ? (int)$_GET['radius'] : 50; // Default 50km
-    $categories = isset($_GET['categories']) ? explode(',', $_GET['categories']) : [];
-    $provincia = isset($_GET['provincia']) ? trim($_GET['provincia']) : '';
-
-    if (empty($categories)) {
-        $response['message'] = 'No categories specified.';
-        echo json_encode($response);
-        exit();
+    // Se necesita al menos coordenadas o provincia
+    if ((!$latitud || !$longitud) && empty($provincia_filter)) {
+        echo json_encode(['success' => false, 'message' => 'Coordenadas o provincia no proporcionadas']);
+        exit;
     }
 
-    if (!$lat || !$lng) {
-        // If no coordinates, but province is provided, try to use province as fallback
-        if (!empty($provincia)) {
-            // This is a simplified approach. A more robust solution would involve geocoding the province.
-            // For now, we'll proceed with province-based search if coordinates are missing.
-        } else {
-            $response['message'] = 'Latitude and longitude are required.';
-            echo json_encode($response);
-            exit();
-        }
+    // Construir la parte WHERE de provincia (se usa en todas las tablas)
+    $use_provincia = !empty($provincia_filter);
+    $use_coords    = ($latitud && $longitud);
+
+    $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASS);
+    $resultados = [];
+
+    // Función para calcular distancia en km usando fórmula Haversine
+    function calcularDistancia($lat1, $lon1, $lat2, $lon2) {
+        $earthRadius = 6371; // Radio de la Tierra en km
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon/2) * sin($dLon/2);
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        $distancia = $earthRadius * $c;
+
+        return $distancia;
     }
 
-    $results = [];
+    // Cláusula WHERE de provincia (preparada)
+    $prov_where  = $use_provincia ? " AND LOWER(province) = LOWER(?)" : "";
+    $prov_params = $use_provincia ? [$provincia_filter] : [];
 
-    foreach ($categories as $category) {
-        $category = trim($category);
-        $sql = '';
-        $params = [];
-
-        switch ($category) {
-            case 'alojamientos':
-                $sql = "
-                    SELECT 'alojamiento' as tipo, name, slug, municipality, price_per_night as precio, photo1 as foto, latitude, longitude,
-                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distancia
-                    FROM accommodations
-                    WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
-                ";
-                $params = [$lat, $lng, $lat];
-                if (!empty($provincia)) {
-                    $sql .= " AND province = ?";
-                    $params[] = $provincia;
-                }
-                $sql .= " HAVING distancia < ? ORDER BY distancia ASC LIMIT 10";
-                $params[] = $radius;
-                break;
-            case 'lugares':
-                $sql = "
-                    SELECT 'lugar' as tipo, name, slug, municipality, NULL as precio, photo1 as foto, latitude, longitude,
-                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distancia
-                    FROM places_of_interest
-                    WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
-                ";
-                $params = [$lat, $lng, $lat];
-                if (!empty($provincia)) {
-                    $sql .= " AND province = ?";
-                    $params[] = $provincia;
-                }
-                $sql .= " HAVING distancia < ? ORDER BY distancia ASC LIMIT 10";
-                $params[] = $radius;
-                break;
-            case 'actividades':
-                $sql = "
-                    SELECT 'actividad' as tipo, name, slug, municipality, price as precio, photo1 as foto, latitude, longitude,
-                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distancia
-                    FROM tourist_activities
-                    WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
-                ";
-                $params = [$lat, $lng, $lat];
-                if (!empty($provincia)) {
-                    $sql .= " AND province = ?";
-                    $params[] = $provincia;
-                }
-                $sql .= " HAVING distancia < ? ORDER BY distancia ASC LIMIT 10";
-                $params[] = $radius;
-                break;
-            case 'eventos':
-                $sql = "
-                    SELECT 'evento' as tipo, name, slug, municipality, ticket_price as precio, photo1 as foto, latitude, longitude, start_date as fecha,
-                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distancia
-                    FROM cultural_events
-                    WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()
-                ";
-                $params = [$lat, $lng, $lat];
-                if (!empty($provincia)) {
-                    $sql .= " AND province = ?";
-                    $params[] = $provincia;
-                }
-                $sql .= " HAVING distancia < ? ORDER BY distancia ASC LIMIT 10";
-                $params[] = $radius;
-                break;
-            default:
-                continue;
-        }
-
-        if (!empty($sql)) {
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
-            $categoryResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($categoryResults as $item) {
-                $item['precio'] = $item['precio'] ? $item['precio'] . '€' : 'Gratis';
-                $item['distancia'] = round($item['distancia'], 1);
-                $results[] = $item;
+    // ── ALOJAMIENTOS ──────────────────────────────────────────────────────────
+    if (in_array('alojamientos', $categorias)) {
+        $sql = "SELECT id, slug, name, address, municipality, province, latitude, longitude,
+                       photo1, price_per_night, category_id, created_by AS propietario_id, description
+                FROM accommodations
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0
+                $prov_where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($prov_params);
+        $alojamientos = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $distancia = $use_coords
+                ? calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude'])
+                : 0;
+            if (!$use_coords || $distancia <= $radio) {
+                $alojamientos[] = [
+                    'id'           => $row['id'],
+                    'slug'         => $row['slug'],
+                    'nombre'       => $row['name'],
+                    'direccion'    => $row['address'],
+                    'localidad'    => $row['municipality'],
+                    'provincia'    => $row['province'],
+                    'latitud'      => $row['latitude'],
+                    'longitud'     => $row['longitude'],
+                    'foto'         => $row['photo1'],
+                    'precio'       => !empty($row['price_per_night']) && $row['price_per_night'] > 0
+                                        ? $row['price_per_night'].'€' : 'Consultar',
+                    'distancia'    => round($distancia, 1),
+                    'tipo'         => 'alojamiento',
+                    'categoria'    => $row['category_id'],
+                    'propietario_id' => $row['propietario_id'],
+                    'description'  => $row['description'],
+                ];
             }
         }
+        $resultados = array_merge($resultados, $alojamientos);
     }
 
-    // Sort results by distance if coordinates are available
-    if ($lat && $lng) {
-        usort($results, function($a, $b) {
-            return $a['distancia'] <=> $b['distancia'];
-        });
+    // ── LUGARES DE INTERÉS ────────────────────────────────────────────────────
+    if (in_array('lugares', $categorias)) {
+        $sql = "SELECT id, slug, name, address, municipality, province, latitude, longitude,
+                       photo1, entry_fee, category_id, created_by AS propietario_id, description
+                FROM places_of_interest
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0
+                $prov_where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($prov_params);
+        $lugares = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $distancia = $use_coords
+                ? calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude'])
+                : 0;
+            if (!$use_coords || $distancia <= $radio) {
+                $lugares[] = [
+                    'id'           => $row['id'],
+                    'slug'         => $row['slug'],
+                    'nombre'       => $row['name'],
+                    'direccion'    => $row['address'],
+                    'localidad'    => $row['municipality'],
+                    'provincia'    => $row['province'],
+                    'latitud'      => $row['latitude'],
+                    'longitud'     => $row['longitude'],
+                    'foto'         => $row['photo1'],
+                    'precio'       => !empty($row['entry_fee']) && $row['entry_fee'] > 0
+                                        ? $row['entry_fee'].'€' : 'Gratis',
+                    'distancia'    => round($distancia, 1),
+                    'tipo'         => 'lugar',
+                    'categoria'    => $row['category_id'],
+                    'propietario_id' => $row['propietario_id'],
+                    'description'  => $row['description'],
+                ];
+            }
+        }
+        $resultados = array_merge($resultados, $lugares);
     }
 
-    $response['success'] = true;
-    $response['count'] = count($results);
-    $response['data'] = $results;
+    // ── ACTIVIDADES TURÍSTICAS ────────────────────────────────────────────────
+    if (in_array('actividades', $categorias)) {
+        $sql = "SELECT id, slug, name, meeting_point, municipality, province, latitude, longitude,
+                       photo1, price_adult, category_id, created_by AS propietario_id, description
+                FROM tourist_activities
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0
+                $prov_where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($prov_params);
+        $actividades = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $distancia = $use_coords
+                ? calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude'])
+                : 0;
+            if (!$use_coords || $distancia <= $radio) {
+                $actividades[] = [
+                    'id'           => $row['id'],
+                    'slug'         => $row['slug'],
+                    'nombre'       => $row['name'],
+                    'direccion'    => $row['meeting_point'],
+                    'localidad'    => $row['municipality'],
+                    'provincia'    => $row['province'],
+                    'latitud'      => $row['latitude'],
+                    'longitud'     => $row['longitude'],
+                    'foto'         => $row['photo1'],
+                    'precio'       => !empty($row['price_adult']) && $row['price_adult'] > 0
+                                        ? $row['price_adult'].'€' : 'Gratis',
+                    'distancia'    => round($distancia, 1),
+                    'tipo'         => 'actividad',
+                    'categoria'    => $row['category_id'],
+                    'propietario_id' => $row['propietario_id'],
+                    'description'  => $row['description'],
+                ];
+            }
+        }
+        $resultados = array_merge($resultados, $actividades);
+    }
 
-} catch (Exception $e) {
-    error_log('API Error: ' . $e->getMessage());
-    $response['message'] = 'Internal server error.';
+    // ── EVENTOS CULTURALES ────────────────────────────────────────────────────
+    if (in_array('eventos', $categorias)) {
+        $sql = "SELECT id, slug, name, venue_name AS location, municipality, province, latitude, longitude,
+                       photo1, poster_image, ticket_price AS price, category_id AS category,
+                       created_by AS propietario_id, description, start_date
+                FROM cultural_events
+                WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0
+                  AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE()
+                $prov_where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($prov_params);
+        $eventos = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $distancia = $use_coords
+                ? calcularDistancia($latitud, $longitud, $row['latitude'], $row['longitude'])
+                : 0;
+            if (!$use_coords || $distancia <= $radio) {
+                $foto = $row['poster_image'] ?: $row['photo1'];
+                if (empty($foto)) {
+                    $foto = "/cultural_events_images/" . $row['slug'] . ".webp";
+                }
+                $eventos[] = [
+                    'id'           => $row['id'],
+                    'slug'         => $row['slug'],
+                    'nombre'       => $row['name'],
+                    'direccion'    => $row['location'],
+                    'localidad'    => $row['municipality'],
+                    'provincia'    => $row['province'],
+                    'latitud'      => $row['latitude'],
+                    'longitud'     => $row['longitude'],
+                    'foto'         => $foto,
+                    'precio'       => !empty($row['price']) && $row['price'] > 0
+                                        ? $row['price'].'€' : 'Gratis',
+                    'distancia'    => round($distancia, 1),
+                    'tipo'         => 'evento',
+                    'categoria'    => $row['category'],
+                    'propietario_id' => $row['propietario_id'],
+                    'description'  => $row['description'],
+                    'fecha'        => $row['start_date'] ?? null,
+                ];
+            }
+        }
+        $resultados = array_merge($resultados, $eventos);
+    }
+
+    // Separar eventos del resto para ordenar de forma diferente
+    $eventos = [];
+    $no_eventos = [];
+    
+    foreach ($resultados as $item) {
+        if ($item['tipo'] === 'evento') {
+            $eventos[] = $item;
+        } else {
+            $no_eventos[] = $item;
+        }
+    }
+    
+    // Ordenar no-eventos por distancia
+    usort($no_eventos, function($a, $b) {
+        return $a['distancia'] <=> $b['distancia'];
+    });
+    
+    // Ordenar eventos por fecha ASC (próximos primero)
+    usort($eventos, function($a, $b) {
+        $fechaA = $a['fecha'] ?? '9999-12-31';
+        $fechaB = $b['fecha'] ?? '9999-12-31';
+        return $fechaA <=> $fechaB;
+    });
+    
+    // Combinar: primero no-eventos (por distancia), luego eventos (por fecha)
+    $resultados = array_merge($no_eventos, $eventos);
+
+    echo json_encode(['success' => true, 'data' => $resultados, 'count' => count($resultados)]);
+
+} catch(Exception $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
-
-echo json_encode($response);
+?>
