@@ -261,6 +261,37 @@ if ($slug === 'turismo-rural') {
     $hero_image_url = '/img/eventos-landing-hero/turismo_rural3.webp';
 }
 
+// Override for filter-based slugs (no province)
+if ($slug === 'para-ninos') {
+    $hero_image_url = '/img/alojamientos-landing-hero/alojamientos_ninos.webp';
+}
+if ($slug === 'con-jacuzzi') {
+    $hero_image_url = '/img/alojamientos-landing-hero/jacuzzi.webp';
+}
+if ($slug === 'con-piscina') {
+    $hero_image_url = '/img/alojamientos-landing-hero/con_piscina.webp';
+}
+if ($slug === 'con-chimenea') {
+    $hero_image_url = '/img/alojamientos-landing-hero/chimenea.webp';
+}
+if ($slug === 'casas-rurales') {
+    $hero_image_url = '/img/alojamientos-landing-hero/casas_rurales.webp';
+}
+if ($slug === 'baratos') {
+    $hero_image_url = '/img/alojamientos-landing-hero/alojamientos_baratos.webp';
+}
+if ($slug === 'grandes-grupos') {
+    $hero_image_url = '/img/alojamientos-landing-hero/grandes_grupos.webp';
+}
+if ($slug === 'con-cocina') {
+    $hero_image_url = '/img/alojamientos-landing-hero/con_concina.webp';
+}
+if ($slug === 'romantico') {
+    $hero_image_url = '/img/alojamientos-landing-hero/romantico.webp';
+}
+if ($slug === 'con-mascotas') {
+    $hero_image_url = '/img/alojamientos-landing-hero/alojamientos_macostas.webp';
+}
 $ctx['hero_image_url'] = $hero_image_url;
 $ctx['hero_image_alt'] = $h1;
 

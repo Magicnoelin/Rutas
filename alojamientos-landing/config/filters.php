@@ -294,6 +294,22 @@ const LANDING_PROVINCIAS = [
     ],
 
     // ─────────────────────────────────────────────────────────────────────
+    // NAVARRA (1 provincia)
+    // ─────────────────────────────────────────────────────────────────────
+    'navarra' => [
+        'label' => 'Navarra', 'db' => 'Navarra',
+        'region' => 'Navarra',
+        'attractions' => ['Parque Natural de Urbasa y Andía', 'Bardenas Reales', 'Selva de Irati', 'Camino de Santiago'],
+        'vibe' => [
+            'es' => 'una provincia de paisajes extremos donde las Bardenas Reales forman un desierto semiárido único en Europa, la Selva de Irati es el segundo bosque de hayas más grande del continente y el Camino de Santiago cruza valles eternos',
+            'en' => 'a province of extreme landscapes where the Bardenas Reales form a unique semi-arid desert in Europe, the Irati Forest is the continent\'s second largest beech forest and the Camino de Santiago crosses eternal valleys',
+            'fr' => 'une province aux paysages extrêmes où les Bardenas Reales forment un désert semi-aride unique en Europe, la Forêt d\'Irati est la deuxième plus grande hêtraie du continent et le Chemin de Santiago traverse des vallées éternelles',
+            'de' => 'eine Provincia mit extremen Landschaften, wo die Bardenas Reales eine einzigartige Halbwüste in Europa bilden, der Irati-Wald Europas zweitgrößter Buchenwald ist und der Jakobsweg ewige Täler durchquert',
+            'zh' => '景观极致多样的省份：巴尔德纳斯雷亚莱斯是欧洲独特的半干旱沙漠，伊拉蒂森林是欧洲第二大山毛榉林，圣地亚哥之路穿越永恒山谷',
+        ],
+    ],
+
+    // ─────────────────────────────────────────────────────────────────────
     // COMUNIDAD VALENCIANA (1 provincia)
     // ─────────────────────────────────────────────────────────────────────
     'valencia' => [

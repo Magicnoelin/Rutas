@@ -124,6 +124,10 @@ const HUB_COMBIS_ALO = [
     ['turismo-rural', 'con-jacuzzi',  'segovia'],
     ['casas-rurales', 'con-cocina',   'valladolid'],
     ['turismo-rural', 'con-chimenea', 'avila'],
+    // Navarra
+    ['casas-rurales', 'con-chimenea', 'navarra'],
+    ['turismo-rural', 'con-mascotas', 'navarra'],
+    ['casas-rurales', 'grandes-grupos', 'navarra'],
 ];
 
 // ── FILTROS EVENTOS DESTACADOS ────────────────────────────────────────────────
