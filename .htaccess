@@ -220,6 +220,28 @@ RewriteCond %{THE_REQUEST} \s/+eventos-culturales-paginacion\.html [NC]
 RewriteRule ^eventos-culturales-paginacion\.html$ /eventos/ [R=301,L]
 
 # ============================================================
+# 4b-SEO. REDIRECCIÓN 301 — /alojamientos/{provincia_sola}
+#         → /alojamientos/turismo-rural-{provincia}
+#
+# Se activa ÚNICAMENTE cuando el segmento es exactamente el slug
+# de una de las 50 provincias españolas (sin ningún prefijo de
+# filtro delante). Ejemplos que SÍ redirigen:
+#   /alojamientos/lugo        → /alojamientos/turismo-rural-lugo
+#   /alojamientos/soria       → /alojamientos/turismo-rural-soria
+#   /alojamientos/granada/    → /alojamientos/turismo-rural-granada
+#
+# Ejemplos que NO se ven afectados (pasan a sección 4c):
+#   /alojamientos/casas-rurales-lugo      (tiene prefijo)
+#   /alojamientos/turismo-rural-soria     (ya tiene prefijo)
+#   /alojamientos/con-chimenea-zamora     (tiene prefijo)
+#
+# Lista blanca de las 50 provincias (slugs URL normalizados sin tildes).
+# ============================================================
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^alojamientos/(avila|burgos|leon|palencia|salamanca|segovia|soria|valladolid|zamora|a-coruna|lugo|ourense|pontevedra|asturias|cantabria|alava|gipuzkoa|vizcaya|navarra|la-rioja|huesca|teruel|zaragoza|barcelona|girona|lleida|tarragona|alicante|castellon|valencia|murcia|almeria|cadiz|cordoba|granada|huelva|jaen|malaga|sevilla|badajoz|caceres|albacete|ciudad-real|cuenca|guadalajara|toledo|madrid|baleares|las-palmas|santa-cruz-de-tenerife)/?$ /alojamientos/turismo-rural-$1 [R=301,L]
+
+# ============================================================
 # 4c. LANDINGS SEO LONG-TAIL — Sistema dinámico por provincia/filtro
 # ============================================================
 # Patrón: /alojamientos/{filtro}-{provincia}  (mínimo 2 tokens)
@@ -229,7 +251,7 @@ RewriteRule ^eventos-culturales-paginacion\.html$ /eventos/ [R=301,L]
 #   turismo-rural-soria             (3 tokens)
 #   casas-rurales-con-chimenea-soria (5 tokens)
 #   turismo-rural-mascotas-zamora   (4 tokens)
-# Slugs con 1 token (ej: "soria") caen en sección 5 (compatibilidad).
+# Slugs con 1 token (ej: "soria") ya han sido redirigidos en sección 4b-SEO.
 #
 # MULTIIDIOMA: /{lang}/alojamientos/{slug}
 # Idiomas soportados: en · fr · de · zh  (es = sin prefijo)

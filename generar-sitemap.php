@@ -101,6 +101,131 @@ if ($type == 'estatico') {
         echo "    <priority>{$s['pri']}</priority>\n";
         echo "  </url>\n";
     }
+} elseif ($type === 'landings') {
+    // ════════════════════════════════════════════════════════════════════
+    // LANDINGS DE PROVINCIA — /alojamientos/turismo-rural-{provincia}
+    //
+    // Se publican ÚNICAMENTE las provincias que tienen alojamientos
+    // activos en BD (COUNT > 0). Las provincias vacías no se indexan.
+    //
+    // Filtro principal elegido: "turismo-rural-" (URL canónica que
+    // el .htaccess genera desde las antiguas rutas cortas /{provincia}).
+    //
+    // Cada entrada incluye hreflang para los 5 idiomas del proyecto:
+    //   ES: /alojamientos/turismo-rural-{slug}
+    //   EN: /en/alojamientos/turismo-rural-{slug}
+    //   FR: /fr/alojamientos/turismo-rural-{slug}
+    //   DE: /de/alojamientos/turismo-rural-{slug}
+    //   ZH: /zh/alojamientos/turismo-rural-{slug}
+    // ════════════════════════════════════════════════════════════════════
+
+    // Mapa slug → valor en columna `province` de accommodations
+    // (debe estar sincronizado con LANDING_PROVINCIAS en filters.php)
+    $provincias_map = [
+        'avila'                  => 'Avila',
+        'burgos'                 => 'Burgos',
+        'leon'                   => 'León',
+        'palencia'               => 'Palencia',
+        'salamanca'              => 'Salamanca',
+        'segovia'                => 'Segovia',
+        'soria'                  => 'Soria',
+        'valladolid'             => 'Valladolid',
+        'zamora'                 => 'Zamora',
+        'a-coruna'               => 'A Coruña',
+        'lugo'                   => 'Lugo',
+        'ourense'                => 'Ourense',
+        'pontevedra'             => 'Pontevedra',
+        'asturias'               => 'Asturias',
+        'cantabria'              => 'Cantabria',
+        'alava'                  => 'Álava',
+        'gipuzkoa'               => 'Gipuzkoa',
+        'vizcaya'                => 'Vizcaya',
+        'navarra'                => 'Navarra',
+        'la-rioja'               => 'La Rioja',
+        'huesca'                 => 'Huesca',
+        'teruel'                 => 'Teruel',
+        'zaragoza'               => 'Zaragoza',
+        'barcelona'              => 'Barcelona',
+        'girona'                 => 'Girona',
+        'lleida'                 => 'Lleida',
+        'tarragona'              => 'Tarragona',
+        'alicante'               => 'Alicante',
+        'castellon'              => 'Castellón',
+        'valencia'               => 'Valencia',
+        'murcia'                 => 'Murcia',
+        'almeria'                => 'Almería',
+        'cadiz'                  => 'Cádiz',
+        'cordoba'                => 'Cordoba',
+        'granada'                => 'Granada',
+        'huelva'                 => 'Huelva',
+        'jaen'                   => 'Jaén',
+        'malaga'                 => 'Málaga',
+        'sevilla'                => 'Sevilla',
+        'badajoz'                => 'Badajoz',
+        'caceres'                => 'Cáceres',
+        'albacete'               => 'Albacete',
+        'ciudad-real'            => 'Ciudad Real',
+        'cuenca'                 => 'Cuenca',
+        'guadalajara'            => 'Guadalajara',
+        'toledo'                 => 'Toledo',
+        'madrid'                 => 'Madrid',
+        'baleares'               => 'Baleares',
+        'las-palmas'             => 'Las Palmas',
+        'santa-cruz-de-tenerife' => 'Santa Cruz de Tenerife',
+    ];
+
+    // Query: obtener solo provincias con alojamientos activos
+    $stmt_prov = $pdo->query(
+        "SELECT province, COUNT(*) AS total, MAX(updated_at) AS last_update
+           FROM accommodations
+          WHERE is_active = 1
+            AND province IS NOT NULL
+            AND province != ''
+          GROUP BY province
+          HAVING total > 0"
+    );
+    $prov_db_data = [];
+    while ($row = $stmt_prov->fetch(PDO::FETCH_ASSOC)) {
+        $prov_db_data[$row['province']] = [
+            'total'       => (int)$row['total'],
+            'last_update' => $row['last_update'],
+        ];
+    }
+
+    $idiomas_hl = ['es', 'en', 'fr', 'de', 'zh'];
+
+    foreach ($provincias_map as $slug_prov => $db_value) {
+        // Solo publicar si tiene alojamientos activos
+        if (empty($prov_db_data[$db_value])) {
+            continue;
+        }
+
+        $canonical_slug = 'turismo-rural-' . $slug_prov;
+        $lastmod        = !empty($prov_db_data[$db_value]['last_update'])
+            ? date('Y-m-d', strtotime($prov_db_data[$db_value]['last_update']))
+            : date('Y-m-d');
+
+        // URL canónica ES (sin prefijo de idioma)
+        $canonical_url = $baseUrl . '/alojamientos/' . $canonical_slug;
+
+        echo "  <url>\n";
+        echo "    <loc>" . htmlspecialchars($canonical_url) . "</loc>\n";
+        echo "    <lastmod>{$lastmod}</lastmod>\n";
+        echo "    <changefreq>weekly</changefreq>\n";
+        echo "    <priority>0.85</priority>\n";
+
+        // hreflang para los 5 idiomas + x-default
+        foreach ($idiomas_hl as $hl) {
+            $hl_url = $baseUrl
+                . ($hl === 'es' ? '' : '/' . $hl)
+                . '/alojamientos/' . $canonical_slug;
+            echo "    <xhtml:link rel=\"alternate\" hreflang=\"{$hl}\" href=\"" . htmlspecialchars($hl_url) . "\" />\n";
+        }
+        echo "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonical_url) . "\" />\n";
+
+        echo "  </url>\n";
+    }
+
 } else {
     // Mapeo de tipos a tablas y prefijos de URL
     $config = [

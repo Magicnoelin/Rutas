@@ -132,18 +132,36 @@ $h2_listing = t($t['h2_listing'], ['PROVINCE' => $province_label ?: 'España']);
 
 // ── 6. URL canónica y hreflang ────────────────────────────────────────────────
 $base_domain = 'https://rutasrurales.io';
-$canonical   = $lang === 'es'
-    ? "$base_domain/alojamientos/$slug"
-    : "$base_domain/$lang/alojamientos/$slug";
 
-// hreflang: mismo slug para todos los idiomas (las landings en ES son el master)
+// ── CORRECCIÓN CANONICAL PARA RUTAS CORTAS (anti-canibalización SEO) ─────────
+// Si el slug es ÚNICAMENTE una provincia (sin filtros), la URL canónica correcta
+// es /alojamientos/turismo-rural-{provincia}, NO /alojamientos/{provincia}.
+// El .htaccess ya emite un 301 para la mayoría de los casos, pero si una petición
+// llega al PHP sin haber sido redirigida (caché, proxy, llamada directa), este
+// bloque garantiza que el <link rel="canonical"> y los hreflang apunten siempre
+// a la URL con el prefijo "turismo-rural-", evitando el error de GSC:
+// "Duplicada: Google ha elegido una versión canónica diferente a la del usuario".
+if ($parsed['valid'] && empty($parsed['filters']) && !empty($parsed['province'])) {
+    // Slug es solo una provincia → la URL canónica lleva el prefijo turismo-rural-
+    $canonical_slug = 'turismo-rural-' . $parsed['province'];
+} else {
+    // Slug ya tiene filtros (ej: casas-rurales-soria, con-chimenea-zamora)
+    // → el slug tal cual ES la URL canónica
+    $canonical_slug = $slug;
+}
+
+$canonical = $lang === 'es'
+    ? "$base_domain/alojamientos/$canonical_slug"
+    : "$base_domain/$lang/alojamientos/$canonical_slug";
+
+// hreflang: todos los idiomas apuntan siempre a la URL canónica (con turismo-rural- si procede)
 $hreflang_urls = [
-    'es'        => "$base_domain/alojamientos/$slug",
-    'en'        => "$base_domain/en/alojamientos/$slug",
-    'fr'        => "$base_domain/fr/alojamientos/$slug",
-    'de'        => "$base_domain/de/alojamientos/$slug",
-    'zh'        => "$base_domain/zh/alojamientos/$slug",
-    'x-default' => "$base_domain/alojamientos/$slug",
+    'es'        => "$base_domain/alojamientos/$canonical_slug",
+    'en'        => "$base_domain/en/alojamientos/$canonical_slug",
+    'fr'        => "$base_domain/fr/alojamientos/$canonical_slug",
+    'de'        => "$base_domain/de/alojamientos/$canonical_slug",
+    'zh'        => "$base_domain/zh/alojamientos/$canonical_slug",
+    'x-default' => "$base_domain/alojamientos/$canonical_slug",
 ];
 
 // ── 7. Consultas a BD ─────────────────────────────────────────────────────────
