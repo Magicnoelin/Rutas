@@ -83,6 +83,7 @@ const HUB_PROVINCIAS = [
     'pontevedra'  => ['label'=>'Pontevedra',  'emoji'=>'🌊', 'region'=>'Galicia'],
     'toledo'      => ['label'=>'Toledo',      'emoji'=>'🏰', 'region'=>'Castilla-La Mancha'],
     'valencia'    => ['label'=>'Valencia',    'emoji'=>'🍊', 'region'=>'Comunidad Valenciana'],
+    'navarra'     => ['label'=>'Navarra',     'emoji'=>'🏔️', 'region'=>'Navarra'],
 ];
 
 // ── FILTROS ALOJAMIENTOS DESTACADOS (para el hub visual) ────────────────────
@@ -96,9 +97,7 @@ const HUB_FILTROS_ALO = [
     'con-jacuzzi'          => ['icon'=>'♨️', 'es'=>'Con jacuzzi',          'en'=>'With jacuzzi',     'fr'=>'Avec jacuzzi',          'de'=>'Mit Jacuzzi',         'zh'=>'带按摩浴缸'],
     'grandes-grupos'       => ['icon'=>'👥', 'es'=>'Grupos grandes',        'en'=>'Large groups',     'fr'=>'Grands groupes',        'de'=>'Für Gruppen',         'zh'=>'大团体适用'],
     'con-cocina'           => ['icon'=>'🍳', 'es'=>'Con cocina equipada',   'en'=>'Full kitchen',     'fr'=>'Cuisine équipée',       'de'=>'Mit Küche',           'zh'=>'含厨房'],
-    'turismo-rural'        => ['icon'=>'🌿', 'es'=>'Turismo rural',         'en'=>'Rural tourism',    'fr'=>'Tourisme rural',        'de'=>'Landurlaub',          'zh'=>'乡村旅游'],
     'baratos'              => ['icon'=>'💰', 'es'=>'Económicos',            'en'=>'Budget-friendly',  'fr'=>'Économiques',           'de'=>'Günstig',             'zh'=>'经济实惠'],
-    'apartamentos-rurales' => ['icon'=>'🏠', 'es'=>'Apartamentos rurales',  'en'=>'Rural apartments', 'fr'=>'Appts ruraux',          'de'=>'Landapartments',      'zh'=>'乡村公寓'],
     'para-ninos'           => ['icon'=>'👨‍👩‍👧', 'es'=>'Para niños',    'en'=>'Child-friendly',   'fr'=>'Pour enfants',          'de'=>'Kinderfreundlich',    'zh'=>'亲子友好'],
 ];
 

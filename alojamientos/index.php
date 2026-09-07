@@ -52,9 +52,7 @@ $filtros_inline = [
     'con-jacuzzi'          => ['icon'=>'♨️', 'label'=>'Con jacuzzi'],
     'grandes-grupos'       => ['icon'=>'👥', 'label'=>'Grupos grandes'],
     'con-cocina'           => ['icon'=>'🍳', 'label'=>'Con cocina equipada'],
-    'turismo-rural'        => ['icon'=>'🌿', 'label'=>'Turismo rural'],
     'baratos'              => ['icon'=>'💰', 'label'=>'Económicos'],
-    'apartamentos-rurales' => ['icon'=>'🏠', 'label'=>'Apartamentos rurales'],
     'para-ninos'           => ['icon'=>'👨‍👩‍👧', 'label'=>'Para niños'],
 ];
 
@@ -79,6 +77,7 @@ $provincias_inline = [
     'pontevedra' => ['emoji'=>'🌊','label'=>'Pontevedra','region'=>'Galicia'],
     'toledo'     => ['emoji'=>'🏰','label'=>'Toledo',    'region'=>'Castilla-La Mancha'],
     'valencia'   => ['emoji'=>'🍊','label'=>'Valencia',  'region'=>'C. Valenciana'],
+    'navarra'    => ['emoji'=>'🏔️','label'=>'Navarra',  'region'=>'Navarra'],
 ];
 
 $filtros   = $has_hub_data ? HUB_FILTROS_ALO  : array_map(fn($v) => ['icon'=>$v['icon'],'es'=>$v['label']], $filtros_inline);
@@ -598,7 +597,8 @@ ul{list-style:none;padding:0;margin:0}
       { name: 'Granada',      lat: 37.177,  lng: -3.599,   slug: 'turismo-rural-granada'     },
       { name: 'Toledo',       lat: 39.857,  lng: -4.024,   slug: 'turismo-rural-toledo'      },
       { name: 'Valencia',     lat: 39.470,  lng: -0.376,   slug: 'turismo-rural-valencia'    },
-      { name: 'Barcelona',    lat: 41.389,  lng:  2.159,   slug: 'turismo-rural-barcelona'   }
+      { name: 'Barcelona',    lat: 41.389,  lng:  2.159,   slug: 'turismo-rural-barcelona'   },
+      { name: 'Navarra',      lat: 42.695,  lng: -1.676,   slug: 'turismo-rural-navarra'     }
     ];
 
     provincias.forEach(function (p) {
