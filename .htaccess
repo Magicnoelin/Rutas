@@ -291,6 +291,17 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^eventos/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ eventos-landing/index.php?lang=es&slug=$1 [L,QSA]
 
 # ============================================================
+# 5d. LANDINGS DE LUGARES — /lugares/{categoria} o /lugares/{provincia}
+# Ejemplos: /lugares/patrimonio → lugares-landing (categoría)
+#           /lugares/soria      → lugares-landing (provincia)
+# NOTA: /lugares/ como directorio sigue siendo servido por Apache (index.php)
+#       gracias a la condición !-d que excluye directorios existentes.
+# ============================================================
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^lugares/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ lugares-landing/index.php?lang=es&slug=$1 [L,QSA]
+
+# ============================================================
 # 5. LIMPIEZA DE URLs ANTIGUAS
 # ============================================================
 RewriteRule ^alojamiento/lugar/(.+)$ /alojamiento/$1 [R=301,L]

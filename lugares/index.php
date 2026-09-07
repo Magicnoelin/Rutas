@@ -4,40 +4,119 @@
  * URL canónica: https://rutasrurales.io/lugares/
  */
 ini_set('display_errors', 0); error_reporting(E_ERROR | E_PARSE);
+
 $base_domain = 'https://rutasrurales.io';
 $canonical   = $base_domain . '/lugares/';
 $meta_title  = 'Lugares de Interés en España | Monumentos, Naturaleza y Gastronomía Rural';
 $meta_desc   = 'Descubre los mejores lugares de interés rurales de España: monumentos históricos, espacios naturales, restaurantes con encanto, bodegas y mucho más.';
 $og_image    = $base_domain . '/menu_images/og-default.jpg';
 
-$tipos = [
-  'patrimonio'   => ['icon'=>'🏛️','label'=>'Patrimonio histórico','desc'=>'Castillos, iglesias y monumentos'],
-  'naturaleza'   => ['icon'=>'🌿','label'=>'Naturaleza','desc'=>'Parques, reservas y paisajes'],
-  'gastronomia'  => ['icon'=>'🍷','label'=>'Gastronomía','desc'=>'Restaurantes y productos locales'],
-  'bodegas'      => ['icon'=>'🍾','label'=>'Bodegas y vinos','desc'=>'Enoturismo y catas'],
-  'rutas'        => ['icon'=>'🥾','label'=>'Rutas y senderos','desc'=>'Caminos y travesías'],
-  'museos'       => ['icon'=>'🎨','label'=>'Museos y arte','desc'=>'Arte, cultura e historia'],
-  'miradores'    => ['icon'=>'🔭','label'=>'Miradores','desc'=>'Vistas panorámicas'],
-  'mercados'     => ['icon'=>'🛖','label'=>'Mercados locales','desc'=>'Artesanía y productos km0'],
-];
+// ── Helper: texto → slug URL ─────────────────────────────────────────────────
+function lug_to_slug(string $text): string {
+    $text = mb_strtolower(trim($text), 'UTF-8');
+    $text = strtr($text, [
+        'á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ú'=>'u','ü'=>'u','ñ'=>'n',
+        'à'=>'a','è'=>'e','ì'=>'i','ò'=>'o','ù'=>'u','ç'=>'c',
+    ]);
+    $text = preg_replace('/[^a-z0-9\s\-]/', '', $text);
+    $text = preg_replace('/[\s\-]+/', '-', $text);
+    return trim($text, '-');
+}
 
-$provincias = [
-  ['slug'=>'soria',      'emoji'=>'🌲','label'=>'Soria'],
-  ['slug'=>'zamora',     'emoji'=>'🦌','label'=>'Zamora'],
-  ['slug'=>'leon',       'emoji'=>'🏔️','label'=>'León'],
-  ['slug'=>'burgos',     'emoji'=>'⚔️','label'=>'Burgos'],
-  ['slug'=>'valladolid', 'emoji'=>'🍇','label'=>'Valladolid'],
-  ['slug'=>'salamanca',  'emoji'=>'🏛️','label'=>'Salamanca'],
-  ['slug'=>'segovia',    'emoji'=>'🏰','label'=>'Segovia'],
-  ['slug'=>'avila',      'emoji'=>'🧱','label'=>'Ávila'],
-  ['slug'=>'palencia',   'emoji'=>'🌾','label'=>'Palencia'],
-  ['slug'=>'guadalajara','emoji'=>'🌳','label'=>'Guadalajara'],
-  ['slug'=>'ourense',    'emoji'=>'♨️','label'=>'Ourense'],
-  ['slug'=>'cordoba',    'emoji'=>'🕌','label'=>'Córdoba'],
-  ['slug'=>'granada',    'emoji'=>'🏰','label'=>'Granada'],
-  ['slug'=>'asturias',   'emoji'=>'🦅','label'=>'Asturias'],
-  ['slug'=>'cantabria',  'emoji'=>'🏖️','label'=>'Cantabria'],
-];
+// ── Emoji por provincia ───────────────────────────────────────────────────────
+function lug_province_emoji(string $prov): string {
+    $slug = lug_to_slug($prov);
+    $map = [
+        'soria'=>'🌲','zamora'=>'🦌','leon'=>'🏔️','burgos'=>'⚔️','valladolid'=>'🍇',
+        'salamanca'=>'🏛️','segovia'=>'🏰','avila'=>'🧱','palencia'=>'🌾',
+        'guadalajara'=>'🌳','ourense'=>'♨️','cordoba'=>'🕌','granada'=>'🏰',
+        'asturias'=>'🦅','cantabria'=>'🏖️','lugo'=>'🏛️','pontevedra'=>'🌊',
+        'toledo'=>'🏰','valencia'=>'🍊','navarra'=>'🏔️','madrid'=>'🏙️',
+        'barcelona'=>'🎨','sevilla'=>'💃','malaga'=>'☀️','cadiz'=>'🌊',
+        'huelva'=>'🌿','jaen'=>'🫒','almeria'=>'🏜️','murcia'=>'🌞',
+        'alicante'=>'⛵','castellon'=>'🌄','zaragoza'=>'🕌','huesca'=>'⛰️',
+        'teruel'=>'🏛️','lleida'=>'🏔️','tarragona'=>'🏺','girona'=>'🌊',
+        'caceres'=>'🦜','badajoz'=>'🌾','albacete'=>'🔪','ciudad-real'=>'♟️',
+        'cuenca'=>'🏚️','la-rioja'=>'🍷','alava'=>'🍷','gipuzkoa'=>'🌊',
+        'vizcaya'=>'🌉','a-coruna'=>'🐙','baleares'=>'⛵',
+        'las-palmas'=>'🌋','santa-cruz-de-tenerife'=>'🌋',
+    ];
+    return $map[$slug] ?? '📍';
+}
+
+// ── Icono fallback para categorías sin icono en BD ───────────────────────────
+function lug_cat_icon(string $slug, ?string $db_icon): string {
+    if (!empty($db_icon)) return $db_icon;
+    $map = [
+        'patrimonio'=>'🏛️','naturaleza'=>'🌿','gastronomia'=>'🍷','gastronom'=>'🍷',
+        'bodegas'=>'🍾','bodega'=>'🍾','rutas'=>'🥾','museos'=>'🎨','museo'=>'🎨',
+        'miradores'=>'🔭','mirador'=>'🔭','mercados'=>'🛖','mercado'=>'🛖',
+        'restaurante'=>'🍽️','monumento'=>'🏛️','parque'=>'🌿','iglesia'=>'⛪',
+        'castillo'=>'🏰','playa'=>'🏖️','rio'=>'🌊','lago'=>'💧',
+    ];
+    foreach ($map as $k => $v) {
+        if (str_contains($slug, $k)) return $v;
+    }
+    return '📍';
+}
+
+// ── Conectar a BD y cargar datos ─────────────────────────────────────────────
+$tipos     = [];
+$provincias = [];
+$total_places = '';
+
+try {
+    require_once dirname(__DIR__) . '/api/config.php';
+    $pdo = getDBConnection();
+
+    // Total de lugares activos
+    $r = $pdo->query("SELECT COUNT(*) AS c FROM places_of_interest WHERE is_active=1")->fetch(PDO::FETCH_ASSOC);
+    if (!empty($r['c'])) $total_places = '+' . number_format((int)$r['c'], 0, ',', '.');
+
+    // Categorías con al menos 1 lugar activo
+    $stypes = $pdo->query("
+        SELECT c.id, c.name, c.slug, c.icon, c.description, COUNT(p.id) AS total
+        FROM categories_places c
+        INNER JOIN places_of_interest p ON p.category_id = c.id AND p.is_active = 1
+        WHERE c.is_active = 1
+        GROUP BY c.id, c.name, c.slug, c.icon, c.description
+        HAVING total > 0
+        ORDER BY c.display_order ASC, c.name ASC
+    ");
+    $tipos = $stypes->fetchAll(PDO::FETCH_ASSOC);
+
+    // Provincias con al menos 1 lugar activo, ordenadas por número de lugares
+    $sprovs = $pdo->query("
+        SELECT province, COUNT(*) AS total
+        FROM places_of_interest
+        WHERE is_active = 1 AND province IS NOT NULL AND province != ''
+        GROUP BY province
+        HAVING total > 0
+        ORDER BY total DESC, province ASC
+    ");
+    $provincias = $sprovs->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (Throwable $e) { /* silencioso — fallback abajo */ }
+
+// ── Fallback estático si la BD no responde ───────────────────────────────────
+if (empty($tipos)) {
+    $tipos = [
+        ['name'=>'Patrimonio histórico','slug'=>'patrimonio',  'icon'=>'🏛️','description'=>'Castillos, iglesias y monumentos','total'=>0],
+        ['name'=>'Naturaleza',          'slug'=>'naturaleza',  'icon'=>'🌿','description'=>'Parques, reservas y paisajes',    'total'=>0],
+        ['name'=>'Gastronomía',         'slug'=>'gastronomia', 'icon'=>'🍷','description'=>'Restaurantes y productos locales','total'=>0],
+        ['name'=>'Bodegas y vinos',     'slug'=>'bodegas',     'icon'=>'🍾','description'=>'Enoturismo y catas',              'total'=>0],
+        ['name'=>'Rutas y senderos',    'slug'=>'rutas',       'icon'=>'🥾','description'=>'Caminos y travesías',             'total'=>0],
+        ['name'=>'Museos y arte',       'slug'=>'museos',      'icon'=>'🎨','description'=>'Arte, cultura e historia',        'total'=>0],
+        ['name'=>'Miradores',           'slug'=>'miradores',   'icon'=>'🔭','description'=>'Vistas panorámicas',             'total'=>0],
+        ['name'=>'Mercados locales',    'slug'=>'mercados',    'icon'=>'🛖','description'=>'Artesanía y productos km0',      'total'=>0],
+    ];
+}
+if (empty($provincias)) {
+    foreach (['Soria','Zamora','León','Burgos','Valladolid','Salamanca','Segovia','Ávila',
+              'Palencia','Guadalajara','Ourense','Córdoba','Granada','Asturias','Cantabria'] as $p) {
+        $provincias[] = ['province' => $p, 'total' => 0];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es" dir="ltr">
@@ -50,13 +129,13 @@ $provincias = [
 <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
 <link rel="alternate" hreflang="es"        href="https://rutasrurales.io/lugares/">
 <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/lugares/">
-<meta property="og:type"       content="website">
-<meta property="og:title"      content="<?= htmlspecialchars($meta_title) ?>">
+<meta property="og:type"        content="website">
+<meta property="og:title"       content="<?= htmlspecialchars($meta_title) ?>">
 <meta property="og:description" content="<?= htmlspecialchars($meta_desc) ?>">
-<meta property="og:image"      content="<?= htmlspecialchars($og_image) ?>">
-<meta property="og:url"        content="<?= htmlspecialchars($canonical) ?>">
-<meta property="og:site_name"  content="Rutas Rurales">
-<meta name="twitter:card"      content="summary_large_image">
+<meta property="og:image"       content="<?= htmlspecialchars($og_image) ?>">
+<meta property="og:url"         content="<?= htmlspecialchars($canonical) ?>">
+<meta property="og:site_name"   content="Rutas Rurales">
+<meta name="twitter:card"       content="summary_large_image">
 <link rel="icon"             href="/menu_images/Favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/menu_images/Favicon.png">
 <link rel="manifest"         href="/manifest.json">
@@ -89,6 +168,9 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 .lug-hero__inner{position:relative;z-index:1;padding:52px 20px 48px;width:100%;max-width:var(--max-w);margin:0 auto}
 .lug-hero h1{font-size:clamp(1.7rem,4vw,2.7rem);font-weight:800;color:var(--white);line-height:1.1;margin-bottom:12px;text-shadow:0 2px 8px rgba(0,0,0,.3);max-width:680px}
 .lug-hero__sub{font-size:clamp(.88rem,1.8vw,1.05rem);color:rgba(255,255,255,.88);max-width:560px;font-weight:500;line-height:1.55}
+.lug-hero__stats{display:flex;flex-wrap:wrap;gap:24px;margin-top:18px}
+.lug-stat__val{display:block;font-size:1.55rem;font-weight:800;color:var(--accent);line-height:1}
+.lug-stat__lbl{font-size:.72rem;color:rgba(255,255,255,.78);font-weight:500}
 .lug-bc ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:14px}
 .lug-bc a{color:rgba(255,255,255,.7)}
 
@@ -106,12 +188,14 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 .lug-tipo__info{min-width:0}
 .lug-tipo__nm{font-size:.85rem;font-weight:700;display:block}
 .lug-tipo__desc{font-size:.72rem;opacity:.7;display:block;margin-top:2px}
+.lug-tipo__count{font-size:.68rem;opacity:.55;display:block;margin-top:2px}
 
 /* Grid provincias */
 .lug-provs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .lug-prov{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);text-align:center;transition:var(--tr);box-shadow:var(--shadow)}
 .lug-prov:hover{background:var(--lug);color:var(--white);border-color:var(--lug);transform:translateY(-2px)}
 .lug-prov__em{font-size:1.5rem}.lug-prov__nm{font-size:.82rem;font-weight:700}
+.lug-prov__count{font-size:.68rem;opacity:.6}
 
 .lug-cta{background:linear-gradient(135deg,#1a3a5c 0%,#2563a8 100%);color:var(--white);padding:52px 20px;text-align:center}
 .lug-cta h2{font-size:clamp(1.25rem,2.5vw,1.7rem);font-weight:800;margin-bottom:10px}
@@ -171,23 +255,36 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
     </nav>
     <h1 id="lug-h1">Lugares de Interés en España</h1>
     <p class="lug-hero__sub">Monumentos históricos, espacios naturales, restaurantes con encanto, bodegas y rincones únicos del turismo rural español.</p>
+    <?php if ($total_places): ?>
+    <div class="lug-hero__stats" aria-label="Estadísticas">
+      <div><span class="lug-stat__val"><?= htmlspecialchars($total_places) ?></span><span class="lug-stat__lbl">Lugares</span></div>
+      <div><span class="lug-stat__val"><?= count($provincias) ?></span><span class="lug-stat__lbl">Provincias</span></div>
+      <div><span class="lug-stat__val"><?= count($tipos) ?></span><span class="lug-stat__lbl">Categorías</span></div>
+    </div>
+    <?php endif; ?>
   </div>
 </section>
 
-<!-- TIPOS DE LUGAR -->
+<!-- TIPOS DE LUGAR — desde categories_places -->
 <section class="lug-section lug-section--alt" aria-labelledby="tipos-h2">
   <div class="lug-wrap">
     <h2 class="lug-h2" id="tipos-h2">🗂️ Explorar por tipo</h2>
     <p class="lug-intro">Encuentra lugares según tu interés: patrimonio, gastronomía, naturaleza y más.</p>
     <ul class="lug-tipos" role="list" aria-label="Tipos de lugares de interés">
-      <?php foreach ($tipos as $tk => $td): ?>
+      <?php foreach ($tipos as $td): ?>
       <li>
-        <a href="/lugares-de-interes?tipo=<?= urlencode($tk) ?>" class="lug-tipo"
-           title="<?= htmlspecialchars($td['label']) ?> en España">
-          <span class="lug-tipo__icon" aria-hidden="true"><?= $td['icon'] ?></span>
+        <a href="/lugares/<?= htmlspecialchars($td['slug']) ?>"
+           class="lug-tipo"
+           title="<?= htmlspecialchars($td['name']) ?> en España">
+          <span class="lug-tipo__icon" aria-hidden="true"><?= lug_cat_icon($td['slug'], $td['icon'] ?? null) ?></span>
           <span class="lug-tipo__info">
-            <span class="lug-tipo__nm"><?= htmlspecialchars($td['label']) ?></span>
-            <span class="lug-tipo__desc"><?= htmlspecialchars($td['desc']) ?></span>
+            <span class="lug-tipo__nm"><?= htmlspecialchars($td['name']) ?></span>
+            <?php if (!empty($td['description'])): ?>
+            <span class="lug-tipo__desc"><?= htmlspecialchars($td['description']) ?></span>
+            <?php endif; ?>
+            <?php if (!empty($td['total'])): ?>
+            <span class="lug-tipo__count"><?= (int)$td['total'] ?> lugares</span>
+            <?php endif; ?>
           </span>
         </a>
       </li>
@@ -196,19 +293,23 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
   </div>
 </section>
 
-<!-- PROVINCIAS -->
+<!-- PROVINCIAS — desde places_of_interest -->
 <section class="lug-section" aria-labelledby="prov-h2">
   <div class="lug-wrap">
     <h2 class="lug-h2" id="prov-h2">📍 Explorar por provincia</h2>
     <p class="lug-intro">Descubre los lugares de interés más destacados de cada provincia española.</p>
     <ul class="lug-provs" role="list" aria-label="Provincias con lugares de interés">
       <?php foreach ($provincias as $pv): ?>
+      <?php $pslug = lug_to_slug($pv['province']); ?>
       <li>
-        <a href="/lugares-de-interes?provincia=<?= urlencode($pv['slug']) ?>"
+        <a href="/lugares/<?= htmlspecialchars($pslug) ?>"
            class="lug-prov"
-           title="Lugares de interés en <?= htmlspecialchars($pv['label']) ?>">
-          <span class="lug-prov__em" aria-hidden="true"><?= $pv['emoji'] ?></span>
-          <span class="lug-prov__nm"><?= htmlspecialchars($pv['label']) ?></span>
+           title="Lugares de interés en <?= htmlspecialchars($pv['province']) ?>">
+          <span class="lug-prov__em" aria-hidden="true"><?= lug_province_emoji($pv['province']) ?></span>
+          <span class="lug-prov__nm"><?= htmlspecialchars($pv['province']) ?></span>
+          <?php if (!empty($pv['total'])): ?>
+          <span class="lug-prov__count"><?= (int)$pv['total'] ?> lugares</span>
+          <?php endif; ?>
         </a>
       </li>
       <?php endforeach; ?>
