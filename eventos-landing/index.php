@@ -55,13 +55,13 @@ $parsed = parseEventosLandingSlug($slug);
 
 // Si el slug no es válido como landing de eventos, redirigir al listado
 if (!$parsed['valid'] && !empty($slug)) {
-    header('Location: https://rutasrurales.io/eventos-culturales-paginacion.html', true, 301);
+    header('Location: https://rutasrurales.io/eventos/', true, 301);
     exit;
 }
 
-// Si slug vacío → redirigir al listado
+// Si slug vacío → redirigir al hub canónico de eventos
 if (empty($slug)) {
-    header('Location: https://rutasrurales.io/eventos-culturales-paginacion.html', true, 301);
+    header('Location: https://rutasrurales.io/eventos/', true, 301);
     exit;
 }
 
@@ -463,10 +463,10 @@ a{color:var(--primary);text-decoration:none}
         <span>Rutas Rurales</span>
     </a>
     <nav class="lnd-navbar__nav" aria-label="Menú principal">
-        <a href="https://rutasrurales.io/eventos-culturales-paginacion.html">
+        <a href="https://rutasrurales.io/eventos/">
             <?= htmlspecialchars($t['footer_events']) ?>
         </a>
-        <a href="https://rutasrurales.io/alojamientos-turisticos">
+        <a href="https://rutasrurales.io/alojamientos/">
             <?= htmlspecialchars($t['footer_stays']) ?>
         </a>
         <a href="https://rutasrurales.io/rutas.php" class="lnd-navbar__cta">
@@ -546,9 +546,9 @@ a{color:var(--primary);text-decoration:none}
     <div class="lnd-footer__inner">
         <nav class="lnd-footer__links" aria-label="Links de pie de página">
             <a href="https://rutasrurales.io/"><?= htmlspecialchars($t['footer_home']) ?></a>
-            <a href="https://rutasrurales.io/eventos-culturales-paginacion.html"><?= htmlspecialchars($t['footer_events']) ?></a>
-            <a href="https://rutasrurales.io/alojamientos-turisticos"><?= htmlspecialchars($t['footer_stays']) ?></a>
-            <a href="https://rutasrurales.io/lugares-de-interes"><?= htmlspecialchars($t['footer_places']) ?></a>
+            <a href="https://rutasrurales.io/eventos/"><?= htmlspecialchars($t['footer_events']) ?></a>
+            <a href="https://rutasrurales.io/alojamientos/"><?= htmlspecialchars($t['footer_stays']) ?></a>
+            <a href="https://rutasrurales.io/lugares/"><?= htmlspecialchars($t['footer_places']) ?></a>
             <a href="https://rutasrurales.io/aviso-legal.html"><?= htmlspecialchars($t['footer_legal']) ?></a>
         </nav>
 

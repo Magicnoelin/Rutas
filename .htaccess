@@ -209,6 +209,17 @@ RewriteCond %{QUERY_STRING} ^id=(.+)$ [NC]
 RewriteRule ^(alojamiento|lugar-interes|actividad)\.html$ /api/external-id-redirect.php?type=$1&id=%1 [R=302,L]
 
 # ============================================================
+# 4b. REDIRECCIONES 301 — URLs genéricas antiguas de verticales
+#     → redirigen a las nuevas URLs hub canónicas
+# ============================================================
+# /alojamientos/turismo-rural → /alojamientos/ (hub canónico)
+RewriteRule ^alojamientos/turismo-rural/?$ /alojamientos/ [R=301,L]
+
+# /eventos-culturales-paginacion.html → /eventos/ (hub canónico)
+RewriteCond %{THE_REQUEST} \s/+eventos-culturales-paginacion\.html [NC]
+RewriteRule ^eventos-culturales-paginacion\.html$ /eventos/ [R=301,L]
+
+# ============================================================
 # 4c. LANDINGS SEO LONG-TAIL — Sistema dinámico por provincia/filtro
 # ============================================================
 # Patrón: /alojamientos/{filtro}-{provincia}  (mínimo 2 tokens)
@@ -314,24 +325,30 @@ RewriteRule ^evento/([^/]+)/?$ evento-detalle.php?slug=$1 [L,QSA]
 RewriteCond %{THE_REQUEST} \s/index\.html [NC]
 RewriteRule ^index\.html$ / [R=301,L]
 
+# alojamientos-turisticos.html → /alojamientos/ (hub canónico, sin pasos intermedios)
 RewriteCond %{THE_REQUEST} \s/+alojamientos-turisticos\.html [NC]
-RewriteRule ^alojamientos-turisticos\.html$ /alojamientos/turismo-rural [R=301,L,NE]
+RewriteRule ^alojamientos-turisticos\.html$ /alojamientos/ [R=301,L]
 
+# eventos-culturales.html → /eventos/ (hub canónico, sin pasos intermedios)
 RewriteCond %{THE_REQUEST} \s/+eventos-culturales\.html [NC]
-RewriteRule ^eventos-culturales\.html$ /eventos-culturales-paginacion.html [R=301,L]
+RewriteRule ^eventos-culturales\.html$ /eventos/ [R=301,L]
 
+# lugares-interes-paginacion.html → /lugares/ (hub canónico)
 RewriteCond %{THE_REQUEST} \s/+lugares-interes-paginacion\.html [NC]
-RewriteRule ^lugares-interes-paginacion\.html$ /lugares-de-interes [R=301,L]
+RewriteRule ^lugares-interes-paginacion\.html$ /lugares/ [R=301,L]
 
+# actividades-turisticas.html → /actividades/ (hub canónico)
 RewriteCond %{THE_REQUEST} \s/+actividades-turisticas\.html [NC]
-RewriteRule ^actividades-turisticas\.html$ /actividades-turisticas [R=301,L]
+RewriteRule ^actividades-turisticas\.html$ /actividades/ [R=301,L]
 
-# Redirigir /alojamientos-turisticos a la nueva URL canónica
-RewriteRule ^alojamientos-turisticos/?$ /alojamientos/turismo-rural [R=301,L]
-# /eventos-culturales redirige permanentemente a la versión canónica con paginación
-RewriteRule ^eventos-culturales/?$ /eventos-culturales-paginacion.html [R=301,L]
-RewriteRule ^lugares-de-interes/?$ lugares-interes-paginacion.html [L]
-RewriteRule ^actividades-turisticas/?$ actividades-turisticas.html [L]
+# /alojamientos-turisticos → /alojamientos/ (hub canónico)
+RewriteRule ^alojamientos-turisticos/?$ /alojamientos/ [R=301,L]
+# /eventos-culturales → /eventos/ (hub canónico)
+RewriteRule ^eventos-culturales/?$ /eventos/ [R=301,L]
+# /lugares-de-interes → /lugares/ (hub canónico)
+RewriteRule ^lugares-de-interes/?$ /lugares/ [R=301,L]
+# /actividades-turisticas → /actividades/ (hub canónico)
+RewriteRule ^actividades-turisticas/?$ /actividades/ [R=301,L]
 
 # ============================================================
 # 7. CATCH-ALL — ELIMINADO

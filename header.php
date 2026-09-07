@@ -440,19 +440,19 @@ if (!$_header_skip_head):
 
                 <div class="nav-menu" id="navMenu">
                     <ul class="nav-row">
-                        <li><a href="<?php echo $lang_prefix; ?>/alojamientos-turisticos.html">
+                        <li><a href="/alojamientos/">
                             <i class="fas fa-bed"></i>
                             <span><?php echo $t['accommodations']; ?></span>
                         </a></li>
-                        <li><a href="<?php echo $lang_prefix; ?>/lugares-interes-paginacion.html">
+                        <li><a href="/lugares/">
                             <i class="fas fa-map-marker-alt"></i>
                             <span><?php echo $t['places']; ?></span>
                         </a></li>
-                        <li><a href="<?php echo $lang_prefix; ?>/eventos-culturales-paginacion.html">
+                        <li><a href="/eventos/">
                             <i class="fas fa-calendar-alt"></i>
                             <span><?php echo $t['events']; ?></span>
                         </a></li>
-                        <li><a href="<?php echo $lang_prefix; ?>/actividades-turisticas.html">
+                        <li><a href="/actividades/">
                             <i class="fas fa-hiking"></i>
                             <span><?php echo $t['activities']; ?></span>
                         </a></li>

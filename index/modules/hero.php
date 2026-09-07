@@ -18,11 +18,11 @@ function renderHubHero(array $ctx): void {
     $base     = 'https://rutasrurales.io';
     $langPfx  = ($lang !== 'es') ? "/$lang" : '';
 
-    // URLs de las verticales con soporte multilingüe
-    $url_stays  = $base . $langPfx . '/alojamientos/turismo-rural';
-    $url_events = $base . $langPfx . '/eventos-culturales-paginacion.html';
-    $url_places = $base . '/lugares-de-interes'; // Solo ES por ahora
-    $url_activ  = $base . '/actividades-turisticas'; // Solo ES por ahora
+    // URLs de las verticales — hubs canónicos sin extensión ni sufijos
+    $url_stays  = $base . $langPfx . '/alojamientos/';
+    $url_events = $base . $langPfx . '/eventos/';
+    $url_places = $base . '/lugares/';    // Solo ES por ahora
+    $url_activ  = $base . '/actividades/'; // Solo ES por ahora
 
     // Estadísticas (fallback a valores ilustrativos si BD no disponible)
     $total_stays  = $stats['total_stays']  ?? '+500';
