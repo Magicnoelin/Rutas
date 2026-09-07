@@ -21,10 +21,85 @@ echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n";
 echo '      xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
 
 if ($type == 'estatico') {
-    // Aquí pones tus URLs fijas (index, contacto, etc.) y las multiidioma
-    $paginas = ['/', '/alojamientos-turisticos.html', '/eventos-culturales-paginacion.html', '/rutas-turisticas.html'];
-    foreach ($paginas as $p) {
-        echo "<url><loc>$baseUrl$p</loc><priority>1.0</priority><changefreq>daily</changefreq></url>\n";
+    // ── URLs hub canónicas (máxima prioridad — landing principal de cada vertical) ──
+    // Formato extendido con hreflang para las verticales multilingüe (alo + eventos).
+    // Lugares y Actividades son solo ES de momento; se ampliarán en futuras fases.
+
+    $today = date('Y-m-d');
+
+    // 1. Homepage
+    echo "  <url>\n";
+    echo "    <loc>{$baseUrl}/</loc>\n";
+    echo "    <lastmod>{$today}</lastmod>\n";
+    echo "    <changefreq>daily</changefreq>\n";
+    echo "    <priority>1.0</priority>\n";
+    $idiomas = ['es', 'en', 'fr', 'de', 'zh'];
+    foreach ($idiomas as $hl) {
+        $href = $baseUrl . ($hl === 'es' ? '/' : "/$hl/");
+        echo "    <xhtml:link rel=\"alternate\" hreflang=\"{$hl}\" href=\"{$href}\" />\n";
+    }
+    echo "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/\" />\n";
+    echo "  </url>\n";
+
+    // 2. Hub Alojamientos — 5 idiomas
+    echo "  <url>\n";
+    echo "    <loc>{$baseUrl}/alojamientos/</loc>\n";
+    echo "    <lastmod>{$today}</lastmod>\n";
+    echo "    <changefreq>daily</changefreq>\n";
+    echo "    <priority>1.0</priority>\n";
+    foreach ($idiomas as $hl) {
+        $href = $baseUrl . ($hl === 'es' ? '/alojamientos/' : "/$hl/alojamientos/");
+        echo "    <xhtml:link rel=\"alternate\" hreflang=\"{$hl}\" href=\"{$href}\" />\n";
+    }
+    echo "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/alojamientos/\" />\n";
+    echo "  </url>\n";
+
+    // 3. Hub Eventos — 5 idiomas
+    echo "  <url>\n";
+    echo "    <loc>{$baseUrl}/eventos/</loc>\n";
+    echo "    <lastmod>{$today}</lastmod>\n";
+    echo "    <changefreq>daily</changefreq>\n";
+    echo "    <priority>1.0</priority>\n";
+    foreach ($idiomas as $hl) {
+        $href = $baseUrl . ($hl === 'es' ? '/eventos/' : "/$hl/eventos/");
+        echo "    <xhtml:link rel=\"alternate\" hreflang=\"{$hl}\" href=\"{$href}\" />\n";
+    }
+    echo "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/eventos/\" />\n";
+    echo "  </url>\n";
+
+    // 4. Hub Lugares — solo ES (por ahora)
+    echo "  <url>\n";
+    echo "    <loc>{$baseUrl}/lugares/</loc>\n";
+    echo "    <lastmod>{$today}</lastmod>\n";
+    echo "    <changefreq>weekly</changefreq>\n";
+    echo "    <priority>0.9</priority>\n";
+    echo "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"{$baseUrl}/lugares/\" />\n";
+    echo "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/lugares/\" />\n";
+    echo "  </url>\n";
+
+    // 5. Hub Actividades — solo ES (por ahora)
+    echo "  <url>\n";
+    echo "    <loc>{$baseUrl}/actividades/</loc>\n";
+    echo "    <lastmod>{$today}</lastmod>\n";
+    echo "    <changefreq>weekly</changefreq>\n";
+    echo "    <priority>0.9</priority>\n";
+    echo "    <xhtml:link rel=\"alternate\" hreflang=\"es\" href=\"{$baseUrl}/actividades/\" />\n";
+    echo "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$baseUrl}/actividades/\" />\n";
+    echo "  </url>\n";
+
+    // 6. Páginas estáticas secundarias (aviso legal, rutas, etc.)
+    $secundarias = [
+        ['url' => '/rutas-turisticas.html', 'pri' => '0.7', 'freq' => 'weekly'],
+        ['url' => '/aviso-legal.html',      'pri' => '0.3', 'freq' => 'yearly'],
+        ['url' => '/apoyar.php',            'pri' => '0.5', 'freq' => 'monthly'],
+    ];
+    foreach ($secundarias as $s) {
+        echo "  <url>\n";
+        echo "    <loc>{$baseUrl}{$s['url']}</loc>\n";
+        echo "    <lastmod>{$today}</lastmod>\n";
+        echo "    <changefreq>{$s['freq']}</changefreq>\n";
+        echo "    <priority>{$s['pri']}</priority>\n";
+        echo "  </url>\n";
     }
 } else {
     // Mapeo de tipos a tablas y prefijos de URL

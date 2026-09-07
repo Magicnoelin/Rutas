@@ -1,11 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://rutasrurales.io/</loc><lastmod>2026-04-16</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>
-  <url><loc>https://rutasrurales.io/alojamientos-turisticos.html</loc><lastmod>2026-04-16</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>
-  <url><loc>https://rutasrurales.io/eventos-culturales.html</loc><lastmod>2026-04-16</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>
-  <url><loc>https://rutasrurales.io/rutas-turisticas.html</loc><lastmod>2026-04-16</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>
-  <url><loc>https://rutasrurales.io/en/index.html</loc><lastmod>2026-04-16</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>
-  <url><loc>https://rutasrurales.io/fr/index.html</loc><lastmod>2026-04-16</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>
-  <url><loc>https://rutasrurales.io/zh/index.html</loc><lastmod>2026-04-16</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>
-  <url><loc>https://rutasrurales.io/de/index.html</loc><lastmod>2026-04-16</lastmod><priority>1.0</priority><changefreq>daily</changefreq></url>
+<!--
+  sitemap-estatico.xml — Páginas hub y estáticas de rutasrurales.io
+  Actualizado: 2026-07-09
+  Incluye hreflang para verticales multilingüe (Alojamientos y Eventos).
+  Lugares y Actividades: solo ES en esta fase.
+  URLs antiguas (.html) eliminadas; redirigen 301 a las nuevas hubs.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- ══════════ HOMEPAGE ══════════ -->
+  <url>
+    <loc>https://rutasrurales.io/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="es"        href="https://rutasrurales.io/" />
+    <xhtml:link rel="alternate" hreflang="en"        href="https://rutasrurales.io/en/" />
+    <xhtml:link rel="alternate" hreflang="fr"        href="https://rutasrurales.io/fr/" />
+    <xhtml:link rel="alternate" hreflang="de"        href="https://rutasrurales.io/de/" />
+    <xhtml:link rel="alternate" hreflang="zh"        href="https://rutasrurales.io/zh/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/" />
+  </url>
+
+  <!-- ══════════ HUB ALOJAMIENTOS ══════════ -->
+  <url>
+    <loc>https://rutasrurales.io/alojamientos/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="es"        href="https://rutasrurales.io/alojamientos/" />
+    <xhtml:link rel="alternate" hreflang="en"        href="https://rutasrurales.io/en/alojamientos/" />
+    <xhtml:link rel="alternate" hreflang="fr"        href="https://rutasrurales.io/fr/alojamientos/" />
+    <xhtml:link rel="alternate" hreflang="de"        href="https://rutasrurales.io/de/alojamientos/" />
+    <xhtml:link rel="alternate" hreflang="zh"        href="https://rutasrurales.io/zh/alojamientos/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/alojamientos/" />
+  </url>
+
+  <!-- ══════════ HUB EVENTOS ══════════ -->
+  <url>
+    <loc>https://rutasrurales.io/eventos/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="es"        href="https://rutasrurales.io/eventos/" />
+    <xhtml:link rel="alternate" hreflang="en"        href="https://rutasrurales.io/en/eventos/" />
+    <xhtml:link rel="alternate" hreflang="fr"        href="https://rutasrurales.io/fr/eventos/" />
+    <xhtml:link rel="alternate" hreflang="de"        href="https://rutasrurales.io/de/eventos/" />
+    <xhtml:link rel="alternate" hreflang="zh"        href="https://rutasrurales.io/zh/eventos/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/eventos/" />
+  </url>
+
+  <!-- ══════════ HUB LUGARES (solo ES) ══════════ -->
+  <url>
+    <loc>https://rutasrurales.io/lugares/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="es"        href="https://rutasrurales.io/lugares/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/lugares/" />
+  </url>
+
+  <!-- ══════════ HUB ACTIVIDADES (solo ES) ══════════ -->
+  <url>
+    <loc>https://rutasrurales.io/actividades/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="es"        href="https://rutasrurales.io/actividades/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/actividades/" />
+  </url>
+
+  <!-- ══════════ PÁGINAS MULTILINGÜE (Homepages idioma) ══════════ -->
+  <url>
+    <loc>https://rutasrurales.io/en/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/fr/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/de/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/zh/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ══════════ PÁGINAS SECUNDARIAS ══════════ -->
+  <url>
+    <loc>https://rutasrurales.io/rutas-turisticas.html</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/apoyar.php</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://rutasrurales.io/aviso-legal.html</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>
