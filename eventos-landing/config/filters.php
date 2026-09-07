@@ -166,6 +166,154 @@ const EVENTOS_PROVINCIAS = [
             'zh' => '加利西亚最狂野狂欢节和可与欧洲最佳媲美的国际电影节所在省份，尽在垂直葡萄园和温泉之间',
         ],
     ],
+
+    // ── Galicia ───────────────────────────────────────────────────────────────
+    'coruña' => [
+        'label' => 'A Coruña', 'db' => 'A Coruña',
+        'lat' => 43.362, 'lng' => -8.412,
+        'attractions' => ['Torre de Hércules', 'Festival de Jazz de A Coruña', 'Carnaval de Galicia', 'Rías Altas'],
+        'vibe' => [
+            'es' => 'ciudad atlántica con una agenda cultural vibrante, desde el Festival de Jazz hasta el Carnaval más colorido de Galicia, siempre al ritmo del océano',
+            'en' => 'an Atlantic city with a vibrant cultural calendar, from the Jazz Festival to Galicia\'s most colourful Carnival, always to the rhythm of the ocean',
+            'fr' => 'une ville atlantique avec un calendrier culturel vibrant, du Festival de Jazz au Carnaval le plus coloré de Galice, toujours au rythme de l\'océan',
+            'de' => 'eine atlantische Stadt mit einem lebhaften Kulturkalender, vom Jazzfestival bis zum farbenfrohen Karneval Galiziens, immer im Rhythmus des Ozeans',
+            'zh' => '大西洋城市，文化日历丰富多彩，从爵士音乐节到加利西亚最多彩的狂欢节，始终随海洋的节奏律动',
+        ],
+    ],
+    'lugo' => [
+        'label' => 'Lugo', 'db' => 'Lugo',
+        'lat' => 43.012, 'lng' => -7.555,
+        'attractions' => ['Muralla Romana de Lugo', 'Arde Lucus (Festival Romano)', 'Semana Santa de Lugo', 'Ribeira Sacra'],
+        'vibe' => [
+            'es' => 'guardiana de la única muralla romana intacta del mundo, que cada verano se convierte en escenario del Arde Lucus, uno de los festivales de historia viva más espectaculares de Europa',
+            'en' => 'guardian of the world\'s only intact Roman wall, which every summer becomes the stage for Arde Lucus, one of Europe\'s most spectacular living history festivals',
+            'fr' => 'gardienne du seul mur romain intact au monde, qui chaque été devient le décor d\'Arde Lucus, l\'un des festivals d\'histoire vivante les plus spectaculaires d\'Europe',
+            'de' => 'Hüterin der einzigen intakten Römmauer der Welt, die jeden Sommer zur Bühne des Arde Lucus wird, eines der spektakulärsten Living-History-Festivals Europas',
+            'zh' => '世界上唯一完整罗马城墙的守护者，每年夏天成为Arde Lucus的舞台，欧洲最壮观的活历史节之一',
+        ],
+    ],
+    'pontevedra' => [
+        'label' => 'Pontevedra', 'db' => 'Pontevedra',
+        'lat' => 42.434, 'lng' => -8.645,
+        'attractions' => ['Festival de Jazz de Vigo', 'Festas da Peregrina', 'Rías Baixas', 'Islas Cíes'],
+        'vibe' => [
+            'es' => 'puerta de las Rías Baixas y de las Islas Cíes, con festivales de jazz en Vigo y una cultura marinera que se celebra en cada feria y romería de la comarca',
+            'en' => 'gateway to the Rías Baixas and the Cíes Islands, with jazz festivals in Vigo and a maritime culture celebrated in every fair and pilgrimage of the region',
+            'fr' => 'porte des Rías Baixas et des îles Cíes, avec des festivals de jazz à Vigo et une culture maritime célébrée dans chaque foire et pèlerinage de la région',
+            'de' => 'Tor zu den Rías Baixas und den Cíes-Inseln, mit Jazzfestivals in Vigo und einer Meereskultur, die in jeder Messe und Wallfahrt der Region gefeiert wird',
+            'zh' => '里亚斯巴希亚斯和西耶斯群岛的门户，维戈爵士音乐节和在每个集市和朝圣活动中庆祝的海洋文化',
+        ],
+    ],
+
+    // ── Asturias ──────────────────────────────────────────────────────────────
+    'asturias' => [
+        'label' => 'Asturias', 'db' => 'Asturias',
+        'lat' => 43.361, 'lng' => -5.849,
+        'attractions' => ['Festival Internacional de Gijón', 'Semana Negra de Gijón', 'Descenso del Sella', 'Festival Asturias Paraíso Natural'],
+        'vibe' => [
+            'es' => 'el paraíso natural de España con una agenda cultural que va del Descenso del Sella a la Semana Negra de Gijón, siempre con la sidra y la gastronomía asturiana como protagonistas',
+            'en' => 'Spain\'s natural paradise with a cultural programme ranging from the Sella Descent to the Gijón Black Week, always with Asturian cider and gastronomy as the stars',
+            'fr' => 'le paradis naturel d\'Espagne avec une programmation culturelle allant de la Descente du Sella à la Semaine Noire de Gijón, toujours avec le cidre et la gastronomie asturienne à l\'honneur',
+            'de' => 'Spaniens Naturparadies mit einem Kulturprogramm, das vom Sella-Abstieg bis zur Schwarzen Woche in Gijón reicht, immer mit asturischem Cidre und Gastronomie als Hauptdarsteller',
+            'zh' => '西班牙的自然天堂，文化日程从塞拉河漂流到希洪黑色周，阿斯图里亚斯苹果酒和美食始终是主角',
+        ],
+    ],
+
+    // ── Cantabria ─────────────────────────────────────────────────────────────
+    'cantabria' => [
+        'label' => 'Cantabria', 'db' => 'Cantabria',
+        'lat' => 43.462, 'lng' => -3.810,
+        'attractions' => ['Festival Internacional de Santander', 'Semana Grande de Santander', 'Altamira', 'Picos de Europa'],
+        'vibe' => [
+            'es' => 'tierra de cuevas prehistóricas y festivales internacionales, donde el Festival de Santander lleva décadas reuniendo a los mejores artistas del mundo frente al Cantábrico',
+            'en' => 'a land of prehistoric caves and international festivals, where the Santander Festival has spent decades bringing together the world\'s best artists before the Cantabrian Sea',
+            'fr' => 'une terre de grottes préhistoriques et de festivals internationaux, où le Festival de Santander réunit depuis des décennies les meilleurs artistes du monde face à la mer Cantabrique',
+            'de' => 'ein Land prähistorischer Höhlen und internationaler Festivals, wo das Santander Festival seit Jahrzehnten die besten Künstler der Welt vor dem Kantabrischen Meer versammelt',
+            'zh' => '史前洞穴与国际音乐节之地，桑坦德音乐节数十年来在坎塔布里亚海前汇聚世界顶尖艺术家',
+        ],
+    ],
+
+    // ── Cataluña ──────────────────────────────────────────────────────────────
+    'barcelona' => [
+        'label' => 'Barcelona', 'db' => 'Barcelona',
+        'lat' => 41.385, 'lng' => 2.173,
+        'attractions' => ['Festival Primavera Sound', 'Mercè (Fiesta Mayor)', 'Festival de Grec', 'Sónar'],
+        'vibe' => [
+            'es' => 'capital cultural del Mediterráneo con una agenda de festivales que no descansa: Primavera Sound, Sónar, el Festival de Grec y la Mercè hacen de Barcelona una fiesta permanente',
+            'en' => 'cultural capital of the Mediterranean with a festival programme that never rests: Primavera Sound, Sónar, the Grec Festival and La Mercè make Barcelona a permanent celebration',
+            'fr' => 'capitale culturelle de la Méditerranée avec une programmation de festivals ininterrompue : Primavera Sound, Sónar, le Festival de Grec et la Mercè font de Barcelone une fête permanente',
+            'de' => 'Kulturhauptstadt des Mittelmeers mit einem Festivalprogramm, das nie ruht: Primavera Sound, Sónar, das Grec Festival und die Mercè machen Barcelona zu einem dauerhaften Fest',
+            'zh' => '地中海文化之都，节日日程从不停歇：Primavera Sound、Sónar、Grec音乐节和Mercè让巴塞罗那成为永恒的庆典',
+        ],
+    ],
+
+    // ── Andalucía ─────────────────────────────────────────────────────────────
+    'cordoba' => [
+        'label' => 'Córdoba', 'db' => 'Córdoba',
+        'lat' => 37.891, 'lng' => -4.779,
+        'attractions' => ['Festival de la Guitarra', 'Fiesta de los Patios', 'Noche Blanca del Flamenco', 'Semana Santa de Córdoba'],
+        'vibe' => [
+            'es' => 'ciudad de los patios floridos y del flamenco más puro, con la Fiesta de los Patios declarada Patrimonio Inmaterial de la Humanidad y un Festival de la Guitarra de fama mundial',
+            'en' => 'city of flowery courtyards and purest flamenco, with the Patio Festival declared Intangible Cultural Heritage of Humanity and a world-famous Guitar Festival',
+            'fr' => 'ville des cours fleuries et du flamenco le plus pur, avec la Fête des Patios déclarée Patrimoine Immatériel de l\'Humanité et un Festival de la Guitare de renommée mondiale',
+            'de' => 'Stadt der Blumenhöfe und des reinsten Flamencos, mit dem Patio-Fest, das zum immateriellen Kulturerbe der Menschheit erklärt wurde, und einem weltbekannten Gitarrenfestival',
+            'zh' => '花园城市与最纯正弗拉明戈之都，庭院节被列为人类非物质文化遗产，吉他音乐节享誉世界',
+        ],
+    ],
+    'granada' => [
+        'label' => 'Granada', 'db' => 'Granada',
+        'lat' => 37.177, 'lng' => -3.598,
+        'attractions' => ['Festival Internacional de Música y Danza', 'Festival de Jazz de Granada', 'La Alhambra', 'Festival de Flamenco Íntimo'],
+        'vibe' => [
+            'es' => 'ciudad de la Alhambra y del Festival Internacional de Música y Danza, uno de los festivales al aire libre más prestigiosos de Europa celebrado entre palacios nazaríes y jardines moriscos',
+            'en' => 'city of the Alhambra and the International Music and Dance Festival, one of Europe\'s most prestigious open-air festivals held among Nasrid palaces and Moorish gardens',
+            'fr' => 'ville de l\'Alhambra et du Festival International de Musique et de Danse, l\'un des festivals en plein air les plus prestigieux d\'Europe, organisé parmi les palais nasrides et les jardins mauresques',
+            'de' => 'Stadt der Alhambra und des Internationalen Musik- und Tanzfestivals, eines der renommiertesten Open-Air-Festivals Europas, das zwischen nasridischen Palästen und maurischen Gärten stattfindet',
+            'zh' => '阿尔罕布拉宫之城与国际音乐舞蹈节，欧洲最负盛名的露天音乐节之一，在纳斯里德宫殿与摩尔式花园间举行',
+        ],
+    ],
+
+    // ── Castilla-La Mancha ────────────────────────────────────────────────────
+    'toledo' => [
+        'label' => 'Toledo', 'db' => 'Toledo',
+        'lat' => 39.860, 'lng' => -4.022,
+        'attractions' => ['Festival de las Tres Culturas', 'Semana Santa de Toledo', 'Corpus Christi de Toledo', 'El Greco'],
+        'vibe' => [
+            'es' => 'ciudad de las Tres Culturas y Patrimonio de la Humanidad, con el Corpus Christi más espectacular de España y festivales que celebran siglos de convivencia entre culturas',
+            'en' => 'city of Three Cultures and World Heritage Site, with Spain\'s most spectacular Corpus Christi and festivals celebrating centuries of coexistence between cultures',
+            'fr' => 'ville des Trois Cultures et Patrimoine Mondial, avec le Corpus Christi le plus spectaculaire d\'Espagne et des festivals célébrant des siècles de coexistence entre les cultures',
+            'de' => 'Stadt der Drei Kulturen und Weltkulturerbe, mit dem spektakulärsten Fronleichnam Spaniens und Festivals, die Jahrhunderte der Koexistenz zwischen Kulturen feiern',
+            'zh' => '三种文化之城与世界文化遗产，西班牙最壮观的基督圣体节，节日庆祝几个世纪的文化共存',
+        ],
+    ],
+
+    // ── Comunidad Valenciana ──────────────────────────────────────────────────
+    'valencia' => [
+        'label' => 'Valencia', 'db' => 'Valencia',
+        'lat' => 39.470, 'lng' => -0.376,
+        'attractions' => ['Fallas de Valencia', 'Festival Internacional de Cinema', 'La Tomatina', 'Festival del Mediterráneo'],
+        'vibe' => [
+            'es' => 'tierra de las Fallas —declaradas Patrimonio Inmaterial de la Humanidad— y de la paella, con una agenda festiva que mezcla fuego, música y la alegría mediterránea más genuina',
+            'en' => 'land of the Fallas — declared Intangible Cultural Heritage — and paella, with a festive calendar mixing fire, music and the most genuine Mediterranean joy',
+            'fr' => 'terre des Fallas — déclarées Patrimoine Immatériel — et de la paella, avec un calendrier festif mêlant feu, musique et la joie méditerranéenne la plus authentique',
+            'de' => 'Land der Fallas — die zum immateriellen Kulturerbe erklärt wurden — und der Paella, mit einem Festkalender, der Feuer, Musik und die echteste mediterrane Lebensfreude vereint',
+            'zh' => '法雅节——人类非物质文化遗产——与海鲜饭之乡，节日日程融合火焰、音乐与最纯正的地中海喜悦',
+        ],
+    ],
+
+    // ── Navarra ───────────────────────────────────────────────────────────────
+    'navarra' => [
+        'label' => 'Navarra', 'db' => 'Navarra',
+        'lat' => 42.812, 'lng' => -1.645,
+        'attractions' => ['San Fermín (Encierros de Pamplona)', 'Festival de Jotas', 'Semana Medieval de Olite', 'Bardenas Reales'],
+        'vibe' => [
+            'es' => 'tierra de los Sanfermines —la fiesta más famosa de España— y del Camino de Santiago, donde la cultura navarra se expresa con una intensidad y autenticidad únicas en el mundo',
+            'en' => 'land of the San Fermín festival — Spain\'s most famous celebration — and the Camino de Santiago, where Navarrese culture expresses itself with a unique intensity and authenticity',
+            'fr' => 'terre de la San Fermín — la fête la plus célèbre d\'Espagne — et du Chemin de Saint-Jacques, où la culture navarraise s\'exprime avec une intensité et une authenticité uniques au monde',
+            'de' => 'Land des San Fermín — Spaniens berühmtestem Fest — und des Jakobswegs, wo die navarre\'sche Kultur sich mit einer einzigartigen Intensität und Authentizität ausdrückt',
+            'zh' => '圣费尔明节——西班牙最著名的节日——与圣地亚哥朝圣之路所在地，纳瓦拉文化以世界独一无二的热情与真实性表达自我',
+        ],
+    ],
 ];
 
 // ─── FILTROS DE EVENTOS ───────────────────────────────────────────────────────
