@@ -45,6 +45,7 @@ $bc_label    = '';
 
 // ── Conectar BD y detectar modo ───────────────────────────────────────────────
 try {
+    if (!defined('API_NO_HEADERS')) define('API_NO_HEADERS', true);
     require_once dirname(__DIR__) . '/api/config.php';
     $pdo = getDBConnection();
 

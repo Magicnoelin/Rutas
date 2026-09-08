@@ -66,6 +66,9 @@ $provincias = [];
 $total_places = '';
 
 try {
+    // API_NO_HEADERS evita que api/config.php envíe Content-Type: application/json
+    // (esta es una página HTML, no una respuesta de API)
+    if (!defined('API_NO_HEADERS')) define('API_NO_HEADERS', true);
     require_once dirname(__DIR__) . '/api/config.php';
     $pdo = getDBConnection();
 

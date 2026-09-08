@@ -187,7 +187,7 @@ RewriteRule ^eventos-([a-z][a-z0-9\-]*)/?$ /eventos/$1 [R=301,L]
 # EXCLUSIONES: páginas estáticas reales en la raíz con URL limpia (sin .html)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/(alojamiento|alojamientos|lugar|lugares-interes|lugares-de-interes|evento|eventos|eventos-culturales|actividad|actividades|actividades-turisticas|alojamientos-turisticos|rutas|rutas-listas-para-disfrutar|rutas-tematicas|nuevo-alojamiento|api|admin_tablas|dashboard|en|fr|de|zh|es|css|fonts|js|menu_images|accommodations_images|cultural_events_images|Alojamientos_Images|alojamiento-modular|lugar-modular|evento-modular|alojamientos-landing|eventos-landing|dev|docs|ayuntamientos|dashboard)(/|$) [NC]
+RewriteCond %{REQUEST_URI} !^/(alojamiento|alojamientos|lugar|lugares|lugares-interes|lugares-de-interes|lugares-landing|evento|eventos|eventos-culturales|actividad|actividades|actividades-turisticas|alojamientos-turisticos|rutas|rutas-listas-para-disfrutar|rutas-tematicas|nuevo-alojamiento|api|admin_tablas|dashboard|en|fr|de|zh|es|css|fonts|js|menu_images|accommodations_images|cultural_events_images|Alojamientos_Images|alojamiento-modular|lugar-modular|evento-modular|alojamientos-landing|eventos-landing|dev|docs|ayuntamientos|dashboard)(/|$) [NC]
 RewriteCond %{REQUEST_URI} !\.(css|js|php|html|xml|txt|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|webp|mp4|pdf)$ [NC]
 RewriteRule ^([a-z][a-z0-9\-]+)/?$ /lugar/$1 [R=301,L]
 
