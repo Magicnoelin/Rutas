@@ -75,6 +75,12 @@ function obtenerEmojiLugar(string $icono): string {
         'home-city'            => '🏡',
         'monastery'            => '🛕',
         'fas fa-hammer'        => '🔨',
+        'bodega', 'bodegas'    => '🍾',
+        'parque', 'parques'    => '🎢',
+        'restauracion'         => '🍽️',
+        '🎢'                  => '🎢',
+        '🍾'                  => '🍾',
+        '🍽️'                  => '🍽️',
         default                => '📍',
     };
 }
@@ -95,14 +101,13 @@ try {
     $r = $pdo->query("SELECT COUNT(*) AS c FROM places_of_interest WHERE is_active=1")->fetch(PDO::FETCH_ASSOC);
     if (!empty($r['c'])) $total_places = '+' . number_format((int)$r['c'], 0, ',', '.');
 
-    // Categorías con al menos 1 lugar activo
+    // Todas las categorías activas (incluyendo las con 0 lugares)
     $stypes = $pdo->query("
         SELECT c.id, c.name, c.slug, c.icon, c.description, COUNT(p.id) AS total
         FROM categories_places c
-        INNER JOIN places_of_interest p ON p.category_id = c.id AND p.is_active = 1
+        LEFT JOIN places_of_interest p ON p.category_id = c.id AND p.is_active = 1
         WHERE c.is_active = 1
         GROUP BY c.id, c.name, c.slug, c.icon, c.description
-        HAVING total > 0
         ORDER BY c.display_order ASC, c.name ASC
     ");
     $tipos = $stypes->fetchAll(PDO::FETCH_ASSOC);
@@ -123,14 +128,17 @@ try {
 // ── Fallback estático si la BD no responde ───────────────────────────────────
 if (empty($tipos)) {
     $tipos = [
-        ['name'=>'Patrimonio histórico','slug'=>'patrimonio',  'icon'=>'🏛️','description'=>'Castillos, iglesias y monumentos','total'=>0],
-        ['name'=>'Naturaleza',          'slug'=>'naturaleza',  'icon'=>'🌿','description'=>'Parques, reservas y paisajes',    'total'=>0],
-        ['name'=>'Gastronomía',         'slug'=>'gastronomia', 'icon'=>'🍷','description'=>'Restaurantes y productos locales','total'=>0],
-        ['name'=>'Bodegas y vinos',     'slug'=>'bodegas',     'icon'=>'🍾','description'=>'Enoturismo y catas',              'total'=>0],
-        ['name'=>'Rutas y senderos',    'slug'=>'rutas',       'icon'=>'🥾','description'=>'Caminos y travesías',             'total'=>0],
-        ['name'=>'Museos y arte',       'slug'=>'museos',      'icon'=>'🎨','description'=>'Arte, cultura e historia',        'total'=>0],
-        ['name'=>'Miradores',           'slug'=>'miradores',   'icon'=>'🔭','description'=>'Vistas panorámicas',             'total'=>0],
-        ['name'=>'Mercados locales',    'slug'=>'mercados',    'icon'=>'🛖','description'=>'Artesanía y productos km0',      'total'=>0],
+        ['name'=>'Patrimonio histórico','slug'=>'patrimonio',    'icon'=>'🏛️','description'=>'Castillos, iglesias y monumentos','total'=>0],
+        ['name'=>'Naturaleza',          'slug'=>'naturaleza',    'icon'=>'🌿','description'=>'Parques, reservas y paisajes',    'total'=>0],
+        ['name'=>'Gastronomía',         'slug'=>'gastronomia',   'icon'=>'🍷','description'=>'Restaurantes y productos locales','total'=>0],
+        ['name'=>'Bodegas y vinos',     'slug'=>'bodegas',       'icon'=>'🍾','description'=>'Enoturismo y catas',              'total'=>0],
+        ['name'=>'Rutas y senderos',    'slug'=>'rutas',         'icon'=>'🥾','description'=>'Caminos y travesías',             'total'=>0],
+        ['name'=>'Museos y arte',       'slug'=>'museos',        'icon'=>'🎨','description'=>'Arte, cultura e historia',        'total'=>0],
+        ['name'=>'Miradores',           'slug'=>'miradores',     'icon'=>'🔭','description'=>'Vistas panorámicas',             'total'=>0],
+        ['name'=>'Mercados locales',    'slug'=>'mercados',      'icon'=>'🛖','description'=>'Artesanía y productos km0',      'total'=>0],
+        ['name'=>'Bodegas',             'slug'=>'bodegas-cat',   'icon'=>'🍾','description'=>'Categoría dedicada a las bodegas','total'=>14],
+        ['name'=>'Parques Temáticos',   'slug'=>'parques-tematicos','icon'=>'🎢','description'=>'Categoría dedicada a parques de atracciones y temáticos','total'=>1],
+        ['name'=>'Restauración',        'slug'=>'restauracion',  'icon'=>'🍽️','description'=>'Categoría de restauración',       'total'=>0],
     ];
 }
 if (empty($provincias)) {

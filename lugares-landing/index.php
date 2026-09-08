@@ -30,6 +30,35 @@ function ll_to_slug(string $text): string {
     return trim($text, '-');
 }
 
+// ── Helper: convierte identificador de icono a emoji ─────────────────────────
+function obtenerEmojiLugar(string $icono): string {
+    return match (strtolower(trim($icono))) {
+        'fort', 'castle-turret' => '🏰',
+        'city'                 => '🏙️',
+        'binoculars'           => '🔭',
+        'castle', 'landmark'   => '🏛️',
+        'museum'               => '🏛️',
+        'church', 'chapel'     => '⛪',
+        'tree', 'forest'       => '🌲',
+        'park'                 => '🏞️',
+        'water'                => '🌊',
+        'home-city'            => '🏡',
+        'monastery'            => '🛕',
+        'fas fa-hammer'        => '🔨',
+        'fas fa-glass-wine'    => '🍾',
+        'fas fa-concierge-bell' => '🍽️',
+        'fas fa-ticket-alt'    => '🎢',
+        'bodega', 'bodegas'    => '🍾',
+        'parque', 'parques'    => '🎢',
+        'restauracion'         => '🍽️',
+        '🎢'                  => '🎢',
+        '🍾'                  => '🍾',
+        '🍽️'                  => '🍽️',
+        'Bodeags'              => '🍾',  // Fix para el slug con error tipográfico
+        default                => '📍',
+    };
+}
+
 // ── Variables de página ───────────────────────────────────────────────────────
 $base_domain = 'https://rutasrurales.io';
 $canonical   = $base_domain . '/lugares/' . $slug . '/';
@@ -60,7 +89,7 @@ try {
     if ($cat) {
         $mode         = 'categoria';
         $category     = $cat;
-        $cat_icon     = !empty($cat['icon']) ? $cat['icon'] : '📍';
+        $cat_icon     = !empty($cat['icon']) ? obtenerEmojiLugar($cat['icon']) : '📍';
         $bc_label     = $cat['name'];
         $page_h1      = $cat['name'] . ' en España';
         $meta_title   = $cat['name'] . ' en España | Rutas Rurales';
@@ -435,7 +464,7 @@ ul,ol{list-style:none;margin:0;padding:0}
 
             <?php if ($mode === 'provincia' && !empty($place['category_name'])): ?>
             <span class="lnd-card__type-badge">
-              <?= !empty($place['category_icon']) ? htmlspecialchars($place['category_icon']) . ' ' : '' ?><?= htmlspecialchars($place['category_name']) ?>
+              <?= !empty($place['category_icon']) ? obtenerEmojiLugar($place['category_icon']) . ' ' : '' ?><?= htmlspecialchars($place['category_name']) ?>
             </span>
             <?php endif; ?>
 
