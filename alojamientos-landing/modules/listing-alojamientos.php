@@ -61,7 +61,47 @@ function renderAlojamientosLandingListing(array $ctx): void
             $alojUrl   = htmlspecialchars($aloj['url'] ?? '#');
             $name      = htmlspecialchars($aloj['name'] ?? $aloj['titulo'] ?? '');
             $munic     = htmlspecialchars($aloj['municipality'] ?? $aloj['municipio'] ?? '');
+            $province  = htmlspecialchars($aloj['province'] ?? '');
             $precio    = $aloj['precio_display'] ?? $aloj['precio_min'] ?? null;
+            
+            // Obtener la etiqueta de la provincia para mostrar (municipio + provincia)
+            $provinceLabel = '';
+            if (!empty($munic) && !empty($province)) {
+                // Mapear código de provincia a nombre legible
+                $provinceMap = [
+                    'Albacete' => 'Albacete', 'Alicante' => 'Alicante', 'Almería' => 'Almería',
+                    'Álava' => 'Álava', 'Asturias' => 'Asturias', 'Ávila' => 'Ávila',
+                    'Badajoz' => 'Badajoz', 'Barcelona' => 'Barcelona', 'Burgos' => 'Burgos',
+                    'Cáceres' => 'Cáceres', 'Cádiz' => 'Cádiz', 'Cantabria' => 'Cantabria',
+                    'Castellón' => 'Castellón', 'Ciudad Real' => 'Ciudad Real', 'Córdoba' => 'Córdoba',
+                    'Cuenca' => 'Cuenca', 'Gerona' => 'Gerona', 'Granada' => 'Granada',
+                    'Guadalajara' => 'Guadalajara', 'Guipúzcoa' => 'Guipúzcoa', 'Huelva' => 'Huelva',
+                    'Huesca' => 'Huesca', 'Islas Baleares' => 'Islas Baleares', 'Jaén' => 'Jaén',
+                    'La Coruña' => 'La Coruña', 'La Rioja' => 'La Rioja', 'Las Palmas' => 'Las Palmas',
+                    'León' => 'León', 'Lérida' => 'Lérida', 'Lugo' => 'Lugo', 'Madrid' => 'Madrid',
+                    'Málaga' => 'Málaga', 'Murcia' => 'Murcia', 'Navarra' => 'Navarra',
+                    'Orense' => 'Orense', 'Palencia' => 'Palencia', 'Pontevedra' => 'Pontevedra',
+                    'Salamanca' => 'Salamanca', 'Santa Cruz de Tenerife' => 'Santa Cruz de Tenerife',
+                    'Segovia' => 'Segovia', 'Sevilla' => 'Sevilla', 'Soria' => 'Soria',
+                    'Tarragona' => 'Tarragona', 'Teruel' => 'Teruel', 'Toledo' => 'Toledo',
+                    'Valencia' => 'Valencia', 'Valladolid' => 'Valladolid', 'Vizcaya' => 'Vizcaya',
+                    'Zamora' => 'Zamora', 'Zaragoza' => 'Zaragoza'
+                ];
+                $provinceLabel = $provinceMap[$province] ?? $province;
+            }
+            
+            // Ubicación formateada: "Municipio, Provincia"
+            $locationDisplay = '';
+            if (!empty($munic) && !empty($provinceLabel)) {
+                $locationDisplay = $munic . ', ' . $provinceLabel;
+            } elseif (!empty($munic)) {
+                $locationDisplay = $munic;
+            } elseif (!empty($provinceLabel)) {
+                $locationDisplay = $provinceLabel;
+            }
+            
+            // Descripción corta truncada
+            $shortDesc = !empty($aloj['short_description']) ? htmlspecialchars($aloj['short_description']) : '';
             
             // Placeholder para imágenes que no se cargan inicialmente
             $placeholderSrc = 'data:image/svg+xml;base64,' . base64_encode('
@@ -94,20 +134,15 @@ function renderAlojamientosLandingListing(array $ctx): void
                     itemprop="image"
                     onerror="this.src='https://images.unsplash.com/photo-1546548970-71785318a17b?w=600&h=400&fit=crop&auto=format&q=60'"
                 >
-                <?php if ($precio): ?>
-                <span class="lnd-card__price-badge">
-                    <?= htmlspecialchars($t['card_precio'] ?? 'Desde') ?> <?= htmlspecialchars($precio) ?>€
-                </span>
-                <?php endif; ?>
             </a>
 
             <div class="lnd-card__body">
-                <?php if ($munic): ?>
+                <?php if ($locationDisplay): ?>
                 <p class="lnd-card__location">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
                     </svg>
-                    <span><?= $munic ?></span>
+                    <span><?= htmlspecialchars($locationDisplay) ?></span>
                 </p>
                 <?php endif; ?>
 
@@ -115,9 +150,21 @@ function renderAlojamientosLandingListing(array $ctx): void
                     <a href="<?= $alojUrl ?>" itemprop="url"><?= $name ?></a>
                 </h3>
 
-                <div class="lnd-card__footer" style="margin-top: 15px;">
+                <?php if ($shortDesc): ?>
+                <p class="lnd-card__desc line-clamp-2"><?= $shortDesc ?></p>
+                <?php endif; ?>
+
+                <div class="lnd-card__footer">
+                    <?php if ($precio): ?>
+                    <span class="lnd-card__price">
+                        <strong><?= htmlspecialchars($precio) ?></strong>
+                        <small> / noche</small>
+                    </span>
+                    <?php else: ?>
+                    <span class="lnd-card__price lnd-card__price--consult">Consultar</span>
+                    <?php endif; ?>
                     <a href="<?= $alojUrl ?>" class="lnd-btn lnd-btn--primary lnd-card__cta">
-                        <?= htmlspecialchars($t['card_ver'] ?? 'Ver alojamiento') ?>
+                        <?= htmlspecialchars($t['card_ver'] ?? 'Ver') ?>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                         </svg>

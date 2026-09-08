@@ -744,3 +744,78 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   color: var(--primary-dark);
   text-decoration-color: var(--accent);
 }
+
+/* ════════════════════════════════════════════════════ LINE CLAMP (descripción truncada) ══ */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+  max-height: 3em;
+}
+
+/* ════════════════════════════════════════════════════ PRECIO DESTACADO EN PIE DE TARJETA ══ */
+.lnd-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+.lnd-card__price strong {
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.lnd-card__price small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+.lnd-card__price--consult {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* ════════════════════════════════════════════════════ MEJORAS RESPONSIVE TARJETAS ══ */
+@media (max-width: 640px) {
+  .lnd-card__body {
+    padding: 14px;
+  }
+  .lnd-card__location {
+    font-size: 0.72rem;
+  }
+  .lnd-card__name {
+    font-size: 0.95rem;
+  }
+  .lnd-card__desc {
+    font-size: 0.8rem;
+    -webkit-line-clamp: 2;
+    max-height: 2.8em;
+  }
+  .lnd-card__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .lnd-card__price {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .lnd-card__cta {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .lnd-card__footer {
+    flex-wrap: wrap;
+  }
+  .lnd-card__price {
+    flex: 1;
+    min-width: 100px;
+  }
+  .lnd-card__cta {
+    margin-left: auto;
+  }
+}

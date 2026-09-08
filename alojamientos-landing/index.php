@@ -169,9 +169,19 @@ $result   = ['items' => [], 'total' => 0, 'pages' => 0, 'page' => 1];
 $stats    = ['total' => 0, 'avg_price' => 0, 'towns' => 0];
 $semantic = ['places' => [], 'routes' => []];
 $events   = [];
+$noindex_seo = false; // Flag para thin content SEO
 
 try {
     $pdo = getDBConnection();
+
+    // Primero obtenemos solo el total para verificar thin content
+    $stats = getLandingStats($pdo, $province_db, $sql_conditions);
+
+    // ── SEO THIN CONTENT: Si hay menos de 3 alojamientos válidos, marcar para noindex ─
+    // Esto evita penalizaciones por contenido insuficiente en páginas de provincia/filtro
+    if ($stats['total'] < 3) {
+        $noindex_seo = true;
+    }
 
     // Resultados paginados — Premium primero, rotación diaria, más cercanos al centro
     $result = getLandingAccommodations(
@@ -184,7 +194,6 @@ try {
         (float)($province_data['lat'] ?? 0.0),
         (float)($province_data['lng'] ?? 0.0)
     );
-    $stats  = getLandingStats($pdo, $province_db, $sql_conditions);
 
     // Cruce semántico (solo si hay provincia)
     if (!empty($province_db)) {
@@ -332,7 +341,11 @@ $general_listings_url = $lang === 'es'
 <!-- ── SEO primario ──────────────────────────────────────────────── -->
 <title><?= htmlspecialchars($meta_title) ?></title>
 <meta name="description" content="<?= htmlspecialchars($meta_desc) ?>">
+<?php if ($noindex_seo): ?>
+<meta name="robots" content="noindex, follow">
+<?php else: ?>
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<?php endif; ?>
 <link rel="canonical" href="<?= htmlspecialchars($canonical . ($page > 1 ? '?p=' . $page : '')) ?>">
 <?php if ($rel_prev): ?><link rel="prev" href="<?= htmlspecialchars($rel_prev) ?>"><?php endif; ?>
 <?php if ($rel_next): ?><link rel="next" href="<?= htmlspecialchars($rel_next) ?>"><?php endif; ?>
