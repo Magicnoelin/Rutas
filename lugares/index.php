@@ -60,6 +60,25 @@ function lug_cat_icon(string $slug, ?string $db_icon): string {
     return '📍';
 }
 
+// ── Helper: convierte identificador de icono a emoji ─────────────────────────
+function obtenerEmojiLugar(string $icono): string {
+    return match (strtolower(trim($icono))) {
+        'fort', 'castle-turret' => '🏰',
+        'city'                 => '🏙️',
+        'binoculars'           => '🔭',
+        'castle', 'landmark'   => '🏛️',
+        'museum'               => '🏛️',
+        'church', 'chapel'     => '⛪',
+        'tree', 'forest'       => '🌲',
+        'park'                 => '🏞️',
+        'water'                => '🌊',
+        'home-city'            => '🏡',
+        'monastery'            => '🛕',
+        'fas fa-hammer'        => '🔨',
+        default                => '📍',
+    };
+}
+
 // ── Conectar a BD y cargar datos ─────────────────────────────────────────────
 $tipos     = [];
 $provincias = [];
@@ -279,7 +298,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
         <a href="/lugares/<?= htmlspecialchars($td['slug']) ?>"
            class="lug-tipo"
            title="<?= htmlspecialchars($td['name']) ?> en España">
-          <span class="lug-tipo__icon" aria-hidden="true"><?= lug_cat_icon($td['slug'], $td['icon'] ?? null) ?></span>
+          <span class="lug-tipo__icon" aria-hidden="true"><?= obtenerEmojiLugar($td['icon'] ?? '') ?></span>
           <span class="lug-tipo__info">
             <span class="lug-tipo__nm"><?= htmlspecialchars($td['name']) ?></span>
             <?php if (!empty($td['description'])): ?>
