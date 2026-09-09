@@ -38,6 +38,7 @@ $llegada   = trim($data['llegada']  ?? '');
 $salida    = trim($data['salida']   ?? '');
 $personas  = (int)($data['personas'] ?? 2);
 $ref       = mb_substr(trim($data['ref'] ?? 'cta'), 0, 50);
+$lugar_id  = (int)($data['lugar_id'] ?? 0);
 $ip        = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '';
 $ip        = mb_substr(explode(',', $ip)[0], 0, 45); // Solo la primera IP, IPv6 max 45 chars
 
@@ -51,11 +52,12 @@ try {
     require_once __DIR__ . '/config.php';
     $pdo = getDBConnection();
 
-    // Crear tabla si no existe (primera vez)
+    // Crear tabla si no existe (primera vez) - incluir lugar_id si no existe
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS cta_leads (
             id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             email        VARCHAR(254) NOT NULL,
+            lugar_id     INT UNSIGNED DEFAULT NULL,
             provincia    VARCHAR(100) DEFAULT NULL,
             municipio    VARCHAR(100) DEFAULT NULL,
             lugar        VARCHAR(200) DEFAULT NULL,
@@ -66,6 +68,7 @@ try {
             ip           VARCHAR(45)  DEFAULT NULL,
             created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_email (email),
+            INDEX idx_lugar_id (lugar_id),
             INDEX idx_provincia (provincia),
             INDEX idx_created (created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
@@ -73,9 +76,10 @@ try {
 
     // Insertar — si el mismo email ya existe hoy para el mismo lugar, actualizar en lugar de duplicar
     $stmt = $pdo->prepare("
-        INSERT INTO cta_leads (email, provincia, municipio, lugar, llegada, salida, personas, ref, ip)
-        VALUES (:email, :provincia, :municipio, :lugar, :llegada, :salida, :personas, :ref, :ip)
+        INSERT INTO cta_leads (email, lugar_id, provincia, municipio, lugar, llegada, salida, personas, ref, ip)
+        VALUES (:email, :lugar_id, :provincia, :municipio, :lugar, :llegada, :salida, :personas, :ref, :ip)
         ON DUPLICATE KEY UPDATE
+            lugar_id   = VALUES(lugar_id),
             llegada    = VALUES(llegada),
             salida     = VALUES(salida),
             personas   = VALUES(personas),
@@ -83,6 +87,7 @@ try {
     ");
     $stmt->execute([
         ':email'     => $email,
+        ':lugar_id'  => $lugar_id ?: null,
         ':provincia' => $provincia ?: null,
         ':municipio' => $municipio ?: null,
         ':lugar'     => $lugar     ?: null,

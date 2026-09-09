@@ -177,13 +177,13 @@ $_t = [
         $ctaTxt = [
         'es' => [
             'titulo'   => '🏕️ ¿Quieres visitar este lugar?',
-            'subtitulo'=> 'Dinos tus fechas y cuántos sois — te buscamos alojamiento cerca',
+            'subtitulo'=> 'Dinos tus fechas y cuántos somos — te buscamos alojamiento cerca',
             'lbl_lleg' => 'Llegada',
             'lbl_sal'  => 'Salida',
             'lbl_per'  => 'Personas',
             'lbl_email'=> '📩 Déjanos tu email',
             'email_ph' => 'Te enviamos ofertas de alojamiento directas',
-            'btn'      => '🔍 Ver alojamientos cerca',
+            'btn'      => '📩 Recibir ofertas disponibles',
             'oferta'   => '¿Tienes cuenta? Guárdalo en favoritos',
             'ya_cuenta'=> 'Acceder →',
             'register' => '✨ Registrarme gratis',
@@ -196,7 +196,7 @@ $_t = [
             'lbl_per'  => 'Guests',
             'lbl_email'=> 'Your email (optional)',
             'email_ph' => 'to receive accommodation offers',
-            'btn'      => '🔍 See nearby stays',
+            'btn'      => '📩 Get available offers',
             'oferta'   => 'Have an account? Save to favourites',
             'ya_cuenta'=> 'Log in →',
             'register' => '✨ Sign up free',
@@ -209,7 +209,7 @@ $_t = [
             'lbl_per'  => 'Voyageurs',
             'lbl_email'=> 'Votre e-mail (facultatif)',
             'email_ph' => 'pour recevoir des offres d\'hébergement',
-            'btn'      => '🔍 Voir les hébergements proches',
+            'btn'      => '📩 Recevoir les offres',
             'oferta'   => 'Vous avez un compte ? Sauvegardez-le',
             'ya_cuenta'=> 'Se connecter →',
             'register' => '✨ Inscription gratuite',
@@ -222,7 +222,7 @@ $_t = [
             'lbl_per'  => 'Personen',
             'lbl_email'=> 'Ihre E-Mail (optional)',
             'email_ph' => 'für Unterkunftsangebote',
-            'btn'      => '🔍 Unterkünfte in der Nähe',
+            'btn'      => '📩 Angebote erhalten',
             'oferta'   => 'Haben Sie ein Konto? Speichern',
             'ya_cuenta'=> 'Anmelden →',
             'register' => '✨ Kostenlos registrieren',
@@ -235,7 +235,7 @@ $_t = [
             'lbl_per'  => '人数',
             'lbl_email'=> '您的邮箱（可选）',
             'email_ph' => '接收住宿优惠',
-            'btn'      => '🔍 查看附近住宿',
+            'btn'      => '📩 获取优惠',
             'oferta'   => '已有账户？收藏此地',
             'ya_cuenta'=> '登录 →',
             'register' => '✨ 免费注册',
@@ -250,8 +250,11 @@ $_t = [
         <p class="lug-cta-sub"><?php echo $c['subtitulo']; ?></p>
 
         <!-- Mini formulario de búsqueda de alojamiento -->
-        <form class="lug-cta-form" id="lug-cta-form-sidebar"
-              onsubmit="lugBuscarAloj(event,'sidebar')" novalidate>
+        <form class="lug-cta-form" id="lug-cta-form-sidebar" novalidate>
+            <input type="hidden" name="lugar_id" value="<?php echo (int)($lugar['id'] ?? 0); ?>">
+            <input type="hidden" name="lugar_nombre" value="<?php echo htmlspecialchars($lugar['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="provincia" value="<?php echo htmlspecialchars($lugar['province'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="municipio" value="<?php echo htmlspecialchars($lugar['municipality'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="lug-cta-fields">
                 <div class="lug-cta-field">
                     <label><?php echo $c['lbl_lleg']; ?></label>
@@ -276,13 +279,46 @@ $_t = [
                     <label for="lug-email-sb"><?php echo htmlspecialchars($c['lbl_email'], ENT_QUOTES, 'UTF-8'); ?></label>
                     <input type="email" id="lug-email-sb" name="email"
                            placeholder="<?php echo htmlspecialchars($c['email_ph'], ENT_QUOTES, 'UTF-8'); ?>"
-                           autocomplete="email">
+                           autocomplete="email" required>
                 </div>
             </div>
             <button type="submit" class="lug-cta-btn-main">
                 <?php echo $c['btn']; ?>
             </button>
         </form>
+
+        <script>
+        document.getElementById('lug-cta-form-sidebar').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var data = {
+                email: form.email.value,
+                lugar_id: form.lugar_id.value,
+                lugar: form.lugar_nombre.value,
+                provincia: form.provincia.value,
+                municipio: form.municipio.value,
+                llegada: form.llegada.value,
+                salida: form.salida.value,
+                personas: form.personas.value,
+                ref: 'lugar_sidebar'
+            };
+            fetch('/api/cta-lead.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.ok) {
+                    alert('¡Gracias! Te enviaremos las mejores ofertas de alojamiento.');
+                    form.reset();
+                } else {
+                    alert('Error: ' + (res.error || 'Inténtalo de nuevo'));
+                }
+            }).catch(function() {
+                alert('Error de conexión. Inténtalo de nuevo.');
+            });
+        });
+        </script>
 
         <!-- Separador -->
         <div class="lug-cta-divider">
