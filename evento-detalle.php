@@ -1378,14 +1378,20 @@ $evento_js = $evento ? json_encode([
             overflow: hidden;
             box-shadow: var(--shadow);
             margin-bottom: 24px;
+            /* CLS FIX: Reservar espacio mínimo para evitar layout shift */
+            min-height: 380px;
         }
         #event-map {
             height: 380px;
             width: 100%;
             background: #e8f0e8;
+            /* CLS FIX: Forzar altura fija */
+            min-height: 380px;
         }
         .map-placeholder {
             height: 380px;
+            /* CLS FIX: Asegurar altura fija */
+            min-height: 380px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1421,12 +1427,14 @@ $evento_js = $evento ? json_encode([
             border-color: var(--primary);
         }
 
-        /* ── Contenido cercano ── */
+        /* ── Contenido cercano (CLS FIX: reservar espacio para evitar layout shift) ── */
         .nearby-section { margin-bottom: 24px; }
         .nearby-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 12px;
+            /* CLS FIX: altura mínima para reservar espacio */
+            min-height: 400px;
         }
         .nearby-card {
             border-radius: 8px;
@@ -1443,6 +1451,8 @@ $evento_js = $evento ? json_encode([
             height: 120px;
             background: #e8f0e8;
             overflow: hidden;
+            /* CLS FIX: aspect-ratio para reservar espacio de imagen */
+            aspect-ratio: 16/9;
         }
         .nearby-card-img img {
             width: 100%; height: 100%;
