@@ -6,7 +6,7 @@ if (isset($lugar) && $lugar && isset($t)):
     <h2 class="section-title"><i class="fas fa-map"></i> <?php echo isset($t['ubicacion']) ? $t['ubicacion'] : 'Ubicación'; ?></h2>
     
     <div id="map-container" class="map-container">
-        <div id="map-placeholder" class="map-placeholder">
+        <div id="map-placeholder" class="map-placeholder" onclick="initMap()">
             <i class="fas fa-map-marked-alt map-icon"></i>
             <h3><?php echo isset($t['ver_mapa']) ? $t['ver_mapa'] : 'Ver en el mapa'; ?></h3>
             <p><?php echo isset($t['click_mapa']) ? $t['click_mapa'] : 'Haz clic para cargar el mapa interactivo'; ?></p>
@@ -16,13 +16,8 @@ if (isset($lugar) && $lugar && isset($t)):
     
     <?php if (!empty($lugar['latitude']) && !empty($lugar['longitude'])): ?>
     <script>
-        // Datos para el mapa (lazy load)
-        const mapData = {
-            lat: <?php echo $lugar['latitude']; ?>,
-            lng: <?php echo $lugar['longitude']; ?>,
-            title: "<?php echo addslashes($lugar['name']); ?>",
-            address: "<?php echo addslashes($lugar['address'] ?? ''); ?>"
-        };
+        // Los datos del lugar están disponibles en window.LUG_DATA (inyectado por head.php)
+        // y la función initMap() en lugar.js los utiliza directamente
     </script>
     <?php endif; ?>
 </div>

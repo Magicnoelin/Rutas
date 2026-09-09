@@ -186,27 +186,6 @@ $hayContactoBloq = !empty($lugar['phone']) || !empty($lugar['email']) || !empty(
         </div>
         <?php endif; ?>
 
-        <?php if (!empty($lugar['latitude']) && !empty($lugar['longitude'])): ?>
-        <!-- Mapa Leaflet simplificado -->
-        <div id="map-container" class="lug-card" style="margin-bottom:24px;">
-            <div class="lug-card-body">
-                <h2 class="lug-card-title">🗺️ <?php echo htmlspecialchars($_t['ubicacion'] ?? 'Ubicación', ENT_QUOTES, 'UTF-8'); ?></h2>
-                <div id="map-placeholder" class="map-placeholder" onclick="initMap()">
-                    <div class="map-icon">🗺️</div>
-                    <strong style="font-size:1rem;"><?php echo htmlspecialchars($_t['ver_mapa'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                    <p><?php echo htmlspecialchars($_t['click_mapa'], ENT_QUOTES, 'UTF-8'); ?></p>
-                </div>
-                <div id="map" style="height:280px; display:none; border-radius:var(--lug-r);"></div>
-                <div class="map-links" style="margin-top:15px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
-                    <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($lugar['latitude'] . ',' . $lugar['longitude']); ?>" target="_blank" rel="noopener noreferrer" class="map-link-btn">Ver en Google Maps</a>
-                    <a href="/alojamientos/cerca-de-<?php echo htmlspecialchars($lugar['slug'], ENT_QUOTES, 'UTF-8'); ?>" class="map-link-btn">🏠 Alojamientos cerca</a>
-                    <a href="/actividades/cerca-de-<?php echo htmlspecialchars($lugar['slug'], ENT_QUOTES, 'UTF-8'); ?>" class="map-link-btn">🎯 Actividades cerca</a>
-                    <a href="/lugares/cerca-de-<?php echo htmlspecialchars($lugar['slug'], ENT_QUOTES, 'UTF-8'); ?>" class="map-link-btn">🏛️ Otros lugares cerca</a>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-
     </div>
 </div>
 <?php endif; ?>
