@@ -91,11 +91,12 @@ try {
             }
         }
 
-        // 2) Segundo: fotos de entity_photos (aportadas por usuarios)
+        // 2) Segundo: fotos de entity_photos (aportadas por usuarios) - con créditos
         $fotosEntity = [];
+        $fotosCredits = []; // Array para almacenar créditos de cada foto
         try {
             $stmtF = $pdo->prepare("
-                SELECT file_url
+                SELECT file_url, author_name, author_instagram
                 FROM entity_photos
                 WHERE entity_type = 'places_of_interest'
                   AND entity_id = ?
@@ -110,6 +111,15 @@ try {
                     $url = '/' . ltrim(str_replace('\\', '/', $f['file_url']), '/');
                     if (!in_array($url, $fotosLegacy)) {
                         $fotosEntity[] = $url;
+                        // Guardar crédito: nombre + @instagram si existe
+                        $credit = '';
+                        if (!empty($f['author_name'])) {
+                            $credit = $f['author_name'];
+                            if (!empty($f['author_instagram'])) {
+                                $credit .= ' (@' . $f['author_instagram'] . ')';
+                            }
+                        }
+                        $fotosCredits[$url] = $credit;
                     }
                 }
             }
@@ -185,6 +195,7 @@ $lugar_js = json_encode([
     'province'     => $lugar['province']     ?? '',
     'municipality' => $lugar['municipality'] ?? '',
     'photos'       => $fotos,
+    'photos_credits' => $fotosCredits ?? [],
     'lang'         => $lang,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
@@ -202,7 +213,7 @@ $ssr_lng  = !empty($lugar['longitude']) ? (float)$lugar['longitude'] : null;
 if ($ssr_lat && $ssr_lng) {
     // Alojamientos más cercanos
     $ss = $pdo->prepare("
-        SELECT name, slug, municipality, price_per_night, photo1,
+        SELECT name, slug, municipality, price_per_night, photo1, short_description,
             (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
         FROM accommodations
         WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
@@ -228,7 +239,7 @@ if ($ssr_lat && $ssr_lng) {
 
     // Actividades turísticas más cercanas
     $ss3 = $pdo->prepare("
-        SELECT name, slug, municipality, photo1,
+        SELECT name, slug, municipality, photo1, price_adult, description,
             (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
         FROM tourist_activities
         WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
@@ -241,7 +252,7 @@ if ($ssr_lat && $ssr_lng) {
 
     // Eventos culturales cercanos (solo futuros o en curso)
     $ss4 = $pdo->prepare("
-        SELECT name, slug, municipality, photo1, poster_image, start_date, is_free, ticket_price,
+        SELECT name, slug, municipality, photo1, poster_image, start_date, is_free, ticket_price, description,
             (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS dist
         FROM cultural_events
         WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
@@ -255,7 +266,7 @@ if ($ssr_lat && $ssr_lng) {
 
 } elseif ($ssr_prov) {
     // Fallback por provincia si no hay coordenadas
-    $ss = $pdo->prepare("SELECT name, slug, municipality, price_per_night, photo1, 0 AS dist FROM accommodations WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
+    $ss = $pdo->prepare("SELECT name, slug, municipality, price_per_night, photo1, short_description, 0 AS dist FROM accommodations WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
     $ss->execute([$ssr_prov]);
     $ssr_nearby_alojamientos = $ss->fetchAll(PDO::FETCH_ASSOC);
 
@@ -263,11 +274,11 @@ if ($ssr_lat && $ssr_lng) {
     $ss2->execute([$ssr_prov, $lugar['slug']]);
     $ssr_nearby_lugares = $ss2->fetchAll(PDO::FETCH_ASSOC);
 
-    $ss3 = $pdo->prepare("SELECT name, slug, municipality, photo1, 0 AS dist FROM tourist_activities WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
+    $ss3 = $pdo->prepare("SELECT name, slug, municipality, photo1, price_adult, description, 0 AS dist FROM tourist_activities WHERE is_active = 1 AND province = ? ORDER BY RAND() LIMIT 4");
     $ss3->execute([$ssr_prov]);
     $ssr_nearby_actividades = $ss3->fetchAll(PDO::FETCH_ASSOC);
 
-    $ss4 = $pdo->prepare("SELECT name, slug, municipality, photo1, poster_image, start_date, is_free, ticket_price, 0 AS dist FROM cultural_events WHERE is_active = 1 AND province = ? AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE() ORDER BY start_date ASC LIMIT 4");
+    $ss4 = $pdo->prepare("SELECT name, slug, municipality, photo1, poster_image, start_date, is_free, ticket_price, description, 0 AS dist FROM cultural_events WHERE is_active = 1 AND province = ? AND COALESCE(end_date, DATE_ADD(start_date, INTERVAL 1 DAY)) >= CURDATE() ORDER BY start_date ASC LIMIT 4");
     $ss4->execute([$ssr_prov]);
     $ssr_nearby_eventos = $ss4->fetchAll(PDO::FETCH_ASSOC);
 }

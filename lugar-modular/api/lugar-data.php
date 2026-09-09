@@ -42,7 +42,7 @@ try {
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province,
-                       price_per_night, photo1 AS main_image, latitude, longitude,
+                       price_per_night, photo1 AS main_image, short_description, latitude, longitude,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM accommodations
                 WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
@@ -54,7 +54,7 @@ try {
         } else {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province,
-                       price_per_night, photo1 AS main_image, latitude, longitude, 0 AS distance
+                       price_per_night, photo1 AS main_image, short_description, latitude, longitude, 0 AS distance
                 FROM accommodations
                 WHERE is_active = 1 AND province = ?
                 ORDER BY RAND()
@@ -104,7 +104,7 @@ try {
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province, category_id, photo1 AS main_image,
-                       latitude, longitude, price_adult AS price,
+                       latitude, longitude, price_adult AS price, description,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM tourist_activities
                 WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
@@ -116,7 +116,7 @@ try {
         } else {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province, category_id, photo1 AS main_image,
-                       latitude, longitude, price_adult AS price, 0 AS distance
+                       latitude, longitude, price_adult AS price, description, 0 AS distance
                 FROM tourist_activities
                 WHERE is_active = 1 AND province = ?
                 ORDER BY RAND()
@@ -158,7 +158,7 @@ try {
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, start_date, end_date, municipality, province,
-                       is_free, ticket_price, photo1, poster_image, category_id,
+                       is_free, ticket_price, photo1, poster_image, category_id, description,
                        latitude, longitude,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM cultural_events
@@ -176,7 +176,7 @@ try {
         } else {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, start_date, end_date, municipality, province,
-                       is_free, ticket_price, photo1, poster_image, category_id,
+                       is_free, ticket_price, photo1, poster_image, category_id, description,
                        latitude, longitude, 0 AS distance
                 FROM cultural_events
                 WHERE is_active = 1
@@ -238,8 +238,9 @@ try {
         }
     }
 
-    // 2) Segundo: fotos de entity_photos (aportadas por usuarios)
+    // 2) Segundo: fotos de entity_photos (aportadas por usuarios) - con créditos
     $fotosEntity = [];
+    $fotosCredits = [];
     try {
         $stmtF = $pdo->prepare("
             SELECT file_url, author_name, author_instagram
@@ -258,6 +259,15 @@ try {
                 $url = '/' . ltrim(str_replace('\\', '/', $f['file_url']), '/');
                 if (!in_array($url, $fotosLegacy)) {
                     $fotosEntity[] = $url;
+                    // Guardar crédito
+                    $credit = '';
+                    if (!empty($f['author_name'])) {
+                        $credit = $f['author_name'];
+                        if (!empty($f['author_instagram'])) {
+                            $credit .= ' (@' . $f['author_instagram'] . ')';
+                        }
+                    }
+                    $fotosCredits[$url] = $credit;
                 }
             }
         }
@@ -271,6 +281,7 @@ try {
     }
 
     $lugar['fotos'] = $fotos;
+    $lugar['photos_credits'] = $fotosCredits;
 
     // ── Procesar campos JSON ───────────────────────────────────────────────────
     $facilities = [];

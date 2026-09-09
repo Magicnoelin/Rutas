@@ -1,10 +1,15 @@
 <?php
 /**
- * galeria.php — Galería de fotos con miniaturas y lightbox
- * Variables requeridas: $lugar, $fotos, $t
+ * galeria.php — Galería de fotos con miniaturas, lightbox y créditos
+ * Variables requeridas: $lugar, $fotos, $t, $fotosCredits (opcional)
  */
 if (empty($lugar)) return;
 if (!isset($fotos) || !is_array($fotos) || empty($fotos)) return;
+
+// fotosCredits es un array asociativo [url_foto => credito]
+if (!isset($fotosCredits) || !is_array($fotosCredits)) {
+    $fotosCredits = [];
+}
 
 if (!function_exists('fixUrl')) {
     function fixUrl(string $url): string {
@@ -16,6 +21,22 @@ if (!function_exists('fixUrl')) {
 $_t_fotos    = isset($t['fotos'])    ? $t['fotos']    : '📸 Galería de fotos';
 $_t_vertodas = isset($t['ver_todas']) ? $t['ver_todas'] : '🔍 Ver todas';
 $_nombre     = isset($lugar['name']) ? $lugar['name'] : '';
+
+// Función para obtener crédito de una foto
+function getFotoCredito(string $url, array $credits): string {
+    // Buscar crédito exacto o por URL normalizada
+    $urlNormalizada = fixUrl($url);
+    if (isset($credits[$urlNormalizada]) && !empty($credits[$urlNormalizada])) {
+        return $credits[$urlNormalizada];
+    }
+    // Buscar por URL original
+    foreach ($credits as $key => $credit) {
+        if (strpos($urlNormalizada, $key) !== false || strpos($key, $urlNormalizada) !== false) {
+            return $credit;
+        }
+    }
+    return '';
+}
 ?>
 
 <!-- ▸ GALERÍA -->
@@ -40,6 +61,15 @@ $_nombre     = isset($lugar['name']) ? $lugar['name'] : '';
                     aria-label="<?php echo htmlspecialchars($_t_vertodas, ENT_QUOTES, 'UTF-8'); ?>">
                 <?php echo htmlspecialchars($_t_vertodas, ENT_QUOTES, 'UTF-8'); ?>
             </button>
+            <?php endif; ?>
+            
+            <!-- Crédito de la foto (debajo de la imagen principal) -->
+            <?php 
+            $creditoPrincipal = getFotoCredito($fotos[0], $fotosCredits);
+            if (!empty($creditoPrincipal)): ?>
+            <div class="photo-credit" style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.7);color:#fff;padding:4px 8px;border-radius:4px;font-size:0.75rem;">
+                📷 <?php echo htmlspecialchars($creditoPrincipal, ENT_QUOTES, 'UTF-8'); ?>
+            </div>
             <?php endif; ?>
         </div>
 

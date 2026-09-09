@@ -54,6 +54,16 @@ function skeletonCards(int $n = 4): string {
                             <div class="nearby-card-body">
                                 <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
                                 <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
+                                <?php if (!empty($item['price_per_night'])): ?>
+                                <p class="nearby-card-price" style="color:var(--lug-primary);font-weight:600;font-size:0.9rem;margin-top:4px;">
+                                    <?php echo number_format((float)$item['price_per_night'], 0, ',', '.'); ?> €/noche
+                                </p>
+                                <?php endif; ?>
+                                <?php if (!empty($item['short_description'])): ?>
+                                <p class="nearby-card-desc" style="font-size:0.8rem;color:var(--text-light);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    <?php echo esc($item['short_description']); ?>
+                                </p>
+                                <?php endif; ?>
                             </div>
                         </a>
                     <?php endforeach; ?>
@@ -84,6 +94,16 @@ function skeletonCards(int $n = 4): string {
                             <div class="nearby-card-body">
                                 <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
                                 <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
+                                <?php if (!empty($item['price_adult'])): ?>
+                                <p class="nearby-card-price" style="color:var(--lug-primary);font-weight:600;font-size:0.9rem;margin-top:4px;">
+                                    <?php echo number_format((float)$item['price_adult'], 0, ',', '.'); ?> €/persona
+                                </p>
+                                <?php endif; ?>
+                                <?php if (!empty($item['description'])): ?>
+                                <p class="nearby-card-desc" style="font-size:0.8rem;color:var(--text-light);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    <?php echo esc(strip_tags($item['description'])); ?>
+                                </p>
+                                <?php endif; ?>
                             </div>
                         </a>
                     <?php endforeach; ?>
@@ -114,6 +134,20 @@ function skeletonCards(int $n = 4): string {
                             <div class="nearby-card-body">
                                 <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
                                 <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
+                                <?php if (isset($item['is_free']) && $item['is_free']): ?>
+                                <p class="nearby-card-price" style="color:#27ae60;font-weight:600;font-size:0.9rem;margin-top:4px;">
+                                    Entrada gratuita
+                                </p>
+                                <?php elseif (!empty($item['ticket_price'])): ?>
+                                <p class="nearby-card-price" style="color:var(--lug-primary);font-weight:600;font-size:0.9rem;margin-top:4px;">
+                                    <?php echo number_format((float)$item['ticket_price'], 0, ',', '.'); ?> €
+                                </p>
+                                <?php endif; ?>
+                                <?php if (!empty($item['description'])): ?>
+                                <p class="nearby-card-desc" style="font-size:0.8rem;color:var(--text-light);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    <?php echo esc(strip_tags($item['description'])); ?>
+                                </p>
+                                <?php endif; ?>
                             </div>
                         </a>
                     <?php endforeach; ?>

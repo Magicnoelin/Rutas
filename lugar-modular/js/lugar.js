@@ -9,6 +9,8 @@
     var lug   = window.LUG_DATA;
     // Compatibilidad: el PHP puede pasar 'photos' o 'fotos'
     var fotos = lug ? (lug.photos || lug.fotos || []) : [];
+    // Fotos créditos (asociativo: url -> crédito)
+    var fotosCredits = lug ? (lug.photos_credits || {}) : {};
     var map = null;
     var markers = {};
 
@@ -110,6 +112,20 @@
         });
     }
 
+    // Función para obtener crédito de una foto
+    function getFotoCredito(url) {
+        if (!url || !fotosCredits) return '';
+        // Buscar por URL exacta o parcial
+        for (var key in fotosCredits) {
+            if (fotosCredits.hasOwnProperty(key)) {
+                if (url.indexOf(key) !== -1 || key.indexOf(url) !== -1) {
+                    return fotosCredits[key];
+                }
+            }
+        }
+        return '';
+    }
+
     function updateLightboxImage() {
         var img = document.getElementById('lightbox-img');
         var caption = document.getElementById('lightbox-caption');
@@ -120,7 +136,12 @@
         }
         
         if (caption) {
-            caption.textContent = (currentLightboxIndex + 1) + ' / ' + fotos.length;
+            var credit = getFotoCredito(fotos[currentLightboxIndex]);
+            if (credit) {
+                caption.innerHTML = (currentLightboxIndex + 1) + ' / ' + fotos.length + ' &nbsp; 📷 ' + credit;
+            } else {
+                caption.textContent = (currentLightboxIndex + 1) + ' / ' + fotos.length;
+            }
         }
     }
 
