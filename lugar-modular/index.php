@@ -295,6 +295,7 @@ if (!isset($t) || !is_array($t)) {
         'no_encontrado_p'  => 'El lugar de interés que buscas no existe o ya no está disponible.',
         'volver_lista'     => '← Volver a los lugares de interés',
         'ubicacion'        => 'Ubicación',
+        'ver_mapa'         => 'Ver en el mapa',
         'click_mapa'       => 'Haz clic para cargar el mapa interactivo',
         'mapa_hint'        => 'Se mostrarán alojamientos, lugares, actividades y eventos cercanos.',
         'actividades'      => 'Actividades',
@@ -343,6 +344,7 @@ if (file_exists($globalHeader)) {
 
             <?php require __DIR__ . '/components/galeria.php'; ?>
             <?php require __DIR__ . '/components/descripcion.php'; ?>
+            <?php require __DIR__ . '/components/mapa.php'; ?>
             
             <?php 
             // Renderizar el acordeón visual de preguntas frecuentes
