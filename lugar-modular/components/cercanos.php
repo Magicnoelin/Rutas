@@ -54,7 +54,7 @@ function skeletonCards(int $n = 4): string {
                             <div class="nearby-card-body">
                                 <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
                                 <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
-                                <?php if (!empty($item['price_per_night'])): ?>
+                                <?php if (!empty($item['price_per_night']) && (float)$item['price_per_night'] > 0): ?>
                                 <p class="nearby-card-price" style="color:var(--lug-primary);font-weight:600;font-size:0.9rem;margin-top:4px;">
                                     <?php echo number_format((float)$item['price_per_night'], 0, ',', '.'); ?> €/noche
                                 </p>
@@ -94,7 +94,7 @@ function skeletonCards(int $n = 4): string {
                             <div class="nearby-card-body">
                                 <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>
                                 <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
-                                <?php if (!empty($item['price_adult'])): ?>
+                                <?php if (!empty($item['price_adult']) && (float)$item['price_adult'] > 0): ?>
                                 <p class="nearby-card-price" style="color:var(--lug-primary);font-weight:600;font-size:0.9rem;margin-top:4px;">
                                     <?php echo number_format((float)$item['price_adult'], 0, ',', '.'); ?> €/persona
                                 </p>
@@ -138,7 +138,7 @@ function skeletonCards(int $n = 4): string {
                                 <p class="nearby-card-price" style="color:#27ae60;font-weight:600;font-size:0.9rem;margin-top:4px;">
                                     Entrada gratuita
                                 </p>
-                                <?php elseif (!empty($item['ticket_price'])): ?>
+                                <?php elseif (!empty($item['ticket_price']) && (float)$item['ticket_price'] > 0): ?>
                                 <p class="nearby-card-price" style="color:var(--lug-primary);font-weight:600;font-size:0.9rem;margin-top:4px;">
                                     <?php echo number_format((float)$item['ticket_price'], 0, ',', '.'); ?> €
                                 </p>
