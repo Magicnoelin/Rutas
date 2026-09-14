@@ -37,11 +37,13 @@ function renderLandingSchema(array $ctx): void
         'mainEntity'  => ['@id' => $canonical . '#itemlist'],
     ];
 
-    if (!empty($stats['avg_price'])) {
+    // Formatear priceRange para CollectionPage (formato válido de schema.org)
+    if (!empty($stats['avg_price']) && $stats['avg_price'] > 0) {
+        $priceValue = number_format((float)$stats['avg_price'], 0, ',', '.');
         $priceRange = $lang === 'es'
-            ? 'Desde ' . $stats['avg_price'] . ' €/noche'
-            : 'From ' . $stats['avg_price'] . ' €/night';
-        $collectionPage['description'] .= ' ' . $priceRange;
+            ? 'Desde ' . $priceValue . ' €'
+            : 'From ' . $priceValue . ' €';
+        $collectionPage['description'] .= ' | ' . $priceRange;
     }
 
     // ── 2. BreadcrumbList ────────────────────────────────────────────────────
@@ -57,12 +59,20 @@ function renderLandingSchema(array $ctx): void
     // Prefijo de idioma para las URLs del breadcrumb (vacío en español)
     $langPrefix = ($lang !== 'es') ? '/' . $lang : '';
 
+    // Dinamizar segundo nivel del breadcrumb: usar filtro si existe, sino "turismo-rural"
+    $bcLevel2Name = !empty($filter_label) && $filter_label !== 'Alojamientos rurales'
+        ? $filter_label
+        : $bcLabel[1];
+    $bcLevel2Url = !empty($filter_label) && $filter_label !== 'Alojamientos rurales'
+        ? 'https://rutasrurales.io' . $langPrefix . '/alojamientos/' . ($ctx['slug'] ?? 'turismo-rural')
+        : 'https://rutasrurales.io' . $langPrefix . '/alojamientos/turismo-rural';
+
     $breadcrumb = [
         '@type' => 'BreadcrumbList',
         '@id'   => $canonical . '#breadcrumb',
         'itemListElement' => [ 
             ['@type' => 'ListItem', 'position' => 1, 'name' => $bcLabel[0],   'item' => 'https://rutasrurales.io' . $langPrefix . '/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcLabel[1],   'item' => 'https://rutasrurales.io' . $langPrefix . '/alojamientos/turismo-rural'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcLevel2Name, 'item' => $bcLevel2Url],
             ['@type' => 'ListItem', 'position' => 3, 'name' => $filter_label . (!empty($province) ? ' · ' . $province : ''), 'item' => $canonical],
         ],
     ];
@@ -96,12 +106,16 @@ function renderLandingSchema(array $ctx): void
             ],
         ];
 
-        if (!empty($alo['price_per_night']) && $alo['price_per_night'] > 0) {
-            $lodging['priceRange'] = number_format((float)$alo['price_per_night'], 0, ',', '.') . ' €/noche';
+        // Validar que price > 0 antes de renderizar offers
+        $priceValue = !empty($alo['price_per_night']) ? (float)$alo['price_per_night'] : 0;
+        if ($priceValue > 0) {
+            // priceRange con formato válido (solo número, sin texto adicional)
+            $lodging['priceRange'] = number_format($priceValue, 0, ',', '.') . '€';
             $lodging['offers']     = [
                 '@type'         => 'Offer',
-                'price'         => (float)$alo['price_per_night'],
+                'price'         => $priceValue,
                 'priceCurrency' => 'EUR',
+                'priceValidUntil' => date('Y-12-31'),
                 'availability'  => 'https://schema.org/InStock',
                 'url'           => $acanonical,
             ];
@@ -135,13 +149,14 @@ function renderLandingSchema(array $ctx): void
         ];
     }
 
+    // Usar count($items) para numberOfItems (items reales en esta página, no total BD)
     $itemList = [
         '@type'           => 'ItemList',
         '@id'             => $canonical . '#itemlist',
         'name'            => $page_title,
         'description'     => $page_desc,
         'url'             => $canonical,
-        'numberOfItems'   => $stats['total'],
+        'numberOfItems'   => count($items),
         'itemListElement' => $listElements,
     ];
 
