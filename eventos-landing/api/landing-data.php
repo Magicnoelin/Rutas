@@ -462,8 +462,105 @@ function resolveHeroImage(
     ?string $eventoHeroImage,
     ?int    $categoryId,
     array   $filterKeys,
-    ?PDO    $pdo = null
+    ?PDO    $pdo = null,
+    ?string $province = null
 ): array {
+
+    // ── Mapa provincia → imágenes hero (ruta: /img/eventos-landing-hero/{provincia}.webp) ──
+    $provinceHeroMap = [
+        'soria' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/soria.webp',
+            'alt' => 'Eventos culturales en Soria',
+        ],
+        'zamora' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/zamora.webp',
+            'alt' => 'Eventos culturales en Zamora',
+        ],
+        'salamanca' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/salamanca.webp',
+            'alt' => 'Eventos culturales en Salamanca',
+        ],
+        'burgos' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/burgos.webp',
+            'alt' => 'Eventos culturales en Burgos',
+        ],
+        'leon' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/leon.webp',
+            'alt' => 'Eventos culturales en León',
+        ],
+        'valladolid' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/valladolid.webp',
+            'alt' => 'Eventos culturales en Valladolid',
+        ],
+        'palencia' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/palencia.webp',
+            'alt' => 'Eventos culturales en Palencia',
+        ],
+        'segovia' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/segovia.webp',
+            'alt' => 'Eventos culturales en Segovia',
+        ],
+        'avila' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/avila.webp',
+            'alt' => 'Eventos culturales en Ávila',
+        ],
+        'guadalajara' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/guadalajara.webp',
+            'alt' => 'Eventos culturales en Guadalajara',
+        ],
+        'cuenca' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/cuenca.webp',
+            'alt' => 'Eventos culturales en Cuenca',
+        ],
+        'ourense' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/ourense.webp',
+            'alt' => 'Eventos culturales en Ourense',
+        ],
+        'coruña' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/coruna.webp',
+            'alt' => 'Eventos culturales en A Coruña',
+        ],
+        'lugo' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/lugo.webp',
+            'alt' => 'Eventos culturales en Lugo',
+        ],
+        'pontevedra' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/pontevedra.webp',
+            'alt' => 'Eventos culturales en Pontevedra',
+        ],
+        'asturias' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/asturias.webp',
+            'alt' => 'Eventos culturales en Asturias',
+        ],
+        'cantabria' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/cantabria.webp',
+            'alt' => 'Eventos culturales en Cantabria',
+        ],
+        'barcelona' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/barcelona.webp',
+            'alt' => 'Eventos culturales en Barcelona',
+        ],
+        'cordoba' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/cordoba.webp',
+            'alt' => 'Eventos culturales en Córdoba',
+        ],
+        'granada' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/granada.webp',
+            'alt' => 'Eventos culturales en Granada',
+        ],
+        'toledo' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/toledo.webp',
+            'alt' => 'Eventos culturales en Toledo',
+        ],
+        'valencia' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/valencia.webp',
+            'alt' => 'Eventos culturales en Valencia',
+        ],
+        'navarra' => [
+            'url' => 'https://rutasrurales.io/img/eventos-landing-hero/navarra.webp',
+            'alt' => 'Eventos culturales en Navarra',
+        ],
+    ];
 
     // ── Mapa filtro → imágenes (placeholder Unsplash mientras no haya propias) ──
     // Formato: 'filtro' => ['url' => '...', 'alt' => '...']
@@ -531,6 +628,15 @@ function resolveHeroImage(
             'alt' => 'Eventos culturales este mes',
         ],
     ];
+
+    // ── PRIORIDAD 0: imagen de la provincia (máxima prioridad en landings de provincia) ──
+    if (!empty($province) && !empty($provinceHeroMap[$province])) {
+        return [
+            'url'        => $provinceHeroMap[$province]['url'],
+            'source'     => 'provincia',
+            'alt_suffix' => $provinceHeroMap[$province]['alt'],
+        ];
+    }
 
     // ── PRIORIDAD 1: imagen específica del evento ─────────────────────────────
     if (!empty($eventoHeroImage)) {

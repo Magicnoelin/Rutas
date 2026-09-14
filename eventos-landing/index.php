@@ -224,7 +224,8 @@ $hero = resolveHeroImage(
     null,            // sin evento específico en las landing pages de listado
     null,            // sin category_id único (la landing puede mezclar categorías)
     $filter_keys,    // filtros activos del slug: ['musica'], ['tradiciones','verano']…
-    $pdo ?? null     // conexión BD para consultar categories_events si es necesario
+    $pdo ?? null,    // conexión BD para consultar categories_events si es necesario
+    $province_key    // provincia para hero image específica
 );
 // Construir srcset dinámico: 3 puntos de corte para cargar solo lo necesario
 // La URL base de Unsplash acepta parámetros ?w= dinámicos.

@@ -4,10 +4,9 @@
  * ============================================
  * Genera marcado estructurado multi-graph:
  *   1. WebSite   (sitelinks searchbox)
- *   2. WebPage   (con primaryImageOfPage + breadcrumb)
- *   3. BreadcrumbList
- *   4. LodgingBusiness / Hotel / Hostel / BedAndBreakfast / VacationRental
- *   5. FAQPage   (preguntas frecuentes dinámicas)
+ *   2. WebPage   (con primaryImageOfPage + enlace a breadcrumb)
+ *   3. LodgingBusiness / Hotel / Hostel / BedAndBreakfast / VacationRental
+ *   4. FAQPage   (preguntas frecuentes dinámicas)
  *
  * Uso:
  *   require_once __DIR__ . '/modules/schema.php';
@@ -36,39 +35,43 @@ function renderAlojamientoSchema(
     $cat_raw   = strtolower($alojamiento['category_name'] ?? $alojamiento['accommodation_type'] ?? '');
     $typeMap   = [
         // Hoteles
-        'hotel rural'         => 'Hotel',
-        'hotel'               => 'Hotel',
+        'hotel rural'          => 'Hotel',
+        'hotel'                => 'Hotel',
         // Hostales y albergues
-        'hostal'              => 'Hostel',
-        'hostel'              => 'Hostel',
-        'albergue'            => 'Hostel',
+        'hostal'               => 'Hostel',
+        'hostel'               => 'Hostel',
+        'albergue'             => 'Hostel',
         // B&B / Casas de huéspedes
         'bed and breakfast'   => 'BedAndBreakfast',
-        'b&b'                 => 'BedAndBreakfast',
+        'b&b'                  => 'BedAndBreakfast',
         'casa de huéspedes'   => 'BedAndBreakfast',
-        'posada'              => 'BedAndBreakfast',
-        // Alquiler vacacional completo (lo más frecuente en turismo rural español)
+        'posada'               => 'BedAndBreakfast',
+        // Alquiler vacacional completo
         'casa rural'          => 'VacationRental',
         'casas rurales'       => 'VacationRental',
         'apartamento rural'   => 'VacationRental',
         'apartamento turístico'=> 'VacationRental',
         'apartamento'         => 'VacationRental',
-        'villa'               => 'VacationRental',
+        'villa'                => 'VacationRental',
         'cabaña'              => 'VacationRental',
         'casa de campo'       => 'VacationRental',
-        'chalet'              => 'VacationRental',
+        'chalet'               => 'VacationRental',
         'masía'               => 'VacationRental',
-        'cortijo'             => 'VacationRental',
-        'finca rural'         => 'VacationRental',
+        'cortijo'              => 'VacationRental',
+        'finca rural'          => 'VacationRental',
         'alojamiento rural'   => 'VacationRental',
         'turismo rural'       => 'VacationRental',
-        // Glamping
-        'glamping'            => 'Campground',
-        'camping'             => 'Campground',
+        // Glamping / Camping
+        'glamping'             => 'Campground',
+        'camping'              => 'Campground',
     ];
+    
     $schemaType = 'VacationRental'; // fallback más apropiado para turismo rural
     foreach ($typeMap as $kw => $st) {
-        if (str_contains($cat_raw, $kw)) { $schemaType = $st; break; }
+        if (str_contains($cat_raw, $kw)) { 
+            $schemaType = $st; 
+            break; 
+        }
     }
 
     // ── 2. ImageObject array ──────────────────────────────────────────────────
@@ -92,14 +95,13 @@ function renderAlojamientoSchema(
         $amenityFeatures[] = ['@type' => 'LocationFeatureSpecification', 'name' => $name, 'value' => $val];
     };
 
-    // Amenidades desde JSON (campo genérico)
     if (!empty($alojamiento['amenities'])) {
         $ams = json_decode($alojamiento['amenities'], true);
         if (is_array($ams)) {
             foreach ($ams as $am) { $addFeature((string)$am); }
         }
     }
-    // Campos booleanos específicos
+
     $boolFeatures = [
         'pet_friendly'          => 'Admite mascotas',
         'kitchen_available'     => 'Cocina disponible',
@@ -118,6 +120,7 @@ function renderAlojamientoSchema(
         'fireplace'             => 'Chimenea',
         'accessible'            => 'Accesible para personas con movilidad reducida',
     ];
+
     foreach ($boolFeatures as $field => $label) {
         if (!empty($alojamiento[$field]) && (int)$alojamiento[$field] === 1) {
             $addFeature($label);
@@ -125,11 +128,10 @@ function renderAlojamientoSchema(
     }
 
     // ── 4. Check-in / Check-out ───────────────────────────────────────────────
-    // schema.org espera formato "HH:MM" simple (sin prefijo T)
     $ci = $alojamiento['check_in_time']  ?? '15:00';
     $co = $alojamiento['check_out_time'] ?? '11:00';
-    $checkinTime  = substr($ci, 0, 5);   // "15:00"
-    $checkoutTime = substr($co, 0, 5);   // "11:00"
+    $checkinTime  = substr($ci, 0, 5);
+    $checkoutTime = substr($co, 0, 5);
 
     // ── 5. LodgingBusiness / VacationRental ───────────────────────────────────
     $descRaw   = strip_tags($alojamiento['description'] ?? '');
@@ -143,19 +145,14 @@ function renderAlojamientoSchema(
         'postalCode'      => $alojamiento['postal_code'] ?? '',
         'addressCountry'  => 'ES',
     ];
-    // NO usar array_filter aquí - Google requiere streetAddress y postalCode presentes
-    // aunque estén vacíos, para evitar el warning en Search Console
-    // Solo eliminamos valores vacíos que no sean streetAddress ni postalCode
     $address = array_filter($address, fn($v, $k) => $v !== '' || in_array($k, ['streetAddress', 'postalCode', '@type', 'addressCountry']), ARRAY_FILTER_USE_BOTH);
 
-    // Imágenes consolidadas — Google recomienda mínimo 8 para VacationRental
-    // Si hay menos fotos reales, se rellena con la imagen genérica del sitio
     $genericImage = $baseUrl . '/menu_images/turismo_rural.webp';
     $allImages    = !empty($imageObjects) ? $imageObjects : array_map(
         fn($u) => str_starts_with($u, 'http') ? $u : $baseUrl . $u,
         $fotos
     );
-    // Rellenar hasta 8 si faltan imágenes
+
     $minImages = 8;
     while (count($allImages) < $minImages) {
         $idx          = count($allImages) + 1;
@@ -171,28 +168,24 @@ function renderAlojamientoSchema(
     }
 
     $lodging = [
-        '@type'         => $schemaType,
-        '@id'           => $canonical . '#lodging',
-        // identifier: REQUERIDO por Google para VacationRental
-        // Debe ser un string simple (URL canónica) — PropertyValue no es válido aquí
-        'identifier'    => $canonical,
-        'name'          => $alojamiento['name'],
-        'description'   => $descShort,
-        'url'           => $canonical,
-        'image'         => $allImages,
-        'address'       => $address,
-        'checkinTime'   => $checkinTime,
-        'checkoutTime'  => $checkoutTime,
+        '@type'              => $schemaType,
+        '@id'                => $canonical . '#lodging',
+        'identifier'         => $canonical,
+        'name'               => $alojamiento['name'],
+        'description'        => $descShort,
+        'url'                => $canonical,
+        'image'              => $allImages,
+        'address'            => $address,
+        'checkinTime'        => $checkinTime,
+        'checkoutTime'       => $checkoutTime,
         'currenciesAccepted' => 'EUR',
         'paymentAccepted'    => 'Cash, Credit Card',
     ];
 
-    // Contacto
-    if (!empty($alojamiento['phone']))   $lodging['telephone']  = $alojamiento['phone'];
-    if (!empty($alojamiento['email']))   $lodging['email']      = $alojamiento['email'];
-    if (!empty($alojamiento['website'])) $lodging['sameAs']     = [$alojamiento['website']];
+    if (!empty($alojamiento['phone']))   $lodging['telephone'] = $alojamiento['phone'];
+    if (!empty($alojamiento['email']))   $lodging['email']     = $alojamiento['email'];
+    if (!empty($alojamiento['website'])) $lodging['sameAs']    = [$alojamiento['website']];
 
-    // Precio
     if (!empty($alojamiento['price_per_night']) && (float)$alojamiento['price_per_night'] > 0) {
         $precio = (float)$alojamiento['price_per_night'];
         $lodging['priceRange'] = 'Desde ' . number_format($precio, 0, ',', '.') . '€/noche';
@@ -207,27 +200,23 @@ function renderAlojamientoSchema(
         ];
     }
 
-    // Capacidad — QuantitativeValue requiere 'value' (no solo maxValue)
     if (!empty($alojamiento['capacity']) && (int)$alojamiento['capacity'] > 0) {
         $lodging['occupancy'] = [
             '@type'    => 'QuantitativeValue',
             'value'    => (int)$alojamiento['capacity'],
             'maxValue' => (int)$alojamiento['capacity'],
-            'unitCode' => 'C62', // personas
+            'unitCode' => 'C62',
         ];
     }
 
-    // Habitaciones
     if (!empty($alojamiento['bedrooms']) && (int)$alojamiento['bedrooms'] > 0) {
         $lodging['numberOfRooms'] = (int)$alojamiento['bedrooms'];
     }
 
-    // Baños
     if (!empty($alojamiento['bathrooms']) && (int)$alojamiento['bathrooms'] > 0) {
         $lodging['numberOfBathroomsTotal'] = (int)$alojamiento['bathrooms'];
     }
 
-    // Coordenadas
     if (!empty($alojamiento['latitude']) && !empty($alojamiento['longitude'])) {
         $lat = (float)$alojamiento['latitude'];
         $lng = (float)$alojamiento['longitude'];
@@ -235,38 +224,25 @@ function renderAlojamientoSchema(
         $lodging['hasMap'] = 'https://www.google.com/maps?q=' . $lat . ',' . $lng;
     }
 
-    // ── additionalType en la entidad principal ────────────────────────────────
-    // Enlace directo a schema.org para ayudar a Google a clasificar el tipo
-    $schemaTypeUrl = 'https://schema.org/' . $schemaType;
-    $lodging['additionalType'] = $schemaTypeUrl;
+    $lodging['additionalType'] = 'https://schema.org/' . $schemaType;
 
-    // containsPlace: REQUERIDO por Google para VacationRental
-    // Describe las unidades de alojamiento que contiene la propiedad
-    // additionalType: debe ser una URL válida de schema.org para el tipo de unidad
     $containsPlaceObj = [
         '@type'          => 'Accommodation',
         'name'           => 'Alojamiento completo — ' . $alojamiento['name'],
-        // additionalType: VacationRental es el tipo más específico para alquiler turístico
         'additionalType' => 'https://schema.org/VacationRental',
     ];
 
-    // numberOfBedrooms (correcto para Accommodation, Google lo requiere)
-    // Fallback a 1 si no hay dato en BD (evita el warning "falta el campo" en GSC)
     $numBedrooms = (!empty($alojamiento['bedrooms']) && (int)$alojamiento['bedrooms'] > 0)
         ? (int)$alojamiento['bedrooms']
-        : 1; // fallback mínimo
+        : 1;
     $containsPlaceObj['numberOfBedrooms'] = $numBedrooms;
     $containsPlaceObj['numberOfRooms']    = $numBedrooms;
 
-    // numberOfBathroomsTotal en containsPlace
-    // Fallback a 1 si no hay dato en BD
     $numBathrooms = (!empty($alojamiento['bathrooms']) && (int)$alojamiento['bathrooms'] > 0)
         ? (int)$alojamiento['bathrooms']
-        : 1; // fallback mínimo
+        : 1;
     $containsPlaceObj['numberOfBathroomsTotal'] = $numBathrooms;
 
-    // bed: descripción de las camas (requerido por Google para VacationRental)
-    // Siempre presente: se infiere de numberOfBedrooms (mínimo 1)
     $beds = [];
     for ($b = 0; $b < $numBedrooms; $b++) {
         $beds[] = [
@@ -277,7 +253,6 @@ function renderAlojamientoSchema(
     }
     $containsPlaceObj['bed'] = count($beds) === 1 ? $beds[0] : $beds;
 
-    // occupancy: QuantitativeValue REQUIERE 'value' (además de maxValue)
     if (!empty($alojamiento['capacity']) && (int)$alojamiento['capacity'] > 0) {
         $containsPlaceObj['occupancy'] = [
             '@type'    => 'QuantitativeValue',
@@ -291,19 +266,14 @@ function renderAlojamientoSchema(
     }
     $lodging['containsPlace'] = $containsPlaceObj;
 
-    // Amenidades
     if (!empty($amenityFeatures)) {
         $lodging['amenityFeature'] = $amenityFeatures;
     }
 
-    // Mascotas
     if (isset($alojamiento['pet_friendly'])) {
         $lodging['petsAllowed'] = (bool)(int)$alojamiento['pet_friendly'];
     }
 
-    // aggregateRating (requerido por Google para VacationRental)
-    // Se incluye siempre: si hay datos reales de la BD se usan; si no, se usa
-    // la valoración editorial de Rutas Rurales (reviewCount mínimo = 1)
     $hasRealRating = !empty($alojamiento['rating_avg'])
                   && (float)$alojamiento['rating_avg'] > 0
                   && !empty($alojamiento['rating_count'])
@@ -313,7 +283,6 @@ function renderAlojamientoSchema(
         $ratingVal   = number_format((float)$alojamiento['rating_avg'], 1, '.', '');
         $reviewCount = (int)$alojamiento['rating_count'];
     } else {
-        // Valoración editorial por defecto: alojamiento verificado y publicado
         $ratingVal   = '4.0';
         $reviewCount = 1;
     }
@@ -326,7 +295,6 @@ function renderAlojamientoSchema(
         'worstRating' => '1',
     ];
 
-    // review: al menos una reseña representativa (requerido por Google)
     $lodging['review'] = [
         '@type'        => 'Review',
         'reviewRating' => [
@@ -349,27 +317,7 @@ function renderAlojamientoSchema(
         'datePublished' => $alojamiento['created_at'] ?? date('Y-m-d'),
     ];
 
-    // ── 6. BreadcrumbList ─────────────────────────────────────────────────────
-    $bcLabels = [
-        'es' => ['Inicio', 'Alojamientos turísticos'],
-        'en' => ['Home',   'Accommodations'],
-        'fr' => ['Accueil','Hébergements'],
-        'de' => ['Startseite', 'Unterkünfte'],
-        'zh' => ['首页', '住宿列表'],
-    ];
-    $bl            = $bcLabels[$lang] ?? $bcLabels['es'];
-    $listingUrl    = $baseUrl . ($lang !== 'es' ? "/$lang" : '') . '/alojamientos/turismo-rural';
-    $breadcrumb    = [
-        '@type'           => 'BreadcrumbList',
-        '@id'             => $canonical . '#breadcrumb',
-        'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => $bl[0], 'item' => $baseUrl . '/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => $bl[1], 'item' => $listingUrl],
-            ['@type' => 'ListItem', 'position' => 3, 'name' => $alojamiento['name'], 'item' => $canonical],
-        ],
-    ];
-
-    // ── 7. WebPage ────────────────────────────────────────────────────────────
+    // ── 6. WebPage ────────────────────────────────────────────────────────────
     $inLanguage = $lang === 'es' ? 'es-ES' : strtolower($lang) . '-' . strtoupper($lang);
     $webpage    = [
         '@type'          => 'WebPage',
@@ -380,40 +328,39 @@ function renderAlojamientoSchema(
         'inLanguage'     => $inLanguage,
         'isPartOf'       => ['@id' => $baseUrl . '/#website'],
         'about'          => ['@id' => $canonical . '#lodging'],
-        'breadcrumb'     => ['@id' => $canonical . '#breadcrumb'],
         'datePublished'  => $alojamiento['created_at'] ?? date('Y-m-d'),
         'dateModified'   => $alojamiento['updated_at'] ?? date('Y-m-d'),
         'speakable'      => [
-            '@type'    => 'SpeakableSpecification',
-            'cssSelector' => ['.alo-hero h1', '.desc-text'],
+            '@type'       => 'SpeakableSpecification',
+            'cssSelector' => ['.hero-title', '.desc-text'],
         ],
     ];
     if (!empty($imageObjects)) {
         $webpage['primaryImageOfPage'] = ['@id' => $canonical . '#photo1'];
     }
 
-    // ── 8. WebSite (sitelinks searchbox) ─────────────────────────────────────
+    // ── 7. WebSite (Sitelinks searchbox) ─────────────────────────────────────
     $website = [
-        '@type'            => 'WebSite',
-        '@id'              => $baseUrl . '/#website',
-        'name'             => 'Rutas Rurales',
-        'url'              => $baseUrl . '/',
-        'description'      => 'Turismo rural en España: alojamientos, rutas, eventos y lugares de interés',
-        'inLanguage'       => 'es-ES',
-        'publisher'        => [
+        '@type'        => 'WebSite',
+        '@id'          => $baseUrl . '/#website',
+        'name'         => 'Rutas Rurales',
+        'url'          => $baseUrl . '/',
+        'description'  => 'Turismo rural en España: alojamientos, rutas, eventos y lugares de interés',
+        'inLanguage'   => 'es-ES',
+        'publisher'    => [
             '@type' => 'Organization',
             '@id'   => $baseUrl . '/#organization',
             'name'  => 'Rutas Rurales',
             'url'   => $baseUrl . '/',
             'logo'  => [
-                '@type' => 'ImageObject',
-                'url'   => $baseUrl . '/menu_images/Logo%20transparente.webp',
-                'width' => 300,
-                'height'=> 80,
+                '@type'  => 'ImageObject',
+                'url'    => $baseUrl . '/menu_images/Logo%20transparente.webp',
+                'width'  => 300,
+                'height' => 80,
             ],
             'sameAs' => ['https://twitter.com/rutasrurales'],
         ],
-        'potentialAction'  => [
+        'potentialAction' => [
             '@type'       => 'SearchAction',
             'target'      => [
                 '@type'       => 'EntryPoint',
@@ -423,18 +370,16 @@ function renderAlojamientoSchema(
         ],
     ];
 
-    // ── 9. FAQPage dinámico ───────────────────────────────────────────────────
-    $nombre   = $alojamiento['name'];
-    $municipio= $alojamiento['municipality'] ?? 'Soria';
-    $provincia= $alojamiento['province']    ?? 'Soria';
-    $capacidad= (int)($alojamiento['capacity'] ?? 0);
+    // ── 8. FAQPage dinámico ───────────────────────────────────────────────────
+    $nombre      = $alojamiento['name'];
+    $municipio   = $alojamiento['municipality'] ?? 'Soria';
+    $provincia   = $alojamiento['province']     ?? 'Soria';
+    $capacidad   = (int)($alojamiento['capacity'] ?? 0);
     $precioNoche = !empty($alojamiento['price_per_night']) && (float)$alojamiento['price_per_night'] > 0
         ? number_format((float)$alojamiento['price_per_night'], 0, ',', '.') . ' € por noche'
         : 'consultar directamente';
     $petFriendly  = !empty($alojamiento['pet_friendly'])     && (int)$alojamiento['pet_friendly']     === 1;
-    $tieneWifi    = !empty($alojamiento['wifi'])              && (int)$alojamiento['wifi']              === 1;
-    $tienePiscina = !empty($alojamiento['swimming_pool'])     && (int)$alojamiento['swimming_pool']     === 1;
-    $tieneParking = !empty($alojamiento['parking'])           && (int)$alojamiento['parking']           === 1;
+    $tieneWifi    = !empty($alojamiento['wifi'])             && (int)$alojamiento['wifi']             === 1;
     $aptaNinos    = !empty($alojamiento['suitable_for_children']) && (int)$alojamiento['suitable_for_children'] === 1;
 
     $faqItems = [
@@ -458,7 +403,6 @@ function renderAlojamientoSchema(
         ],
     ];
 
-    // FAQ: capacidad
     if ($capacidad > 0) {
         $faqItems[] = [
             '@type'          => 'Question',
@@ -470,7 +414,6 @@ function renderAlojamientoSchema(
         ];
     }
 
-    // FAQ: mascotas
     $faqItems[] = [
         '@type'          => 'Question',
         'name'           => '¿Se admiten mascotas en ' . $nombre . '?',
@@ -482,7 +425,6 @@ function renderAlojamientoSchema(
         ],
     ];
 
-    // FAQ: WiFi
     $faqItems[] = [
         '@type'          => 'Question',
         'name'           => '¿Tiene WiFi ' . $nombre . '?',
@@ -494,7 +436,6 @@ function renderAlojamientoSchema(
         ],
     ];
 
-    // FAQ: niños
     $faqItems[] = [
         '@type'          => 'Question',
         'name'           => '¿Es ' . $nombre . ' apto para familias con niños?',
@@ -506,7 +447,6 @@ function renderAlojamientoSchema(
         ],
     ];
 
-    // FAQ: check-in/check-out
     $faqItems[] = [
         '@type'          => 'Question',
         'name'           => '¿Cuáles son los horarios de entrada y salida en ' . $nombre . '?',
@@ -518,42 +458,37 @@ function renderAlojamientoSchema(
         ],
     ];
 
-    // FAQ: qué hay cerca
     $faqItems[] = [
         '@type'          => 'Question',
         'name'           => '¿Qué se puede hacer cerca de ' . $nombre . ' en ' . $municipio . '?',
         'acceptedAnswer' => [
             '@type' => 'Answer',
-            'text'  => $municipio . ', en la provincia de ' . $provincia . ', ofrece numerosas actividades y atractivos turísticos.'
-                . ' Puedes explorar rutas de senderismo, monumentos, gastronomía local y festividades tradicionales. '
+            'text'  => $municipio . ', en la provincia de ' . $provincia . ', ofrece numerosas actividades y atractivos turísticos. '
+                . 'Puedes explorar rutas de senderismo, monumentos, gastronomía local y festividades tradicionales. '
                 . 'Consulta nuestra web para descubrir alojamientos, lugares de interés, actividades y eventos cercanos a ' . $nombre . '.',
         ],
     ];
 
     $faqPage = [
+        '@context'   => 'https://schema.org',
         '@type'      => 'FAQPage',
         '@id'        => $canonical . '#faq',
         'mainEntity' => $faqItems,
     ];
 
-    // ── 10. Ensamblar @graph y emitir bloques <script> separados ──────────────
-    // Google recomienda un @graph por página, separamos WebSite en bloque propio
-    // para no mezclar entidades independientes.
-
+    // ── 9. Ensamblar y emitir bloques <script> ───────────────────────────────
     $graph = [
         '@context' => 'https://schema.org',
-        '@graph'   => [$website, $webpage, $breadcrumb, $lodging],
+        '@graph'   => [$website, $webpage, $lodging],
     ];
 
     $flags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
 
-    // Bloque principal (entidades relacionadas en @graph)
     echo '<script type="application/ld+json">' . "\n";
     echo json_encode($graph, $flags);
     echo "\n</script>\n";
 
-    // FAQPage en bloque separado (entidad independiente)
     echo '<script type="application/ld+json">' . "\n";
-    echo json_encode(['@context' => 'https://schema.org'] + $faqPage, $flags);
+    echo json_encode($faqPage, $flags);
     echo "\n</script>\n";
 }

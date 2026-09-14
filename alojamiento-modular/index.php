@@ -1832,12 +1832,14 @@ if (file_exists($header_path)) {
 
     <div class="alo-hero-content">
         <nav class="alo-breadcrumb" aria-label="breadcrumb">
-            <a href="/">🏠 Inicio</a>
-            <span>/</span>
-            <a href="/alojamientos/turismo-rural"><?php echo $t['alojamientos']; ?></a>
-            <span>/</span>
-            <span><?php echo htmlspecialchars($alojamiento['name']); ?></span>
-        </nav>
+    <ol style="display:flex; list-style:none; padding:0; margin:0; gap:6px; align-items:center;">
+        <li><a href="<?php echo ($lang !== 'es' ? '/' . $lang : ''); ?>/">🏠 <?php echo !empty($t['inicio']) ? $t['inicio'] : 'Inicio'; ?></a></li>
+        <li style="opacity: 0.6;">/</li>
+        <li><a href="<?php echo ($lang !== 'es' ? '/' . $lang : ''); ?>/alojamientos/"><?php echo !empty($t['alojamientos']) ? $t['alojamientos'] : (!empty($t['alojamiento']) ? $t['alojamiento'] : 'Alojamientos'); ?></a></li>
+        <li style="opacity: 0.6;">/</li>
+        <li aria-current="page" style="color: #fff; font-weight: 600;"><?php echo htmlspecialchars(mb_strimwidth($alojamiento['name'] ?? '', 0, 45, '...'), ENT_QUOTES, 'UTF-8'); ?></li>
+    </ol>
+</nav>
 
         <div class="alo-hero-badge"><?php echo htmlspecialchars($tipo_display); ?></div>
 
