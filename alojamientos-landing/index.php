@@ -117,15 +117,29 @@ if (!empty($filter_labels) && !empty($province_label)) {
 }
 
 // Meta title y description
-$meta_title = t($t['meta_title'], [
-    'FILTER_LABEL' => $primary_filter_label,
-    'PROVINCE'     => $province_label ?: 'España',
-]);
-$meta_desc_raw = t($t['meta_desc'], [
-    'FILTER_LABEL_LOWER' => mb_strtolower($primary_filter_label),
-    'PROVINCE'           => $province_label ?: 'España',
-    'FILTER_FEATURE'     => $feature_label,
-]);
+// Si no hay provincia, usar el filtro como elemento principal y ajustar el template
+$province_for_meta = !empty($province_label) ? $province_label : '';
+
+// Usar template alternativo cuando no hay provincia
+if (empty($province_label)) {
+    $meta_title = t($t['meta_title_no_prov'] ?? '{FILTER_LABEL} — Alojamientos Rurales | rutasrurales.io', [
+        'FILTER_LABEL' => $primary_filter_label,
+    ]);
+    $meta_desc_raw = t($t['meta_desc_no_prov'] ?? 'Descubre los mejores {FILTER_LABEL_LOWER}. Casas rurales con encanto y naturaleza auténtica. Reserva directa sin intermediarios.', [
+        'FILTER_LABEL_LOWER' => mb_strtolower($primary_filter_label),
+        'FILTER_FEATURE'     => $feature_label,
+    ]);
+} else {
+    $meta_title = t($t['meta_title'], [
+        'FILTER_LABEL' => $primary_filter_label,
+        'PROVINCE'     => $province_label,
+    ]);
+    $meta_desc_raw = t($t['meta_desc'], [
+        'FILTER_LABEL_LOWER' => mb_strtolower($primary_filter_label),
+        'PROVINCE'           => $province_label,
+        'FILTER_FEATURE'     => $feature_label,
+    ]);
+}
 // Limitar meta description a 155 caracteres para evitar truncado en SERPs
 $meta_desc = mb_substr($meta_desc_raw, 0, 155);
 // Añadir "..." si se cortó el texto

@@ -353,8 +353,8 @@ const LANDING_I18N = [
         'lang_locale' => 'zh-CN',
         'dir'         => 'ltr',
 
-        'meta_title'  => '{PROVINCE}{FILTER_LABEL} — 乡村住宿 | rutasrurales.io',
-        'meta_desc'   => '在西班牙{PROVINCE}寻找最优质的{FILTER_LABEL_LOWER}。迷人的乡村民宿，{FILTER_FEATURE}，真实自然体验。直接预订，无中间商。',
+        'meta_title'  => '{FILTER_LABEL} en {PROVINCE} — 乡村住宿 | rutasrurales.io',
+        'meta_desc'   => '在{PROVINCE}寻找最优质的{FILTER_LABEL_LOWER}。迷人的乡村民宿，{FILTER_FEATURE}，真实自然体验。直接预订，无中间商。',
 
         'h1_template'   => '{PROVINCE}的{FILTER_LABEL}',
         'h1_only_prov'  => '{PROVINCE}乡村住宿',
