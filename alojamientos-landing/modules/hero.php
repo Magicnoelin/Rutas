@@ -33,13 +33,13 @@ function renderLandingHero(array $ctx): void
     $list_url = $lang !== 'es' ? "$base_url/$lang/alojamientos/turismo-rural" : "$base_url/alojamientos/turismo-rural";
 
     // Enlace "ver todos en provincia" — slug solo-provincia (sin filtros)
-    // p.ej. /de/alojamientos/zamora  (no turismo-rural-zamora, que sería la misma página)
+    // SIEMPRE con prefijo turismo-rural- para evitar duplicación canónica
     $prov_url = '';
     if (!empty($parsed['province'])) {
         $prov_slug = $parsed['province'];
         $prov_url  = $lang !== 'es'
-            ? "$base_url/$lang/alojamientos/$prov_slug"
-            : "$base_url/alojamientos/$prov_slug";
+            ? "$base_url/$lang/alojamientos/turismo-rural-$prov_slug"
+            : "$base_url/alojamientos/turismo-rural-$prov_slug";
     }
 ?>
 <!-- ══════════════════════════════════════════════════════════ HERO ══ -->

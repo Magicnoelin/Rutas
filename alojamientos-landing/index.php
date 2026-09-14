@@ -121,11 +121,17 @@ $meta_title = t($t['meta_title'], [
     'FILTER_LABEL' => $primary_filter_label,
     'PROVINCE'     => $province_label ?: 'España',
 ]);
-$meta_desc = t($t['meta_desc'], [
+$meta_desc_raw = t($t['meta_desc'], [
     'FILTER_LABEL_LOWER' => mb_strtolower($primary_filter_label),
     'PROVINCE'           => $province_label ?: 'España',
     'FILTER_FEATURE'     => $feature_label,
 ]);
+// Limitar meta description a 155 caracteres para evitar truncado en SERPs
+$meta_desc = mb_substr($meta_desc_raw, 0, 155);
+// Añadir "..." si se cortó el texto
+if (mb_strlen($meta_desc_raw) > 155) {
+    $meta_desc = mb_substr($meta_desc, 0, 152) . '...';
+}
 
 // H2 del listing
 $h2_listing = t($t['h2_listing'], ['PROVINCE' => $province_label ?: 'España']);
@@ -141,12 +147,16 @@ $base_domain = 'https://rutasrurales.io';
 // bloque garantiza que el <link rel="canonical"> y los hreflang apunten siempre
 // a la URL con el prefijo "turismo-rural-", evitando el error de GSC:
 // "Duplicada: Google ha elegido una versión canónica diferente a la del usuario".
-if ($parsed['valid'] && empty($parsed['filters']) && !empty($parsed['province'])) {
-    // Slug es solo una provincia → la URL canónica lleva el prefijo turismo-rural-
-    $canonical_slug = 'turismo-rural-' . $parsed['province'];
+if ($parsed['valid'] && !empty($parsed['province'])) {
+    // SIEMPRE usar prefijo turismo-rural- para URLs de provincia
+    // Eliminar cualquier prefijo existente del slug antes de añadir el correcto
+    $province_only = $parsed['province'];
+    $canonical_slug = 'turismo-rural-' . $province_only;
+} elseif ($parsed['valid'] && empty($parsed['province'])) {
+    // Slug sin provincia (solo filtros) → usar slug tal cual
+    $canonical_slug = $slug;
 } else {
-    // Slug ya tiene filtros (ej: casas-rurales-soria, con-chimenea-zamora)
-    // → el slug tal cual ES la URL canónica
+    // Fallback por seguridad
     $canonical_slug = $slug;
 }
 
