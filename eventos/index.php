@@ -18,7 +18,7 @@ $base_domain = 'https://rutasrurales.io';
 $canonical   = $base_domain . '/eventos/';
 $meta_title  = 'Eventos Culturales en España | Agenda Cultural y Festivales';
 $meta_desc   = 'Descubre más de 1.200 eventos culturales verificados en España. Música, gastronomía, tradiciones, teatro, mercados medievales y festivales por provincia.';
-$og_image    = $base_domain . '/menu_images/og-default.jpg';
+$og_image    = $base_domain . '/img/eventos-landing-hero/eventos_culturales.webp';
 
 
 // Conexión PDO y carga de eventos para el carrusel
@@ -39,7 +39,7 @@ try {
 
         // 1. Intentar obtener eventos futuros
         $stmt = $pdo->prepare("
-            SELECT name, slug, description, municipality, province, start_date, poster_image 
+            SELECT name, slug, description, municipality, province, start_date, poster_image, photo1 
             FROM cultural_events 
             WHERE is_active = 1 AND start_date >= CURDATE()
             ORDER BY start_date ASC 
@@ -51,7 +51,7 @@ try {
         // 2. FALLBACK: Si no hay eventos futuros registrados, traer los últimos 10 activos
         if (empty($upcoming_events)) {
             $stmt = $pdo->prepare("
-                SELECT name, slug, description, municipality, province, start_date, poster_image 
+                SELECT name, slug, description, municipality, province, start_date, poster_image, photo1 
                 FROM cultural_events 
                 WHERE is_active = 1
                 ORDER BY id DESC 
@@ -299,7 +299,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <!-- HERO -->
 <section class="evt-hero" id="inicio" aria-labelledby="evt-h1">
   <div class="evt-hero__bg" aria-hidden="true">
-    <img src="/menu_images/hero_main.webp"
+    <img src="/img/eventos-landing-hero/eventos_culturales.webp"
          alt="Eventos culturales y festivales en España"
          width="1200" height="500" loading="eager" fetchpriority="high">
     <div class="evt-hero__overlay"></div>
@@ -333,7 +333,8 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
     <div class="evt-carousel-wrap">
       <ul class="evt-carousel" role="list">
         <?php foreach ($upcoming_events as $ev): 
-          $img_src = !empty($ev['poster_image']) ? $ev['poster_image'] : '/menu_images/og-default.jpg';
+          // Usar poster_image primero, luego photo1, sino imagen por defecto
+          $img_src = !empty($ev['poster_image']) ? $ev['poster_image'] : (!empty($ev['photo1']) ? $ev['photo1'] : '/menu_images/og-default.jpg');
           $date_badge = date('d M', strtotime($ev['start_date']));
           $lugar = array_filter([$ev['municipality'], $ev['province']]);
           $loc_str = implode(', ', $lugar);
@@ -354,12 +355,12 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
               <span class="evt-card__loc">📍 <?= htmlspecialchars($loc_str) ?></span>
             <?php endif; ?>
             <h3 class="evt-card__title">
-              <a href="/eventos/<?= htmlspecialchars($ev['slug']) ?>"><?= htmlspecialchars($ev['name']) ?></a>
+              <a href="/evento-modular/<?= htmlspecialchars($ev['slug']) ?>"><?= htmlspecialchars($ev['name']) ?></a>
             </h3>
             <?php if (!empty($short_desc)): ?>
               <p class="evt-card__desc"><?= htmlspecialchars($short_desc) ?></p>
             <?php endif; ?>
-            <a href="/eventos/<?= htmlspecialchars($ev['slug']) ?>" class="evt-card__btn">Ver detalles ›</a>
+            <a href="/evento-modular/<?= htmlspecialchars($ev['slug']) ?>" class="evt-card__btn">Ver detalles ›</a>
           </div>
         </li>
         <?php endforeach; ?>
