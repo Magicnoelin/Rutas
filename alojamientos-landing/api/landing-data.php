@@ -305,7 +305,7 @@ function getUpcomingEvents(PDO $pdo, ?string $province_db, int $limit = 4): arra
         // Solo eventos futuros o en curso (end_date >= hoy, o start_date >= hoy si no hay end_date)
         $stmt = $pdo->prepare("
             SELECT e.id, e.name AS title, e.slug,
-                   e.short_description, e.municipality,
+                   e.short_description, e.municipality, e.province,
                    e.start_date, e.end_date, e.is_free, e.ticket_price,
                    e.poster_image, e.photo1
             FROM cultural_events e

@@ -2,11 +2,6 @@
 /**
  * /eventos/ — Hub Índice de Eventos Culturales
  * URL canónica: https://rutasrurales.io/eventos/
- *
- * Sirve como índice SEO de la vertical de eventos:
- *  - Grid de categorías temáticas
- *  - Grid de provincias con agenda
- *  - Combinaciones por temporada y provincia (accordion)
  */
 
 ini_set('display_errors', 0);
@@ -25,16 +20,50 @@ $meta_title  = 'Eventos Culturales en España | Agenda Cultural y Festivales';
 $meta_desc   = 'Descubre más de 1.200 eventos culturales verificados en España. Música, gastronomía, tradiciones, teatro, mercados medievales y festivales por provincia.';
 $og_image    = $base_domain . '/menu_images/og-default.jpg';
 
-// Stats desde BD con fallback
+
+// Conexión PDO y carga de eventos para el carrusel
+$pdo = null;
 $total_events = '+1.200';
+$upcoming_events = [];
+
 try {
     if (file_exists(dirname(__DIR__) . '/api/config.php')) {
         require_once dirname(__DIR__) . '/api/config.php';
         $pdo = getDBConnection();
-        $r = $pdo->query("SELECT COUNT(*) AS c FROM cultural_events WHERE is_active=1")->fetch(PDO::FETCH_ASSOC);
-        if (!empty($r['c'])) $total_events = '+' . number_format((int)$r['c'], 0, ',', '.');
+
+        // Conteo total activo
+        $r = $pdo->query("SELECT COUNT(*) AS c FROM cultural_events WHERE is_active = 1")->fetch(PDO::FETCH_ASSOC);
+        if (!empty($r['c'])) {
+            $total_events = '+' . number_format((int)$r['c'], 0, ',', '.');
+        }
+
+        // 1. Intentar obtener eventos futuros
+        $stmt = $pdo->prepare("
+            SELECT name, slug, description, municipality, province, start_date, poster_image 
+            FROM cultural_events 
+            WHERE is_active = 1 AND start_date >= CURDATE()
+            ORDER BY start_date ASC 
+            LIMIT 10
+        ");
+        $stmt->execute();
+        $upcoming_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 2. FALLBACK: Si no hay eventos futuros registrados, traer los últimos 10 activos
+        if (empty($upcoming_events)) {
+            $stmt = $pdo->prepare("
+                SELECT name, slug, description, municipality, province, start_date, poster_image 
+                FROM cultural_events 
+                WHERE is_active = 1
+                ORDER BY id DESC 
+                LIMIT 10
+            ");
+            $stmt->execute();
+            $upcoming_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+    // Manejo silencioso de fallback
+}    // Manejo silencioso de fallback
 
 // Temporada actual
 $mes = (int)date('n');
@@ -43,7 +72,7 @@ elseif (in_array($mes, [3,4,5])) { $temporada = 'primavera'; $temp_label = 'Even
 elseif (in_array($mes, [6,7,8])) { $temporada = 'verano'; $temp_label = 'Eventos de verano ☀️'; }
 else { $temporada = 'otono'; $temp_label = 'Eventos de otoño 🍂'; }
 
-// Datos inline si no hay hub-config
+// Datos inline de respaldo
 $categorias_inline = [
     'musica'       => ['icon'=>'🎵', 'label'=>'Música y conciertos'],
     'gastronomia'  => ['icon'=>'🍷', 'label'=>'Gastronomía y vinos'],
@@ -85,8 +114,6 @@ if ($has_hub_data) {
 }
 $provincias = $has_hub_data ? HUB_PROVINCIAS : $provincias_inline;
 $combis     = $has_hub_data ? HUB_COMBIS_EVT : [];
-
-// Provincias destacadas para temporada
 $provs_temp = ['soria','zamora','burgos','salamanca','valladolid','leon','palencia','segovia','avila'];
 ?>
 <!DOCTYPE html>
@@ -121,8 +148,7 @@ $provs_temp = ['soria','zamora','burgos','salamanca','valladolid','leon','palenc
 @font-face{font-family:'Montserrat';font-style:normal;font-weight:400;font-display:swap;src:local('Montserrat Regular'),url('/fonts/montserrat-v31-latin-regular.woff2') format('woff2')}
 @font-face{font-family:'Montserrat';font-style:normal;font-weight:600;font-display:swap;src:local('Montserrat SemiBold'),url('/fonts/montserrat-v31-latin-600.woff2') format('woff2')}
 @font-face{font-family:'Montserrat';font-style:normal;font-weight:800;font-display:swap;src:local('Montserrat ExtraBold'),url('/fonts/montserrat-v31-latin-800.woff2') format('woff2')}
-</style>
-<style>
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--primary:#2F5233;--primary-dark:#1a3d1e;--accent:#81C784;--accent-warm:#F9A825;--white:#fff;--bg:#f8f9fa;--bg-alt:#f0f4f1;--text:#2d3436;--text-light:#636e72;--border:#e8eaed;--radius:14px;--radius-sm:8px;--shadow:0 2px 12px rgba(0,0,0,.07);--max-w:1200px;--tr:.18s ease}
 html{scroll-behavior:smooth}
@@ -153,11 +179,28 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 
 /* Container */
 .evt-wrap{max-width:var(--max-w);margin:0 auto;padding:0 20px}
-.evt-section{padding:56px 0}
+.evt-section{padding:48px 0}
 .evt-section--alt{background:var(--bg-alt)}
-.evt-section__hdr{margin-bottom:24px}
+.evt-section__hdr{margin-bottom:20px}
 .evt-h2{font-size:clamp(1.25rem,2.5vw,1.65rem);font-weight:800;color:var(--primary);display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .evt-intro{font-size:.92rem;color:var(--text-light);max-width:620px;line-height:1.6}
+
+/* Carrusel Touch Native Optimizado */
+.evt-carousel-wrap{position:relative;width:100%;margin-top:10px}
+.evt-carousel{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:8px 4px 16px;scrollbar-width:thin;scrollbar-color:var(--primary) transparent;-webkit-overflow-scrolling:touch}
+.evt-carousel::-webkit-scrollbar{height:6px}
+.evt-carousel::-webkit-scrollbar-thumb{background:var(--primary);border-radius:4px}
+.evt-card{flex:0 0 280px;scroll-snap-align:start;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .2s ease,box-shadow .2s ease}
+.evt-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,.1)}
+.evt-card__img{position:relative;width:100%;height:150px;background:var(--bg-alt);overflow:hidden}
+.evt-card__img img{width:100%;height:100%;object-fit:cover}
+.evt-card__badge{position:absolute;top:10px;right:10px;background:var(--primary);color:var(--white);font-size:0.75rem;font-weight:800;padding:4px 8px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.evt-card__body{padding:14px;display:flex;flex-direction:column;flex-grow:1}
+.evt-card__loc{font-size:0.75rem;font-weight:700;color:var(--accent-warm);text-transform:uppercase;margin-bottom:4px}
+.evt-card__title{font-size:0.95rem;font-weight:800;line-height:1.3;margin-bottom:6px}
+.evt-card__title a{color:var(--text)}
+.evt-card__desc{font-size:0.8rem;color:var(--text-light);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:12px}
+.evt-card__btn{margin-top:auto;font-size:0.8rem;font-weight:700;color:var(--primary);display:inline-flex;align-items:center;gap:4px}
 
 /* Temporada destacada */
 .evt-season-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:4px}
@@ -203,8 +246,16 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 .evt-footer a{color:rgba(255,255,255,.7)}.evt-footer a:hover{color:#fff}
 .evt-footer__nav{display:flex;flex-wrap:wrap;gap:10px}
 
-@media(max-width:800px){.evt-nav__links{display:none}.evt-provs{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
-@media(max-width:480px){.evt-hero{min-height:300px}.evt-hero__inner{padding:40px 16px 36px}.evt-section{padding:40px 0}}
+@media(max-width:800px){
+    .evt-nav__links{display:none}
+    .evt-provs{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+    .evt-card{flex:0 0 240px} /* Tamaño ajustado para pantallas móviles */
+}
+@media(max-width:480px){
+    .evt-hero{min-height:300px}
+    .evt-hero__inner{padding:40px 16px 36px}
+    .evt-section{padding:36px 0}
+}
 </style>
 
 <script type="application/ld+json">
@@ -271,8 +322,55 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
   </div>
 </section>
 
+<!-- CARRUSEL DE EVENTOS PRÓXIMOS -->
+<?php if (!empty($upcoming_events)): ?>
+<section class="evt-section" aria-labelledby="carousel-h2">
+  <div class="evt-wrap">
+    <div class="evt-section__hdr">
+      <h2 class="evt-h2" id="carousel-h2">📅 Próximos eventos en la agenda</h2>
+      <p class="evt-intro">Eventos destacados ordenados por fecha de celebración en los próximos meses.</p>
+    </div>
+    <div class="evt-carousel-wrap">
+      <ul class="evt-carousel" role="list">
+        <?php foreach ($upcoming_events as $ev): 
+          $img_src = !empty($ev['poster_image']) ? $ev['poster_image'] : '/menu_images/og-default.jpg';
+          $date_badge = date('d M', strtotime($ev['start_date']));
+          $lugar = array_filter([$ev['municipality'], $ev['province']]);
+          $loc_str = implode(', ', $lugar);
+          // Usar description (truncada) para short_description
+          $short_desc = !empty($ev['description']) ? mb_substr(strip_tags($ev['description']), 0, 120) . '...' : '';
+        ?>
+        <li class="evt-card">
+          <div class="evt-card__img">
+            <img src="<?= htmlspecialchars($img_src) ?>" 
+                 alt="<?= htmlspecialchars($ev['name']) ?>" 
+                 width="280" height="150" 
+                 loading="lazy" 
+                 decoding="async">
+            <span class="evt-card__badge"><?= strtoupper($date_badge) ?></span>
+          </div>
+          <div class="evt-card__body">
+            <?php if ($loc_str): ?>
+              <span class="evt-card__loc">📍 <?= htmlspecialchars($loc_str) ?></span>
+            <?php endif; ?>
+            <h3 class="evt-card__title">
+              <a href="/eventos/<?= htmlspecialchars($ev['slug']) ?>"><?= htmlspecialchars($ev['name']) ?></a>
+            </h3>
+            <?php if (!empty($short_desc)): ?>
+              <p class="evt-card__desc"><?= htmlspecialchars($short_desc) ?></p>
+            <?php endif; ?>
+            <a href="/eventos/<?= htmlspecialchars($ev['slug']) ?>" class="evt-card__btn">Ver detalles ›</a>
+          </div>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
 <!-- TEMPORADA ACTUAL -->
-<section class="evt-section" aria-labelledby="temp-h2">
+<section class="evt-section evt-section--alt" aria-labelledby="temp-h2">
   <div class="evt-wrap">
     <div class="evt-section__hdr">
       <h2 class="evt-h2" id="temp-h2"><?= htmlspecialchars($temp_label) ?></h2>
@@ -302,7 +400,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 </section>
 
 <!-- CATEGORÍAS -->
-<section class="evt-section evt-section--alt" aria-labelledby="cats-h2">
+<section class="evt-section" aria-labelledby="cats-h2">
   <div class="evt-wrap">
     <div class="evt-section__hdr">
       <h2 class="evt-h2" id="cats-h2">🗂️ Buscar por categoría</h2>
@@ -323,7 +421,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 </section>
 
 <!-- PROVINCIAS -->
-<section class="evt-section" aria-labelledby="provs-h2">
+<section class="evt-section evt-section--alt" aria-labelledby="provs-h2">
   <div class="evt-wrap">
     <div class="evt-section__hdr">
       <h2 class="evt-h2" id="provs-h2">📍 Agenda cultural por provincia</h2>

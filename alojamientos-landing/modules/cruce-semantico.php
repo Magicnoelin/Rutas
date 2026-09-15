@@ -21,6 +21,7 @@ function renderCruceSemantico(array $ctx): void
     $t        = $ctx['t']              ?? [];
     $lang     = $ctx['lang']           ?? 'es';
     $province = $ctx['province_label'] ?? '';
+    $province_db = $ctx['province_key'] ?? ''; // Key de provincia para fallback
     $places   = $ctx['places']         ?? [];
     $routes   = $ctx['routes']         ?? [];
     $events   = $ctx['events']         ?? [];
@@ -299,11 +300,15 @@ function renderCruceSemantico(array $ctx): void
                 </time>
                 <?php endif; ?>
                 <?php if ($evMunic): ?>
+                <?php 
+                    // Fallback: si el evento no tiene provincia, usar la provincia de la landing
+                    $eventProvince = !empty($ev['province']) ? $ev['province'] : $province;
+                ?>
                 <span class="lnd-event-card__loc" itemprop="location" itemscope itemtype="https://schema.org/Place">
                     📍 <span itemprop="name"><?= $evMunic ?></span>
                     <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
                         <meta itemprop="addressLocality" content="<?= $evMunic ?>">
-                        <meta itemprop="addressRegion" content="<?= htmlspecialchars($ev['province'] ?? '') ?>">
+                        <meta itemprop="addressRegion" content="<?= htmlspecialchars($eventProvince) ?>">
                         <meta itemprop="addressCountry" content="ES">
                     </span>
                 </span>

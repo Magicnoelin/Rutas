@@ -24,13 +24,22 @@ function renderLandingSchema(array $ctx): void
     $items        = $ctx['items']         ?? [];
     $lang         = substr($lang_locale, 0, 2);
 
+    // Limpiar saltos de línea y caracteres problemáticos del title para JSON-LD
+    // Elimina saltos de línea, tabs y múltiples espacios, reemplaza por espacio simple
+    $clean_title = preg_replace('/\s+/', ' ', trim($page_title));
+    $clean_title = htmlspecialchars($clean_title, ENT_QUOTES, 'UTF-8');
+
+    // Limpiar también la descripción
+    $clean_desc = preg_replace('/\s+/', ' ', trim($page_desc));
+    $clean_desc = htmlspecialchars($clean_desc, ENT_QUOTES, 'UTF-8');
+
     // ── 1. CollectionPage ────────────────────────────────────────────────────
     $collectionPage = [
         '@type'       => 'CollectionPage',
         '@id'         => $canonical . '#collection',
         'url'         => $canonical,
-        'name'        => $page_title,
-        'description' => $page_desc,
+        'name'        => $clean_title,
+        'description' => $clean_desc,
         'inLanguage'  => $lang_locale,
         'isPartOf'    => ['@id' => 'https://rutasrurales.io/#website'],
         'breadcrumb'  => ['@id' => $canonical . '#breadcrumb'],
@@ -153,8 +162,8 @@ function renderLandingSchema(array $ctx): void
     $itemList = [
         '@type'           => 'ItemList',
         '@id'             => $canonical . '#itemlist',
-        'name'            => $page_title,
-        'description'     => $page_desc,
+        'name'            => $clean_title,
+        'description'     => $clean_desc,
         'url'             => $canonical,
         'numberOfItems'   => count($items),
         'itemListElement' => $listElements,
