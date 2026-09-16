@@ -158,6 +158,7 @@ RewriteRule ^lugar/puente-real/?$ /lugar/puente-real-el-burgo-de-osma [R=301,L]
 RewriteRule ^lugar/taberna-mercedes/?$ /lugar/taberna-mercedes-soria [R=301,L]
 RewriteRule ^lugar/berlanga-duero-pueblo/?$ /lugar/berlanga-de-duero [R=301,L]
 RewriteRule ^lugar/pico-urbion/?$ /lugar/pico-urbion-duruelo-de-la-sierra [R=301,L]
+RewriteRule ^lugar/mirador-de-los-cuatro-vientos-vinuesa/?$ /lugar/mirador-de-los-cuatro-vientos-soria [R=301,L]
 
 # ============================================================
 # 3b. REDIRECCIONES DE SECCIONES ANTIGUAS → RUTAS ACTUALES
