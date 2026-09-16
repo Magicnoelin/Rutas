@@ -42,6 +42,7 @@ function renderEventosLandingHero(array $ctx): void
     $has_hero    = !empty($hero_url);
 
     $base_url = 'https://rutasrurales.io';
+    $home_url = $lang !== 'es' ? "$base_url/$lang/" : "$base_url/";
     $list_url = $lang !== 'es' ? "$base_url/$lang/eventos-culturales" : "$base_url/eventos-culturales";
 
     // Enlace "ver todos los eventos en provincia"
@@ -187,7 +188,7 @@ function renderEventosLandingHero(array $ctx): void
         <nav class="lnd-breadcrumb" aria-label="Breadcrumb">
             <ol itemscope itemtype="https://schema.org/BreadcrumbList">
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a href="<?= $base_url ?>/" itemprop="item">
+                    <a href="<?= $home_url ?>" itemprop="item">
                         <span itemprop="name"><?= htmlspecialchars($t['bc_home'] ?? 'Inicio') ?></span>
                     </a>
                     <meta itemprop="position" content="1">

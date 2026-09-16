@@ -176,8 +176,9 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 .evt-hero__stats{display:flex;flex-wrap:wrap;gap:24px}
 .evt-stat__val{display:block;font-size:1.55rem;font-weight:800;color:var(--accent-warm);line-height:1}
 .evt-stat__lbl{font-size:.72rem;color:rgba(255,255,255,.78);font-weight:500}
-.evt-bc ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:14px}
+.evt-bc ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:14px;list-style:none;padding:0}
 .evt-bc a{color:rgba(255,255,255,.7)}
+.evt-bc li+li::before{content:'›';margin-right:4px;color:rgba(255,255,255,.5)}
 
 /* Container */
 .evt-wrap{max-width:var(--max-w);margin:0 auto;padding:0 20px}
@@ -310,7 +311,6 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
     <nav class="evt-bc" aria-label="<?= htmlspecialchars($t['bc_nav']) ?>">
       <ol>
         <li><a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a></li>
-        <li aria-hidden="true" style="padding:0 4px">›</li>
         <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($t['evt_bc']) ?></span></li>
       </ol>
     </nav>

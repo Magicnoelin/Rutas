@@ -6,8 +6,16 @@
  *   - Provincia:  /lugares/soria       → lista lugares de esa provincia
  *
  * URL canónica: https://rutasrurales.io/lugares/{slug}
+ * Multiidioma: /lugares/{slug} y /{lang}/lugares/{slug}
  */
 ini_set('display_errors', 0); error_reporting(E_ERROR | E_PARSE);
+
+// I18n Bootstrap
+require_once dirname(__DIR__) . '/index/i18n/vertical-hubs.php';
+$vh = vh_boot('lugares');
+$lang = $vh['lang'];
+$t = $vh['t'];
+$path_prefix = $vh['path_prefix'];
 
 // ── Sanitizar slug ────────────────────────────────────────────────────────────
 $slug_raw = isset($_GET['slug']) ? $_GET['slug'] : '';
@@ -79,21 +87,52 @@ try {
     $pdo = getDBConnection();
 
     // 1. Intentar como categoría (categories_places.slug)
+    // Selecciona todos los campos traducibles
     $sc = $pdo->prepare(
-        "SELECT id, name, slug, icon, description FROM categories_places
+        "SELECT id, name AS name_es, slug, icon, description AS description_es,
+                name_en, description_en, name_fr, description_fr, name_de, description_de, name_zh, description_zh
+         FROM categories_places
          WHERE slug = ? AND is_active = 1 LIMIT 1"
     );
     $sc->execute([$slug]);
-    $cat = $sc->fetch(PDO::FETCH_ASSOC);
+    $cat_raw = $sc->fetch(PDO::FETCH_ASSOC);
 
-    if ($cat) {
+    if ($cat_raw) {
+        // Aplicar traducciones según el idioma actual
+        $lang_fields = [
+            'en' => ['name' => 'name_en', 'desc' => 'description_en'],
+            'fr' => ['name' => 'name_fr', 'desc' => 'description_fr'],
+            'de' => ['name' => 'name_de', 'desc' => 'description_de'],
+            'zh' => ['name' => 'name_zh', 'desc' => 'description_zh'],
+        ];
+        
+        $cat_name = $cat_raw['name_es'];
+        $cat_desc = $cat_raw['description_es'];
+        
+        if ($lang !== 'es' && isset($lang_fields[$lang])) {
+            $fields = $lang_fields[$lang];
+            if (!empty($cat_raw[$fields['name']])) {
+                $cat_name = $cat_raw[$fields['name']];
+            }
+            if (!empty($cat_raw[$fields['desc']])) {
+                $cat_desc = $cat_raw[$fields['desc']];
+            }
+        }
+        
+        $category = [
+            'id' => $cat_raw['id'],
+            'slug' => $cat_raw['slug'],
+            'icon' => $cat_raw['icon'],
+            'name' => $cat_name,
+            'description' => $cat_desc,
+        ];
+        
         $mode         = 'categoria';
-        $category     = $cat;
-        $cat_icon     = !empty($cat['icon']) ? obtenerEmojiLugar($cat['icon']) : '📍';
-        $bc_label     = $cat['name'];
-        $page_h1      = $cat['name'] . ' en España';
-        $meta_title   = $cat['name'] . ' en España | Rutas Rurales';
-        $meta_desc    = 'Descubre los mejores lugares de ' . $cat['name'] . ' en España rural: monumentos, naturaleza, gastronomía y más.';
+        $cat_icon     = !empty($category['icon']) ? obtenerEmojiLugar($category['icon']) : '📍';
+        $bc_label     = $category['name'];
+        $page_h1      = $category['name'] . ' ' . ($t['in_spain'] ?? 'en España');
+        $meta_title   = $category['name'] . ' ' . ($t['in_spain'] ?? 'en España') . ' | Rutas Rurales';
+        $meta_desc    = 'Descubre los mejores lugares de ' . $category['name'] . ' ' . ($t['lug_meta_desc'] ?? 'en España rural: monumentos, naturaleza, gastronomía y más.');
 
         $sp = $pdo->prepare(
             "SELECT p.id, p.slug, p.name, p.municipality, p.province,
@@ -103,7 +142,7 @@ try {
              ORDER BY p.name ASC
              LIMIT 60"
         );
-        $sp->execute([$cat['id']]);
+        $sp->execute([$category['id']]);
         $places = $sp->fetchAll(PDO::FETCH_ASSOC);
 
     } else {
@@ -124,15 +163,20 @@ try {
         if ($province_label) {
             $mode       = 'provincia';
             $bc_label   = $province_label;
-            $page_h1    = 'Lugares de Interés en ' . $province_label;
-            $meta_title = 'Lugares de Interés en ' . $province_label . ' | Rutas Rurales';
+            $page_h1    = $t['lug_by_prov'] . ' ' . $province_label;
+            $meta_title = $t['lug_by_prov'] . ' ' . $province_label . ' | Rutas Rurales';
             $meta_desc  = 'Descubre los mejores lugares de interés en ' . $province_label
                         . ': monumentos históricos, naturaleza, gastronomía y rincones únicos del turismo rural.';
 
+            // Seleccionar categorías traducibles
             $sp2 = $pdo->prepare(
                 "SELECT p.id, p.slug, p.name, p.municipality, p.province,
                         p.short_description, p.photo1, p.entry_fee,
-                        c.name AS category_name, c.icon AS category_icon
+                        c.name AS category_name, c.icon AS category_icon,
+                        COALESCE(c.name_en, c.name) AS category_name_en,
+                        COALESCE(c.name_fr, c.name) AS category_name_fr,
+                        COALESCE(c.name_de, c.name) AS category_name_de,
+                        COALESCE(c.name_zh, c.name) AS category_name_zh
                  FROM places_of_interest p
                  LEFT JOIN categories_places c ON p.category_id = c.id
                  WHERE p.province = ? AND p.is_active = 1
@@ -140,7 +184,17 @@ try {
                  LIMIT 80"
             );
             $sp2->execute([$province_label]);
-            $places = $sp2->fetchAll(PDO::FETCH_ASSOC);
+            $places_raw = $sp2->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Aplicar traducciones a las categorías de cada lugar
+            $cat_field = 'category_name_' . $lang;
+            foreach ($places_raw as &$place) {
+                if ($lang !== 'es' && !empty($place[$cat_field])) {
+                    $place['category_name'] = $place[$cat_field];
+                }
+            }
+            unset($place);
+            $places = $places_raw;
         }
     }
 

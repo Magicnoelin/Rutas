@@ -17,6 +17,7 @@ $meta_title  = $t['lug_meta_title'];
 $meta_desc   = $t['lug_meta_desc'];
 $og_image    = $base_domain . '/menu_images/og-default.jpg';
 $home_url    = $vh['home_url'];
+$hreflang    = $vh['hreflang'];
 
 // ── Helper: texto → slug URL ─────────────────────────────────────────────────
 function lug_to_slug(string $text): string {
@@ -109,15 +110,63 @@ try {
     if (!empty($r['c'])) $total_places = '+' . number_format((int)$r['c'], 0, ',', '.');
 
     // Todas las categorías activas (incluyendo las con 0 lugares)
+    // Selecciona todos los campos traducibles
     $stypes = $pdo->query("
-        SELECT c.id, c.name, c.slug, c.icon, c.description, COUNT(p.id) AS total
+        SELECT 
+            c.id, 
+            c.slug, 
+            c.icon, 
+            c.name AS name_es,
+            c.description AS description_es,
+            c.name_en,
+            c.description_en,
+            c.name_fr,
+            c.description_fr,
+            c.name_de,
+            c.description_de,
+            c.name_zh,
+            c.description_zh,
+            COUNT(p.id) AS total
         FROM categories_places c
         LEFT JOIN places_of_interest p ON p.category_id = c.id AND p.is_active = 1
         WHERE c.is_active = 1
-        GROUP BY c.id, c.name, c.slug, c.icon, c.description
+        GROUP BY c.id, c.slug, c.icon, c.name, c.description, c.name_en, c.description_en, c.name_fr, c.description_fr, c.name_de, c.description_de, c.name_zh, c.description_zh
         ORDER BY c.display_order ASC, c.name ASC
     ");
-    $tipos = $stypes->fetchAll(PDO::FETCH_ASSOC);
+    $tipos_raw = $stypes->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Aplicar traducciones según el idioma actual
+    $lang_fields = [
+        'en' => ['name' => 'name_en', 'desc' => 'description_en'],
+        'fr' => ['name' => 'name_fr', 'desc' => 'description_fr'],
+        'de' => ['name' => 'name_de', 'desc' => 'description_de'],
+        'zh' => ['name' => 'name_zh', 'desc' => 'description_zh'],
+    ];
+    
+    $tipos = [];
+    foreach ($tipos_raw as $tipo) {
+        $nombre = $tipo['name_es'];
+        $desc = $tipo['description_es'];
+        
+        if ($lang !== 'es' && isset($lang_fields[$lang])) {
+            $fields = $lang_fields[$lang];
+            if (!empty($tipo[$fields['name']])) {
+                $nombre = $tipo[$fields['name']];
+            }
+            if (!empty($tipo[$fields['desc']])) {
+                $desc = $tipo[$fields['desc']];
+            }
+        }
+        
+        $tipos[] = [
+            'id' => $tipo['id'],
+            'slug' => $tipo['slug'],
+            'icon' => $tipo['icon'],
+            'name' => $nombre,
+            'description' => $desc,
+            'total' => $tipo['total'],
+        ];
+    }
 
     // Provincias con al menos 1 lugar activo, ordenadas por número de lugares
     $sprovs = $pdo->query("
@@ -156,7 +205,7 @@ if (empty($provincias)) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="<?= htmlspecialchars($lang) ?>" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -164,8 +213,7 @@ if (empty($provincias)) {
 <meta name="description" content="<?= htmlspecialchars($meta_desc) ?>">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
-<link rel="alternate" hreflang="es"        href="https://rutasrurales.io/lugares/">
-<link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/lugares/">
+<?= vh_render_hreflang($hreflang) ?>
 <meta property="og:type"        content="website">
 <meta property="og:title"       content="<?= htmlspecialchars($meta_title) ?>">
 <meta property="og:description" content="<?= htmlspecialchars($meta_desc) ?>">
@@ -251,7 +299,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 </style>
 
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"CollectionPage","name":"Lugares de Interés en España","description":"<?= htmlspecialchars($meta_desc) ?>","url":"<?= htmlspecialchars($canonical) ?>","inLanguage":"es","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://rutasrurales.io/"},{"@type":"ListItem","position":2,"name":"Lugares de interés","item":"<?= htmlspecialchars($canonical) ?>"}]},"publisher":{"@type":"Organization","name":"Rutas Rurales","url":"https://rutasrurales.io"}}
+{"@context":"https://schema.org","@type":"CollectionPage","name":"<?= htmlspecialchars($meta_title) ?>","description":"<?= htmlspecialchars($meta_desc) ?>","url":"<?= htmlspecialchars($canonical) ?>","inLanguage":"<?= htmlspecialchars($lang) ?>","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"<?= htmlspecialchars($t['nav_home']) ?>","item":"<?= htmlspecialchars($home_url) ?>"},{"@type":"ListItem","position":2,"name":"<?= htmlspecialchars($t['lug_bc']) ?>","item":"<?= htmlspecialchars($canonical) ?>"}]},"publisher":{"@type":"Organization","name":"Rutas Rurales","url":"https://rutasrurales.io"}}
 </script>
 <script>(function(){var l=function(){if(window._gtm)return;window._gtm=1;(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MBP57VQM');};['click','scroll','keydown','touchstart'].forEach(function(e){window.addEventListener(e,function(){setTimeout(l,1e3)},{once:true,passive:true});});setTimeout(l,8000);})();</script>
 </head>
@@ -259,17 +307,17 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <header class="lug-nav" role="banner">
-  <a href="https://rutasrurales.io/" class="lug-nav__logo" aria-label="Rutas Rurales - Inicio">
+  <a href="<?= htmlspecialchars($home_url) ?>" class="lug-nav__logo" aria-label="Rutas Rurales - <?= htmlspecialchars($t['nav_home']) ?>">
     <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales" width="38" height="38" loading="eager">
     <span>Rutas Rurales</span>
   </a>
-  <nav class="lug-nav__links" aria-label="Menú principal">
-    <a href="/alojamientos/">🏡 Alojamientos</a>
-    <a href="/eventos/">🎭 Eventos</a>
-    <a href="/lugares/" aria-current="page">📍 Lugares</a>
-    <a href="/actividades/">🥾 Actividades</a>
-    <a href="/rutas.php">🗺️ Mapa</a>
-    <a href="/login.html" class="lug-nav__cta" rel="nofollow">Acceder</a>
+  <nav class="lug-nav__links" aria-label="<?= htmlspecialchars($t['nav_main']) ?>">
+    <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/">🏡 <?= htmlspecialchars($t['nav_stays']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/">🎭 <?= htmlspecialchars($t['nav_events']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/" aria-current="page">📍 <?= htmlspecialchars($t['nav_places']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/">🥾 <?= htmlspecialchars($t['nav_activities']) ?></a>
+    <a href="/rutas.php">🗺️ <?= htmlspecialchars($t['nav_map']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/login.html" class="lug-nav__cta" rel="nofollow"><?= htmlspecialchars($t['nav_login']) ?></a>
   </nav>
 </header>
 
@@ -278,25 +326,25 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <section class="lug-hero" id="inicio" aria-labelledby="lug-h1">
   <div class="lug-hero__bg" aria-hidden="true">
     <img src="/menu_images/hero_main.webp"
-         alt="Lugares de interés y monumentos en España rural"
+         alt="<?= htmlspecialchars($t['lug_h1']) ?>"
          width="1200" height="500" loading="eager" fetchpriority="high">
     <div class="lug-hero__overlay"></div>
   </div>
   <div class="lug-hero__inner">
-    <nav class="lug-bc" aria-label="Ruta de navegación">
+    <nav class="lug-bc" aria-label="<?= htmlspecialchars($t['bc_nav']) ?>">
       <ol>
-        <li><a href="https://rutasrurales.io/">Inicio</a></li>
+        <li><a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a></li>
         <li aria-hidden="true" style="padding:0 4px">›</li>
-        <li><span aria-current="page" style="color:#fff">Lugares de interés</span></li>
+        <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($t['lug_bc']) ?></span></li>
       </ol>
     </nav>
-    <h1 id="lug-h1">Lugares de Interés en España</h1>
-    <p class="lug-hero__sub">Monumentos históricos, espacios naturales, restaurantes con encanto, bodegas y rincones únicos del turismo rural español.</p>
+    <h1 id="lug-h1"><?= htmlspecialchars($t['lug_h1']) ?></h1>
+    <p class="lug-hero__sub"><?= htmlspecialchars($t['lug_sub']) ?></p>
     <?php if ($total_places): ?>
-    <div class="lug-hero__stats" aria-label="Estadísticas">
-      <div><span class="lug-stat__val"><?= htmlspecialchars($total_places) ?></span><span class="lug-stat__lbl">Lugares</span></div>
-      <div><span class="lug-stat__val"><?= count($provincias) ?></span><span class="lug-stat__lbl">Provincias</span></div>
-      <div><span class="lug-stat__val"><?= count($tipos) ?></span><span class="lug-stat__lbl">Categorías</span></div>
+    <div class="lug-hero__stats" aria-label="<?= htmlspecialchars($t['stats']) ?>">
+      <div><span class="lug-stat__val"><?= htmlspecialchars($total_places) ?></span><span class="lug-stat__lbl"><?= htmlspecialchars($t['nav_places']) ?></span></div>
+      <div><span class="lug-stat__val"><?= count($provincias) ?></span><span class="lug-stat__lbl"><?= htmlspecialchars($t['provinces']) ?></span></div>
+      <div><span class="lug-stat__val"><?= count($tipos) ?></span><span class="lug-stat__lbl"><?= htmlspecialchars($t['alo_stat_provs'] ?? 'Categorías') ?></span></div>
     </div>
     <?php endif; ?>
   </div>
@@ -305,14 +353,14 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <!-- TIPOS DE LUGAR — desde categories_places -->
 <section class="lug-section lug-section--alt" aria-labelledby="tipos-h2">
   <div class="lug-wrap">
-    <h2 class="lug-h2" id="tipos-h2">🗂️ Explorar por tipo</h2>
-    <p class="lug-intro">Encuentra lugares según tu interés: patrimonio, gastronomía, naturaleza y más.</p>
-    <ul class="lug-tipos" role="list" aria-label="Tipos de lugares de interés">
+    <h2 class="lug-h2" id="tipos-h2">🗂️ <?= htmlspecialchars($t['lug_by_type']) ?></h2>
+    <p class="lug-intro"><?= htmlspecialchars($t['lug_by_type_intro']) ?></p>
+    <ul class="lug-tipos" role="list" aria-label="<?= htmlspecialchars($t['lug_type_aria']) ?>">
       <?php foreach ($tipos as $td): ?>
       <li>
-        <a href="/lugares/<?= htmlspecialchars($td['slug']) ?>"
+        <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/<?= htmlspecialchars($td['slug']) ?>"
            class="lug-tipo"
-           title="<?= htmlspecialchars($td['name']) ?> en España">
+           title="<?= htmlspecialchars($td['name']) ?>">
           <span class="lug-tipo__icon" aria-hidden="true"><?= obtenerEmojiLugar($td['icon'] ?? '') ?></span>
           <span class="lug-tipo__info">
             <span class="lug-tipo__nm"><?= htmlspecialchars($td['name']) ?></span>
@@ -320,7 +368,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
             <span class="lug-tipo__desc"><?= htmlspecialchars($td['description']) ?></span>
             <?php endif; ?>
             <?php if (!empty($td['total'])): ?>
-            <span class="lug-tipo__count"><?= (int)$td['total'] ?> lugares</span>
+            <span class="lug-tipo__count"><?= (int)$td['total'] ?> <?= htmlspecialchars($t['places_count']) ?></span>
             <?php endif; ?>
           </span>
         </a>
@@ -333,19 +381,19 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <!-- PROVINCIAS — desde places_of_interest -->
 <section class="lug-section" aria-labelledby="prov-h2">
   <div class="lug-wrap">
-    <h2 class="lug-h2" id="prov-h2">📍 Explorar por provincia</h2>
-    <p class="lug-intro">Descubre los lugares de interés más destacados de cada provincia española.</p>
-    <ul class="lug-provs" role="list" aria-label="Provincias con lugares de interés">
+    <h2 class="lug-h2" id="prov-h2">📍 <?= htmlspecialchars($t['lug_by_prov']) ?></h2>
+    <p class="lug-intro"><?= htmlspecialchars($t['lug_by_prov_intro']) ?></p>
+    <ul class="lug-provs" role="list" aria-label="<?= htmlspecialchars($t['lug_prov_aria']) ?>">
       <?php foreach ($provincias as $pv): ?>
       <?php $pslug = lug_to_slug($pv['province']); ?>
       <li>
-        <a href="/lugares/<?= htmlspecialchars($pslug) ?>"
+        <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/<?= htmlspecialchars($pslug) ?>"
            class="lug-prov"
-           title="Lugares de interés en <?= htmlspecialchars($pv['province']) ?>">
+           title="<?= htmlspecialchars($t['lug_by_prov']) ?> <?= htmlspecialchars($pv['province']) ?>">
           <span class="lug-prov__em" aria-hidden="true"><?= lug_province_emoji($pv['province']) ?></span>
           <span class="lug-prov__nm"><?= htmlspecialchars($pv['province']) ?></span>
           <?php if (!empty($pv['total'])): ?>
-          <span class="lug-prov__count"><?= (int)$pv['total'] ?> lugares</span>
+          <span class="lug-prov__count"><?= (int)$pv['total'] ?> <?= htmlspecialchars($t['places_count']) ?></span>
           <?php endif; ?>
         </a>
       </li>
@@ -355,24 +403,24 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 </section>
 
 <!-- CTA -->
-<section class="lug-cta" aria-label="Añadir un lugar">
-  <h2>¿Conoces un lugar con encanto?</h2>
-  <p>Añade tu restaurante, bodega, monumento o espacio natural y compártelo con viajeros de toda España.</p>
-  <a href="/agregar-lugar-interes.html" class="lug-btn lug-btn--w">Añadir un lugar</a>
-  <a href="/rutas.php?alojamientos=0&lugares=1&actividades=0&eventos=0" class="lug-btn lug-btn--o">🗺️ Ver en el mapa</a>
+<section class="lug-cta" aria-label="<?= htmlspecialchars($t['lug_cta_aria']) ?>">
+  <h2><?= htmlspecialchars($t['lug_cta_h2']) ?></h2>
+  <p><?= htmlspecialchars($t['lug_cta_p']) ?></p>
+  <a href="/agregar-lugar-interes.html" class="lug-btn lug-btn--w"><?= htmlspecialchars($t['lug_cta_btn']) ?></a>
+  <a href="/rutas.php?alojamientos=0&lugares=1&actividades=0&eventos=0" class="lug-btn lug-btn--o">🗺️ <?= htmlspecialchars($t['map_cta']) ?></a>
 </section>
 
 </main>
 
 <footer class="lug-footer" role="contentinfo">
   <div class="lug-footer__inner">
-    <nav class="lug-footer__nav" aria-label="Navegación del pie">
-      <a href="https://rutasrurales.io/">Inicio</a>
-      <a href="/alojamientos/">Alojamientos</a>
-      <a href="/eventos/">Eventos</a>
-      <a href="/lugares/" aria-current="page">Lugares</a>
-      <a href="/actividades/">Actividades</a>
-      <a href="/aviso-legal.html">Aviso Legal</a>
+    <nav class="lug-footer__nav" aria-label="<?= htmlspecialchars($t['nav_footer']) ?>">
+      <a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/"><?= htmlspecialchars($t['nav_stays']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/"><?= htmlspecialchars($t['nav_events']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/" aria-current="page"><?= htmlspecialchars($t['nav_places']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/"><?= htmlspecialchars($t['nav_activities']) ?></a>
+      <a href="/aviso-legal.html"><?= htmlspecialchars($t['legal']) ?></a>
     </nav>
     <p>© <?= date('Y') ?> <strong style="color:#fff">rutasrurales.io</strong></p>
   </div>
