@@ -299,7 +299,7 @@ ul{list-style:none;padding:0;margin:0}
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBP57VQM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- Skip link -->
-<a href="#main-content" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--primary);color:#fff;padding:6px 14px;border-radius:4px;font-size:.85rem;font-weight:700" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido principal</a>
+<a href="#main-content" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--primary);color:#fff;padding:6px 14px;border-radius:4px;font-size:.85rem;font-weight:700" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'"><?= htmlspecialchars($t['skip_link']) ?></a>
 
 <!-- ══════════════════════ NAVBAR ══════════════════════ -->
 <header class="alo-nav" role="banner">
@@ -342,7 +342,7 @@ ul{list-style:none;padding:0;margin:0}
     <div class="alo-hero__stats" aria-label="<?= htmlspecialchars($t['stats']) ?>">
       <div><span class="alo-stat__val"><?= htmlspecialchars($total_stays) ?></span><span class="alo-stat__lbl"><?= htmlspecialchars($t['alo_stat_stays']) ?></span></div>
       <div><span class="alo-stat__val"><?= htmlspecialchars($total_provs) ?></span><span class="alo-stat__lbl"><?= htmlspecialchars($t['alo_stat_provs']) ?></span></div>
-      <div><span class="alo-stat__val">100%</span><span class="alo-stat__lbl">Verificados</span></div>
+      <div><span class="alo-stat__val">100%</span><span class="alo-stat__lbl"><?= htmlspecialchars($t['alo_stat_verified']) ?></span></div>
     </div>
   </div>
 </section>
@@ -352,32 +352,32 @@ ul{list-style:none;padding:0;margin:0}
   <div class="alo-wrap">
     <div class="alo-section__hdr">
       <h2 class="alo-section__h2" id="map-h2">🗺️ <?= htmlspecialchars($t['map_cta']) ?></h2>
-      <p class="alo-section__intro">Visualiza la distribución de alojamientos rurales por toda España. Haz clic en cada marcador para ir a los alojamientos de esa provincia.</p>
+      <p class="alo-section__intro"><?= htmlspecialchars($t['alo_map_intro']) ?></p>
     </div>
     <div class="alo-map-box">
       <div class="alo-map-hdr">
-        <h3>Distribución por provincia</h3>
-        <small>Mapa interactivo — carga al hacer scroll</small>
+        <h3><?= htmlspecialchars($t['alo_map_dist_h3']) ?></h3>
+        <small><?= htmlspecialchars($t['alo_map_lazy_hint']) ?></small>
       </div>
 
       <!-- Placeholder visible antes de cargar Leaflet -->
-      <div class="alo-map-placeholder" id="mapPlaceholder" role="img" aria-label="Vista previa del mapa de alojamientos rurales en España">
+      <div class="alo-map-placeholder" id="mapPlaceholder" role="img" aria-label="<?= htmlspecialchars($t['alo_map_preview_aria']) ?>">
         <span class="mp-icon" aria-hidden="true">🗺️</span>
-        <p>Mapa de alojamientos rurales</p>
-        <small>Se cargará al desplazarte hasta aquí</small>
+        <p><?= htmlspecialchars($t['alo_map_placeholder_p']) ?></p>
+        <small><?= htmlspecialchars($t['alo_map_placeholder_small']) ?></small>
       </div>
 
       <!-- Spinner mientras carga Leaflet JS/CSS -->
-      <div class="alo-map-spinner" id="mapSpinner" role="status" aria-live="polite" aria-label="Cargando mapa interactivo">
+      <div class="alo-map-spinner" id="mapSpinner" role="status" aria-live="polite" aria-label="<?= htmlspecialchars($t['alo_map_loading_aria']) ?>">
         <div class="spinner" aria-hidden="true"></div>
-        <span>Cargando mapa...</span>
+        <span><?= htmlspecialchars($t['alo_map_loading']) ?></span>
       </div>
 
       <!-- Contenedor real del mapa Leaflet (oculto hasta que cargue) -->
-      <div id="mapAlo" aria-label="Mapa interactivo de alojamientos rurales en España"></div>
+      <div id="mapAlo" aria-label="<?= htmlspecialchars($t['alo_map_aria']) ?>"></div>
 
       <div class="alo-map-cta">
-        <a href="/rutas.php?alojamientos=1&lugares=0&actividades=0&eventos=0" aria-label="Ver todos los alojamientos en el mapa completo">Ver mapa completo →</a>
+        <a href="/rutas.php?alojamientos=1&lugares=0&actividades=0&eventos=0" aria-label="<?= htmlspecialchars($t['alo_map_full_aria']) ?>"><?= htmlspecialchars($t['map_full']) ?> →</a>
       </div>
     </div>
   </div>
@@ -417,7 +417,7 @@ ul{list-style:none;padding:0;margin:0}
       <li>
         <a href="/alojamientos/turismo-rural-<?= htmlspecialchars($pk) ?>"
            class="alo-prov"
-           title="Alojamientos rurales en <?= htmlspecialchars($pd['label']) ?>">
+           title="<?= htmlspecialchars($t['alo_stays_in_prov']) ?> <?= htmlspecialchars($pd['label']) ?>">
           <span class="alo-prov__em" aria-hidden="true"><?= $pd['emoji'] ?></span>
           <span class="alo-prov__nm"><?= htmlspecialchars($pd['label']) ?></span>
           <span class="alo-prov__rg"><?= htmlspecialchars($pd['region']) ?></span>
@@ -484,6 +484,15 @@ ul{list-style:none;padding:0;margin:0}
 </footer>
 
 <!-- ══════════════ LAZY LOADING DEL MAPA ══════════════ -->
+<!-- Strings i18n para el mapa (JS) -->
+<script>
+var ALO_MAP = {
+  errorMsg:  <?= json_encode($t['alo_map_error']) ?>,
+  openFull:  <?= json_encode($t['alo_map_open_full']) ?>,
+  seeStays:  <?= json_encode($t['see_stays']) ?>,
+  staysIn:   <?= json_encode($t['stays_in']) ?>
+};
+</script>
 <!--
   IntersectionObserver:
   - rootMargin:300px → empieza a cargar cuando el mapa está a 300px del viewport
@@ -526,8 +535,8 @@ ul{list-style:none;padding:0;margin:0}
       if (placeholder) {
         placeholder.innerHTML =
           '<span class="mp-icon">⚠️</span>' +
-          '<p>No se pudo cargar el mapa</p>' +
-          '<small><a href="/rutas.php?alojamientos=1&lugares=0&actividades=0&eventos=0">Abrir mapa completo →</a></small>';
+          '<p>' + ALO_MAP.errorMsg + '</p>' +
+          '<small><a href="/rutas.php?alojamientos=1&lugares=0&actividades=0&eventos=0">' + ALO_MAP.openFull + '</a></small>';
         placeholder.style.display = 'flex';
       }
     };
@@ -606,9 +615,9 @@ ul{list-style:none;padding:0;margin:0}
         '<strong style="color:#2F5233;font-size:.9rem">' + p.name + '</strong><br>' +
         '<a href="/alojamientos/' + p.slug + '" ' +
            'style="color:#2F5233;font-weight:700;font-size:.8rem;display:inline-block;margin-top:6px">' +
-           'Ver alojamientos \u2192</a>' +
+           ALO_MAP.seeStays + '</a>' +
         '</div>';
-      L.marker([p.lat, p.lng], { icon: icon, title: 'Alojamientos en ' + p.name })
+      L.marker([p.lat, p.lng], { icon: icon, title: ALO_MAP.staysIn + ' ' + p.name })
         .bindPopup(popup)
         .addTo(map);
     });
