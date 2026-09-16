@@ -136,14 +136,27 @@ try {
 
         $sp = $pdo->prepare(
             "SELECT p.id, p.slug, p.name, p.municipality, p.province,
-                    p.short_description, p.photo1, p.entry_fee
+                    p.short_description, p.photo1, p.entry_fee,
+                    tr.name AS name_tr, tr.short_description AS short_desc_tr, tr.slug AS slug_tr
              FROM places_of_interest p
+             LEFT JOIN places_of_interest_trads tr ON p.id = tr.place_id AND tr.language_code = ?
              WHERE p.category_id = ? AND p.is_active = 1
              ORDER BY p.name ASC
              LIMIT 60"
         );
-        $sp->execute([$category['id']]);
-        $places = $sp->fetchAll(PDO::FETCH_ASSOC);
+        $sp->execute([$lang, $category['id']]);
+        $places_raw = $sp->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Aplicar traducciones si existen
+        foreach ($places_raw as &$place) {
+            if ($lang !== 'es' && !empty($place['name_tr'])) {
+                $place['name'] = $place['name_tr'];
+                $place['short_description'] = !empty($place['short_desc_tr']) ? $place['short_desc_tr'] : $place['short_description'];
+                $place['slug'] = !empty($place['slug_tr']) ? $place['slug_tr'] : $place['slug'];
+            }
+        }
+        unset($place);
+        $places = $places_raw;
 
     } else {
         // 2. Intentar como provincia (slug normalizado de places_of_interest.province)
@@ -168,7 +181,7 @@ try {
             $meta_desc  = 'Descubre los mejores lugares de interés en ' . $province_label
                         . ': monumentos históricos, naturaleza, gastronomía y rincones únicos del turismo rural.';
 
-            // Seleccionar categorías traducibles
+            // Seleccionar categorías traducibles y lugares traducibles
             $sp2 = $pdo->prepare(
                 "SELECT p.id, p.slug, p.name, p.municipality, p.province,
                         p.short_description, p.photo1, p.entry_fee,
@@ -176,21 +189,30 @@ try {
                         COALESCE(c.name_en, c.name) AS category_name_en,
                         COALESCE(c.name_fr, c.name) AS category_name_fr,
                         COALESCE(c.name_de, c.name) AS category_name_de,
-                        COALESCE(c.name_zh, c.name) AS category_name_zh
+                        COALESCE(c.name_zh, c.name) AS category_name_zh,
+                        tr.name AS name_tr, tr.short_description AS short_desc_tr, tr.slug AS slug_tr
                  FROM places_of_interest p
                  LEFT JOIN categories_places c ON p.category_id = c.id
+                 LEFT JOIN places_of_interest_trads tr ON p.id = tr.place_id AND tr.language_code = ?
                  WHERE p.province = ? AND p.is_active = 1
                  ORDER BY p.name ASC
                  LIMIT 80"
             );
-            $sp2->execute([$province_label]);
+            $sp2->execute([$lang, $province_label]);
             $places_raw = $sp2->fetchAll(PDO::FETCH_ASSOC);
             
-            // Aplicar traducciones a las categorías de cada lugar
+            // Aplicar traducciones de categorías y lugares
             $cat_field = 'category_name_' . $lang;
             foreach ($places_raw as &$place) {
+                // Traducción de categoría
                 if ($lang !== 'es' && !empty($place[$cat_field])) {
                     $place['category_name'] = $place[$cat_field];
+                }
+                // Traducción de lugar individual
+                if ($lang !== 'es' && !empty($place['name_tr'])) {
+                    $place['name'] = $place['name_tr'];
+                    $place['short_description'] = !empty($place['short_desc_tr']) ? $place['short_desc_tr'] : $place['short_description'];
+                    $place['slug'] = !empty($place['slug_tr']) ? $place['slug_tr'] : $place['slug'];
                 }
             }
             unset($place);
