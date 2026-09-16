@@ -5,6 +5,29 @@ include 'db.php';
 // 2. INCLUIR EL MENÚ LATERAL
 include 'sidebar.php'; 
 
+// 3. REGENERAR SITEMAP i18n si se solicita manualmente
+$sitemapMsg = '';
+if (isset($_GET['regenerar_sitemap'])) {
+    try {
+        // Redirigir al generador de sitemap de lugares
+        header('Location: ../generar_sitemap_lugares_i18n.php');
+        exit;
+    } catch (Exception $e) {
+        $sitemapMsg = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> <strong>Error al regenerar sitemap:</strong> ' . htmlspecialchars($e->getMessage()) . '
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>';
+    }
+}
+
+// Mensaje de lugar actualizado
+if (isset($_GET['msg']) && $_GET['msg'] === 'updated') {
+    $sitemapMsg .= '<div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i> Lugar actualizado correctamente.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>';
+}
+
 try {
     // Consulta con JOIN.
     $sql = "SELECT p.*, c.name as category_name 
@@ -51,6 +74,22 @@ try {
         <?php if(isset($error_msg)): ?>
             <div class="alert alert-warning small py-2"><?= $error_msg ?></div>
         <?php endif; ?>
+        
+        <?= $sitemapMsg ?? '' ?>
+        
+        <!-- Botones de Traducciones y Sitemap -->
+        <div class="d-flex gap-2 mb-3">
+            <a href="generar_traducciones_lugares.php" class="btn btn-outline-info btn-sm shadow-sm" 
+               title="Genera traducciones automáticas (en, fr, de, zh) para lugares que no tengan"
+               onclick="return confirm('¿Generar traducciones automáticas para los lugares que falten?\n\nSe crearán en inglés, francés, alemán y chino.\nNo se sobrescribirán las existentes.');">
+                <i class="bi bi-translate"></i> Generar Traducciones
+            </a>
+            <a href="lugares_index.php?regenerar_sitemap=1" class="btn btn-outline-warning btn-sm shadow-sm" 
+               title="Regenera sitemap-lugares-i18n.xml desde la tabla de traducciones"
+               onclick="return confirm('¿Regenerar el sitemap de traducciones (i18n)?');">
+                <i class="bi bi-arrow-repeat"></i> Regenerar Sitemap i18n
+            </a>
+        </div>
 
         <div class="card shadow-sm border-0">
             <div class="table-responsive">
