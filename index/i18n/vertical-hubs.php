@@ -1,0 +1,771 @@
+<?php
+/**
+ * i18n compartida para hubs de verticales:
+ * /alojamientos/ /eventos/ /lugares/ /actividades/
+ * + versiones /{lang}/...
+ *
+ * Uso:
+ *   require_once __DIR__ . '/../index/i18n/vertical-hubs.php';
+ *   $ctx = vh_boot('eventos'); // o alojamientos|lugares|actividades
+ *   // $ctx: lang, t, base_domain, path_prefix, hub_path, canonical, hreflang, locale, dir
+ */
+
+if (!defined('VH_I18N_LOADED')) {
+    define('VH_I18N_LOADED', true);
+}
+
+const VH_I18N = [
+    'es' => [
+        'dir' => 'ltr',
+        'locale' => 'es_ES',
+        'lang_locale' => 'es-ES',
+        'nav_home' => 'Inicio',
+        'nav_stays' => 'Alojamientos',
+        'nav_events' => 'Eventos',
+        'nav_places' => 'Lugares',
+        'nav_activities' => 'Actividades',
+        'nav_map' => 'Mapa',
+        'nav_login' => 'Acceder',
+        'nav_main' => 'Menú principal',
+        'nav_footer' => 'Navegación del pie',
+        'bc_nav' => 'Ruta de navegación',
+        'legal' => 'Aviso Legal',
+        'stats' => 'Estadísticas',
+        'map_cta' => 'Ver en el mapa',
+        'map_full' => 'Ver mapa completo',
+        'see_details' => 'Ver detalles ›',
+        'provinces' => 'Provincias',
+        'free' => 'Gratis',
+        'many_free' => 'Muchos sin coste',
+        'places_count' => 'lugares',
+        'see_stays' => 'Ver alojamientos →',
+        'stays_in' => 'Alojamientos en',
+
+        // Alojamientos
+        'alo_meta_title' => 'Alojamientos Rurales en España | Casas Rurales y Turismo Rural',
+        'alo_meta_desc'  => 'Más de 500 alojamientos rurales verificados en España. Casas rurales con chimenea, piscina, para mascotas y grupos. Busca por provincia o característica.',
+        'alo_h1' => 'Alojamientos Rurales en España',
+        'alo_sub' => 'Más de 500 alojamientos verificados: casas rurales con chimenea, piscina, para mascotas y grupos en toda España.',
+        'alo_bc' => 'Alojamientos rurales',
+        'alo_stat_stays' => 'Alojamientos',
+        'alo_stat_provs' => 'Provincias',
+        'alo_by_feat' => 'Buscar por característica',
+        'alo_by_feat_intro' => 'Filtra casas rurales según lo que más te importa: chimenea, piscina, mascotas, grupos y más.',
+        'alo_by_prov' => 'Buscar por provincia',
+        'alo_by_prov_intro' => 'Explora todos los alojamientos rurales disponibles en cada provincia española.',
+        'alo_combis' => 'Combinaciones más buscadas',
+        'alo_cta_h2' => '¿Tienes un alojamiento rural?',
+        'alo_cta_p' => 'Únete a nuestra red y llega a miles de turistas que buscan escapadas auténticas en España cada mes.',
+        'alo_cta_btn' => 'Añadir mi alojamiento',
+        'alo_feat_aria' => 'Características de alojamientos rurales',
+        'alo_prov_aria' => 'Provincias con alojamientos rurales',
+        'alo_combi_aria' => 'Combinaciones populares de alojamientos rurales',
+        'alo_cta_aria' => 'Añade tu alojamiento',
+
+        // Eventos
+        'evt_meta_title' => 'Eventos Culturales en España | Agenda Cultural y Festivales',
+        'evt_meta_desc'  => 'Descubre más de 1.200 eventos culturales verificados en España. Música, gastronomía, tradiciones, teatro, mercados medievales y festivales por provincia.',
+        'evt_h1' => 'Eventos Culturales en España',
+        'evt_sub' => 'Más de 1.200 eventos verificados: música, gastronomía, tradiciones, teatro, mercados medievales y mucho más por toda España.',
+        'evt_bc' => 'Eventos culturales',
+        'evt_stat_events' => 'Eventos',
+        'evt_carousel_h2' => 'Próximos eventos en la agenda',
+        'evt_carousel_intro' => 'Eventos destacados ordenados por fecha de celebración en los próximos meses.',
+        'evt_season_intro' => 'Los mejores eventos de la temporada en las provincias con mayor oferta cultural.',
+        'evt_by_cat' => 'Buscar por categoría',
+        'evt_by_cat_intro' => 'Explora la agenda cultural de España según el tipo de evento que más te interese.',
+        'evt_by_prov' => 'Agenda cultural por provincia',
+        'evt_by_prov_intro' => 'Consulta todos los eventos culturales disponibles en cada provincia española.',
+        'evt_combis' => 'Combinaciones destacadas',
+        'evt_cta_h2' => '¿Organizas un evento cultural?',
+        'evt_cta_p' => 'Publica tu evento en nuestra plataforma y llega a miles de aficionados a la cultura rural en toda España.',
+        'evt_cta_btn' => 'Publicar mi evento',
+        'evt_cta_aria' => 'Añadir un evento',
+        'evt_cat_aria' => 'Categorías de eventos culturales',
+        'evt_prov_aria' => 'Provincias con agenda cultural',
+        'evt_combi_aria' => 'Combinaciones populares de eventos',
+        'evt_season_aria' => 'Eventos de temporada por provincia',
+        'evt_hero_alt' => 'Eventos culturales y festivales en España',
+        'evt_season_label' => [
+            'invierno' => 'Eventos de invierno ❄️',
+            'primavera' => 'Eventos de primavera 🌸',
+            'verano' => 'Eventos de verano ☀️',
+            'otono' => 'Eventos de otoño 🍂',
+        ],
+        'evt_in_spain' => 'en España',
+        'evt_agenda_in' => 'Agenda cultural en',
+
+        // Lugares
+        'lug_meta_title' => 'Lugares de Interés en España | Monumentos, Naturaleza y Gastronomía Rural',
+        'lug_meta_desc'  => 'Descubre los mejores lugares de interés rurales de España: monumentos históricos, espacios naturales, restaurantes con encanto, bodegas y mucho más.',
+        'lug_h1' => 'Lugares de Interés en España',
+        'lug_sub' => 'Monumentos, naturaleza, gastronomía y patrimonio rural para planificar tu escapada.',
+        'lug_bc' => 'Lugares de interés',
+        'lug_by_type' => 'Explorar por tipo',
+        'lug_by_type_intro' => 'Encuentra lugares según tu interés: patrimonio, gastronomía, naturaleza y más.',
+        'lug_by_prov' => 'Explorar por provincia',
+        'lug_by_prov_intro' => 'Descubre los lugares de interés más destacados de cada provincia española.',
+        'lug_cta_h2' => '¿Conoces un lugar con encanto?',
+        'lug_cta_p' => 'Añade tu restaurante, bodega, monumento o espacio natural y compártelo con viajeros de toda España.',
+        'lug_cta_btn' => 'Añadir un lugar',
+        'lug_cta_aria' => 'Añadir un lugar',
+        'lug_type_aria' => 'Tipos de lugares de interés',
+        'lug_prov_aria' => 'Provincias con lugares de interés',
+
+        // Actividades
+        'act_meta_title' => 'Actividades Turísticas en España | Senderismo, Rutas y Turismo Rural',
+        'act_meta_desc'  => 'Más de 300 actividades turísticas en España: senderismo, rutas en bici, kayak, birdwatching, ecoturismo y experiencias únicas en entornos rurales.',
+        'act_h1' => 'Actividades Turísticas en España',
+        'act_sub' => 'Senderismo, bici, kayak, birdwatching y experiencias de naturaleza en el medio rural.',
+        'act_bc' => 'Actividades turísticas',
+        'act_by_type' => 'Explorar por tipo de actividad',
+        'act_by_type_intro' => 'Elige la experiencia que buscas y descubre propuestas en toda España.',
+        'act_by_prov' => 'Actividades por provincia',
+        'act_by_prov_intro' => 'Descubre qué hacer en cada provincia: rutas, deportes de aventura y experiencias con la naturaleza.',
+        'act_cta_h2' => '¿Ofreces actividades al aire libre?',
+        'act_cta_p' => 'Publica tus rutas, talleres o experiencias de naturaleza y conecta con turistas que buscan aventura rural.',
+        'act_cta_btn' => 'Añadir mi actividad',
+        'act_cta_aria' => 'Añadir una actividad',
+        'act_type_aria' => 'Tipos de actividades turísticas',
+        'act_prov_aria' => 'Provincias con actividades turísticas',
+
+        'act_labels' => [
+            'senderismo' => ['label' => 'Senderismo', 'desc' => 'Rutas y caminos por la naturaleza'],
+            'rutas-en-bici' => ['label' => 'Rutas en bici', 'desc' => 'BTT y cicloturismo rural'],
+            'kayak-canoa' => ['label' => 'Kayak y canoa', 'desc' => 'Deportes de agua dulce'],
+            'birdwatching' => ['label' => 'Birdwatching', 'desc' => 'Avistamiento de aves'],
+            'ecoturismo' => ['label' => 'Ecoturismo', 'desc' => 'Turismo responsable y sostenible'],
+            'escalada' => ['label' => 'Escalada', 'desc' => 'Rocódromos y vías ferrata'],
+            'rutas-caballo' => ['label' => 'Rutas a caballo', 'desc' => 'Equiturismo rural'],
+            'fotografía' => ['label' => 'Fotografía naturaleza', 'desc' => 'Paisajes y fauna silvestre'],
+            'astronomia' => ['label' => 'Astronomía', 'desc' => 'Cielos oscuros y stargazing'],
+            'micologia' => ['label' => 'Micología', 'desc' => 'Rutas y recogida de setas'],
+            'setas-guiada' => ['label' => 'Rutas guiadas', 'desc' => 'Con guía experto local'],
+            'nieve-invierno' => ['label' => 'Nieve e invierno', 'desc' => 'Raquetas de nieve y esquí nordic'],
+        ],
+    ],
+
+    'en' => [
+        'dir' => 'ltr',
+        'locale' => 'en_GB',
+        'lang_locale' => 'en-GB',
+        'nav_home' => 'Home',
+        'nav_stays' => 'Accommodation',
+        'nav_events' => 'Events',
+        'nav_places' => 'Places',
+        'nav_activities' => 'Activities',
+        'nav_map' => 'Map',
+        'nav_login' => 'Sign in',
+        'nav_main' => 'Main menu',
+        'nav_footer' => 'Footer navigation',
+        'bc_nav' => 'Breadcrumb',
+        'legal' => 'Legal notice',
+        'stats' => 'Statistics',
+        'map_cta' => 'View on map',
+        'map_full' => 'View full map',
+        'see_details' => 'See details ›',
+        'provinces' => 'Provinces',
+        'free' => 'Free',
+        'many_free' => 'Many free of charge',
+        'places_count' => 'places',
+        'see_stays' => 'View accommodation →',
+        'stays_in' => 'Accommodation in',
+
+        'alo_meta_title' => 'Rural Accommodation in Spain | Cottages & Rural Tourism',
+        'alo_meta_desc'  => 'Over 500 verified rural stays in Spain. Cottages with fireplace, pool, pet-friendly and group options. Browse by province or feature.',
+        'alo_h1' => 'Rural Accommodation in Spain',
+        'alo_sub' => 'Over 500 verified stays: cottages with fireplace, pool, pet-friendly homes and group houses across Spain.',
+        'alo_bc' => 'Rural accommodation',
+        'alo_stat_stays' => 'Stays',
+        'alo_stat_provs' => 'Provinces',
+        'alo_by_feat' => 'Browse by feature',
+        'alo_by_feat_intro' => 'Filter rural homes by what matters most: fireplace, pool, pets, groups and more.',
+        'alo_by_prov' => 'Browse by province',
+        'alo_by_prov_intro' => 'Explore all rural accommodation available in each Spanish province.',
+        'alo_combis' => 'Most popular combinations',
+        'alo_cta_h2' => 'Do you own a rural stay?',
+        'alo_cta_p' => 'Join our network and reach thousands of travellers looking for authentic getaways in Spain every month.',
+        'alo_cta_btn' => 'Add my accommodation',
+        'alo_feat_aria' => 'Rural accommodation features',
+        'alo_prov_aria' => 'Provinces with rural accommodation',
+        'alo_combi_aria' => 'Popular rural accommodation combinations',
+        'alo_cta_aria' => 'Add your accommodation',
+
+        'evt_meta_title' => 'Cultural Events in Spain | Festivals & Cultural Calendar',
+        'evt_meta_desc'  => 'Discover over 1,200 verified cultural events in Spain. Music, food, traditions, theatre, medieval markets and festivals by province.',
+        'evt_h1' => 'Cultural Events in Spain',
+        'evt_sub' => 'Over 1,200 verified events: music, food, traditions, theatre, medieval markets and more across Spain.',
+        'evt_bc' => 'Cultural events',
+        'evt_stat_events' => 'Events',
+        'evt_carousel_h2' => 'Upcoming events',
+        'evt_carousel_intro' => 'Featured events ordered by date over the coming months.',
+        'evt_season_intro' => 'The best seasonal events in provinces with the richest cultural offer.',
+        'evt_by_cat' => 'Browse by category',
+        'evt_by_cat_intro' => 'Explore Spain’s cultural calendar by the type of event you enjoy most.',
+        'evt_by_prov' => 'Cultural calendar by province',
+        'evt_by_prov_intro' => 'Browse all cultural events available in each Spanish province.',
+        'evt_combis' => 'Featured combinations',
+        'evt_cta_h2' => 'Do you organise a cultural event?',
+        'evt_cta_p' => 'Publish your event on our platform and reach thousands of rural culture lovers across Spain.',
+        'evt_cta_btn' => 'Publish my event',
+        'evt_cta_aria' => 'Add an event',
+        'evt_cat_aria' => 'Cultural event categories',
+        'evt_prov_aria' => 'Provinces with cultural calendar',
+        'evt_combi_aria' => 'Popular event combinations',
+        'evt_season_aria' => 'Seasonal events by province',
+        'evt_hero_alt' => 'Cultural events and festivals in Spain',
+        'evt_season_label' => [
+            'invierno' => 'Winter events ❄️',
+            'primavera' => 'Spring events 🌸',
+            'verano' => 'Summer events ☀️',
+            'otono' => 'Autumn events 🍂',
+        ],
+        'evt_in_spain' => 'in Spain',
+        'evt_agenda_in' => 'Cultural calendar in',
+
+        'lug_meta_title' => 'Places of Interest in Spain | Heritage, Nature & Rural Gastronomy',
+        'lug_meta_desc'  => 'Discover the best rural places of interest in Spain: historic monuments, natural spaces, charming restaurants, wineries and more.',
+        'lug_h1' => 'Places of Interest in Spain',
+        'lug_sub' => 'Monuments, nature, gastronomy and rural heritage to plan your getaway.',
+        'lug_bc' => 'Places of interest',
+        'lug_by_type' => 'Browse by type',
+        'lug_by_type_intro' => 'Find places by interest: heritage, food, nature and more.',
+        'lug_by_prov' => 'Browse by province',
+        'lug_by_prov_intro' => 'Discover the top places of interest in each Spanish province.',
+        'lug_cta_h2' => 'Know a charming place?',
+        'lug_cta_p' => 'Add your restaurant, winery, monument or natural space and share it with travellers across Spain.',
+        'lug_cta_btn' => 'Add a place',
+        'lug_cta_aria' => 'Add a place',
+        'lug_type_aria' => 'Types of places of interest',
+        'lug_prov_aria' => 'Provinces with places of interest',
+
+        'act_meta_title' => 'Tourist Activities in Spain | Hiking, Routes & Rural Tourism',
+        'act_meta_desc'  => 'Over 300 tourist activities in Spain: hiking, cycling, kayaking, birdwatching, ecotourism and unique rural experiences.',
+        'act_h1' => 'Tourist Activities in Spain',
+        'act_sub' => 'Hiking, cycling, kayaking, birdwatching and nature experiences in rural Spain.',
+        'act_bc' => 'Tourist activities',
+        'act_by_type' => 'Browse by activity type',
+        'act_by_type_intro' => 'Choose the experience you want and discover options across Spain.',
+        'act_by_prov' => 'Activities by province',
+        'act_by_prov_intro' => 'Find what to do in each province: routes, adventure sports and nature experiences.',
+        'act_cta_h2' => 'Do you offer outdoor activities?',
+        'act_cta_p' => 'Publish your routes, workshops or nature experiences and connect with travellers seeking rural adventure.',
+        'act_cta_btn' => 'Add my activity',
+        'act_cta_aria' => 'Add an activity',
+        'act_type_aria' => 'Types of tourist activities',
+        'act_prov_aria' => 'Provinces with tourist activities',
+
+        'act_labels' => [
+            'senderismo' => ['label' => 'Hiking', 'desc' => 'Trails and paths through nature'],
+            'rutas-en-bici' => ['label' => 'Cycling routes', 'desc' => 'MTB and rural cycle touring'],
+            'kayak-canoa' => ['label' => 'Kayak & canoe', 'desc' => 'Freshwater sports'],
+            'birdwatching' => ['label' => 'Birdwatching', 'desc' => 'Bird spotting'],
+            'ecoturismo' => ['label' => 'Ecotourism', 'desc' => 'Responsible sustainable tourism'],
+            'escalada' => ['label' => 'Climbing', 'desc' => 'Climbing walls and via ferrata'],
+            'rutas-caballo' => ['label' => 'Horse riding', 'desc' => 'Rural equestrian tourism'],
+            'fotografía' => ['label' => 'Nature photography', 'desc' => 'Landscapes and wildlife'],
+            'astronomia' => ['label' => 'Astronomy', 'desc' => 'Dark skies and stargazing'],
+            'micologia' => ['label' => 'Mycology', 'desc' => 'Mushroom routes and foraging'],
+            'setas-guiada' => ['label' => 'Guided routes', 'desc' => 'With a local expert guide'],
+            'nieve-invierno' => ['label' => 'Snow & winter', 'desc' => 'Snowshoes and Nordic skiing'],
+        ],
+    ],
+
+    'fr' => [
+        'dir' => 'ltr',
+        'locale' => 'fr_FR',
+        'lang_locale' => 'fr-FR',
+        'nav_home' => 'Accueil',
+        'nav_stays' => 'Hébergements',
+        'nav_events' => 'Événements',
+        'nav_places' => 'Lieux',
+        'nav_activities' => 'Activités',
+        'nav_map' => 'Carte',
+        'nav_login' => 'Connexion',
+        'nav_main' => 'Menu principal',
+        'nav_footer' => 'Navigation du pied de page',
+        'bc_nav' => 'Fil d’Ariane',
+        'legal' => 'Mentions légales',
+        'stats' => 'Statistiques',
+        'map_cta' => 'Voir sur la carte',
+        'map_full' => 'Voir la carte complète',
+        'see_details' => 'Voir les détails ›',
+        'provinces' => 'Provinces',
+        'free' => 'Gratuit',
+        'many_free' => 'Beaucoup gratuits',
+        'places_count' => 'lieux',
+        'see_stays' => 'Voir les hébergements →',
+        'stays_in' => 'Hébergements à',
+
+        'alo_meta_title' => 'Hébergements Ruraux en Espagne | Gîtes et Tourisme Rural',
+        'alo_meta_desc'  => 'Plus de 500 hébergements ruraux vérifiés en Espagne. Gîtes avec cheminée, piscine, animaux acceptés et pour groupes. Par province ou caractéristique.',
+        'alo_h1' => 'Hébergements Ruraux en Espagne',
+        'alo_sub' => 'Plus de 500 séjours vérifiés : gîtes avec cheminée, piscine, animaux acceptés et maisons pour groupes dans toute l’Espagne.',
+        'alo_bc' => 'Hébergements ruraux',
+        'alo_stat_stays' => 'Hébergements',
+        'alo_stat_provs' => 'Provinces',
+        'alo_by_feat' => 'Rechercher par caractéristique',
+        'alo_by_feat_intro' => 'Filtrez les gîtes selon ce qui compte : cheminée, piscine, animaux, groupes et plus.',
+        'alo_by_prov' => 'Rechercher par province',
+        'alo_by_prov_intro' => 'Explorez tous les hébergements ruraux disponibles dans chaque province espagnole.',
+        'alo_combis' => 'Combinaisons les plus recherchées',
+        'alo_cta_h2' => 'Vous avez un hébergement rural ?',
+        'alo_cta_p' => 'Rejoignez notre réseau et touchez des milliers de voyageurs en quête d’escapades authentiques en Espagne.',
+        'alo_cta_btn' => 'Ajouter mon hébergement',
+        'alo_feat_aria' => 'Caractéristiques des hébergements ruraux',
+        'alo_prov_aria' => 'Provinces avec hébergements ruraux',
+        'alo_combi_aria' => 'Combinaisons populaires d’hébergements ruraux',
+        'alo_cta_aria' => 'Ajoutez votre hébergement',
+
+        'evt_meta_title' => 'Événements Culturels en Espagne | Agenda et Festivals',
+        'evt_meta_desc'  => 'Découvrez plus de 1 200 événements culturels vérifiés en Espagne. Musique, gastronomie, traditions, théâtre, marchés médiévaux et festivals par province.',
+        'evt_h1' => 'Événements Culturels en Espagne',
+        'evt_sub' => 'Plus de 1 200 événements vérifiés : musique, gastronomie, traditions, théâtre, marchés médiévaux et bien plus dans toute l’Espagne.',
+        'evt_bc' => 'Événements culturels',
+        'evt_stat_events' => 'Événements',
+        'evt_carousel_h2' => 'Prochains événements',
+        'evt_carousel_intro' => 'Événements à la une classés par date dans les mois à venir.',
+        'evt_season_intro' => 'Les meilleurs événements de la saison dans les provinces les plus riches culturellement.',
+        'evt_by_cat' => 'Rechercher par catégorie',
+        'evt_by_cat_intro' => 'Explorez l’agenda culturel d’Espagne selon le type d’événement qui vous plaît.',
+        'evt_by_prov' => 'Agenda culturel par province',
+        'evt_by_prov_intro' => 'Consultez tous les événements culturels disponibles dans chaque province espagnole.',
+        'evt_combis' => 'Combinaisons à la une',
+        'evt_cta_h2' => 'Vous organisez un événement culturel ?',
+        'evt_cta_p' => 'Publiez votre événement sur notre plateforme et touchez des milliers d’amateurs de culture rurale en Espagne.',
+        'evt_cta_btn' => 'Publier mon événement',
+        'evt_cta_aria' => 'Ajouter un événement',
+        'evt_cat_aria' => 'Catégories d’événements culturels',
+        'evt_prov_aria' => 'Provinces avec agenda culturel',
+        'evt_combi_aria' => 'Combinaisons populaires d’événements',
+        'evt_season_aria' => 'Événements de saison par province',
+        'evt_hero_alt' => 'Événements culturels et festivals en Espagne',
+        'evt_season_label' => [
+            'invierno' => 'Événements d’hiver ❄️',
+            'primavera' => 'Événements de printemps 🌸',
+            'verano' => 'Événements d’été ☀️',
+            'otono' => 'Événements d’automne 🍂',
+        ],
+        'evt_in_spain' => 'en Espagne',
+        'evt_agenda_in' => 'Agenda culturel en',
+        ],
+
+        'lug_meta_title' => 'Lieux d’Intérêt en Espagne | Patrimoine, Nature et Gastronomie',
+        'lug_meta_desc'  => 'Découvrez les meilleurs lieux d’intérêt ruraux d’Espagne : monuments, nature, restaurants de charme, caves et plus encore.',
+        'lug_h1' => 'Lieux d’Intérêt en Espagne',
+        'lug_sub' => 'Monuments, nature, gastronomie et patrimoine rural pour préparer votre escapade.',
+        'lug_bc' => 'Lieux d’intérêt',
+        'lug_by_type' => 'Explorer par type',
+        'lug_by_type_intro' => 'Trouvez des lieux selon vos envies : patrimoine, gastronomie, nature et plus.',
+        'lug_by_prov' => 'Explorer par province',
+        'lug_by_prov_intro' => 'Découvrez les lieux d’intérêt les plus remarquables de chaque province espagnole.',
+        'lug_cta_h2' => 'Vous connaissez un lieu de charme ?',
+        'lug_cta_p' => 'Ajoutez votre restaurant, cave, monument ou espace naturel et partagez-le avec des voyageurs de toute l’Espagne.',
+        'lug_cta_btn' => 'Ajouter un lieu',
+        'lug_cta_aria' => 'Ajouter un lieu',
+        'lug_type_aria' => 'Types de lieux d’intérêt',
+        'lug_prov_aria' => 'Provinces avec lieux d’intérêt',
+
+        'act_meta_title' => 'Activités Touristiques en Espagne | Randonnée, Routes et Nature',
+        'act_meta_desc'  => 'Plus de 300 activités touristiques en Espagne : randonnée, vélo, kayak, birdwatching, écotourisme et expériences uniques en milieu rural.',
+        'act_h1' => 'Activités Touristiques en Espagne',
+        'act_sub' => 'Randonnée, vélo, kayak, birdwatching et expériences nature en Espagne rurale.',
+        'act_bc' => 'Activités touristiques',
+        'act_by_type' => 'Explorer par type d’activité',
+        'act_by_type_intro' => 'Choisissez l’expérience souhaitée et découvrez des propositions dans toute l’Espagne.',
+        'act_by_prov' => 'Activités par province',
+        'act_by_prov_intro' => 'Découvrez quoi faire dans chaque province : routes, sports d’aventure et nature.',
+        'act_cta_h2' => 'Vous proposez des activités de plein air ?',
+        'act_cta_p' => 'Publiez vos routes, ateliers ou expériences nature et connectez-vous avec des voyageurs en quête d’aventure rurale.',
+        'act_cta_btn' => 'Ajouter mon activité',
+        'act_cta_aria' => 'Ajouter une activité',
+        'act_type_aria' => 'Types d’activités touristiques',
+        'act_prov_aria' => 'Provinces avec activités touristiques',
+
+        'act_labels' => [
+            'senderismo' => ['label' => 'Randonnée', 'desc' => 'Sentiers et chemins dans la nature'],
+            'rutas-en-bici' => ['label' => 'Routes à vélo', 'desc' => 'VTT et cyclotourisme rural'],
+            'kayak-canoa' => ['label' => 'Kayak et canoë', 'desc' => 'Sports d’eau douce'],
+            'birdwatching' => ['label' => 'Birdwatching', 'desc' => 'Observation des oiseaux'],
+            'ecoturismo' => ['label' => 'Écotourisme', 'desc' => 'Tourisme responsable et durable'],
+            'escalada' => ['label' => 'Escalade', 'desc' => 'Voies et via ferrata'],
+            'rutas-caballo' => ['label' => 'Balades à cheval', 'desc' => 'Tourisme équestre rural'],
+            'fotografía' => ['label' => 'Photo nature', 'desc' => 'Paysages et faune sauvage'],
+            'astronomia' => ['label' => 'Astronomie', 'desc' => 'Ciels sombres et stargazing'],
+            'micologia' => ['label' => 'Mycologie', 'desc' => 'Routes et cueillette de champignons'],
+            'setas-guiada' => ['label' => 'Routes guidées', 'desc' => 'Avec un guide local expert'],
+            'nieve-invierno' => ['label' => 'Neige et hiver', 'desc' => 'Raquettes et ski nordique'],
+        ],
+    ],
+
+    'de' => [
+        'dir' => 'ltr',
+        'locale' => 'de_DE',
+        'lang_locale' => 'de-DE',
+        'nav_home' => 'Start',
+        'nav_stays' => 'Unterkünfte',
+        'nav_events' => 'Events',
+        'nav_places' => 'Orte',
+        'nav_activities' => 'Aktivitäten',
+        'nav_map' => 'Karte',
+        'nav_login' => 'Anmelden',
+        'nav_main' => 'Hauptmenü',
+        'nav_footer' => 'Fußnavigation',
+        'bc_nav' => 'Brotkrumen',
+        'legal' => 'Impressum',
+        'stats' => 'Statistiken',
+        'map_cta' => 'Auf der Karte ansehen',
+        'map_full' => 'Vollständige Karte',
+        'see_details' => 'Details ansehen ›',
+        'provinces' => 'Provinzen',
+        'free' => 'Kostenlos',
+        'many_free' => 'Viele kostenlos',
+        'places_count' => 'Orte',
+        'see_stays' => 'Unterkünfte ansehen →',
+        'stays_in' => 'Unterkünfte in',
+
+        'alo_meta_title' => 'Ländliche Unterkünfte in Spanien | Ferienhäuser & Landtourismus',
+        'alo_meta_desc'  => 'Über 500 geprüfte ländliche Unterkünfte in Spanien. Häuser mit Kamin, Pool, haustierfreundlich und für Gruppen. Nach Provinz oder Merkmal suchen.',
+        'alo_h1' => 'Ländliche Unterkünfte in Spanien',
+        'alo_sub' => 'Über 500 geprüfte Unterkünfte: Ferienhäuser mit Kamin, Pool, haustierfreundlich und für Gruppen in ganz Spanien.',
+        'alo_bc' => 'Ländliche Unterkünfte',
+        'alo_stat_stays' => 'Unterkünfte',
+        'alo_stat_provs' => 'Provinzen',
+        'alo_by_feat' => 'Nach Merkmal suchen',
+        'alo_by_feat_intro' => 'Filtern Sie Landhäuser nach dem, was zählt: Kamin, Pool, Haustiere, Gruppen und mehr.',
+        'alo_by_prov' => 'Nach Provinz suchen',
+        'alo_by_prov_intro' => 'Entdecken Sie alle ländlichen Unterkünfte in jeder spanischen Provinz.',
+        'alo_combis' => 'Beliebteste Kombinationen',
+        'alo_cta_h2' => 'Haben Sie eine ländliche Unterkunft?',
+        'alo_cta_p' => 'Treten Sie unserem Netzwerk bei und erreichen Sie Tausende Reisende, die authentische Auszeiten in Spanien suchen.',
+        'alo_cta_btn' => 'Meine Unterkunft hinzufügen',
+        'alo_feat_aria' => 'Merkmale ländlicher Unterkünfte',
+        'alo_prov_aria' => 'Provinzen mit ländlichen Unterkünften',
+        'alo_combi_aria' => 'Beliebte Kombinationen ländlicher Unterkünfte',
+        'alo_cta_aria' => 'Unterkunft hinzufügen',
+
+        'evt_meta_title' => 'Kulturelle Events in Spanien | Festivals & Kulturkalender',
+        'evt_meta_desc'  => 'Entdecken Sie über 1.200 geprüfte Kulturveranstaltungen in Spanien. Musik, Gastronomie, Traditionen, Theater, Mittelaltermärkte und Festivals nach Provinz.',
+        'evt_h1' => 'Kulturelle Events in Spanien',
+        'evt_sub' => 'Über 1.200 geprüfte Events: Musik, Gastronomie, Traditionen, Theater, Mittelaltermärkte und mehr in ganz Spanien.',
+        'evt_bc' => 'Kulturelle Events',
+        'evt_stat_events' => 'Events',
+        'evt_carousel_h2' => 'Kommende Events',
+        'evt_carousel_intro' => 'Ausgewählte Events nach Datum in den kommenden Monaten.',
+        'evt_season_intro' => 'Die besten Saison-Events in Provinzen mit reichem Kulturangebot.',
+        'evt_by_cat' => 'Nach Kategorie suchen',
+        'evt_by_cat_intro' => 'Entdecken Sie den Kulturkalender Spaniens nach Event-Typ.',
+        'evt_by_prov' => 'Kulturkalender nach Provinz',
+        'evt_by_prov_intro' => 'Alle kulturellen Events in jeder spanischen Provinz.',
+        'evt_combis' => 'Ausgewählte Kombinationen',
+        'evt_cta_h2' => 'Organisieren Sie ein Kulturevent?',
+        'evt_cta_p' => 'Veröffentlichen Sie Ihr Event auf unserer Plattform und erreichen Sie Tausende Fans der ländlichen Kultur in Spanien.',
+        'evt_cta_btn' => 'Mein Event veröffentlichen',
+        'evt_cta_aria' => 'Event hinzufügen',
+        'evt_cat_aria' => 'Kategorien kultureller Events',
+        'evt_prov_aria' => 'Provinzen mit Kulturkalender',
+        'evt_combi_aria' => 'Beliebte Event-Kombinationen',
+        'evt_season_aria' => 'Saison-Events nach Provinz',
+        'evt_hero_alt' => 'Kulturelle Events und Festivals in Spanien',
+        'evt_season_label' => [
+            'invierno' => 'Winter-Events ❄️',
+            'primavera' => 'Frühlings-Events 🌸',
+            'verano' => 'Sommer-Events ☀️',
+            'otono' => 'Herbst-Events 🍂',
+        ],
+        'evt_in_spain' => 'in Spanien',
+        'evt_agenda_in' => 'Kulturkalender in',
+
+        'lug_meta_title' => 'Sehenswürdigkeiten in Spanien | Erbe, Natur & Gastronomie',
+        'lug_meta_desc'  => 'Entdecken Sie die besten ländlichen Sehenswürdigkeiten Spaniens: Denkmäler, Natur, charmante Restaurants, Weingüter und mehr.',
+        'lug_h1' => 'Sehenswürdigkeiten in Spanien',
+        'lug_sub' => 'Denkmäler, Natur, Gastronomie und ländliches Erbe für Ihren Ausflug.',
+        'lug_bc' => 'Sehenswürdigkeiten',
+        'lug_by_type' => 'Nach Typ erkunden',
+        'lug_by_type_intro' => 'Orte nach Interesse finden: Erbe, Gastronomie, Natur und mehr.',
+        'lug_by_prov' => 'Nach Provinz erkunden',
+        'lug_by_prov_intro' => 'Die wichtigsten Sehenswürdigkeiten jeder spanischen Provinz entdecken.',
+        'lug_cta_h2' => 'Kennen Sie einen charmanten Ort?',
+        'lug_cta_p' => 'Fügen Sie Ihr Restaurant, Weingut, Denkmal oder Naturgebiet hinzu und teilen Sie es mit Reisenden in ganz Spanien.',
+        'lug_cta_btn' => 'Ort hinzufügen',
+        'lug_cta_aria' => 'Ort hinzufügen',
+        'lug_type_aria' => 'Arten von Sehenswürdigkeiten',
+        'lug_prov_aria' => 'Provinzen mit Sehenswürdigkeiten',
+
+        'act_meta_title' => 'Touristische Aktivitäten in Spanien | Wandern, Routen & Natur',
+        'act_meta_desc'  => 'Über 300 touristische Aktivitäten in Spanien: Wandern, Radfahren, Kajak, Birdwatching, Ökotourismus und einzigartige ländliche Erlebnisse.',
+        'act_h1' => 'Touristische Aktivitäten in Spanien',
+        'act_sub' => 'Wandern, Radfahren, Kajak, Birdwatching und Naturerlebnisse im ländlichen Spanien.',
+        'act_bc' => 'Touristische Aktivitäten',
+        'act_by_type' => 'Nach Aktivitätstyp erkunden',
+        'act_by_type_intro' => 'Wählen Sie das gewünschte Erlebnis und entdecken Sie Angebote in ganz Spanien.',
+        'act_by_prov' => 'Aktivitäten nach Provinz',
+        'act_by_prov_intro' => 'Entdecken Sie, was es in jeder Provinz zu tun gibt: Routen, Abenteuersport und Natur.',
+        'act_cta_h2' => 'Bieten Sie Outdoor-Aktivitäten an?',
+        'act_cta_p' => 'Veröffentlichen Sie Ihre Routen, Workshops oder Naturerlebnisse und verbinden Sie sich mit Reisenden, die ländliches Abenteuer suchen.',
+        'act_cta_btn' => 'Meine Aktivität hinzufügen',
+        'act_cta_aria' => 'Aktivität hinzufügen',
+        'act_type_aria' => 'Arten touristischer Aktivitäten',
+        'act_prov_aria' => 'Provinzen mit touristischen Aktivitäten',
+
+        'act_labels' => [
+            'senderismo' => ['label' => 'Wandern', 'desc' => 'Wege und Pfade in der Natur'],
+            'rutas-en-bici' => ['label' => 'Radrouten', 'desc' => 'MTB und ländlicher Radtourismus'],
+            'kayak-canoa' => ['label' => 'Kajak & Kanu', 'desc' => 'Süßwassersport'],
+            'birdwatching' => ['label' => 'Birdwatching', 'desc' => 'Vogelbeobachtung'],
+            'ecoturismo' => ['label' => 'Ökotourismus', 'desc' => 'Verantwortungsvoller nachhaltiger Tourismus'],
+            'escalada' => ['label' => 'Klettern', 'desc' => 'Kletterwände und Via Ferrata'],
+            'rutas-caballo' => ['label' => 'Reitrouten', 'desc' => 'Ländlicher Reittourismus'],
+            'fotografía' => ['label' => 'Naturfotografie', 'desc' => 'Landschaften und Wildtiere'],
+            'astronomia' => ['label' => 'Astronomie', 'desc' => 'Dunkle Himmel und Sternenbeobachtung'],
+            'micologia' => ['label' => 'Mykologie', 'desc' => 'Pilzrouten und Sammeln'],
+            'setas-guiada' => ['label' => 'Geführte Routen', 'desc' => 'Mit lokalem Expertenführer'],
+            'nieve-invierno' => ['label' => 'Schnee & Winter', 'desc' => 'Schneeschuhe und Nordisch'],
+        ],
+    ],
+
+    'zh' => [
+        'dir' => 'ltr',
+        'locale' => 'zh_CN',
+        'lang_locale' => 'zh-CN',
+        'nav_home' => '首页',
+        'nav_stays' => '住宿',
+        'nav_events' => '活动',
+        'nav_places' => '景点',
+        'nav_activities' => '体验',
+        'nav_map' => '地图',
+        'nav_login' => '登录',
+        'nav_main' => '主导航',
+        'nav_footer' => '页脚导航',
+        'bc_nav' => '面包屑导航',
+        'legal' => '法律声明',
+        'stats' => '统计',
+        'map_cta' => '在地图上查看',
+        'map_full' => '查看完整地图',
+        'see_details' => '查看详情 ›',
+        'provinces' => '省份',
+        'free' => '免费',
+        'many_free' => '许多免费',
+        'places_count' => '景点',
+        'see_stays' => '查看住宿 →',
+        'stays_in' => '住宿地点：',
+
+        'alo_meta_title' => '西班牙乡村住宿 | 民宿与乡村旅游',
+        'alo_meta_desc'  => '超过500处经过核实的西班牙乡村住宿。带壁炉、泳池、宠物友好和团体房源。按省份或特色浏览。',
+        'alo_h1' => '西班牙乡村住宿',
+        'alo_sub' => '超过500处核实住宿：带壁炉、泳池、宠物友好和团体民宿遍布西班牙。',
+        'alo_bc' => '乡村住宿',
+        'alo_stat_stays' => '住宿',
+        'alo_stat_provs' => '省份',
+        'alo_by_feat' => '按特色搜索',
+        'alo_by_feat_intro' => '按您最关心的条件筛选：壁炉、泳池、宠物、团体等。',
+        'alo_by_prov' => '按省份搜索',
+        'alo_by_prov_intro' => '探索西班牙各省可用的乡村住宿。',
+        'alo_combis' => '热门组合',
+        'alo_cta_h2' => '您有乡村住宿吗？',
+        'alo_cta_p' => '加入我们的网络，每月触达数千名寻找正宗西班牙乡村之旅的游客。',
+        'alo_cta_btn' => '添加我的住宿',
+        'alo_feat_aria' => '乡村住宿特色',
+        'alo_prov_aria' => '有乡村住宿的省份',
+        'alo_combi_aria' => '热门乡村住宿组合',
+        'alo_cta_aria' => '添加住宿',
+
+        'evt_meta_title' => '西班牙文化活动 | 节日与文化日程',
+        'evt_meta_desc'  => '发现超过1200场经过核实的西班牙文化活动。音乐、美食、传统、戏剧、中世纪集市及各省节日。',
+        'evt_h1' => '西班牙文化活动',
+        'evt_sub' => '超过1200场核实活动：音乐、美食、传统、戏剧、中世纪集市等遍布西班牙。',
+        'evt_bc' => '文化活动',
+        'evt_stat_events' => '活动',
+        'evt_carousel_h2' => '即将到来的活动',
+        'evt_carousel_intro' => '按日期排序的未来数月精选活动。',
+        'evt_season_intro' => '文化供给最丰富省份的当季最佳活动。',
+        'evt_by_cat' => '按类别搜索',
+        'evt_by_cat_intro' => '按您喜欢的活动类型探索西班牙文化日程。',
+        'evt_by_prov' => '各省文化日程',
+        'evt_by_prov_intro' => '查看西班牙各省所有文化活动。',
+        'evt_combis' => '精选组合',
+        'evt_cta_h2' => '您组织文化活动吗？',
+        'evt_cta_p' => '在我们的平台发布活动，触达全西班牙数千名乡村文化爱好者。',
+        'evt_cta_btn' => '发布我的活动',
+        'evt_cta_aria' => '添加活动',
+        'evt_cat_aria' => '文化活动类别',
+        'evt_prov_aria' => '有文化日程的省份',
+        'evt_combi_aria' => '热门活动组合',
+        'evt_season_aria' => '各省当季活动',
+        'evt_hero_alt' => '西班牙文化活动与节日',
+        'evt_season_label' => [
+            'invierno' => '冬季活动 ❄️',
+            'primavera' => '春季活动 🌸',
+            'verano' => '夏季活动 ☀️',
+            'otono' => '秋季活动 🍂',
+        ],
+        'evt_in_spain' => '在西班牙',
+        'evt_agenda_in' => '文化日历在',
+        ],
+
+        'lug_meta_title' => '西班牙景点 | 遗产、自然与乡村美食',
+        'lug_meta_desc'  => '发现西班牙最佳乡村景点：历史古迹、自然空间、特色餐厅、酒庄等。',
+        'lug_h1' => '西班牙景点',
+        'lug_sub' => '古迹、自然、美食与乡村遗产，助您规划短途旅行。',
+        'lug_bc' => '景点',
+        'lug_by_type' => '按类型浏览',
+        'lug_by_type_intro' => '按兴趣寻找景点：遗产、美食、自然等。',
+        'lug_by_prov' => '按省份浏览',
+        'lug_by_prov_intro' => '发现西班牙各省最突出的景点。',
+        'lug_cta_h2' => '您知道有魅力的地方吗？',
+        'lug_cta_p' => '添加您的餐厅、酒庄、古迹或自然空间，与全西班牙旅行者分享。',
+        'lug_cta_btn' => '添加景点',
+        'lug_cta_aria' => '添加景点',
+        'lug_type_aria' => '景点类型',
+        'lug_prov_aria' => '有景点的省份',
+
+        'act_meta_title' => '西班牙旅游体验 | 徒步、路线与乡村旅游',
+        'act_meta_desc'  => '超过300项西班牙旅游体验：徒步、骑行、皮划艇、观鸟、生态旅游及独特乡村体验。',
+        'act_h1' => '西班牙旅游体验',
+        'act_sub' => '徒步、骑行、皮划艇、观鸟与西班牙乡村自然体验。',
+        'act_bc' => '旅游体验',
+        'act_by_type' => '按体验类型浏览',
+        'act_by_type_intro' => '选择您想要的体验，发现全西班牙的方案。',
+        'act_by_prov' => '各省体验',
+        'act_by_prov_intro' => '了解各省可做之事：路线、冒险运动与自然体验。',
+        'act_cta_h2' => '您提供户外体验吗？',
+        'act_cta_p' => '发布您的路线、工作坊或自然体验，连接寻找乡村冒险的游客。',
+        'act_cta_btn' => '添加我的体验',
+        'act_cta_aria' => '添加体验',
+        'act_type_aria' => '旅游体验类型',
+        'act_prov_aria' => '有旅游体验的省份',
+
+        'act_labels' => [
+            'senderismo' => ['label' => '徒步', 'desc' => '自然步道与路径'],
+            'rutas-en-bici' => ['label' => '骑行路线', 'desc' => '山地车与乡村骑行'],
+            'kayak-canoa' => ['label' => '皮划艇', 'desc' => '淡水运动'],
+            'birdwatching' => ['label' => '观鸟', 'desc' => '鸟类观察'],
+            'ecoturismo' => ['label' => '生态旅游', 'desc' => '负责任的可持续旅游'],
+            'escalada' => ['label' => '攀岩', 'desc' => '岩壁与铁索攀登'],
+            'rutas-caballo' => ['label' => '骑马路线', 'desc' => '乡村马术旅游'],
+            'fotografía' => ['label' => '自然摄影', 'desc' => '风景与野生动物'],
+            'astronomia' => ['label' => '天文', 'desc' => '暗夜与观星'],
+            'micologia' => ['label' => '菌类', 'desc' => '蘑菇路线与采集'],
+            'setas-guiada' => ['label' => '向导路线', 'desc' => '本地专家向导'],
+            'nieve-invierno' => ['label' => '冰雪冬季', 'desc' => '雪鞋与北欧滑雪'],
+        ],
+    ],
+];
+
+/**
+ * Detecta idioma desde ?lang= y valida.
+ */
+function vh_detect_lang(): string {
+    $lang = isset($_GET['lang']) ? trim((string)$_GET['lang']) : 'es';
+    return in_array($lang, ['es', 'en', 'fr', 'de', 'zh'], true) ? $lang : 'es';
+}
+
+/**
+ * Prefijo de path por idioma: '' | '/en' | '/fr' ...
+ */
+function vh_path_prefix(string $lang): string {
+    return $lang === 'es' ? '' : '/' . $lang;
+}
+
+/**
+ * URL de un hub vertical en un idioma.
+ */
+function vh_hub_url(string $vertical, string $lang = 'es'): string {
+    $prefix = vh_path_prefix($lang);
+    return 'https://rutasrurales.io' . $prefix . '/' . $vertical . '/';
+}
+
+/**
+ * URL interna de un recurso bajo un hub (landing/filtro).
+ * Mantiene el path del vertical en todos los idiomas (estrategia simple).
+ */
+function vh_item_url(string $vertical, string $slug, string $lang = 'es'): string {
+    $prefix = vh_path_prefix($lang);
+    $slug = ltrim($slug, '/');
+    return $prefix . '/' . $vertical . '/' . $slug;
+}
+
+/**
+ * Home URL por idioma.
+ */
+function vh_home_url(string $lang = 'es'): string {
+    if ($lang === 'es') {
+        return 'https://rutasrurales.io/';
+    }
+    return 'https://rutasrurales.io/' . $lang . '/';
+}
+
+/**
+ * Traducciones del hub (fallback ES).
+ */
+function vh_t(string $lang): array {
+    return VH_I18N[$lang] ?? VH_I18N['es'];
+}
+
+/**
+ * Label de filtro de alojamientos/eventos desde hub-config si existe.
+ */
+function vh_filter_label(array $filterRow, string $lang): string {
+    if (isset($filterRow[$lang]) && $filterRow[$lang] !== '') {
+        return (string)$filterRow[$lang];
+    }
+    if (isset($filterRow['es'])) {
+        return (string)$filterRow['es'];
+    }
+    if (isset($filterRow['label'])) {
+        return (string)$filterRow['label'];
+    }
+    return '';
+}
+
+/**
+ * Bootstrap común para un hub vertical.
+ *
+ * @param string $vertical alojamientos|eventos|lugares|actividades
+ * @return array{
+ *   lang:string,t:array,base_domain:string,path_prefix:string,hub_path:string,
+ *   canonical:string,hreflang:array,locale:string,dir:string,home_url:string
+ * }
+ */
+function vh_boot(string $vertical): array {
+    $lang = vh_detect_lang();
+    $t = vh_t($lang);
+    $base = 'https://rutasrurales.io';
+    $prefix = vh_path_prefix($lang);
+    $hubPath = $prefix . '/' . $vertical . '/';
+    $canonical = $base . $hubPath;
+
+    $hreflang = [
+        'es' => vh_hub_url($vertical, 'es'),
+        'en' => vh_hub_url($vertical, 'en'),
+        'fr' => vh_hub_url($vertical, 'fr'),
+        'de' => vh_hub_url($vertical, 'de'),
+        'zh' => vh_hub_url($vertical, 'zh'),
+        'x-default' => vh_hub_url($vertical, 'es'),
+    ];
+
+    return [
+        'lang' => $lang,
+        't' => $t,
+        'base_domain' => $base,
+        'path_prefix' => $prefix,
+        'hub_path' => $hubPath,
+        'canonical' => $canonical,
+        'hreflang' => $hreflang,
+        'locale' => $t['locale'] ?? 'es_ES',
+        'dir' => $t['dir'] ?? 'ltr',
+        'home_url' => vh_home_url($lang),
+        'vertical' => $vertical,
+    ];
+}
+
+/**
+ * Renderiza bloque hreflang.
+ */
+function vh_render_hreflang(array $hreflang): string {
+    $out = '';
+    foreach ($hreflang as $code => $url) {
+        $out .= '<link rel="alternate" hreflang="' . htmlspecialchars($code) . '" href="' . htmlspecialchars($url) . '">' . "\n";
+    }
+    return $out;
+}

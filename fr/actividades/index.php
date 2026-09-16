@@ -1,10 +1,9 @@
 <?php
 /**
- * /actividades/ — Hub Índice de Actividades Turísticas
- * Multiidioma: /actividades/ y /{lang}/actividades/
+ * /fr/actividades/ — Hub Índice de Actividades Turísticas (Francés)
  */
 ini_set('display_errors', 0); error_reporting(E_ERROR | E_PARSE);
-require_once dirname(__DIR__) . '/index/i18n/vertical-hubs.php';
+require_once dirname(__DIR__, 2) . '/index/i18n/vertical-hubs.php';
 $vh = vh_boot('actividades');
 $lang = $vh['lang'];
 $t = $vh['t'];
@@ -145,7 +144,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 </style>
 
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"CollectionPage","name":"Actividades Turísticas en España","description":"<?= htmlspecialchars($meta_desc) ?>","url":"<?= htmlspecialchars($canonical) ?>","inLanguage":"es","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://rutasrurales.io/"},{"@type":"ListItem","position":2,"name":"Actividades Turísticas","item":"<?= htmlspecialchars($canonical) ?>"}]},"publisher":{"@type":"Organization","name":"Rutas Rurales","url":"https://rutasrurales.io"}}
+{"@context":"https://schema.org","@type":"CollectionPage","name":"Actividades Turísticas en España","description":"<?= htmlspecialchars($meta_desc) ?>","url":"<?= htmlspecialchars($canonical) ?>","inLanguage":"<?= htmlspecialchars($lang) ?>","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"<?= htmlspecialchars($t['nav_home']) ?>","item":"<?= htmlspecialchars($home_url) ?>"},{"@type":"ListItem","position":2,"name":"<?= htmlspecialchars($t['act_bc']) ?>","item":"<?= htmlspecialchars($canonical) ?>"}]},"publisher":{"@type":"Organization","name":"Rutas Rurales","url":"https://rutasrurales.io"}}
 </script>
 <script>(function(){var l=function(){if(window._gtm)return;window._gtm=1;(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MBP57VQM');};['click','scroll','keydown','touchstart'].forEach(function(e){window.addEventListener(e,function(){setTimeout(l,1e3)},{once:true,passive:true});});setTimeout(l,8000);})();</script>
 </head>
@@ -179,7 +178,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
   <div class="act-hero__inner">
     <nav class="act-bc" aria-label="<?= htmlspecialchars($t['bc_nav']) ?>">
       <ol>
-        <li><a href="https://rutasrurales.io/"><?= htmlspecialchars($t['nav_home']) ?></a></li>
+        <li><a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a></li>
         <li aria-hidden="true" style="padding:0 4px">›</li>
         <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($t['act_bc']) ?></span></li>
       </ol>
@@ -203,7 +202,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
       <?php foreach ($actividades as $ak => $ad): ?>
       <li>
         <a href="/actividades-turisticas.html?tipo=<?= urlencode($ak) ?>" class="act-card"
-           title="<?= htmlspecialchars($ad['label']) ?> en España">
+           title="<?= htmlspecialchars($ad['label']) ?>">
           <span class="act-card__icon" aria-hidden="true"><?= $ad['icon'] ?></span>
           <span>
             <span class="act-card__nm"><?= htmlspecialchars($ad['label']) ?></span>
@@ -226,7 +225,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
       <li>
         <a href="/actividades-turisticas.html?provincia=<?= urlencode($pv['slug']) ?>"
            class="act-prov"
-           title="Actividades turísticas en <?= htmlspecialchars($pv['label']) ?>">
+           title="<?= htmlspecialchars($pv['label']) ?>">
           <span class="act-prov__em" aria-hidden="true"><?= $pv['emoji'] ?></span>
           <span class="act-prov__nm"><?= htmlspecialchars($pv['label']) ?></span>
         </a>
@@ -249,13 +248,11 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <footer class="act-footer" role="contentinfo">
   <div class="act-footer__inner">
     <nav class="act-footer__nav" aria-label="Navegación del pie">
-        
-<a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a>
-      
-      <a href="/alojamientos/">Alojamientos</a>
-      <a href="/eventos/">Eventos</a>
-      <a href="/lugares/">Lugares</a>
-      <a href="/actividades/" aria-current="page">Actividades</a>
+      <a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/"><?= htmlspecialchars($t['nav_stays']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/"><?= htmlspecialchars($t['nav_events']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/"><?= htmlspecialchars($t['nav_places']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/" aria-current="page"><?= htmlspecialchars($t['nav_activities']) ?></a>
       <a href="/aviso-legal.html">Aviso Legal</a>
     </nav>
     <p>&copy; <?= date('Y') ?> <strong style="color:#fff">rutasrurales.io</strong></p>

@@ -269,6 +269,15 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^alojamientos/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ alojamientos-landing/index.php?lang=es&slug=$1 [L,QSA]
 
 # ============================================================
+# 5b-HUBS. HUBS MULTIIDIOMA DE VERTICALES (DEBE IR PRIMERO)
+# ============================================================
+# IMPORTANTE: Esta regla DEBE ir ANTES de las reglas de landings
+# para que /en/eventos/ vaya al hub y no sea capturada por la landing.
+# /en/eventos/ → eventos/index.php?lang=en  (URL canónica preservada)
+# /fr/alojamientos/ → alojamientos/index.php?lang=fr
+RewriteRule ^(en|fr|de|zh)/(alojamientos|eventos|lugares|actividades)/?$ $2/index.php?lang=$1 [L,QSA]
+
+# ============================================================
 # 5c. LANDINGS LONG-TAIL DE EVENTOS — /eventos/{filtros}-{provincia}
 # ============================================================
 # Patrón: /eventos/musica-soria, /eventos/gratuitos-zamora,
@@ -336,9 +345,8 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(es|de|en|fr|zh)/evento/([^/]+)/?$ evento-detalle.php?slug=$2&lang=$1 [L,QSA]
 
-# EXCEPCIÓN: hubs multilingües de listados → hub canónico en español
-# /en/eventos, /fr/eventos, etc. NO son slugs de un evento individual
-RewriteRule ^(en|fr|de|zh)/(eventos|lugares|alojamientos|actividades|rutas)/?$ /$2/ [R=301,L]
+# /en/rutas/ → hub ES de rutas (sin i18n propio aún)
+RewriteRule ^(en|fr|de|zh)/rutas/?$ /rutas/ [R=301,L]
 
 # REDIRECCIÓN 301: URLs antiguas sin "evento" → con "evento"
 # Ejemplo: /de/slug-traditionelles-fest-spanien → /de/evento/slug-traditionelles-fest-spanien
@@ -347,6 +355,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/(es|de|en|fr|zh)/(eventos|lugares|alojamientos|actividades|rutas|evento|index\.html|login\.html|mapa-eclipse\.php|eventos-culturales-paginacion\.html|rutas-turisticas\.html|apoyar\.html|apoyar\.php)(/|$) [NC]
 RewriteRule ^(es|de|en|fr|zh)/([^/]+)/?$ /$1/evento/$2 [R=301,L]
+
 
 # Eventos sin idioma (por defecto español)
 

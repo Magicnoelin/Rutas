@@ -31,7 +31,7 @@ const HUB_LANGS = [
         'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/gb.svg',
         'locale'   => 'en-GB',
         'dir'      => 'ltr',
-        'available' => ['alojamientos', 'eventos'],
+        'available' => ['alojamientos', 'eventos', 'lugares', 'actividades'],
     ],
     'fr' => [
         'label'    => 'Français',
@@ -39,7 +39,7 @@ const HUB_LANGS = [
         'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/fr.svg',
         'locale'   => 'fr-FR',
         'dir'      => 'ltr',
-        'available' => ['alojamientos', 'eventos'],
+        'available' => ['alojamientos', 'eventos', 'lugares', 'actividades'],
     ],
     'de' => [
         'label'    => 'Deutsch',
@@ -47,7 +47,7 @@ const HUB_LANGS = [
         'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/de.svg',
         'locale'   => 'de-DE',
         'dir'      => 'ltr',
-        'available' => ['alojamientos', 'eventos'],
+        'available' => ['alojamientos', 'eventos', 'lugares', 'actividades'],
     ],
     'zh' => [
         'label'    => '中文',
@@ -55,8 +55,9 @@ const HUB_LANGS = [
         'flag_svg' => 'https://hatscripts.github.io/circle-flags/flags/cn.svg',
         'locale'   => 'zh-CN',
         'dir'      => 'ltr',
-        'available' => ['alojamientos', 'eventos'],
+        'available' => ['alojamientos', 'eventos', 'lugares', 'actividades'],
     ],
+
 ];
 
 // ── PROVINCIAS HUB (curadas con icono e imagen representativa) ────────────────

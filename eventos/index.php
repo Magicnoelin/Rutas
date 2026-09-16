@@ -1,7 +1,7 @@
 <?php
 /**
  * /eventos/ — Hub Índice de Eventos Culturales
- * URL canónica: https://rutasrurales.io/eventos/
+ * Multiidioma: /eventos/ y /{lang}/eventos/
  */
 
 ini_set('display_errors', 0);
@@ -13,12 +13,17 @@ if (file_exists($_HUBCFG)) {
     require_once $_HUBCFG;
     $has_hub_data = true;
 }
-
-$base_domain = 'https://rutasrurales.io';
-$canonical   = $base_domain . '/eventos/';
-$meta_title  = 'Eventos Culturales en España | Agenda Cultural y Festivales';
-$meta_desc   = 'Descubre más de 1.200 eventos culturales verificados en España. Música, gastronomía, tradiciones, teatro, mercados medievales y festivales por provincia.';
+require_once dirname(__DIR__) . '/index/i18n/vertical-hubs.php';
+$vh = vh_boot('eventos');
+$lang = $vh['lang'];
+$t = $vh['t'];
+$path_prefix = $vh['path_prefix'];
+$base_domain = $vh['base_domain'];
+$canonical   = $vh['canonical'];
+$meta_title  = $t['evt_meta_title'];
+$meta_desc   = $t['evt_meta_desc'];
 $og_image    = $base_domain . '/img/eventos-landing-hero/eventos_culturales.webp';
+$home_url    = $vh['home_url'];
 
 
 // Conexión PDO y carga de eventos para el carrusel
@@ -67,10 +72,11 @@ try {
 
 // Temporada actual
 $mes = (int)date('n');
-if (in_array($mes, [12,1,2])) { $temporada = 'invierno'; $temp_label = 'Eventos de invierno ❄️'; }
-elseif (in_array($mes, [3,4,5])) { $temporada = 'primavera'; $temp_label = 'Eventos de primavera 🌸'; }
-elseif (in_array($mes, [6,7,8])) { $temporada = 'verano'; $temp_label = 'Eventos de verano ☀️'; }
-else { $temporada = 'otono'; $temp_label = 'Eventos de otoño 🍂'; }
+if (in_array($mes, [12,1,2])) { $temporada = 'invierno'; }
+elseif (in_array($mes, [3,4,5])) { $temporada = 'primavera'; }
+elseif (in_array($mes, [6,7,8])) { $temporada = 'verano'; }
+else { $temporada = 'otono'; }
+$temp_label = $t['evt_season_label'][$temporada] ?? $t['evt_season_label']['otono'];
 
 // Datos inline de respaldo
 $categorias_inline = [
@@ -107,7 +113,7 @@ $provincias_inline = [
 $categorias = [];
 if ($has_hub_data) {
     foreach (HUB_FILTROS_EVT as $k => $v) {
-        $categorias[$k] = ['icon' => $v['icon'], 'label' => $v['es']];
+        $categorias[$k] = ['icon' => $v['icon'], 'label' => vh_filter_label($v, $lang)];
     }
 } else {
     $categorias = array_map(fn($v) => ['icon'=>$v['icon'],'label'=>$v['label']], $categorias_inline);
@@ -117,7 +123,7 @@ $combis     = $has_hub_data ? HUB_COMBIS_EVT : [];
 $provs_temp = ['soria','zamora','burgos','salamanca','valladolid','leon','palencia','segovia','avila'];
 ?>
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="<?= htmlspecialchars($lang) ?>" dir="<?= htmlspecialchars($vh['dir']) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,11 +131,7 @@ $provs_temp = ['soria','zamora','burgos','salamanca','valladolid','leon','palenc
 <meta name="description" content="<?= htmlspecialchars($meta_desc) ?>">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
-<link rel="alternate" hreflang="es"        href="https://rutasrurales.io/eventos/">
-<link rel="alternate" hreflang="en"        href="https://rutasrurales.io/en/eventos/">
-<link rel="alternate" hreflang="fr"        href="https://rutasrurales.io/fr/eventos/">
-<link rel="alternate" hreflang="de"        href="https://rutasrurales.io/de/eventos/">
-<link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/eventos/">
+<?= vh_render_hreflang($vh['hreflang']) ?>
 <meta property="og:type"        content="website">
 <meta property="og:title"       content="<?= htmlspecialchars($meta_title) ?>">
 <meta property="og:description" content="<?= htmlspecialchars($meta_desc) ?>">
@@ -262,13 +264,13 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 {
   "@context":"https://schema.org",
   "@type":"CollectionPage",
-  "name":"Eventos Culturales en España",
-  "description":"<?= htmlspecialchars($meta_desc) ?>",
-  "url":"<?= htmlspecialchars($canonical) ?>",
-  "inLanguage":"es",
+  "name":<?= json_encode($t['evt_h1']) ?>,
+  "description":<?= json_encode($meta_desc) ?>,
+  "url":<?= json_encode($canonical) ?>,
+  "inLanguage":<?= json_encode($t['lang_locale'] ?? 'es-ES') ?>,
   "breadcrumb":{"@type":"BreadcrumbList","itemListElement":[
-    {"@type":"ListItem","position":1,"name":"Inicio","item":"https://rutasrurales.io/"},
-    {"@type":"ListItem","position":2,"name":"Eventos Culturales","item":"<?= htmlspecialchars($canonical) ?>"}
+    {"@type":"ListItem","position":1,"name":<?= json_encode($t['nav_home']) ?>,"item":<?= json_encode($home_url) ?>},
+    {"@type":"ListItem","position":2,"name":<?= json_encode($t['evt_bc']) ?>,"item":<?= json_encode($canonical) ?>}
   ]},
   "publisher":{"@type":"Organization","name":"Rutas Rurales","url":"https://rutasrurales.io"}
 }
@@ -280,17 +282,17 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 
 <!-- NAVBAR -->
 <header class="evt-nav" role="banner">
-  <a href="https://rutasrurales.io/" class="evt-nav__logo" aria-label="Rutas Rurales - Inicio">
+  <a href="<?= htmlspecialchars($home_url) ?>" class="evt-nav__logo" aria-label="Rutas Rurales - <?= htmlspecialchars($t['nav_home']) ?>">
     <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales" width="38" height="38" loading="eager">
     <span>Rutas Rurales</span>
   </a>
-  <nav class="evt-nav__links" aria-label="Menú principal">
-    <a href="/alojamientos/">🏡 Alojamientos</a>
-    <a href="/eventos/" aria-current="page">🎭 Eventos</a>
-    <a href="/lugares/">📍 Lugares</a>
-    <a href="/actividades/">🥾 Actividades</a>
-    <a href="/rutas.php">🗺️ Mapa</a>
-    <a href="/login.html" class="evt-nav__cta" rel="nofollow">Acceder</a>
+  <nav class="evt-nav__links" aria-label="<?= htmlspecialchars($t['nav_main']) ?>">
+    <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/">🏡 <?= htmlspecialchars($t['nav_stays']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/" aria-current="page">🎭 <?= htmlspecialchars($t['nav_events']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/">📍 <?= htmlspecialchars($t['nav_places']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/">🥾 <?= htmlspecialchars($t['nav_activities']) ?></a>
+    <a href="/rutas.php">🗺️ <?= htmlspecialchars($t['nav_map']) ?></a>
+    <a href="/login.html" class="evt-nav__cta" rel="nofollow"><?= htmlspecialchars($t['nav_login']) ?></a>
   </nav>
 </header>
 
@@ -300,24 +302,24 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <section class="evt-hero" id="inicio" aria-labelledby="evt-h1">
   <div class="evt-hero__bg" aria-hidden="true">
     <img src="/img/eventos-landing-hero/eventos_culturales.webp"
-         alt="Eventos culturales y festivales en España"
+         alt="<?= htmlspecialchars($t['evt_hero_alt']) ?>"
          width="1200" height="500" loading="eager" fetchpriority="high">
     <div class="evt-hero__overlay"></div>
   </div>
   <div class="evt-hero__inner">
-    <nav class="evt-bc" aria-label="Ruta de navegación">
+    <nav class="evt-bc" aria-label="<?= htmlspecialchars($t['bc_nav']) ?>">
       <ol>
-        <li><a href="https://rutasrurales.io/">Inicio</a></li>
+        <li><a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a></li>
         <li aria-hidden="true" style="padding:0 4px">›</li>
-        <li><span aria-current="page" style="color:#fff">Eventos culturales</span></li>
+        <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($t['evt_bc']) ?></span></li>
       </ol>
     </nav>
-    <h1 id="evt-h1">Eventos Culturales en España</h1>
-    <p class="evt-hero__sub">Más de 1.200 eventos verificados: música, gastronomía, tradiciones, teatro, mercados medievales y mucho más por toda España.</p>
-    <div class="evt-hero__stats" aria-label="Estadísticas">
-      <div><span class="evt-stat__val"><?= htmlspecialchars($total_events) ?></span><span class="evt-stat__lbl">Eventos</span></div>
-      <div><span class="evt-stat__val">+20</span><span class="evt-stat__lbl">Provincias</span></div>
-      <div><span class="evt-stat__val">Gratis</span><span class="evt-stat__lbl">Muchos sin coste</span></div>
+    <h1 id="evt-h1"><?= htmlspecialchars($t['evt_h1']) ?></h1>
+    <p class="evt-hero__sub"><?= htmlspecialchars($t['evt_sub']) ?></p>
+    <div class="evt-hero__stats" aria-label="<?= htmlspecialchars($t['stats']) ?>">
+      <div><span class="evt-stat__val"><?= htmlspecialchars($total_events) ?></span><span class="evt-stat__lbl"><?= htmlspecialchars($t['evt_stat_events']) ?></span></div>
+      <div><span class="evt-stat__val">+20</span><span class="evt-stat__lbl"><?= htmlspecialchars($t['provinces']) ?></span></div>
+      <div><span class="evt-stat__val"><?= htmlspecialchars($t['free']) ?></span><span class="evt-stat__lbl"><?= htmlspecialchars($t['many_free']) ?></span></div>
     </div>
   </div>
 </section>
@@ -327,8 +329,8 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <section class="evt-section" aria-labelledby="carousel-h2">
   <div class="evt-wrap">
     <div class="evt-section__hdr">
-      <h2 class="evt-h2" id="carousel-h2">📅 Próximos eventos en la agenda</h2>
-      <p class="evt-intro">Eventos destacados ordenados por fecha de celebración en los próximos meses.</p>
+      <h2 class="evt-h2" id="carousel-h2">📅 <?= htmlspecialchars($t['evt_carousel_h2']) ?></h2>
+      <p class="evt-intro"><?= htmlspecialchars($t['evt_carousel_intro']) ?></p>
     </div>
     <div class="evt-carousel-wrap">
       <ul class="evt-carousel" role="list">
@@ -355,12 +357,12 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
               <span class="evt-card__loc">📍 <?= htmlspecialchars($loc_str) ?></span>
             <?php endif; ?>
             <h3 class="evt-card__title">
-              <a href="/evento-modular/<?= htmlspecialchars($ev['slug']) ?>"><?= htmlspecialchars($ev['name']) ?></a>
+              <a href="<?= $lang==='es' ? '/evento/' : '/'.$lang.'/evento/' ?><?= htmlspecialchars($ev['slug']) ?>"><?= htmlspecialchars($ev['name']) ?></a>
             </h3>
             <?php if (!empty($short_desc)): ?>
               <p class="evt-card__desc"><?= htmlspecialchars($short_desc) ?></p>
             <?php endif; ?>
-            <a href="/evento-modular/<?= htmlspecialchars($ev['slug']) ?>" class="evt-card__btn">Ver detalles ›</a>
+            <a href="<?= $lang==='es' ? '/evento/' : '/'.$lang.'/evento/' ?><?= htmlspecialchars($ev['slug']) ?>" class="evt-card__btn"><?= htmlspecialchars($t['see_details']) ?></a>
           </div>
         </li>
         <?php endforeach; ?>
@@ -375,21 +377,21 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
   <div class="evt-wrap">
     <div class="evt-section__hdr">
       <h2 class="evt-h2" id="temp-h2"><?= htmlspecialchars($temp_label) ?></h2>
-      <p class="evt-intro">Los mejores eventos de la temporada en las provincias con mayor oferta cultural.</p>
+      <p class="evt-intro"><?= htmlspecialchars($t['evt_season_intro']) ?></p>
     </div>
-    <ul class="evt-season-grid" role="list" aria-label="Eventos de temporada por provincia">
+    <ul class="evt-season-grid" role="list" aria-label="<?= htmlspecialchars($t['evt_season_aria']) ?>">
       <?php
       $filtro_temp = $temporada;
-      $cat_label = $has_hub_data ? (HUB_FILTROS_EVT[$filtro_temp]['es'] ?? ucfirst($temporada)) : ucfirst($temporada);
+      $cat_label = $has_hub_data ? vh_filter_label(HUB_FILTROS_EVT[$filtro_temp] ?? [], $lang) : ucfirst($temporada);
       foreach ($provs_temp as $pk):
         $pd = $has_hub_data ? (HUB_PROVINCIAS[$pk] ?? null) : ($provincias_inline[$pk] ?? null);
         if (!$pd) continue;
         $slug_t = $filtro_temp . '-' . $pk;
-        $url_t  = '/eventos/' . $slug_t;
+        $url_t  = vh_item_url('eventos', $slug_t, $lang);
       ?>
       <li>
         <a href="<?= htmlspecialchars($url_t) ?>" class="evt-season-card"
-           title="<?= htmlspecialchars($cat_label . ' en ' . $pd['label']) ?>">
+           title="<?= htmlspecialchars($cat_label . ' ' . ($t['evt_in_spain'] ?? 'en España')) ?>">
           <span class="evt-season-card__em" aria-hidden="true"><?= $pd['emoji'] ?></span>
           <span class="evt-season-card__prov"><?= htmlspecialchars($pd['label']) ?></span>
           <span class="evt-season-card__cat"><?= htmlspecialchars($cat_label) ?></span>
@@ -404,14 +406,14 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <section class="evt-section" aria-labelledby="cats-h2">
   <div class="evt-wrap">
     <div class="evt-section__hdr">
-      <h2 class="evt-h2" id="cats-h2">🗂️ Buscar por categoría</h2>
-      <p class="evt-intro">Explora la agenda cultural de España según el tipo de evento que más te interese.</p>
+      <h2 class="evt-h2" id="cats-h2">🗂️ <?= htmlspecialchars($t['evt_by_cat']) ?></h2>
+      <p class="evt-intro"><?= htmlspecialchars($t['evt_by_cat_intro']) ?></p>
     </div>
-    <ul class="evt-chips" role="list" aria-label="Categorías de eventos culturales">
+    <ul class="evt-chips" role="list" aria-label="<?= htmlspecialchars($t['evt_cat_aria']) ?>">
       <?php foreach ($categorias as $ck => $cd): ?>
       <li>
-        <a href="/eventos/<?= htmlspecialchars($ck) ?>" class="evt-chip"
-           title="<?= htmlspecialchars($cd['label']) ?> en España">
+        <a href="<?= htmlspecialchars(vh_item_url('eventos', $ck, $lang)) ?>" class="evt-chip"
+           title="<?= htmlspecialchars($cd['label']) ?> <?= htmlspecialchars($t['evt_in_spain'] ?? 'en España') ?>">
           <span aria-hidden="true"><?= $cd['icon'] ?></span>
           <?= htmlspecialchars($cd['label']) ?>
         </a>
@@ -425,14 +427,14 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <section class="evt-section evt-section--alt" aria-labelledby="provs-h2">
   <div class="evt-wrap">
     <div class="evt-section__hdr">
-      <h2 class="evt-h2" id="provs-h2">📍 Agenda cultural por provincia</h2>
-      <p class="evt-intro">Consulta todos los eventos culturales disponibles en cada provincia española.</p>
+      <h2 class="evt-h2" id="provs-h2">📍 <?= htmlspecialchars($t['evt_by_prov']) ?></h2>
+      <p class="evt-intro"><?= htmlspecialchars($t['evt_by_prov_intro']) ?></p>
     </div>
-    <ul class="evt-provs" role="list" aria-label="Provincias con agenda cultural">
+    <ul class="evt-provs" role="list" aria-label="<?= htmlspecialchars($t['evt_prov_aria']) ?>">
       <?php foreach ($provincias as $pk => $pd): ?>
       <li>
-        <a href="/eventos/<?= htmlspecialchars($pk) ?>" class="evt-prov"
-           title="Agenda cultural en <?= htmlspecialchars($pd['label']) ?>">
+        <a href="<?= htmlspecialchars(vh_item_url('eventos', $pk, $lang)) ?>" class="evt-prov"
+           title="<?= htmlspecialchars(($t['evt_agenda_in'] ?? 'Agenda cultural en') . ' ' . $pd['label']) ?>">
           <span class="evt-prov__em" aria-hidden="true"><?= $pd['emoji'] ?></span>
           <span class="evt-prov__nm"><?= htmlspecialchars($pd['label']) ?></span>
         </a>
@@ -444,19 +446,19 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
     <details class="evt-accord">
       <summary>
         <span aria-hidden="true">⭐</span>
-        Combinaciones destacadas
+        <?= htmlspecialchars($t['evt_combis']) ?>
         <span class="ac-ch" aria-hidden="true">›</span>
       </summary>
       <div class="evt-accord__body">
-        <ul class="evt-links" role="list" aria-label="Combinaciones populares de eventos">
+        <ul class="evt-links" role="list" aria-label="<?= htmlspecialchars($t['evt_combi_aria']) ?>">
           <?php foreach ($combis as $combi):
             [$fk, $pk2] = $combi;
             if (!isset(HUB_FILTROS_EVT[$fk], HUB_PROVINCIAS[$pk2])) continue;
             $slug_c = $fk . '-' . $pk2;
-            $label_c = (HUB_FILTROS_EVT[$fk]['es'] ?? $fk) . ' · ' . (HUB_PROVINCIAS[$pk2]['label'] ?? $pk2);
+            $label_c = vh_filter_label(HUB_FILTROS_EVT[$fk] ?? [], $lang) . ' · ' . (HUB_PROVINCIAS[$pk2]['label'] ?? $pk2);
           ?>
           <li>
-            <a href="/eventos/<?= htmlspecialchars($slug_c) ?>" class="evt-lnk">
+            <a href="<?= htmlspecialchars(vh_item_url('eventos', $slug_c, $lang)) ?>" class="evt-lnk">
               <?= htmlspecialchars($label_c) ?>
             </a>
           </li>
@@ -469,11 +471,11 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 </section>
 
 <!-- CTA -->
-<section class="evt-cta" aria-label="Añadir un evento">
-  <h2>¿Organizas un evento cultural?</h2>
-  <p>Publica tu evento en nuestra plataforma y llega a miles de aficionados a la cultura rural en toda España.</p>
-  <a href="/agregar-evento.html" class="evt-btn evt-btn--w">Publicar mi evento</a>
-  <a href="/rutas.php?alojamientos=0&lugares=0&actividades=0&eventos=1" class="evt-btn evt-btn--o">🗺️ Ver en el mapa</a>
+<section class="evt-cta" aria-label="<?= htmlspecialchars($t['evt_cta_aria']) ?>">
+  <h2><?= htmlspecialchars($t['evt_cta_h2']) ?></h2>
+  <p><?= htmlspecialchars($t['evt_cta_p']) ?></p>
+  <a href="/agregar-evento.html" class="evt-btn evt-btn--w"><?= htmlspecialchars($t['evt_cta_btn']) ?></a>
+  <a href="/rutas.php?alojamientos=0&lugares=0&actividades=0&eventos=1" class="evt-btn evt-btn--o">🗺️ <?= htmlspecialchars($t['map_cta']) ?></a>
 </section>
 
 </main>
@@ -481,13 +483,13 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 <!-- FOOTER -->
 <footer class="evt-footer" role="contentinfo">
   <div class="evt-footer__inner">
-    <nav class="evt-footer__nav" aria-label="Navegación del pie">
-      <a href="https://rutasrurales.io/">Inicio</a>
-      <a href="/alojamientos/">Alojamientos</a>
-      <a href="/eventos/" aria-current="page">Eventos</a>
-      <a href="/lugares/">Lugares</a>
-      <a href="/actividades/">Actividades</a>
-      <a href="/aviso-legal.html">Aviso Legal</a>
+    <nav class="evt-footer__nav" aria-label="<?= htmlspecialchars($t['nav_footer']) ?>">
+      <a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/"><?= htmlspecialchars($t['nav_stays']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/" aria-current="page"><?= htmlspecialchars($t['nav_events']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/"><?= htmlspecialchars($t['nav_places']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/"><?= htmlspecialchars($t['nav_activities']) ?></a>
+      <a href="/aviso-legal.html"><?= htmlspecialchars($t['legal']) ?></a>
     </nav>
     <p>© <?= date('Y') ?> <strong style="color:#fff">rutasrurales.io</strong></p>
   </div>

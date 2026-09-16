@@ -1,0 +1,6 @@
+<?php
+/**
+ * /de/alojamientos/ → German Accommodation Hub
+ */
+$_GET['lang'] = 'de';
+require_once dirname(__DIR__, 2) . '/alojamientos/index.php';

@@ -1,19 +1,26 @@
 <?php
 /**
  * /alojamientos/ — Hub Índice de Alojamientos Rurales
- * URL canónica: https://rutasrurales.io/alojamientos/
- *
- * Sirve como índice SEO de la vertical de alojamientos:
- *  - Mapa Leaflet con lazy loading (IntersectionObserver)
- *  - Grid de filtros/características
- *  - Grid de provincias
- *  - Combinaciones más buscadas (accordion semántico)
+ * Multiidioma: /alojamientos/ y /{lang}/alojamientos/
  */
 
 ini_set('display_errors', 0);
 error_reporting(E_ERROR | E_PARSE);
 
-// Reutilizamos la config del hub (filtros, provincias, combinaciones)
+// I18n Bootstrap
+require_once dirname(__DIR__) . '/index/i18n/vertical-hubs.php';
+$vh = vh_boot('alojamientos');
+$lang = $vh['lang'];
+$t = $vh['t'];
+$path_prefix = $vh['path_prefix'];
+$base_domain = $vh['base_domain'];
+$canonical   = $vh['canonical'];
+$meta_title  = $t['alo_meta_title'];
+$meta_desc   = $t['alo_meta_desc'];
+$og_image    = $base_domain . '/menu_images/og-default.jpg';
+$home_url    = $vh['home_url'];
+
+// Config del hub
 $_HUBCFG = dirname(__DIR__) . '/index/config/hub-config.php';
 if (file_exists($_HUBCFG)) {
     require_once $_HUBCFG;
@@ -21,12 +28,6 @@ if (file_exists($_HUBCFG)) {
 } else {
     $has_hub_data = false;
 }
-
-$base_domain = 'https://rutasrurales.io';
-$canonical   = $base_domain . '/alojamientos/';
-$meta_title  = 'Alojamientos Rurales en España | Casas Rurales y Turismo Rural';
-$meta_desc   = 'Más de 500 alojamientos rurales verificados en España. Casas rurales con chimenea, piscina, para mascotas y grupos. Busca por provincia o característica.';
-$og_image    = $base_domain . '/menu_images/og-default.jpg';
 
 // Intentar stats desde BD
 $total_stays  = '+500';
@@ -80,18 +81,22 @@ $provincias_inline = [
     'navarra'    => ['emoji'=>'🏔️','label'=>'Navarra',  'region'=>'Navarra'],
 ];
 
-$filtros   = $has_hub_data ? HUB_FILTROS_ALO  : array_map(fn($v) => ['icon'=>$v['icon'],'es'=>$v['label']], $filtros_inline);
-// Normalize structure if using inline
-if (!$has_hub_data) {
-    $filtros_norm = [];
-    foreach ($filtros_inline as $k => $v) { $filtros_norm[$k] = ['icon'=>$v['icon'],'es'=>$v['label']]; }
-    $filtros = $filtros_norm;
+// Preparar filtros con labels traducidos
+$filtros = [];
+if ($has_hub_data) {
+    foreach (HUB_FILTROS_ALO as $k => $v) {
+        $filtros[$k] = ['icon' => $v['icon'], 'label' => vh_filter_label($v, $lang)];
+    }
+} else {
+    foreach ($filtros_inline as $k => $v) {
+        $filtros[$k] = ['icon'=>$v['icon'],'label'=>$v['label']];
+    }
 }
 $provincias = $has_hub_data ? HUB_PROVINCIAS : $provincias_inline;
 $combis     = $has_hub_data ? HUB_COMBIS_ALO : [];
 ?>
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="<?= htmlspecialchars($lang) ?>" dir="<?= htmlspecialchars($vh['dir']) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -102,12 +107,7 @@ $combis     = $has_hub_data ? HUB_COMBIS_ALO : [];
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
 
-<!-- hreflang — 5 idiomas -->
-<link rel="alternate" hreflang="es"        href="https://rutasrurales.io/alojamientos/">
-<link rel="alternate" hreflang="en"        href="https://rutasrurales.io/en/alojamientos/">
-<link rel="alternate" hreflang="fr"        href="https://rutasrurales.io/fr/alojamientos/">
-<link rel="alternate" hreflang="de"        href="https://rutasrurales.io/de/alojamientos/">
-<link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/alojamientos/">
+<?= vh_render_hreflang($vh['hreflang']) ?>
 
 <!-- Open Graph -->
 <meta property="og:type"        content="website">
@@ -118,7 +118,7 @@ $combis     = $has_hub_data ? HUB_COMBIS_ALO : [];
 <meta property="og:image:height" content="630">
 <meta property="og:url"         content="<?= htmlspecialchars($canonical) ?>">
 <meta property="og:site_name"   content="Rutas Rurales">
-<meta property="og:locale"      content="es_ES">
+<meta property="og:locale"      content="<?= htmlspecialchars($vh['locale']) ?>">
 
 <!-- Twitter Card -->
 <meta name="twitter:card"        content="summary_large_image">
@@ -303,17 +303,17 @@ ul{list-style:none;padding:0;margin:0}
 
 <!-- ══════════════════════ NAVBAR ══════════════════════ -->
 <header class="alo-nav" role="banner">
-  <a href="https://rutasrurales.io/" class="alo-nav__logo" aria-label="Rutas Rurales - Inicio">
+  <a href="<?= htmlspecialchars($home_url) ?>" class="alo-nav__logo" aria-label="Rutas Rurales - <?= htmlspecialchars($t['nav_home']) ?>">
     <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales" width="38" height="38" loading="eager">
     <span>Rutas Rurales</span>
   </a>
-  <nav class="alo-nav__links" aria-label="Menú principal">
-    <a href="/alojamientos/" aria-current="page">🏡 Alojamientos</a>
-    <a href="/eventos/">🎭 Eventos</a>
-    <a href="/lugares/">📍 Lugares</a>
-    <a href="/actividades/">🥾 Actividades</a>
-    <a href="/rutas.php">🗺️ Mapa</a>
-    <a href="/login.html" class="alo-nav__cta" rel="nofollow">Acceder</a>
+  <nav class="alo-nav__links" aria-label="<?= htmlspecialchars($t['nav_main']) ?>">
+    <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/" aria-current="page">🏡 <?= htmlspecialchars($t['nav_stays']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/">🎭 <?= htmlspecialchars($t['nav_events']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/">📍 <?= htmlspecialchars($t['nav_places']) ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/">🥾 <?= htmlspecialchars($t['nav_activities']) ?></a>
+    <a href="/rutas.php">🗺️ <?= htmlspecialchars($t['nav_map']) ?></a>
+    <a href="/login.html" class="alo-nav__cta" rel="nofollow"><?= htmlspecialchars($t['nav_login']) ?></a>
   </nav>
 </header>
 
@@ -330,18 +330,18 @@ ul{list-style:none;padding:0;margin:0}
     <div class="alo-hero__overlay"></div>
   </div>
   <div class="alo-hero__inner">
-    <nav class="alo-breadcrumb" aria-label="Ruta de navegación">
+    <nav class="alo-breadcrumb" aria-label="<?= htmlspecialchars($t['bc_nav']) ?>">
       <ol>
-        <li><a href="https://rutasrurales.io/">Inicio</a></li>
+        <li><a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a></li>
         <li aria-hidden="true" style="padding:0 4px">›</li>
-        <li><span aria-current="page" style="color:#fff">Alojamientos rurales</span></li>
+        <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($t['alo_bc']) ?></span></li>
       </ol>
     </nav>
-    <h1 id="alo-h1">Alojamientos Rurales en España</h1>
-    <p class="alo-hero__sub">Más de 500 casas rurales, apartamentos y alojamientos con encanto. Turismo rural auténtico verificado en Castilla y León, Galicia, Andalucía y más.</p>
-    <div class="alo-hero__stats" aria-label="Estadísticas">
-      <div><span class="alo-stat__val"><?= htmlspecialchars($total_stays) ?></span><span class="alo-stat__lbl">Alojamientos</span></div>
-      <div><span class="alo-stat__val"><?= htmlspecialchars($total_provs) ?></span><span class="alo-stat__lbl">Provincias</span></div>
+    <h1 id="alo-h1"><?= htmlspecialchars($t['alo_h1']) ?></h1>
+    <p class="alo-hero__sub"><?= htmlspecialchars($t['alo_sub']) ?></p>
+    <div class="alo-hero__stats" aria-label="<?= htmlspecialchars($t['stats']) ?>">
+      <div><span class="alo-stat__val"><?= htmlspecialchars($total_stays) ?></span><span class="alo-stat__lbl"><?= htmlspecialchars($t['alo_stat_stays']) ?></span></div>
+      <div><span class="alo-stat__val"><?= htmlspecialchars($total_provs) ?></span><span class="alo-stat__lbl"><?= htmlspecialchars($t['alo_stat_provs']) ?></span></div>
       <div><span class="alo-stat__val">100%</span><span class="alo-stat__lbl">Verificados</span></div>
     </div>
   </div>
@@ -351,7 +351,7 @@ ul{list-style:none;padding:0;margin:0}
 <section class="alo-section" aria-labelledby="map-h2">
   <div class="alo-wrap">
     <div class="alo-section__hdr">
-      <h2 class="alo-section__h2" id="map-h2">🗺️ Explorar alojamientos en el mapa</h2>
+      <h2 class="alo-section__h2" id="map-h2">🗺️ <?= htmlspecialchars($t['map_cta']) ?></h2>
       <p class="alo-section__intro">Visualiza la distribución de alojamientos rurales por toda España. Haz clic en cada marcador para ir a los alojamientos de esa provincia.</p>
     </div>
     <div class="alo-map-box">
@@ -387,17 +387,17 @@ ul{list-style:none;padding:0;margin:0}
 <section class="alo-section alo-section--alt" aria-labelledby="filtros-h2">
   <div class="alo-wrap">
     <div class="alo-section__hdr">
-      <h2 class="alo-section__h2" id="filtros-h2">✨ Buscar por características</h2>
-      <p class="alo-section__intro">Filtra los alojamientos según lo que más importa en tu escapada rural.</p>
+      <h2 class="alo-section__h2" id="filtros-h2">✨ <?= htmlspecialchars($t['alo_by_feat']) ?></h2>
+      <p class="alo-section__intro"><?= htmlspecialchars($t['alo_by_feat_intro']) ?></p>
     </div>
-    <ul class="alo-chips" role="list" aria-label="Tipos de alojamientos rurales">
+    <ul class="alo-chips" role="list" aria-label="<?= htmlspecialchars($t['alo_feat_aria']) ?>">
       <?php foreach ($filtros as $fk => $fd): ?>
       <li>
-        <a href="/alojamientos/<?= htmlspecialchars($fk) ?>"
+        <a href="<?= htmlspecialchars(vh_item_url('alojamientos', $fk, $lang)) ?>"
            class="alo-chip"
-           title="<?= htmlspecialchars($fd['es']) ?> en España">
+           title="<?= htmlspecialchars($fd['label']) ?> en España">
           <span aria-hidden="true"><?= $fd['icon'] ?></span>
-          <?= htmlspecialchars($fd['es']) ?>
+          <?= htmlspecialchars($fd['label']) ?>
         </a>
       </li>
       <?php endforeach; ?>
@@ -409,10 +409,10 @@ ul{list-style:none;padding:0;margin:0}
 <section class="alo-section" aria-labelledby="provs-h2">
   <div class="alo-wrap">
     <div class="alo-section__hdr">
-      <h2 class="alo-section__h2" id="provs-h2">📍 Buscar por provincia</h2>
-      <p class="alo-section__intro">Explora todos los alojamientos rurales disponibles en cada provincia española.</p>
+      <h2 class="alo-section__h2" id="provs-h2">📍 <?= htmlspecialchars($t['alo_by_prov']) ?></h2>
+      <p class="alo-section__intro"><?= htmlspecialchars($t['alo_by_prov_intro']) ?></p>
     </div>
-    <ul class="alo-provs" role="list" aria-label="Provincias con alojamientos rurales">
+    <ul class="alo-provs" role="list" aria-label="<?= htmlspecialchars($t['alo_prov_aria']) ?>">
       <?php foreach ($provincias as $pk => $pd): ?>
       <li>
         <a href="/alojamientos/turismo-rural-<?= htmlspecialchars($pk) ?>"
@@ -431,11 +431,11 @@ ul{list-style:none;padding:0;margin:0}
     <details class="alo-accord">
       <summary>
         <span aria-hidden="true">🔥</span>
-        Combinaciones más buscadas
+        <?= htmlspecialchars($t['alo_combis']) ?>
         <span class="ac-chevron" aria-hidden="true">›</span>
       </summary>
       <div class="alo-accord__body">
-        <ul class="alo-links" role="list" aria-label="Combinaciones populares de alojamientos rurales">
+        <ul class="alo-links" role="list" aria-label="<?= htmlspecialchars($t['alo_combi_aria']) ?>">
           <?php foreach ($combis as $combi):
             $slug_c = implode('-', $combi);
             $parts_lbl = [];
@@ -459,11 +459,11 @@ ul{list-style:none;padding:0;margin:0}
 </section>
 
 <!-- ── CTA FINAL ──────────────────────────────────────── -->
-<section class="alo-cta" aria-label="Añade tu alojamiento">
-  <h2>¿Tienes un alojamiento rural?</h2>
-  <p>Únete a nuestra red y llega a miles de turistas que buscan escapadas auténticas en España cada mes.</p>
-  <a href="/agregar-alojamiento.html" class="alo-btn alo-btn--w">Añadir mi alojamiento</a>
-  <a href="/rutas.php" class="alo-btn alo-btn--o">🗺️ Ver mapa completo</a>
+<section class="alo-cta" aria-label="<?= htmlspecialchars($t['alo_cta_aria']) ?>">
+  <h2><?= htmlspecialchars($t['alo_cta_h2']) ?></h2>
+  <p><?= htmlspecialchars($t['alo_cta_p']) ?></p>
+  <a href="/agregar-alojamiento.html" class="alo-btn alo-btn--w"><?= htmlspecialchars($t['alo_cta_btn']) ?></a>
+  <a href="/rutas.php" class="alo-btn alo-btn--o">🗺️ <?= htmlspecialchars($t['map_full']) ?></a>
 </section>
 
 </main>
@@ -471,14 +471,13 @@ ul{list-style:none;padding:0;margin:0}
 <!-- ══════════════════════ FOOTER ══════════════════════ -->
 <footer class="alo-footer" role="contentinfo">
   <div class="alo-footer__inner">
-    <nav class="alo-footer__nav" aria-label="Navegación del pie">
-      <a href="https://rutasrurales.io/">Inicio</a>
-      <a href="/alojamientos/" aria-current="page">Alojamientos</a>
-      <a href="/eventos/">Eventos</a>
-      <a href="/lugares/">Lugares</a>
-      <a href="/actividades/">Actividades</a>
-      <a href="/aviso-legal.html">Aviso Legal</a>
-      <a href="/politica-cookies.html">Cookies</a>
+    <nav class="alo-footer__nav" aria-label="<?= htmlspecialchars($t['nav_footer']) ?>">
+      <a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/" aria-current="page"><?= htmlspecialchars($t['nav_stays']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/"><?= htmlspecialchars($t['nav_events']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/"><?= htmlspecialchars($t['nav_places']) ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/"><?= htmlspecialchars($t['nav_activities']) ?></a>
+      <a href="/aviso-legal.html"><?= htmlspecialchars($t['legal']) ?></a>
     </nav>
     <p>© <?= date('Y') ?> <strong style="color:#fff">rutasrurales.io</strong></p>
   </div>

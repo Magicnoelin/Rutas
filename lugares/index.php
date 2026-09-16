@@ -1,15 +1,22 @@
 <?php
 /**
  * /lugares/ — Hub Índice de Lugares de Interés
- * URL canónica: https://rutasrurales.io/lugares/
+ * Multiidioma: /lugares/ y /{lang}/lugares/
  */
 ini_set('display_errors', 0); error_reporting(E_ERROR | E_PARSE);
 
-$base_domain = 'https://rutasrurales.io';
-$canonical   = $base_domain . '/lugares/';
-$meta_title  = 'Lugares de Interés en España | Monumentos, Naturaleza y Gastronomía Rural';
-$meta_desc   = 'Descubre los mejores lugares de interés rurales de España: monumentos históricos, espacios naturales, restaurantes con encanto, bodegas y mucho más.';
+// I18n Bootstrap
+require_once dirname(__DIR__) . '/index/i18n/vertical-hubs.php';
+$vh = vh_boot('lugares');
+$lang = $vh['lang'];
+$t = $vh['t'];
+$path_prefix = $vh['path_prefix'];
+$base_domain = $vh['base_domain'];
+$canonical   = $vh['canonical'];
+$meta_title  = $t['lug_meta_title'];
+$meta_desc   = $t['lug_meta_desc'];
 $og_image    = $base_domain . '/menu_images/og-default.jpg';
+$home_url    = $vh['home_url'];
 
 // ── Helper: texto → slug URL ─────────────────────────────────────────────────
 function lug_to_slug(string $text): string {
