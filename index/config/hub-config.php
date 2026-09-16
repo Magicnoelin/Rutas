@@ -74,7 +74,7 @@ const HUB_PROVINCIAS = [
     'guadalajara' => ['label'=>'Guadalajara', 'emoji'=>'🌳', 'region'=>'Castilla-La Mancha'],
     'cuenca'      => ['label'=>'Cuenca',      'emoji'=>'🪨', 'region'=>'Castilla-La Mancha'],
     'ourense'     => ['label'=>'Ourense',     'emoji'=>'♨️', 'region'=>'Galicia'],
-    'coruña'      => ['label'=>'A Coruña',    'emoji'=>'🏰', 'region'=>'Galicia'],
+    'a-coruna'    => ['label'=>'A Coruña',    'emoji'=>'🏰', 'region'=>'Galicia'],
     'asturias'    => ['label'=>'Asturias',    'emoji'=>'🦅', 'region'=>'Asturias'],
     'barcelona'   => ['label'=>'Barcelona',   'emoji'=>'🏛️', 'region'=>'Cataluña'],
     'cantabria'   => ['label'=>'Cantabria',   'emoji'=>'🏖️', 'region'=>'Cantabria'],

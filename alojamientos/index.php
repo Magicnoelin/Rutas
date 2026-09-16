@@ -596,7 +596,7 @@ var ALO_MAP = {
       { name: 'Guadalajara',  lat: 40.633,  lng: -3.163,   slug: 'turismo-rural-guadalajara' },
       { name: 'Cuenca',       lat: 40.070,  lng: -2.134,   slug: 'turismo-rural-cuenca'      },
       { name: 'Ourense',      lat: 42.336,  lng: -7.864,   slug: 'turismo-rural-ourense'     },
-      { name: 'A Coru\u00f1a',lat: 43.371,  lng: -8.396,   slug: 'turismo-rural-coruña'     },
+      { name: 'A Coru\u00f1a',lat: 43.371,  lng: -8.396,   slug: 'turismo-rural-a-coruna'   },
       { name: 'Lugo',         lat: 43.012,  lng: -7.556,   slug: 'turismo-rural-lugo'        },
       { name: 'Pontevedra',   lat: 42.433,  lng: -8.648,   slug: 'turismo-rural-pontevedra'  },
       { name: 'Asturias',     lat: 43.362,  lng: -5.849,   slug: 'turismo-rural-asturias'    },

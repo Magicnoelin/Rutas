@@ -215,6 +215,9 @@ RewriteRule ^(alojamiento|lugar-interes|actividad)\.html$ /api/external-id-redir
 # /alojamientos/turismo-rural → /alojamientos/ (hub canónico)
 RewriteRule ^alojamientos/turismo-rural/?$ /alojamientos/ [R=301,L]
 
+# /alojamientos/acoruna (sin guión, variante sin tilde) → canónica con guión
+RewriteRule ^alojamientos/acoruna/?$ /alojamientos/turismo-rural-a-coruna [R=301,L]
+
 # /eventos-culturales-paginacion.html → /eventos/ (hub canónico)
 RewriteCond %{THE_REQUEST} \s/+eventos-culturales-paginacion\.html [NC]
 RewriteRule ^eventos-culturales-paginacion\.html$ /eventos/ [R=301,L]
