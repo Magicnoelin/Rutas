@@ -914,7 +914,15 @@ $alo_js = $alojamiento ? json_encode([
             align-items: start;
         }
         @media (max-width: 900px) {
-            .alo-layout { grid-template-columns: 1fr; margin-top: 0; }
+            .alo-layout { 
+                grid-template-columns: 1fr; 
+                margin-top: 0; 
+                display: flex;
+                flex-direction: column;
+            }
+            /* En móvil: sidebar primero (justo después del hero) */
+            .alo-layout main { order: 2; }
+            .alo-layout aside.alo-sidebar { order: 1; }
         }
 
         /* ── Card base ── */
