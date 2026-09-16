@@ -397,6 +397,8 @@ RewriteRule ^actividades-turisticas\.html$ /actividades/ [R=301,L]
 RewriteRule ^alojamientos-turisticos/?$ /alojamientos/ [R=301,L]
 # /eventos-culturales → /eventos/ (hub canónico)
 RewriteRule ^eventos-culturales/?$ /eventos/ [R=301,L]
+# /{lang}/eventos-culturales → /{lang}/eventos/ (hub canónico multiidioma)
+RewriteRule ^(en|fr|de|zh)/eventos-culturales/?$ /$1/eventos/ [R=301,L]
 # /lugares-de-interes → /lugares/ (hub canónico)
 RewriteRule ^lugares-de-interes/?$ /lugares/ [R=301,L]
 # /actividades-turisticas → /actividades/ (hub canónico)

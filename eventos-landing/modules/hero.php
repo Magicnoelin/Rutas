@@ -43,7 +43,7 @@ function renderEventosLandingHero(array $ctx): void
 
     $base_url = 'https://rutasrurales.io';
     $home_url = $lang !== 'es' ? "$base_url/$lang/" : "$base_url/";
-    $list_url = $lang !== 'es' ? "$base_url/$lang/eventos-culturales" : "$base_url/eventos-culturales";
+    $list_url = $lang !== 'es' ? "$base_url/$lang/eventos/" : "$base_url/eventos/";
 
     // Enlace "ver todos los eventos en provincia"
     $prov_url = '';
