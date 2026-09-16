@@ -256,8 +256,9 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 .lug-hero__stats{display:flex;flex-wrap:wrap;gap:24px;margin-top:18px}
 .lug-stat__val{display:block;font-size:1.55rem;font-weight:800;color:var(--accent);line-height:1}
 .lug-stat__lbl{font-size:.72rem;color:rgba(255,255,255,.78);font-weight:500}
-.lug-bc ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:14px}
+.lug-bc ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:14px;list-style:none;padding:0}
 .lug-bc a{color:rgba(255,255,255,.7)}
+.lug-bc li+li::before{content:'›';margin-right:4px;color:rgba(255,255,255,.5)}
 
 .lug-wrap{max-width:var(--max-w);margin:0 auto;padding:0 20px}
 .lug-section{padding:56px 0}
@@ -334,7 +335,6 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
     <nav class="lug-bc" aria-label="<?= htmlspecialchars($t['bc_nav']) ?>">
       <ol>
         <li><a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a></li>
-        <li aria-hidden="true" style="padding:0 4px">›</li>
         <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($t['lug_bc']) ?></span></li>
       </ol>
     </nav>

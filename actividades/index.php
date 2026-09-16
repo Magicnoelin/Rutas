@@ -105,8 +105,9 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
 .act-hero__stats{display:flex;flex-wrap:wrap;gap:24px}
 .act-stat__val{display:block;font-size:1.55rem;font-weight:800;color:var(--accent-warm);line-height:1}
 .act-stat__lbl{font-size:.72rem;color:rgba(255,255,255,.78);font-weight:500}
-.act-bc ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:14px}
+.act-bc ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:14px;list-style:none;padding:0}
 .act-bc a{color:rgba(255,255,255,.7)}
+.act-bc li+li::before{content:'›';margin-right:4px;color:rgba(255,255,255,.5)}
 
 .act-wrap{max-width:var(--max-w);margin:0 auto;padding:0 20px}
 .act-section{padding:56px 0}
@@ -179,8 +180,7 @@ img{display:block;max-width:100%;height:auto}a{color:var(--primary);text-decorat
   <div class="act-hero__inner">
     <nav class="act-bc" aria-label="<?= htmlspecialchars($t['bc_nav']) ?>">
       <ol>
-        <li><a href="https://rutasrurales.io/"><?= htmlspecialchars($t['nav_home']) ?></a></li>
-        <li aria-hidden="true" style="padding:0 4px">›</li>
+        <li><a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a></li>
         <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($t['act_bc']) ?></span></li>
       </ol>
     </nav>

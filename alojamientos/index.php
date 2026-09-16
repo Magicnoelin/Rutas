@@ -183,8 +183,9 @@ ul{list-style:none;padding:0;margin:0}
 .alo-stat__val{display:block;font-size:1.55rem;font-weight:800;color:var(--accent);line-height:1}
 .alo-stat__lbl{font-size:.72rem;color:rgba(255,255,255,.78);font-weight:500}
 .alo-breadcrumb{margin-bottom:14px}
-.alo-breadcrumb ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7)}
+.alo-breadcrumb ol{display:flex;gap:4px;flex-wrap:wrap;font-size:.75rem;color:rgba(255,255,255,.7);list-style:none;padding:0}
 .alo-breadcrumb a{color:rgba(255,255,255,.7)}
+.alo-breadcrumb li+li::before{content:'›';margin-right:4px;color:rgba(255,255,255,.5)}
 
 /* ── Container / Sections ──────────────────────────── */
 .alo-wrap{max-width:var(--max-w);margin:0 auto;padding:0 20px}
@@ -333,7 +334,6 @@ ul{list-style:none;padding:0;margin:0}
     <nav class="alo-breadcrumb" aria-label="<?= htmlspecialchars($t['bc_nav']) ?>">
       <ol>
         <li><a href="<?= htmlspecialchars($home_url) ?>"><?= htmlspecialchars($t['nav_home']) ?></a></li>
-        <li aria-hidden="true" style="padding:0 4px">›</li>
         <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($t['alo_bc']) ?></span></li>
       </ol>
     </nav>
