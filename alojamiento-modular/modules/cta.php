@@ -8,7 +8,7 @@ if (isset($alojamiento) && $alojamiento && isset($t)):
         <p><?php echo isset($t['cta_desc']) ? $t['cta_desc'] : 'Regístrate gratis para guardarlo en tus favoritos y recibir ofertas similares'; ?></p>
         
         <div class="cta-buttons">
-            <a href="/register.html" class="btn-cta btn-register">
+            <a href="/register.html" rel="nofollow" class="btn-cta btn-register">
                 <i class="fas fa-user-plus"></i>
                 <?php echo isset($t['cta_register']) ? $t['cta_register'] : '✨ Registrarme gratis'; ?>
             </a>
