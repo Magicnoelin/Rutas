@@ -348,6 +348,9 @@ $og_locale = $og_locale_map[$lang] ?? 'es_ES';
     <!-- ── Estilos globales del proyecto (incluye nav, header, footer, etc.) ── -->
     <link rel="stylesheet" href="/styles.css">
 
+    <!-- ── Estilos específicos de lugar-modular (tarjetas, hero, etc.) ── -->
+    <link rel="stylesheet" href="/lugar-modular/css/lugar.css">
+
     <!-- ── Estilos del navbar (header.php los omite con HEADER_NO_HTML_HEAD) ── -->
     <style>
         /* RESET GLOBAL navMenu */
