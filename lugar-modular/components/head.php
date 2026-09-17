@@ -887,4 +887,18 @@ $og_locale = $og_locale_map[$lang] ?? 'es_ES';
             })(window,document,'script','dataLayer','GTM-PLACEHOLDER');
         }, 2000);
     </script>-->
+
+    <!-- ── ESTILOS DE TARJETAS (mismo que alojamiento-modular) ── -->
+    <style>
+        /* Copiados exactamente de alojamiento-modular */
+        .nearby-card { background:#fff !important; border-radius:12px !important; box-shadow:0 4px 20px rgba(0,0,0,0.08) !important; overflow:hidden !important; margin-bottom:24px !important; transform:none !important; }
+        .nearby-card:hover { transform:none !important; box-shadow:0 8px 30px rgba(0,0,0,0.12) !important; }
+        .nearby-card-img { height:120px !important; background:#e8f0e8 !important; overflow:hidden !important; position:relative !important; display:block !important; }
+        .nearby-card-img img { width:100% !important; height:100% !important; object-fit:cover !important; display:block !important; }
+        .nearby-card-dist { position:absolute !important; bottom:6px !important; right:8px !important; background:rgba(0,0,0,0.55) !important; color:#fff !important; font-size:0.7rem !important; font-weight:700 !important; padding:2px 7px !important; border-radius:10px !important; }
+        .nearby-card-body { padding:10px 12px !important; display:block !important; }
+        .nearby-card-name { font-size:0.85rem !important; font-weight:700 !important; color:#333 !important; margin-bottom:4px !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; }
+        .nearby-card-meta { font-size:0.75rem !important; color:#666 !important; margin-bottom:4px !important; }
+        .nearby-card-price { font-size:0.8rem !important; font-weight:700 !important; color:#2F5233 !important; margin-top:4px !important; }
+    </style>
 </head>
