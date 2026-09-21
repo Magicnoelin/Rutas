@@ -48,7 +48,7 @@ try {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province,
                        price_per_night, capacity, photo1 AS main_image, latitude, longitude,
-                       featured_until,
+                       short_description, featured_until,
                        (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM accommodations
@@ -70,7 +70,7 @@ try {
                 $stmt2 = $pdo->prepare("
                     SELECT id, name, slug, municipality, province,
                            price_per_night, capacity, photo1 AS main_image, latitude, longitude,
-                           featured_until,
+                           short_description, featured_until,
                            (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
                            0 AS distance
                     FROM accommodations
@@ -84,7 +84,7 @@ try {
                 $stmt2 = $pdo->prepare("
                     SELECT id, name, slug, municipality, province,
                            price_per_night, capacity, photo1 AS main_image, latitude, longitude,
-                           featured_until,
+                           short_description, featured_until,
                            (featured_until IS NOT NULL AND featured_until > NOW()) AS is_featured_now,
                            0 AS distance
                     FROM accommodations
@@ -108,7 +108,7 @@ try {
         if ($lat && $lng) {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province, category_id, photo1 AS main_image,
-                       latitude, longitude,
+                       short_description, latitude, longitude,
                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
                 FROM places_of_interest
                 WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL
@@ -120,7 +120,7 @@ try {
         } else {
             $stmt = $pdo->prepare("
                 SELECT id, name, slug, municipality, province, category_id, photo1 AS main_image,
-                       latitude, longitude, 0 AS distance
+                       short_description, latitude, longitude, 0 AS distance
                 FROM places_of_interest
                 WHERE is_active = 1 AND province = ?
                 ORDER BY RAND()

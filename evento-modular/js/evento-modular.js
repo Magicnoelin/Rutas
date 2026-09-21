@@ -365,6 +365,7 @@ function _renderNearbyAlojamientos() {
             </div>
             <div class="nearby-card-body">
                 <div class="nearby-card-name">${a.name}</div>
+                ${a.short_description ? `<div class="nearby-card-desc" style="font-size:0.75rem;color:#666;margin:4px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${a.short_description}</div>` : ''}
                 <div class="nearby-card-meta">📍 ${a.municipality || a.province || ''}</div>
                 ${a.distance > 0 ? `<div class="nearby-card-meta">📏 ${a.distance} km</div>` : ''}
                 ${a.price_per_night ? `<div class="nearby-card-price">💶 ${formatPrice(a.price_per_night)}/noche</div>` : ''}
