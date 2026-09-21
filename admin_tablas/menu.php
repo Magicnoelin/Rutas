@@ -206,7 +206,9 @@
         <a class="nav-item" href="https://rutasrurales.io/admin_tablas/cultural_events_trads_index.php">
             <i class="fas fa-language"></i> Traducciones Eventos
         </a>
-
+        <a class="nav-item" href="https://rutasrurales.io/admin_tablas/lugares_trads_index.php">
+            <i class="fas fa-language"></i> Traducciones Lugares
+        </a>
         <div class="nav-divider"></div>
 
         <!-- Monetización -->

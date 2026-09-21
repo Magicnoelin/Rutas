@@ -348,6 +348,8 @@ RewriteRule ^actividad/([^/]+)/?$ redirect_manager.php?type=actividad&slug=$1 [L
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(es|de|en|fr|zh)/evento/([^/]+)/?$ evento-detalle.php?slug=$2&lang=$1 [L,QSA]
+# Lugares con idiomas: /es/lugar/slug, /de/lugar/slug, etc.
+RewriteRule ^(es|de|en|fr|zh)/lugar/([^/]+)/?$ lugar-modular/index.php?slug=$2&lang=$1 [L,QSA]
 
 # /en/rutas/ → hub ES de rutas (sin i18n propio aún)
 RewriteRule ^(en|fr|de|zh)/rutas/?$ /rutas/ [R=301,L]

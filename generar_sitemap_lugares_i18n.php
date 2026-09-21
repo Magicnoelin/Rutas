@@ -81,19 +81,19 @@ try {
                 'lang' => 'es-ES'
             ],
             'en' => [
-                'url' => $baseUrl . '/en/place/' . $slugEn,
+                'url' => $baseUrl . '/en/lugar/' . $slugEn,
                 'lang' => 'en-GB'
             ],
             'fr' => [
-                'url' => $baseUrl . '/fr/lieu/' . $slugFr,
+                'url' => $baseUrl . '/fr/lugar/' . $slugFr,
                 'lang' => 'fr-FR'
             ],
             'de' => [
-                'url' => $baseUrl . '/de/ort/' . $slugDe,
+                'url' => $baseUrl . '/de/lugar/' . $slugDe,
                 'lang' => 'de-DE'
             ],
             'zh' => [
-                'url' => $baseUrl . '/zh/didian/' . $slugZh,
+                'url' => $baseUrl . '/zh/lugar/' . $slugZh,
                 'lang' => 'zh-CN'
             ]
         ];
