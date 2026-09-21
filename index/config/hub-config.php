@@ -71,6 +71,7 @@ const HUB_PROVINCIAS = [
     'palencia'    => ['label'=>'Palencia',    'emoji'=>'🌾', 'region'=>'Castilla y León'],
     'segovia'     => ['label'=>'Segovia',     'emoji'=>'🏰', 'region'=>'Castilla y León'],
     'avila'       => ['label'=>'Ávila',       'emoji'=>'🧱', 'region'=>'Castilla y León'],
+    'madrid'     => ['label'=>'Madrid',     'emoji'=>'🎭', 'region'=>'Comunidad de Madrid'],
     'guadalajara' => ['label'=>'Guadalajara', 'emoji'=>'🌳', 'region'=>'Castilla-La Mancha'],
     'cuenca'      => ['label'=>'Cuenca',      'emoji'=>'🪨', 'region'=>'Castilla-La Mancha'],
     'ourense'     => ['label'=>'Ourense',     'emoji'=>'♨️', 'region'=>'Galicia'],

@@ -102,6 +102,7 @@ $provincias_inline = [
     'palencia'   => ['emoji'=>'🌾','label'=>'Palencia'],
     'segovia'    => ['emoji'=>'🏰','label'=>'Segovia'],
     'avila'      => ['emoji'=>'🧱','label'=>'Ávila'],
+    'madrid'     => ['emoji'=>'🎭','label'=>'Madrid'],
     'guadalajara'=> ['emoji'=>'🌳','label'=>'Guadalajara'],
     'ourense'    => ['emoji'=>'♨️','label'=>'Ourense'],
     'asturias'   => ['emoji'=>'🦅','label'=>'Asturias'],
@@ -120,7 +121,7 @@ if ($has_hub_data) {
 }
 $provincias = $has_hub_data ? HUB_PROVINCIAS : $provincias_inline;
 $combis     = $has_hub_data ? HUB_COMBIS_EVT : [];
-$provs_temp = ['soria','zamora','burgos','salamanca','valladolid','leon','palencia','segovia','avila'];
+$provs_temp = ['soria','zamora','burgos','salamanca','valladolid','leon','palencia','segovia','avila', 'madrid'];
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($lang) ?>" dir="<?= htmlspecialchars($vh['dir']) ?>">

@@ -35,7 +35,7 @@ function renderHubEventos(array $ctx): void {
 
     // Provincias destacadas para el bloque estacional (las 6 más activas)
     $provDestacadas = ['soria', 'zamora', 'burgos', 'salamanca', 'valladolid', 'leon',
-                       'palencia', 'segovia', 'avila'];
+                       'palencia', 'segovia', 'avila', 'madrid'];
     ?>
 <!-- ══════════════════════════════════ HUB EVENTOS ═══════════════════════════ -->
 <section class="hub-section hub-section--events hub-section--alt" id="eventos" aria-labelledby="hub-evt-heading">
