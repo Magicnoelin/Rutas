@@ -1,8 +1,8 @@
 <?php
 /**
- * GENERAR TRADUCCIONES DE LUGARES DE INTERÉS
- * Ejecuta el script SQL para completar traducciones faltantes
- * USA la categoría del lugar para crear el slug traducido
+ * REGENERAR TRADUCCIONES DE LUGARES DE INTERÉS
+ * ESTE SCRIPT REEMPLAZA TODAS LAS TRADUCCIONES EXISTENTES
+ * Usa la categoría del lugar para crear el slug traducido
  */
 
 // 1. CONEXIÓN A LA BASE DE DATOS
@@ -10,10 +10,13 @@ include 'db.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
+// Primero borramos todas las traducciones existentes
+$pdo->exec("DELETE FROM places_of_interest_trads");
+
 // 2. EJECUTAR EL SCRIPT SQL
 $sql_script = "
 -- ============================================
--- TRADUCCIONES DE LUGARES DE INTERÉS
+-- TRADUCCIONES DE LUGARES DE INTERÉS (REGENERADAS)
 -- Usa la categoría del lugar para el slug traducido
 -- ============================================
 
@@ -33,14 +36,7 @@ SELECT
         ELSE CONCAT(p.slug, '-place-spain')
     END,
     CONCAT('Discover ', p.name, ' in ', p.municipality, ', ', p.province),
-    CONCAT('<section>
-        <h3>About ', p.name, '</h3>
-        <p>', COALESCE(p.short_description, ''), '</p>
-    </section>
-    <section>
-        <h3>What to See</h3>
-        <ul><li>', COALESCE(p.description, ''), '</li></ul>
-    </section>'),
+    CONCAT('<section><h3>About ', p.name, '</h3><p>', COALESCE(p.short_description, ''), '</p></section><section><h3>What to See</h3><ul><li>', COALESCE(p.description, ''), '</li></ul></section>'),
     p.address, p.municipality, p.province, p.opening_hours,
     'Wheelchair accessible, family-friendly',
     CONCAT(p.name, ' | ', COALESCE(c.name, 'Place'), ' in Spain'),
@@ -48,8 +44,7 @@ SELECT
     p.entry_fee, p.entry_fee_details, p.facilities
 FROM places_of_interest p
 LEFT JOIN categories_places c ON p.category_id = c.id
-WHERE p.is_active = 1 
-    AND p.id NOT IN (SELECT place_id FROM places_of_interest_trads WHERE language_code = 'en');
+WHERE p.is_active = 1;
 
 -- 2. FRANCÉS (fr)
 INSERT INTO places_of_interest_trads
@@ -67,10 +62,7 @@ SELECT
         ELSE CONCAT(p.slug, '-lieu-espagne')
     END,
     CONCAT('Découvrez ', p.name, ' à ', p.municipality, ', ', p.province),
-    CONCAT('<section>
-        <h3>À propos de ', p.name, '</h3>
-        <p>', COALESCE(p.short_description, ''), '</p>
-    </section>'),
+    CONCAT('<section><h3>À propos de ', p.name, '</h3><p>', COALESCE(p.short_description, ''), '</p></section>'),
     p.address, p.municipality, p.province, p.opening_hours,
     'Accessible, adapté aux familles',
     CONCAT(p.name, ' | ', COALESCE(c.name, 'Lieu'), ' en Espagne'),
@@ -78,8 +70,7 @@ SELECT
     p.entry_fee, p.entry_fee_details, p.facilities
 FROM places_of_interest p
 LEFT JOIN categories_places c ON p.category_id = c.id
-WHERE p.is_active = 1 
-    AND p.id NOT IN (SELECT place_id FROM places_of_interest_trads WHERE language_code = 'fr');
+WHERE p.is_active = 1;
 
 -- 3. ALEMÁN (de)
 INSERT INTO places_of_interest_trads
@@ -97,10 +88,7 @@ SELECT
         ELSE CONCAT(p.slug, '-ort-spanien')
     END,
     CONCAT('Entdecken Sie ', p.name, ' in ', p.municipality, ', ', p.province),
-    CONCAT('<section>
-        <h3>Über ', p.name, '</h3>
-        <p>', COALESCE(p.short_description, ''), '</p>
-    </section>'),
+    CONCAT('<section><h3>Über ', p.name, '</h3><p>', COALESCE(p.short_description, ''), '</p></section>'),
     p.address, p.municipality, p.province, p.opening_hours,
     'Barrierefrei, familienfreundlich',
     CONCAT(p.name, ' | ', COALESCE(c.name, 'Ort'), ' in Spanien'),
@@ -108,8 +96,7 @@ SELECT
     p.entry_fee, p.entry_fee_details, p.facilities
 FROM places_of_interest p
 LEFT JOIN categories_places c ON p.category_id = c.id
-WHERE p.is_active = 1 
-    AND p.id NOT IN (SELECT place_id FROM places_of_interest_trads WHERE language_code = 'de');
+WHERE p.is_active = 1;
 
 -- 4. CHINO (zh)
 INSERT INTO places_of_interest_trads
@@ -127,10 +114,7 @@ SELECT
         ELSE CONCAT(p.slug, '-difang-xibanya')
     END,
     CONCAT('探索 ', p.name, ' 在 ', p.municipality, ', ', p.province),
-    CONCAT('<section>
-        <h3>关于', p.name, '</h3>
-        <p>', COALESCE(p.short_description, ''), '</p>
-    </section>'),
+    CONCAT('<section><h3>关于', p.name, '</h3><p>', COALESCE(p.short_description, ''), '</p></section>'),
     p.address, p.municipality, p.province, p.opening_hours,
     '无障碍, 适合家庭',
     CONCAT(p.name, ' | 西班牙', COALESCE(c.name, '景点')),
@@ -138,8 +122,7 @@ SELECT
     p.entry_fee, p.entry_fee_details, p.facilities
 FROM places_of_interest p
 LEFT JOIN categories_places c ON p.category_id = c.id
-WHERE p.is_active = 1 
-    AND p.id NOT IN (SELECT place_id FROM places_of_interest_trads WHERE language_code = 'zh');
+WHERE p.is_active = 1;
 ";
 
 try {
@@ -162,107 +145,37 @@ try {
     $stmt = $pdo->query("SELECT COUNT(DISTINCT place_id) as total FROM places_of_interest_trads WHERE language_code = 'zh'");
     $lugaresZh = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
-    $stmt = $pdo->query("
-        SELECT COUNT(*) as completos FROM (
-            SELECT place_id 
-            FROM places_of_interest_trads 
-            WHERE language_code IN ('en', 'fr', 'de', 'zh')
-            GROUP BY place_id 
-            HAVING COUNT(DISTINCT language_code) = 4
-        ) AS completos
-    ");
-    $lugaresCompletos = $stmt->fetch(PDO::FETCH_ASSOC)['completos'];
-    
-    $resumen = [
-        'total_lugares' => $totalLugares,
-        'lugares_con_en' => $lugaresEn,
-        'lugares_con_fr' => $lugaresFr,
-        'lugares_con_de' => $lugaresDe,
-        'lugares_con_zh' => $lugaresZh,
-        'lugares_completos' => $lugaresCompletos
-    ];
-    
     ?>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-        <title>Traducciones Generadas - Rutas Rurales</title>
-    </head>
-    <body class="bg-light">
-        <div class="container py-5">
-            <div class="card shadow border-0">
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0"><i class="bi bi-check-circle-fill"></i> Traducciones de Lugares generadas correctamente</h4>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Métrica</th>
-                                <th>Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Total lugares activos</td><td><strong><?= $resumen['total_lugares'] ?></strong></td></tr>
-                            <tr><td>Lugares con inglés (en)</td><td><strong><?= $resumen['lugares_con_en'] ?></strong></td></tr>
-                            <tr><td>Lugares con francés (fr)</td><td><strong><?= $resumen['lugares_con_fr'] ?></strong></td></tr>
-                            <tr><td>Lugares con alemán (de)</td><td><strong><?= $resumen['lugares_con_de'] ?></strong></td></tr>
-                            <tr><td>Lugares con chino (zh)</td><td><strong><?= $resumen['lugares_con_zh'] ?></strong></td></tr>
-                            <tr class="table-success">
-                                <td><strong>Lugares COMPLETOS (4 idiomas)</strong></td>
-                                <td><strong><?= $resumen['lugares_completos'] ?> / <?= $resumen['total_lugares'] ?></strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i>
-                        <strong>Nota:</strong> Los slugs ahora incluyen la categoría del lugar traducida.
-                    </div>
-                    
-                    <a href="lugares_index.php" class="btn btn-primary">
-                        <i class="bi bi-arrow-left"></i> Volver a Lugares
-                    </a>
-                    <a href="../generar_sitemap_lugares_i18n.php" class="btn btn-warning">
-                        <i class="bi bi-globe"></i> Generar Sitemap i18n
-                    </a>
-                </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Traducciones Regeneradas - Rutas Rurales</title>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card shadow border-0">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">✅ Traducciones de Lugares REGENERADAS correctamente</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr><td>Total lugares activos</td><td><strong><?= $totalLugares ?></strong></td></tr>
+                    <tr><td>Lugares con inglés (en)</td><td><strong><?= $lugaresEn ?></strong></td></tr>
+                    <tr><td>Lugares con francés (fr)</td><td><strong><?= $lugaresFr ?></strong></td></tr>
+                    <tr><td>Lugares con alemán (de)</td><td><strong><?= $lugaresDe ?></strong></td></tr>
+                    <tr><td>Lugares con chino (zh)</td><td><strong><?= $lugaresZh ?></strong></td></tr>
+                </table>
+                <a href="lugares_index.php" class="btn btn-primary">← Volver a Lugares</a>
+                <a href="../generar_sitemap_lugares_i18n.php" class="btn btn-warning">Generar Sitemap</a>
             </div>
         </div>
-    </body>
-    </html>
+    </div>
+</body>
+</html>
     <?php
     
 } catch (PDOException $e) {
-    ?>
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <title>Error - Rutas Rurales</title>
-    </head>
-    <body class="bg-light">
-        <div class="container py-5">
-            <div class="card shadow border-0">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Error al generar traducciones</h4>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-danger">
-                        <?= htmlspecialchars($e->getMessage()) ?>
-                    </div>
-                    <a href="lugares_index.php" class="btn btn-primary">
-                        <i class="bi bi-arrow-left"></i> Volver a Lugares
-                    </a>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    <?php
+    echo "Error: " . $e->getMessage();
 }

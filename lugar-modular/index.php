@@ -64,15 +64,43 @@ require_once dirname(__DIR__) . '/api/config.php';
 try {
     $pdo = getDBConnection();
 
-    // 1) Consulta principal del lugar
-    $stmt = $pdo->prepare("
-        SELECT p.*, c.name AS category_name
-        FROM places_of_interest p
-        LEFT JOIN categories_places c ON p.category_id = c.id
-        WHERE p.slug = ? AND p.is_active = 1
-        LIMIT 1
-    ");
-    $stmt->execute([$slug]);
+    // 1) Buscar el lugar - si el idioma no es español, primero buscar en traducciones
+    $placeId = null;
+    
+    if ($lang !== 'es') {
+        // Buscar el place_id usando el slug traducido
+        try {
+            $stmtTrad = $pdo->prepare("SELECT place_id FROM places_of_interest_trads WHERE slug = ? AND language_code = ? LIMIT 1");
+            $stmtTrad->execute([$slug, $lang]);
+            $result = $stmtTrad->fetch(PDO::FETCH_ASSOC);
+            if ($result) {
+                $placeId = $result['place_id'];
+            }
+        } catch (Exception $e) { /* ignorar */ }
+    }
+    
+    // Consulta principal del lugar
+    if ($placeId) {
+        // Si encontramos el ID por traducción, buscar por ID
+        $stmt = $pdo->prepare("
+            SELECT p.*, c.name AS category_name
+            FROM places_of_interest p
+            LEFT JOIN categories_places c ON p.category_id = c.id
+            WHERE p.id = ? AND p.is_active = 1
+            LIMIT 1
+        ");
+        $stmt->execute([$placeId]);
+    } else {
+        // Buscar por slug original (español)
+        $stmt = $pdo->prepare("
+            SELECT p.*, c.name AS category_name
+            FROM places_of_interest p
+            LEFT JOIN categories_places c ON p.category_id = c.id
+            WHERE p.slug = ? AND p.is_active = 1
+            LIMIT 1
+        ");
+        $stmt->execute([$slug]);
+    }
     $lugar = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
     if (!empty($lugar)) {
@@ -134,6 +162,38 @@ try {
     error_log('[lugar-modular] Error BD: ' . $e->getMessage());
 }
 
+
+    // 3) CARGAR TRADUCCIONES si el idioma no es español
+    if (!empty($lugar) && $lang !== 'es') {
+        try {
+            $stmtTrad = $pdo->prepare("
+                SELECT * FROM places_of_interest_trads 
+                WHERE place_id = ? AND language_code = ?
+                LIMIT 1
+            ");
+            $stmtTrad->execute([$lugar['id'], $lang]);
+            $trad = $stmtTrad->fetch(PDO::FETCH_ASSOC);
+            
+            if ($trad) {
+                // Sobrescribir campos con traducciones
+                $lugar['name'] = $trad['name'];
+                $lugar['short_description'] = $trad['short_description'];
+                $lugar['description'] = $trad['description'];
+                $lugar['address'] = $trad['address'];
+                $lugar['municipality'] = $trad['municipality'];
+                $lugar['province'] = $trad['province'];
+                $lugar['opening_hours'] = $trad['opening_hours'];
+                $lugar['accessibility'] = $trad['accessibility'];
+                $lugar['entry_fee'] = $trad['entry_fee'];
+                $lugar['entry_fee_details'] = $trad['entry_fee_details'];
+                $lugar['facilities'] = $trad['facilities'];
+                $lugar['meta_title'] = $trad['meta_title'];
+                $lugar['meta_description'] = $trad['meta_description'];
+            }
+        } catch (Exception $e) {
+            error_log('[lugar-modular] Error traducciones: ' . $e->getMessage());
+        }
+    }
 // ─── VARIABLES SEO ────────────────────────────────────────────────────────────
 
 $baseUrl   = 'https://rutasrurales.io';
