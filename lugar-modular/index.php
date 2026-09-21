@@ -176,19 +176,24 @@ try {
             
             if ($trad) {
                 // Sobrescribir campos con traducciones
-                $lugar['name'] = $trad['name'];
-                $lugar['short_description'] = $trad['short_description'];
-                $lugar['description'] = $trad['description'];
-                $lugar['address'] = $trad['address'];
-                $lugar['municipality'] = $trad['municipality'];
-                $lugar['province'] = $trad['province'];
-                $lugar['opening_hours'] = $trad['opening_hours'];
-                $lugar['accessibility'] = $trad['accessibility'];
-                $lugar['entry_fee'] = $trad['entry_fee'];
-                $lugar['entry_fee_details'] = $trad['entry_fee_details'];
-                $lugar['facilities'] = $trad['facilities'];
-                $lugar['meta_title'] = $trad['meta_title'];
-                $lugar['meta_description'] = $trad['meta_description'];
+                if (!empty($trad['name']))              $lugar['name']              = $trad['name'];
+                if (!empty($trad['short_description'])) $lugar['short_description'] = $trad['short_description'];
+                if (!empty($trad['description'])) {
+                    $lugar['description'] = $trad['description'];
+                    // IMPORTANTE: limpiar description_linked para que descripcion.php
+                    // use la descripción traducida y no la versión en español enlazada
+                    $lugar['description_linked'] = '';
+                }
+                if (!empty($trad['address']))           $lugar['address']           = $trad['address'];
+                if (!empty($trad['municipality']))      $lugar['municipality']      = $trad['municipality'];
+                if (!empty($trad['province']))          $lugar['province']          = $trad['province'];
+                if (!empty($trad['opening_hours']))     $lugar['opening_hours']     = $trad['opening_hours'];
+                if (!empty($trad['accessibility']))     $lugar['accessibility']     = $trad['accessibility'];
+                if (!empty($trad['entry_fee']))         $lugar['entry_fee']         = $trad['entry_fee'];
+                if (!empty($trad['entry_fee_details'])) $lugar['entry_fee_details'] = $trad['entry_fee_details'];
+                if (!empty($trad['facilities']))        $lugar['facilities']        = $trad['facilities'];
+                if (!empty($trad['meta_title']))        $lugar['meta_title']        = $trad['meta_title'];
+                if (!empty($trad['meta_description'])) $lugar['meta_description']  = $trad['meta_description'];
             }
         } catch (Exception $e) {
             error_log('[lugar-modular] Error traducciones: ' . $e->getMessage());
