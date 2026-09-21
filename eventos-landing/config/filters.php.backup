@@ -130,20 +130,6 @@ const EVENTOS_PROVINCIAS = [
             'zh' => '欧洲海拔最高的城墙城市，节日历法纪念圣特蕾莎，在西班牙最真实的中世纪集市中重现中世纪',
         ],
     ],
-    'madrid' => [
-        'label' => 'Madrid', 'db' => 'Madrid',
-        'lat' => 40.416, 'lng' => -3.703,
-        'attractions' => ['Retiro', 'Prado', 'Gran Vía', 'Palacio Real'],
-        'vibe' => [
-            'es' => 'capital de España con vida cultural inagotable',
-            'en' => 'capital of Spain with inexhaustible cultural life',
-            'fr' => 'capitale de l\'Espagne avec une vie culturelle inepuisable',
-            'de' => 'Hauptstadt Spaniens mit unerschöpflichem Kulturleben',
-            'zh' => '西班牙首都，拥有无穷的文化生活',
-        ],
-    ],
-
-
     'guadalajara' => [
         'label' => 'Guadalajara', 'db' => 'Guadalajara',
         'lat' => 40.630, 'lng' => -3.164,
