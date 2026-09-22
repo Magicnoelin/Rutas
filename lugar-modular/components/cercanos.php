@@ -27,6 +27,10 @@ $_t = [
 $prov = isset($lugar['province'])     ? $lugar['province']     : '';
 $muni = isset($lugar['municipality']) ? $lugar['municipality'] : '';
 
+// Generar prefijo de idioma para URLs
+$langPrefix = ($lang ?? 'es') === 'es' ? '' : '/' . ($lang ?? 'es');
+
+
 // Generar skeleton HTML reutilizable
 function skeletonCards(int $n = 4): string {
     $html = '<div class="nearby-grid">';
@@ -179,7 +183,7 @@ function skeletonCards(int $n = 4): string {
             <?php if (!empty($ssr_nearby_lugares)): ?>
                 <div class="nearby-grid">
                     <?php foreach ($ssr_nearby_lugares as $item): ?>
-                        <a href="/lugar/<?php echo esc($item['slug']); ?>" class="nearby-card">
+                        <a href="<?php echo $langPrefix; ?>/lugar/<?php echo esc($item['slug']); ?>" class="nearby-card">
                             <img src="<?php echo esc($item['photo1'] ?? '/menu_images/turismo_rural.webp'); ?>" alt="<?php echo esc($item['name']); ?>" loading="lazy" class="nearby-card-img">
                             <div class="nearby-card-body">
                                 <h3 class="nearby-card-title"><?php echo esc($item['name']); ?></h3>

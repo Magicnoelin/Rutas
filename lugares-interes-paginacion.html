@@ -264,6 +264,12 @@
     </footer>
 
     <script>
+        // Detectar idioma desde la URL
+        const path = window.location.pathname;
+        const langMatch = path.match(/^/([a-z]{2})//);
+        const currentLang = langMatch ? langMatch[1] : 'es';
+        const langPrefix = currentLang === 'es' ? '' : '/' + currentLang;
+
         let todosLosLugares = [];
         let lugaresFiltrados = [];
         let filtroCategorias = [];
@@ -417,7 +423,7 @@
                     <p class="location"><i class="fas fa-map-marker-alt"></i> ${lugar.localidad || ''}, ${lugar.provincia || ''}</p>
                     <p>${descripcion}...</p>
                     <p class="price">${precio}</p>
-                    <a href="/lugar/${lugar.slug}" class="btn-primary" style="margin-top: 1rem;">
+                    <a href="${langPrefix}/lugar/${lugar.slug}" class="btn-primary" style="margin-top: 1rem;">
                         <i class="fas fa-eye"></i> Ver Detalle
                     </a>
                 </div>

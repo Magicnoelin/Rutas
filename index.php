@@ -347,7 +347,7 @@ ul{list-style:none}
         <a href="<?= $base_domain ?>/eventos-culturales">
             <?= htmlspecialchars($t['nav_events']) ?>
         </a>
-        <a href="<?= $base_domain ?>/lugares-de-interes">
+        <a href="<?= $base_domain . $langPfx ?>/lugares/">
             <?= htmlspecialchars($t['nav_places']) ?>
         </a>
         <a href="<?= $base_domain ?>/actividades-turisticas">
@@ -414,7 +414,7 @@ ul{list-style:none}
         <span class="hub-cta__icon">🎭</span>
         <?= htmlspecialchars($t['nav_events']) ?>
     </a>
-    <a href="<?= $base_domain ?>/lugares-de-interes">
+    <a href="<?= $base_domain . $langPfx ?>/lugares/">
         <span class="hub-cta__icon">🏛️</span>
         <?= htmlspecialchars($t['nav_places']) ?>
     </a>
@@ -533,7 +533,7 @@ ul{list-style:none}
                     <a href="<?= $base_domain ?>/eventos-culturales">
                         <?= htmlspecialchars($t['footer_nav_events']) ?>
                     </a>
-                    <a href="<?= $base_domain ?>/lugares-de-interes">
+                    <a href="<?= $base_domain . $langPfx ?>/lugares/">
                         <?= htmlspecialchars($t['footer_nav_places']) ?>
                     </a>
                     <a href="<?= $base_domain ?>/actividades-turisticas">

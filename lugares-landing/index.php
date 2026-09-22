@@ -521,7 +521,7 @@ ul,ol{list-style:none;margin:0;padding:0}
     <ul class="lnd-grid" role="list" aria-label="<?= htmlspecialchars($page_h1) ?>">
       <?php foreach ($places as $place): ?>
       <li>
-        <a href="/lugar/<?= htmlspecialchars($place['slug']) ?>"
+        <a href="<?= htmlspecialchars($path_prefix) ?>/lugar/<?= htmlspecialchars($place['slug']) ?>"
            class="lnd-card"
            title="<?= htmlspecialchars($place['name']) ?>">
 
