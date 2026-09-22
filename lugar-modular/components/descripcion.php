@@ -38,8 +38,11 @@ if (!empty($lugar['description_linked'])) {
     
     // Aplicar inbound links dinámicamente
     if (isset($pdo) && $pdo !== null) {
-        require_once dirname(__DIR__) . '/api/inbound_links_helper.php';
-        $descripcionRaw = procesarInboundLinks($descripcionRaw, $pdo);
+        $inboundHelper = dirname(dirname(__DIR__)) . '/api/inbound_links_helper.php';
+        if (file_exists($inboundHelper)) {
+            require_once $inboundHelper;
+            $descripcionRaw = procesarInboundLinks($descripcionRaw, $pdo);
+        }
     }
 }
 
