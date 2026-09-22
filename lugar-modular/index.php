@@ -199,6 +199,64 @@ try {
             error_log('[lugar-modular] Error traducciones: ' . $e->getMessage());
         }
     }
+// ─── TRADUCCIÓN DE CATEGORÍA ─────────────────────────────────────────────────
+if (!empty($lugar['category_name']) && $lang !== 'es') {
+    $cat_map = [
+        'en' => [
+            'Monumento'=>'Monument','Monumentos'=>'Monuments','Parque Natural'=>'Natural Park',
+            'Parques Naturales'=>'Natural Parks','Parque'=>'Park','Naturaleza'=>'Nature',
+            'Museo'=>'Museum','Museos'=>'Museums','Iglesia'=>'Church','Iglesias'=>'Churches',
+            'Castillo'=>'Castle','Castillos'=>'Castles','Bodega'=>'Winery','Bodegas'=>'Wineries',
+            'Gastronomía'=>'Gastronomy','Restaurante'=>'Restaurant','Restaurantes'=>'Restaurants',
+            'Turismo Rural'=>'Rural Tourism','Patrimonio'=>'Heritage','Arqueología'=>'Archaeology',
+            'Mirador'=>'Viewpoint','Miradores'=>'Viewpoints','Lago'=>'Lake','Laguna'=>'Lagoon',
+            'Reserva Natural'=>'Nature Reserve','Río'=>'River','Cascada'=>'Waterfall',
+            'Ruta'=>'Route','Puente'=>'Bridge','Ermita'=>'Hermitage','Convento'=>'Convent',
+            'Catedral'=>'Cathedral','Plaza'=>'Square','Enoturismo'=>'Wine Tourism','Turismo'=>'Tourism',
+        ],
+        'fr' => [
+            'Monumento'=>'Monument','Monumentos'=>'Monuments','Parque Natural'=>'Parc Naturel',
+            'Parques Naturales'=>'Parcs Naturels','Parque'=>'Parc','Naturaleza'=>'Nature',
+            'Museo'=>'Musée','Museos'=>'Musées','Iglesia'=>'Église','Iglesias'=>'Églises',
+            'Castillo'=>'Château','Castillos'=>'Châteaux','Bodega'=>'Cave vinicole','Bodegas'=>'Caves vinicoles',
+            'Gastronomía'=>'Gastronomie','Restaurante'=>'Restaurant','Restaurantes'=>'Restaurants',
+            'Turismo Rural'=>'Tourisme Rural','Patrimonio'=>'Patrimoine','Arqueología'=>'Archéologie',
+            'Mirador'=>'Belvédère','Miradores'=>'Belvédères','Lago'=>'Lac','Laguna'=>'Lagune',
+            'Reserva Natural'=>'Réserve Naturelle','Río'=>'Rivière','Cascada'=>'Cascade',
+            'Ruta'=>'Route','Puente'=>'Pont','Ermita'=>'Ermitage','Convento'=>'Couvent',
+            'Catedral'=>'Cathédrale','Plaza'=>'Place','Enoturismo'=>'Œnotourisme','Turismo'=>'Tourisme',
+        ],
+        'de' => [
+            'Monumento'=>'Denkmal','Monumentos'=>'Denkmäler','Parque Natural'=>'Naturpark',
+            'Parques Naturales'=>'Naturparks','Parque'=>'Park','Naturaleza'=>'Natur',
+            'Museo'=>'Museum','Museos'=>'Museen','Iglesia'=>'Kirche','Iglesias'=>'Kirchen',
+            'Castillo'=>'Burg','Castillos'=>'Burgen','Bodega'=>'Weinkeller','Bodegas'=>'Weinkeller',
+            'Gastronomía'=>'Gastronomie','Restaurante'=>'Restaurant','Restaurantes'=>'Restaurants',
+            'Turismo Rural'=>'Ländlicher Tourismus','Patrimonio'=>'Erbe','Arqueología'=>'Archäologie',
+            'Mirador'=>'Aussichtspunkt','Miradores'=>'Aussichtspunkte','Lago'=>'See','Laguna'=>'Lagune',
+            'Reserva Natural'=>'Naturschutzgebiet','Río'=>'Fluss','Cascada'=>'Wasserfall',
+            'Ruta'=>'Route','Puente'=>'Brücke','Ermita'=>'Einsiedelei','Convento'=>'Kloster',
+            'Catedral'=>'Kathedrale','Plaza'=>'Platz','Enoturismo'=>'Weintourismus','Turismo'=>'Tourismus',
+        ],
+        'zh' => [
+            'Monumento'=>'纪念碑','Monumentos'=>'纪念碑','Parque Natural'=>'自然公园',
+            'Parques Naturales'=>'自然公园','Parque'=>'公园','Naturaleza'=>'自然',
+            'Museo'=>'博物馆','Museos'=>'博物馆','Iglesia'=>'教堂','Iglesias'=>'教堂',
+            'Castillo'=>'城堡','Castillos'=>'城堡','Bodega'=>'酒窖','Bodegas'=>'酒窖',
+            'Gastronomía'=>'美食','Restaurante'=>'餐厅','Restaurantes'=>'餐厅',
+            'Turismo Rural'=>'乡村旅游','Patrimonio'=>'遗产','Arqueología'=>'考古学',
+            'Mirador'=>'观景台','Miradores'=>'观景台','Lago'=>'湖','Laguna'=>'泻湖',
+            'Reserva Natural'=>'自然保护区','Río'=>'河流','Cascada'=>'瀑布',
+            'Ruta'=>'路线','Puente'=>'桥','Ermita'=>'隐居所','Convento'=>'修道院',
+            'Catedral'=>'大教堂','Plaza'=>'广场','Enoturismo'=>'葡萄酒旅游','Turismo'=>'旅游',
+        ],
+    ];
+    $catEs = $lugar['category_name'];
+    if (!empty($cat_map[$lang][$catEs])) {
+        $lugar['category_name'] = $cat_map[$lang][$catEs];
+    }
+}
+
 // ─── VARIABLES SEO ────────────────────────────────────────────────────────────
 
 $baseUrl   = 'https://rutasrurales.io';

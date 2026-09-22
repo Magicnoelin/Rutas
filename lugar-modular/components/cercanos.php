@@ -15,7 +15,13 @@ $_t = [
     'ver_mas_aloj'     => isset($t['ver_mas_aloj'])     ? $t['ver_mas_aloj']     : 'Ver más alojamientos',
     'ver_mas_activ'    => isset($t['ver_mas_activ'])    ? $t['ver_mas_activ']    : 'Ver más actividades',
     'ver_mas_eventos'  => isset($t['ver_mas_eventos'])  ? $t['ver_mas_eventos']  : 'Ver más eventos',
-    'ver_mas_lugares'  => isset($t['ver_mas_lugares'])  ? $t['ver_mas_lugares']  : 'Ver más lugares',
+    'ver_mas_lugares'      => isset($t['ver_mas_lugares'])      ? $t['ver_mas_lugares']      : 'Ver más lugares',
+    'sin_aloj_cercanos'    => isset($t['sin_aloj_cercanos'])    ? $t['sin_aloj_cercanos']    : 'No se encontraron alojamientos cercanos.',
+    'sin_activ_cercanas'   => isset($t['sin_activ_cercanas'])   ? $t['sin_activ_cercanas']   : 'No se encontraron actividades cercanas.',
+    'sin_eventos_cercanos' => isset($t['sin_eventos_cercanos']) ? $t['sin_eventos_cercanos'] : 'No se encontraron eventos cercanos.',
+    'sin_lugares_cercanos' => isset($t['sin_lugares_cercanos']) ? $t['sin_lugares_cercanos'] : 'No se encontraron lugares de interés cercanos.',
+    'precio_noche'         => isset($t['precio_noche'])         ? $t['precio_noche']         : '€/noche',
+    'precio_persona'       => isset($t['precio_persona'])       ? $t['precio_persona']       : '€/persona',
 ];
 
 $prov = isset($lugar['province'])     ? $lugar['province']     : '';
@@ -56,7 +62,7 @@ function skeletonCards(int $n = 4): string {
                                 <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
                                 <?php if (!empty($item['price_per_night']) && (float)$item['price_per_night'] > 0): ?>
                                 <p class="nearby-card-price" style="color:var(--lug-primary);font-weight:600;font-size:0.9rem;margin-top:4px;">
-                                    <?php echo number_format((float)$item['price_per_night'], 0, ',', '.'); ?> €/noche
+                                    <?php echo number_format((float)$item['price_per_night'], 0, ',', '.'); ?> <?php echo htmlspecialchars($_t['precio_noche'], ENT_QUOTES, 'UTF-8'); ?>
                                 </p>
                                 <?php endif; ?>
                                 <?php if (!empty($item['short_description'])): ?>
@@ -69,7 +75,7 @@ function skeletonCards(int $n = 4): string {
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <p class="no-nearby-results">No se encontraron alojamientos cercanos.</p>
+                <p class="no-nearby-results"><?php echo htmlspecialchars($_t['sin_aloj_cercanos'], ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?>
         </div>
         <div id="nearby-aloj-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_alojamientos) ? 'display:none;' : ''; ?>">
@@ -96,7 +102,7 @@ function skeletonCards(int $n = 4): string {
                                 <p class="nearby-card-meta"><?php echo esc($item['municipality']); ?> <?php echo !empty($item['dist']) ? '(' . round($item['dist']) . 'km)' : ''; ?></p>
                                 <?php if (!empty($item['price_adult']) && (float)$item['price_adult'] > 0): ?>
                                 <p class="nearby-card-price" style="color:var(--lug-primary);font-weight:600;font-size:0.9rem;margin-top:4px;">
-                                    <?php echo number_format((float)$item['price_adult'], 0, ',', '.'); ?> €/persona
+                                    <?php echo number_format((float)$item['price_adult'], 0, ',', '.'); ?> <?php echo htmlspecialchars($_t['precio_persona'], ENT_QUOTES, 'UTF-8'); ?>
                                 </p>
                                 <?php endif; ?>
                                 <?php if (!empty($item['description'])): ?>
@@ -109,7 +115,7 @@ function skeletonCards(int $n = 4): string {
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <p class="no-nearby-results">No se encontraron actividades cercanas.</p>
+                <p class="no-nearby-results"><?php echo htmlspecialchars($_t['sin_activ_cercanas'], ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?>
         </div>
         <div id="nearby-activ-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_actividades) ? 'display:none;' : ''; ?>">
@@ -153,7 +159,7 @@ function skeletonCards(int $n = 4): string {
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <p class="no-nearby-results">No se encontraron eventos cercanos.</p>
+                <p class="no-nearby-results"><?php echo htmlspecialchars($_t['sin_eventos_cercanos'], ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?>
         </div>
         <div id="nearby-eventos-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_eventos) ? 'display:none;' : ''; ?>">
@@ -183,7 +189,7 @@ function skeletonCards(int $n = 4): string {
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <p class="no-nearby-results">No se encontraron lugares de interés cercanos.</p>
+                <p class="no-nearby-results"><?php echo htmlspecialchars($_t['sin_lugares_cercanos'], ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?>
         </div>
         <div id="nearby-lugares-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_lugares) ? 'display:none;' : ''; ?>">

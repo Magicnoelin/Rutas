@@ -20,8 +20,10 @@ $_t = [
     'web_oficial'   => isset($t['web_oficial'])   ? $t['web_oficial']   : '🌐 Web oficial',
     'ver_mapa'      => isset($t['ver_mapa'])      ? $t['ver_mapa']      : 'Ver en el mapa',
     'click_mapa'    => isset($t['click_mapa'])    ? $t['click_mapa']    : 'Haz clic para cargar el mapa interactivo',
-    'leer_mas'      => isset($t['leer_mas'])      ? $t['leer_mas']      : '↓ Leer más',
-    'leer_menos'    => isset($t['leer_menos'])    ? $t['leer_menos']    : '↑ Leer menos',
+    'leer_mas'        => isset($t['leer_mas'])        ? $t['leer_mas']        : '↓ Leer más',
+    'leer_menos'      => isset($t['leer_menos'])      ? $t['leer_menos']      : '↑ Leer menos',
+    'duracion_visita' => isset($t['duracion_visita']) ? $t['duracion_visita'] : '⏱️ Duración',
+    'mejor_epoca'     => isset($t['mejor_epoca'])     ? $t['mejor_epoca']     : '🌸 Mejor época',
 ];
 
 // Usar description_linked (con inbound links pre-generados) si existe
@@ -117,14 +119,14 @@ $hayContacto = !empty($lugar['phone'])
 
             <?php if (!empty($lugar['visit_duration'])): ?>
             <div class="info-dl-row">
-                <dt>⏱️ Duración</dt>
+                <dt><?php echo htmlspecialchars($_t['duracion_visita'], ENT_QUOTES, 'UTF-8'); ?></dt>
                 <dd><?php echo htmlspecialchars($lugar['visit_duration'], ENT_QUOTES, 'UTF-8'); ?></dd>
             </div>
             <?php endif; ?>
 
             <?php if (!empty($lugar['best_season'])): ?>
             <div class="info-dl-row">
-                <dt>🌸 Mejor época</dt>
+                <dt><?php echo htmlspecialchars($_t['mejor_epoca'], ENT_QUOTES, 'UTF-8'); ?></dt>
                 <dd><?php echo htmlspecialchars($lugar['best_season'], ENT_QUOTES, 'UTF-8'); ?></dd>
             </div>
             <?php endif; ?>

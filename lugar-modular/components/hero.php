@@ -24,8 +24,12 @@ if (!function_exists('esLugarGastronomicoHero')) {
 
 // Acceso seguro a claves de $t con fallback
 $_t = [
-    'inicio'  => isset($t['inicio'])  ? $t['inicio']  : 'Inicio',
-    'lugares' => isset($t['lugares']) ? $t['lugares'] : 'Lugares de interés',
+    'inicio'   => isset($t['inicio'])   ? $t['inicio']   : 'Inicio',
+    'lugares'  => isset($t['lugares'])  ? $t['lugares']  : 'Lugares de interés',
+    'gratis'   => isset($t['gratis'])   ? $t['gratis']   : 'Gratis',
+    'mascotas' => isset($t['mascotas']) ? $t['mascotas'] : 'Mascotas',
+    'ninos'    => isset($t['ninos'])    ? $t['ninos']    : 'Familias',
+    'estrellas_calidad' => isset($t['estrellas_calidad']) ? $t['estrellas_calidad'] : 'estrellas de calidad',
 ];
 
 $fotoHero    = !empty($fotos[0]) ? fixUrlHero($fotos[0]) : '/menu_images/turismo_rural.webp';
@@ -97,7 +101,7 @@ $langPrefix = ($lang !== 'es') ? '/' . $lang : '';
             <?php if (!empty($provincia)): ?>, <?php echo htmlspecialchars($provincia, ENT_QUOTES, 'UTF-8'); ?><?php endif; ?>
 
             <?php if ($stars > 0): ?>
-            <span class="lug-stars" aria-label="<?php echo $stars; ?> estrellas de calidad" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+            <span class="lug-stars" aria-label="<?php echo $stars; ?> <?php echo htmlspecialchars($_t['estrellas_calidad'], ENT_QUOTES, 'UTF-8'); ?>" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
                 <meta itemprop="ratingValue" content="<?php echo $stars; ?>">
                 <meta itemprop="bestRating" content="5">
                 <?php for ($i = 0; $i < min($stars, 5); $i++) echo '⭐'; ?>
@@ -113,15 +117,15 @@ $langPrefix = ($lang !== 'es') ? '/' . $lang : '';
             <?php endif; ?>
 
             <?php if (!$esGastronomico && $isGratuito && empty($entradaInfo)): ?>
-            <span class="lug-badge lug-badge-free">✅ Gratis</span>
+            <span class="lug-badge lug-badge-free">✅ <?php echo htmlspecialchars($_t['gratis'], ENT_QUOTES, 'UTF-8'); ?></span>
             <?php endif; ?>
 
             <?php if (!empty($lugar['pet_friendly'])): ?>
-            <span class="lug-badge lug-badge-pet">🐾 Mascotas</span>
+            <span class="lug-badge lug-badge-pet">🐾 <?php echo htmlspecialchars($_t['mascotas'], ENT_QUOTES, 'UTF-8'); ?></span>
             <?php endif; ?>
 
             <?php if (!empty($lugar['suitable_for_children'])): ?>
-            <span class="lug-badge lug-badge-kids">👶 Familias</span>
+            <span class="lug-badge lug-badge-kids">👶 <?php echo htmlspecialchars($_t['ninos'], ENT_QUOTES, 'UTF-8'); ?></span>
             <?php endif; ?>
         </div>
 
