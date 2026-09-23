@@ -144,13 +144,14 @@ try {
         $mode         = 'categoria';
         $cat_icon     = !empty($category['icon']) ? obtenerEmojiLugar($category['icon']) : '📍';
         $bc_label     = $category['name'];
-        $page_h1      = $category['name'] . ' ' . ($t['in_spain'] ?? 'en España');
-        $meta_title   = $category['name'] . ' ' . ($t['in_spain'] ?? 'en España') . ' | Rutas Rurales';
+        $page_h1      = $category['name'] . ' ' . ($t['lug_landing_cat_in_spain'] ?? 'en España');
+        $meta_title   = $category['name'] . ' ' . ($t['lug_landing_cat_in_spain'] ?? 'en España') . ' | Rutas Rurales';
         $meta_desc    = 'Descubre los mejores lugares de ' . $category['name'] . ' ' . ($t['lug_meta_desc'] ?? 'en España rural: monumentos, naturaleza, gastronomía y más.');
 
         $sp = $pdo->prepare(
             "SELECT p.id, p.slug, p.name, p.municipality, p.province,
                     p.short_description, p.photo1, p.entry_fee,
+                    p.latitude, p.longitude,
                     tr.name AS name_tr, tr.short_description AS short_desc_tr, tr.slug AS slug_tr
              FROM places_of_interest p
              LEFT JOIN places_of_interest_trads tr ON p.id = tr.place_id AND tr.language_code = ?
@@ -199,6 +200,7 @@ try {
             $sp2 = $pdo->prepare(
                 "SELECT p.id, p.slug, p.name, p.municipality, p.province,
                         p.short_description, p.photo1, p.entry_fee,
+                        p.latitude, p.longitude,
                         c.name AS category_name, c.icon AS category_icon,
                         COALESCE(c.name_en, c.name) AS category_name_en,
                         COALESCE(c.name_fr, c.name) AS category_name_fr,
@@ -437,6 +439,64 @@ ul,ol{list-style:none;margin:0;padding:0}
 .lnd-no-results__icon{font-size:3rem;margin:0 0 12px}
 .lnd-no-results__h3{font-size:1.2rem;color:var(--primary);margin:0 0 8px}
 .lnd-no-results__p{color:var(--text-light);margin:0 0 20px;max-width:480px;margin-inline:auto}
+
+/* ── Vista Toolbar (Lista / Mapa / Split) ──────────────────────────────────── */
+.ll-view-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.ll-view-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;
+  border:2px solid var(--border);border-radius:25px;background:var(--white);
+  color:var(--text);font-size:.84rem;font-weight:600;cursor:pointer;
+  transition:all var(--transition);white-space:nowrap;line-height:1}
+.ll-view-btn:hover{border-color:var(--primary);color:var(--primary);background:#f0f7ff}
+.ll-view-btn[aria-pressed="true"],.ll-view-btn.ll-active{
+  background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(27,67,108,.25)}
+.ll-view-btn--split{display:none} /* Oculto en móvil, visible desde 900px */
+.ll-view-map-count{margin-left:auto;font-size:.78rem;color:var(--text-muted);font-style:italic}
+
+/* ── Contenedor del mapa ───────────────────────────────────────────────────── */
+#ll-map-wrap{display:none;margin-bottom:32px;border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow-hover)}
+#ll-map{height:520px;width:100%;background:#e8edf2}
+.ll-map-loading{display:flex;align-items:center;justify-content:center;
+  height:520px;color:var(--text-muted);font-size:.9rem;gap:10px}
+.ll-map-spinner{width:22px;height:22px;border:3px solid var(--border);
+  border-top-color:var(--primary);border-radius:50%;animation:ll-spin .7s linear infinite}
+@keyframes ll-spin{to{transform:rotate(360deg)}}
+
+/* ── Split View ────────────────────────────────────────────────────────────── */
+.ll-split-wrap{display:none}
+.ll-split-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;
+  height:80vh;min-height:500px;border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow-hover)}
+.ll-split-list{overflow-y:auto;padding:16px;background:var(--bg);
+  scroll-behavior:smooth}
+.ll-split-list .lnd-grid{grid-template-columns:1fr;gap:12px}
+.ll-split-list .lnd-card{margin:0}
+/* Tarjeta resaltada en split view */
+.lnd-card.ll-card--highlighted{box-shadow:0 0 0 3px var(--primary),var(--shadow-hover);
+  transform:translateY(-2px)}
+#ll-map-split{height:100%;width:100%;background:#e8edf2}
+
+/* ── Popup del mapa ────────────────────────────────────────────────────────── */
+.ll-popup{width:230px;font-family:inherit}
+.ll-popup__img{width:100%;height:110px;object-fit:cover;background:#e8f4ea;
+  display:block;border-radius:4px 4px 0 0}
+.ll-popup__img-placeholder{width:100%;height:110px;display:flex;align-items:center;
+  justify-content:center;font-size:2rem;background:linear-gradient(135deg,#e8f4ea,#c8e6c9)}
+.ll-popup__body{padding:10px 12px 12px}
+.ll-popup__name{font-size:.92rem;font-weight:700;color:var(--primary);margin:0 0 4px;line-height:1.3}
+.ll-popup__loc{font-size:.75rem;color:var(--text-muted);margin:0 0 8px}
+.ll-popup__btn{display:block;background:var(--primary);color:#fff;text-decoration:none;
+  padding:6px 10px;font-size:.78rem;border-radius:4px;text-align:center;font-weight:600;
+  margin-top:6px;transition:background var(--transition)}
+.ll-popup__btn:hover{background:var(--primary-light)}
+
+/* ── Responsive breakpoints ────────────────────────────────────────────────── */
+@media(min-width:900px){
+  .ll-view-btn--split{display:inline-flex}
+}
+@media(max-width:600px){
+  #ll-map{height:380px}
+}
 </style>
 
 <!-- ── CSS no-crítico (carga asíncrona) ───────────────────────────── -->
@@ -471,13 +531,13 @@ ul,ol{list-style:none;margin:0;padding:0}
     <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales" width="40" height="40" loading="eager">
     <span>Rutas Rurales</span>
   </a>
-  <nav class="lnd-navbar__nav" aria-label="Menú principal">
-    <a href="/alojamientos/">🏡 Alojamientos</a>
-    <a href="/eventos/">🎭 Eventos</a>
-    <a href="/lugares/" aria-current="true">📍 Lugares</a>
-    <a href="/actividades/">🥾 Actividades</a>
-    <a href="/rutas.php">🗺️ Mapa</a>
-    <a href="/login.html" class="lnd-navbar__cta" rel="nofollow">Acceder</a>
+  <nav class="lnd-navbar__nav" aria-label="<?= htmlspecialchars($t['lug_landing_nav_aria'] ?? 'Menú principal') ?>">
+    <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/">🏡 <?= htmlspecialchars($t['nav_stays'] ?? 'Alojamientos') ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/">🎭 <?= htmlspecialchars($t['nav_events'] ?? 'Eventos') ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/" aria-current="true">📍 <?= htmlspecialchars($t['nav_places'] ?? 'Lugares') ?></a>
+    <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/">🥾 <?= htmlspecialchars($t['nav_activities'] ?? 'Actividades') ?></a>
+    <a href="/rutas.php">🗺️ <?= htmlspecialchars($t['nav_map'] ?? 'Mapa') ?></a>
+    <a href="/login.html" class="lnd-navbar__cta" rel="nofollow"><?= htmlspecialchars($t['nav_login'] ?? 'Acceder') ?></a>
   </nav>
 </header>
 
@@ -494,11 +554,11 @@ ul,ol{list-style:none;margin:0;padding:0}
          fetchpriority="high">
   </div>
   <div class="lnd-hero__content">
-    <nav class="lnd-breadcrumb" aria-label="Ruta de navegación">
+    <nav class="lnd-breadcrumb" aria-label="<?= htmlspecialchars($t['bc_nav'] ?? 'Ruta de navegación') ?>">
       <ol>
-        <li><a href="https://rutasrurales.io/">Inicio</a></li>
+        <li><a href="<?= htmlspecialchars($vh['home_url']) ?>"><?= htmlspecialchars($t['nav_home'] ?? 'Inicio') ?></a></li>
         <li aria-hidden="true" class="lnd-bc-sep">›</li>
-        <li><a href="/lugares/">Lugares de interés</a></li>
+        <li><a href="<?= htmlspecialchars($path_prefix) ?>/lugares/"><?= htmlspecialchars($t['lug_landing_breadcrumb_places'] ?? 'Lugares de interés') ?></a></li>
         <li aria-hidden="true" class="lnd-bc-sep">›</li>
         <li><span aria-current="page" style="color:#fff"><?= htmlspecialchars($bc_label) ?></span></li>
       </ol>
@@ -509,7 +569,7 @@ ul,ol{list-style:none;margin:0;padding:0}
     <p class="lnd-hero__sub"><?= htmlspecialchars($meta_desc) ?></p>
     <?php if (!empty($places)): ?>
     <span class="lnd-hero__badge">
-      📍 <?= count($places) ?> lugar<?= count($places) !== 1 ? 'es' : '' ?> encontrado<?= count($places) !== 1 ? 's' : '' ?>
+      📍 <?= count($places) ?> <?= count($places) !== 1 ? htmlspecialchars($t['lug_landing_found_pl'] ?? 'lugares encontrados') : htmlspecialchars($t['lug_landing_found'] ?? 'lugar encontrado') ?>
     </span>
     <?php endif; ?>
   </div>
@@ -519,9 +579,9 @@ ul,ol{list-style:none;margin:0;padding:0}
 <section aria-labelledby="ll-list-h2">
   <div class="lnd-listing">
 
-    <a href="/lugares/"
+    <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/"
        style="display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-weight:700;font-size:.85rem;margin-bottom:24px">
-      ← Volver a Lugares de interés
+      <?= htmlspecialchars($t['lug_landing_back'] ?? '← Volver a Lugares de interés') ?>
     </a>
 
     <?php if (!empty($places)): ?>
@@ -529,17 +589,53 @@ ul,ol{list-style:none;margin:0;padding:0}
     <div class="lnd-listing__header">
       <h2 id="ll-list-h2" class="lnd-listing__title">
         <?php if ($mode === 'categoria'): ?>
-          <?= htmlspecialchars($cat_icon) ?> <?= htmlspecialchars($category['name']) ?> en España
+          <?= htmlspecialchars($cat_icon) ?> <?= htmlspecialchars($category['name']) ?> <?= htmlspecialchars($t['lug_landing_cat_in_spain'] ?? 'en España') ?>
         <?php else: ?>
-          📍 Lugares de interés en <?= htmlspecialchars($province_label) ?>
+          <?= htmlspecialchars($t['lug_landing_by_province'] ?? '📍 Lugares de interés en') ?> <?= htmlspecialchars($province_label) ?>
         <?php endif; ?>
       </h2>
-      <p class="lnd-listing__count"><?= count($places) ?> resultado<?= count($places) !== 1 ? 's' : '' ?></p>
+      <p class="lnd-listing__count"><?= count($places) ?> <?= count($places) !== 1 ? htmlspecialchars($t['lug_landing_results_pl'] ?? 'resultados') : htmlspecialchars($t['lug_landing_results'] ?? 'resultado') ?></p>
     </div>
 
-    <ul class="lnd-grid" role="list" aria-label="<?= htmlspecialchars($page_h1) ?>">
+    <!-- ── Barra de herramientas de vista ─────────────────────────────────── -->
+    <div class="ll-view-toolbar" role="group" aria-label="Cambiar modo de visualización">
+      <button class="ll-view-btn ll-active" data-view="list" aria-pressed="true" title="Ver como tarjetas">
+        📋 <span>Lista</span>
+      </button>
+      <button class="ll-view-btn" data-view="map" aria-pressed="false" title="Ver en mapa interactivo">
+        🗺️ <span>Mapa</span>
+      </button>
+      <button class="ll-view-btn ll-view-btn--split" data-view="split" aria-pressed="false" title="Ver lista y mapa juntos">
+        🧭 <span>Split</span>
+      </button>
+      <span class="ll-view-map-count" id="ll-map-pin-count" aria-live="polite"></span>
+    </div>
+
+    <!-- ── Contenedor mapa (Vista Mapa) ───────────────────────────────────── -->
+    <div id="ll-map-wrap" role="region" aria-label="Mapa interactivo de lugares" aria-hidden="true">
+      <div id="ll-map">
+        <div class="ll-map-loading" id="ll-map-loading">
+          <div class="ll-map-spinner" aria-hidden="true"></div>
+          <span>Cargando mapa…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Contenedor Split View ───────────────────────────────────────────── -->
+    <div class="ll-split-wrap" id="ll-split-wrap" role="region" aria-label="Vista dividida lista y mapa" aria-hidden="true">
+      <div class="ll-split-layout">
+        <div class="ll-split-list" id="ll-split-list">
+          <!-- Las tarjetas se clonan aquí por JS -->
+        </div>
+        <div id="ll-map-split"></div>
+      </div>
+    </div>
+
+    <ul class="lnd-grid" id="ll-list-grid" role="list" aria-label="<?= htmlspecialchars($page_h1) ?>">
       <?php foreach ($places as $place): ?>
-      <li>
+      <li data-slug="<?= htmlspecialchars($place['slug']) ?>"
+          data-lat="<?= htmlspecialchars($place['latitude'] ?? '') ?>"
+          data-lng="<?= htmlspecialchars($place['longitude'] ?? '') ?>">
         <a href="<?= htmlspecialchars($path_prefix) ?>/lugar/<?= htmlspecialchars($place['slug']) ?>"
            class="lnd-card"
            title="<?= htmlspecialchars($place['name']) ?>">
@@ -564,7 +660,7 @@ ul,ol{list-style:none;margin:0;padding:0}
             <?php endif; ?>
 
             <?php if (empty($place['entry_fee']) || (float)$place['entry_fee'] === 0.0): ?>
-            <span class="lnd-card__free-badge">Entrada libre</span>
+            <span class="lnd-card__free-badge"><?= htmlspecialchars($t['lug_landing_free_entry'] ?? 'Entrada libre') ?></span>
             <?php endif; ?>
           </div>
 
@@ -585,7 +681,7 @@ ul,ol{list-style:none;margin:0;padding:0}
 
           <div class="lnd-card__footer">
             <span class="lnd-card__cta">
-              Ver más
+              <?= htmlspecialchars($t['lug_landing_see_more'] ?? 'Ver más') ?>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
               </svg>
@@ -593,7 +689,7 @@ ul,ol{list-style:none;margin:0;padding:0}
             <?php if (!empty($place['entry_fee']) && (float)$place['entry_fee'] > 0): ?>
             <span class="lnd-card__price"><?= number_format((float)$place['entry_fee'], 2, ',', '.') ?>€</span>
             <?php else: ?>
-            <span class="lnd-card__price lnd-card__price--free">✓ Gratis</span>
+            <span class="lnd-card__price lnd-card__price--free"><?= htmlspecialchars($t['lug_landing_free'] ?? '✓ Gratis') ?></span>
             <?php endif; ?>
           </div>
         </a>
@@ -604,9 +700,9 @@ ul,ol{list-style:none;margin:0;padding:0}
     <?php else: ?>
     <div class="lnd-no-results" role="status">
       <div class="lnd-no-results__icon">🗺️</div>
-      <h3 class="lnd-no-results__h3">Aún no hay lugares publicados aquí</h3>
-      <p class="lnd-no-results__p">¡Sé el primero en añadir un lugar en esta sección!</p>
-      <a href="/agregar-lugar-interes.html" class="lnd-btn lnd-btn--primary">Añadir un lugar</a>
+      <h3 class="lnd-no-results__h3"><?= htmlspecialchars($t['lug_landing_no_results_h3'] ?? 'Aún no hay lugares publicados aquí') ?></h3>
+      <p class="lnd-no-results__p"><?= htmlspecialchars($t['lug_landing_no_results_p'] ?? '¡Sé el primero en añadir un lugar en esta sección!') ?></p>
+      <a href="/agregar-lugar-interes.html" class="lnd-btn lnd-btn--primary"><?= htmlspecialchars($t['lug_landing_add'] ?? 'Añadir un lugar') ?></a>
     </div>
     <?php endif; ?>
 
@@ -616,12 +712,12 @@ ul,ol{list-style:none;margin:0;padding:0}
       <?php if ($mode === 'provincia'): ?>
       <a href="/rutas.php?provincia=<?= urlencode($province_label) ?>&alojamientos=0&lugares=1&actividades=0&eventos=0"
          class="lnd-btn lnd-btn--primary">
-        🗺️ Ver en el mapa — <?= htmlspecialchars($province_label) ?>
+        <?= htmlspecialchars($t['lug_landing_map_prov'] ?? '🗺️ Ver en el mapa') ?> — <?= htmlspecialchars($province_label) ?>
       </a>
       <?php else: ?>
       <a href="/rutas.php?alojamientos=0&lugares=1&actividades=0&eventos=0"
          class="lnd-btn lnd-btn--primary">
-        🗺️ Ver todos en el mapa interactivo
+        <?= htmlspecialchars($t['lug_landing_map_all'] ?? '🗺️ Ver todos en el mapa interactivo') ?>
       </a>
       <?php endif; ?>
     </div>
@@ -633,11 +729,11 @@ ul,ol{list-style:none;margin:0;padding:0}
 <!-- ══════════════════════════════════════════════ CTA FINAL ══ -->
 <section class="lnd-intro" style="border-top:3px solid var(--accent)" aria-label="Añadir un lugar">
   <div class="lnd-intro__inner" style="text-align:center;padding:48px 20px">
-    <h2 class="lnd-intro__h2" style="display:block;text-align:left">¿Conoces un lugar con encanto?</h2>
-    <p class="lnd-intro__p">Comparte tu restaurante, bodega, monumento o espacio natural con viajeros de toda España.</p>
+    <h2 class="lnd-intro__h2" style="display:block;text-align:left"><?= htmlspecialchars($t['lug_landing_cta_h2'] ?? '¿Conoces un lugar con encanto?') ?></h2>
+    <p class="lnd-intro__p"><?= htmlspecialchars($t['lug_landing_cta_p'] ?? 'Comparte tu restaurante, bodega, monumento o espacio natural con viajeros de toda España.') ?></p>
     <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:16px">
-      <a href="/agregar-lugar-interes.html" class="lnd-btn lnd-btn--primary">Añadir un lugar</a>
-      <a href="/lugares/" class="lnd-btn lnd-btn--secondary">← Ver todos los tipos</a>
+      <a href="/agregar-lugar-interes.html" class="lnd-btn lnd-btn--primary"><?= htmlspecialchars($t['lug_landing_add'] ?? 'Añadir un lugar') ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/" class="lnd-btn lnd-btn--secondary"><?= htmlspecialchars($t['lug_landing_back_all'] ?? '← Ver todos los tipos') ?></a>
     </div>
   </div>
 </section>
@@ -647,13 +743,13 @@ ul,ol{list-style:none;margin:0;padding:0}
 <!-- ══════════════════════════════════════════════════════ FOOTER ══ -->
 <footer class="lnd-footer" role="contentinfo">
   <div class="lnd-footer__inner">
-    <nav class="lnd-footer__links" aria-label="Navegación del pie">
-      <a href="https://rutasrurales.io/">Inicio</a>
-      <a href="/alojamientos/">Alojamientos</a>
-      <a href="/eventos/">Eventos</a>
-      <a href="/lugares/">Lugares</a>
-      <a href="/actividades/">Actividades</a>
-      <a href="/aviso-legal.html">Aviso Legal</a>
+    <nav class="lnd-footer__links" aria-label="<?= htmlspecialchars($t['nav_footer'] ?? 'Navegación del pie') ?>">
+      <a href="<?= htmlspecialchars($vh['home_url']) ?>"><?= htmlspecialchars($t['nav_home'] ?? 'Inicio') ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/alojamientos/"><?= htmlspecialchars($t['nav_stays'] ?? 'Alojamientos') ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/eventos/"><?= htmlspecialchars($t['nav_events'] ?? 'Eventos') ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/lugares/"><?= htmlspecialchars($t['nav_places'] ?? 'Lugares') ?></a>
+      <a href="<?= htmlspecialchars($path_prefix) ?>/actividades/"><?= htmlspecialchars($t['nav_activities'] ?? 'Actividades') ?></a>
+      <a href="/aviso-legal.html"><?= htmlspecialchars($t['legal'] ?? 'Aviso Legal') ?></a>
     </nav>
     <p class="lnd-footer__copy">© <?= date('Y') ?> <strong style="color:#fff">rutasrurales.io</strong></p>
   </div>
@@ -674,5 +770,16 @@ ul,ol{list-style:none;margin:0;padding:0}
 </style>
 
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
+
+<!-- ── Selector de Vista: Lista / Mapa / Split ───────────────────── -->
+<script>
+window.LLVS_CONFIG = {
+  slug:       '<?= htmlspecialchars(addslashes($slug)) ?>',
+  mode:       '<?= htmlspecialchars(addslashes($mode ?? '')) ?>',
+  pathPrefix: '<?= htmlspecialchars(addslashes($path_prefix)) ?>',
+  catIcon:    '<?= htmlspecialchars(addslashes($cat_icon)) ?>'
+};
+</script>
+<script src="/js/lugares-view-switcher.js" defer></script>
 </body>
 </html>

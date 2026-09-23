@@ -342,6 +342,10 @@
             <a class="quick-link" href="https://rutasrurales.io/admin_tablas/analytics-dashboard.php">
                 <i class="fas fa-area-chart"></i><span>Views stats</span>
             </a>
+            </a>
+            <a class="quick-link" href="https://rutasrurales.io/admin_tablas/importar_overpass.php">
+                <i class="fas fa-file"></i><span>Overpass</span>
+            </a>
   
            </div>
     </div>

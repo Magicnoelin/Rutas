@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Bodegas | RutasRurales.io</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- MarkerCluster CSS (Agrupa los marcadores para que no se sature la pantalla) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; }
+        .map-container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        #mapa-bodegas { height: 580px; width: 100%; border-radius: 8px; }
+        
+        /* Estilos del Popup */
+        .leaflet-popup-content-wrapper { border-radius: 10px; padding: 0; overflow: hidden; }
+        .leaflet-popup-content { margin: 0 !important; width: 250px !important; }
+        .popup-card { display: flex; flex-direction: column; }
+        .popup-card img { width: 100%; height: 110px; object-fit: cover; background: #eee; }
+        .popup-card-body { padding: 12px; }
+        .popup-card-title { font-size: 15px; font-weight: bold; margin: 0 0 6px 0; color: #2c3e50; }
+        .popup-card-info { font-size: 13px; color: #555; margin-bottom: 8px; line-height: 1.4; }
+        .popup-card-btn { display: block; background: #800020; color: #fff; text-decoration: none; padding: 6px 10px; font-size: 12px; border-radius: 4px; text-align: center; font-weight: 500; }
+        .popup-claim { display: block; font-size: 11px; color: #888; text-align: center; margin-top: 8px; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="map-container">
+    <h2 style="margin-top: 0; color: #800020;">🍷 Rutas Enoturísticas y Bodegas</h2>
+    <div id="mapa-bodegas"></div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- MarkerCluster JS -->
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+<script>
+// 1. Inicializar el mapa centrado en España
+const map = L.map('mapa-bodegas').setView([40.4167, -3.7037], 6);
+
+// 2. Capa base OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap | rutasrurales.io'
+}).addTo(map);
+
+// 3. Crear el icono personalizado circular de vino 🍷
+const iconoBodega = L.divIcon({
+    className: 'custom-pin',
+    html: `<div style="
+        background-color: #800020; 
+        width: 30px; 
+        height: 30px; 
+        border-radius: 50%; 
+        border: 2px solid #ffffff; 
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        color: white; 
+        font-size: 15px;">🍷</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15]
+});
+
+// 4. Grupo para agrupar marcadores (Clustering)
+const markersCluster = L.markerClusterGroup();
+
+// 5. Cargar los datos desde el endpoint PHP
+fetch('get_bodegas_geojson.php')
+    .then(res => res.json())
+    .then(data => {
+        if (data.features && data.features.length > 0) {
+            const geoJsonLayer = L.geoJSON(data, {
+                pointToLayer: function (feature, latlng) {
+                    return L.marker(latlng, { icon: iconoBodega });
+                },
+                onEachFeature: function (feature, layer) {
+                    const p = feature.properties;
+                    
+                    let popupContent = `
+                        <div class="popup-card">
+                            <img src="${p.foto}" alt="${p.nombre}" onerror="this.src='https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=300&q=80'">
+                            <div class="popup-card-body">
+                                <h4 class="popup-card-title">${p.nombre}</h4>
+                                <div class="popup-card-info">
+                                    ${p.categoria ? '🏷️ ' + p.categoria + '<br>' : ''}
+                                    ${p.telefono ? '📞 ' + p.telefono + '<br>' : ''}
+                                </div>
+                                ${p.web ? `<a href="${p.web}" target="_blank" rel="noopener" class="popup-card-btn">Visitar Sitio Web</a>` : ''}
+                                <a href="#" class="popup-claim">¿Eres el propietario? Reclama esta ficha</a>
+                            </div>
+                        </div>
+                    `;
+                    
+                    layer.bindPopup(popupContent);
+                }
+            });
+
+            markersCluster.addLayer(geoJsonLayer);
+            map.addLayer(markersCluster);
+            map.fitBounds(markersCluster.getBounds());
+        }
+    })
+    .catch(err => console.error("Error al cargar las bodegas:", err));
+</script>
+
+</body>
+</html>
