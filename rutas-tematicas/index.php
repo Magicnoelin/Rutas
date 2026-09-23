@@ -38,17 +38,14 @@ $error         = null;
 try {
     $pdo = getDBConnection();
 
-    // 1. Ruta base — incluye columnas generadas por n8n (polyline_osrm, descripcion_larga_es/fr, etc.)
+    // 1. Ruta base — columnas originales (siempre seguras)
     $stmt = $pdo->prepare("
         SELECT r.id, r.name, r.slug, r.description, r.duration_days,
                r.difficulty_level,
                r.status, r.views_count, r.is_public, r.is_featured,
                r.route_type, r.hero_image, r.seo_keywords,
                r.seo_title, r.seo_description, r.province,
-               r.season, r.cover_color, r.itinerary_json, r.created_at,
-               r.polyline_osrm, r.distancia_total_km, r.duracion_min,
-               r.total_paradas, r.descripcion_larga_es, r.descripcion_larga_fr,
-               r.titulo_fr, r.schema_json, r.generated_by
+               r.season, r.cover_color, r.itinerary_json, r.created_at
         FROM routes r
         WHERE r.slug = :slug AND r.status = 'published' AND r.is_public = 1
         LIMIT 1
@@ -63,6 +60,33 @@ try {
     }
 
     $ruta['itinerary_json'] = json_decode($ruta['itinerary_json'] ?? '[]', true);
+
+    // 1b. Columnas n8n — bloque aislado: si la migración no se ha ejecutado aún,
+    //     estas columnas no existen en la BD. El catch las rellena con null
+    //     y el sitio sigue funcionando igual que antes.
+    try {
+        $stmtN8n = $pdo->prepare("
+            SELECT polyline_osrm, distancia_total_km, duracion_min,
+                   total_paradas, descripcion_larga_es, descripcion_larga_fr,
+                   titulo_fr, schema_json, generated_by
+            FROM routes
+            WHERE id = :id
+            LIMIT 1
+        ");
+        $stmtN8n->execute([':id' => $ruta['id']]);
+        $n8nCols = $stmtN8n->fetch(PDO::FETCH_ASSOC);
+        if ($n8nCols) {
+            $ruta = array_merge($ruta, $n8nCols);
+        }
+    } catch (PDOException $e) {
+        // Columnas n8n no existen aún → rellenar con null para evitar errores en módulos
+        foreach (['polyline_osrm','distancia_total_km','duracion_min','total_paradas',
+                  'descripcion_larga_es','descripcion_larga_fr','titulo_fr',
+                  'schema_json','generated_by'] as $col) {
+            $ruta[$col] = null;
+        }
+        error_log('index.php: columnas n8n no encontradas (ejecuta migration_n8n_auto.sql): ' . $e->getMessage());
+    }
 
     // Normalizar formato del itinerario: soportar tanto el formato array estándar
     // como el formato antiguo con clave "steps" (ej: {"steps": [...]})
