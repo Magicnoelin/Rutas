@@ -26,25 +26,29 @@ if (empty($slug) || !preg_match('/^[a-z0-9\-]+$/', $slug)) {
 $_BASE = dirname(__DIR__); // /home/.../Rutas
 require_once $_BASE . '/api/config.php';
 
-$ruta         = null;
-$alojamientos = [];
-$lugares      = [];
-$actividades  = [];
-$eventos      = [];
-$faqs         = []; // FAQs desde BD (tabla route_faqs)
-$error        = null;
+$ruta          = null;
+$alojamientos  = [];
+$lugares       = [];
+$actividades   = [];
+$eventos       = [];
+$faqs          = []; // FAQs desde BD (tabla route_faqs)
+$waypointsJson = []; // Waypoints con coords para el mapa OSRM
+$error         = null;
 
 try {
     $pdo = getDBConnection();
 
-    // 1. Ruta base
+    // 1. Ruta base — incluye columnas generadas por n8n (polyline_osrm, descripcion_larga_es/fr, etc.)
     $stmt = $pdo->prepare("
         SELECT r.id, r.name, r.slug, r.description, r.duration_days,
                r.difficulty_level,
                r.status, r.views_count, r.is_public, r.is_featured,
                r.route_type, r.hero_image, r.seo_keywords,
                r.seo_title, r.seo_description, r.province,
-               r.season, r.cover_color, r.itinerary_json, r.created_at
+               r.season, r.cover_color, r.itinerary_json, r.created_at,
+               r.polyline_osrm, r.distancia_total_km, r.duracion_min,
+               r.total_paradas, r.descripcion_larga_es, r.descripcion_larga_fr,
+               r.titulo_fr, r.schema_json, r.generated_by
         FROM routes r
         WHERE r.slug = :slug AND r.status = 'published' AND r.is_public = 1
         LIMIT 1
@@ -401,6 +405,32 @@ try {
         error_log('route_faqs table not found (first run?): ' . $e->getMessage());
     }
 
+    // 5. Waypoints con coordenadas para el módulo de mapa OSRM
+    // Lee latitude/longitude cacheadas en route_items (columnas añadidas en la migración).
+    // Fallback graceful: si las columnas no existen aún, $waypointsJson queda [].
+    try {
+        $stmtWp = $pdo->prepare("
+            SELECT ri.id, ri.item_type, ri.item_id,
+                   ri.day_number, ri.display_order, ri.item_order,
+                   ri.time_slot, ri.is_highlight, ri.editorial_note,
+                   ri.latitude, ri.longitude, ri.poi_categoria,
+                   ri.title, ri.description
+            FROM route_items ri
+            WHERE ri.route_id = :route_id
+              AND ri.latitude  IS NOT NULL
+              AND ri.longitude IS NOT NULL
+              AND ri.latitude  != 0
+              AND ri.longitude != 0
+            ORDER BY ri.display_order ASC, ri.item_order ASC
+        ");
+        $stmtWp->execute([':route_id' => $ruta['id']]);
+        $waypointsJson = $stmtWp->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Columnas latitude/longitude no existen aún en route_items → ignorar
+        $waypointsJson = [];
+        error_log('mapa_ruta: columnas coords no encontradas en route_items: ' . $e->getMessage());
+    }
+
     // Incrementar visitas
     $pdo->prepare("UPDATE routes SET views_count = COALESCE(views_count,0)+1 WHERE id=:id")
         ->execute([':id' => $ruta['id']]);
@@ -431,6 +461,8 @@ require_once $_MODS . '/lugares.php';
 require_once $_MODS . '/actividades.php';
 require_once $_MODS . '/eventos.php';
 require_once $_MODS . '/faq.php';
+require_once $_MODS . '/descripcion_seo.php'; // Descripción larga ES/FR + ficha datos (n8n-auto)
+require_once $_MODS . '/mapa_ruta.php';       // Mapa Leaflet con polyline OSRM (n8n-auto)
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -505,6 +537,16 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
 <link rel="stylesheet" href="/rutas-tematicas/css/ruta.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/rutas-tematicas/css/ruta.css"></noscript>
 
+<!-- Leaflet.js CSS — no bloqueante (solo se usa si hay mapa) -->
+<?php if (!empty($ruta['polyline_osrm']) || !empty($waypointsJson)): ?>
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+      media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""></noscript>
+<?php endif; ?>
+
 <!-- Schema.org JSON-LD -->
 <?php if ($ruta): renderSchema($ruta, $alojamientos, $lugares, $actividades, $eventos, $faqs); endif; ?>
 
@@ -556,6 +598,9 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
 <!-- ── HERO ────────────────────────────────────────────────── -->
 <?php renderHero($ruta); ?>
 
+<!-- ── DESCRIPCIÓN SEO LARGA (n8n-auto, ES/FR + ficha datos) ── -->
+<?php renderDescripcionSeo($ruta); ?>
+
 <!-- ── ITINERARIO ──────────────────────────────────────────── -->
 <?php renderItinerario($ruta, $alojamientos, $lugares, $actividades, $eventos); ?>
 
@@ -570,6 +615,9 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
 
 <!-- ── EVENTOS ─────────────────────────────────────────────── -->
 <?php renderEventos($eventos, $ruta); ?>
+
+<!-- ── MAPA DE RUTA (polyline OSRM + marcadores) ───────────── -->
+<?php renderMapaRuta($ruta, $waypointsJson); ?>
 
 <!-- ── FAQ + SEO TEXT ──────────────────────────────────────── -->
 <?php renderFaq($ruta, $alojamientos, $lugares, $actividades, $faqs); ?>
@@ -610,6 +658,16 @@ body{font-family:'Montserrat','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-h
         <p>&copy; <?= date('Y') ?> rutasrurales.io — Turismo rural auténtico en España</p>
     </div>
 </footer>
+
+<!-- Leaflet.js — carga diferida, solo si la ruta tiene mapa -->
+<?php if (!empty($ruta['polyline_osrm']) || !empty($waypointsJson)): ?>
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPeM="
+    crossorigin=""
+    defer>
+</script>
+<?php endif; ?>
 
 </body>
 </html>

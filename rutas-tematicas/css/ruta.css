@@ -495,6 +495,156 @@ details[open] .rt-faq__icon { transform: rotate(180deg); }
 .rt-footer a:hover { color: #fff; }
 .rt-footer__links { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 8px; }
 
+/* ── MÓDULO: MAPA DE RUTA ───────────────────────────────────── */
+.rt-mapa-ruta { background: var(--rt-blanco); }
+.rt-mapa-ruta__stats {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  justify-content: center; margin-top: 16px;
+}
+.rt-mapa-stat {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: #e8f5e9; color: var(--rt-verde);
+  font-size: 0.85rem; font-weight: 700;
+  padding: 6px 16px; border-radius: 20px;
+}
+.rt-mapa-stat--brown  { background: #fdf3e7; color: var(--rt-marron); }
+.rt-mapa-stat--purple { background: #f3e5f5; color: #6A1B9A; }
+.rt-mapa-ruta__layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+  margin-top: 32px;
+  align-items: start;
+}
+.rt-mapa-ruta__map-wrap { display: flex; flex-direction: column; gap: 8px; }
+.rt-mapa-ruta__map {
+  height: 480px;
+  border-radius: var(--rt-radio);
+  overflow: hidden;
+  box-shadow: var(--rt-sombra);
+  background: var(--rt-gris-bg);
+  z-index: 1;
+}
+.rt-mapa-ruta__attrib {
+  font-size: 0.73rem; color: var(--rt-texto-suave);
+  text-align: right; margin: 0;
+}
+.rt-mapa-ruta__attrib a { color: var(--rt-texto-suave); }
+.rt-mapa-ruta__leyenda {
+  background: var(--rt-blanco);
+  border-radius: var(--rt-radio);
+  padding: 20px;
+  box-shadow: var(--rt-sombra);
+  max-height: 480px;
+  overflow-y: auto;
+  position: sticky; top: 80px;
+}
+.rt-mapa-ruta__leyenda-title {
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--rt-verde); margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e8f5e9;
+  display: flex; align-items: center; gap: 7px;
+}
+.rt-mapa-ruta__paradas { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.rt-mapa-ruta__parada-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px; border-radius: var(--rt-radio-sm);
+  cursor: pointer; transition: var(--rt-trans);
+}
+.rt-mapa-ruta__parada-item:hover { background: #f0f7f0; }
+.rt-mapa-ruta__parada-item:focus-visible { outline: 2px solid var(--rt-verde); outline-offset: 2px; }
+.rt-mapa-parada__num {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 800;
+  color: #fff; flex-shrink: 0;
+}
+.rt-mapa-parada__info { flex: 1; min-width: 0; }
+.rt-mapa-parada__nombre {
+  font-size: 0.83rem; font-weight: 700;
+  color: var(--rt-texto); line-height: 1.3;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.rt-mapa-parada__meta { font-size: 0.73rem; color: var(--rt-texto-suave); margin-top: 2px; }
+/* Popup personalizado Leaflet */
+.rt-leaflet-icon { background: transparent !important; border: none !important; }
+.rt-leaflet-popup .leaflet-popup-content-wrapper {
+  border-radius: 10px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+.rt-leaflet-popup .leaflet-popup-content { margin: 14px 20px !important; }
+.rt-leaflet-popup .leaflet-popup-tip-container { display: none; }
+
+/* ── MÓDULO: DESCRIPCIÓN SEO ─────────────────────────────────── */
+.rt-desc-seo__inner {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 40px;
+  align-items: start;
+}
+.rt-desc-seo__header {
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  margin-bottom: 20px;
+}
+.rt-desc-seo__title {
+  font-size: clamp(1.3rem,2.5vw,1.8rem);
+  font-weight: 800; color: var(--rt-verde);
+  margin: 0; display: flex; align-items: center; gap: 10px;
+}
+.rt-desc-seo__content { line-height: 1.8; color: var(--rt-texto); }
+.rt-desc-seo__content p { margin: 0 0 1.1em; font-size: 1rem; }
+.rt-desc-seo__content p:last-child { margin-bottom: 0; }
+.rt-desc-seo__content--hidden { display: none; }
+/* Toggle de idioma */
+.rt-lang-toggle { display: flex; gap: 4px; }
+.rt-lang-btn {
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 0.82rem; font-weight: 700;
+  border: 2px solid var(--rt-gris-borde);
+  background: var(--rt-blanco); color: var(--rt-texto-suave);
+  cursor: pointer; transition: var(--rt-trans);
+}
+.rt-lang-btn--active {
+  background: var(--rt-verde); color: #fff;
+  border-color: var(--rt-verde);
+}
+.rt-lang-btn:hover:not(.rt-lang-btn--active) { border-color: var(--rt-verde); color: var(--rt-verde); }
+/* Ficha lateral */
+.rt-desc-seo__ficha {
+  background: var(--rt-blanco);
+  border-radius: var(--rt-radio);
+  padding: 24px;
+  box-shadow: var(--rt-sombra);
+  position: sticky; top: 80px;
+}
+.rt-desc-seo__ficha-title {
+  font-size: 1rem; font-weight: 800;
+  color: var(--rt-verde); margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e8f5e9;
+}
+.rt-desc-seo__dato {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--rt-gris-borde);
+}
+.rt-desc-seo__dato:last-of-type { border-bottom: none; }
+.rt-desc-seo__dato-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+.rt-desc-seo__dato-val {
+  display: block; font-size: 0.95rem; font-weight: 700; color: var(--rt-texto);
+}
+.rt-desc-seo__dato-label {
+  display: block; font-size: 0.76rem; color: var(--rt-texto-suave); margin-top: 1px;
+}
+.rt-desc-seo__cta {
+  display: flex; flex-direction: column; gap: 0;
+  margin-top: 20px;
+}
+.rt-desc-seo__cta .rt-btn { justify-content: center; text-align: center; }
+
 /* ── RESPONSIVE ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .rt-hero { min-height: 420px; padding: 70px 0 40px; }
@@ -512,6 +662,13 @@ details[open] .rt-faq__icon { transform: rotate(180deg); }
   .rt-countdown { flex-wrap: wrap; }
   .rt-hero__ctas { flex-direction: column; }
   .rt-hero__ctas .rt-btn { justify-content: center; }
+  /* Mapa — columna única en móvil */
+  .rt-mapa-ruta__layout { grid-template-columns: 1fr; }
+  .rt-mapa-ruta__map    { height: 320px; }
+  .rt-mapa-ruta__leyenda{ position: static; max-height: 260px; }
+  /* Descripción SEO — columna única en móvil */
+  .rt-desc-seo__inner   { grid-template-columns: 1fr; gap: 24px; }
+  .rt-desc-seo__ficha   { position: static; }
 }
 
 @media (max-width: 480px) {
