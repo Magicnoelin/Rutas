@@ -310,6 +310,12 @@ RewriteRule ^eventos/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ eventos-landing/index.ph
 # NOTA: /lugares/ como directorio sigue siendo servido por Apache (index.php)
 #       gracias a la condición !-d que excluye directorios existentes.
 # ============================================================
+# Multiidioma: /{lang}/lugares/{slug} → lugares-landing con idioma
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(en|fr|de|zh)/lugares/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ lugares-landing/index.php?lang=$1&slug=$2 [L,QSA]
+
+# Español (sin prefijo de idioma)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^lugares/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ lugares-landing/index.php?lang=es&slug=$1 [L,QSA]

@@ -69,7 +69,21 @@ function obtenerEmojiLugar(string $icono): string {
 
 // ── Variables de página ───────────────────────────────────────────────────────
 $base_domain = 'https://rutasrurales.io';
+// La URL canónica es siempre la versión en español (sin prefijo de idioma)
 $canonical   = $base_domain . '/lugares/' . $slug . '/';
+// URL de la página actual (con prefijo de idioma si corresponde)
+$current_url = ($lang !== 'es')
+    ? $base_domain . '/' . $lang . '/lugares/' . $slug . '/'
+    : $canonical;
+// Hreflang para todas las versiones de idioma
+$hreflang_links = [
+    'es'    => $base_domain . '/lugares/' . $slug . '/',
+    'en'    => $base_domain . '/en/lugares/' . $slug . '/',
+    'fr'    => $base_domain . '/fr/lugares/' . $slug . '/',
+    'de'    => $base_domain . '/de/lugares/' . $slug . '/',
+    'zh'    => $base_domain . '/zh/lugares/' . $slug . '/',
+    'x-default' => $base_domain . '/lugares/' . $slug . '/',
+];
 $mode        = null;   // 'categoria' | 'provincia'
 $category    = null;
 $province_label = null;
@@ -236,7 +250,7 @@ $og_image = !empty($places[0]['photo1'])
     : $base_domain . '/menu_images/og-default.jpg';
 ?>
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="<?= htmlspecialchars($lang === 'zh' ? 'zh-Hans' : $lang) ?>" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -247,6 +261,11 @@ $og_image = !empty($places[0]['photo1'])
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
 
+<!-- ── Hreflang multiidioma ───────────────────────────────────────── -->
+<?php foreach ($hreflang_links as $hl_code => $hl_url): ?>
+<link rel="alternate" hreflang="<?= htmlspecialchars($hl_code) ?>" href="<?= htmlspecialchars($hl_url) ?>">
+<?php endforeach; ?>
+
 <!-- ── Open Graph ────────────────────────────────────────────────── -->
 <meta property="og:type"         content="website">
 <meta property="og:title"        content="<?= htmlspecialchars($meta_title) ?>">
@@ -254,7 +273,7 @@ $og_image = !empty($places[0]['photo1'])
 <meta property="og:image"        content="<?= htmlspecialchars($og_image) ?>">
 <meta property="og:image:width"  content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url"          content="<?= htmlspecialchars($canonical) ?>">
+<meta property="og:url"          content="<?= htmlspecialchars($current_url) ?>">
 <meta property="og:site_name"    content="Rutas Rurales">
 
 <!-- ── Twitter Card ──────────────────────────────────────────────── -->
