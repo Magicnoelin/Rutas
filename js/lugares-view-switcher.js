@@ -157,7 +157,7 @@
       if(pinCount)pinCount.textContent='';
     } else if(view==='map'){
       listGrid.style.display='none';
-      mapWrap.style.display=''; mapWrap.setAttribute('aria-hidden','false');
+      mapWrap.style.display='block'; mapWrap.setAttribute('aria-hidden','false');
       splitWrap.style.display='none'; splitWrap.setAttribute('aria-hidden','true');
       loadLeaflet(function(){
         initMapMain();
@@ -167,7 +167,7 @@
       if(window.innerWidth<900){switchView('map');return;}
       listGrid.style.display='none';
       mapWrap.style.display='none'; mapWrap.setAttribute('aria-hidden','true');
-      splitWrap.style.display=''; splitWrap.setAttribute('aria-hidden','false');
+      splitWrap.style.display='block'; splitWrap.setAttribute('aria-hidden','false');
       loadLeaflet(function(){
         initMapSplit();
         setTimeout(function(){if(mapSplit)mapSplit.invalidateSize();},200);
