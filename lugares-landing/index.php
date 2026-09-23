@@ -92,6 +92,7 @@ $meta_title  = '';
 $meta_desc   = '';
 $page_h1     = '';
 $cat_icon    = '📍';
+$cat_color   = '#2d6a4f';  // verde corporativo por defecto
 $bc_label    = '';
 
 // ── Conectar BD y detectar modo ───────────────────────────────────────────────
@@ -143,6 +144,21 @@ try {
         
         $mode         = 'categoria';
         $cat_icon     = !empty($category['icon']) ? obtenerEmojiLugar($category['icon']) : '📍';
+        // Color del marcador según la categoría
+        $cat_color_map = [
+            'bodegas'      => '#800020',  // burdeos
+            'bodega'       => '#800020',
+            'restauracion' => '#c0392b',  // rojo
+            'restaurantes' => '#c0392b',
+            'patrimonio'   => '#8e44ad',  // morado
+            'monumentos'   => '#6c3483',
+            'iglesias'     => '#5d4e75',
+            'castillos'    => '#7d6608',
+            'naturaleza'   => '#1a5276',  // azul natural
+            'parques'      => '#1a7a4a',  // verde oscuro
+            'turismo'      => '#1abc9c',
+        ];
+        $cat_color = $cat_color_map[strtolower($category['slug'])] ?? '#2d6a4f';
         $bc_label     = $category['name'];
         $page_h1      = $category['name'] . ' ' . ($t['lug_landing_cat_in_spain'] ?? 'en España');
         $meta_title   = $category['name'] . ' ' . ($t['lug_landing_cat_in_spain'] ?? 'en España') . ' | Rutas Rurales';
@@ -485,10 +501,19 @@ ul,ol{list-style:none;margin:0;padding:0}
 .ll-popup__body{padding:10px 12px 12px}
 .ll-popup__name{font-size:.92rem;font-weight:700;color:var(--primary);margin:0 0 4px;line-height:1.3}
 .ll-popup__loc{font-size:.75rem;color:var(--text-muted);margin:0 0 8px}
+.ll-popup__cat{font-size:.75rem;color:#555;margin:0 0 3px}
+.ll-popup__tel{font-size:.75rem;color:#555;margin:0 0 6px}
 .ll-popup__btn{display:block;background:var(--primary);color:#fff;text-decoration:none;
-  padding:6px 10px;font-size:.78rem;border-radius:4px;text-align:center;font-weight:600;
-  margin-top:6px;transition:background var(--transition)}
+  padding:7px 10px;font-size:.78rem;border-radius:4px;text-align:center;font-weight:600;
+  margin-top:8px;transition:background var(--transition)}
 .ll-popup__btn:hover{background:var(--primary-light)}
+.ll-popup__web{display:block;font-size:.72rem;color:var(--primary);text-decoration:underline;
+  margin-top:5px;text-align:center}
+.ll-popup__claim{display:block;font-size:.7rem;color:#aaa;text-align:center;
+  margin-top:7px;text-decoration:underline}
+/* Popup más ancho para mostrar imagen y datos */
+.leaflet-popup-content-wrapper{border-radius:10px;padding:0;overflow:hidden}
+.leaflet-popup-content{margin:0!important;width:260px!important}
 
 /* ── Responsive breakpoints ────────────────────────────────────────────────── */
 @media(min-width:900px){
@@ -777,7 +802,8 @@ window.LLVS_CONFIG = {
   slug:       '<?= htmlspecialchars(addslashes($slug)) ?>',
   mode:       '<?= htmlspecialchars(addslashes($mode ?? '')) ?>',
   pathPrefix: '<?= htmlspecialchars(addslashes($path_prefix)) ?>',
-  catIcon:    '<?= htmlspecialchars(addslashes($cat_icon)) ?>'
+  catIcon:    '<?= htmlspecialchars(addslashes($cat_icon)) ?>',
+  catColor:   '<?= htmlspecialchars(addslashes($cat_color)) ?>'
 };
 </script>
 <script src="/js/lugares-view-switcher.js" defer></script>

@@ -59,10 +59,12 @@ try {
             exit;
         }
 
+        // ── 1. Lugares de places_of_interest ─────────────────────────────────
         $sp = $pdo->prepare(
             "SELECT id, slug, name, municipality, province,
                     short_description, photo1, website, phone,
-                    latitude, longitude
+                    latitude, longitude,
+                    'poi' AS source
              FROM places_of_interest
              WHERE category_id = ? AND is_active = 1
                AND latitude IS NOT NULL AND longitude IS NOT NULL
@@ -71,6 +73,60 @@ try {
         );
         $sp->execute([$cat['id']]);
         $places = $sp->fetchAll(PDO::FETCH_ASSOC);
+
+        // ── 2. Lugares de auxiliar_poi filtrados por categoría ────────────────
+        // Buscamos en categoria_label usando el nombre de la categoría (ej: "Bodegas")
+        $cat_name_like = '%' . $cat['name'] . '%';
+        $sa = $pdo->prepare(
+            "SELECT osm_id AS id,
+                    COALESCE(slug, CONCAT('aux-', osm_id)) AS slug,
+                    nombre AS name,
+                    '' AS municipality,
+                    '' AS province,
+                    '' AS short_description,
+                    '' AS photo1,
+                    '' AS website,
+                    '' AS phone,
+                    latitud AS latitude,
+                    longitud AS longitude,
+                    datos_json,
+                    'aux' AS source
+             FROM auxiliar_poi
+             WHERE (categoria_label LIKE ? OR categoria_label LIKE ?)
+               AND latitud IS NOT NULL AND longitud IS NOT NULL
+             LIMIT 500"
+        );
+        // También probar con el slug directamente (ej: slug=bodegas → 'bodega')
+        $slug_like = '%' . rtrim($slug, 's') . '%';
+        $sa->execute([$cat_name_like, $slug_like]);
+        $aux_places = $sa->fetchAll(PDO::FETCH_ASSOC);
+
+        // Enriquecer los auxiliar_poi con datos de datos_json
+        foreach ($aux_places as &$aux) {
+            $extra = json_decode($aux['datos_json'] ?? '{}', true) ?: [];
+            $aux['website'] = $extra['web'] ?? '';
+            $aux['phone']   = $extra['telefono'] ?? '';
+            // Foto: miniatura del sitio web o imagen de Unsplash por defecto
+            if (!empty($aux['website'])) {
+                $aux['photo1'] = 'https://image.thum.io/get/width/300/crop/600/' . $aux['website'];
+            }
+            unset($aux['datos_json']);
+        }
+        unset($aux);
+
+        // Merge: primero los POIs propios, luego los auxiliares (sin duplicar por coords aproximadas)
+        $seen_coords = [];
+        foreach ($places as $p) {
+            $key = round((float)$p['latitude'], 4) . ',' . round((float)$p['longitude'], 4);
+            $seen_coords[$key] = true;
+        }
+        foreach ($aux_places as $a) {
+            $key = round((float)$a['latitude'], 4) . ',' . round((float)$a['longitude'], 4);
+            if (!isset($seen_coords[$key])) {
+                $places[] = $a;
+                $seen_coords[$key] = true;
+            }
+        }
 
     } else {
         // mode = provincia — normalizar el slug a nombre de provincia real
@@ -115,6 +171,8 @@ try {
         $lng = (float)$p['longitude'];
         if ($lat === 0.0 && $lng === 0.0) continue; // ignorar coords nulas
 
+        $source = $p['source'] ?? 'poi';
+
         $features[] = [
             'type' => 'Feature',
             'geometry' => [
@@ -122,7 +180,7 @@ try {
                 'coordinates' => [$lng, $lat],  // GeoJSON: [lon, lat]
             ],
             'properties' => [
-                'id'          => (int)$p['id'],
+                'id'          => $p['id'] ?? '',
                 'slug'        => $p['slug'] ?? '',
                 'nombre'      => $p['name'] ?? '',
                 'municipio'   => $p['municipality'] ?? '',
@@ -132,6 +190,7 @@ try {
                 'web'         => $p['website'] ?? '',
                 'telefono'    => $p['phone'] ?? '',
                 'categoria'   => $p['category_name'] ?? '',
+                'source'      => $source,  // 'poi' | 'aux'
             ],
         ];
     }
