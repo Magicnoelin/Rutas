@@ -21,8 +21,8 @@ function renderHubHero(array $ctx): void {
     // URLs de las verticales — hubs canónicos sin extensión ni sufijos
     $url_stays  = $base . $langPfx . '/alojamientos/';
     $url_events = $base . $langPfx . '/eventos/';
-    $url_places = $base . '/lugares/';    // Solo ES por ahora
-    $url_activ  = $base . '/actividades/'; // Solo ES por ahora
+    $url_places = $base . $langPfx . '/lugares/';
+    $url_activ  = $base . $langPfx . '/actividades/';
 
     // Estadísticas (fallback a valores ilustrativos si BD no disponible)
     $total_stays  = $stats['total_stays']  ?? '+500';
