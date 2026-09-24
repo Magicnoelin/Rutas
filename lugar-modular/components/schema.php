@@ -134,6 +134,24 @@
             ];
         }
 
+        // ── AggregateRating ───────────────────────────────────────────────────
+        // Google muestra estrellas en los resultados de búsqueda cuando:
+        //   - ratingValue está entre 1 y 5
+        //   - reviewCount >= 1  (mínimo 1 reseña real)
+        // Las columnas rating_avg y reviews_count vienen del SELECT p.* en index.php
+        $ratingVal    = isset($lugar['rating_avg'])    ? (float)$lugar['rating_avg']    : 0.0;
+        $reviewCount  = isset($lugar['reviews_count']) ? (int)$lugar['reviews_count']   : 0;
+
+        if ($ratingVal >= 1.0 && $ratingVal <= 5.0 && $reviewCount >= 1) {
+            $tourist['aggregateRating'] = [
+                '@type'       => 'AggregateRating',
+                'ratingValue' => round($ratingVal, 1),   // un decimal: ej. 4.3
+                'reviewCount' => $reviewCount,
+                'bestRating'  => 5,
+                'worstRating' => 1,
+            ];
+        }
+
         // Categorías (touristType)
         $cat = strtolower($lugar['category_name'] ?? '');
         $touristTypeMap = [

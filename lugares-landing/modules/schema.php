@@ -211,11 +211,12 @@ function renderLugaresLandingSchema(array $ctx): void
             $attraction['touristType'] = $tourist_type;
         }
 
+        // Schema.org spec: ListItem referencia la entidad solo dentro de 'item'.
+        // El 'url' aquí arriba es redundante y puede confundir el parser de Google.
         $listElements[] = [
             '@type'    => 'ListItem',
             'position' => $idx + 1,
-            'url'      => $place_url,
-            'item'     => $attraction,
+            'item'     => $attraction,   // la url ya vive en $attraction['url'] y @id
         ];
     }
 
