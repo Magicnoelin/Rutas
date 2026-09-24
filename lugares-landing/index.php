@@ -311,26 +311,60 @@ $og_image = !empty($places[0]['photo1'])
 <link rel="preload" as="image" href="<?= htmlspecialchars($places[0]['photo1']) ?>">
 <?php endif; ?>
 
-<!-- ── JSON-LD ───────────────────────────────────────────────────── -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": "<?= htmlspecialchars($page_h1) ?>",
-  "description": "<?= htmlspecialchars($meta_desc) ?>",
-  "url": "<?= htmlspecialchars($canonical) ?>",
-  "inLanguage": "es",
-  "breadcrumb": {
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {"@type":"ListItem","position":1,"name":"Inicio","item":"https://rutasrurales.io/"},
-      {"@type":"ListItem","position":2,"name":"Lugares de interés","item":"https://rutasrurales.io/lugares/"},
-      {"@type":"ListItem","position":3,"name":"<?= htmlspecialchars($bc_label) ?>","item":"<?= htmlspecialchars($canonical) ?>"}
-    ]
-  },
-  "publisher": {"@type":"Organization","name":"Rutas Rurales","url":"https://rutasrurales.io"}
+<!-- ── JSON-LD: ItemList + TouristAttraction + GeoCoordinates ────── -->
+<?php
+require_once dirname(__DIR__) . '/lugares-landing/modules/schema.php';
+
+// Detectar si algún lugar tiene coordenadas válidas (para preconnect Leaflet)
+$hasGeo = false;
+foreach ($places as $_p) {
+    if (!empty($_p['latitude']) && !empty($_p['longitude'])
+        && !((float)$_p['latitude'] === 0.0 && (float)$_p['longitude'] === 0.0)) {
+        $hasGeo = true;
+        break;
+    }
 }
-</script>
+
+// Locale BCP-47 para schema.org
+$lang_locale_schema = match($lang) {
+    'en'    => 'en-GB',
+    'fr'    => 'fr-FR',
+    'de'    => 'de-DE',
+    'zh'    => 'zh-Hans',
+    default => 'es-ES',
+};
+
+renderLugaresLandingSchema([
+    'canonical'   => $canonical,
+    'page_title'  => $meta_title,
+    'page_desc'   => $meta_desc,
+    'lang'        => $lang,
+    'lang_locale' => $lang_locale_schema,
+    'mode'        => $mode,
+    'bc_label'    => $bc_label,
+    'cat_name'    => $category['name'] ?? '',
+    'province'    => $province_label   ?? '',
+    'slug'        => $slug,
+    'base_domain' => $base_domain,
+    'path_prefix' => $path_prefix,
+    'items'       => $places,
+]);
+?>
+
+<!-- ── Preconnect CDN mapa (negociación TCP/TLS anticipada) ────────── -->
+<?php if ($hasGeo): ?>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+<link rel="dns-prefetch" href="https://unpkg.com">
+<link rel="dns-prefetch" href="https://tile.openstreetmap.org">
+<!-- CSS de Leaflet precargado para evitar CLS al abrir la vista Mapa -->
+<link rel="preload" as="style"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</noscript>
+<?php endif; ?>
 
 <!-- ── Fuentes ────────────────────────────────────────────────────── -->
 <style>
@@ -657,7 +691,7 @@ ul,ol{list-style:none;margin:0;padding:0}
     </div>
 
     <ul class="lnd-grid" id="ll-list-grid" role="list" aria-label="<?= htmlspecialchars($page_h1) ?>">
-      <?php foreach ($places as $place): ?>
+      <?php foreach ($places as $lnd_idx => $place): ?>
       <li data-slug="<?= htmlspecialchars($place['slug']) ?>"
           data-lat="<?= htmlspecialchars($place['latitude'] ?? '') ?>"
           data-lng="<?= htmlspecialchars($place['longitude'] ?? '') ?>">
@@ -668,10 +702,21 @@ ul,ol{list-style:none;margin:0;padding:0}
           <!-- Imagen con aspect-ratio fijo -->
           <div class="lnd-card__img-wrap">
             <?php if (!empty($place['photo1'])): ?>
+            <?php
+              // Primera tarjeta = candidato LCP → eager + fetchpriority high
+              // Resto → lazy para no bloquear el hilo principal en móvil
+              $is_first_card   = ($lnd_idx === 0);
+              $img_loading     = $is_first_card ? 'eager' : 'lazy';
+              $img_fetchprio   = $is_first_card ? 'high'  : 'auto';
+              $img_decoding    = $is_first_card ? 'sync'  : 'async';
+            ?>
             <img class="lnd-card__img"
                  src="<?= htmlspecialchars($place['photo1']) ?>"
-                 alt="<?= htmlspecialchars($place['name']) ?>"
-                 width="400" height="267" loading="lazy">
+                 alt="<?= htmlspecialchars($place['name']) ?> — <?= htmlspecialchars(implode(', ', array_filter([$place['municipality'] ?? '', $place['province'] ?? '']))) ?>"
+                 width="400" height="267"
+                 loading="<?= $img_loading ?>"
+                 fetchpriority="<?= $img_fetchprio ?>"
+                 decoding="<?= $img_decoding ?>">
             <?php else: ?>
             <div class="lnd-card__img-placeholder" aria-hidden="true">
               <?= $mode === 'categoria' ? htmlspecialchars($cat_icon) : '📍' ?>

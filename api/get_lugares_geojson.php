@@ -12,7 +12,10 @@ error_reporting(E_ERROR | E_PARSE);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: https://rutasrurales.io');
-header('Cache-Control: public, max-age=300'); // 5 min caché en navegador
+// Caché 1 hora en navegador + CDN; los datos de categorías cambian poco
+// Vary: Accept-Encoding permite que proxies cacheen la versión gzip
+header('Cache-Control: public, max-age=3600, stale-while-revalidate=600');
+header('Vary: Accept-Encoding');
 
 // ── Parámetros ────────────────────────────────────────────────────────────────
 $slug_raw = isset($_GET['slug']) ? $_GET['slug'] : '';
