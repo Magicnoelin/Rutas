@@ -24,6 +24,73 @@
  *   propio espanol limpio, igual que EN/FR/DE. Solo cambia el prefijo.
  */
 
+/**
+ * MAPA PRIMARIO: slugs exactos de la tabla categories_places → prefijos i18n.
+ * Prioridad alta: se comprueba antes que CATEGORIAS_SLUG (fuzzy).
+ * Actualizar aquí cada vez que se añada una fila en categories_places.
+ *
+ * Campos BD visibles:
+ *   id | name                    | slug
+ *    1 | Monumentos              | monumentos
+ *    2 | Castillos               | castillos
+ *    3 | Iglesias                | iglesias
+ *    4 | Ermitas                 | ermitas
+ *    5 | Monasterios             | monasterios
+ *    6 | Naturaleza              | naturaleza
+ *    7 | Miradores               | miradores
+ *    8 | Parques Naturales       | parques-naturales
+ *    9 | Ríos y Lagunas          | rios-lagunas
+ *   10 | Bosques                 | bosques
+ *   11 | Patrimonio Cultural     | patrimonio-cultural
+ *   12 | Museos                  | museos
+ *   13 | Yacimientos Arqueológicos | yacimientos
+ *   14 | Centros de Interpretación | centros-interpretacion
+ *   15 | Pueblos con Encanto     | pueblos
+ *   16 | Conjuntos Históricos    | conjuntos-historicos
+ *   17 | Villas Medievales       | villas-medievales
+ *   18 | Bodegas                 | bodegas   (también 'Bodeags' typo — se cubre igual)
+ *   19 | Restauración            | restauracion
+ *   22 | Parques Temáticos       | parques-tematicos
+ *      | Gastronomía             | gastronomia
+ *      | Enoturismo              | enoturismo
+ */
+const CATEGORIAS_BD_SLUG = [
+    // --- Religioso ---
+    'iglesias'               => ['en'=>'church',               'fr'=>'eglise',              'de'=>'kirche',               'zh'=>'jiaotang'],
+    'ermitas'                => ['en'=>'hermitage',            'fr'=>'ermitage',             'de'=>'einsiedelei',          'zh'=>'yinxiuchu'],
+    'monasterios'            => ['en'=>'monastery',            'fr'=>'monastere',            'de'=>'kloster',              'zh'=>'si'],
+    // --- Castillos / Civil ---
+    'castillos'              => ['en'=>'castle',               'fr'=>'chateau',              'de'=>'burg',                 'zh'=>'chengbao'],
+    'monumentos'             => ['en'=>'monument',             'fr'=>'monument',             'de'=>'denkmal',              'zh'=>'jinianbei'],
+    // --- Naturaleza ---
+    'naturaleza'             => ['en'=>'nature',               'fr'=>'nature',               'de'=>'natur',                'zh'=>'ziran'],
+    'parques-naturales'      => ['en'=>'natural-park',         'fr'=>'parc-naturel',         'de'=>'naturpark',            'zh'=>'ziran-gongyuan'],
+    'rios-lagunas'           => ['en'=>'rivers-lakes',         'fr'=>'rivieres-lacs',        'de'=>'fluesse-seen',         'zh'=>'heli-hupao'],
+    // Alias: slugificar("Ríos y Lagunas") = "rios-y-lagunas"
+    'rios-y-lagunas'         => ['en'=>'rivers-lakes',         'fr'=>'rivieres-lacs',        'de'=>'fluesse-seen',         'zh'=>'heli-hupao'],
+    'bosques'                => ['en'=>'forest',               'fr'=>'foret',                'de'=>'wald',                 'zh'=>'senlin'],
+    // --- Miradores ---
+    'miradores'              => ['en'=>'viewpoint',            'fr'=>'belvedere',            'de'=>'aussichtspunkt',       'zh'=>'guanjingdian'],
+    // --- Cultura / Historia ---
+    'patrimonio-cultural'    => ['en'=>'cultural-heritage',    'fr'=>'patrimoine-culturel',  'de'=>'kulturerbe',           'zh'=>'wenhua-yichan'],
+    'museos'                 => ['en'=>'museum',               'fr'=>'musee',                'de'=>'museum',               'zh'=>'bowuguan'],
+    'yacimientos'            => ['en'=>'archaeological-site',  'fr'=>'site-archeologique',   'de'=>'ausgrabungsstaette',   'zh'=>'kaoguzhi'],
+    'centros-interpretacion'     => ['en'=>'interpretation-centre','fr'=>'centre-interpretation','de'=>'besucherzentrum',      'zh'=>'jieshizhongxin'],
+    // Alias: slugificar("Centros de Interpretación") = "centros-de-interpretacion"
+    'centros-de-interpretacion'  => ['en'=>'interpretation-centre','fr'=>'centre-interpretation','de'=>'besucherzentrum',      'zh'=>'jieshizhongxin'],
+    // --- Pueblos / Conjuntos ---
+    'pueblos'                => ['en'=>'charming-village',     'fr'=>'village-de-charme',    'de'=>'malerisches-dorf',     'zh'=>'tese-xiaozhen'],
+    'conjuntos-historicos'   => ['en'=>'historic-district',    'fr'=>'centre-historique',    'de'=>'altstadt',             'zh'=>'lishi-jiequ'],
+    'villas-medievales'      => ['en'=>'medieval-town',        'fr'=>'cite-medievale',       'de'=>'mittelalterliche-stadt','zh'=>'zhongshi-gucheng'],
+    // --- Gastronomía / Vino ---
+    'bodegas'                => ['en'=>'winery',               'fr'=>'cave-a-vin',           'de'=>'weinkeller',           'zh'=>'jiuzhuang'],
+    'enoturismo'             => ['en'=>'wine-tourism',         'fr'=>'oenotourisme',         'de'=>'weintourismus',        'zh'=>'jiuqu-lvyou'],
+    'gastronomia'            => ['en'=>'gastronomy',           'fr'=>'gastronomie',          'de'=>'gastronomie',          'zh'=>'meishi'],
+    'restauracion'           => ['en'=>'restaurant',           'fr'=>'restaurant',           'de'=>'restaurant',           'zh'=>'canting'],
+    // --- Ocio ---
+    'parques-tematicos'      => ['en'=>'theme-park',           'fr'=>'parc-de-loisirs',      'de'=>'freizeitpark',         'zh'=>'zhuti-gongyuan'],
+];
+
 const CATEGORIAS_SLUG = [
     'monasterio' => ['en'=>'monastery', 'fr'=>'monastere', 'de'=>'kloster', 'zh'=>'si'],
     'convento' => ['en'=>'convent', 'fr'=>'couvent', 'de'=>'konvent', 'zh'=>'xiuyuan'],
@@ -78,6 +145,10 @@ const PALABRAS_TRIVIALES = [
     'el', 'la', 'los', 'las',
     'un', 'una', 'unos', 'unas',
     'de', 'en', 'y',
+    // Sustantivos genéricos que aparecen en el nombre y ya están cubiertos por el prefijo de categoría
+    'pueblo', 'villa', 'villas', 'rio', 'lago', 'bosque', 'mirador', 'centro', 'centros',
+    'interpretacion', 'natural', 'parque', 'conjunto', 'patrimonio', 'cultural',
+    'yacimiento', 'mirador', 'miradero',
 ];
 
 function contieneCJK(string $texto): bool
@@ -99,27 +170,82 @@ function slugificar(string $texto): string
     return trim(preg_replace('/-{2,}/', '-', $texto), '-');
 }
 
+/**
+ * Traduce el nombre/slug de una categoría al prefijo correcto en el idioma dado.
+ *
+ * @param string $categoriaNombre  Nombre ES de la categoría (ej: "Parques Naturales")
+ *                                  o su slug BD (ej: "parques-naturales").
+ * @param string $idioma           Código ISO 639-1: en | fr | de | zh
+ * @return string  Prefijo slugificado (ej: "natural-park", "parc-naturel"…)
+ */
 function traducirCategoria(string $categoriaNombre, string $idioma): string
 {
+    // 1) Intentar coincidencia exacta con el slug BD (prioridad máxima).
+    //    Normaliza a minúsculas + ASCII + guiones para cubrir variantes.
+    $slugBD = slugificar($categoriaNombre);   // "parques-naturales", "ermitas", etc.
+    if ($slugBD && isset(CATEGORIAS_BD_SLUG[$slugBD])) {
+        return CATEGORIAS_BD_SLUG[$slugBD][$idioma]
+            ?? CATEGORIAS_BD_SLUG[$slugBD]['en']
+            ?? 'place';
+    }
+
+    // 2) Coincidencia parcial de palabra dentro del nombre normalizado (fallback fuzzy).
     $normalizado = strtolower(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $categoriaNombre) ?: $categoriaNombre);
     foreach (CATEGORIAS_SLUG as $clave => $traducciones) {
         if (strpos($normalizado, $clave) !== false) {
             return $traducciones[$idioma] ?? $traducciones['en'] ?? 'place';
         }
     }
-    return slugificar($categoriaNombre) ?: 'place';
+
+    // 3) Sin coincidencia: slugificar el nombre tal cual.
+    return $slugBD ?: 'place';
 }
 
 // FIX v2: do-while para categorias compuestas + multiples pasadas triviales
+// FIX v3: strip de segmentos del slug de categoría BD uno a uno al inicio del nombre
 function limpiarNombre(string $nombre, string $categoriaNombre): string
 {
     $nombreSlug = slugificar($nombre);
     $catNorm    = strtolower(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $categoriaNombre) ?: $categoriaNombre);
 
+    // --- Paso 1: eliminar slug completo de categoría si aparece al inicio ---
     $catSlugCompleto = slugificar($categoriaNombre);
-    if ($catSlugCompleto && strpos($nombreSlug, $catSlugCompleto . '-') === 0) {
-        $nombreSlug = substr($nombreSlug, strlen($catSlugCompleto) + 1);
-    } else {
+    if ($catSlugCompleto) {
+        // Caso A: slug_nombre empieza por slug_cat + '-algo' (hay texto propio después)
+        if (strpos($nombreSlug, $catSlugCompleto . '-') === 0) {
+            $nombreSlug = substr($nombreSlug, strlen($catSlugCompleto) + 1);
+        }
+        // Caso B: slug_nombre == slug_cat exacto (nombre == categoría, sin texto propio)
+        elseif ($nombreSlug === $catSlugCompleto) {
+            $nombreSlug = '';
+        }
+        // Caso C: strip palabra a palabra de los segmentos del slug de categoría (ej: "villas-medievales" → quitar "villas", luego "medievales")
+        else {
+            $catSegmentos = explode('-', $catSlugCompleto);
+            $cambio = true;
+            while ($cambio) {
+                $cambio = false;
+                foreach ($catSegmentos as $seg) {
+                    if ($seg !== '' && strpos($nombreSlug, $seg . '-') === 0) {
+                        $nombreSlug = substr($nombreSlug, strlen($seg) + 1);
+                        $cambio = true;
+                        break;
+                    }
+                    // también al final
+                    if ($seg !== '' && substr($nombreSlug, -(strlen($seg))) === $seg
+                        && strlen($nombreSlug) > strlen($seg)
+                        && $nombreSlug[strlen($nombreSlug) - strlen($seg) - 1] === '-') {
+                        $nombreSlug = rtrim(substr($nombreSlug, 0, -strlen($seg)), '-');
+                        $cambio = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Paso 2: fallback fuzzy con palabras clave de CATEGORIAS_SLUG ---
+    if ($nombreSlug !== '') {
         $cambio = true;
         while ($cambio) {
             $cambio = false;
@@ -135,6 +261,7 @@ function limpiarNombre(string $nombre, string $categoriaNombre): string
         }
     }
 
+    // --- Paso 3: eliminar palabras triviales al inicio ---
     $cambio = true;
     while ($cambio) {
         $cambio = false;
