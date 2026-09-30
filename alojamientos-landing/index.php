@@ -54,10 +54,8 @@ $normalized = generarSlug($slug_decoded);
 if (!empty($slug_decoded) && $slug_decoded !== $normalized && !empty($normalized)) {
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: /alojamientos/' . $normalized, true, 301);
-    exit;
+    exit();
 }
-
-
 
 // ── 1. Parámetros de entrada ──────────────────────────────────────────────────
 $lang     = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
@@ -70,17 +68,17 @@ $slug = preg_replace('/[^a-z0-9\-]/', '', strtolower($normalized));
 // ── 2. Parsear slug → provincia + filtros ─────────────────────────────────────
 $parsed = parseLandingSlug($slug);
 
-// Si el slug no es válido como landing, redirigir al detalle de alojamiento
-// (compatibilidad hacia atrás con slugs de alojamientos individuales)
+// Si el slug no es válido como landing, redirigir al hub principal de alojamientos
+// NUNCA redirigir a /alojamiento/ (singular) desde aquí
 if (!$parsed['valid'] && !empty($slug)) {
-    header('Location: https://rutasrurales.io/alojamiento/' . $slug, true, 301);
-    exit;
+    header('Location: /alojamientos/', true, 301);
+    exit();
 }
 
 // Si es completamente inválido (slug vacío), redirigir al hub canónico
 if (empty($slug)) {
-    header('Location: https://rutasrurales.io/alojamientos/', true, 301);
-    exit;
+    header('Location: /alojamientos/', true, 301);
+    exit();
 }
 
 // ── 3. Resolución de datos de provincia y filtros ─────────────────────────────
