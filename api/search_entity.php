@@ -19,7 +19,7 @@ if (strlen($q) < 2) {
     exit;
 }
 
-$validTypes = ['accommodations', 'places_of_interest', 'cultural_events', 'activities', 'all'];
+$validTypes = ['accommodations', 'places_of_interest', 'cultural_events', 'activities', 'auxiliar_poi', 'all'];
 if (!in_array($type, $validTypes)) {
     $type = 'all';
 }
@@ -86,11 +86,19 @@ try {
         'places_of_interest' => ['label' => 'Lugar de Interés', 'icon' => 'fa-map-marker-alt'],
         'cultural_events'    => ['label' => 'Evento Cultural',  'icon' => 'fa-calendar-alt'],
         'activities'         => ['table' => 'tourist_activities', 'label' => 'Actividad', 'icon' => 'fa-hiking'],
+        'auxiliar_poi'       => ['label' => 'POI Auxiliar',     'icon' => 'fa-thumbtack'],
     ];
 
     foreach ($tableConfig as $entityType => $config) {
         // Filtrar por tipo si se especificó
-        if ($type !== 'all' && $type !== $entityType) continue;
+        // auxiliar_poi se incluye también cuando se busca en places_of_interest o all
+        if ($type !== 'all' && $type !== $entityType) {
+            if ($entityType === 'auxiliar_poi' && $type === 'places_of_interest') {
+                // incluir — sigue adelante
+            } else {
+                continue;
+            }
+        }
         
         // Usar el nombre real de la tabla (para 'activities' usa 'tourist_activities')
         $tableName = $config['table'] ?? $entityType;

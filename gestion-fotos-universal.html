@@ -400,6 +400,9 @@
             <button class="type-btn" data-type="accommodations" onclick="selectType(this)">
                 <i class="fas fa-bed"></i>Alojamiento
             </button>
+            <button class="type-btn" data-type="auxiliar_poi" onclick="selectType(this)">
+                <i class="fas fa-thumbtack"></i>POI Auxiliar
+            </button>
         </div>
     </div>
 
@@ -579,6 +582,13 @@ const CATEGORIES = {
         {id:'piscina',    label:'Piscina',    icon:'fa-person-swimming'},
         {id:'otro',       label:'Otro',       icon:'fa-plus'},
     ],
+    auxiliar_poi: [
+        {id:'exterior',   label:'Exterior',   icon:'fa-mountain-sun'},
+        {id:'panoramica', label:'Panoramica', icon:'fa-image'},
+        {id:'detalle',    label:'Detalle',    icon:'fa-search-plus'},
+        {id:'entorno',    label:'Entorno',    icon:'fa-tree'},
+        {id:'otro',       label:'Otro',       icon:'fa-plus'},
+    ],
 };
 
 const TYPE_ICONS = {
@@ -586,6 +596,7 @@ const TYPE_ICONS = {
     cultural_events:    'fa-calendar-alt',
     activities:         'fa-hiking',
     accommodations:     'fa-bed',
+    auxiliar_poi:       'fa-thumbtack',
 };
 
 const TYPE_LABELS = {
@@ -593,6 +604,7 @@ const TYPE_LABELS = {
     cultural_events:    'Evento Cultural',
     activities:         'Actividad',
     accommodations:     'Alojamiento',
+    auxiliar_poi:       'POI Auxiliar',
 };
 
 function selectType(btn) {

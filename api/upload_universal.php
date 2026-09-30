@@ -6,7 +6,8 @@ $entity_map = [
     'accommodations'     => 'alojamientos/',
     'cultural_events'    => 'eventos-culturales/',
     'places_of_interest' => 'lugares/',
-    'activities'         => 'actividades/'
+    'activities'         => 'actividades/',
+    'auxiliar_poi'       => 'auxiliar_poi/'
 ];
 
 $base_path = "../img/";
@@ -42,20 +43,33 @@ if (move_uploaded_file($file['tmp_name'], $final_path)) {
     
     include 'db_connect.php'; // Tu conexión habitual
 
-    // Insertamos en la tabla maestra entity_photos
-    $sql = "INSERT INTO entity_photos (entity_type, entity_id, category, file_path, alt_text) 
-            VALUES (?, ?, ?, ?, ?)";
-    
-    $stmt = $conn->prepare($sql);
     $db_path = "/img/" . $folder_name . $new_file_name;
-    $alt_text = str_replace('-', ' ', $slug) . " - " . $category;
-    
-    $stmt->bind_param("sisss", $entity_type, $entity_id, $category, $db_path, $alt_text);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'url' => $db_path]);
+
+    // Para auxiliar_poi actualizamos directamente el campo photo1 de la tabla
+    if ($entity_type === 'auxiliar_poi') {
+        $sql  = "UPDATE auxiliar_poi SET photo1 = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $db_path, $entity_id);
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'url' => $db_path]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al actualizar photo1 en auxiliar_poi']);
+        }
     } else {
-        echo json_encode(['success' => false, 'error' => 'Error al registrar en DB']);
+        // Insertamos en la tabla maestra entity_photos
+        $sql = "INSERT INTO entity_photos (entity_type, entity_id, category, file_path, alt_text) 
+                VALUES (?, ?, ?, ?, ?)";
+        
+        $stmt = $conn->prepare($sql);
+        $alt_text = str_replace('-', ' ', $slug) . " - " . $category;
+        
+        $stmt->bind_param("sisss", $entity_type, $entity_id, $category, $db_path, $alt_text);
+        
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'url' => $db_path]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al registrar en DB']);
+        }
     }
 } else {
     echo json_encode(['success' => false, 'error' => 'Error al mover el archivo']);
