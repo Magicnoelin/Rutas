@@ -1,5 +1,6 @@
 <?php 
 include 'db.php';
+require_once __DIR__ . '/../api/slug_functions.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $fromSuggested = isset($_GET['from_suggested']) ? (int)$_GET['from_suggested'] : 0;
@@ -13,7 +14,7 @@ if ($id === 0 && $fromSuggested > 0) {
     
     if ($suggestion) {
         // Generar slug único
-        $baseSlug = strtolower(trim(preg_replace('/[^a-zA-Z0-9-]/', '-', $suggestion['name'])));
+        $baseSlug = generarSlug($suggestion['name']);
         $slug = $baseSlug . '-' . time();
         
         // Obtener primera categoría válida (si no hay, usar 1 como fallback)

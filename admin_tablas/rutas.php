@@ -5,6 +5,7 @@
  * Crear, editar, gestionar items y publicar rutas temáticas
  */
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/../api/slug_functions.php';
 
 $pdo = getDBConnection();
 $msg = '';
@@ -39,7 +40,7 @@ if ($action === 'save_ruta' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Auto-slug si vacío
     if (empty($slug) && !empty($name)) {
-        $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $name)));
+        $slug = generarSlug($name);
         $slug = trim($slug, '-');
     }
 

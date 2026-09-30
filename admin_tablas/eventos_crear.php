@@ -1,5 +1,6 @@
 <?php 
-include 'db.php'; 
+include 'db.php';
+require_once __DIR__ . '/../api/slug_functions.php'; 
 
 // 1. CONFIGURACIÓN DE ERRORES
 ini_set('display_errors', 1);
@@ -28,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $pdo->prepare($sql);
         
         $name = $_POST['name'] ?: 'Evento sin nombre';
-        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
+        $slug = generarSlug($name);
 
         $stmt->execute([
             $name,

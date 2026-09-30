@@ -6,14 +6,8 @@
  */
 
 require_once 'config.php';
+require_once 'slug_functions.php';
 
-// Función para generar slug
-function generarSlug($texto) {
-    if (!$texto) return '';
-    return strtolower(trim(preg_replace('/[^a-zA-Z0-9-]/', '', preg_replace('/\s+/', '-', $texto)), '-'));
-}
-
-// Solo permitir método POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonError('Método no permitido', 405);
 }
