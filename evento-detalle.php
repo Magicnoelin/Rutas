@@ -19,19 +19,14 @@ require_once 'api/slug_functions.php';
 // ─── NORMALIZACIÓN DE SLUG: Prevenir bucles y manejar tildes ───────────────────────
 $slug_raw = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 
-$needs_redirect = false;
-$normalized_slug = $slug_raw;
+// 1. Decodificar URL encoding (ej: %C3%B3 -> ó)
+$slug_decoded = urldecode($slug_raw);
 
-if (!empty($slug_raw)) {
-    if (preg_match('/[áéíóúñüÁÉÍÓÚÑÜ%]/', $slug_raw)) {
-        $normalized_slug = generarSlug($slug_raw);
-        if ($normalized_slug !== $slug_raw && !empty($normalized_slug)) {
-            $needs_redirect = true;
-        }
-    }
-}
+// 2. Normalizar el slug (convertir tildes a ASCII)
+$normalized_slug = generarSlug($slug_decoded);
 
-if ($needs_redirect) {
+// 3. Si el slug decodificado diffiere del normalizado, redirect 301
+if (!empty($slug_decoded) && $slug_decoded !== $normalized_slug && !empty($normalized_slug)) {
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: /evento/' . $normalized_slug);
     exit;

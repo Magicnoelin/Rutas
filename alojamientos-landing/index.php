@@ -37,6 +37,24 @@ require_once __DIR__ . '/modules/hero.php';
 require_once __DIR__ . '/modules/intro.php';
 require_once __DIR__ . '/modules/listing-alojamientos.php';
 require_once __DIR__ . '/modules/cruce-semantico.php';
+// ── 0. Normalización de slug (tildes → ASCII) ────────────────────────────────
+// Cargar funciones de slug
+require_once $_BASE . '/api/slug_functions.php';
+
+// 1. Decodificar URL encoding (ej: %C3%B3 -> ó)
+$slug_decoded = urldecode($slug_raw);
+
+// 2. Normalizar el slug (convertir tildes a ASCII)
+$normalized = generarSlug($slug_decoded);
+
+// 3. Si el slug decodificado diffiere del normalizado, redirect 301
+if (!empty($slug_decoded) && $slug_decoded !== $normalized && !empty($normalized)) {
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: /alojamientos/' . $normalized);
+    exit;
+}
+
+
 
 // ── 1. Parámetros de entrada ──────────────────────────────────────────────────
 $slug_raw = isset($_GET['slug']) ? trim($_GET['slug']) : '';

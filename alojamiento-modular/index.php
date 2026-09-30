@@ -20,26 +20,14 @@ require_once '../api/slug_functions.php';
 
 $slug_raw = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 
-// 1. Detectar si el slug contiene tildes o caracteres UTF-8 encoding
-// Si contiene %C3 (encoding UTF-8) o tildes directas, normalizar y redirigir 301
-$needs_redirect = false;
-$normalized_slug = $slug_raw;
+// 1. Decodificar URL encoding (ej: %C3%B3 -> ó)
+$slug_decoded = urldecode($slug_raw);
 
-if (!empty($slug_raw)) {
-    // Verificar si hay tildes o encoding UTF-8 en la URL
-    if (preg_match('/[áéíóúñüÁÉÍÓÚÑÜ%]/', $slug_raw)) {
-        // Normalizar el slug
-        $normalized_slug = generarSlug($slug_raw);
-        
-        // Solo redirigir si el slug normalizado es diferente al original
-        if ($normalized_slug !== $slug_raw && !empty($normalized_slug)) {
-            $needs_redirect = true;
-        }
-    }
-}
+// 2. Normalizar el slug (convertir tildes a ASCII)
+$normalized_slug = generarSlug($slug_decoded);
 
-// Si necesita redirect, hacerlo con 301
-if ($needs_redirect) {
+// 3. Si el slug decodificado contiene caracteres no ASCII o diffiere del normalizado, redirect 301
+if (!empty($slug_decoded) && $slug_decoded !== $normalized_slug && !empty($normalized_slug)) {
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: /alojamiento/' . $normalized_slug);
     exit;
