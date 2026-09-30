@@ -59,24 +59,13 @@ RewriteEngine On
 RewriteBase /
 
 # ══════════════════════════════════════════════════════════════════════════════
-# REGLAS DE NORMALIZACIÓN UTF-8 → ASCII (Prevenir bucles de redirección)
+# DETECCIÓN: URLs con encoding UTF-8 (%C3) → pasar a PHP para normalización
 # ══════════════════════════════════════════════════════════════════════════════
-# Estas reglas normalizan URLs con tildes, eñes y caracteres especiales
-# antes de cualquier otro procesamiento para evitar bucles infinitos
-
-# 1. Redirigir URLs con %C3%XX (UTF-8 percent-encoded) a versión ASCII
-# Ejemplo: /alojamiento/mascotas-le%C3%B3n → /alojamiento/mascotas-leon
-# Usa NE (No Escape) para evitar recodificación
-RewriteCond %{THE_REQUEST} ^[A-Z]+\s+/.*%[C3][A-F0-9] [NC]
-RewriteRule ^(.*)$ $1 [N,L]
-
-# Solo para rutas de contenido, no para carpetas reales
-RewriteCond %{THE_REQUEST} ^[A-Z]+\s+/((alojamiento|alojamientos|lugar|evento|actividad)/.*[A-Z]) [NC]
-RewriteRule ^/?((alojamiento|alojamientos|lugar|evento|actividad)/.*)$ /$1 [R=301,L,NE]
-
-# ══════════════════════════════════════════════════════════════════════════════
-# FIN DE NORMALIZACIÓN UTF-8
-# ══════════════════════════════════════════════════════════════════════════════
+# Si la URL contiene %C3 (encoding UTF-8), la pasamos al PHP
+# El PHP normaliza el slug con generarSlug() y redirige si es necesario
+# THE_REQUEST evita bucles infinitos
+RewriteCond %{THE_REQUEST} %C3 [NC]
+RewriteRule ^ - [L]
 
 
 # Forzar eliminación del evento conflictivo (Evitar Phishing)
