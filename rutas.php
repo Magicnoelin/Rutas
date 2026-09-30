@@ -1,6 +1,32 @@
 <?php 
     $page_title = "Rutas Cercanas | Rutas Rurales";
     $page_canonical = "https://rutasrurales.io/rutas.php";
+    
+    // ============================================================
+    // SEO: Detectar parámetros de filtro/coordenadas para noindex
+    // ============================================================
+    // Parámetros que indican una página filtrada (no indexar)
+    $filter_params = ['lat', 'lng', 'radius', 'provincia', 'alojamientos', 'lugares', 'actividades', 'eventos'];
+    
+    // Verificar si hay parámetros de filtro en la URL
+    $has_filter_params = false;
+    foreach ($filter_params as $param) {
+        if (isset($_GET[$param])) {
+            $has_filter_params = true;
+            break;
+        }
+    }
+    
+    // Si hay parámetros de filtro, generar noindex,follow; si no, index,follow
+    if ($has_filter_params) {
+        $page_robots = "noindex, follow";
+    } else {
+        $page_robots = "index, follow";
+    }
+    
+    // Canonical siempre limpio (sin parámetros de filtros/coordenadas)
+    $page_canonical = "https://rutasrurales.io/rutas.php";
+    
     include 'header.php'; 
     
     // Parámetros URL para pre-seleccionar valores

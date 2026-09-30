@@ -116,7 +116,10 @@ if (!$_header_skip_head):
     
     <meta name="description" content="<?php echo $page_description; ?>" />
     <title><?php echo $page_title ?? $t['title']; ?></title>
-    <link rel="canonical" href="<?php echo $page_canonical ?? 'https://rutasrurales.io' . $_SERVER['REQUEST_URI']; ?>">
+    
+    <!-- Meta Robots: configurable dinámicamente (page_robots) o por defecto index,follow -->
+    <meta name="robots" content="<?php echo isset($page_robots) ? $page_robots : 'index, follow'; ?>" />
+    <link rel="canonical" href="<?php echo isset($page_canonical) ? $page_canonical : 'https://rutasrurales.io' . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>">
     
     <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
     

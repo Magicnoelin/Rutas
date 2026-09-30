@@ -19,8 +19,14 @@ Disallow: /places/alojamientos/tag/
 Disallow: */feed/
 Disallow: */comments/feed/
 Disallow: /?elementor_library=*
-# Bloqueo de búsquedas dinámicas por parámetros para evitar Soft 404 (páginas vacías) y ahorrar crawl budget
-Disallow: /rutas.php?*
+
+# BLOQUEO DE BÚSQUEDAS DINÁMICAS - RUTAS.PHP
+# ============================================
+# IMPORTANTE: Se eliminó el Disallow de /rutas.php?* para permitir que Googlebot lea la directiva noindex
+# Las URLs con parámetros de filtro/coordenadas ahora tienen <meta name="robots" content="noindex, follow"> en el HTML
+Allow: /rutas.php
+Allow: /rutas.php?
+# Disallow: /rutas.php?*  # COMENTADO: Permitimos rastreo para leer meta noindex
 
 # 3. URLs específicas antiguas o basura
 Disallow: /8017-2/
