@@ -41,8 +41,11 @@ require_once __DIR__ . '/modules/cruce-semantico.php';
 // Cargar funciones de slug
 require_once $_BASE . '/api/slug_functions.php';
 
+// Obtener slug de GET
+$slug_input = isset($_GET['slug']) ? trim($_GET['slug']) : '';
+
 // 1. Decodificar URL encoding (ej: %C3%B3 -> ó)
-$slug_decoded = urldecode($slug_raw);
+$slug_decoded = urldecode($slug_input);
 
 // 2. Normalizar el slug (convertir tildes a ASCII)
 $normalized = generarSlug($slug_decoded);
@@ -57,13 +60,12 @@ if (!empty($slug_decoded) && $slug_decoded !== $normalized && !empty($normalized
 
 
 // ── 1. Parámetros de entrada ──────────────────────────────────────────────────
-$slug_raw = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 $lang     = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
 $lang     = in_array($lang, ['es', 'en', 'fr', 'de', 'zh'], true) ? $lang : 'es';
 $page     = max(1, (int)($_GET['p'] ?? $_GET['page'] ?? 1));
 
-// Sanitizar slug: solo a-z 0-9 y guiones
-$slug = preg_replace('/[^a-z0-9\-]/', '', strtolower($slug_raw));
+// Usar el slug ya normalizado, luego sanitizar
+$slug = preg_replace('/[^a-z0-9\-]/', '', strtolower($normalized));
 
 // ── 2. Parsear slug → provincia + filtros ─────────────────────────────────────
 $parsed = parseLandingSlug($slug);
