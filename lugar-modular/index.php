@@ -28,10 +28,31 @@ function esc(?string $str): string {
 require_once __DIR__ . '/../includes/faq-helper.php';
 // Cargar el helper de viator-section
 require_once __DIR__ . '/components/viator-section.php';
+// Cargar funciones de slug
+require_once __DIR__ . '/../api/slug_functions.php';
 
-// ─── SEGURIDAD: SLUG ─────────────────────────────────────────────────────────
+// ─── NORMALIZACIÓN DE SLUG: Prevenir bucles y manejar tildes ───────────────────
+$slug_raw = trim($_GET['slug'] ?? '');
 
-$slug = trim($_GET['slug'] ?? '');
+$needs_redirect = false;
+$normalized_slug = $slug_raw;
+
+if (!empty($slug_raw)) {
+    if (preg_match('/[áéíóúñüÁÉÍÓÚÑÜ%]/', $slug_raw)) {
+        $normalized_slug = generarSlug($slug_raw);
+        if ($normalized_slug !== $slug_raw && !empty($normalized_slug)) {
+            $needs_redirect = true;
+        }
+    }
+}
+
+if ($needs_redirect) {
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: /lugar/' . $normalized_slug);
+    exit;
+}
+
+$slug = $normalized_slug;
 $slug = preg_replace('/[^a-z0-9\-\.\_]/i', '', $slug);
 
 if (empty($slug)) {

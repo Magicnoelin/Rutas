@@ -15,7 +15,38 @@ define('API_NO_HEADERS', true);
 require_once '../api/config.php';
 require_once __DIR__ . '/modules/schema.php';
 
-$slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
+// ─── NORMALIZACIÓN DE SLUG: Prevenir bucles y manejar tildes ───────────────────
+require_once '../api/slug_functions.php';
+
+$slug_raw = isset($_GET['slug']) ? trim($_GET['slug']) : '';
+
+// 1. Detectar si el slug contiene tildes o caracteres UTF-8 encoding
+// Si contiene %C3 (encoding UTF-8) o tildes directas, normalizar y redirigir 301
+$needs_redirect = false;
+$normalized_slug = $slug_raw;
+
+if (!empty($slug_raw)) {
+    // Verificar si hay tildes o encoding UTF-8 en la URL
+    if (preg_match('/[áéíóúñüÁÉÍÓÚÑÜ%]/', $slug_raw)) {
+        // Normalizar el slug
+        $normalized_slug = generarSlug($slug_raw);
+        
+        // Solo redirigir si el slug normalizado es diferente al original
+        if ($normalized_slug !== $slug_raw && !empty($normalized_slug)) {
+            $needs_redirect = true;
+        }
+    }
+}
+
+// Si necesita redirect, hacerlo con 301
+if ($needs_redirect) {
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: /alojamiento/' . $normalized_slug);
+    exit;
+}
+
+// Usar el slug normalizado para la búsqueda
+$slug = $normalized_slug;
 $lang = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
 $lang = in_array($lang, ['es', 'en', 'fr', 'de', 'zh']) ? $lang : 'es';
 
@@ -34,6 +65,31 @@ if (!empty($slug)) {
         ");
         $stmt->execute([$slug]);
         $alojamiento = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // ─── FALLBACK: Si no se encuentra por slug, buscar por nombre normalizado ───
+        // Esto maneja el caso de slugs que no coinciden exactamente
+        if (!$alojamiento && !empty($slug)) {
+            // Convertir slug a nombre (reemplazar guiones por espacios)
+            $nombre_busqueda = str_replace('-', ' ', $slug);
+            
+            // Buscar por nombre que coincida parcialmente
+            $stmt2 = $pdo->prepare("
+                SELECT a.*, c.name as category_name
+                FROM accommodations a
+                LEFT JOIN categories_accommodations c ON a.category_id = c.id
+                WHERE LOWER(a.name) LIKE ? AND a.is_active = 1
+                LIMIT 1
+            ");
+            $stmt2->execute(['%' . strtolower($nombre_busqueda) . '%']);
+            $alojamiento = $stmt2->fetch(PDO::FETCH_ASSOC);
+            
+            // Si encontramos uno por nombre, redirigir 301 al slug correcto
+            if ($alojamiento && $alojamiento['slug'] !== $slug) {
+                header('HTTP/1.1 301 Moved Permanently');
+                header('Location: /alojamiento/' . $alojamiento['slug']);
+                exit;
+            }
+        }
 
         // ─── CONTROL DE ACCESO POR MEMBRESÍA ───────────────────────────────
         // Si el alojamiento NO es premium y se accede desde un idioma que NO es español,

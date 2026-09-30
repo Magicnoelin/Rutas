@@ -10,13 +10,34 @@
 
 define('API_NO_HEADERS', true);
 require_once 'api/config.php';
+require_once 'api/slug_functions.php';
 
 // ── SEO: indicar explícitamente a Bing/Google que indexe Y archive estas páginas
 // Esto elimina el warning "NOARCHIVE" de Bing Webmaster Tools / Copilot
-// IMPORTANTE: "archive" debe aparecer explícitamente para que Bing no lo omita
-header('X-Robots-Tag: index, follow, archive, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+// IMPORTANTE: "archive" debe aparecer explícitamente para que Bing no lo omitaheder('X-Robots-Tag: index, follow, archive, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
 
-$slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
+// ─── NORMALIZACIÓN DE SLUG: Prevenir bucles y manejar tildes ───────────────────────
+$slug_raw = isset($_GET['slug']) ? trim($_GET['slug']) : '';
+
+$needs_redirect = false;
+$normalized_slug = $slug_raw;
+
+if (!empty($slug_raw)) {
+    if (preg_match('/[áéíóúñüÁÉÍÓÚÑÜ%]/', $slug_raw)) {
+        $normalized_slug = generarSlug($slug_raw);
+        if ($normalized_slug !== $slug_raw && !empty($normalized_slug)) {
+            $needs_redirect = true;
+        }
+    }
+}
+
+if ($needs_redirect) {
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: /evento/' . $normalized_slug);
+    exit;
+}
+
+$slug = $normalized_slug;
 $lang = isset($_GET['lang']) ? trim($_GET['lang']) : 'es';
 $lang = in_array($lang, ['es', 'en', 'fr', 'de', 'zh']) ? $lang : 'es';
 
