@@ -59,6 +59,15 @@ RewriteEngine On
 RewriteBase /
 
 # ══════════════════════════════════════════════════════════════════════════════
+# REDIRECCIONES 301 MANUALES PARA LEÓN (limpiar tildes)
+# ══════════════════════════════════════════════════════════════════════════════
+Redirect 301 /alojamientos/mascotas-león https://rutasrurales.io/alojamientos/mascotas-leon
+Redirect 301 /alojamiento/mascotas-león https://rutasrurales.io/alojamientos/mascotas-leon
+Redirect 301 /alojamientos/casas-rurales-león https://rutasrurales.io/alojamientos/casas-rurales-leon
+Redirect 301 /alojamiento/casas-rurales-león https://rutasrurales.io/alojamientos/casas-rurales-leon
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # DETECCIÓN: URLs con encoding UTF-8 (%C3) → pasar a PHP para normalización
 # ══════════════════════════════════════════════════════════════════════════════
 # Si la URL contiene %C3 (encoding UTF-8), la pasamos al PHP
