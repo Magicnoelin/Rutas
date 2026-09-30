@@ -53,7 +53,7 @@ $normalized = generarSlug($slug_decoded);
 // 3. Si el slug decodificado diffiere del normalizado, redirect 301
 if (!empty($slug_decoded) && $slug_decoded !== $normalized && !empty($normalized)) {
     header('HTTP/1.1 301 Moved Permanently');
-    header('Location: /alojamientos/' . $normalized);
+    header('Location: /alojamientos/' . $normalized, true, 301);
     exit;
 }
 

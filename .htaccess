@@ -334,7 +334,7 @@ RewriteRule ^lugares/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ lugares-landing/index.ph
 # 5. LIMPIEZA DE URLs ANTIGUAS
 # ============================================================
 RewriteRule ^alojamiento/lugar/(.+)$ /alojamiento/$1 [R=301,L]
-RewriteRule ^alojamientos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
+# RewriteRule ^alojamientos/([^/]+)/?$ /alojamiento/$1 [R=301,L] # COMENTADO - Ahora las landings van a alojamientos-landing
 RewriteRule ^alojamientos-turisticos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
 RewriteRule ^lugares-interes/([^/]+)/?$ /lugar/$1 [R=301,L]
 
