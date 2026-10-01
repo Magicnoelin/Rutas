@@ -1,7 +1,104 @@
 <?php
+// ============================================================
+// SEO INTERNACIONAL - CONFIGURACIÓN DE IDIOMA Y ETIQUETAS
+// ============================================================
+
 // Detectar idioma desde variable $lang o desde el path
 $lang = $lang ?? 'es';
+
+// Detectar idioma desde la URL si no se ha definido
+if (!isset($lang) || empty($lang)) {
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '/';
+    // Extraer prefijo de idioma de la URL (ej: /en/, /fr/, /de/, /zh/)
+    if (preg_match('#^/(en|fr|de|zh)/#', $request_uri, $matches)) {
+        $lang = $matches[1];
+    } else {
+        $lang = 'es';
+    }
+}
+
+// Lista de idiomas soportados
+$supported_languages = ['es', 'en', 'fr', 'de', 'zh'];
+if (!in_array($lang, $supported_languages)) {
+    $lang = 'es';
+}
+
 $lang_prefix = ($lang != 'es') ? '/' . $lang : '';
+
+// ============================================================
+// SEO: LÓGICA DE INDEXACIÓN PARA PÁGINAS TRADUCIDAS
+// ============================================================
+
+// Por defecto, las páginas traducidas deben indexarse
+// Solo se aplica noindex si hay parámetros de paginación profunda o filtros innecesarios
+$page_robots = $page_robots ?? 'index, follow';
+
+// Detectar parámetros que indican paginación profunda o filtros innecesarios
+$pagination_params = ['p', 'page', 'pagina', 'offset'];
+$has_pagination = false;
+foreach ($pagination_params as $param) {
+    if (isset($_GET[$param]) && is_numeric($_GET[$param]) && intval($_GET[$param]) > 1) {
+        $has_pagination = true;
+        break;
+    }
+}
+
+// Si es una página traducida y tiene paginación profunda, aplicar noindex
+$is_translated_page = ($lang !== 'es');
+if ($is_translated_page && $has_pagination) {
+    $page_robots = 'noindex, follow';
+}
+
+// ============================================================
+// SEO: GENERACIÓN DE HREFLANG DINÁMICO
+// ============================================================
+
+// Función helper para generar URL equivalente en otro idioma
+function get_lang_url($current_lang, $target_lang, $base_path = null) {
+    $base_domain = 'https://rutasrurales.io';
+    
+    if ($base_path === null) {
+        $base_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    }
+    
+    // Eliminar el prefijo de idioma actual del path
+    $clean_path = preg_replace('#^/(en|fr|de|zh)/#', '/', $base_path);
+    
+    // Construir el nuevo prefijo de idioma
+    if ($target_lang === 'es') {
+        $new_prefix = '';
+    } else {
+        $new_prefix = '/' . $target_lang;
+    }
+    
+    return $base_domain . $new_prefix . $clean_path;
+}
+
+// Generar array de hreflang para todos los idiomas
+$hreflang_urls = [];
+$current_path = $_SERVER['REQUEST_URI'] ?? '/';
+
+foreach ($supported_languages as $lang_code) {
+    $hreflang_urls[$lang_code] = get_lang_url($lang, $lang_code, $current_path);
+}
+// x-default siempre apunta a la versión española
+$hreflang_urls['x-default'] = $hreflang_urls['es'];
+
+// ============================================================
+// SEO: CANONICAL CORRECTO PARA CADA IDIOMA
+// ============================================================
+
+// Si no se ha definido una canonical personalizada, generar una según el idioma actual
+if (!isset($page_canonical)) {
+    $page_canonical = get_lang_url($lang, $lang, $current_path);
+}
+
+// Mantener solo la ruta (sin query string) para canonical
+$page_canonical = strtok($page_canonical, '?');
+
+// ============================================================
+// INICIO DEL HEADER ORIGINAL
+// ============================================================
 
 // ── Guard: si la página llamante ya ha generado su propio <head> completo
 // (define HEADER_NO_HTML_HEAD = true), saltamos todo el bloque HTML hasta
@@ -117,11 +214,16 @@ if (!$_header_skip_head):
     <meta name="description" content="<?php echo $page_description; ?>" />
     <title><?php echo $page_title ?? $t['title']; ?></title>
     
-    <!-- Meta Robots: configurable dinámicamente (page_robots) o por defecto index,follow -->
-    <meta name="robots" content="<?php echo isset($page_robots) ? $page_robots : 'index, follow'; ?>" />
-    <link rel="canonical" href="<?php echo isset($page_canonical) ? $page_canonical : 'https://rutasrurales.io' . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>">
+    <!-- Meta Robots: configurable dinámicamente (page_robots) - SEO Internacional -->
+    <meta name="robots" content="<?php echo $page_robots; ?>" />
+    <link rel="canonical" href="<?php echo $page_canonical; ?>">
     
-    <link rel="icon" href="/menu_images/Favicon.png" type="image/png">
+    <!-- Hreflang para SEO Internacional -->
+    <?php foreach ($hreflang_urls as $lang_code => $href_url): ?>
+    <link rel="alternate" hreflang="<?php echo $lang_code; ?>" href="<?php echo htmlspecialchars($href_url); ?>">
+    <?php endforeach; ?>
+    
+    <link rel="icon"
     
     <!-- PWA - Enlace al manifisto -->
     <link rel="manifest" href="/manifest.json">
