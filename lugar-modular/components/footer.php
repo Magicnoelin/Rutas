@@ -74,11 +74,11 @@ $_mob_lpfx = ($_cta_mob_lang !== 'es') ? '/' . $_cta_mob_lang : '';
             <button type="submit" class="lug-cta-btn-main"><?php echo $_cm['btn2']; ?></button>
         </form>
         <div style="display:flex;gap:8px;margin-top:4px;">
-            <a href="<?php echo $_mob_lpfx; ?>/register.html?ref=lugar&slug=<?php echo urlencode($_mob_slug); ?>" rel="nofollow"
+            <a href="<?php echo $_mob_lpfx; ?>/register.html" rel="nofollow"
                style="flex:1;text-align:center;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);color:#fff;padding:10px;border-radius:8px;font-size:0.82rem;font-weight:700;text-decoration:none;">
                 <?php echo $_cm['register']; ?>
             </a>
-            <a href="<?php echo $_mob_lpfx; ?>/login.html?ref=lugar&slug=<?php echo urlencode($_mob_slug); ?>"
+            <a href="<?php echo $_mob_lpfx; ?>/login.html"
                style="flex:1;text-align:center;color:rgba(255,255,255,0.7);padding:10px;border-radius:8px;font-size:0.82rem;font-weight:600;text-decoration:none;background:transparent;border:1.5px solid rgba(255,255,255,0.2);">
                 <?php echo $_cm['login']; ?>
             </a>

@@ -83,7 +83,7 @@ function skeletonCards(int $n = 4): string {
             <?php endif; ?>
         </div>
         <div id="nearby-aloj-more" style="text-align:center;margin-top:16px;<?php echo empty($ssr_nearby_alojamientos) ? 'display:none;' : ''; ?>">
-            <a href="/rutas.php?provincia=<?php echo urlencode($prov); ?>&alojamientos=1&lat=<?php echo esc($lugar['latitude']); ?>&lng=<?php echo esc($lugar['longitude']); ?>"
+            <a href="/rutas.php?provincia=<?php echo urlencode($prov); ?>"
                class="nearby-ver-mas">
                 <?php echo htmlspecialchars($_t['ver_mas_aloj'], ENT_QUOTES, 'UTF-8'); ?>
             </a>

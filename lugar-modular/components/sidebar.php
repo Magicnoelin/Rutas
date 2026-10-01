@@ -327,7 +327,7 @@ $_t = [
 
         <!-- Único botón de acceso -->
         <div class="lug-cta-btns-row" style="justify-content: center;">
-            <a href="<?php echo $langPfx; ?>/login.html?ref=lugar&slug=<?php echo urlencode($slug ?? ''); ?>"
+            <a href="<?php echo $langPfx; ?>/login.html"
                class="lug-cta-btn-reg" style="flex: 1; text-align: center;">
                 <?php echo $c['ya_cuenta']; ?> / <?php echo $c['register']; ?>
             </a>
