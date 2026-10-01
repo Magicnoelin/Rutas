@@ -25,6 +25,8 @@ try {
 }
 
 echo '<?xml version="1.0" encoding="UTF-8"?>';
+echo '<?xml-stylesheet type="text/xsl" href="https://rutasrurales.io/sitemap.xsl"?>';
+
 echo "\n<!-- sitemap-eventos-landing | generado: " . gmdate('Y-m-d H:i') . " UTC -->";
 echo "\n<!-- Solo URLs con ≥1 evento activo, aprobado y futuro -->";
 echo "\n" . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

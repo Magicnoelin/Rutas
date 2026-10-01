@@ -57,6 +57,8 @@ try {
 } catch (PDOException $e) {
     // Si hay error de BD, devolver sitemap vacío válido
     echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+echo '<?xml-stylesheet type="text/xsl" href="https://rutasrurales.io/sitemap.xsl"?>' . "\n";
+
     echo '<!-- Error al conectar con la base de datos: ' . htmlspecialchars($e->getMessage()) . ' -->' . "\n";
     echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>';
     exit;
@@ -64,6 +66,8 @@ try {
 
 // Generar XML
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+echo '<?xml-stylesheet type="text/xsl" href="https://rutasrurales.io/sitemap.xsl"?>' . "\n";
+
 echo '<!--' . "\n";
 echo '  Sitemap generado automáticamente desde la base de datos.' . "\n";
 echo '  Contiene SOLO eventos en idiomas distintos al español (de, en, fr, zh...).' . "\n";

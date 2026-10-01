@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   HOJA DE ESTILO XSLT PARA SITEMAPS — rutasrurales.io
-  Hace que los archivos XML del sitemap sean legibles en el navegador
-  sin extensiones ni herramientas externas.
+  namespaces: sm, xhtml, image
 -->
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:sm="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="sm xhtml">
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+  exclude-result-prefixes="sm xhtml image">
 
 <xsl:output method="html" encoding="UTF-8" indent="yes"/>
 
@@ -20,12 +20,14 @@
   <title>Sitemap — rutasrurales.io</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <style>
-    body  { font-family: system-ui, sans-serif; background: #f8f9fa; }
-    h1    { font-size: 1.4rem; }
-    code  { font-size: .78rem; word-break: break-all; }
+    body { font-family: system-ui, sans-serif; background: #f8f9fa; }
+    h1 { font-size: 1.4rem; }
+    code { font-size: .78rem; word-break: break-all; }
     .hreflang-tags { font-size: .72rem; color: #555; }
     .badge-lang { font-size: .65rem; }
+    .image-tags { font-size: .7rem; color: #666; margin-top: 4px; }
     tr:hover td { background: #e9f5ff !important; }
+    tr.has-images td { background: #fffbea !important; }
   </style>
 </head>
 <body>
@@ -43,7 +45,6 @@
   </div>
 
   <xsl:if test="sm:sitemapindex">
-    <!-- Índice de sitemaps -->
     <div class="card shadow-sm border-0 mb-4">
       <div class="card-header bg-dark text-white">
         <strong>📑 Índice de Sitemaps</strong>
@@ -70,7 +71,6 @@
   </xsl:if>
 
   <xsl:if test="sm:urlset">
-    <!-- Listado de URLs -->
     <div class="card shadow-sm border-0">
       <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <strong>🔗 URLs del Sitemap</strong>
@@ -92,12 +92,27 @@
           </thead>
           <tbody>
             <xsl:for-each select="sm:urlset/sm:url">
+              <xsl:variable name="hasImages" select="count(image:image) &gt; 0"/>
               <tr>
+                <xsl:if test="$hasImages">
+                  <xsl:attribute name="class">has-images</xsl:attribute>
+                </xsl:if>
                 <td class="text-muted"><xsl:value-of select="position()"/></td>
                 <td>
                   <a href="{sm:loc}" target="_blank">
                     <code><xsl:value-of select="sm:loc"/></code>
                   </a>
+                  <xsl:if test="$hasImages">
+                    <div class="image-tags">
+                      <strong>🖼️ Imágenes:</strong>
+                      <xsl:for-each select="image:image">
+                        <xsl:if test="position() &gt; 1"><xsl:text>, </xsl:text></xsl:if>
+                        <a href="{image:loc}" target="_blank" title="{image:title}">
+                          <xsl:value-of select="image:title"/>
+                        </a>
+                      </xsl:for-each>
+                    </div>
+                  </xsl:if>
                 </td>
                 <td><xsl:value-of select="sm:lastmod"/></td>
                 <td><xsl:value-of select="sm:changefreq"/></td>
@@ -130,7 +145,6 @@
 
     <p class="text-muted small mt-3 text-center">
       Sitemap generado por rutasrurales.io ·
-      Visualización mediante hoja de estilo XSLT ·
       <a href="https://www.sitemaps.org/protocol.html" target="_blank">Protocolo Sitemaps 0.9</a>
     </p>
   </xsl:if>

@@ -91,6 +91,8 @@ try {
 
 } catch (PDOException $e) {
     echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+echo '<?xml-stylesheet type="text/xsl" href="https://rutasrurales.io/sitemap.xsl"?>' . "\n";
+
     echo '<!-- Error BD: ' . htmlspecialchars($e->getMessage()) . ' -->' . "\n";
     echo '<!-- Fecha actual: ' . date('Y-m-d H:i:s') . ' -->' . "\n";
     echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>';
@@ -101,6 +103,8 @@ try {
 // Generar XML
 // ============================================================
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+echo '<?xml-stylesheet type="text/xsl" href="https://rutasrurales.io/sitemap.xsl"?>' . "\n";
+
 echo '<!--' . "\n";
 echo '  Sitemap unificado de eventos: español + todos los idiomas.' . "\n";
 echo '  Generado automáticamente desde la base de datos.' . "\n";
