@@ -861,19 +861,25 @@ $evento_js = $evento ? json_encode([
     <meta name="description" content="<?php echo htmlspecialchars($page_desc); ?>">
     <link rel="canonical" href="<?php echo $canonical; ?>">
 
-    <!-- hreflang: SEO multiidioma — SOLO idiomas con traducción real en BD
-         Evita errores 404 en Google Search Console cuando no hay traducción -->
-    <?php if ($evento && isset($pdo)): ?>
+    <!-- hreflang: SEO multiidioma — declaramos TODOS los idiomas del sitio.
+         Si un idioma no tiene slug traducido en BD, usamos el slug español como
+         fallback para que Google sepa que existe versión en ese idioma (aunque
+         redirecte al contenido español). Esto evita que solo aparezca 1 hreflang. -->
+    <?php if ($evento): ?>
     <?php
-    // Cargar helper de i18n
-    require_once __DIR__ . '/includes/i18n_helper.php';
-    
-    // Generar mapa de hreflang SOLO con traducciones existentes
-    $hreflang_map = generar_hreflang_evento($pdo, (int)$evento['id'], $evento['slug'], $lang);
-    
-    // Renderizar etiquetas hreflang
-    echo render_hreflang_html($hreflang_map);
+    // Construir mapa completo de hreflang: todos los idiomas del sitio
+    $hreflang_map = [
+        'es'      => 'https://rutasrurales.io/evento/' . $evento['slug'],
+        'en'      => 'https://rutasrurales.io/en/evento/' . ($todas_trads['en'] ?? $evento['slug']),
+        'fr'      => 'https://rutasrurales.io/fr/evento/' . ($todas_trads['fr'] ?? $evento['slug']),
+        'de'      => 'https://rutasrurales.io/de/evento/' . ($todas_trads['de'] ?? $evento['slug']),
+        'zh-Hans' => 'https://rutasrurales.io/zh/evento/' . ($todas_trads['zh'] ?? $evento['slug']),
+    ];
     ?>
+    <?php foreach ($hreflang_map as $hLang => $hUrl): ?>
+    <link rel="alternate" hreflang="<?php echo htmlspecialchars($hLang); ?>" href="<?php echo htmlspecialchars($hUrl); ?>">
+    <?php endforeach; ?>
+    <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/evento/<?php echo htmlspecialchars($evento['slug']); ?>">
     <?php endif; ?>
 
     <!-- Open Graph — og:type="event" para que Bing/Facebook reconozcan el contenido -->

@@ -66,6 +66,17 @@ Redirect 301 /alojamiento/mascotas-león https://rutasrurales.io/alojamientos/ma
 Redirect 301 /alojamientos/casas-rurales-león https://rutasrurales.io/alojamientos/casas-rurales-leon
 Redirect 301 /alojamiento/casas-rurales-león https://rutasrurales.io/alojamientos/casas-rurales-leon
 
+# Redirección 301 para A Coruña (coruña → a-coruna)
+# Maneja la ñ directa y codificada en UTF-8
+Redirect 301 /alojamientos/turismo-rural-coruña https://rutasrurales.io/alojamientos/turismo-rural-a-coruna
+Redirect 301 /alojamiento/turismo-rural-coruña https://rutasrurales.io/alojamientos/turismo-rural-a-coruna
+
+# Manejo específico para ñ codificada en UTF-8 (%C3%B1)
+RewriteCond %{THE_REQUEST} %C3%B1 [NC]
+RewriteRule ^alojamientos/turismo-rural-coruna.*$ https://rutasrurales.io/alojamientos/turismo-rural-a-coruna [R=301,L]
+RewriteCond %{THE_REQUEST} %C3%B1 [NC]
+RewriteRule ^alojamiento/turismo-rural-coruna.*$ https://rutasrurales.io/alojamientos/turismo-rural-a-coruna [R=301,L]
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # DETECCIÓN: URLs con encoding UTF-8 (%C3) → pasar a PHP para normalización

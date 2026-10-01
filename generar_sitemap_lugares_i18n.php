@@ -70,29 +70,29 @@ try {
     $xml .= '  xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n\n";
 
     foreach ($lugares as $lugar) {
-        // ── Slugs con fallback limpio (nunca slug vacío en sitemap) ─────────
+        // ── Slugs: SOLO usar traducción si existe, si no dejar vacío (no generar URL) ─
         $slugEs = $lugar['slug_es'];
-        $slugEn = !empty($lugar['slug_en']) ? $lugar['slug_en'] : $slugEs;
-        $slugFr = !empty($lugar['slug_fr']) ? $lugar['slug_fr'] : $slugEs;
-        $slugDe = !empty($lugar['slug_de']) ? $lugar['slug_de'] : $slugEs;
-        $slugZh = !empty($lugar['slug_zh']) ? $lugar['slug_zh'] : $slugEs;
+        $slugEn = !empty($lugar['slug_en']) ? $lugar['slug_en'] : '';
+        $slugFr = !empty($lugar['slug_fr']) ? $lugar['slug_fr'] : '';
+        $slugDe = !empty($lugar['slug_de']) ? $lugar['slug_de'] : '';
+        $slugZh = !empty($lugar['slug_zh']) ? $lugar['slug_zh'] : '';
 
-        // ── URLs por idioma ─────────────────────────────────────────────────
-        $urlEs = BASE_URL . '/lugar/'    . $slugEs;
-        $urlEn = BASE_URL . '/en/lugar/' . $slugEn;
-        $urlFr = BASE_URL . '/fr/lugar/' . $slugFr;
-        $urlDe = BASE_URL . '/de/lugar/' . $slugDe;
-        $urlZh = BASE_URL . '/zh/lugar/' . $slugZh;
+        // ── URLs por idioma (solo si hay slug) ──────────────────────────────
+        $urlEs = BASE_URL . '/lugar/' . $slugEs;
+        $urlEn = !empty($slugEn) ? BASE_URL . '/en/lugar/' . $slugEn : '';
+        $urlFr = !empty($slugFr) ? BASE_URL . '/fr/lugar/' . $slugFr : '';
+        $urlDe = !empty($slugDe) ? BASE_URL . '/de/lugar/' . $slugDe : '';
+        $urlZh = !empty($slugZh) ? BASE_URL . '/zh/lugar/' . $slugZh : '';
 
         // ── lastmod desde BD o fallback ─────────────────────────────────────
         $lastmod = !empty($lugar['lastmod']) ? $lugar['lastmod'] : LASTMOD_FB;
 
-        // ── Bloque hreflang completo (idéntico en los 5 <url>) ──────────────
+        // ── Construir hreflang SOLO con idiomas que tienen traducción ───────
         $hreflang  = '    <xhtml:link rel="alternate" hreflang="es"        href="' . htmlspecialchars($urlEs) . '"/>' . "\n";
-        $hreflang .= '    <xhtml:link rel="alternate" hreflang="en"        href="' . htmlspecialchars($urlEn) . '"/>' . "\n";
-        $hreflang .= '    <xhtml:link rel="alternate" hreflang="fr"        href="' . htmlspecialchars($urlFr) . '"/>' . "\n";
-        $hreflang .= '    <xhtml:link rel="alternate" hreflang="de"        href="' . htmlspecialchars($urlDe) . '"/>' . "\n";
-        $hreflang .= '    <xhtml:link rel="alternate" hreflang="zh"        href="' . htmlspecialchars($urlZh) . '"/>' . "\n";
+        if ($urlEn) $hreflang .= '    <xhtml:link rel="alternate" hreflang="en"        href="' . htmlspecialchars($urlEn) . '"/>' . "\n";
+        if ($urlFr) $hreflang .= '    <xhtml:link rel="alternate" hreflang="fr"        href="' . htmlspecialchars($urlFr) . '"/>' . "\n";
+        if ($urlDe) $hreflang .= '    <xhtml:link rel="alternate" hreflang="de"        href="' . htmlspecialchars($urlDe) . '"/>' . "\n";
+        if ($urlZh) $hreflang .= '    <xhtml:link rel="alternate" hreflang="zh"        href="' . htmlspecialchars($urlZh) . '"/>' . "\n";
         $hreflang .= '    <xhtml:link rel="alternate" hreflang="x-default" href="' . htmlspecialchars($urlEs) . '"/>' . "\n";
 
         // ── Comentario de grupo ─────────────────────────────────────────────
@@ -100,14 +100,14 @@ try {
               . ' · ' . htmlspecialchars($lugar['municipality'])
               . ' (id:' . $lugar['id'] . ') -->' . "\n";
 
-        // ── 5 bloques <url>, uno por idioma ─────────────────────────────────
+        // ── Bloques <url> SOLO para idiomas con traducción real ──────────────
         $bloques = [
-            ['url' => $urlEs, 'priority' => '0.9'],
-            ['url' => $urlEn, 'priority' => '0.8'],
-            ['url' => $urlFr, 'priority' => '0.8'],
-            ['url' => $urlDe, 'priority' => '0.8'],
-            ['url' => $urlZh, 'priority' => '0.7'],
+            ['url' => $urlEs, 'priority' => '0.9', 'lang' => 'es'],
         ];
+        if ($urlEn) $bloques[] = ['url' => $urlEn, 'priority' => '0.8', 'lang' => 'en'];
+        if ($urlFr) $bloques[] = ['url' => $urlFr, 'priority' => '0.8', 'lang' => 'fr'];
+        if ($urlDe) $bloques[] = ['url' => $urlDe, 'priority' => '0.8', 'lang' => 'de'];
+        if ($urlZh) $bloques[] = ['url' => $urlZh, 'priority' => '0.7', 'lang' => 'zh'];
 
         foreach ($bloques as $b) {
             $xml .= '  <url>' . "\n";

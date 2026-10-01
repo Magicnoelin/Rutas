@@ -345,13 +345,23 @@ $og_locale = $og_locale_map[$lang] ?? 'es_ES';
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="<?php echo htmlspecialchars(rtrim($canonical, '/'), ENT_QUOTES, 'UTF-8'); ?>">
     
-    <!-- ── hreflang — todos los idiomas (contenido editorial, sin restricción de membresía) ── -->
-    <link rel="alternate" hreflang="es"        href="https://rutasrurales.io/lugar/<?php echo htmlspecialchars($slug, ENT_QUOTES, 'UTF-8'); ?>">
-    <link rel="alternate" hreflang="en"        href="https://rutasrurales.io/en/lugar/<?php echo htmlspecialchars($slug, ENT_QUOTES, 'UTF-8'); ?>">
-    <link rel="alternate" hreflang="fr"        href="https://rutasrurales.io/fr/lugar/<?php echo htmlspecialchars($slug, ENT_QUOTES, 'UTF-8'); ?>">
-    <link rel="alternate" hreflang="de"        href="https://rutasrurales.io/de/lugar/<?php echo htmlspecialchars($slug, ENT_QUOTES, 'UTF-8'); ?>">
-    <link rel="alternate" hreflang="zh"        href="https://rutasrurales.io/zh/lugar/<?php echo htmlspecialchars($slug, ENT_QUOTES, 'UTF-8'); ?>">
-    <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/lugar/<?php echo htmlspecialchars($slug, ENT_QUOTES, 'UTF-8'); ?>">
+    <!-- ── hreflang — SOLO idiomas con traducción real en BD (evita 404) ── -->
+    <?php
+    // Cargar helper de i18n para verificar traducciones
+    require_once dirname(__DIR__, 2) . '/includes/i18n_helper.php';
+    
+    // El slug base es siempre el español (canónico)
+    $slug_es = $slug;
+    if (!empty($lugar['id'])) {
+        $hreflang_map = generar_hreflang_lugar($pdo, (int)$lugar['id'], $slug_es, $lang);
+        
+        foreach ($hreflang_map as $hLang => $hData):
+            $hLangAttr = ($hLang === 'zh') ? 'zh-Hans' : $hLang;
+    ?>
+    <link rel="alternate" hreflang="<?php echo htmlspecialchars($hLangAttr); ?>" href="<?php echo htmlspecialchars($hData['url']); ?>">
+    <?php endforeach; ?>
+    <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/lugar/<?php echo htmlspecialchars($slug_es, ENT_QUOTES, 'UTF-8'); ?>">
+    <?php } ?>
 
     <!-- ── Open Graph ── -->
     <meta property="og:type"         content="place">

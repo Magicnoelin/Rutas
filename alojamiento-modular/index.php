@@ -672,14 +672,18 @@ $alo_js = $alojamiento ? json_encode([
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="<?php echo $canonical; ?>">
 
-    <!-- hreflang — SOLO para alojamientos Premium (con derecho a traducciones) -->
-    <?php if ($alojamiento && !empty($alojamiento['is_premium'])): ?>
-    <link rel="alternate" hreflang="es"       href="https://rutasrurales.io/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
-    <link rel="alternate" hreflang="en"       href="https://rutasrurales.io/en/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
-    <link rel="alternate" hreflang="fr"       href="https://rutasrurales.io/fr/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
-    <link rel="alternate" hreflang="de"       href="https://rutasrurales.io/de/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
-    <link rel="alternate" hreflang="zh"       href="https://rutasrurales.io/zh/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
-    <link rel="alternate" hreflang="x-default" href="https://rutasrurales.io/alojamiento/<?php echo htmlspecialchars($alojamiento['slug']); ?>">
+    <!-- hreflang — SOLO idiomas con traducción real en BD (evita 404) -->
+    <?php if ($alojamiento && !empty($alojamiento['is_premium']) && isset($pdo)): ?>
+    <?php
+    // Cargar helper de i18n
+    require_once dirname(__DIR__) . '/includes/i18n_helper.php';
+    
+    // Generar mapa de hreflang SOLO con traducciones existentes
+    $hreflang_map = generar_hreflang_alojamiento($pdo, (int)$alojamiento['id'], $alojamiento['slug'], $lang);
+    
+    // Renderizar etiquetas hreflang
+    echo render_hreflang_html($hreflang_map);
+    ?>
     <?php endif; ?>
 
     <!-- Open Graph -->
