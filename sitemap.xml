@@ -3,18 +3,17 @@
 <!--
   ÍNDICE PRINCIPAL DE SITEMAPS — rutasrurales.io
   ─────────────────────────────────────────────────────────────────────────────
-  Última actualización: 2026-09-25
+  Última actualización: 2026-10-01
 
   ESTRUCTURA:
     sitemap-estatico.xml          → Páginas estáticas (home, legal, etc.)
     sitemap-alojamientos.php      → Alojamientos turísticos (dinámico, desde BD)
-    sitemap-lugares.xml           → Lugares de interés
+    sitemap-lugares-i18n.xml      → Lugares de interés (i18n)
     sitemap-actividades.xml       → Actividades turísticas
-    sitemap-eventos.php           → Eventos culturales (dinámico, desde BD)
     sitemap-eventos-i18n.xml      → Eventos en 5 idiomas (hreflang)
     sitemap-rutas.php             → Rutas temáticas (dinámico, desde BD)
-    sitemap-landings.php          → Landings long-tail Alojamientos (dinámico, solo páginas con contenido)
-    sitemap-eventos-landing.php   → Landings long-tail Eventos (dinámico, solo páginas con contenido)
+    sitemap-landings.xml          → Landings long-tail Alojamientos (dinámico, solo páginas con contenido)
+    sitemap-eventos-landing.xml   → Landings long-tail Eventos (dinámico, solo páginas con contenido)
 
   Los archivos .php se generan en tiempo real consultando la BD.
   Solo incluyen URLs con contenido real (≥1 resultado activo y aprobado).
@@ -32,21 +31,15 @@
     <loc>https://rutasrurales.io/sitemap-alojamientos.php</loc>
   </sitemap>
   <sitemap>
-    <loc>https://rutasrurales.io/sitemap-lugares.xml</loc>
-    <lastmod>2026-09-25</lastmod>
-  </sitemap>
-  <sitemap>
     <loc>https://rutasrurales.io/sitemap-lugares-i18n.xml</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-10-01</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://rutasrurales.io/sitemap-actividades.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://rutasrurales.io/sitemap-eventos.php</loc>
-  </sitemap>
-  <sitemap>
     <loc>https://rutasrurales.io/sitemap-eventos-i18n.xml</loc>
+    <lastmod>2026-10-01</lastmod>
   </sitemap>
 
   <!-- Rutas temáticas -->
@@ -55,8 +48,6 @@
   </sitemap>
 
   <!-- Landings long-tail (solo URLs con contenido real en BD) -->
-  <!-- NOTA: estos archivos .xml se generan ejecutando regenerar_sitemap_landings.php -->
-  <!-- y regenerar_sitemap_eventos_landing.php en el servidor -->
   <sitemap>
     <loc>https://rutasrurales.io/sitemap-landings.xml</loc>
     <lastmod>2026-07-06</lastmod>
