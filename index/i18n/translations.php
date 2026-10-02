@@ -15,7 +15,7 @@ const HUB_I18N = [
 
         // <head>
         'meta_title'  => 'Turismo Rural en España | Casas Rurales, Eventos y Experiencias Auténticas | Rutas',
-        'meta_desc'   => 'Descubre el turismo rural auténtico en España. Reserva casas rurales con encanto, consulta la agenda cultural de eventos y planifica tus escapadas rurales con Rutas Rurales.',
+        'meta_desc'   => 'Descubre el turismo rural auténtico en España. Reserva alojamientos turísticos con encanto, consulta la agenda cultural de eventos y planifica tus escapadas rurales con Rutas Rurales.',
         'og_title'    => 'Turismo Rural en España — Rutas Rurales',
 
         // Navbar
@@ -28,7 +28,7 @@ const HUB_I18N = [
 
         // Hero
         'hero_h1'         => 'Turismo Rural Auténtico en España',
-        'hero_sub'        => 'Casas rurales con encanto, eventos culturales y experiencias únicas en Castilla, Galicia y más',
+        'hero_sub'        => 'Alojamientos turísticos con encanto, eventos culturales y experiencias únicas en Castilla, Galicia y más',
         'hero_cta_stays'  => 'Ver alojamientos',
         'hero_cta_events' => 'Agenda cultural',
         'hero_cta_places' => 'Lugares de interés',
@@ -40,7 +40,7 @@ const HUB_I18N = [
 
         // Hub Alojamientos
         'hub_alo_h2'        => 'Alojamientos Rurales por Características y Provincia',
-        'hub_alo_intro'     => 'Encuentra tu casa rural perfecta combinando características y destino.',
+        'hub_alo_intro'     => 'Encuentra tu alojamiento turístico perfecto combinando características y destino.',
         'hub_alo_by_feat'   => 'Por características',
         'hub_alo_by_prov'   => 'Por provincia',
         'hub_alo_combis'    => 'Combinaciones más buscadas',
