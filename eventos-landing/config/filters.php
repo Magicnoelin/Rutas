@@ -182,7 +182,7 @@ const EVENTOS_PROVINCIAS = [
     ],
 
     // ── Galicia ───────────────────────────────────────────────────────────────
-    'coruña' => [
+    'a-coruna' => [ 
         'label' => 'A Coruña', 'db' => 'A Coruña',
         'lat' => 43.362, 'lng' => -8.412,
         'attractions' => ['Torre de Hércules', 'Festival de Jazz de A Coruña', 'Carnaval de Galicia', 'Rías Altas'],
