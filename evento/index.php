@@ -209,26 +209,70 @@ HTML;
 <meta name="ICBM"          content="40.416775, -3.703790">
 <!-- Schema.org JSON-LD -->
 <script type="application/ld+json"><?= $json_ld ?></script>
-<!-- CSS -->
+<!-- CSS global -->
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/css/buscador-eventos.css">
 <link rel="sitemap" type="application/xml" title="Sitemap Eventos" href="/sitemap-eventos.php">
+<link rel="icon"             href="/menu_images/Favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/menu_images/Favicon.png">
+<meta name="theme-color" content="#2F5233">
+
+<!-- Variables CSS y estilos del navbar — idénticos a /eventos/ -->
+<style>
+:root{
+    --primary:#2F5233;--primary-dark:#1a3d1e;--accent:#81C784;
+    --accent-warm:#F9A825;--white:#fff;--bg:#f8f9fa;--bg-alt:#f0f4f1;
+    --text:#2d3436;--text-light:#636e72;--border:#e8eaed;
+    --radius:14px;--radius-sm:8px;--shadow:0 2px 12px rgba(0,0,0,.07);
+    --max-w:1200px;--tr:.18s ease;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--primary);text-decoration:none}
+ul{list-style:none;padding:0;margin:0}
+
+/* ── Navbar idéntico al de /eventos/ ── */
+.evt-nav{position:sticky;top:0;z-index:900;background:var(--white);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;padding:0 20px;gap:14px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.evt-nav__logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--primary);font-size:1rem;flex-shrink:0}
+.evt-nav__logo img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.evt-nav__links{display:flex;align-items:center;gap:4px;margin-left:auto;font-size:.8rem}
+.evt-nav__links a{color:var(--text);font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);white-space:nowrap;transition:background var(--tr)}
+.evt-nav__links a:hover,.evt-nav__links a[aria-current="page"]{background:var(--bg-alt);color:var(--primary)}
+.evt-nav__cta{background:var(--primary)!important;color:var(--white)!important;padding:7px 14px!important;border-radius:var(--radius-sm)!important;font-weight:700!important}
+@media(max-width:640px){.evt-nav__links{display:none}}
+</style>
 </head>
 <body>
 <a href="#srch-results" class="srch-skip-link"><?= htmlspecialchars($t['h1']) ?></a>
-<!-- NAVBAR -->
-<nav class="lnd-navbar" aria-label="Navegación principal">
-  <div class="lnd-navbar__inner">
-    <a class="lnd-navbar__logo" href="/<?= $lang!=='es'?$lang.'/':'' ?>">
-      <img src="/img/logo-rutasrurales.webp" alt="rutasrurales.io" width="40" height="40" loading="eager">
-      <span>rutasrurales<strong>.io</strong></span>
-    </a>
-    <nav class="lnd-navbar__nav" aria-label="Menú">
-      <a href="/<?= $lang!=='es'?$lang.'/':'' ?>eventos/"><?= htmlspecialchars($t['footer_events']) ?></a>
-      <a href="/<?= $lang!=='es'?$lang.'/':'' ?>alojamientos/"><?= htmlspecialchars($t['footer_stays']) ?></a>
-    </nav>
-  </div>
-</nav>
+
+<!-- NAVBAR — idéntico al de /eventos/ -->
+<?php
+$_home   = ($lang !== 'es') ? "/{$lang}/" : '/';
+$_prefix = ($lang !== 'es') ? "/{$lang}" : '';
+// Etiquetas de navegación por idioma (mismas claves que usa /eventos/)
+$_nav_labels = [
+    'es' => ['home'=>'Inicio','stays'=>'Alojamientos','events'=>'Eventos','places'=>'Lugares','activities'=>'Actividades','map'=>'Mapa','login'=>'Acceder'],
+    'en' => ['home'=>'Home','stays'=>'Accommodation','events'=>'Events','places'=>'Places','activities'=>'Activities','map'=>'Map','login'=>'Log in'],
+    'fr' => ['home'=>'Accueil','stays'=>'Hébergements','events'=>'Événements','places'=>'Lieux','activities'=>'Activités','map'=>'Carte','login'=>'Se connecter'],
+    'zh' => ['home'=>'首页','stays'=>'住宿','events'=>'活动','places'=>'景点','activities'=>'活动','map'=>'地图','login'=>'登录'],
+];
+$_nl = $_nav_labels[$lang] ?? $_nav_labels['es'];
+?>
+<header class="evt-nav" role="banner">
+  <a href="<?= $_home ?>" class="evt-nav__logo" aria-label="Rutas Rurales — <?= htmlspecialchars($_nl['home']) ?>">
+    <img src="/menu_images/Logo%20transparente.webp" alt="Rutas Rurales" width="38" height="38" loading="eager">
+    <span>Rutas Rurales</span>
+  </a>
+  <nav class="evt-nav__links" aria-label="Navegación principal">
+    <a href="<?= $_prefix ?>/alojamientos/">🏡 <?= htmlspecialchars($_nl['stays']) ?></a>
+    <a href="<?= $_prefix ?>/eventos/">🎭 <?= htmlspecialchars($_nl['events']) ?></a>
+    <a href="<?= $_prefix ?>/lugares/">📍 <?= htmlspecialchars($_nl['places']) ?></a>
+    <a href="<?= $_prefix ?>/actividades/">🥾 <?= htmlspecialchars($_nl['activities']) ?></a>
+    <a href="/rutas.php">🗺️ <?= htmlspecialchars($_nl['map']) ?></a>
+    <a href="/login.html" class="evt-nav__cta" rel="nofollow"><?= htmlspecialchars($_nl['login']) ?></a>
+  </nav>
+</header>
 <!-- BREADCRUMB -->
 <nav class="srch-breadcrumb" aria-label="Breadcrumb">
   <a href="/<?= $lang!=='es'?$lang.'/':'' ?>"><?= htmlspecialchars($t['bc_home']) ?></a>
