@@ -135,6 +135,7 @@ $urlsIncluidas = 0;
 $urlsOmitidas  = 0;
 
 $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+$xml .= '<?xml-stylesheet type="text/xsl" href="https://rutasrurales.io/sitemap.xsl"?>' . "\n";
 $xml .= '<!--' . "\n";
 $xml .= '  sitemap-eventos-landing.xml — rutasrurales.io' . "\n";
 $xml .= '  Landings long-tail: /eventos/{filtro}-{provincia}' . "\n";
