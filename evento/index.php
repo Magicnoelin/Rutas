@@ -39,21 +39,25 @@ try {
 
     $where=["e.is_active=1","e.moderation_status='approved'","COALESCE(e.end_date,e.start_date)>=:fm"];
     $params=[':fm'=>$fecha_min];
-    $usar_ft=mb_strlen($q,'UTF-8')>=2;
+    $usar_ft=false;
     $sel_rel='0 AS relevance,';
-    if($usar_ft){
+    if(mb_strlen($q,'UTF-8')>=2){
         $words=array_filter(preg_split('/\s+/u',$q),fn($w)=>mb_strlen($w,'UTF-8')>=2);
-        $qb=implode(' ',array_map(fn($w)=>'+'.preg_replace('/[^\p{L}\p{N}]/u','',$w).'*',$words));
-        if(!empty(trim($qb))){
-            $ft="MATCH(e.name,e.short_description,e.municipality,e.province,e.description) AGAINST(:q_ft IN BOOLEAN MODE)";
-            $sel_rel="{$ft} AS relevance,";$where[]=$ft;$params[':q_ft']=$qb;
-        } else $usar_ft=false;
+        if(!empty($words)){
+            $like_conds=[];$qi=0;
+            foreach($words as $w){
+                $pk=':qw_'.$qi;
+                $like_conds[]="(e.name LIKE {$pk} OR e.short_description LIKE {$pk} OR e.municipality LIKE {$pk} OR e.province LIKE {$pk})";
+                $params[$pk]='%'.$w.'%';$qi++;
+            }
+            if(!empty($like_conds)){$where[]='('.implode(' AND ',$like_conds).')';$usar_ft=true;}
+        }
     }
     if(!empty($provincia)){$where[]='e.province=:prov';   $params[':prov']=$provincia;}
     if($categoria>0)      {$where[]='e.category_id=:cat'; $params[':cat']=$categoria;}
     if($gratuito)          $where[]='e.is_free=1';
     $wsql=implode(' AND ',$where);
-    $osql=$usar_ft?'ORDER BY relevance DESC,e.is_featured DESC,e.start_date ASC':'ORDER BY e.is_featured DESC,e.start_date ASC';
+    $osql='ORDER BY e.is_featured DESC,e.start_date ASC';
     $lim=12;$off=($page-1)*$lim;
     $sc=$pdo->prepare("SELECT COUNT(*) FROM cultural_events e WHERE {$wsql}");
     foreach($params as $k=>$v)$sc->bindValue($k,$v);
