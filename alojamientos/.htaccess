@@ -1,4 +1,27 @@
-# ─── ALOJAMIENTOS HUB - Ejecución PHP y Rewrite ─────────────────────────────
+# ─── ALOJAMIENTOS HUB + LANDINGS LONG-TAIL ───────────────────────────────────
+#
+# Este .htaccess gestiona DOS tipos de URL dentro del contexto /alojamientos/:
+#
+#   1. /alojamientos/                    → hub de alojamientos (index.php de esta carpeta)
+#   2. /alojamientos/{slug}              → landing long-tail (alojamientos-landing/index.php)
+#      Ej: /alojamientos/turismo-rural-soria
+#          /alojamientos/casas-rurales-zamora
+#          /alojamientos/con-chimenea-leon
+#
+# ARQUITECTURA:
+#   ┌─────────────────────────────────────────────────────────┐
+#   │  Apache recibe /alojamientos/turismo-rural-soria        │
+#   │  → entra en el contexto de directorio /alojamientos/   │
+#   │  → este .htaccess procesa la URL (ya sin prefijo):      │
+#   │     "turismo-rural-soria"                               │
+#   │  → no es archivo ni dir real → regla de slug activa     │
+#   │  → reescritura interna a /alojamientos-landing/index.php│
+#   │     ?lang=es&slug=turismo-rural-soria                   │
+#   └─────────────────────────────────────────────────────────┘
+#
+# IMPORTANTE: alojamientos-landing/index.php está en la RAÍZ del proyecto,
+# no dentro de esta carpeta. Por eso la ruta de destino usa "/" absoluto.
+# ─────────────────────────────────────────────────────────────────────────────
 
 # Habilitar ejecución de PHP en esta carpeta
 <FilesMatch "\.php$">
@@ -20,10 +43,27 @@ DirectoryIndex index.php index.html
 RewriteEngine On
 RewriteBase /alojamientos/
 
-# Permitir acceso directo a archivos y carpetas existentes
+# ── 1. Archivos y directorios reales: servir directamente ────────────────────
+# (ej: index.php del hub, assets estáticos si los hubiera)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Redirigir raíz a index.php
+# ── 2. Raíz /alojamientos/ → hub de alojamientos (index.php de esta carpeta) ─
 RewriteRule ^$ index.php [L,QSA]
+
+# ── 3. SLUGS → landing long-tail de alojamientos ─────────────────────────────
+# Captura cualquier slug tipo "turismo-rural-soria", "casas-rurales-zamora", etc.
+# Redirige INTERNAMENTE (sin cambiar la URL del navegador) a alojamientos-landing/.
+#
+# Regex: [a-z][a-z0-9]*(?:-[a-z0-9]+)*
+#   · Primer carácter: letra minúscula (slugs válidos en SEO)
+#   · Resto: letras, números y guiones compuestos
+#   · Captura: "zamora", "turismo-rural-soria", "casas-rurales-con-chimenea-burgos"
+#   · NO captura: guión inicial, mayúsculas (PHP las normaliza)
+#
+# La ruta de destino es ABSOLUTA (/alojamientos-landing/...) porque ese directorio
+# está en la raíz del proyecto, NO dentro de /alojamientos/.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ /alojamientos-landing/index.php?lang=es&slug=$1 [L,QSA]

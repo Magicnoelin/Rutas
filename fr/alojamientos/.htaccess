@@ -1,0 +1,29 @@
+# ─── /fr/alojamientos/ — HUB EN FRANCÉS + LANDINGS LONG-TAIL ────────────────
+#
+# Gestiona:
+#   1. /fr/alojamientos/          → hub de alojamientos en francés (index.php de esta carpeta)
+#   2. /fr/alojamientos/{slug}    → landing long-tail en francés
+#      Ej: /fr/alojamientos/turismo-rural-soria, /fr/alojamientos/maisons-rurales-zamora
+#
+# La landing se sirve desde /alojamientos-landing/index.php (raíz del proyecto),
+# recibiendo lang=fr y el slug como parámetros GET.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+RewriteBase /fr/alojamientos/
+
+# ── 1. Archivos y directorios reales: servir directamente ────────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── 2. Raíz /fr/alojamientos/ → hub de alojamientos en francés ───────────────
+RewriteRule ^$ index.php [L,QSA]
+
+# ── 3. SLUGS → landing long-tail (francés) ───────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ /alojamientos-landing/index.php?lang=fr&slug=$1 [L,QSA]

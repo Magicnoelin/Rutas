@@ -1,0 +1,29 @@
+# ─── /de/alojamientos/ — HUB EN ALEMÁN + LANDINGS LONG-TAIL ─────────────────
+#
+# Gestiona:
+#   1. /de/alojamientos/          → hub de alojamientos en alemán (index.php de esta carpeta)
+#   2. /de/alojamientos/{slug}    → landing long-tail en alemán
+#      Ej: /de/alojamientos/turismo-rural-soria, /de/alojamientos/casas-rurales-zamora
+#
+# La landing se sirve desde /alojamientos-landing/index.php (raíz del proyecto),
+# recibiendo lang=de y el slug como parámetros GET.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+RewriteBase /de/alojamientos/
+
+# ── 1. Archivos y directorios reales: servir directamente ────────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── 2. Raíz /de/alojamientos/ → hub de alojamientos en alemán ────────────────
+RewriteRule ^$ index.php [L,QSA]
+
+# ── 3. SLUGS → landing long-tail (alemán) ────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ /alojamientos-landing/index.php?lang=de&slug=$1 [L,QSA]

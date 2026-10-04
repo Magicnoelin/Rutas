@@ -360,7 +360,11 @@ RewriteRule ^lugares/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ lugares-landing/index.ph
 # 5. LIMPIEZA DE URLs ANTIGUAS
 # ============================================================
 RewriteRule ^alojamiento/lugar/(.+)$ /alojamiento/$1 [R=301,L]
-RewriteRule ^alojamientos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
+# NOTA: La regla ^alojamientos/([^/]+) ya NO se necesita aquí porque el
+# directorio físico /alojamientos/ tiene su propio .htaccess que enruta
+# los slugs a alojamientos-landing/index.php. Esta regla causaba conflicto
+# redirigiendo todas las landings SEO a páginas de detalle individuales.
+# RewriteRule ^alojamientos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
 RewriteRule ^alojamientos-turisticos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
 RewriteRule ^lugares-interes/([^/]+)/?$ /lugar/$1 [R=301,L]
 

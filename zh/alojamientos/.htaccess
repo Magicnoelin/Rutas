@@ -1,0 +1,29 @@
+# ─── /zh/alojamientos/ — HUB EN CHINO + LANDINGS LONG-TAIL ──────────────────
+#
+# Gestiona:
+#   1. /zh/alojamientos/          → hub de alojamientos en chino (index.php de esta carpeta)
+#   2. /zh/alojamientos/{slug}    → landing long-tail en chino
+#      Ej: /zh/alojamientos/turismo-rural-soria, /zh/alojamientos/casas-rurales-zamora
+#
+# La landing se sirve desde /alojamientos-landing/index.php (raíz del proyecto),
+# recibiendo lang=zh y el slug como parámetros GET.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+RewriteBase /zh/alojamientos/
+
+# ── 1. Archivos y directorios reales: servir directamente ────────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── 2. Raíz /zh/alojamientos/ → hub de alojamientos en chino ─────────────────
+RewriteRule ^$ index.php [L,QSA]
+
+# ── 3. SLUGS → landing long-tail (chino) ─────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ /alojamientos-landing/index.php?lang=zh&slug=$1 [L,QSA]
