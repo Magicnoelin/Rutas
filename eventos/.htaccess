@@ -1,4 +1,27 @@
-# ─── EVENTOS HUB - Ejecución PHP y Rewrite ───────────────────────────────────
+# ─── EVENTOS HUB + LANDINGS LONG-TAIL ────────────────────────────────────────
+#
+# Este .htaccess gestiona DOS tipos de URL dentro del contexto /eventos/:
+#
+#   1. /eventos/                    → hub de eventos (index.php de esta carpeta)
+#   2. /eventos/{slug}              → landing long-tail (eventos-landing/index.php)
+#      Ej: /eventos/otono-zamora
+#          /eventos/musica-soria
+#          /eventos/gratuitos
+#
+# ARQUITECTURA:
+#   ┌─────────────────────────────────────────────────────────┐
+#   │  Apache recibe /eventos/otono-zamora                    │
+#   │  → entra en el contexto de directorio /eventos/         │
+#   │  → este .htaccess procesa la URL (ya sin prefijo):      │
+#   │     "otono-zamora"                                      │
+#   │  → no es archivo ni dir real → regla de slug activa     │
+#   │  → reescritura interna a /eventos-landing/index.php     │
+#   │     ?lang=es&slug=otono-zamora                          │
+#   └─────────────────────────────────────────────────────────┘
+#
+# IMPORTANTE: eventos-landing/index.php está en la RAÍZ del proyecto,
+# no dentro de esta carpeta. Por eso la ruta de destino usa "/" absoluto.
+# ─────────────────────────────────────────────────────────────────────────────
 
 # Habilitar ejecución de PHP en esta carpeta
 <FilesMatch "\.php$">
@@ -20,10 +43,27 @@ DirectoryIndex index.php index.html
 RewriteEngine On
 RewriteBase /eventos/
 
-# Permitir acceso directo a archivos y carpetas existentes
+# ── 1. Archivos y directorios reales: servir directamente ────────────────────
+# (ej: index.php del hub, assets estáticos si los hubiera)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Redirigir raíz a index.php
+# ── 2. Raíz /eventos/ → hub de eventos (index.php de esta carpeta) ───────────
 RewriteRule ^$ index.php [L,QSA]
+
+# ── 3. SLUGS → landing long-tail de eventos ───────────────────────────────────
+# Captura cualquier slug tipo "otono-zamora", "musica-soria", "gratuitos", etc.
+# Redirige INTERNAMENTE (sin cambiar la URL del navegador) a eventos-landing/.
+#
+# Regex: [a-z][a-z0-9]*(?:-[a-z0-9]+)*
+#   · Primer carácter: letra minúscula (slugs válidos en SEO)
+#   · Resto: letras, números y guiones compuestos
+#   · Captura: "zamora", "otono-zamora", "musica-folk-soria"
+#   · NO captura: guión inicial, mayúsculas (PHP las normaliza)
+#
+# La ruta de destino es ABSOLUTA (/eventos-landing/...) porque ese directorio
+# está en la raíz del proyecto, NO dentro de /eventos/.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ /eventos-landing/index.php?lang=es&slug=$1 [L,QSA]

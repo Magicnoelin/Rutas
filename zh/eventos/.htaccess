@@ -1,0 +1,29 @@
+# ─── /zh/eventos/ — HUB EN CHINO + LANDINGS LONG-TAIL ───────────────────────
+#
+# Gestiona:
+#   1. /zh/eventos/          → hub de eventos en chino (index.php de esta carpeta)
+#   2. /zh/eventos/{slug}    → landing long-tail en chino
+#      Ej: /zh/eventos/qiutian-zamora, /zh/eventos/yinyue-soria
+#
+# La landing se sirve desde /eventos-landing/index.php (raíz del proyecto),
+# recibiendo lang=zh y el slug como parámetros GET.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+RewriteBase /zh/eventos/
+
+# ── 1. Archivos y directorios reales: servir directamente ────────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── 2. Raíz /zh/eventos/ → hub de eventos en chino ───────────────────────────
+RewriteRule ^$ index.php [L,QSA]
+
+# ── 3. SLUGS → landing long-tail (chino) ─────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ /eventos-landing/index.php?lang=zh&slug=$1 [L,QSA]

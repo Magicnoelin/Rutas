@@ -1,0 +1,29 @@
+# ─── /fr/eventos/ — HUB EN FRANCÉS + LANDINGS LONG-TAIL ─────────────────────
+#
+# Gestiona:
+#   1. /fr/eventos/          → hub de eventos en francés (index.php de esta carpeta)
+#   2. /fr/eventos/{slug}    → landing long-tail en francés
+#      Ej: /fr/eventos/automne-zamora, /fr/eventos/musique-soria
+#
+# La landing se sirve desde /eventos-landing/index.php (raíz del proyecto),
+# recibiendo lang=fr y el slug como parámetros GET.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+RewriteBase /fr/eventos/
+
+# ── 1. Archivos y directorios reales: servir directamente ────────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── 2. Raíz /fr/eventos/ → hub de eventos en francés ─────────────────────────
+RewriteRule ^$ index.php [L,QSA]
+
+# ── 3. SLUGS → landing long-tail (francés) ───────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ /eventos-landing/index.php?lang=fr&slug=$1 [L,QSA]

@@ -1,0 +1,29 @@
+# ─── /de/eventos/ — HUB EN ALEMÁN + LANDINGS LONG-TAIL ──────────────────────
+#
+# Gestiona:
+#   1. /de/eventos/          → hub de eventos en alemán (index.php de esta carpeta)
+#   2. /de/eventos/{slug}    → landing long-tail en alemán
+#      Ej: /de/eventos/herbst-zamora, /de/eventos/musik-soria
+#
+# La landing se sirve desde /eventos-landing/index.php (raíz del proyecto),
+# recibiendo lang=de y el slug como parámetros GET.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+RewriteBase /de/eventos/
+
+# ── 1. Archivos y directorios reales: servir directamente ────────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── 2. Raíz /de/eventos/ → hub de eventos en alemán ──────────────────────────
+RewriteRule ^$ index.php [L,QSA]
+
+# ── 3. SLUGS → landing long-tail (alemán) ────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ /eventos-landing/index.php?lang=de&slug=$1 [L,QSA]
