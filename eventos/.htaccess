@@ -1,0 +1,29 @@
+# ─── EVENTOS HUB - Ejecución PHP y Rewrite ───────────────────────────────────
+
+# Habilitar ejecución de PHP en esta carpeta
+<FilesMatch "\.php$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+<IfModule mod_mime.c>
+    AddHandler application/x-httpd-php .php
+    AddType application/x-httpd-php .php
+</IfModule>
+
+<IfModule mod_php.c>
+    php_flag engine on
+</IfModule>
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+RewriteBase /eventos/
+
+# Permitir acceso directo a archivos y carpetas existentes
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirigir raíz a index.php
+RewriteRule ^$ index.php [L,QSA]

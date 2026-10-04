@@ -58,36 +58,6 @@
 RewriteEngine On
 RewriteBase /
 
-# ══════════════════════════════════════════════════════════════════════════════
-# REDIRECCIONES 301 MANUALES PARA LEÓN (limpiar tildes)
-# ══════════════════════════════════════════════════════════════════════════════
-Redirect 301 /alojamientos/mascotas-león https://rutasrurales.io/alojamientos/mascotas-leon
-Redirect 301 /alojamiento/mascotas-león https://rutasrurales.io/alojamientos/mascotas-leon
-Redirect 301 /alojamientos/casas-rurales-león https://rutasrurales.io/alojamientos/casas-rurales-leon
-Redirect 301 /alojamiento/casas-rurales-león https://rutasrurales.io/alojamientos/casas-rurales-leon
-
-# Redirección 301 para A Coruña (coruña → a-coruna)
-# Maneja la ñ directa y codificada en UTF-8
-Redirect 301 /alojamientos/turismo-rural-coruña https://rutasrurales.io/alojamientos/turismo-rural-a-coruna
-Redirect 301 /alojamiento/turismo-rural-coruña https://rutasrurales.io/alojamientos/turismo-rural-a-coruna
-
-# Manejo específico para ñ codificada en UTF-8 (%C3%B1)
-RewriteCond %{THE_REQUEST} %C3%B1 [NC]
-RewriteRule ^alojamientos/turismo-rural-coruna.*$ https://rutasrurales.io/alojamientos/turismo-rural-a-coruna [R=301,L]
-RewriteCond %{THE_REQUEST} %C3%B1 [NC]
-RewriteRule ^alojamiento/turismo-rural-coruna.*$ https://rutasrurales.io/alojamientos/turismo-rural-a-coruna [R=301,L]
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# DETECCIÓN: URLs con encoding UTF-8 (%C3) → pasar a PHP para normalización
-# ══════════════════════════════════════════════════════════════════════════════
-# Si la URL contiene %C3 (encoding UTF-8), la pasamos al PHP
-# El PHP normaliza el slug con generarSlug() y redirige si es necesario
-# THE_REQUEST evita bucles infinitos
-RewriteCond %{THE_REQUEST} %C3 [NC]
-RewriteRule ^ - [L]
-
-
 # Forzar eliminación del evento conflictivo (Evitar Phishing)
 RewriteRule ^/?evento/viernes-flamencos-zamora-2026-teatro-ramos-carrion/?$ - [G,L]
 
@@ -354,7 +324,7 @@ RewriteRule ^lugares/([a-z][a-z0-9]*(?:-[a-z0-9]+)*)/?$ lugares-landing/index.ph
 # 5. LIMPIEZA DE URLs ANTIGUAS
 # ============================================================
 RewriteRule ^alojamiento/lugar/(.+)$ /alojamiento/$1 [R=301,L]
-# RewriteRule ^alojamientos/([^/]+)/?$ /alojamiento/$1 [R=301,L] # COMENTADO - Ahora las landings van a alojamientos-landing
+RewriteRule ^alojamientos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
 RewriteRule ^alojamientos-turisticos/([^/]+)/?$ /alojamiento/$1 [R=301,L]
 RewriteRule ^lugares-interes/([^/]+)/?$ /lugar/$1 [R=301,L]
 

@@ -7,6 +7,11 @@
 ini_set('display_errors', 0);
 error_reporting(E_ERROR | E_PARSE);
 
+// Evitar que api/config.php envíe Content-Type: application/json
+if (!defined('API_NO_HEADERS')) {
+    define('API_NO_HEADERS', true);
+}
+
 // I18n Bootstrap
 require_once dirname(__DIR__) . '/index/i18n/vertical-hubs.php';
 $vh = vh_boot('alojamientos');
