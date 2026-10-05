@@ -171,6 +171,8 @@ foreach (['en', 'fr', 'de', 'zh'] as $lang) {
             pt_es.province,
             pt_es.address,
             pt_es.opening_hours,
+            p.short_description     AS short_original,
+            p.description           AS desc_original,
             p.entry_fee,
             p.entry_fee_details,
             p.facilities,
@@ -188,10 +190,36 @@ foreach (['en', 'fr', 'de', 'zh'] as $lang) {
     $stmtLang->execute([':lang' => $lang]);
     $lugares = $stmtLang->fetchAll(PDO::FETCH_ASSOC);
 
+    // Textos de fallback genérico por idioma (cuando description real está vacía)
+    $fallbackIntro = [
+        'en' => 'This remarkable location offers a unique experience for travelers seeking authentic rural tourism, full of charm and local tradition.',
+        'fr' => "Ce lieu remarquable offre une expérience unique aux voyageurs à la recherche d'authenticité et de patrimoine rural.",
+        'de' => 'Dieser bemerkenswerte Ort bietet Reisenden ein einzigartiges Erlebnis im ländlichen Spanien voller Tradition und Charme.',
+        'zh' => '这个出色的景点为游客提供独特的旅行体验，充满西班牙乡村的传统与魅力。',
+    ];
+    $fallbackWhatToSee = [
+        'en' => 'Enjoy its surroundings, cultural heritage, and local environment.',
+        'fr' => 'Profitez de ses environs, de son patrimoine culturel et de son environnement local.',
+        'de' => 'Genießen Sie die Umgebung, das kulturelle Erbe und die lokale Natur.',
+        'zh' => '尽情欣赏周边环境、文化遗产和当地风情。',
+    ];
+
     foreach ($lugares as $lugar) {
         $slug      = generarSlugLugar($lugar['name'], $lugar['categoria'], $lugar['municipality'], $lang);
         $shortDesc = ($t['short_template'])($lugar['name'], $lugar['municipality'], $lugar['province']);
-        $desc      = ($t['desc_template'])($lugar['name'], '', $t['h3a'], $t['h3v']);
+
+        // Usar contenido real del lugar (en español) para las descripciones
+        $shortOriginal = trim(strip_tags($lugar['short_original'] ?? ''));
+        $descOriginal  = trim(strip_tags($lugar['desc_original']  ?? ''));
+        $introContent  = !empty($shortOriginal) ? htmlspecialchars($shortOriginal) : $fallbackIntro[$lang];
+        $bodyContent   = !empty($descOriginal)  ? htmlspecialchars($descOriginal)  : $fallbackWhatToSee[$lang];
+
+        $h3a = $t['h3a'] ?? 'About';
+        $h3v = $t['h3v'] ?? 'What to See';
+        $desc = '<section><h3>'.$h3a.' '.htmlspecialchars($lugar['name']).'</h3>'
+              . '<p>'.$introContent.'</p></section>'
+              . '<section><h3>'.$h3v.'</h3><p>'.$bodyContent.'</p></section>';
+
         $metaTitle = ($t['meta_title'])($lugar['name'], $lugar['categoria']);
         $metaDesc  = ($t['meta_desc'])($lugar['name'], $lugar['municipality'], $lugar['province']);
 

@@ -152,11 +152,26 @@ foreach ($lugares as $lugar) {
 // ══════════════════════════════════════════════════════════════════════════
 // FASE 2 — Insertar idiomas secundarios leyendo desde la fila 'es' en trads
 // ══════════════════════════════════════════════════════════════════════════
+// Textos genéricos de fallback por idioma (cuando description real está vacía)
+$fallbackIntro = [
+    'en' => 'This remarkable location offers a unique experience for travelers seeking authentic rural tourism, full of charm and local tradition.',
+    'fr' => "Ce lieu remarquable offre une expérience unique aux voyageurs à la recherche d'authenticité et de patrimoine rural.",
+    'de' => 'Dieser bemerkenswerte Ort bietet Reisenden ein einzigartiges Erlebnis im ländlichen Spanien voller Tradition und Charme.',
+    'zh' => '这个出色的景点为游客提供独特的旅行体验，充满西班牙乡村的传统与魅力。',
+];
+$fallbackWhatToSee = [
+    'en' => 'Enjoy its surroundings, cultural heritage, and local environment.',
+    'fr' => 'Profitez de ses environs, de son patrimoine culturel et de son environnement local.',
+    'de' => 'Genießen Sie die Umgebung, das kulturelle Erbe und die lokale Natur.',
+    'zh' => '尽情欣赏周边环境、文化遗产和当地风情。',
+];
+
 foreach (['en', 'fr', 'de', 'zh'] as $lang) {
     $t = $textos[$lang];
     $stmtLang = $pdo->prepare("
         SELECT pt_es.place_id AS id, pt_es.name, pt_es.municipality, pt_es.province, pt_es.address,
-               pt_es.short_description AS short_es, pt_es.description AS desc_es, pt_es.opening_hours,
+               pt_es.opening_hours,
+               p.short_description AS short_original, p.description AS desc_original,
                p.entry_fee, p.entry_fee_details, p.facilities, COALESCE(c.name,'') AS categoria
         FROM   places_of_interest_trads pt_es
         INNER JOIN places_of_interest p ON p.id = pt_es.place_id
@@ -171,9 +186,21 @@ foreach (['en', 'fr', 'de', 'zh'] as $lang) {
         $slug      = generarSlugLugar($lugar['name'], $lugar['categoria'], $lugar['municipality'], $lang);
         $catLabel  = !empty($lugar['categoria']) ? $lugar['categoria'] : 'Place';
         $shortDesc = $t['intro'].' '.$lugar['name'].' '.$t['in'].' '.$lugar['municipality'].', '.$lugar['province'].'.';
-        $desc      = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3>'
-                   . '<p>'.($lugar['short_es'] ?? '').'</p></section>'
-                   . '<section><h3>'.$t['h3v'].'</h3><p>'.($lugar['desc_es'] ?? '').'</p></section>';
+
+        // Usar el contenido real del lugar (en español, campo maesto) para la descripción
+        // Se muestra en el idioma del encabezado, con el contenido auténtico del lugar
+        $shortOriginal = trim(strip_tags($lugar['short_original'] ?? ''));
+        $descOriginal  = trim(strip_tags($lugar['desc_original']  ?? ''));
+
+        // Sección intro: short_description real del lugar si existe, si no fallback por idioma
+        $introContent = !empty($shortOriginal) ? htmlspecialchars($shortOriginal) : $fallbackIntro[$lang];
+        // Sección descripción larga: description real del lugar si existe, si no fallback por idioma
+        $bodyContent  = !empty($descOriginal)  ? htmlspecialchars($descOriginal)  : $fallbackWhatToSee[$lang];
+
+        $desc = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3>'
+              . '<p>'.$introContent.'</p></section>'
+              . '<section><h3>'.$t['h3v'].'</h3><p>'.$bodyContent.'</p></section>';
+
         $metaTitle = $lugar['name'].' | '.$catLabel.' '.$t['msuf'];
         $metaDesc  = $t['mv'].' '.$lugar['name'].' '.$t['in'].' '.$lugar['municipality'].', '.$lugar['province'].'. '.$t['mend'];
         $insert->execute([

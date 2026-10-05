@@ -51,7 +51,7 @@ if (!empty($lugar['description_linked'])) {
 // Sanitizar descripción: permitir solo HTML seguro (sin scripts)
 if ($descripcionRaw) {
     // Permite etiquetas de formato y enlaces pero elimina scripts
-    $descHtml = strip_tags($descripcionRaw, '<p><br><a><strong><em><ul><ol><li><h2><h3><h4><blockquote><span>');
+    $descHtml = strip_tags($descripcionRaw, '<p><br><a><strong><em><ul><ol><li><h2><h3><h4><blockquote><span><section>');
     
     // EVITAR AUTO-ENLACE: Remover enlaces que apunten al propio lugar (Google lo penaliza)
     if (!empty($lugar['slug'])) {
