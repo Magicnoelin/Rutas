@@ -9,6 +9,51 @@ include 'db.php';
 include 'slug_lugares_helper.php'; // <--- Añadido aquí para que reconozca generarSlugLugar()
 
 header('Content-Type: text/html; charset=utf-8');
+
+// ── FUNCIÓN DE TRADUCCIÓN VÍA GOOGLE TRANSLATE (sin API key) ─────────────
+function traducirTexto(string $texto, string $targetLang): string {
+    if (empty(trim($texto))) return $texto;
+    $fragmentos = [];
+    $partes = explode("\n\n", $texto);
+    $buffer = '';
+    foreach ($partes as $parte) {
+        if (strlen($buffer) + strlen($parte) > 4500) {
+            if ($buffer !== '') $fragmentos[] = $buffer;
+            $buffer = $parte;
+        } else {
+            $buffer .= ($buffer !== '' ? "\n\n" : '') . $parte;
+        }
+    }
+    if ($buffer !== '') $fragmentos[] = $buffer;
+
+    $traducido = [];
+    foreach ($fragmentos as $frag) {
+        $url = 'https://translate.googleapis.com/translate_a/single'
+             . '?client=gtx&sl=es&tl=' . urlencode($targetLang)
+             . '&dt=t&q=' . urlencode($frag);
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_USERAGENT      => 'Mozilla/5.0',
+            CURLOPT_SSL_VERIFYPEER => false,
+        ]);
+        $resp = curl_exec($ch);
+        $err  = curl_error($ch);
+        curl_close($ch);
+
+        if ($err || !$resp) { $traducido[] = $frag; continue; }
+        $data = json_decode($resp, true);
+        if (json_last_error() !== JSON_ERROR_NONE || empty($data[0])) { $traducido[] = $frag; continue; }
+        $partesTrad = '';
+        foreach ($data[0] as $segmento) {
+            if (!empty($segmento[0])) $partesTrad .= $segmento[0];
+        }
+        $traducido[] = $partesTrad;
+        usleep(150000);
+    }
+    return implode("\n\n", $traducido);
+}
 // ── 2. CONFIGURACIÓN Y TEXTOS POR IDIOMA ────────────────────────────────────
 $textos = [
     'es' => [
@@ -211,8 +256,16 @@ foreach (['en', 'fr', 'de', 'zh'] as $lang) {
         // Usar contenido real del lugar (en español) para las descripciones
         $shortOriginal = trim(strip_tags($lugar['short_original'] ?? ''));
         $descOriginal  = trim(strip_tags($lugar['desc_original']  ?? ''));
-        $introContent  = !empty($shortOriginal) ? htmlspecialchars($shortOriginal) : $fallbackIntro[$lang];
-        $bodyContent   = !empty($descOriginal)  ? htmlspecialchars($descOriginal)  : $fallbackWhatToSee[$lang];
+        if (!empty($shortOriginal)) {
+            $introContent = htmlspecialchars(traducirTexto($shortOriginal, $lang));
+        } else {
+            $introContent = $fallbackIntro[$lang];
+        }
+        if (!empty($descOriginal)) {
+            $bodyContent = htmlspecialchars(traducirTexto($descOriginal, $lang));
+        } else {
+            $bodyContent = $fallbackWhatToSee[$lang];
+        }
 
         $h3a = $t['h3a'] ?? 'About';
         $h3v = $t['h3v'] ?? 'What to See';

@@ -21,6 +21,65 @@ include 'db.php';
 require_once 'slug_lugares_helper.php';
 
 header('Content-Type: text/html; charset=utf-8');
+set_time_limit(0); // Sin límite: el script puede tardar varios minutos traduciendo todos los lugares
+ini_set('max_execution_time', 0);
+
+// ── FUNCIÓN DE TRADUCCIÓN VÍA GOOGLE TRANSLATE (sin API key) ─────────────
+/**
+ * Traduce texto de 'es' al idioma destino usando la API pública de Google Translate.
+ * Divide textos largos en fragmentos para evitar límites de URL.
+ * Retorna el texto original si la traducción falla.
+ */
+function traducirTexto(string $texto, string $targetLang): string {
+    if (empty(trim($texto))) return $texto;
+    // Google Translate soporta segmentos de hasta ~5000 chars
+    $fragmentos = [];
+    $partes = explode("\n\n", $texto);
+    $buffer = '';
+    foreach ($partes as $parte) {
+        if (strlen($buffer) + strlen($parte) > 4500) {
+            if ($buffer !== '') $fragmentos[] = $buffer;
+            $buffer = $parte;
+        } else {
+            $buffer .= ($buffer !== '' ? "\n\n" : '') . $parte;
+        }
+    }
+    if ($buffer !== '') $fragmentos[] = $buffer;
+
+    $traducido = [];
+    foreach ($fragmentos as $frag) {
+        $url = 'https://translate.googleapis.com/translate_a/single'
+             . '?client=gtx&sl=es&tl=' . urlencode($targetLang)
+             . '&dt=t&q=' . urlencode($frag);
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_USERAGENT      => 'Mozilla/5.0',
+            CURLOPT_SSL_VERIFYPEER => false,
+        ]);
+        $resp = curl_exec($ch);
+        $err  = curl_error($ch);
+        curl_close($ch);
+
+        if ($err || !$resp) {
+            $traducido[] = $frag; // fallback: original
+            continue;
+        }
+        $data = json_decode($resp, true);
+        if (json_last_error() !== JSON_ERROR_NONE || empty($data[0])) {
+            $traducido[] = $frag;
+            continue;
+        }
+        $partesTrad = '';
+        foreach ($data[0] as $segmento) {
+            if (!empty($segmento[0])) $partesTrad .= $segmento[0];
+        }
+        $traducido[] = $partesTrad;
+        usleep(150000); // 150ms entre peticiones para no ser bloqueado
+    }
+    return implode("\n\n", $traducido);
+}
 
 try {
 
@@ -187,15 +246,21 @@ foreach (['en', 'fr', 'de', 'zh'] as $lang) {
         $catLabel  = !empty($lugar['categoria']) ? $lugar['categoria'] : 'Place';
         $shortDesc = $t['intro'].' '.$lugar['name'].' '.$t['in'].' '.$lugar['municipality'].', '.$lugar['province'].'.';
 
-        // Usar el contenido real del lugar (en español, campo maesto) para la descripción
-        // Se muestra en el idioma del encabezado, con el contenido auténtico del lugar
+        // Obtener texto original en español (sin HTML)
         $shortOriginal = trim(strip_tags($lugar['short_original'] ?? ''));
         $descOriginal  = trim(strip_tags($lugar['desc_original']  ?? ''));
 
-        // Sección intro: short_description real del lugar si existe, si no fallback por idioma
-        $introContent = !empty($shortOriginal) ? htmlspecialchars($shortOriginal) : $fallbackIntro[$lang];
-        // Sección descripción larga: description real del lugar si existe, si no fallback por idioma
-        $bodyContent  = !empty($descOriginal)  ? htmlspecialchars($descOriginal)  : $fallbackWhatToSee[$lang];
+        // Traducir al idioma destino (o usar fallback si está vacío)
+        if (!empty($shortOriginal)) {
+            $introContent = htmlspecialchars(traducirTexto($shortOriginal, $lang));
+        } else {
+            $introContent = $fallbackIntro[$lang];
+        }
+        if (!empty($descOriginal)) {
+            $bodyContent = htmlspecialchars(traducirTexto($descOriginal, $lang));
+        } else {
+            $bodyContent = $fallbackWhatToSee[$lang];
+        }
 
         $desc = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3>'
               . '<p>'.$introContent.'</p></section>'
