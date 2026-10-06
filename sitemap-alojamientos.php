@@ -1,10 +1,13 @@
 <?php
 /**
- * Sitemap dinámico de alojamientos con soporte de imágenes
+ * Sitemap dinámico de alojamientos con soporte de imágenes e i18n
  * URL: https://rutasrurales.io/sitemap-alojamientos.php
  *
- * Incluye <image:image> para cada foto, ayudando a Google a indexar las imágenes
- * de los alojamientos y mejorar la visibilidad en Google Images.
+ * Incluye:
+ * - <image:image> para cada foto (ayuda a Google a indexar imágenes)
+ * - hreflang para 5 idiomas (es/en/fr/de/zh)
+ *
+ * GENERADO AUTOMÁTICAMENTE — NO EDITAR MANUALMENTE
  */
 
 define('API_NO_HEADERS', true);
@@ -15,6 +18,15 @@ header('Content-Type: application/xml; charset=utf-8');
 header('Cache-Control: public, max-age=43200'); // 12 horas
 
 $baseUrl = 'https://rutasrurales.io';
+
+// Idiomas soportados con prefijos de URL
+$idiomas = [
+    ''    => 'es',
+    'en/' => 'en',
+    'fr/' => 'fr',
+    'de/' => 'de',
+    'zh/' => 'zh',
+];
 
 try {
     $pdo = getDBConnection();
@@ -38,52 +50,82 @@ try {
     $alojamientos = [];
 }
 
-echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-echo '<?xml-stylesheet type="text/xsl" href="https://rutasrurales.io/sitemap.xsl"?>' . "\n";
+// ═══════════════════════════════════════════════════════════════════════════════
+// GENERACIÓN DEL XML
+// ═══════════════════════════════════════════════════════════════════════════════
 
-echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n";
-echo '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . "\n";
+echo '<?xml version="1.0" encoding="UTF-8"?>';
+echo '<?xml-stylesheet type="text/xsl" href="https://rutasrurales.io/sitemap.xsl"?>';
+
+echo '<!-- sitemap-alojamientos | generado: ' . gmdate('Y-m-d H:i:s') . ' UTC -->';
+echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
+
+$totalUrls = 0;
 
 foreach ($alojamientos as $alo) {
     $slug    = htmlspecialchars($alo['slug']);
-    $loc     = $baseUrl . '/alojamiento/' . $slug;
     $lastmod = !empty($alo['updated_at']) ? date('Y-m-d', strtotime($alo['updated_at'])) : date('Y-m-d');
     $name    = htmlspecialchars($alo['name'] ?? '');
     $ubicacion = trim(($alo['municipality'] ?? '') . ', ' . ($alo['province'] ?? ''), ', ');
 
-    echo "  <url>\n";
-    echo "    <loc>" . $loc . "</loc>\n";
-    echo "    <lastmod>" . $lastmod . "</lastmod>\n";
-    echo "    <changefreq>weekly</changefreq>\n";
-    echo "    <priority>0.8</priority>\n";
+    // URL canónica (versión español)
+    $canonicalUrl = $baseUrl . '/alojamiento/' . $slug;
 
-    // Imágenes del alojamiento
-    $foto_idx = 0;
-    for ($i = 1; $i <= 10; $i++) {
-        $foto = $alo['photo' . $i] ?? '';
-        if (empty($foto)) continue;
+    echo "\n  <!-- {$slug} -->" . "\n";
 
-        // Normalizar URL
-        if (!preg_match('/^https?:\/\//', $foto)) {
-            $foto = $baseUrl . '/' . ltrim($foto, '/');
+    // Generar entrada para cada idioma con hreflang completo
+    foreach ($idiomas as $langPrefix => $langCode) {
+        $url = $baseUrl . '/' . $langPrefix . 'alojamiento/' . $slug;
+
+        echo "  <url>\n";
+        echo "    <loc>" . htmlspecialchars($url, ENT_XML1) . "</loc>\n";
+        echo "    <lastmod>" . $lastmod . "</lastmod>\n";
+        echo "    <changefreq>weekly</changefreq>\n";
+        echo "    <priority>" . ($langCode === 'es' ? '0.9' : '0.7') . "</priority>\n";
+
+        // Añadir hreflang para todos los idiomas
+        foreach ($idiomas as $hlPrefix => $hlCode) {
+            $hlUrl = $baseUrl . '/' . $hlPrefix . 'alojamiento/' . $slug;
+            echo "    <xhtml:link rel=\"alternate\" hreflang=\"{$hlCode}\" href=\"" . htmlspecialchars($hlUrl, ENT_XML1) . "\"/>\n";
+        }
+        // x-default para el español
+        echo "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" . htmlspecialchars($canonicalUrl, ENT_XML1) . "\"/>\n";
+
+        // Imágenes del alojamiento (solo en la versión español para evitar duplicados)
+        if ($langCode === 'es') {
+            $foto_idx = 0;
+            for ($i = 1; $i <= 10; $i++) {
+                $foto = $alo['photo' . $i] ?? '';
+                if (empty($foto)) continue;
+
+                // Normalizar URL
+                if (!preg_match('/^https?:\/\//', $foto)) {
+                    $foto = $baseUrl . '/' . ltrim($foto, '/');
+                }
+
+                // Saltar imágenes de Unsplash (no son nuestras)
+                if (strpos($foto, 'unsplash.com') !== false) continue;
+
+                $foto_idx++;
+                $foto_esc = htmlspecialchars($foto);
+                $caption  = htmlspecialchars($name . ($ubicacion ? ' — ' . $ubicacion : '') . ' (foto ' . $foto_idx . ')');
+                $title    = htmlspecialchars($name);
+
+                echo "    <image:image>\n";
+                echo "      <image:loc>" . $foto_esc . "</image:loc>\n";
+                echo "      <image:title>" . $title . "</image:title>\n";
+                echo "      <image:caption>" . $caption . "</image:caption>\n";
+                echo "    </image:image>\n";
+            }
         }
 
-        // Saltar imágenes de Unsplash (no son nuestras, pueden no indexarse bien)
-        if (strpos($foto, 'unsplash.com') !== false) continue;
-
-        $foto_idx++;
-        $foto_esc = htmlspecialchars($foto);
-        $caption  = htmlspecialchars($name . ($ubicacion ? ' — ' . $ubicacion : '') . ' (foto ' . $foto_idx . ')');
-        $title    = htmlspecialchars($name);
-
-        echo "    <image:image>\n";
-        echo "      <image:loc>" . $foto_esc . "</image:loc>\n";
-        echo "      <image:title>" . $title . "</image:title>\n";
-        echo "      <image:caption>" . $caption . "</image:caption>\n";
-        echo "    </image:image>\n";
+        echo "  </url>\n";
+        $totalUrls++;
     }
-
-    echo "  </url>\n";
 }
 
-echo '</urlset>';
+echo "\n</urlset>\n";
+
+error_log("[sitemap-alojamientos] Generado OK: {$totalUrls} URLs (" . count($alojamientos) . " alojamientos × " . count($idiomas) . " idiomas)");
