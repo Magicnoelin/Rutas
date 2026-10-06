@@ -18,6 +18,9 @@
  * 2. Se mejoró el manejo de traducciones desde cultural_events_trads
  */
 
+// Limpiar cualquier header previo (evita que Apache sobrescriba con text/html)
+while (ob_get_level()) ob_end_clean();
+header_remove();
 header('Content-Type: application/xml; charset=UTF-8');
 
 $host   = 'localhost';

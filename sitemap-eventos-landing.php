@@ -10,6 +10,9 @@
  * Accesible en: https://rutasrurales.io/sitemap-eventos-landing.php
  * ────────────────────────────────────────────────────────────────────────────
  */
+// Limpiar cualquier header previo (evita que Apache sobrescriba con text/html)
+while (ob_get_level()) ob_end_clean();
+header_remove();
 header("Content-Type: application/xml; charset=utf-8");
 
 require_once 'api/config.php';

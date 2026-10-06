@@ -9,6 +9,9 @@
  * URL: https://rutasrurales.io/sitemap-eventos-idiomas.php
  */
 
+// Limpiar cualquier header previo (evita que Apache sobrescriba con text/html)
+while (ob_get_level()) ob_end_clean();
+header_remove();
 header('Content-Type: application/xml; charset=UTF-8');
 
 // Conexión directa a BD (sin usar api/config.php para evitar headers JSON)
