@@ -48,9 +48,13 @@
     <FilesMatch "\.(php|html?)$">
         Header set Content-Type "text/html; charset=UTF-8"
     </FilesMatch>
-    # Content-Type correcto para sitemaps XML (evita que el navegador los trate como text/html)
+    # Content-Type correcto para sitemaps XML estáticos
     <FilesMatch "^sitemap.*\.xml$">
         Header set Content-Type "application/xml; charset=UTF-8"
+    </FilesMatch>
+    # Content-Type correcto para sitemaps PHP dinámicos (sobreescribe la regla text/html anterior)
+    <FilesMatch "^sitemap.*\.php$">
+        Header always set Content-Type "application/xml; charset=UTF-8"
     </FilesMatch>
 </IfModule>
 
