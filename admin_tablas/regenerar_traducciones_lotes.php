@@ -14,38 +14,77 @@ set_time_limit(120);
 ini_set('max_execution_time', 120);
 
 // ── FUNCIÓN DE TRADUCCIÓN ─────────────────────────────────────────────────
+/**
+ * Traduce texto/HTML de español al idioma destino usando Google Translate público.
+ * Divide en fragmentos respetando etiquetas HTML de bloque completas.
+ * Usa POST para no romper el HTML en la URL.
+ */
 function traducirTexto(string $texto, string $targetLang): string {
     if (empty(trim($texto))) return $texto;
+
+    // Dividir después de cada etiqueta de cierre de bloque, preservando la etiqueta
+    // Se usa marcador temporal para evitar lookbehind de longitud variable (no soportado en PHP)
+    $marcador = "\x00SPLIT\x00";
+    $textoMarcado = preg_replace(
+        '/(<\/(?:p|h[1-6]|li|div|ul|ol|blockquote|section|article|tr|td|th)>)/i',
+        '$1' . $marcador,
+        $texto
+    );
+    $partes = explode($marcador, $textoMarcado ?? $texto);
+    if (!$partes || count($partes) === 0) $partes = [$texto];
+
+    // Agrupar partes en fragmentos de máx. 4500 chars
     $fragmentos = [];
-    $partes = explode("\n\n", $texto);
     $buffer = '';
     foreach ($partes as $parte) {
         if (strlen($buffer) + strlen($parte) > 4500) {
             if ($buffer !== '') $fragmentos[] = $buffer;
             $buffer = $parte;
         } else {
-            $buffer .= ($buffer !== '' ? "\n\n" : '') . $parte;
+            $buffer .= $parte;
         }
     }
     if ($buffer !== '') $fragmentos[] = $buffer;
+
     $traducido = [];
     foreach ($fragmentos as $frag) {
-        $url = 'https://translate.googleapis.com/translate_a/single'
-             . '?client=gtx&sl=es&tl=' . urlencode($targetLang)
-             . '&dt=t&q=' . urlencode($frag);
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>15,
-            CURLOPT_USERAGENT=>'Mozilla/5.0', CURLOPT_SSL_VERIFYPEER=>false]);
-        $resp = curl_exec($ch); $err = curl_error($ch); curl_close($ch);
+        $apiUrl = 'https://translate.googleapis.com/translate_a/single'
+                . '?client=gtx&sl=es&tl=' . urlencode($targetLang) . '&dt=t&dj=1';
+        $ch = curl_init($apiUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_USERAGENT      => 'Mozilla/5.0',
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => 'q=' . urlencode($frag),
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/x-www-form-urlencoded'],
+        ]);
+        $resp = curl_exec($ch);
+        $err  = curl_error($ch);
+        curl_close($ch);
+
         if ($err || !$resp) { $traducido[] = $frag; continue; }
         $data = json_decode($resp, true);
-        if (json_last_error() !== JSON_ERROR_NONE || empty($data[0])) { $traducido[] = $frag; continue; }
+        if (json_last_error() !== JSON_ERROR_NONE) { $traducido[] = $frag; continue; }
+
         $partesTrad = '';
-        foreach ($data[0] as $seg) { if (!empty($seg[0])) $partesTrad .= $seg[0]; }
+        // dj=1 devuelve {"sentences":[{"trans":"..."},...]}
+        if (!empty($data['sentences'])) {
+            foreach ($data['sentences'] as $seg) {
+                if (!empty($seg['trans'])) $partesTrad .= $seg['trans'];
+            }
+        } elseif (!empty($data[0])) {
+            foreach ($data[0] as $seg) {
+                if (!empty($seg[0])) $partesTrad .= $seg[0];
+            }
+        }
+        if (empty($partesTrad)) { $traducido[] = $frag; continue; }
         $traducido[] = $partesTrad;
         usleep(120000);
     }
-    return implode("\n\n", $traducido);
+    // Unir sin separador: el HTML ya tiene su propia estructura
+    return implode('', $traducido);
 }
 
 // ── TEXTOS FIJOS ──────────────────────────────────────────────────────────

@@ -13,30 +13,35 @@ header('Content-Type: text/html; charset=utf-8');
 // ── FUNCIÓN DE TRADUCCIÓN VÍA GOOGLE TRANSLATE (sin API key) ─────────────
 function traducirTexto(string $texto, string $targetLang): string {
     if (empty(trim($texto))) return $texto;
+    // Dividir después de cada etiqueta de cierre de bloque, preservando la etiqueta
+    $partes = preg_split('/(?<=<\/(?:p|h[1-6]|li|div|ul|ol|blockquote|section|article|tr|td|th)>)/i', $texto);
+    if (!$partes || count($partes) === 0) $partes = [$texto];
+    // Agrupar partes en fragmentos de máx. 4500 chars
     $fragmentos = [];
-    $partes = explode("\n\n", $texto);
     $buffer = '';
     foreach ($partes as $parte) {
         if (strlen($buffer) + strlen($parte) > 4500) {
             if ($buffer !== '') $fragmentos[] = $buffer;
             $buffer = $parte;
         } else {
-            $buffer .= ($buffer !== '' ? "\n\n" : '') . $parte;
+            $buffer .= $parte;
         }
     }
     if ($buffer !== '') $fragmentos[] = $buffer;
 
     $traducido = [];
     foreach ($fragmentos as $frag) {
-        $url = 'https://translate.googleapis.com/translate_a/single'
-             . '?client=gtx&sl=es&tl=' . urlencode($targetLang)
-             . '&dt=t&q=' . urlencode($frag);
-        $ch = curl_init($url);
+        $apiUrl = 'https://translate.googleapis.com/translate_a/single'
+                . '?client=gtx&sl=es&tl=' . urlencode($targetLang) . '&dt=t&dj=1';
+        $ch = curl_init($apiUrl);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT        => 15,
             CURLOPT_USERAGENT      => 'Mozilla/5.0',
             CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => 'q=' . urlencode($frag),
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/x-www-form-urlencoded'],
         ]);
         $resp = curl_exec($ch);
         $err  = curl_error($ch);
@@ -44,15 +49,23 @@ function traducirTexto(string $texto, string $targetLang): string {
 
         if ($err || !$resp) { $traducido[] = $frag; continue; }
         $data = json_decode($resp, true);
-        if (json_last_error() !== JSON_ERROR_NONE || empty($data[0])) { $traducido[] = $frag; continue; }
+        if (json_last_error() !== JSON_ERROR_NONE) { $traducido[] = $frag; continue; }
+
         $partesTrad = '';
-        foreach ($data[0] as $segmento) {
-            if (!empty($segmento[0])) $partesTrad .= $segmento[0];
+        if (!empty($data['sentences'])) {
+            foreach ($data['sentences'] as $seg) {
+                if (!empty($seg['trans'])) $partesTrad .= $seg['trans'];
+            }
+        } elseif (!empty($data[0])) {
+            foreach ($data[0] as $seg) {
+                if (!empty($seg[0])) $partesTrad .= $seg[0];
+            }
         }
+        if (empty($partesTrad)) { $traducido[] = $frag; continue; }
         $traducido[] = $partesTrad;
         usleep(150000);
     }
-    return implode("\n\n", $traducido);
+    return implode('', $traducido);
 }
 // ── 2. CONFIGURACIÓN Y TEXTOS POR IDIOMA ────────────────────────────────────
 $textos = [
