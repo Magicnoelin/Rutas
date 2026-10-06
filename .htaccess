@@ -44,16 +44,17 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-    # Solo establecer Content-Type para archivos HTML/PHP
-    <FilesMatch "\.(php|html?)$">
+    # Solo establecer Content-Type para archivos HTML/PHP (excluye sitemaps)
+    <FilesMatch "^(?!sitemap).*\.(php|html?)$">
         Header set Content-Type "text/html; charset=UTF-8"
     </FilesMatch>
     # Content-Type correcto para sitemaps XML estáticos
     <FilesMatch "^sitemap.*\.xml$">
-        Header set Content-Type "application/xml; charset=UTF-8"
+        Header always set Content-Type "application/xml; charset=UTF-8"
     </FilesMatch>
-    # Content-Type correcto para sitemaps PHP dinámicos (sobreescribe la regla text/html anterior)
+    # Content-Type correcto para sitemaps PHP dinámicos
     <FilesMatch "^sitemap.*\.php$">
+        Header always unset Content-Type
         Header always set Content-Type "application/xml; charset=UTF-8"
     </FilesMatch>
 </IfModule>
