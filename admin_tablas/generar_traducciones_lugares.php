@@ -1,4 +1,3 @@
-PHP
 <?php
 // ============================================================================
 // SCRIPT DE GENERACIÓN DE TRADUCCIONES DE LUGARES DE INTERÉS
@@ -6,16 +5,33 @@ PHP
 
 // 1. CONEXIÓN A LA BASE DE DATOS Y HELPERS DE SLUGS
 include 'db.php';
-include 'slug_lugares_helper.php'; // <--- Añadido aquí para que reconozca generarSlugLugar()
+include 'slug_lugares_helper.php';
 
 header('Content-Type: text/html; charset=utf-8');
+set_time_limit(300);
+
+// ── HELPER: detectar si un texto ya contiene HTML de bloque ───────────────
+function tieneHtmlBloque(string $texto): bool {
+    return (bool)preg_match('/<(?:p|h[1-6]|ul|ol|li|div|section|article|blockquote)\b/i', $texto);
+}
 
 // ── FUNCIÓN DE TRADUCCIÓN VÍA GOOGLE TRANSLATE (sin API key) ─────────────
+// Preserva HTML completo: NO usa strip_tags, NO usa htmlspecialchars en el resultado.
+// Divide en fragmentos por etiquetas de cierre de bloque usando marcador temporal
+// (los lookbehind de longitud variable no están soportados en PHP).
 function traducirTexto(string $texto, string $targetLang): string {
     if (empty(trim($texto))) return $texto;
-    // Dividir después de cada etiqueta de cierre de bloque, preservando la etiqueta
-    $partes = preg_split('/(?<=<\/(?:p|h[1-6]|li|div|ul|ol|blockquote|section|article|tr|td|th)>)/i', $texto);
+
+    // Insertar marcador DESPUÉS de cada etiqueta de cierre de bloque
+    $marcador = "\x00SPLIT\x00";
+    $textoMarcado = preg_replace(
+        '/(<\/(?:p|h[1-6]|li|div|ul|ol|blockquote|section|article|tr|td|th)>)/i',
+        '$1' . $marcador,
+        $texto
+    );
+    $partes = explode($marcador, $textoMarcado ?? $texto);
     if (!$partes || count($partes) === 0) $partes = [$texto];
+
     // Agrupar partes en fragmentos de máx. 4500 chars
     $fragmentos = [];
     $buffer = '';
@@ -31,12 +47,13 @@ function traducirTexto(string $texto, string $targetLang): string {
 
     $traducido = [];
     foreach ($fragmentos as $frag) {
+        // &format=html indica a Google que el contenido es HTML → preserva etiquetas
         $apiUrl = 'https://translate.googleapis.com/translate_a/single'
-                . '?client=gtx&sl=es&tl=' . urlencode($targetLang) . '&dt=t&dj=1';
+                . '?client=gtx&sl=es&tl=' . urlencode($targetLang) . '&dt=t&dj=1&format=html';
         $ch = curl_init($apiUrl);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_TIMEOUT        => 20,
             CURLOPT_USERAGENT      => 'Mozilla/5.0',
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_POST           => true,
@@ -266,25 +283,36 @@ foreach (['en', 'fr', 'de', 'zh'] as $lang) {
         $slug      = generarSlugLugar($lugar['name'], $lugar['categoria'], $lugar['municipality'], $lang);
         $shortDesc = ($t['short_template'])($lugar['name'], $lugar['municipality'], $lugar['province']);
 
-        // Usar contenido real del lugar (en español) para las descripciones
-        $shortOriginal = trim(strip_tags($lugar['short_original'] ?? ''));
-        $descOriginal  = trim(strip_tags($lugar['desc_original']  ?? ''));
+        // Usar contenido real del lugar (en español) para las descripciones.
+        // IMPORTANTE: NO usar strip_tags → preservar HTML original (<p>, <ul>, <li>…)
+        // IMPORTANTE: NO usar htmlspecialchars en el resultado de traducirTexto → ya es HTML
+        $shortOriginal = trim($lugar['short_original'] ?? '');
+        $descOriginal  = trim($lugar['desc_original']  ?? '');
+
         if (!empty($shortOriginal)) {
-            $introContent = htmlspecialchars(traducirTexto($shortOriginal, $lang));
+            $introContent = traducirTexto($shortOriginal, $lang);
         } else {
             $introContent = $fallbackIntro[$lang];
         }
         if (!empty($descOriginal)) {
-            $bodyContent = htmlspecialchars(traducirTexto($descOriginal, $lang));
+            $bodyContent = traducirTexto($descOriginal, $lang);
         } else {
             $bodyContent = $fallbackWhatToSee[$lang];
         }
 
         $h3a = $t['h3a'] ?? 'About';
         $h3v = $t['h3v'] ?? 'What to See';
-        $desc = '<section><h3>'.$h3a.' '.htmlspecialchars($lugar['name']).'</h3>'
-              . '<p>'.$introContent.'</p></section>'
-              . '<section><h3>'.$h3v.'</h3><p>'.$bodyContent.'</p></section>';
+
+        // Si la descripción original ya tiene HTML de bloque, usarla directamente sin añadir <p> extra
+        if (tieneHtmlBloque($bodyContent)) {
+            $desc = '<section><h3>'.$h3a.' '.htmlspecialchars($lugar['name']).'</h3>'
+                  . '<p>'.$introContent.'</p></section>'
+                  . '<section><h3>'.$h3v.'</h3>'.$bodyContent.'</section>';
+        } else {
+            $desc = '<section><h3>'.$h3a.' '.htmlspecialchars($lugar['name']).'</h3>'
+                  . '<p>'.$introContent.'</p></section>'
+                  . '<section><h3>'.$h3v.'</h3><p>'.$bodyContent.'</p></section>';
+        }
 
         $metaTitle = ($t['meta_title'])($lugar['name'], $lugar['categoria']);
         $metaDesc  = ($t['meta_desc'])($lugar['name'], $lugar['municipality'], $lugar['province']);

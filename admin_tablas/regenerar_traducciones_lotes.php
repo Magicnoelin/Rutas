@@ -13,6 +13,11 @@ header('Content-Type: text/html; charset=utf-8');
 set_time_limit(120);
 ini_set('max_execution_time', 120);
 
+// ── HELPER: detectar si un texto ya contiene HTML de bloque ──────────────
+function tieneHtmlBloque(string $texto): bool {
+    return (bool)preg_match('/<(?:p|h[1-6]|ul|ol|li|div|section|article|blockquote)\\b/i', $texto);
+}
+
 // ── FUNCIÓN DE TRADUCCIÓN ─────────────────────────────────────────────────
 /**
  * Traduce texto/HTML de español al idioma destino usando Google Translate público.
@@ -49,11 +54,11 @@ function traducirTexto(string $texto, string $targetLang): string {
     $traducido = [];
     foreach ($fragmentos as $frag) {
         $apiUrl = 'https://translate.googleapis.com/translate_a/single'
-                . '?client=gtx&sl=es&tl=' . urlencode($targetLang) . '&dt=t&dj=1';
+                . '?client=gtx&sl=es&tl=' . urlencode($targetLang) . '&dt=t&dj=1&format=html';
         $ch = curl_init($apiUrl);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_TIMEOUT        => 20,
             CURLOPT_USERAGENT      => 'Mozilla/5.0',
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_POST           => true,
@@ -186,18 +191,25 @@ if ($lote >= 0) {
 
     foreach ($lugares as $lugar) {
         try {
-            $shortOrigRaw = trim(strip_tags($lugar['short_original'] ?? ''));
-            $descOrigRaw  = trim(strip_tags($lugar['desc_original']  ?? ''));
+            // NO strip_tags: preservar HTML original para traducirlo correctamente
+            $shortOrigRaw = trim($lugar['short_original'] ?? '');
+            $descOrigRaw  = trim($lugar['desc_original']  ?? '');
             $catLabel     = !empty($lugar['categoria']) ? $lugar['categoria'] : 'Lugar de Interés';
 
             // FASE 1: ES — texto original en español, sin traducir
             $t           = $textos['es'];
             $slug        = generarSlugLugar($lugar['name'], $lugar['categoria'], $lugar['municipality'], 'es');
             $shortDescES = $t['intro'].' '.$lugar['name'].' '.$t['in'].' '.$lugar['municipality'].', '.$lugar['province'].'.';
-            $introES     = !empty($shortOrigRaw) ? htmlspecialchars($shortOrigRaw) : $shortDescES;
-            $bodyES      = !empty($descOrigRaw)  ? htmlspecialchars($descOrigRaw)  : 'Un espacio especial en España.';
-            $descES      = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3><p>'.$introES.'</p></section>'
-                         . '<section><h3>'.$t['h3v'].'</h3><p>'.$bodyES.'</p></section>';
+            $introES     = !empty($shortOrigRaw) ? $shortOrigRaw : $shortDescES;
+            // NO htmlspecialchars: bodyES puede contener HTML legítimo (<p>, <ul>, etc.)
+            $bodyES      = !empty($descOrigRaw)  ? $descOrigRaw  : 'Un espacio especial en España.';
+            if (tieneHtmlBloque($bodyES)) {
+                $descES = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3><p>'.$introES.'</p></section>'
+                        . '<section><h3>'.$t['h3v'].'</h3>'.$bodyES.'</section>';
+            } else {
+                $descES = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3><p>'.$introES.'</p></section>'
+                        . '<section><h3>'.$t['h3v'].'</h3><p>'.$bodyES.'</p></section>';
+            }
 
             $insert->execute([':place_id'=>$lugar['id'],':lang'=>'es',':name'=>$lugar['name'],
                 ':slug'=>$slug,':short_desc'=>$shortDescES,':description'=>$descES,
@@ -214,14 +226,19 @@ if ($lote >= 0) {
                 $t    = $textos[$lang];
                 $slug = generarSlugLugar($lugar['name'], $lugar['categoria'], $lugar['municipality'], $lang);
                 $introContent = !empty($shortOrigRaw)
-                    ? htmlspecialchars(traducirTexto($shortOrigRaw, $lang))
+                    ? traducirTexto($shortOrigRaw, $lang)
                     : $fallbackIntro[$lang];
                 $bodyContent = !empty($descOrigRaw)
-                    ? htmlspecialchars(traducirTexto($descOrigRaw, $lang))
+                    ? traducirTexto($descOrigRaw, $lang)
                     : $fallbackBody[$lang];
                 $shortTrad = traducirTexto($shortDescES, $lang);
-                $desc = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3><p>'.$introContent.'</p></section>'
-                      . '<section><h3>'.$t['h3v'].'</h3><p>'.$bodyContent.'</p></section>';
+                if (tieneHtmlBloque($bodyContent)) {
+                    $desc = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3><p>'.$introContent.'</p></section>'
+                          . '<section><h3>'.$t['h3v'].'</h3>'.$bodyContent.'</section>';
+                } else {
+                    $desc = '<section><h3>'.$t['h3a'].' '.htmlspecialchars($lugar['name']).'</h3><p>'.$introContent.'</p></section>'
+                          . '<section><h3>'.$t['h3v'].'</h3><p>'.$bodyContent.'</p></section>';
+                }
                 $insert->execute([':place_id'=>$lugar['id'],':lang'=>$lang,':name'=>$lugar['name'],
                     ':slug'=>$slug,':short_desc'=>$shortTrad,':description'=>$desc,
                     ':address'=>$lugar['address']??'',':municipality'=>$lugar['municipality'],
