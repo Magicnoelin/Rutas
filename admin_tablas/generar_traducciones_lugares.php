@@ -16,40 +16,49 @@ function tieneHtmlBloque(string $texto): bool {
 }
 
 // ── FUNCIÓN DE TRADUCCIÓN VÍA GOOGLE TRANSLATE (sin API key) ─────────────
-// Preserva HTML completo: NO usa strip_tags, NO usa htmlspecialchars en el resultado.
-// Divide en fragmentos por etiquetas de cierre de bloque usando marcador temporal
-// (los lookbehind de longitud variable no están soportados en PHP).
+// Estrategia: sustituir etiquetas HTML por placeholders {T0},{T1}... antes de
+// enviar a Google Translate, luego restaurarlas.
+// Así Google recibe texto puro, traduce correctamente, y el HTML queda intacto.
 function traducirTexto(string $texto, string $targetLang): string {
     if (empty(trim($texto))) return $texto;
 
-    // Insertar marcador DESPUÉS de cada etiqueta de cierre de bloque
-    $marcador = "\x00SPLIT\x00";
-    $textoMarcado = preg_replace(
-        '/(<\/(?:p|h[1-6]|li|div|ul|ol|blockquote|section|article|tr|td|th)>)/i',
-        '$1' . $marcador,
+    // 1. Extraer TODAS las etiquetas HTML y entidades → placeholders {T0},{T1}...
+    $tags = [];
+    $textoLimpio = preg_replace_callback(
+        '/<[^>]+>|&[a-zA-Z0-9#]+;/',
+        function ($m) use (&$tags) {
+            $idx    = count($tags);
+            $tags[] = $m[0];
+            return "{T{$idx}}";
+        },
         $texto
     );
-    $partes = explode($marcador, $textoMarcado ?? $texto);
-    if (!$partes || count($partes) === 0) $partes = [$texto];
+    if ($textoLimpio === null) $textoLimpio = strip_tags($texto); // fallback
 
-    // Agrupar partes en fragmentos de máx. 4500 chars
+    // 2. Dividir en fragmentos de máx. 4500 chars respetando placeholders
+    $partes     = preg_split('/(\{T\d+\})/', $textoLimpio, -1, PREG_SPLIT_DELIM_CAPTURE);
     $fragmentos = [];
-    $buffer = '';
-    foreach ($partes as $parte) {
-        if (strlen($buffer) + strlen($parte) > 4500) {
+    $buffer     = '';
+    foreach ((array)$partes as $p) {
+        if (strlen($buffer) + strlen($p) > 4500) {
             if ($buffer !== '') $fragmentos[] = $buffer;
-            $buffer = $parte;
+            $buffer = $p;
         } else {
-            $buffer .= $parte;
+            $buffer .= $p;
         }
     }
     if ($buffer !== '') $fragmentos[] = $buffer;
 
+    // 3. Traducir cada fragmento (solo texto, sin HTML)
     $traducido = [];
     foreach ($fragmentos as $frag) {
-        // &format=html indica a Google que el contenido es HTML → preserva etiquetas
+        // Si el fragmento es solo placeholders, no hay nada que traducir
+        if (trim(preg_replace('/\{T\d+\}/', '', $frag)) === '') {
+            $traducido[] = $frag;
+            continue;
+        }
         $apiUrl = 'https://translate.googleapis.com/translate_a/single'
-                . '?client=gtx&sl=es&tl=' . urlencode($targetLang) . '&dt=t&dj=1&format=html';
+                . '?client=gtx&sl=es&tl=' . urlencode($targetLang) . '&dt=t&dj=1';
         $ch = curl_init($apiUrl);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
@@ -78,12 +87,27 @@ function traducirTexto(string $texto, string $targetLang): string {
                 if (!empty($seg[0])) $partesTrad .= $seg[0];
             }
         }
+        // Google a veces escapa { } → revertir para que los placeholders funcionen
+        $partesTrad = str_replace(
+            ['&lbrace;', '&rbrace;', '&#123;', '&#125;', '{ T', '{ t'],
+            ['{',        '}',        '{',       '}',      '{T',  '{t'],
+            $partesTrad
+        );
+        // Normalizar espacios dentro de placeholders: { T 0 } → {T0}
+        $partesTrad = preg_replace('/\{\s*T\s*(\d+)\s*\}/', '{T$1}', $partesTrad);
         if (empty($partesTrad)) { $traducido[] = $frag; continue; }
         $traducido[] = $partesTrad;
-        usleep(150000);
+        usleep(120000); // 120 ms entre llamadas
     }
-    return implode('', $traducido);
+
+    // 4. Unir y restaurar etiquetas HTML originales
+    $resultado = implode('', $traducido);
+    foreach ($tags as $idx => $tag) {
+        $resultado = str_replace("{T{$idx}}", $tag, $resultado);
+    }
+    return $resultado;
 }
+
 // ── 2. CONFIGURACIÓN Y TEXTOS POR IDIOMA ────────────────────────────────────
 $textos = [
     'es' => [
